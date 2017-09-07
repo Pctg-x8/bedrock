@@ -2779,6 +2779,9 @@ extern crate x11;
 #[cfg(feature = "VK_KHR_storage_buffer_storage_class")] mod storage_buffer_storage_class_khr;
 #[cfg(feature = "VK_KHR_storage_buffer_storage_class")] pub use self::storage_buffer_storage_class_khr::*;
 
+#[cfg(feature = "VK_KHR_relaxed_block_layout")] mod relaxed_block_layout_khr;
+#[cfg(feature = "VK_KHR_relaxed_block_layout")] pub use self::relaxed_block_layout_khr::*;
+
 #[cfg(feature = "VK_KHR_get_memory_requirements2")] mod get_memory_requirements2_khr;
 #[cfg(feature = "VK_KHR_get_memory_requirements2")] pub use self::get_memory_requirements2_khr::*;
 
