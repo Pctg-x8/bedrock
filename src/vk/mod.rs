@@ -18,7 +18,7 @@
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case)]
 
-extern crate libc;
+use std;
 use libc::*;
 
 #[macro_export]
@@ -37,7 +37,7 @@ macro_rules! VK_VERSION
     (PATCH $v: expr) => ($v as usize & 0xfff);
 }
 /// Version of this file
-pub const VK_HEADER_VERSION: usize = 54;
+pub const VK_HEADER_VERSION: usize = 59;
 
 pub const VK_NULL_HANDLE: *mut c_void = 0 as *mut c_void;
 
@@ -2656,16 +2656,6 @@ pub type PFN_vkCmdExecuteCommands = extern "system" fn(commandBuffer: VkCommandB
     #[cfg(feature = "VK_EXT_discard_rectangles")]
     pub fn vkCmdDiscardRectangleEXT(commandBuffer: VkCommandBuffer, firstDiscardRectangle: u32, discardRectangleCount: u32, pDiscardRectangles: *const VkRect2D);
 }
-
-// Platform Extras
-#[cfg(any(
-    feature = "VK_KHR_win32_surface", feature = "VK_KHR_external_memory_win32",
-    feature = "VK_KHR_external_semaphore_win32", feature = "VK_KHR_external_fence_win32",
-    feature = "VK_NV_external_memory_win32"
-))]
-extern crate winapi;
-#[cfg(any(feature = "VK_KHR_xlib_surface", feature = "VK_EXT_acquire_xlib_display"))]
-extern crate x11;
 
 // --- Extension Definitions --- //
 
