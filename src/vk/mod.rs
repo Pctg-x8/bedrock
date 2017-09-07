@@ -2917,6 +2917,9 @@ extern crate x11;
 #[cfg(feature = "VK_AMD_gpu_shader_int16")] mod gpu_shader_int16_amd;
 #[cfg(feature = "VK_AMD_gpu_shader_int16")] pub use self::gpu_shader_int16_amd::*;
 
+#[cfg(feature = "VK_AMD_mixed_attachment_samples")] mod mixed_attachment_samples_amd;
+#[cfg(feature = "VK_AMD_mixed_attachment_samples")] pub use self::mixed_attachment_samples_amd::*;
+
 #[cfg(feature = "VK_EXT_blend_operation_advanced")] mod blend_operation_advanced_ext;
 #[cfg(feature = "VK_EXT_blend_operation_advanced")] pub use self::blend_operation_advanced_ext::*;
 
