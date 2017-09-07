@@ -27,7 +27,7 @@ macro_rules! VK_MAKE_VERSION
     ($major: expr, $minor: expr, $patch: expr) => ($major << 22 | $minor << 12 | $patch)
 }
 /// Vulkan 1.0 version number
-pub const VK_API_VERSION_1_0: usize = VK_MAKE_VERSION!(1, 0, 0);
+pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION!(1, 0, 0);
 
 #[macro_export]
 macro_rules! VK_VERSION
@@ -37,7 +37,7 @@ macro_rules! VK_VERSION
     (PATCH $v: expr) => ($v as usize & 0xfff);
 }
 /// Version of this file
-pub const VK_HEADER_VERSION: usize = 59;
+pub const VK_HEADER_VERSION: u32 = 59;
 
 pub const VK_NULL_HANDLE: *mut c_void = 0 as *mut c_void;
 
@@ -1117,7 +1117,7 @@ impl Default for VkApplicationInfo
     {
         VkApplicationInfo
         {
-            sType: VK_STRUCTURE_TYPE_APPLICATION_INFO, .. unsafe { std::mem::zeroed() }
+            sType: VK_STRUCTURE_TYPE_APPLICATION_INFO, apiVersion: VK_API_VERSION_1_0, .. unsafe { std::mem::zeroed() }
         }
     }
 }
