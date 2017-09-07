@@ -2788,6 +2788,9 @@ extern crate x11;
 #[cfg(feature = "VK_NV_glsl_shader")] mod glsl_shader_nv;
 #[cfg(feature = "VK_NV_glsl_shader")] pub use self::glsl_shader_nv::*;
 
+#[cfg(feature = "VK_EXT_depth_range_unrestricted")] mod depth_range_unrestricted_ext;
+#[cfg(feature = "VK_EXT_depth_range_unrestricted")] pub use self::depth_range_unrestricted::*;
+
 #[cfg(feature = "VK_IMG_filter_cubic")] mod filter_cubic_img;
 #[cfg(feature = "VK_IMG_filter_cubic")] pub use self::filter_cubic_img::*;
 
