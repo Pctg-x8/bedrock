@@ -5,7 +5,7 @@
 use vk::*;
 use std::ffi::CString;
 #[cfg(feature = "FeImplements")]
-use {VkResultHandler, QueueFamilies};
+use VkResultHandler;
 #[cfg(feature = "FeImplements")]
 use std::mem::{uninitialized, zeroed, transmute};
 #[cfg(feature = "FeImplements")]
@@ -57,7 +57,7 @@ impl InstanceBuilder
 	#[cfg(feature = "FeImplements")]
 	pub fn create(mut self) -> ::Result<Instance>
 	{
-		let (layers, extensions): (Vec<_>, Vec<_>) = (self.layers.into_iter().map(|x| x.as_ptr()).collect(), self.extensions.into_iter().map(|x| x.as_ptr()).collect());
+		let (layers, extensions): (Vec<_>, Vec<_>) = (self.layers.iter().map(|x| x.as_ptr()).collect(), self.extensions.iter().map(|x| x.as_ptr()).collect());
 		self.appinfo.pApplicationName = self.app_name.as_ptr(); self.appinfo.pEngineName = self.engine_name.as_ptr();
 		self.cinfo.enabledLayerCount = layers.len() as _; self.cinfo.ppEnabledLayerNames = layers.as_ptr();
 		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
@@ -159,12 +159,12 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceProperties(self.0, &mut p) }; p
 	}
 	/// Reports properties of the queues of the specified physical device
-	pub fn queue_family_properties(&self) -> QueueFamilies
+	pub fn queue_family_properties(&self) -> ::QueueFamilies
 	{
 		let mut n = 0;
 		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, null_mut()) };
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, v.as_mut_ptr()) }; QueueFamilies(v)
+		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, v.as_mut_ptr()) }; ::QueueFamilies(v)
 	}
 	/// Reports memory information for the specified physical device
 	pub fn memory_properties(&self) -> VkPhysicalDeviceMemoryProperties
