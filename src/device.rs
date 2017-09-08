@@ -9,9 +9,9 @@ use vk::
 };
 use PhysicalDevice;
 use std::ffi::CString;
-#[cfg(feature = "FeMultithreaded")] use std::sync::Arc as RefCounter;
+#[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "FeImplements")] use {DeviceChild, VkResultHandler};
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -119,7 +119,7 @@ impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(s
 #[cfg(feature = "FeImplements")]
 impl Device
 {
-	fn native_ptr(&self) -> VkDevice { (self.0).0 }
+	pub fn native_ptr(&self) -> VkDevice { (self.0).0 }
 	/// Return a function pointer for a command
 	/// # Failures
 	/// If function is not provided by instance or `name` is empty, returns `None`
@@ -138,6 +138,40 @@ impl Device
 		let mut h = unsafe { ::std::mem::zeroed() };
 		unsafe { ::vk::vkGetDeviceQueue(self.native_ptr(), family_index, queue_index, &mut h) }
 		Queue(h, self.clone())
+	}
+	/// Create a new fence object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn create_fence(&self, signaled: bool) -> ::Result<::Fence>
+	{
+		let mut h = unsafe { ::std::mem::zeroed() };
+		let flags = if signaled { ::vk::VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
+		unsafe { ::vk::vkCreateFence(self.native_ptr(), &::vk::VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| unsafe { ::Fence::from_unchecked(h, &self) })
+	}
+	/// Create a new queue semaphore object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn create_semaphore(&self) -> ::Result<::Semaphore>
+	{
+		let mut h = unsafe { ::std::mem::zeroed() };
+		unsafe { ::vk::vkCreateSemaphore(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| unsafe { ::Semaphore::from_unchecked(h, &self) })
+	}
+	/// Create a new event object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn create_event(&self) -> ::Result<::Event>
+	{
+		let mut h = unsafe { ::std::mem::zeroed() };
+		unsafe { ::vk::vkCreateEvent(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| unsafe { ::Event::from_unchecked(h, &self) })
 	}
 }
 
