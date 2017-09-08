@@ -53,21 +53,15 @@ impl InstanceBuilder
 		for l in layers { s = s.add_layer(l); } s
 	}
 	#[cfg(feature = "FeImplements")]
-	pub fn create(self) -> ::Result<Instance>
+	pub fn create(mut self) -> ::Result<Instance>
 	{
-		let app = VkApplicationInfo
-		{
-			pApplicationName: self.app_name.as_ptr(), pEngineName: self.engine_name.as_ptr(), .. self.appinfo
-		};
 		let (layers, extensions): (Vec<_>, Vec<_>) = (self.layers.into_iter().map(|x| x.as_ptr()).collect(), self.extensions.into_iter().map(|x| x.as_ptr()).collect());
-		let cinfo = VkInstanceCreateInfo
-		{
-			enabledLayerCount: layers.len() as _, ppEnabledLayerNames: layers.as_ptr(),
-			enabledExtensionCount: extensions.len() as _, ppEnabledExtensionNames: extensions.as_ptr(),
-			pApplicationInfo: &app, .. self.cinfo
-		};
+		self.appinfo.pApplicationName = self.app_name.as_ptr(); self.appinfo.pEngineName = self.engine_name.as_ptr();
+		self.cinfo.enabledLayerCount = layers.len() as _; self.cinfo.ppEnabledLayerNames = layers.as_ptr();
+		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
+		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = unsafe { zeroed() };
-		unsafe { vkCreateInstance(&cinfo, null(), &mut h) }.into_result().map(|_| Instance(h))
+		unsafe { vkCreateInstance(&self.cinfo, null(), &mut h) }.into_result().map(|_| Instance(h))
 	}
 }
 #[cfg(feature = "FeImplements")]
