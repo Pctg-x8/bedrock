@@ -1,5 +1,7 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
+#![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+
 use vk::*;
 use std::ffi::CString;
 #[cfg(feature = "FeImplements")]
