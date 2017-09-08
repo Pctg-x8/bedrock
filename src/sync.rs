@@ -43,9 +43,9 @@ impl Fence
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	/// - VK_ERROR_DEVICE_LOST
-	pub fn wait(&self, timeout: Option<u64>) -> ::Result<bool>
+	fn wait_timeout(&self, timeout: u64) -> ::Result<bool>
 	{
-		let vr = unsafe { ::vk::vkWaitForFences(self.1.native_ptr(), 1, &self.0, false as _, timeout.unwrap_or(::std::u64::MAX)) };
+		let vr = unsafe { ::vk::vkWaitForFences(self.1.native_ptr(), 1, &self.0, false as _, timeout) };
 		match vr { ::vk::VK_SUCCESS => Ok(false), ::vk::VK_TIMEOUT => Ok(true), _ => Err(vr) }
 	}
 	/// Resets one or more fence objects
@@ -109,4 +109,15 @@ impl Status for Event
 		let vr = unsafe { ::vk::vkGetEventStatus(self.1.native_ptr(), self.0) };
 		match vr { ::vk::VK_EVENT_SET => Ok(true), ::vk::VK_EVENT_RESET => Ok(false), _ => Err(vr) }
 	}
+}
+#[cfg(feature = "FeImplements")]
+impl ::Waitable for Fence
+{
+	/// Wait for a fence to become signaled
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_DEVICE_LOST
+	fn wait(&self) -> ::Result<()> { self.wait_timeout(::std::u64::MAX).map(|_| ()) }
 }

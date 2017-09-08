@@ -15,14 +15,10 @@ mod vk;
 use vk::*;
 // use std::ffi::CString;
 
-#[cfg(feature = "FeImplements")]
-mod fnconv;
-mod base;
-pub use base::*;
-mod device;
-pub use device::*;
-mod sync;
-pub use sync::*;
+#[cfg(feature = "FeImplements")] mod fnconv;
+mod base; pub use base::*;
+mod device; pub use device::*;
+mod sync; pub use sync::*;
 
 pub type Result<T> = std::result::Result<T, VkResult>;
 pub trait VkResultHandler

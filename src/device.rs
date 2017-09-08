@@ -176,13 +176,12 @@ impl Device
 }
 
 /// Supports blocking wait operation
-#[cfg(feature = "FeImplements")]
 pub trait Waitable
 {
 	/// Wait for a object to become idle
-	fn wait_idle(&self) -> ::Result<()>;
+	fn wait(&self) -> ::Result<()>;
 }
 #[cfg(feature = "FeImplements")]
-impl Waitable for Device { fn wait_idle(&self) -> ::Result<()> { unsafe { ::vk::vkDeviceWaitIdle(self.native_ptr()) }.into_result() } }
+impl Waitable for Device { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkDeviceWaitIdle(self.native_ptr()) }.into_result() } }
 #[cfg(feature = "FeImplements")]
-impl Waitable for Queue { fn wait_idle(&self) -> ::Result<()> { unsafe { ::vk::vkQueueWaitIdle(self.0) }.into_result() } }
+impl Waitable for Queue { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkQueueWaitIdle(self.0) }.into_result() } }
