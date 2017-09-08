@@ -895,7 +895,7 @@ pub type VkQueueFlags = VkFlags;
 pub const VK_QUEUE_GRAPHICS_BIT: VkQueueFlags = 0x01;
 pub const VK_QUEUE_COMPUTE_BIT: VkQueueFlags = 0x02;
 pub const VK_QUEUE_TRANSFER_BIT: VkQueueFlags = 0x04;
-pub const VK_QUEUE_SPRASE_BINDING_BIT: VkQueueFlags = 0x08;
+pub const VK_QUEUE_SPARSE_BINDING_BIT: VkQueueFlags = 0x08;
 
 pub type VkMemoryPropertyFlags = VkFlags;
 pub const VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT: VkMemoryPropertyFlags = 0x01;
