@@ -107,3 +107,5 @@ impl<'p> DeviceBuilder<'p>
 		unsafe { ::vk::vkCreateDevice(::std::mem::transmute(self.pdev_ref), &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Device(h))
 	}
 }
+#[cfg(feature = "FeImplements")]
+impl Drop for Device { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
