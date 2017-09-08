@@ -43,7 +43,7 @@ impl Fence
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	/// - VK_ERROR_DEVICE_LOST
-	fn wait_timeout(&self, timeout: u64) -> ::Result<bool>
+	pub fn wait_timeout(&self, timeout: u64) -> ::Result<bool>
 	{
 		let vr = unsafe { ::vk::vkWaitForFences(self.1.native_ptr(), 1, &self.0, false as _, timeout) };
 		match vr { ::vk::VK_SUCCESS => Ok(false), ::vk::VK_TIMEOUT => Ok(true), _ => Err(vr) }
