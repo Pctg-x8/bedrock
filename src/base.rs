@@ -73,7 +73,7 @@ impl Instance
 {
 	/// Return a function pointer for a command
 	/// # Failures
-	/// If function is not provided by instance or `name` is empty string, returns `None`
+	/// If function is not provided by instance or `name` is empty, returns `None`
 	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
 	{
 		if name.is_empty() { None }

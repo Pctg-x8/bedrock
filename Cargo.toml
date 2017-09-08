@@ -96,6 +96,7 @@ VK_NV_fill_rectangle = []
 VK_EXT_post_depth_coverage = []
 VK_EXT_shader_viewport_index_layer = []
 FeImplements = []
+FeMultithreaded = []
 
 [dependencies]
 libc = "0.2"

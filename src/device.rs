@@ -5,10 +5,13 @@
 use vk::
 {
 	VkQueueFlags, VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_COMPUTE_BIT, VK_QUEUE_TRANSFER_BIT, VK_QUEUE_SPARSE_BINDING_BIT,
-	VkQueueFamilyProperties, VkDevice, VkExtent3D, VkPhysicalDeviceFeatures
+	VkQueueFamilyProperties, VkDevice, VkExtent3D, VkPhysicalDeviceFeatures, VkQueue
 };
 use PhysicalDevice;
 use std::ffi::CString;
+#[cfg(feature = "FeMultithreaded")] use std::sync::Arc as RefCounter;
+#[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
+#[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -54,8 +57,13 @@ impl QueueFamilies
 	pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &VkExtent3D { &self.0[family_index as usize].minImageTransferGranularity }
 }
 
+struct DeviceCell(VkDevice);
 /// Opaque handle to a device object
-pub struct Device(VkDevice);
+#[derive(Clone)]
+pub struct Device(RefCounter<DeviceCell>);
+#[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Device {}
+/// Opaque handle to a queue object
+pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
 /// Builder object for constructing a `Device`
@@ -88,8 +96,6 @@ impl<'p> DeviceBuilder<'p>
 	#[cfg(feature = "FeImplements")]
 	pub fn create(self) -> ::Result<Device>
 	{
-		use ::VkResultHandler;
-
 		let qinfos = self.queue_infos.iter().map(|&DeviceQueueCreateInfo(fi, ref ps)| ::vk::VkDeviceQueueCreateInfo
 		{
 			queueFamilyIndex: fi, queueCount: ps.len() as _, pQueuePriorities: ps.as_ptr(), .. Default::default()
@@ -104,8 +110,45 @@ impl<'p> DeviceBuilder<'p>
 			pEnabledFeatures: &self.features, .. Default::default()
 		};
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { ::vk::vkCreateDevice(::std::mem::transmute(self.pdev_ref), &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Device(h))
+		unsafe { ::vk::vkCreateDevice(::std::mem::transmute(self.pdev_ref), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Device(RefCounter::new(DeviceCell(h))))
 	}
 }
 #[cfg(feature = "FeImplements")]
-impl Drop for Device { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
+impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
+#[cfg(feature = "FeImplements")]
+impl Device
+{
+	fn native_ptr(&self) -> VkDevice { (self.0).0 }
+	/// Return a function pointer for a command
+	/// # Failures
+	/// If function is not provided by instance or `name` is empty, returns `None`
+	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
+	{
+		if name.is_empty() { None }
+		else
+		{
+			let p = unsafe { ::vk::vkGetDeviceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
+			if unsafe { ::std::mem::transmute::<_, usize>(p) == 0 } { None } else { unsafe { Some(::fnconv::FnTransmute::from_fn(p)) } }
+		}
+	}
+	/// Get a queue handle from a device
+	pub fn queue(&self, family_index: u32, queue_index: u32) -> Queue
+	{
+		let mut h = unsafe { ::std::mem::zeroed() };
+		unsafe { ::vk::vkGetDeviceQueue(self.native_ptr(), family_index, queue_index, &mut h) }
+		Queue(h, self.clone())
+	}
+}
+
+/// Supports blocking wait operation
+#[cfg(feature = "FeImplements")]
+pub trait Waitable
+{
+	/// Wait for a object to become idle
+	fn wait_idle(&self) -> ::Result<()>;
+}
+#[cfg(feature = "FeImplements")]
+impl Waitable for Device { fn wait_idle(&self) -> ::Result<()> { unsafe { ::vk::vkDeviceWaitIdle(self.native_ptr()) }.into_result() } }
+#[cfg(feature = "FeImplements")]
+impl Waitable for Queue { fn wait_idle(&self) -> ::Result<()> { unsafe { ::vk::vkQueueWaitIdle(self.0) }.into_result() } }
