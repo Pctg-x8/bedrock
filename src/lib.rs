@@ -182,12 +182,12 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceProperties(self.0, &mut p) }; p
 	}
 	/// Reports properties of the queues of the specified physical device
-	pub fn queue_family_properties(&self) -> Vec<VkQueueFamilyProperties>
+	pub fn queue_family_properties(&self) -> QueueFamilies
 	{
 		let mut n = 0;
 		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, std::ptr::null_mut()) };
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, v.as_mut_ptr()) }; v
+		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, v.as_mut_ptr()) }; QueueFamilies(v)
 	}
 	/// Reports memory information for the specified physical device
 	pub fn memory_properties(&self) -> VkPhysicalDeviceMemoryProperties
