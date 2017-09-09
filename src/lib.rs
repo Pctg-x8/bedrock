@@ -19,6 +19,7 @@ use vk::*;
 mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
+mod resources; pub use resources::*;
 
 pub type Result<T> = std::result::Result<T, VkResult>;
 pub trait VkResultHandler
@@ -31,4 +32,10 @@ impl VkResultHandler for VkResult
 }
 
 /// Construction from Pointer that is not checked
-pub trait DeviceChild<P> { unsafe fn from_unchecked(p: P, parent: &Device) -> Self; }
+pub trait DeviceChild<P>
+{
+    /// Construct a object from unchecked handle pointer
+    /// # Safety
+    /// Caller and callee do not guarantee that the passed pointer is valid 
+    unsafe fn from_unchecked(p: P, parent: &Device) -> Self;
+}

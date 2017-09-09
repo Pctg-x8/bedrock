@@ -2,11 +2,7 @@
 
 #![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
 
-use vk::
-{
-	VkQueueFlags, VK_QUEUE_GRAPHICS_BIT, VK_QUEUE_COMPUTE_BIT, VK_QUEUE_TRANSFER_BIT, VK_QUEUE_SPARSE_BINDING_BIT,
-	VkQueueFamilyProperties, VkDevice, VkExtent3D, VkPhysicalDeviceFeatures, VkQueue
-};
+use vk::*;
 use PhysicalDevice;
 use std::ffi::CString;
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
@@ -15,27 +11,27 @@ use std::ffi::CString;
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
-pub struct QueueFlags(VkQueueFlags);
+pub struct QueueFlags(pub VkQueueFlags);
 impl QueueFlags
 {
-	/// Empty Bits
-	pub fn new() -> Self { QueueFlags(0) }
+	/// Empty bits
+	pub const EMPTY: Self = QueueFlags(0);
 	/// Supports only graphics operations
-	pub fn graphics1() -> Self { QueueFlags(VK_QUEUE_GRAPHICS_BIT) }
+	pub const GRAPHICS: Self = QueueFlags(VK_QUEUE_GRAPHICS_BIT);
 	/// Supports only compute operations
-	pub fn compute1() -> Self { QueueFlags(VK_QUEUE_COMPUTE_BIT) }
+	pub const COMPUTE: Self = QueueFlags(VK_QUEUE_COMPUTE_BIT);
 	/// Supports only transfer operations
-	pub fn transfer1() -> Self { QueueFlags(VK_QUEUE_TRANSFER_BIT) }
+	pub const TRANSFER: Self = QueueFlags(VK_QUEUE_TRANSFER_BIT);
 	/// Supports only sparse memory management operations
-	pub fn sparse_binding1() -> Self { QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT) }
+	pub const SPARSE_BINDING: Self = QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT);
 	/// Supports graphics operations
-	pub fn graphics(self) -> Self { QueueFlags(self.0 | VK_QUEUE_GRAPHICS_BIT) }
+	pub fn graphics(self) -> Self { QueueFlags(self.0 | Self::GRAPHICS.0) }
 	/// Supports compute operations
-	pub fn compute(self) -> Self { QueueFlags(self.0 | VK_QUEUE_COMPUTE_BIT) }
+	pub fn compute(self) -> Self { QueueFlags(self.0 | Self::COMPUTE.0) }
 	/// Supports transfer operations
-	pub fn transfer(self) -> Self { QueueFlags(self.0 | VK_QUEUE_TRANSFER_BIT) }
+	pub fn transfer(self) -> Self { QueueFlags(self.0 | Self::TRANSFER.0) }
 	/// Supports sparse memory management operatinons
-	pub fn sparse_binding(self) -> Self { QueueFlags(self.0 | VK_QUEUE_SPARSE_BINDING_BIT) }
+	pub fn sparse_binding(self) -> Self { QueueFlags(self.0 | Self::SPARSE_BINDING.0) }
 }
 /// List of queue families
 pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);
@@ -110,7 +106,7 @@ impl<'p> DeviceBuilder<'p>
 			pEnabledFeatures: &self.features, .. Default::default()
 		};
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { ::vk::vkCreateDevice(::std::mem::transmute(self.pdev_ref), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateDevice(::std::mem::transmute(self.pdev_ref), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| Device(RefCounter::new(DeviceCell(h))))
 	}
 }
@@ -128,7 +124,7 @@ impl Device
 		if name.is_empty() { None }
 		else
 		{
-			let p = unsafe { ::vk::vkGetDeviceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
+			let p = unsafe { vkGetDeviceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
 			if unsafe { ::std::mem::transmute::<_, usize>(p) == 0 } { None } else { unsafe { Some(::fnconv::FnTransmute::from_fn(p)) } }
 		}
 	}
@@ -136,7 +132,7 @@ impl Device
 	pub fn queue(&self, family_index: u32, queue_index: u32) -> Queue
 	{
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { ::vk::vkGetDeviceQueue(self.native_ptr(), family_index, queue_index, &mut h) }
+		unsafe { vkGetDeviceQueue(self.native_ptr(), family_index, queue_index, &mut h) }
 		Queue(h, self.clone())
 	}
 	/// Create a new fence object
@@ -148,7 +144,7 @@ impl Device
 	{
 		let mut h = unsafe { ::std::mem::zeroed() };
 		let flags = if signaled { ::vk::VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
-		unsafe { ::vk::vkCreateFence(self.native_ptr(), &::vk::VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
+		unsafe { vkCreateFence(self.native_ptr(), &::vk::VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| unsafe { ::Fence::from_unchecked(h, &self) })
 	}
 	/// Create a new queue semaphore object
@@ -159,7 +155,7 @@ impl Device
 	pub fn create_semaphore(&self) -> ::Result<::Semaphore>
 	{
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { ::vk::vkCreateSemaphore(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+		unsafe { vkCreateSemaphore(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| unsafe { ::Semaphore::from_unchecked(h, &self) })
 	}
 	/// Create a new event object
@@ -170,8 +166,36 @@ impl Device
 	pub fn create_event(&self) -> ::Result<::Event>
 	{
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { ::vk::vkCreateEvent(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+		unsafe { vkCreateEvent(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| unsafe { ::Event::from_unchecked(h, &self) })
+	}
+	/// Allocate GPU memory
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_TOO_MANY_OBJECTS
+	pub fn allocate_memory(&self, size: u64, type_index: u32) -> ::Result<::DeviceMemory>
+	{
+		let mut h = unsafe { ::std::mem::zeroed() };
+		unsafe { vkAllocateMemory(self.native_ptr(), &VkMemoryAllocateInfo { allocationSize: size, memoryTypeIndex: type_index, .. Default::default() },
+			::std::ptr::null(), &mut h) }.into_result().map(|_| unsafe { ::DeviceMemory::from_unchecked(h, &self) })
+	}
+	/// Create a new buffer object, empty slice for `shared_queue_family_indices` indicates that buffer object is exclusive
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn create_buffer(&self, size: u64, usage: ::BufferUsage, sparse_binding_opt: ::BufferSparseBinding, shared_queue_family_indices: &[u32]) -> ::Result<::Buffer>
+	{
+		let mut h = unsafe { ::std::mem::zeroed() };
+		let cinfo = ::vk::VkBufferCreateInfo
+		{
+			size, usage: usage.0, flags: sparse_binding_opt as _,
+			sharingMode: if shared_queue_family_indices.is_empty() { ::vk::VK_SHARING_MODE_EXCLUSIVE } else { ::vk::VK_SHARING_MODE_CONCURRENT },
+			queueFamilyIndexCount: shared_queue_family_indices.len() as _, pQueueFamilyIndices: shared_queue_family_indices.as_ptr(), .. Default::default()
+		};
+		unsafe { vkCreateBuffer(self.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| unsafe { ::Buffer::from_unchecked(h, &self) })
 	}
 }
 
