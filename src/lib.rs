@@ -46,6 +46,20 @@ macro_rules! DeviceChildCommonDrop
 	}
 }
 
+/// size elements
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
+pub struct Extent1D(pub u32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Extent2D(pub u32, pub u32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Extent3D(pub u32, pub u32, pub u32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
+pub struct Offset1D(pub i32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Offset2D(pub i32, pub i32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Offset3D(pub i32, pub i32, pub i32);
+
 mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
