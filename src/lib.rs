@@ -16,10 +16,6 @@ use vk::*;
 // use std::ffi::CString;
 
 #[cfg(feature = "FeImplements")] mod fnconv;
-mod base; pub use base::*;
-mod device; pub use device::*;
-mod sync; pub use sync::*;
-mod resources; pub use resources::*;
 
 pub type Result<T> = std::result::Result<T, VkResult>;
 pub trait VkResultHandler
@@ -39,3 +35,18 @@ pub trait DeviceChild<P>
     /// Caller and callee do not guarantee that the passed pointer is valid 
     unsafe fn from_unchecked(p: P, parent: &Device) -> Self;
 }
+#[cfg(feature = "FeImplements")]
+macro_rules! DeviceChildCommonDrop
+{
+	{ for $($t: ty [$d: expr]),* } =>
+	{
+		$(
+			impl Drop for $t { fn drop(&mut self) { unsafe { $d(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
+		)*
+	}
+}
+
+mod base; pub use base::*;
+mod device; pub use device::*;
+mod sync; pub use sync::*;
+mod resources; pub use resources::*;

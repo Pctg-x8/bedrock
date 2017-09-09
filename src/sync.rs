@@ -2,7 +2,7 @@
 
 #![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
 
-use vk::{VkFence, VkSemaphore, VkEvent};
+use vk::*;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a fence object
@@ -15,12 +15,9 @@ pub struct Event(VkEvent, ::Device);
 impl ::DeviceChild<VkFence> for Fence { unsafe fn from_unchecked(p: VkFence, parent: &::Device) -> Self { Fence(p, parent.clone()) } }
 impl ::DeviceChild<VkSemaphore> for Semaphore { unsafe fn from_unchecked(p: VkSemaphore, parent: &::Device) -> Self { Semaphore(p, parent.clone()) } }
 impl ::DeviceChild<VkEvent> for Event { unsafe fn from_unchecked(p: VkEvent, parent: &::Device) -> Self { Event(p, parent.clone()) } }
-#[cfg(feature = "FeImplements")]
-impl Drop for Fence { fn drop(&mut self) { unsafe { ::vk::vkDestroyFence(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")]
-impl Drop for Semaphore { fn drop(&mut self) { unsafe { ::vk::vkDestroySemaphore(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")]
-impl Drop for Event { fn drop(&mut self) { unsafe { ::vk::vkDestroyEvent(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
+	for Fence[vkDestroyFence], Semaphore[vkDestroySemaphore], Event[vkDestroyEvent]
+}
 
 #[cfg(feature = "FeImplements")]
 impl Fence

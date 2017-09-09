@@ -17,16 +17,13 @@ struct ImageCell(VkImage, ::Device, VkImageType);
 /// Opaque handle to a image view object
 pub struct ImageView(VkImageView, Image);
 
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
+	for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer], ImageCell[vkDestroyImage]
+}
 #[cfg(feature = "FeImplements")]
-impl Drop for DeviceMemoryCell { fn drop(&mut self) { unsafe { vkFreeMemory(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
+impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.1 .0 .1.native_ptr(), self.0, ::std::ptr::null()) }; } }
 #[cfg(feature = "FeImplements")]
-impl Drop for BufferCell { fn drop(&mut self) { unsafe { vkDestroyBuffer(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")]
-impl Drop for ImageCell { fn drop(&mut self) { unsafe { vkDestroyImage(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")]
-impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.1 .0 .1.native_ptr(), self.0, std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")]
-impl Drop for ImageView { fn drop(&mut self) { unsafe { vkDestroyImageView(self.1 .0 .1.native_ptr(), self.0, std::ptr::null()) }; } }
+impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1 .0 .1.native_ptr(), self.0, ::std::ptr::null()) }; } }
 
 impl ::DeviceChild<VkDeviceMemory> for DeviceMemory
 {
@@ -40,13 +37,6 @@ impl ::DeviceChild<VkBuffer> for Buffer
 	unsafe fn from_unchecked(p: VkBuffer, parent: &::Device) -> Self
 	{
 		Buffer(RefCounter::new(BufferCell(p, parent.clone())))
-	}
-}
-impl ::DeviceChild<VkImage> for Image
-{
-	unsafe fn from_unchecked(p: VkImage, parent: &::Device) -> Self
-	{
-		Image(RefCounter::new(ImageCell(p, parent.clone())))
 	}
 }
 
@@ -158,8 +148,8 @@ impl ImageDesc
 		self.cinfo.queueFamilyIndexCount = self.sharing_queues.len() as _;
 		self.cinfo.pQueueFamilyIndices = self.sharing_queues().as_ptr();
 
-		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
+		let mut h = unsafe { std::mem::zeroed() };
+		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell(h, device.clone(), self.cinfo.imageType))))
 	}
 }
