@@ -40,7 +40,7 @@ impl Semaphore
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateSemaphore(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| Semaphore(h, self.clone()))
+			.into_result().map(|_| Semaphore(h, device.clone()))
 	}
 }
 #[cfg(feature = "FeImplements")]
@@ -55,7 +55,7 @@ impl Event
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateEvent(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| Event(h, self.clone()))
+			.into_result().map(|_| Event(h, device.clone()))
 	}
 }
 

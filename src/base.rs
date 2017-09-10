@@ -177,7 +177,7 @@ impl PhysicalDevice
 		usage: ::ImageUsage, tiling: VkImageTiling) -> Vec<VkSparseImageFormatProperties>
 	{
 		let mut n = 0;
-		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, std::ptr::null_mut()) };
+		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, ::std::ptr::null_mut()) };
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
 		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, v.as_mut_ptr()) };
 		v

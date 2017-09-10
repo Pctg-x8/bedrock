@@ -155,7 +155,7 @@ impl BufferDesc
 
 /// Bitmask specifying intended usage of an image
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ImageUsage(VkImageUsageFlags);
+pub struct ImageUsage(pub VkImageUsageFlags);
 impl ImageUsage
 {
 	/// The image can be used as the source of a transfer command
@@ -202,7 +202,7 @@ impl ImageUsage
 }
 /// Bitmask specifying additional parameters of an image
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct ImageFlags(VkImageCreateFlags);
+pub struct ImageFlags(pub VkImageCreateFlags);
 impl ImageFlags
 {
 	/// Empty bits
@@ -303,7 +303,8 @@ impl Image
 		{
 			VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
 			VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
-			VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D
+			VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D,
+			_ => unreachable!()
 		});
 		let cinfo = VkImageViewCreateInfo
 		{
@@ -333,8 +334,8 @@ impl DeviceMemory
 	pub fn map(&self, range: ::std::ops::Range<usize>) -> ::Result<MappedMemoryRange>
 	{
 		let mut p = ::std::ptr::null_mut();
-		unsafe { vkMapMemory(self.0 .1.native_ptr(), self.0 .0, range.start as _, range.end - range.start as _,
-			0, &mut p) }.into_result().map(|_| MappedMemoryRange(self, p, range.start as _ .. range.end as _))
+		unsafe { vkMapMemory(self.0 .1.native_ptr(), self.0 .0, range.start as _, (range.end - range.start) as _,
+			0, &mut p) }.into_result().map(|_| MappedMemoryRange(self, p as *mut _, range.start as _ .. range.end as _))
 	}
 	/// Unmap a previously mapped memory object
 	/// # Safety
@@ -348,7 +349,7 @@ impl DeviceMemory
 	pub fn commitment_bytes(&self) -> VkDeviceSize
 	{
 		let mut b = 0;
-		unsafe { vkGetDeviceMemoryCommitment(self.0 .1.native_ptr(), self.0 .0, &b) }; b
+		unsafe { vkGetDeviceMemoryCommitment(self.0 .1.native_ptr(), self.0 .0, &mut b) }; b
 	}
 }
 
@@ -443,7 +444,7 @@ impl<'m> MappedMemoryRange<'m>
 	/// Flushes the memory range manually. Returns a structure for flush operation
 	pub fn manual_flush(self) -> VkMappedMemoryRange
 	{
-		let (m, r) = (self.0 .0 .0, self.2);
+		let (m, r) = (self.0 .0 .0, self.2.clone()); ::std::mem::forget(self);
 		VkMappedMemoryRange
 		{
 			offset: r.start, size: r.end - r.start, memory: m, .. Default::default()
@@ -455,7 +456,8 @@ impl<'m> Drop for MappedMemoryRange<'m>
 {
 	fn drop(&mut self)
 	{
-		unsafe { vkFlushMappedMemoryRange(self.0 .0 .1.native_ptr(), 1, &self.manual_flush()) }
+		unsafe { vkFlushMappedMemoryRanges(self.0 .0 .1.native_ptr(), 1, &::std::mem::replace(self, ::std::mem::uninitialized()).manual_flush()) }
+			.into_result().unwrap();
 	}
 }
 

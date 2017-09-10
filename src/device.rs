@@ -8,7 +8,7 @@ use std::ffi::CString;
 use std::borrow::Cow;
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
-#[cfg(feature = "FeImplements")] use {DeviceChild, VkResultHandler};
+#[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -139,18 +139,18 @@ impl Device
 	/// Flush `MappedMemoryRange`s
 	/// Flushing the memory range allows that host writes to the memory ranges can
 	/// be made available to device access
-	pub fn flush_memory_range(&self, ranges: &[::MappedMemoryRanges]) -> ::Result<()>
+	pub fn flush_memory_range(&self, ranges: Vec<::MappedMemoryRange>) -> ::Result<()>
 	{
-		let mut v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
+		let v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
 		unsafe { vkFlushMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
 	/// Invalidate `MappedMemoryRange`s
 	/// Invalidating the memory range allows that device writes to the memory ranges
 	/// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
 	/// are made visible to the host
-	pub fn invalidate_memory_range(&self, ranges: &[::MappedMemoryRanges]) -> ::Result<()>
+	pub fn invalidate_memory_range(&self, ranges: Vec<::MappedMemoryRange>) -> ::Result<()>
 	{
-		let mut v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
+		let v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
 		unsafe { vkInvalidateMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
 }
@@ -205,13 +205,14 @@ impl Queue
 	/// - VK_ERROR_DEVICE_LOST
 	pub fn bind_sparse(&self, batches: &[SparseBindingOpBatch], fence: Option<&::Fence>) -> ::Result<()>
 	{
-		let batches = batches.iter().map(|x| VkBindSparseInfo
+		let sem_ptrs = batches.iter().map(|x| (x.wait_semaphores.iter().map(|x| x.0).collect(), x.signal_semaphores.iter().map(|x| x.0).collect()));
+		let batches = batches.iter().zip(sem_ptrs).map(|(x, (ws, ss)): (&SparseBindingOpBatch, (Vec<_>, Vec<_>))| VkBindSparseInfo
 		{
-			waitSemaphoreCount: x.wait_semaphores.len() as _, pWaitSemaphores: x.wait_semaphores.as_ptr(),
+			waitSemaphoreCount: ws.len() as _, pWaitSemaphores: ws.as_ptr(),
 			bufferBindCount: x.buffer_binds.len() as _, pBufferBinds: x.buffer_binds.as_ptr(),
-			imageOpaqueBindCount: x.image_opaque_binds.len() as _, pImageOpaqueBints: x.image_opaque_binds.as_ptr(),
+			imageOpaqueBindCount: x.image_opaque_binds.len() as _, pImageOpaqueBinds: x.image_opaque_binds.as_ptr(),
 			imageBindCount: x.image_binds.len() as _, pImageBinds: x.image_binds.as_ptr(),
-			signalSemaphoreCount: x.signal_semaphores.len() as _, pSignalSemaphores: x.signal_semaphores.as_ptr(),
+			signalSemaphoreCount: ss.len() as _, pSignalSemaphores: ss.as_ptr(),
 			.. Default::default()
 		}).collect::<Vec<_>>();
 		unsafe { vkQueueBindSparse(self.0, batches.len() as _, batches.as_ptr(), fence.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _)) }
