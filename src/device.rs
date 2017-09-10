@@ -181,22 +181,6 @@ impl Device
 		unsafe { vkAllocateMemory(self.native_ptr(), &VkMemoryAllocateInfo { allocationSize: size, memoryTypeIndex: type_index, .. Default::default() },
 			::std::ptr::null(), &mut h) }.into_result().map(|_| unsafe { ::DeviceMemory::from_unchecked(h, &self) })
 	}
-	/// Create a new buffer object, empty slice for `shared_queue_family_indices` indicates that buffer object is exclusive
-	/// # Failures
-	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn create_buffer(&self, size: u64, usage: ::BufferUsage, sparse_binding_opt: ::BufferSparseBinding, shared_queue_family_indices: &[u32]) -> ::Result<::Buffer>
-	{
-		let mut h = unsafe { ::std::mem::zeroed() };
-		let cinfo = ::vk::VkBufferCreateInfo
-		{
-			size, usage: usage.0, flags: sparse_binding_opt as _,
-			sharingMode: if shared_queue_family_indices.is_empty() { ::vk::VK_SHARING_MODE_EXCLUSIVE } else { ::vk::VK_SHARING_MODE_CONCURRENT },
-			queueFamilyIndexCount: shared_queue_family_indices.len() as _, pQueueFamilyIndices: shared_queue_family_indices.as_ptr(), .. Default::default()
-		};
-		unsafe { vkCreateBuffer(self.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| unsafe { ::Buffer::from_unchecked(h, &self) })
-	}
 }
 
 /// Supports blocking wait operation

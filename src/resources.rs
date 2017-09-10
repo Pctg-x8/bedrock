@@ -8,7 +8,7 @@ struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 /// Opaque handle to a device memory object
 pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
 struct BufferCell(VkBuffer, ::Device);
-/// Opaque handle to a buffer object
+/// Opaque handle to a buffer object(constructed via `BufferDesc`)
 #[derive(Clone)] pub struct Buffer(RefCounter<BufferCell>);
 /// Opaque handle to a buffer view object
 pub struct BufferView(VkBufferView, Buffer);
@@ -33,21 +33,12 @@ impl ::DeviceChild<VkDeviceMemory> for DeviceMemory
 		DeviceMemory(RefCounter::new(DeviceMemoryCell(p, parent.clone())))
 	}
 }
-impl ::DeviceChild<VkBuffer> for Buffer
-{
-	unsafe fn from_unchecked(p: VkBuffer, parent: &::Device) -> Self
-	{
-		Buffer(RefCounter::new(BufferCell(p, parent.clone())))
-	}
-}
 
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct BufferUsage(pub VkBufferUsageFlags);
 impl BufferUsage
 {
-	/// Empty bits
-	pub const EMPTY: Self = BufferUsage(0);
 	/// Specifies that the buffer can be used as the source of a transfer command
 	pub const TRANSFER_SRC: Self = BufferUsage(VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
 	/// Specifies that the buffer can be used as the destination of a transfer command
@@ -112,6 +103,48 @@ impl BufferUsage
 	Both = (VK_BUFFER_CREATE_SPARSE_BINDING_BIT | VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT | VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _
 }
 
+/// Builder structure specifying the parameters of a newly created buffer object
+pub struct BufferDesc { cinfo: VkBufferCreateInfo, #[allow(dead_code)] sharing_queues: Vec<u32> }
+impl BufferDesc
+{
+	pub fn new(byte_size: usize, usage: BufferUsage) -> Self
+	{
+		BufferDesc
+		{
+			cinfo: VkBufferCreateInfo
+			{
+				size: byte_size as _, usage: usage.0, .. Default::default()
+			}, sharing_queues: Vec::new()
+		}
+	}
+	/// A list of queue families that will access this buffer
+	pub fn sharing_queue_families(&mut self, indices: Vec<u32>) -> &mut Self
+	{
+		self.sharing_queues = indices;
+		self.cinfo.sharingMode = if self.sharing_queues.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
+		self.cinfo.queueFamilyIndexCount = self.sharing_queues.len() as _;
+		self.cinfo.pQueueFamilyIndices = self.sharing_queues.as_ptr();
+		self
+	}
+	/// A bitmask of `BufferSparseBinding` specifying additional parameters of the buffer
+	pub fn sparse_binding_opt(&mut self, opt: BufferSparseBinding) -> &mut Self
+	{
+		self.cinfo.flags = opt as _; self
+	}
+	/// Create a new buffer object
+	/// # Failure
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "FeImplements")]
+	pub fn create(&self, device: &::Device) -> ::Result<Buffer>
+	{
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateBuffer(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| Buffer(RefCounter::new(BufferCell(h, device.clone()))))
+	}
+}
+
 /// Builder structure specifying the parameters of a newly created image object
 pub struct ImageDesc { cinfo: VkImageCreateInfo, sharing_queues: Vec<u32> }
 impl ImageDesc
@@ -129,31 +162,31 @@ impl ImageDesc
 			sharing_queues: Vec::new()
 		}
 	}
-	pub fn sharing_queue_families(mut self, indices: Vec<u32>) -> Self
+	pub fn sharing_queue_families(&mut self, indices: Vec<u32>) -> &mut Self
 	{
-		self.sharing_queues = indices; self
+		self.sharing_queues = indices;
+		self.cinfo.sharingMode = if self.sharing_queues.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
+		self.cinfo.queueFamilyIndexCount = self.sharing_queues.len() as _;
+		self.cinfo.pQueueFamilyIndices = self.sharing_queues.as_ptr();
+		self
 	}
 	/// bitmask of 1, 2, 4, 8, 16, 32, 64
-	pub fn sample_counts(mut self, count_bits: u32) -> Self
+	pub fn sample_counts(&mut self, count_bits: u32) -> &mut Self
 	{
 		self.cinfo.samples = count_bits; self
 	}
-	pub fn use_linear_tiling(mut self) -> Self
+	pub fn use_linear_tiling(&mut self) -> &mut Self
 	{
 		self.cinfo.tiling = VK_IMAGE_TILING_LINEAR; self
 	}
-	pub fn mutable_format(mut self) -> Self
+	pub fn mutable_format(&mut self) -> &mut Self
 	{
 		self.cinfo.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT; self
 	}
 	#[cfg(features = "FeImplements")]
-	pub fn create(mut self, device: &::Device) -> ::Result<Image>
+	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
-		self.cinfo.sharingMode = if self.sharing_queues.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
-		self.cinfo.queueFamilyIndexCount = self.sharing_queues.len() as _;
-		self.cinfo.pQueueFamilyIndices = self.sharing_queues().as_ptr();
-
-		let mut h = unsafe { std::mem::zeroed() };
+		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell(h, device.clone(), self.cinfo.imageType, self.cinfo.format))))
 	}
