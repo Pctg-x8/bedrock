@@ -154,6 +154,84 @@ impl BufferDesc
 	}
 }
 
+/// Bitmask specifying intended usage of an image
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ImageUsage(VkImageUsageFlags);
+impl ImageUsage
+{
+	/// The image can be used as the source of a transfer command
+	pub const TRANSFER_SRC: Self = ImageUsage(VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+	/// The image can be used as the destination of a transfer command
+	pub const TRANSFER_DEST: Self = ImageUsage(VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+	/// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot
+	/// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader
+	pub const SAMPLED: Self = ImageUsage(VK_IMAGE_USAGE_SAMPLED_BIT);
+	/// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`
+	pub const STORAGE: Self = ImageUsage(VK_IMAGE_USAGE_STORAGE_BIT);
+	/// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`
+	pub const COLOR_ATTACHMENT: Self = ImageUsage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+	/// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`
+	pub const DEPTH_STENCIL_ATTACHMENT: Self = ImageUsage(VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	/// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`
+	/// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,
+	/// or input attachment
+	pub const TRANSIENT_ATTACHMENT: Self = ImageUsage(VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+	/// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;
+	/// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer
+	pub const INPUT_ATTACHMENT: Self = ImageUsage(VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT);
+
+	/// The image can be used as the source of a transfer command
+	pub fn transfer_src(&self) -> Self { ImageUsage(self.0 | Self::TRANSFER_SRC.0) }
+	/// The image can be used as the destination of a transfer command
+	pub fn transfer_dest(&self) -> Self { ImageUsage(self.0 | Self::TRANSFER_DEST.0) }
+	/// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot
+	/// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader
+	pub fn sampled(&self) -> Self { ImageUsage(self.0 | Self::SAMPLED.0) }
+	/// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`
+	pub fn storage(&self) -> Self { ImageUsage(self.0 | Self::STORAGE.0) }
+	/// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`
+	pub fn color_attachment(&self) -> Self { ImageUsage(self.0 | Self::COLOR_ATTACHMENT.0) }
+	/// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`
+	pub fn depth_stencil_attachment(&self) -> Self { ImageUsage(self.0 | Self::DEPTH_STENCIL_ATTACHMENT.0) }
+	/// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`
+	/// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,
+	/// or input attachment
+	pub fn transient_attachment(&self) -> Self { ImageUsage(self.0 | Self::TRANSIENT_ATTACHMENT.0) }
+	/// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;
+	/// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer
+	pub fn input_attachment(&self) -> Self { ImageUsage(self.0 | Self::INPUT_ATTACHMENT.0) }
+}
+/// Bitmask specifying additional parameters of an image
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ImageFlags(VkImageCreateFlags);
+impl ImageFlags
+{
+	/// Empty bits
+	pub const EMPTY: Self = ImageFlags(0);
+	/// The image will be backed using sparse memory binding
+	pub const SPARSE_BINDING: Self = ImageFlags(VK_IMAGE_CREATE_SPARSE_BINDING_BIT);
+	/// The image can be partially backed using sparse memory binding. This bit is with `SPARSE_BINDING` implicitly
+	pub const SPARSE_RESIDENCY: Self = ImageFlags(VK_IMAGE_CREATE_SPARSE_BINDING_BIT | VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT);
+	/// The image will be backed using sparse memory binding with memory ranges
+	/// that might also simultaneously be backing another image. This bit is with `SPARSE_BINDING` implicitly
+	pub const SPARSE_ALIASED: Self = ImageFlags(VK_IMAGE_CREATE_SPARSE_BINDING_BIT | VK_IMAGE_CREATE_SPARSE_ALIASED_BIT);
+	/// The image can be used to create a `ImageView` with a different format from the image
+	pub const MUTABLE_FORMAT: Self = ImageFlags(VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT);
+	/// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`
+	pub const CUBE_COMPATIBLE: Self = ImageFlags(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
+
+	/// The image will be backed using sparse memory binding
+	pub fn sparse_binding(&self) -> Self { ImageFlags(self.0 | Self::SPARSE_BINDING.0) }
+	/// The image can be partially backed using sparse memory binding. This bit is with `SPARSE_BINDING` implicitly
+	pub fn sparse_residency(&self) -> Self { ImageFlags(self.0 | Self::SPARSE_RESIDENCY.0) }
+	/// The image will be backed using sparse memory binding with memory ranges
+	/// that might also simultaneously be backing another image. This bit is with `SPARSE_BINDING` implicitly
+	pub fn sparse_aliased(&self) -> Self { ImageFlags(self.0 | Self::SPARSE_ALIASED.0) }
+	/// The image can be used to create a `ImageView` with a different format from the image
+	pub fn mutable_format(&self) -> Self { ImageFlags(self.0 | Self::MUTABLE_FORMAT.0) }
+	/// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`
+	pub fn cube_compatible(&self) -> Self { ImageFlags(self.0 | Self::CUBE_COMPATIBLE.0) }
+}
 /// Builder structure specifying the parameters of a newly created image object
 pub struct ImageDesc { cinfo: VkImageCreateInfo, sharing_queues: Vec<u32> }
 impl ImageDesc
