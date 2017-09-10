@@ -146,10 +146,10 @@ impl PhysicalDevice
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	/// - VK_ERROR_FORMAT_NOT_SUPPORTED
 	pub fn image_format_properties(&self, format: VkFormat, itype: VkImageType, tiling: VkImageTiling,
-		usage: VkImageUsageFlags, flags: VkImageCreateFlags) -> ::Result<VkImageFormatProperties>
+		usage: ::ImageUsage, flags: ::ImageFlags) -> ::Result<VkImageFormatProperties>
 	{
 		let mut p = unsafe { uninitialized() };
-		unsafe { vkGetPhysicalDeviceImageFormatProperties(self.0, format, itype, tiling, usage, flags, &mut p) }
+		unsafe { vkGetPhysicalDeviceImageFormatProperties(self.0, format, itype, tiling, usage.0, flags.0, &mut p) }
 			.into_result().map(|_| p)
 	}
 	/// Returns properties of a physical device
@@ -171,5 +171,15 @@ impl PhysicalDevice
 	{
 		let mut p = unsafe { uninitialized() };
 		unsafe { vkGetPhysicalDeviceMemoryProperties(self.0, &mut p) }; p
+	}
+	/// Retrieve properties of an image format applied to sparse images
+	pub fn sparse_image_format_properties(&self, format: VkFormat, itype: VkImageType, samples: VkSampleCountFlags,
+		usage: ::ImageUsage, tiling: VkImageTiling) -> Vec<VkSparseImageFormatProperties>
+	{
+		let mut n = 0;
+		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, std::ptr::null_mut()) };
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, v.as_mut_ptr()) };
+		v
 	}
 }
