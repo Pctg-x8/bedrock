@@ -296,13 +296,19 @@ impl Buffer
 #[cfg(feature = "FeImplements")]
 impl Image
 {
-	pub fn create_view(&self, format: Option<VkFormat>, cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange)
+	pub fn create_view(&self, format: Option<VkFormat>, vtype: Option<VkImageViewType>, cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange)
 		-> ::Result<ImageView>
 	{
 		let format = format.unwrap_or(self.0 .3);
+		let vtype = vtype.unwrap_or(match self.0 .2
+		{
+			VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
+			VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
+			VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D
+		});
 		let cinfo = VkImageViewCreateInfo
 		{
-			image: self.0 .0, viewType: self.0 .2, format, components: unsafe { ::std::mem::transmute_copy(cmap) },
+			image: self.0 .0, viewType: vtype, format, components: unsafe { ::std::mem::transmute_copy(cmap) },
 			subresourceRange: VkImageSubresourceRange
 			{
 				aspectMask: subresource_range.aspect_mask.0,
