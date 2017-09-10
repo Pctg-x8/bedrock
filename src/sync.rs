@@ -6,11 +6,11 @@ use vk::*;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a fence object
-pub struct Fence(VkFence, ::Device);
+pub struct Fence(pub VkFence, ::Device);
 /// Opaque handle to a semaphore object
-pub struct Semaphore(VkSemaphore, ::Device);
+pub struct Semaphore(pub VkSemaphore, ::Device);
 /// Opaque handle to a event object
-pub struct Event(VkEvent, ::Device);
+pub struct Event(pub VkEvent, ::Device);
 
 #[cfg(feature = "FeImplements")]
 impl Fence
