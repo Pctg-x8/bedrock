@@ -5,16 +5,16 @@ use std::rc::Rc as RefCounter;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
+struct BufferCell(VkBuffer, ::Device);
+struct ImageCell(VkImage, ::Device, VkImageType, VkFormat);
 /// Opaque handle to a device memory object
 pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
-struct BufferCell(VkBuffer, ::Device);
 /// Opaque handle to a buffer object(constructed via `BufferDesc`)
 #[derive(Clone)] pub struct Buffer(RefCounter<BufferCell>);
-/// Opaque handle to a buffer view object
-pub struct BufferView(VkBufferView, Buffer);
-struct ImageCell(VkImage, ::Device, VkImageType, VkFormat);
 /// Opaque handle to a image object(constructed via `ImageDesc`)
 #[derive(Clone)] pub struct Image(RefCounter<ImageCell>);
+/// Opaque handle to a buffer view object
+pub struct BufferView(VkBufferView, Buffer);
 /// Opaque handle to a image view object
 pub struct ImageView(VkImageView, Image);
 
