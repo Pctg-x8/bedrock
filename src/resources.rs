@@ -26,11 +26,20 @@ impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(sel
 #[cfg(feature = "FeImplements")]
 impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1 .0 .1.native_ptr(), self.0, ::std::ptr::null()) }; } }
 
-impl ::DeviceChild<VkDeviceMemory> for DeviceMemory
+#[cfg(feature = "FeImplements")]
+impl DeviceMemory
 {
-	unsafe fn from_unchecked(p: VkDeviceMemory, parent: &::Device) -> Self
+	/// Allocate GPU memory
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_TOO_MANY_OBJECTS
+	pub fn allocate(device: &::Device, size: usize, type_index: u32) -> ::Result<Self>
 	{
-		DeviceMemory(RefCounter::new(DeviceMemoryCell(p, parent.clone())))
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkAllocateMemory(device.native_ptr(), &VkMemoryAllocateInfo { allocationSize: size as _, memoryTypeIndex: type_index, .. Default::default() },
+			::std::ptr::null(), &mut h) }.into_result().map(|_| DeviceMemory(RefCounter::new(DeviceMemoryCell(h, device.clone()))))
 	}
 }
 
