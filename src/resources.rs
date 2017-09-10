@@ -155,7 +155,7 @@ impl ImageDesc
 		{
 			cinfo: VkImageCreateInfo
 			{
-				imageType: Size::dimension(), extent: unsafe { ::std::mem::transmute(size.expand()) }, format,
+				imageType: Size::dimension(), extent: size.into().as_ref().clone(), format,
 				mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
 				.. Default::default()
 			},
@@ -230,25 +230,21 @@ impl Image
 }
 
 /// Image Dimension by corresponding extent type
-pub trait ImageSize
+pub trait ImageSize : Into<::Extent3D>
 {
 	fn dimension() -> VkImageType;
-	fn expand(self) -> ::Extent3D;
 }
 impl ImageSize for ::Extent1D
 {
 	fn dimension() -> VkImageType { VK_IMAGE_TYPE_1D }
-	fn expand(self) -> ::Extent3D { ::Extent3D(self.0, 1, 1) }
 }
 impl ImageSize for ::Extent2D
 {
 	fn dimension() -> VkImageType { VK_IMAGE_TYPE_2D }
-	fn expand(self) -> ::Extent3D { ::Extent3D(self.0, self.1, 1) }
 }
 impl ImageSize for ::Extent3D
 {
 	fn dimension() -> VkImageType { VK_IMAGE_TYPE_3D }
-	fn expand(self) -> ::Extent3D { self }
 }
 
 /// Layouts of image and image subresources
