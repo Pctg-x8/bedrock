@@ -1,3 +1,9 @@
+//! Glue library between Vulkan and Rust
+//!
+//! # Compile Options
+//! - `FeImplements`: Enable Vulkan implementations(functions)
+//! - `FeMultithreaded`: Enables to use objects from some threads(experimental)
+//! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 
 extern crate libc;
 // Platform Extras
