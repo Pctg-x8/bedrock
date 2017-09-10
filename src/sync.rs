@@ -12,9 +12,53 @@ pub struct Semaphore(VkSemaphore, ::Device);
 /// Opaque handle to a event object
 pub struct Event(VkEvent, ::Device);
 
-impl ::DeviceChild<VkFence> for Fence { unsafe fn from_unchecked(p: VkFence, parent: &::Device) -> Self { Fence(p, parent.clone()) } }
-impl ::DeviceChild<VkSemaphore> for Semaphore { unsafe fn from_unchecked(p: VkSemaphore, parent: &::Device) -> Self { Semaphore(p, parent.clone()) } }
-impl ::DeviceChild<VkEvent> for Event { unsafe fn from_unchecked(p: VkEvent, parent: &::Device) -> Self { Event(p, parent.clone()) } }
+#[cfg(feature = "FeImplements")]
+impl Fence
+{
+	/// Create a new fence object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn new(device: &::Device, signaled: bool) -> ::Result<Self>
+	{
+		let mut h = VK_NULL_HANDLE as _;
+		let flags = if signaled { ::vk::VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
+		unsafe { vkCreateFence(device.native_ptr(), &VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| Fence(h, device.clone()))
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl Semaphore
+{
+	/// Create a new queue semaphore object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn new(device: &::Device) -> ::Result<Self>
+	{
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateSemaphore(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| Semaphore(h, self.clone()))
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl Event
+{
+	/// Create a new event object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn new(device: &::Device) -> ::Result<Self>
+	{
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateEvent(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| Event(h, self.clone()))
+	}
+}
+
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for Fence[vkDestroyFence], Semaphore[vkDestroySemaphore], Event[vkDestroyEvent]
 }

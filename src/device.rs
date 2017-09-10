@@ -135,51 +135,22 @@ impl Device
 		unsafe { vkGetDeviceQueue(self.native_ptr(), family_index, queue_index, &mut h) }
 		Queue(h, self.clone())
 	}
-	/// Create a new fence object
-	/// # Failures
-	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn create_fence(&self, signaled: bool) -> ::Result<::Fence>
+	/// Flush `MappedMemoryRange`s
+	/// Flushing the memory range allows that host writes to the memory ranges can
+	/// be made available to device access
+	pub fn flush_memory_range(&self, ranges: &[::MappedMemoryRanges]) -> ::Result<()>
 	{
-		let mut h = unsafe { ::std::mem::zeroed() };
-		let flags = if signaled { ::vk::VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
-		unsafe { vkCreateFence(self.native_ptr(), &::vk::VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| unsafe { ::Fence::from_unchecked(h, &self) })
+		let mut v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
+		unsafe { vkFlushMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
-	/// Create a new queue semaphore object
-	/// # Failures
-	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn create_semaphore(&self) -> ::Result<::Semaphore>
+	/// Invalidate `MappedMemoryRange`s
+	/// Invalidating the memory range allows that device writes to the memory ranges
+	/// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
+	/// are made visible to the host
+	pub fn invalidate_memory_range(&self, ranges: &[::MappedMemoryRanges]) -> ::Result<()>
 	{
-		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkCreateSemaphore(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| unsafe { ::Semaphore::from_unchecked(h, &self) })
-	}
-	/// Create a new event object
-	/// # Failures
-	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn create_event(&self) -> ::Result<::Event>
-	{
-		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkCreateEvent(self.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| unsafe { ::Event::from_unchecked(h, &self) })
-	}
-	/// Allocate GPU memory
-	/// # Failures
-	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_TOO_MANY_OBJECTS
-	pub fn allocate_memory(&self, size: u64, type_index: u32) -> ::Result<::DeviceMemory>
-	{
-		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkAllocateMemory(self.native_ptr(), &VkMemoryAllocateInfo { allocationSize: size, memoryTypeIndex: type_index, .. Default::default() },
-			::std::ptr::null(), &mut h) }.into_result().map(|_| unsafe { ::DeviceMemory::from_unchecked(h, &self) })
+		let mut v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
+		unsafe { vkInvalidateMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
 }
 
