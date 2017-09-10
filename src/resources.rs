@@ -236,13 +236,13 @@ impl ImageFlags
 pub struct ImageDesc { cinfo: VkImageCreateInfo, sharing_queues: Vec<u32> }
 impl ImageDesc
 {
-	pub fn new<Size: ImageSize>(size: Size, format: VkFormat, initial_layout: ImageLayout) -> Self
+	pub fn new<Size: ImageSize>(size: Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self
 	{
 		ImageDesc
 		{
 			cinfo: VkImageCreateInfo
 			{
-				imageType: Size::dimension(), extent: size.into().as_ref().clone(), format,
+				imageType: Size::dimension(), extent: size.into().as_ref().clone(), format, usage: usage.0,
 				mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
 				.. Default::default()
 			},
@@ -266,9 +266,9 @@ impl ImageDesc
 	{
 		self.cinfo.tiling = VK_IMAGE_TILING_LINEAR; self
 	}
-	pub fn mutable_format(&mut self) -> &mut Self
+	pub fn flags(&mut self, opt: ImageFlags) -> &mut Self
 	{
-		self.cinfo.flags |= VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT; self
+		self.cinfo.flags = opt.0; self
 	}
 	#[cfg(features = "FeImplements")]
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
