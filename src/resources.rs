@@ -111,7 +111,6 @@ impl BufferUsage
 	/// Aliased and Residency
 	Both = (VK_BUFFER_CREATE_SPARSE_BINDING_BIT | VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT | VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _
 }
-
 /// Builder structure specifying the parameters of a newly created buffer object
 pub struct BufferDesc { cinfo: VkBufferCreateInfo, #[allow(dead_code)] sharing_queues: Vec<u32> }
 impl BufferDesc
@@ -322,6 +321,89 @@ impl Image
 	}
 }
 
+#[cfg(feature = "FeImplements")]
+impl DeviceMemory
+{
+	/// Map a memory object into application address space
+	/// # Failure
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_MEMORY_MAP_FAILED
+	pub fn map(&self, range: ::std::ops::Range<usize>) -> ::Result<MappedMemoryRange>
+	{
+		let mut p = ::std::ptr::null_mut();
+		unsafe { vkMapMemory(self.0 .1.native_ptr(), self.0 .0, range.start as _, range.end - range.start as _,
+			0, &mut p) }.into_result().map(|_| MappedMemoryRange(self, p, range.start as _ .. range.end as _))
+	}
+	/// Unmap a previously mapped memory object
+	/// # Safety
+	/// Caller must guarantee that there is no `MappedMemoryRange` alives.
+	/// Accessing the mapped memory after this call has undefined behavior
+	pub unsafe fn unmap(&self)
+	{
+		vkUnmapMemory(self.0 .1.native_ptr(), self.0 .0);
+	}
+	/// Query the current commitment for a `DeviceMemory`
+	pub fn commitment_bytes(&self) -> VkDeviceSize
+	{
+		let mut b = 0;
+		unsafe { vkGetDeviceMemoryCommitment(self.0 .1.native_ptr(), self.0 .0, &b) }; b
+	}
+}
+
+/// Common operations for memory bound objects
+pub trait MemoryBound
+{
+	/// Returns the memory requirements for specified Vulkan object
+	fn requirements(&self) -> VkMemoryRequirements;
+	/// Bind device memory to the object
+	/// # Failure
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>;
+}
+#[cfg(feature = "FeImplements")]
+impl MemoryBound for Buffer
+{
+	fn requirements(&self) -> VkMemoryRequirements
+	{
+		let mut p = unsafe { ::std::mem::uninitialized() };
+		unsafe { vkGetBufferMemoryRequirements(self.0 .1.native_ptr(), self.0 .0, &mut p) }; p
+	}
+	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
+	{
+		unsafe { vkBindBufferMemory(self.0 .1.native_ptr(), self.0 .0, memory.0 .0, offset as _) }.into_result()
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl MemoryBound for Image
+{
+	fn requirements(&self) -> VkMemoryRequirements
+	{
+		let mut p = unsafe { ::std::mem::uninitialized() };
+		unsafe { vkGetImageMemoryRequirements(self.0 .1.native_ptr(), self.0 .0, &mut p) }; p
+	}
+	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
+	{
+		unsafe { vkBindImageMemory(self.0 .1.native_ptr(), self.0 .0, memory.0 .0, offset as _) }.into_result()
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl Image
+{
+	/// Query the memory requirements for a sparse image
+	pub fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements>
+	{
+		let mut n = 0;
+		unsafe { vkGetImageSparseMemoryRequirements(self.0 .1.native_ptr(), self.0 .0, &mut n, ::std::ptr::null_mut()) };
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetImageSparseMemoryRequirements(self.0 .1.native_ptr(), self.0 .0, &mut n, v.as_mut_ptr()) };
+		v
+	}
+}
+
 /// Image Dimension by corresponding extent type
 pub trait ImageSize : Into<::Extent3D>
 {
@@ -338,6 +420,43 @@ impl ImageSize for ::Extent2D
 impl ImageSize for ::Extent3D
 {
 	fn dimension() -> VkImageType { VK_IMAGE_TYPE_3D }
+}
+
+/// Specifies the block of mapped memory in a `DeviceMemory`
+pub struct MappedMemoryRange<'m>(&'m DeviceMemory, *mut u8, ::std::ops::Range<VkDeviceSize>);
+impl<'m> MappedMemoryRange<'m>
+{
+	/// Get a reference in mapped memory with byte offsets
+	/// # Safety
+	/// Caller must guarantee that the pointer and its alignment are valid
+	pub unsafe fn get<T>(&self, offset: usize) -> &T
+	{
+		::std::mem::transmute(self.1.offset(offset as _))
+	}
+	/// Get a mutable reference in mapped memory with byte offsets
+	/// # Safety
+	/// Caller must guarantee that the pointer and its alignment are valid
+	pub unsafe fn get_mut<T>(&self, offset: usize) -> &mut T
+	{
+		::std::mem::transmute(self.1.offset(offset as _))
+	}
+	/// Flushes the memory range manually. Returns a structure for flush operation
+	pub fn manual_flush(self) -> VkMappedMemoryRange
+	{
+		let (m, r) = (self.0 .0 .0, self.2);
+		VkMappedMemoryRange
+		{
+			offset: r.start, size: r.end - r.start, memory: m, .. Default::default()
+		}
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl<'m> Drop for MappedMemoryRange<'m>
+{
+	fn drop(&mut self)
+	{
+		unsafe { vkFlushMappedMemoryRange(self.0 .0 .1.native_ptr(), 1, &self.manual_flush()) }
+	}
 }
 
 /// Layouts of image and image subresources

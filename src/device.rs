@@ -5,6 +5,7 @@
 use vk::*;
 use PhysicalDevice;
 use std::ffi::CString;
+use std::borrow::Cow;
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(feature = "FeImplements")] use {DeviceChild, VkResultHandler};
@@ -164,3 +165,56 @@ pub trait Waitable
 impl Waitable for Device { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkDeviceWaitIdle(self.native_ptr()) }.into_result() } }
 #[cfg(feature = "FeImplements")]
 impl Waitable for Queue { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkQueueWaitIdle(self.0) }.into_result() } }
+
+/// Sparse Binding operation batch
+pub struct SparseBindingOpBatch<'s>
+{
+	/// An array of semaphores upon which to wait on before the sparse binding operations
+	/// for this batch begin execution
+	pub wait_semaphores: Cow<'s, [&'s ::Semaphore]>,
+	/// An array of `VkSparseBufferMemoryBindInfo` structures
+	pub buffer_binds: Cow<'s, [VkSparseBufferMemoryBindInfo]>,
+	/// An array of `VkSparseImageOpaqueMemoryBindInfo` structures
+	pub image_opaque_binds: Cow<'s, [VkSparseImageOpaqueMemoryBindInfo]>,
+	/// An array of `VkSparseImageMemoryBindInfo` structures
+	pub image_binds: Cow<'s, [VkSparseImageMemoryBindInfo]>,
+	/// An array of semaphores which will be signaled when the sparse binding
+	/// operations for this batch have completed execution
+	pub signal_semaphores: Cow<'s, [&'s ::Semaphore]>
+}
+impl<'s> Default for SparseBindingOpBatch<'s>
+{
+	fn default() -> Self
+	{
+		SparseBindingOpBatch
+		{
+			wait_semaphores: Cow::Owned(Vec::new()),
+			buffer_binds: Cow::Owned(Vec::new()), image_opaque_binds: Cow::Owned(Vec::new()), image_binds: Cow::Owned(Vec::new()),
+			signal_semaphores: Cow::Owned(Vec::new())
+		}
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl Queue
+{
+	/// Bind device memory to a sparse resource object
+	/// # Failure
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_DEVICE_LOST
+	pub fn bind_sparse(&self, batches: &[SparseBindingOpBatch], fence: Option<&::Fence>) -> ::Result<()>
+	{
+		let batches = batches.iter().map(|x| VkBindSparseInfo
+		{
+			waitSemaphoreCount: x.wait_semaphores.len() as _, pWaitSemaphores: x.wait_semaphores.as_ptr(),
+			bufferBindCount: x.buffer_binds.len() as _, pBufferBinds: x.buffer_binds.as_ptr(),
+			imageOpaqueBindCount: x.image_opaque_binds.len() as _, pImageOpaqueBints: x.image_opaque_binds.as_ptr(),
+			imageBindCount: x.image_binds.len() as _, pImageBinds: x.image_binds.as_ptr(),
+			signalSemaphoreCount: x.signal_semaphores.len() as _, pSignalSemaphores: x.signal_semaphores.as_ptr(),
+			.. Default::default()
+		}).collect::<Vec<_>>();
+		unsafe { vkQueueBindSparse(self.0, batches.len() as _, batches.as_ptr(), fence.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _)) }
+			.into_result()
+	}
+}
