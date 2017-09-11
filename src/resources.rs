@@ -473,7 +473,7 @@ impl<'m> Drop for MappedMemoryRange<'m>
 }
 
 /// Layouts of image and image subresources
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum ImageLayout
 {
 	/// does not support device access

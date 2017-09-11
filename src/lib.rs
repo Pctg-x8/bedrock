@@ -140,6 +140,7 @@ mod device; pub use device::*;
 mod sync; pub use sync::*;
 mod resources; pub use resources::*;
 mod descriptor; pub use descriptor::*;
+mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;
 
 /// Opaque handle to a query pool object
