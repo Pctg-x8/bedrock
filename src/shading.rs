@@ -71,9 +71,11 @@ pub enum CompareOp
 
 /// Opaque handle to a shader module object
 pub struct ShaderModule(VkShaderModule, ::Device);
+/// Opaque handle to a pipeline cache object
+pub struct PipelineCache(VkPipelineCache, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
-	for ShaderModule[vkDestroyShaderModule]
+	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache]
 }
 
 #[cfg(feature = "FeImplements")]
@@ -100,9 +102,51 @@ impl ShaderModule
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	/// IO Errors may be occured when reading file
-	pub fn from_memory<FilePath: AsRef<OsStr> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
+	pub fn from_file<FilePath: AsRef<OsStr> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
 	{
 		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;
 		Self::from_memory(device, &bin).map_err(From::from)
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl PipelineCache
+{
+	/// Creates a new pipeline cache
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn new<Data: AsRef<[u8]> + ?Sized>(device: &::Device, initial: &Data) -> ::Result<Self>
+	{
+		let cinfo = VkPipelineCacheCreateInfo
+		{
+			initialDataSize: initial.len() as _, pInitialData: initial.as_ptr(), .. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreatePipelineCache(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| PipelineCache(h, device.clone()))
+	}
+	/// Get the data store from a pipeline cache
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn data(&self) -> ::Result<Vec<u8>>
+	{
+		let mut n = 0;
+		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut b = Vec::with_capacity(n as _); unsafe { b.set_len(n as _) };
+		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr()) }.into_result()
+			.map(|_| b)
+	}
+	/// Combine the data stores of pipeline caches into `self`
+	/// # Failures
+	/// On failure, this command returns
+	/// VK_ERROR_OUT_OF_HOST_MEMORY
+	/// VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn merge_into(&self, src: &[&PipelineCache]) -> ::Result<()>
+	{
+		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
+		unsafe { vkMergePipelineCaches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
 	}
 }
