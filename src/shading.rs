@@ -22,10 +22,10 @@ impl ShaderStage
 	/// The compute stage
 	pub const COMPUTE: Self = ShaderStage(VK_SHADER_STAGE_COMPUTE_BIT);
 	/// A combination of bits used as shorthand to specify all graphics stages defined above (excluding the compute stage)
-	pub const ALL_GRAPHICS: Self = ShaderStage(VK_SHADER_STAGE_ALL_GRAPHICS_BIT);
+	pub const ALL_GRAPHICS: Self = ShaderStage(VK_SHADER_STAGE_ALL_GRAPHICS);
 	/// A combination of bits used as shorthand to specify all shader stages supported by the device,
 	/// including all additional stages which are introduced by extensions
-	pub const ALL: Self = ShaderStage(VK_SHADER_STAGE_ALL_BIT);
+	pub const ALL: Self = ShaderStage(VK_SHADER_STAGE_ALL);
 	/// A combination of tessellation control stage and tessellation evaluation stage
 	pub const TESSELLATION: Self = ShaderStage(Self::TESSELLATION_CONTROL.0 | Self::TESSELLATION_EVALUATION.0);
 

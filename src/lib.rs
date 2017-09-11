@@ -84,6 +84,8 @@ mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
 mod resources; pub use resources::*;
+mod descriptor; pub use descriptor::*;
+mod shading; pub use shading::*;
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
@@ -206,8 +208,6 @@ impl QueryResultFlags
     /// The availability status accompanies the results
     pub fn with_availability(&self) -> Self { QueryResultFlags(self.0 | Self::WITH_AVAILABILITY.0) }
     /// Returning partial results is acceptable
-    pub fn partial(&self) -> Self { QueryResultFlags(self.0 | Self::PARTIAL.0) }
-}
     pub fn partial(&self) -> Self { QueryResultFlags(self.0 | Self::PARTIAL.0) }
 }
 
