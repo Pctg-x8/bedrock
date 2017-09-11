@@ -1,5 +1,9 @@
 //! Glue library between Vulkan and Rust
 //!
+//! # Copyright
+//! Some documentation comments are from Vulkan Manual Page.
+//! Copyright (c) 2014-2017 Khronos Group.
+//!
 //! # Compile Options
 //! - `FeImplements`: Enable Vulkan implementations(functions)
 //! - `FeMultithreaded`: Enables to use objects from some threads(experimental)
