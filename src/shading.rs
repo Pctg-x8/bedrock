@@ -68,3 +68,41 @@ pub enum CompareOp
 	/// The test always passes
 	Always = VK_COMPARE_OP_ALWAYS as _
 }
+
+/// Opaque handle to a shader module object
+pub struct ShaderModule(VkShaderModule, ::Device);
+
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
+	for ShaderModule[vkDestroyShaderModule]
+}
+
+#[cfg(feature = "FeImplements")]
+impl ShaderModule
+{
+	/// Creates a new shader module object from bytes on the memory
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn from_memory<Buffer: AsRef<[u8]> + ?Sized>(device: &::Device, buffer: &Buffer) -> ::Result<Self>
+	{
+		let cinfo = VkShaderModuleCreateInfo
+		{
+			codeSize: buffer.len() as _, pCode: buffer.as_ptr() as *const _, .. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateShaderModule(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| ShaderModule(h, device.clone()))
+	}
+	/// Creates a new shader module object from a file
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// IO Errors may be occured when reading file
+	pub fn from_memory<FilePath: AsRef<OsStr> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
+	{
+		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;
+		Self::from_memory(device, &bin).map_err(From::from)
+	}
+}
