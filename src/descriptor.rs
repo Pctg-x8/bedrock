@@ -1,13 +1,14 @@
 //! Vulkan Descriptors
 
 use vk::*;
+#[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a descriptor set layout object
 pub struct DescriptorSetLayout(pub VkDescriptorSetLayout, ::Device);
 /// Opaque handle to a descriptor pool object
 pub struct DescriptorPool(pub VkDescriptorPool, ::Device);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for DescriptorSetLayout, DescriptorPool }
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[vkDestroyDescriptorSetLayout], DescriptorPool[vkDestroyDescriptorPool] }
 
 /// Structure specifying a descriptor set layout binding
 ///
@@ -119,7 +120,7 @@ impl DescriptorSetLayout
         let mut h = VK_NULL_HANDLE as _;
         let cinfo = VkDescriptorSetLayoutCreateInfo
         {
-            bindingCount: VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT + 1, pBindings: bindings.bindings.as_ptr(),
+            bindingCount: VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as u32 + 1, pBindings: bindings.bindings.as_ptr(),
             .. Default::default()
         };
         unsafe { vkCreateDescriptorSetLayout(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
@@ -182,7 +183,7 @@ impl DescriptorPool
         let cinfo = VkDescriptorPoolCreateInfo
         {
             maxSets: max_sets, flags: if allow_free { VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT } else { 0 },
-            poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr(), .. Default::default()
+            poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr() as *const _, .. Default::default()
         };
         unsafe { vkCreateDescriptorPool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
             .into_result().map(|_| DescriptorPool(h, device.clone()))
@@ -207,32 +208,33 @@ impl DescriptorPool
     }
     /// Resets a descriptor pool object
     /// # Safety
-    /// Application cannot be use descriptor sets after this call
+    /// Application cannot use descriptor sets after this call
     /// # Failures
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     pub unsafe fn reset(&self) -> ::Result<()>
     {
-        unsafe { vkResetDescriptorSets(self.1.native_ptr(), self.0, 0) }.into_result()
+        vkResetDescriptorPool(self.1.native_ptr(), self.0, 0).into_result()
     }
     /// Free one or more descriptor sets
     /// # Failures
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn free(&self, sets: &[VkDescriptorSets]) -> ::Result<()>
+    pub fn free(&self, sets: &[VkDescriptorSet]) -> ::Result<()>
     {
         unsafe { vkFreeDescriptorSets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }.into_result()
     }
 }
 
 /// Structure specifying the parameters of a descriptor set write operation
+/// Element order: DescriptorSet, Binding, ArrayIndex, Description
 #[derive(Clone)]
-pub struct DescriptorSetWriteInfo<'d>(VkDescriptorSet, u32, u32, DescriptorUpdateInfo<'d>);
+pub struct DescriptorSetWriteInfo<'d>(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo<'d>);
 /// Structure specifying a copy descriptor set operation
 #[derive(Clone)]
-pub struct DescriptorSetCopyInfo { src: (VkDescriptorSet, u32, u32), dst: (VkDescriptorSet, u32, u32), count: u32 }
+pub struct DescriptorSetCopyInfo { pub src: (VkDescriptorSet, u32, u32), pub dst: (VkDescriptorSet, u32, u32), pub count: u32 }
 /// Structure specifying the parameters of a descriptor set write/copy operations
 /// For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
 /// For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
@@ -255,7 +257,7 @@ pub enum DescriptorUpdateInfo<'d>
 #[cfg(feature = "FeImplements")]
 impl<'d> DescriptorUpdateInfo<'d>
 {
-    fn decomposite(&self) -> (DescriptorType, u32, &[(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)], &[(&'d ::Buffer, ::std::ops::Range<usize>)], &[&'d ::BufferView])
+    pub fn decomposite(&self) -> (DescriptorType, u32, &[(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)], &[(&'d ::Buffer, ::std::ops::Range<usize>)], &[&'d ::BufferView])
     {
         match self
         {

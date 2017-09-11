@@ -161,13 +161,13 @@ impl Device
 		{
 			let p = x.3.decomposite();
 			(x.0, x.1, x.2, p.0, p.1,
-				p.2.iter().map(|(s, v, l)| VkDescriptorImageInfo { sampler: s.0, imageView: v.0, imageLayout: l }).collect::<Vec<_>>(),
-				p.3.iter().map(|(b, r)| VkDescriptorBufferInfo { buffer: b.0, offset: r.start as _, range: (r.end - r.start) as _ }).collect::<Vec<_>>(),
+				p.2.iter().map(|&(s, v, l)| VkDescriptorImageInfo { sampler: s.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _), imageView: v.0, imageLayout: l as _ }).collect::<Vec<_>>(),
+				p.3.iter().map(|&(b, ref r)| VkDescriptorBufferInfo { buffer: b.native_ptr(), offset: r.start as _, range: (r.end - r.start) as _ }).collect::<Vec<_>>(),
 				p.4.iter().map(|x| x.0).collect::<Vec<_>>())
-		}).collect();
+		}).collect::<Vec<_>>();
 		let w = wt.iter().map(|&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet
 		{
-			dstSet: set, dstBinding: binding, dstArrayElement: array, descriptorType: dty, descriptorCount: count,
+			dstSet: set, dstBinding: binding, dstArrayElement: array, descriptorType: dty as _, descriptorCount: count,
 			pImageInfo: iv.as_ptr(), pBufferInfo: bv.as_ptr(), pTexelBufferView: bvv.as_ptr(), .. Default::default()
 		}).collect::<Vec<_>>();
 		let c = copy.iter().map(|x| VkCopyDescriptorSet
