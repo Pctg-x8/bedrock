@@ -126,3 +126,103 @@ impl DescriptorSetLayout
             .into_result().map(|_| DescriptorSetLayout(h, device.clone()))
     }
 }
+
+/*
+# DescriptorPoolのフラグメンテーションについて(from `VkDescriptorPoolCreateInfo` Manual)
+
+`VkDescriptorPoolSize`構造体が`pPoolSizes`配列内に複数ある場合、プールはそれぞれのタイプの合計分のデスクリプタが十分入るように確保されます。
+
+DescriptorPoolはフラグメンテーションを起こすことがあり、DescriptorSetの確保に失敗することがあります。
+フラグメンテーションに起因する失敗は、確保したDescriptorSetの数+確保を要求したDescriptorSetの数が`maxSets`に満たない場合でも
+"DescriptorSetの確保の失敗"と定義されます。(たぶんあってるはず)
+実装は、以下に記述されるような"フラグメンテーションが確保の失敗を引き起こさない場合"について確固たる保証を提供します。
+(言い換えると、「以下に示す場合はフラグメンテーション状態でも確保に成功する」)
+
+DescriptorPoolが、生成されてから/間近にリセットされてから今までに開放されたDescriptorSetがない場合、
+フラグメンテーションは確保の失敗を引き起こしません。(`VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT`を伴わずに生成されたプールに対しては常に満たすものとします？)
+また、
+- プールが生成されてから/間近にリセットされてから確保された、すべてのDescriptorSetが各タイプ同じ数のDescriptorを使う場合、そして
+- 要求した確保も各タイプ同じ数のDescriptorを使う場合、
+フラグメンテーションは確保の失敗を引き起こしません。
+
+もしフラグメンテーションによって確保が失敗した場合、アプリケーションは続けてDescriptorSetの確保を行うために追加のDescriptorPoolを生成することができます
+*/
+
+/// Structure specifying descriptor pool size
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+pub struct DescriptorPoolSize(pub DescriptorType, pub u32);
+/// Specified the type of a descriptor in a descriptor set
+#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+pub enum DescriptorType
+{
+    Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
+    CombinedImageSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER as _,
+    SampledImage = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE as _,
+    StorageImage = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE as _,
+    UniformTexelBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER as _,
+    StorageTexelBuffer = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER as _,
+    UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER as _,
+    StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER as _,
+    UniformBufferDynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC as _,
+    StorageBufferDynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC as _,
+    InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _
+}
+
+#[cfg(feature = "FeImplements")]
+impl DescriptorPool
+{
+    /// Creates a descriptor pool object
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    pub fn new(device: &::Device, max_sets: u32, pool_sizes: &[DescriptorPoolSize], allow_free: bool) -> ::Result<Self>
+    {
+        let mut h = VK_NULL_HANDLE as _;
+        let cinfo = VkDescriptorPoolCreateInfo
+        {
+            maxSets: max_sets, flags: if allow_free { VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT } else { 0 },
+            poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr(), .. Default::default()
+        };
+        unsafe { vkCreateDescriptorPool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
+            .into_result().map(|_| DescriptorPool(h, device.clone()))
+    }
+    /// Allocate one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - VK_ERROR_FRAGMENTED_POOL
+    pub fn alloc(&self, layouts: &[&DescriptorSetLayout]) -> ::Result<Vec<VkDescriptorSet>>
+    {
+        let layout_ptrs = layouts.into_iter().map(|x| x.0).collect::<Vec<_>>();
+        let ainfo = VkDescriptorSetAllocateInfo
+        {
+            descriptorPool: self.0, descriptorSetCount: layout_ptrs.len() as _, pSetLayouts: layout_ptrs.as_ptr(),
+            .. Default::default()
+        };
+        let mut hs = vec![VK_NULL_HANDLE as _; layout_ptrs.len()];
+        unsafe { vkAllocateDescriptorSets(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }
+            .into_result().map(|_| hs)
+    }
+    /// Resets a descriptor pool object
+    /// # Safety
+    /// Application cannot be use descriptor sets after this call
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    pub unsafe fn reset(&self) -> ::Result<()>
+    {
+        unsafe { vkResetDescriptorSets(self.1.native_ptr(), self.0, 0) }.into_result()
+    }
+    /// Free one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    pub fn free(&self, sets: &[VkDescriptorSets]) -> ::Result<()>
+    {
+        unsafe { vkFreeDescriptorSets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }.into_result()
+    }
+}
