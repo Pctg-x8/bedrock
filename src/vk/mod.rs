@@ -1932,7 +1932,7 @@ pub struct VkSamplerCreateInfo
     pub sType: VkStructureType, pub pNext: *const c_void, pub flags: VkSamplerCreateFlags,
     pub magFilter: VkFilter, pub minFilter: VkFilter, pub mipmapMode: VkSamplerMipmapMode,
     pub addressModeU: VkSamplerAddressMode, pub addressModeV: VkSamplerAddressMode, pub addressModeW: VkSamplerAddressMode,
-    pub mipLoadBias: c_float, pub anisotropyEnable: VkBool32, pub maxAnisotropy: c_float,
+    pub mipLodBias: c_float, pub anisotropyEnable: VkBool32, pub maxAnisotropy: c_float,
     pub compareEnable: VkBool32, pub compareOp: VkCompareOp, pub minLod: c_float, pub maxLod: c_float,
     pub borderColor: VkBorderColor, pub unnormalizedCoordinates: VkBool32
 }
