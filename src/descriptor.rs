@@ -226,3 +226,50 @@ impl DescriptorPool
         unsafe { vkFreeDescriptorSets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }.into_result()
     }
 }
+
+/// Structure specifying the parameters of a descriptor set write operation
+#[derive(Clone)]
+pub struct DescriptorSetWriteInfo<'d>(VkDescriptorSet, u32, u32, DescriptorUpdateInfo<'d>);
+/// Structure specifying a copy descriptor set operation
+#[derive(Clone)]
+pub struct DescriptorSetCopyInfo { src: (VkDescriptorSet, u32, u32), dst: (VkDescriptorSet, u32, u32), count: u32 }
+/// Structure specifying the parameters of a descriptor set write/copy operations
+/// For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
+/// For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
+/// For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView
+#[derive(Clone)]
+pub enum DescriptorUpdateInfo<'d>
+{
+    Sampler(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
+    CombinedImageSampler(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
+    SampledImage(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
+    StorageImage(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
+    InputAttachment(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
+    UniformBuffer(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
+    StorageBuffer(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
+    UniformBufferDynamic(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
+    StorageBufferDynamic(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
+    UniformTexelBuffer(Vec<&'d ::BufferView>),
+    StorageTexelBuffer(Vec<&'d ::BufferView>)
+}
+#[cfg(feature = "FeImplements")]
+impl<'d> DescriptorUpdateInfo<'d>
+{
+    fn decomposite(&self) -> (DescriptorType, u32, &[(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)], &[(&'d ::Buffer, ::std::ops::Range<usize>)], &[&'d ::BufferView])
+    {
+        match self
+        {
+            &DescriptorUpdateInfo::Sampler(ref iv) => (DescriptorType::Sampler, iv.len() as _, iv, &[], &[]),
+            &DescriptorUpdateInfo::CombinedImageSampler(ref iv) => (DescriptorType::CombinedImageSampler, iv.len() as _, iv, &[], &[]),
+            &DescriptorUpdateInfo::SampledImage(ref iv) => (DescriptorType::SampledImage, iv.len() as _, iv, &[], &[]),
+            &DescriptorUpdateInfo::StorageImage(ref iv) => (DescriptorType::StorageImage, iv.len() as _, iv, &[], &[]),
+            &DescriptorUpdateInfo::InputAttachment(ref iv) => (DescriptorType::InputAttachment, iv.len() as _, iv, &[], &[]),
+            &DescriptorUpdateInfo::UniformBuffer(ref bv) => (DescriptorType::UniformBuffer, bv.len() as _, &[], bv, &[]),
+            &DescriptorUpdateInfo::StorageBuffer(ref bv) => (DescriptorType::StorageBuffer, bv.len() as _, &[], bv, &[]),
+            &DescriptorUpdateInfo::UniformBufferDynamic(ref bv) => (DescriptorType::UniformBufferDynamic, bv.len() as _, &[], bv, &[]),
+            &DescriptorUpdateInfo::StorageBufferDynamic(ref bv) => (DescriptorType::StorageBufferDynamic, bv.len() as _, &[], bv, &[]),
+            &DescriptorUpdateInfo::UniformTexelBuffer(ref bvv) => (DescriptorType::UniformTexelBuffer, bvv.len() as _, &[], &[], bvv),
+            &DescriptorUpdateInfo::StorageTexelBuffer(ref bvv) => (DescriptorType::StorageTexelBuffer, bvv.len() as _, &[], &[], bvv)
+        }
+    }
+}

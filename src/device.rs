@@ -153,6 +153,30 @@ impl Device
 		let v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
 		unsafe { vkInvalidateMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
+	/// Update the contents of a descriptor set object
+	pub fn update_descriptor_sets(&self, write: &[::DescriptorSetWriteInfo], copy: &[::DescriptorSetCopyInfo])
+	{
+		// save flatten results
+		let wt = write.iter().map(|x|
+		{
+			let p = x.3.decomposite();
+			(x.0, x.1, x.2, p.0, p.1,
+				p.2.iter().map(|(s, v, l)| VkDescriptorImageInfo { sampler: s.0, imageView: v.0, imageLayout: l }).collect::<Vec<_>>(),
+				p.3.iter().map(|(b, r)| VkDescriptorBufferInfo { buffer: b.0, offset: r.start as _, range: (r.end - r.start) as _ }).collect::<Vec<_>>(),
+				p.4.iter().map(|x| x.0).collect::<Vec<_>>())
+		}).collect();
+		let w = wt.iter().map(|&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet
+		{
+			dstSet: set, dstBinding: binding, dstArrayElement: array, descriptorType: dty, descriptorCount: count,
+			pImageInfo: iv.as_ptr(), pBufferInfo: bv.as_ptr(), pTexelBufferView: bvv.as_ptr(), .. Default::default()
+		}).collect::<Vec<_>>();
+		let c = copy.iter().map(|x| VkCopyDescriptorSet
+		{
+			srcSet: x.src.0, srcBinding: x.src.1, srcArrayElement: x.src.2,
+			dstSet: x.dst.0, dstBinding: x.dst.1, dstArrayElement: x.dst.2, descriptorCount: x.count, .. Default::default()
+		}).collect::<Vec<_>>();
+		unsafe { vkUpdateDescriptorSets(self.native_ptr(), w.len() as _, w.as_ptr(), c.len() as _, c.as_ptr()) };
+	}
 }
 
 /// Supports blocking wait operation
