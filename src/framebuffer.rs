@@ -33,15 +33,15 @@ impl RenderPassBuilder
 	pub fn add_dependency(&mut self, desc: VkSubpassDependency) -> &mut Self { self.dependencies.push(desc); self }
 	pub fn add_attachments<Collection: IntoIterator<Item = VkAttachmentDescription>>(&mut self, collection: Collection) -> &mut Self
 	{
-		for d in collection { self = self.add_attachment(d); } self
+		for d in collection { self.add_attachment(d); } self
 	}
 	pub fn add_subpasses<Collection: IntoIterator<Item = SubpassDescription>>(&mut self, collection: Collection) -> &mut Self
 	{
-		for d in collection { self = self.add_subpass(d); } self
+		for d in collection { self.add_subpass(d); } self
 	}
 	pub fn add_dependencies<Collection: IntoIterator<Item = VkSubpassDependency>>(&mut self, collection: Collection) -> &mut Self
 	{
-		for d in collection { self = self.add_dependency(d); } self
+		for d in collection { self.add_dependency(d); } self
 	}
 }
 impl SubpassDescription
@@ -81,7 +81,7 @@ impl SubpassDescription
 	}
 	pub fn add_preserves<Collection: IntoIterator<Item = u32>>(&mut self, collection: Collection) -> &mut Self
 	{
-		for i in collection { self = self.add_preserve(i); } self
+		for i in collection { self.add_preserve(i); } self
 	}
 }
 #[cfg(feature = "FeImplements")]
@@ -137,12 +137,13 @@ impl Framebuffer
 	}
 }
 
+#[cfg(feature = "FeImplements")]
 impl RenderPass
 {
 	/// Returns the granularity for optimal render area
-	pub fn optimal_granularity(&self) -> Extent2D
+	pub fn optimal_granularity(&self) -> ::Extent2D
 	{
-		let mut e = Extent2D(0, 0);
+		let mut e = ::Extent2D(0, 0);
 		unsafe { vkGetRenderAreaGranularity(self.1.native_ptr(), self.0, &mut e as *mut _) }; e
 	}
 }
