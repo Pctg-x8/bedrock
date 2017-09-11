@@ -320,6 +320,14 @@ impl Image
 		unsafe { vkCreateImageView(self.0 .1.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| ImageView(h, self.clone()))
 	}
+	/// Retrieve information about an image subresource
+	/// Subresource: (aspect, mipLevel, arrayLayer)
+	pub fn image_subresource_layout(&self, subres_aspect: AspectMask, subres_mip_level: u32, subres_array_layer: u32) -> VkSubresourceLayout
+	{
+		let mut s = unsafe { ::std::mem::uninitialized() };
+		let mut subres = VkImageSubresource { aspectMask: subres_aspect.0, mipLevel: subres_mip_leve, arrayLayer: subres_array_layer };
+		unsafe { vkGetImageSubresourceLayout(self.0 .1.native_ptr(), self.0 .0, &subres, &mut s) }.into_result().map(|_| s)
+	}
 }
 
 #[cfg(feature = "FeImplements")]
