@@ -73,9 +73,11 @@ pub enum CompareOp
 pub struct ShaderModule(VkShaderModule, ::Device);
 /// Opaque handle to a pipeline cache object
 pub struct PipelineCache(VkPipelineCache, ::Device);
+/// Opaque handle to a pipeline layout object
+pub struct PipelineLayout(VkPipelineLayout, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
-	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache]
+	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout]
 }
 
 #[cfg(feature = "FeImplements")]
@@ -148,5 +150,25 @@ impl PipelineCache
 	{
 		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
 		unsafe { vkMergePipelineCaches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
+	}
+}
+#[cfg(feature = "FeImplements")]
+impl PipelineLayout
+{
+	/// Creates a new pipeline layout object
+	pub fn new(device: &::Device, layouts: &[&::DescriptorSetLayout], push_constants: &[(ShaderStage, ::std::ops::Range<u32>)]) -> ::Result<Self>
+	{
+		let layouts = layouts.into_iter().map(|x| x.0).collect::<Vec<_>>();
+		let push_constants = push_constants.iter().map(|x| VkPushConstantRange { stageFlags: x.0 .0, offset: x.1.start, size: x.1.end - x.1.start })
+			.collect::<Vec<_>>();
+		let cinfo = VkPipelineLayoutCreateInfo
+		{
+			setLayoutCount: layouts.len() as _, pSetLayouts: layouts.as_ptr(),
+			pushConsatntRangeCount: push_constants.len() as _, pPushconstantRanges: push_constants.as_ptr(),
+			.. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreatePipelineLayout(device.native_ptr(), &mut cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| PipelineLayout(h, device.clone()))
 	}
 }
