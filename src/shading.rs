@@ -137,7 +137,7 @@ pub enum StencilFaceMask
 	/// Only the back set of stencil state
 	Back = VK_STENCIL_FACE_BACK_BIT as _,
 	/// Both sets of stencil state
-	Both = VK_STENCIL_FACE_FRONT_AND_BACK as _
+	Both = VK_STENCIL_FRONT_AND_BACK as _
 }
 
 /// Opaque handle to a shader module object
