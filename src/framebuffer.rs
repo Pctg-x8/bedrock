@@ -4,9 +4,9 @@ use vk::*;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a render pass object
-pub struct RenderPass(VkRenderPass, ::Device);
+pub struct RenderPass(pub VkRenderPass, ::Device);
 /// Opaque handle to a framebuffer object
-pub struct Framebuffer(VkFramebuffer, ::Device);
+pub struct Framebuffer(pub VkFramebuffer, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for RenderPass[vkDestroyRenderPass], Framebuffer[vkDestroyFramebuffer]
