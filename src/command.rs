@@ -1,20 +1,15 @@
 //! Vulkan Commands
 
 use vk::*;
-use std::rc::Rc as RefCounter;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
-struct CmdPoolCell(VkCommandPool, ::Device);
 /// Opaque handle to a command pool object
-#[derive(Clone)] pub struct CommandPool(RefCounter<CmdPoolCell>);
+#[derive(Clone)] pub struct CommandPool(VkCommandPool, ::Device);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for CmdPoolCell[vkDestroyCommandPool] }
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for CommandPool[vkDestroyCommandPool] }
 
 /// The recording state of commandbuffers
-pub struct CmdRecord<'d>
-{
-	ptr: VkCommandBuffer, layout: [&'d ::PipelineLayout; 2]
-}
+pub struct CmdRecord<'d> { ptr: VkCommandBuffer, layout: [&'d ::PipelineLayout; 2] }
 
 /// Implicitly closing the recording state. This may cause a panic when there are errors in commands
 #[cfg(feature = "FeImplements")]
@@ -23,6 +18,48 @@ impl<'d> Drop for CmdRecord<'d>
 	fn drop(&mut self)
 	{
 		unsafe { vkEndCommandBuffer(self.ptr) }.into_result().expect("Error closing command recording state");
+	}
+}
+
+#[cfg(feature = "FeImplements")]
+impl CommandPool
+{
+	/// Create a new command pool object
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn new(device: &::Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> ::Result<Self>
+	{
+		let cinfo = VkCommandPoolCreateInfo
+		{
+			queueFamilyIndex: queue_family, flags: if transient { VK_COMMAND_POOL_CREATE_TRANSIENT_BIT } else { 0 }
+				| if indiv_resettable { VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT } else { 0 },
+			.. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateCommandPool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| CommandPool(h, device.clone()))
+	}
+	/// Allocate command buffers from an existing command pool
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn alloc(&self, count: u32, primary: bool) -> ::Result<Vec<VkCommandBuffer>>
+	{
+		let ainfo = VkCommandBufferAllocateInfo
+		{
+			commandBufferCount: count, level: if primary { VK_COMMAND_BUFFER_LEVEL_PRIMARY } else { VK_COMMAND_BUFFER_LEVEL_SECONDARY },
+			commandPool: self.0, .. Default::default()
+		};
+		let mut hs = vec![VK_NULL_HANDLE as _; count as _];
+		unsafe { vkAllocateCommandBuffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }.into_result()
+			.map(|_| hs)
+	}
+	/// Free command buffers
+	pub fn free(&self, buffers: &[VkCommandBuffer])
+	{
+		unsafe { vkFreeCommandBuffers(self.1.native_ptr(), self.0, buffers.len() as _, buffers.as_ptr()) };
 	}
 }
 
@@ -260,7 +297,7 @@ impl<'d> CmdRecord<'d>
 	}
 	/// Copy regions of an image, potentially performing format conversion
 	pub fn blit_image(&mut self, src: &::Image, src_layout: ::ImageLayout, dst: &::Image, dst_layout: ::ImageLayout,
-		regions: &[VkImageCopy], filter: ::Filter) -> &mut Self
+		regions: &[VkImageBlit], filter: ::FilterMode) -> &mut Self
 	{
 		unsafe { vkCmdBlitImage(self.ptr, src.native_ptr(), src_layout as _, dst.native_ptr(), dst_layout as _,
 			regions.len() as _, regions.as_ptr(), filter as _) };
@@ -281,7 +318,7 @@ impl<'d> CmdRecord<'d>
 	/// Update a buffer's contents from host memory
 	pub fn update_buffer<T>(&mut self, dst: &::Buffer, dst_offset: usize, size: usize, data: &T) -> &mut Self
 	{
-		assert!(size <= std::mem::size_of::<T>());
+		assert!(size <= ::std::mem::size_of::<T>());
 		unsafe { vkCmdUpdateBuffer(self.ptr, dst.native_ptr(), dst_offset as _, size as _, data as *const T as *const _) };
 		self
 	}
@@ -292,9 +329,10 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Fill a region of a buffer with a fixed value
-	pub fn fill_buffer<T>(&mut self, dst: &::Buffer, dst_offset: usize, size: usize, data: T) -> &mut Self
+	/// `size` is number of bytes to fill
+	pub fn fill_buffer(&mut self, dst: &::Buffer, dst_offset: usize, size: usize, data: u32) -> &mut Self
 	{
-		unsafe { vkCmdFillBuffer(self.ptr, dst.native_ptr(), dst_offset as _, size as _, ::std::mem::transmute(data)) };
+		unsafe { vkCmdFillBuffer(self.ptr, dst.native_ptr(), dst_offset as _, size as _, data) };
 		self
 	}
 	/// Clear regions of a color image
