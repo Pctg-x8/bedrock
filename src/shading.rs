@@ -128,6 +128,17 @@ pub enum LogicOp
 	/// 1
 	Set = VK_LOGIC_OP_SET as _
 }
+/// Bitmask specifying sets of stencil state for which to update the compare mask
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+pub enum StencilFaceMask
+{
+	/// Only the front set of stencil state
+	Front = VK_STENCIL_FACE_FRONT_BIT as _,
+	/// Only the back set of stencil state
+	Back = VK_STENCIL_FACE_BACK_BIT as _,
+	/// Both sets of stencil state
+	Both = VK_STENCIL_FACE_FRONT_AND_BACK as _
+}
 
 /// Opaque handle to a shader module object
 pub struct ShaderModule(VkShaderModule, ::Device);
