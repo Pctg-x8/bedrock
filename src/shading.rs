@@ -849,7 +849,7 @@ impl ::Device
 
 /// Bitmask specifying pipeline stages
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PipelineStageFlags(VkPipelineStageFlags);
+pub struct PipelineStageFlags(pub VkPipelineStageFlags);
 impl PipelineStageFlags
 {
 	/// The stage of the pipeline where any commands are initially received by the queue
