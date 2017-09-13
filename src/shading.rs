@@ -2,6 +2,7 @@
 
 use vk::*;
 use std::ffi::CString;
+#[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -153,7 +154,7 @@ impl ShaderModule
 	{
 		let cinfo = VkShaderModuleCreateInfo
 		{
-			codeSize: buffer.len() as _, pCode: buffer.as_ptr() as *const _, .. Default::default()
+			codeSize: buffer.as_ref().len() as _, pCode: buffer.as_ref().as_ptr() as *const _, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateShaderModule(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
@@ -165,9 +166,10 @@ impl ShaderModule
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath: AsRef<OsStr> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
+	pub fn from_file<FilePath: AsRef<::std::path::Path> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
 	{
-		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;
+		use ::std::io::prelude::Read;
+		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let mut v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;
 		Self::from_memory(device, &bin).map_err(From::from)
 	}
 }
@@ -183,7 +185,7 @@ impl PipelineCache
 	{
 		let cinfo = VkPipelineCacheCreateInfo
 		{
-			initialDataSize: initial.len() as _, pInitialData: initial.as_ptr(), .. Default::default()
+			initialDataSize: initial.as_ref().len() as _, pInitialData: initial.as_ref().as_ptr() as *const _, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreatePipelineCache(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
@@ -198,9 +200,8 @@ impl PipelineCache
 	{
 		let mut n = 0;
 		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
-		let mut b = Vec::with_capacity(n as _); unsafe { b.set_len(n as _) };
-		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr()) }.into_result()
-			.map(|_| b)
+		let mut b = Vec::<u8>::with_capacity(n as _); unsafe { b.set_len(n as _) };
+		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _) }.into_result().map(|_| b)
 	}
 	/// Combine the data stores of pipeline caches into `self`
 	/// # Failures
@@ -225,11 +226,11 @@ impl PipelineLayout
 		let cinfo = VkPipelineLayoutCreateInfo
 		{
 			setLayoutCount: layouts.len() as _, pSetLayouts: layouts.as_ptr(),
-			pushConsatntRangeCount: push_constants.len() as _, pPushconstantRanges: push_constants.as_ptr(),
+			pushConstantRangeCount: push_constants.len() as _, pPushConstantRanges: push_constants.as_ptr(),
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreatePipelineLayout(device.native_ptr(), &mut cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreatePipelineLayout(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| PipelineLayout(h, device.clone()))
 	}
 }
@@ -242,6 +243,7 @@ impl<T> SwitchOrDynamicState<T>
 }
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
+#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
 pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: ::std::marker::PhantomData<&'d ()> }
 impl<'d, T> From<&'d T> for DynamicDataCell<'d>
 {
@@ -257,6 +259,7 @@ impl<'d> DynamicDataCell<'d>
 	}
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
+#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
 pub struct PipelineShader<'d>
 {
 	module: &'d ShaderModule, entry_name: CString, specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
@@ -685,14 +688,14 @@ impl<'d> PipelineShader<'d>
 {
 	fn createinfo_native(&self, stage: ShaderStage) -> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>)
 	{
-		let specinfo = self.specinfo.as_ref().map(|&(ref m, ref d)| box VkSpecializationInfo
+		let specinfo = self.specinfo.as_ref().map(|&(ref m, ref d)| Box::new(VkSpecializationInfo
 		{
 			mapEntryCount: m.len() as _, pMapEntries: m.as_ptr(), dataSize: d.size as _, pData: d.data as _
-		});
+		}));
 		(VkPipelineShaderStageCreateInfo
 		{
-			stage: stage.0, module: self.module, pName: self.entry_name.as_ptr(),
-			pSpecializationInfo: specinfo.as_ref().map(|x| &*x as *const _).unwrap_or(::std::ptr::null()),
+			stage: stage.0, module: self.module.0, pName: self.entry_name.as_ptr(),
+			pSpecializationInfo: specinfo.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			.. Default::default()
 		}, specinfo)
 	}
@@ -705,6 +708,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// On failure, this command returns
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[allow(unused_variables)]
 	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
 	{
 		let (vs, vs_) = self.vs.as_ref().expect("Required the VertexShader in Graphics Pipeline").createinfo_native(ShaderStage::VERTEX);
@@ -715,7 +719,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		let mut stages = vec![vs];
 		let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
 		let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
-		let gs_ = if let Some((s, sp)) = gs { stages.push(g); Some(sp) } else { None };
+		let gs_ = if let Some((s, sp)) = gs { stages.push(s); Some(sp) } else { None };
 		let fs_ = if let Some((s, sp)) = fs { stages.push(s); Some(sp) } else { None };
 		let mut dynamic_states = Vec::new();
 		if self.dynamic_state_flags.viewport { dynamic_states.push(VK_DYNAMIC_STATE_VIEWPORT); }
@@ -735,7 +739,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 			})
 		}
 		else { None };
-		let base = match self.base_
+		let base = match self._base
 		{
 			BasePipeline::Handle(ref h) => Some(h.0), BasePipeline::None => None,
 			_ => panic!("Deriving from other info in same creation is invalid for single creation of pipeline")
@@ -743,7 +747,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		let flags = self.flags | if base.is_some() { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
 		let cinfo = VkGraphicsPipelineCreateInfo
 		{
-			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &self.vi_state,
+			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &self.vi_state.0,
 			pInputAssemblyState: &self.ia_state, pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pViewportState: self.viewport_state.as_ref().map(|&(ref x, _, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pRasterizationState: &self.rasterizer_state as *const _,
@@ -752,7 +756,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
 			layout: self._layout.0, renderPass: self.rp.0, subpass: self.subpass,
-			basePipelineHandle: if let BasePipeline::Handle(h) = self.base_ { h.0 } else { VK_NULL_HANDLE as _ },
+			basePipelineHandle: if let &BasePipeline::Handle(ref h) = &self._base { h.0 } else { VK_NULL_HANDLE as _ },
 			basePipelineIndex: -1, flags, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
@@ -769,7 +773,7 @@ impl ::Device
 	/// On failure, this command returns
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn create_graphics_pipelines(&self, builders: &[GraphicsPipelineBuilder], cache: Option<&PipelineCache>) -> ::Result<Pipeline>
+	pub fn create_graphics_pipelines(&self, builders: &[GraphicsPipelineBuilder], cache: Option<&PipelineCache>) -> ::Result<Vec<Pipeline>>
 	{
 		let aggregates = builders.iter().map(|x|
 		{
@@ -803,7 +807,7 @@ impl ::Device
 			else { None };
 			(stages, ds, vs_, tcs_, tes_, gs_, fs_, dynamic_states)
 		}).collect::<Vec<_>>();
-		let cinfos = builders.iter().zip(aggregates.iter()).map(|(b, &(stages, ds, _, _, _, _, _, _))|
+		let cinfos = builders.iter().zip(aggregates.iter()).map(|(b, &(ref stages, ref ds, _, _, _, _, _, _))|
 		{
 			let (base_handle, base_index) = match b._base
 			{
@@ -827,7 +831,7 @@ impl ::Device
 		}).collect::<Vec<_>>();
 		let mut hs = vec![VK_NULL_HANDLE as VkPipeline; builders.len()];
 		unsafe { vkCreateGraphicsPipelines(self.native_ptr(), cache.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _),
-			cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), &mut h) }.into_result()
+			cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), hs.as_mut_ptr()) }.into_result()
 			.map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
 	}
 }

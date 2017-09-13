@@ -106,7 +106,7 @@ impl RenderPassBuilder
 		let cinfo = VkRenderPassCreateInfo
 		{
 			attachmentCount: self.attachments.len() as _, pAttachments: self.attachments.as_ptr(),
-			subpassCount: subpasses.len() as _, pSubpassCount: subpasses.as_ptr(),
+			subpassCount: subpasses.len() as _, pSubpasses: subpasses.as_ptr(),
 			dependencyCount: self.dependencies.len() as _, pDependencies: self.dependencies.as_ptr(),
 			.. Default::default()
 		};
@@ -123,7 +123,7 @@ impl Framebuffer
 	/// On failure, this command returns
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn new(mold: &RenderPass, attachment_objects: &[&::ImageView], size: Extent2D, layers: u32) -> ::Result<Self>
+	pub fn new(mold: &RenderPass, attachment_objects: &[&::ImageView], size: ::Extent2D, layers: u32) -> ::Result<Self>
 	{
 		let views = attachment_objects.iter().map(|x| x.0).collect::<Vec<_>>();
 		let cinfo = VkFramebufferCreateInfo
@@ -132,8 +132,8 @@ impl Framebuffer
 			width: size.0, height: size.1, layers, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateFramebuffer(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Framebuffer(h, device.clone()))
+		unsafe { vkCreateFramebuffer(mold.1.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Framebuffer(h, mold.1.clone()))
 	}
 }
 
@@ -144,6 +144,6 @@ impl RenderPass
 	pub fn optimal_granularity(&self) -> ::Extent2D
 	{
 		let mut e = ::Extent2D(0, 0);
-		unsafe { vkGetRenderAreaGranularity(self.1.native_ptr(), self.0, &mut e as *mut _) }; e
+		unsafe { vkGetRenderAreaGranularity(self.1.native_ptr(), self.0, ::std::mem::transmute(&mut e)) }; e
 	}
 }
