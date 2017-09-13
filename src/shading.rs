@@ -147,7 +147,7 @@ pub struct PipelineCache(VkPipelineCache, ::Device);
 /// Opaque handle to a pipeline layout object
 pub struct PipelineLayout(VkPipelineLayout, ::Device);
 /// Opaque handle to a pipeline object
-pub struct Pipeline(VkPipeline, ::Device);
+pub struct Pipeline(pub VkPipeline, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout]
