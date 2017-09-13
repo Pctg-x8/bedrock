@@ -111,12 +111,15 @@ impl<'p> DeviceBuilder<'p>
 			.map(|_| Device(RefCounter::new(DeviceCell(h))))
 	}
 }
+impl Device
+{
+	pub fn native_ptr(&self) -> VkDevice { (self.0).0 }
+}
 #[cfg(feature = "FeImplements")]
 impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
 #[cfg(feature = "FeImplements")]
 impl Device
 {
-	pub fn native_ptr(&self) -> VkDevice { (self.0).0 }
 	/// Return a function pointer for a command
 	/// # Failures
 	/// If function is not provided by instance or `name` is empty, returns `None`
