@@ -56,6 +56,18 @@ impl CommandPool
 		unsafe { vkAllocateCommandBuffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }.into_result()
 			.map(|_| hs)
 	}
+    /// Resets a command pool
+    /// # Safety
+    /// Application cannot use command buffers after this call
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn reset(&self, release_resources: bool) -> ::Result<()>
+	{
+		unsafe { vkResetCommandPool(self.1.native_ptr(), self.0, if reset_resources { VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT } else { 0 }) }
+			.into_result()
+	}
 	/// Free command buffers
 	pub fn free(&self, buffers: &[VkCommandBuffer])
 	{
