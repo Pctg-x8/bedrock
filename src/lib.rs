@@ -43,7 +43,7 @@ impl VkResultHandler for VkResult
 	fn into_result(self) -> Result<()> { if self == VK_SUCCESS { Ok(()) } else { Err(VkResultBox(self)) } }
 }
 /// Boxed version of `VkResult`
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct VkResultBox(pub VkResult);
 impl std::error::Error for VkResultBox
 {
@@ -90,12 +90,16 @@ impl std::error::Error for VkResultBox
         }
     }
 }
-impl std::fmt::Display for VkResultBox
+impl std::fmt::Debug for VkResultBox
 {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result
     {
         write!(fmt, "[{:?}] {}", self.0, (self as &std::error::Error).description())
     }
+}
+impl std::fmt::Display for VkResultBox
+{
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result { std::fmt::Debug::fmt(self, fmt) }
 }
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
