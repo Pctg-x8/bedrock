@@ -52,3 +52,6 @@ FnTransmuteImpl!(for PFN_vkCmdBindPipeline, PFN_vkCmdSetViewport, PFN_vkCmdSetSc
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkBuffer, VkDeviceSize, u32, u32));	// CmdDrawIndirect, CmdDrawIndexedIndirect
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkEvent, VkPipelineStageFlags));		// CmdSetEvent, CmdResetEvent
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkQueryPool, u32, u32));				// CmdBeginQuery, CmdResetQueryPool
+
+#[cfg(feature = "VK_EXT_debug_report")]
+FnTransmuteImpl!(for PFN_vkCreateDebugReportCallbackEXT, PFN_vkDebugReportMessageEXT, PFN_vkDestroyDebugReportCallbackEXT);

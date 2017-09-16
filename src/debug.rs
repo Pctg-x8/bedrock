@@ -5,12 +5,12 @@ use VkHandle;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque object to a debug report callback object
-pub struct DebugReportCallback(VkDebugReportCallbackEXT, ::Instance);
+pub struct DebugReportCallback(VkDebugReportCallbackEXT, ::Instance, PFN_vkDestroyDebugReportCallbackEXT);
 
 #[cfg(feature = "FeImplements")]
 impl Drop for DebugReportCallback
 {
-	fn drop(&mut self) { unsafe { vkDestroyDebugReportCallbackEXT(self.1.native_ptr(), self.native_ptr(), ::std::ptr::null()) }; }
+	fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), ::std::ptr::null()); }
 }
 
 impl VkHandle for DebugReportCallback { type Handle = VkDebugReportCallbackEXT; fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 } }
@@ -25,14 +25,17 @@ impl DebugReportCallback
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	pub fn new<T>(instance: &::Instance, flags: DebugReportFlags, callback: PFN_vkDebugReportCallbackEXT, user_data: Option<&T>) -> ::Result<Self>
 	{
+		let cons: PFN_vkCreateDebugReportCallbackEXT = instance.extra_procedure("vkCreateDebugReportCallbackEXT")
+			.expect("Requiring vkCreateDebugReportCallbackEXT function");
+		let des: PFN_vkDestroyDebugReportCallbackEXT = instance.extra_procedure("vkDestroyDebugReportCallbackEXT")
+			.expect("Requiring vkDestroyDebugReportCallbackEXT function");
 		let s = VkDebugReportCallbackCreateInfoEXT
 		{
 			flags: flags.0, pfnCallback: callback, pUserData: user_data.map(|x| x as *const T as *mut _).unwrap_or(::std::ptr::null_mut()),
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateDebugReportCallbackEXT(instance.native_ptr(), &s, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| DebugReportCallback(h, instance.clone()))
+		cons(instance.native_ptr(), &s, ::std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), des))
 	}
 }
 #[cfg(feature = "FeImplements")]
@@ -44,7 +47,9 @@ impl ::Instance
 	{
 		let lp = ::std::ffi::CString::new(layer_prefix).unwrap();
 		let msg = ::std::ffi::CString::new(message).unwrap();
-		unsafe { vkDebugReportMessageEXT(self.native_ptr(), flags.0, object_type as _, object, location, message_count, lp.as_ptr(), msg.as_ptr()) };
+		let msgf: PFN_vkDebugReportMessageEXT = self.extra_procedure("vkDebugReportMessageEXT")
+			.expect("Requiring vkDebugReportMessageEXT function");
+		msgf(self.native_ptr(), flags.0, object_type as _, object, location, message_count, lp.as_ptr(), msg.as_ptr());
 	}
 }
 
