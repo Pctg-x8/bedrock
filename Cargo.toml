@@ -101,7 +101,7 @@ FePresentation = ["VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display"]
 
 [dependencies]
 libc = "0.2"
-x11 = { version = "~2.14", optional = true }
+x11 = { version = "^2.15", optional = true }
 xcb = { version = "~0.8", optional = true }
 wayland-client = { version = "~0.9", optional = true }
 android_ffi = { version = "~0.1", optional = true }
