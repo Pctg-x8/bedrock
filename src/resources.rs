@@ -25,6 +25,16 @@ pub struct ImageView(pub VkImageView, Image);
 impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.1 .0 .1.native_ptr(), self.0, ::std::ptr::null()) }; } }
 #[cfg(feature = "FeImplements")]
 impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1 .0 .1.native_ptr(), self.0, ::std::ptr::null()) }; } }
+impl ::VkHandle for DeviceMemory { type Handle = VkDeviceMemory; fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 } }
+impl ::VkHandle for Buffer { type Handle = VkBuffer; fn native_ptr(&self) -> VkBuffer { self.0 .0 } }
+impl ::VkHandle for Image  { type Handle = VkImage;  fn native_ptr(&self) -> VkImage  { self.0 .0 } }
+impl ::VkHandle for BufferView { type Handle = VkBufferView; fn native_ptr(&self) -> VkBufferView { self.0 } }
+impl ::VkHandle for ImageView  { type Handle = VkImageView;  fn native_ptr(&self) -> VkImageView  { self.0 } }
+impl ::DeviceChild for DeviceMemory { fn device(&self) -> &::Device { &self.0 .1 } }
+impl ::DeviceChild for Buffer { fn device(&self) -> &::Device { &self.0 .1 } }
+impl ::DeviceChild for Image  { fn device(&self) -> &::Device { &self.0 .1 } }
+impl ::Devicechild for BufferView { fn device(&self) -> &::Device { self.1.device() } }
+impl ::DeviceChild for ImageView  { fn device(&self) -> &::Device { self.1.device() } }
 
 #[cfg(feature = "FeImplements")]
 impl DeviceMemory

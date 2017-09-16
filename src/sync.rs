@@ -12,6 +12,16 @@ pub struct Semaphore(pub VkSemaphore, ::Device);
 /// Opaque handle to a event object
 pub struct Event(pub VkEvent, ::Device);
 
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
+	for Fence[vkDestroyFence], Semaphore[vkDestroySemaphore], Event[vkDestroyEvent]
+}
+impl ::VkHandle for Fence { type Handle = VkFence; fn native_ptr(&self) -> VkFence { self.0 } }
+impl ::VkHandle for Semaphore { type Handle = VkSemaphore; fn native_ptr(&self) -> VkSemaphore { self.0 } }
+impl ::VkHandle for Event { type Handle = VkEvent; fn native_ptr(&self) -> VkEvent { self.0 } }
+impl ::DeviceChild for Fence { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for Semaphore { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for Event { fn device(&self) -> &::Device { &self.1 } }
+
 #[cfg(feature = "FeImplements")]
 impl Fence
 {
@@ -57,10 +67,6 @@ impl Event
 		unsafe { vkCreateEvent(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Event(h, device.clone()))
 	}
-}
-
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
-	for Fence[vkDestroyFence], Semaphore[vkDestroySemaphore], Event[vkDestroyEvent]
 }
 
 #[cfg(feature = "FeImplements")]

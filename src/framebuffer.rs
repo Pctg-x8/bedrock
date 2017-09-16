@@ -4,13 +4,17 @@ use vk::*;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a render pass object
-pub struct RenderPass(pub VkRenderPass, ::Device);
+pub struct RenderPass(VkRenderPass, ::Device);
 /// Opaque handle to a framebuffer object
-pub struct Framebuffer(pub VkFramebuffer, ::Device);
+pub struct Framebuffer(VkFramebuffer, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for RenderPass[vkDestroyRenderPass], Framebuffer[vkDestroyFramebuffer]
 }
+impl ::VkHandle for RenderPass { type Handle = VkRenderPass; fn native_ptr(&self) -> VkRenderPass { self.0 } }
+impl ::VkHandle for Framebuffer { type Handle = VkFramebuffer; fn native_ptr(&self) -> VkFramebuffer { self.0 } }
+impl ::DeviceChild for RenderPass { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for Framebuffer { fn device(&self) -> &::Device { &self.1 } }
 
 /// Builder structure to construct the `VkSubpassDescription`
 pub struct SubpassDescription

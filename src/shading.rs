@@ -145,13 +145,21 @@ pub struct ShaderModule(VkShaderModule, ::Device);
 /// Opaque handle to a pipeline cache object
 pub struct PipelineCache(VkPipelineCache, ::Device);
 /// Opaque handle to a pipeline layout object
-pub struct PipelineLayout(pub VkPipelineLayout, ::Device);
+pub struct PipelineLayout(VkPipelineLayout, ::Device);
 /// Opaque handle to a pipeline object
-pub struct Pipeline(pub VkPipeline, ::Device);
+pub struct Pipeline(VkPipeline, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout]
 }
+impl ::VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
+impl ::VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
+impl ::VkHandle for PipelineLayout { type Handle = VkPipelineLayout; fn native_ptr(&self) -> VkPipelineLayout { self.0 } }
+impl ::VkHandle for Pipeline { type Handle = VkPipeline; fn native_ptr(&self) -> VkPipeline { self.0 } }
+impl ::DeviceChild for ShaderModule { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for PipelineCache { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for PipelineLayout { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for Pipeline { fn device(&self) -> &::Device { &self.1 } }
 
 #[cfg(feature = "FeImplements")]
 impl ShaderModule

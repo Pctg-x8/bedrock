@@ -5,11 +5,17 @@ use vk::*;
 
 /// Opaque handle to a command pool object
 #[derive(Clone)] pub struct CommandPool(VkCommandPool, ::Device);
+/// Opaque handle to a command buffer object
+#[repr(C)] #[derive(Clone, Copy)] pub struct CommandBuffer(VkCommandBuffer);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for CommandPool[vkDestroyCommandPool] }
+impl ::VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
+impl ::VkHandle for CommandBuffer { type Handle = VkCommandBuffer; fn native_ptr(&self) -> VkCommandBuffer { self.0 } }
+impl ::DeviceChild for CommandPool { fn device(&self) -> &::Device { &self.1 } }
 
 /// The recording state of commandbuffers
-pub struct CmdRecord<'d> { ptr: VkCommandBuffer, layout: [&'d ::PipelineLayout; 2] }
+#[cfg(feature = "FeImplements")]
+pub struct CmdRecord<'d> { ptr: &'d CommandBuffer, layout: [Option<&'d ::PipelineLayout>; 2] }
 
 /// Implicitly closing the recording state. This may cause a panic when there are errors in commands
 #[cfg(feature = "FeImplements")]
@@ -45,7 +51,7 @@ impl CommandPool
 	/// On failure, this command returns
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn alloc(&self, count: u32, primary: bool) -> ::Result<Vec<VkCommandBuffer>>
+	pub fn alloc(&self, count: u32, primary: bool) -> ::Result<Vec<CommandBuffer>>
 	{
 		let ainfo = VkCommandBufferAllocateInfo
 		{
@@ -54,7 +60,7 @@ impl CommandPool
 		};
 		let mut hs = vec![VK_NULL_HANDLE as _; count as _];
 		unsafe { vkAllocateCommandBuffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }.into_result()
-			.map(|_| hs)
+			.map(|_| unsafe { ::std::mem::transmute(hs) })
 	}
     /// Resets a command pool
     /// # Safety
@@ -69,6 +75,12 @@ impl CommandPool
 			.into_result()
 	}
 	/// Free command buffers
+	pub fn free(&self, buffers: &[CommandBuffer])
+	{
+		unsafe { vkFreeCommandBuffers(self.1.native_ptr(), self.0, buffers.len() as _, buffers.as_ptr() as *const _) };
+	}
+}
+
 #[cfg(feature = "FeImplements")]
 impl CommandBuffer
 {
@@ -92,7 +104,7 @@ impl CommandBuffer
 		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.0, r.0, s)).unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
 		let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
 		let inherit = VkCommandBufferInheritanceInfo
-	{
+		{
 			framebuffer: fb, renderPass: rp, subpass: s, occlusionQueryEnable: (oq != OcclusionQuery::Disable) as _,
 			queryFlags: if oq == OcclusionQuery::Precise { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 }, pipelineStatistics: psq,
 			.. Default::default()
@@ -541,4 +553,13 @@ pub enum IndexType
 	U16 = VK_INDEX_TYPE_UINT16 as _,
 	/// Indices are 32-bit unsigned integer values
 	U32 = VK_INDEX_TYPE_UINT32 as _
+}
+
+/// Enabling or disabling the occlusion query
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OcclusionQuery
+{
+	Disable, Enable,
+	/// `VK_QUERY_CONTROL_PRECISE_BIT`
+	Precise
 }

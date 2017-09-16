@@ -15,6 +15,10 @@ use std::ptr::{null, null_mut};
 pub struct Instance(VkInstance);
 /// Opaque handle to a physical device object
 pub struct PhysicalDevice(VkPhysicalDevice);
+
+impl ::VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 } }
+impl ::VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
+
 /// Builder object for constructing a `Instance`
 pub struct InstanceBuilder
 {

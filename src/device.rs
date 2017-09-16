@@ -63,6 +63,11 @@ pub struct Device(RefCounter<DeviceCell>);
 pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
+
+impl ::VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
+impl ::VkHandle for Queue  { type Handle = VkQueue;  fn native_ptr(&self) -> VkQueue  { self.0 } }
+impl ::DeviceChild for Queue { fn device(&self) -> &Device { &self.1 } }
+
 /// Builder object for constructing a `Device`
 pub struct DeviceBuilder<'p>
 {

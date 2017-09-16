@@ -92,14 +92,20 @@ impl std::fmt::Display for VkResultBox
     }
 }
 
-/// Construction from Pointer that is not checked
-pub trait DeviceChild<P>
+/// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
+pub trait VkHandle
 {
-    /// Construct a object from unchecked handle pointer
-    /// # Safety
-    /// Caller and callee do not guarantee that the passed pointer is valid 
-    unsafe fn from_unchecked(p: P, parent: &Device) -> Self;
+    type Handle;
+    /// Retrieve an underlying handle
+    fn native_ptr(&self) -> Self::Handle;
 }
+/// Child of a device object
+pub trait DeviceChild
+{
+    /// Retrieve a reference to a device object that creates this object
+    fn device(&self) -> &Device;
+}
+
 #[cfg(feature = "FeImplements")]
 macro_rules! DeviceChildCommonDrop
 {
@@ -150,6 +156,7 @@ mod command; pub use command::*;
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
+impl VkHandle for QueryPool { type Handle = VkQueryPool; fn native_ptr(&self) -> VkQueryPool { self.0 } }
 #[cfg(feature = "FeImplements")]
 impl QueryPool
 {
