@@ -33,7 +33,7 @@ impl ::VkHandle for ImageView  { type Handle = VkImageView;  fn native_ptr(&self
 impl ::DeviceChild for DeviceMemory { fn device(&self) -> &::Device { &self.0 .1 } }
 impl ::DeviceChild for Buffer { fn device(&self) -> &::Device { &self.0 .1 } }
 impl ::DeviceChild for Image  { fn device(&self) -> &::Device { &self.0 .1 } }
-impl ::Devicechild for BufferView { fn device(&self) -> &::Device { self.1.device() } }
+impl ::DeviceChild for BufferView { fn device(&self) -> &::Device { self.1.device() } }
 impl ::DeviceChild for ImageView  { fn device(&self) -> &::Device { self.1.device() } }
 
 #[cfg(feature = "FeImplements")]

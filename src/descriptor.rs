@@ -13,7 +13,7 @@ pub struct DescriptorPool(VkDescriptorPool, ::Device);
 impl ::VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
 impl ::VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }
 impl ::DeviceChild for DescriptorSetLayout { fn device(&self) -> &::Device { &self.1 } }
-impl ::Devicechild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
+impl ::DeviceChild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
 
 /// Structure specifying a descriptor set layout binding
 ///
