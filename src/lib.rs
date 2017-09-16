@@ -454,12 +454,34 @@ impl FormatTraits
     }
 }
 
+/// Format Selection Query
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct FormatQuery(pub vk::VkFormat);
+impl FormatQuery
+{
+    pub fn eq_bit_width(self, w: usize) -> Self
+    {
+        if FormatTraits(self.0).bit_width() == w { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+    }
+    pub fn has_components(self, c: FormatComponents) -> Self
+    {
+        if FormatTraits(self.0).components() == c { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+    }
+    pub fn has_element_of(self, e: ElementType) -> Self
+    {
+        if FormatTraits(self.0).etype() == e { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+    }
+    pub fn passed(self) -> bool { self.0 != VK_FORMAT_UNDEFINED }
+}
+
 /// Containing Components in Format(Order is not considered)
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum FormatComponents
 {
     Undefined, R, RG, RGB, RGBA, EBGR, D, S, DS, Compressed
 }
 /// Containing component element in format
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum ElementType
 {
     Undefined, UNORM, SNORM, UINT, SINT, SFLOAT, UFLOAT, SRGB, USCALED, SSCALED,
