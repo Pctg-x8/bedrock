@@ -13,7 +13,7 @@ pub type VkXlibSurfaceCreateFlagsKHR = VkFlags;
 pub struct VkXlibSurfaceCreateInfoKHR
 {
     pub sType: VkStructureType, pub pNext: *const c_void,
-    pub flags: VkXlibSurfaceCreateFlagsKHR, pub pdy: *mut Display, pub window: Window
+    pub flags: VkXlibSurfaceCreateFlagsKHR, pub dpy: *mut Display, pub window: Window
 }
 impl Default for VkXlibSurfaceCreateInfoKHR
 {
@@ -30,5 +30,5 @@ pub type PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR = extern "system" fn(
 extern "system"
 {
     pub fn vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    pub fn vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut x11::xlib::Display, visualID: x11::xlib::VisualID) -> VkBool32;
+    pub fn vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut Display, visualID: VisualID) -> VkBool32;
 }

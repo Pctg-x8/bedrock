@@ -31,7 +31,7 @@ impl Surface
 		let cinfo = VkXlibSurfaceCreateInfoKHR { dpy: display, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateXlibSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Surface(h, instance.clone()))
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for a X11 window, using the XCB client-side library
 	/// # Failures
@@ -39,12 +39,12 @@ impl Surface
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	#[cfg(feature = "VK_KHR_xcb_surface")]
-	pub fn new_xcb(instance: &::Instance, connection: *mut ::xcb::xcb_connection_t, window: ::xcb::xcb_window_t) -> ::Result<Self>
+	pub fn new_xcb(instance: &::Instance, connection: *mut ::xcb::ffi::xcb_connection_t, window: ::xcb::ffi::xcb_window_t) -> ::Result<Self>
 	{
 		let cinfo = VkXcbSurfaceCreateInfoKHR { connection, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateXcbSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Surface(h, instance.clone()))
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for a Wayland window
 	/// # Failures
@@ -57,7 +57,7 @@ impl Surface
 		let cinfo = VkWaylandSurfaceCreateInfoKHR { display, surface, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateWaylandSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Surface(h, instance.clone()))
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an Android native window
 	/// # Failures
@@ -65,12 +65,12 @@ impl Surface
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
 	#[cfg(feature = "VK_KHR_android_surface")]
-	pub fn new_android(instance: &::Instance, window: *mut ::android_ffi::ANativeWindow) -> ::Result<Self>
+	pub fn new_android(instance: &::Instance, window: *mut ::android_ffi::ffi::ANativeWindow) -> ::Result<Self>
 	{
-		let cinfo = VkAndroidSurfaceCreateInfo { window, .. Default::default() };
+		let cinfo = VkAndroidSurfaceCreateInfoKHR { window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateAndroidSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Surface(h, instance.clone()))
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an Win32 native window
 	/// # Failures
@@ -80,10 +80,10 @@ impl Surface
 	#[cfg(feature = "VK_KHR_win32_surface")]
 	pub fn new_win32(instance: &::Instance, hinstance: ::winapi::HINSTANCE, hwnd: ::winapi::HWND) -> ::Result<Self>
 	{
-		let cinfo = VkWin32SurfaceCreateInfo { hinstance, hwnd, .. Default::default() };
+		let cinfo = VkWin32SurfaceCreateInfoKHR { hinstance, hwnd, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Surface(h, instance.clone()))
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 }
 

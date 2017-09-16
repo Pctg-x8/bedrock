@@ -11,13 +11,17 @@ use VkResultHandler;
 use std::mem::{uninitialized, zeroed, transmute};
 #[cfg(feature = "FeImplements")]
 use std::ptr::{null, null_mut};
+#[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
+#[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
 
+struct InstanceCell(VkInstance);
 /// Opaque handle to a instance object
-pub struct Instance(VkInstance);
+#[derive(Clone)] pub struct Instance(RefCounter<InstanceCell>);
+#[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Instance {}
 /// Opaque handle to a physical device object
 pub struct PhysicalDevice(VkPhysicalDevice);
 
-impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 } }
+impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 .0 } }
 impl VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
 
 /// Builder object for constructing a `Instance`
@@ -68,11 +72,11 @@ impl InstanceBuilder
 		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
 		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = unsafe { zeroed() };
-		unsafe { vkCreateInstance(&self.cinfo, null(), &mut h) }.into_result().map(|_| Instance(h))
+		unsafe { vkCreateInstance(&self.cinfo, null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell(h))))
 	}
 }
 #[cfg(feature = "FeImplements")]
-impl Drop for Instance { fn drop(&mut self) { unsafe { vkDestroyInstance(self.0, null()); } } }
+impl Drop for InstanceCell { fn drop(&mut self) { unsafe { vkDestroyInstance(self.0, null()); } } }
 #[cfg(feature = "FeImplements")]
 impl Instance
 {
@@ -84,7 +88,7 @@ impl Instance
 		if name.is_empty() { None }
 		else
 		{
-			let p = unsafe { vkGetInstanceProcAddr(self.0, CString::new(name).unwrap().as_ptr()) };
+			let p = unsafe { vkGetInstanceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
 			if unsafe { transmute::<_, usize>(p) == 0 } { None } else { unsafe { Some(::fnconv::FnTransmute::from_fn(p)) } }
 		}
 	}
@@ -97,9 +101,9 @@ impl Instance
 	pub fn enumerate_physical_devices(&self) -> ::Result<Vec<PhysicalDevice>>
 	{
 		let mut n = 0;
-		unsafe { vkEnumeratePhysicalDevices(self.0, &mut n, null_mut()) }.into_result()?;
+		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkEnumeratePhysicalDevices(self.0, &mut n, v.as_mut_ptr()) }.into_result()
+		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
 			.map(|_| unsafe { transmute(v) })
 	}
 	/// Returns up to all of global layer properties
@@ -248,7 +252,7 @@ impl PhysicalDevice
 	}
 	/// Query physical device for presentation to X11 server using XCB
 	#[cfg(feature = "VK_KHR_xcb_surface")]
-	pub fn xcb_presentation_support(&self, queue_family: u32, connection: *mut ::xcb::xcb_connection_t, visual: ::xcb::xcb_visualid_t) -> bool
+	pub fn xcb_presentation_support(&self, queue_family: u32, connection: *mut ::xcb::ffi::xcb_connection_t, visual: ::xcb::ffi::xcb_visualid_t) -> bool
 	{
 		unsafe { vkGetPhysicalDeviceXcbPresentationSupportKHR(self.0, queue_family, connection, visual) != 0 }
 	}

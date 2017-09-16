@@ -2,7 +2,7 @@
 
 use libc::*;
 use super::*;
-use xcb::*;
+use xcb::ffi::*;
 
 pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_XCB_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_xcb_surface";
@@ -13,7 +13,7 @@ pub type VkXcbSurfaceCreateFlagsKHR = VkFlags;
 pub struct VkXcbSurfaceCreateInfoKHR
 {
     pub sType: VkStructureType, pub pNext: *const c_void,
-    pub flags: VkXcbSurfaceCreateFlagsKHR, pub connection: *mut xcb_connection_t, pub window: *mut xcb_window_t
+    pub flags: VkXcbSurfaceCreateFlagsKHR, pub connection: *mut xcb_connection_t, pub window: xcb_window_t
 }
 impl Default for VkXcbSurfaceCreateInfoKHR
 {
@@ -30,5 +30,5 @@ pub type PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = extern "system" fn(p
 extern "system"
 {
     pub fn vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb::xcb_connection_t, visual_id: xcb::xcb_visualid_t) -> VkBool32;
+    pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb_connection_t, visual_id: xcb_visualid_t) -> VkBool32;
 }

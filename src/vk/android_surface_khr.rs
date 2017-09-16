@@ -2,7 +2,7 @@
 
 use libc::*;
 use super::*;
-use android_ffi::*;
+use android_ffi::ffi::*;
 
 pub const VK_KHR_ANDROID_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_ANDROID_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_android_surface";
