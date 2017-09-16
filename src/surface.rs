@@ -18,6 +18,8 @@ impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> 
 impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 } }
 impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.1 } }
 
+/// Creation Procedures
+#[cfg(feature = "FeImplements")]
 impl Surface
 {
 	/// Create a `Surface` object for an X11 window, using the Xlib client-side library

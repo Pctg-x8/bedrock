@@ -271,7 +271,7 @@ impl PhysicalDevice
 }
 
 /// VK_KHR_display
-#[cfg(feature = "VK_KHR_display")]
+#[cfg(all(feature = "VK_KHR_display", feature = "FeImplements"))]
 impl PhysicalDevice
 {
 	/// Query information about the available displays
