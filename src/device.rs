@@ -6,6 +6,7 @@ use vk::*;
 use PhysicalDevice;
 use std::ffi::CString;
 use std::borrow::Cow;
+use VkHandle;
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
@@ -64,8 +65,8 @@ pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
 
-impl ::VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
-impl ::VkHandle for Queue  { type Handle = VkQueue;  fn native_ptr(&self) -> VkQueue  { self.0 } }
+impl VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
+impl VkHandle for Queue  { type Handle = VkQueue;  fn native_ptr(&self) -> VkQueue  { self.0 } }
 impl ::DeviceChild for Queue { fn device(&self) -> &Device { &self.1 } }
 
 /// Builder object for constructing a `Device`
@@ -123,7 +124,7 @@ impl<'p> DeviceBuilder<'p>
 			pEnabledFeatures: &self.features, .. Default::default()
 		};
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkCreateDevice(::std::mem::transmute(self.pdev_ref), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateDevice(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| Device(RefCounter::new(DeviceCell(h))))
 	}
 }
