@@ -7,6 +7,7 @@
 //! # Compile Options
 //! - `FeImplements`: Enable Vulkan implementations(functions)
 //! - `FeMultithreaded`: Enables to use objects from some threads(experimental)
+//! - `FeWindowRendering`: Enable window rendering features(`VK_KHR_surface`/`VK_KHR_swapchain`)
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 
 extern crate libc;
@@ -153,7 +154,8 @@ mod descriptor; pub use descriptor::*;
 mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;
 mod command; pub use command::*;
-mod surface; pub use surface::*;
+#[cfg(feature = "FeWindowRendering")] mod surface;
+#[cfg(feature = "FeWindowRendering")] pub use surface::*;
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);

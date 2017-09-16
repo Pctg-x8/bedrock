@@ -5,23 +5,17 @@ use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
-#[cfg(feature = "VK_KHR_surface")]
 struct SurfaceCell(VkSurfaceKHR, ::Instance);
 /// Opaque handle to a surface object
-#[cfg(feature = "VK_KHR_surface")]
 #[derive(Clone)] pub struct Surface(RefCounter<SurfaceCell>);
 /// Opaque handle to a swapchain object
-#[cfg(feature = "VK_KHR_swapchain")]
 pub struct Swapchain(VkSwapchainKHR, ::Device, Surface);
 
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_surface"))]
+#[cfg(feature = "FeImplements")]
 impl Drop for SurfaceCell { fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))] DeviceChildCommonDrop! { for Swapchain[vkDestroySwapchainKHR] }
-#[cfg(feature = "VK_KHR_surface")]
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for Swapchain[vkDestroySwapchainKHR] }
 impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
-#[cfg(feature = "VK_KHR_swapchain")]
 impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 } }
-#[cfg(feature = "VK_KHR_swapchain")]
 impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.1 } }
 
 /// Builder object to construct a `Swapchain`
@@ -62,7 +56,7 @@ impl<'d> SwapchainBuilder<'d>
 	/// - VK_ERROR_DEVICE_LOST
 	/// - VK_ERROR_SURFACE_LOST_KHR
 	/// - VK_ERROR_NATIVE_WINDOW_IN_USE_KHR
-	#[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
+	#[cfg(feature = "FeImplements")]
 	pub fn create(&self, device: &::Device) -> ::Result<Swapchain>
 	{
 		let mut h = VK_NULL_HANDLE as _;
@@ -71,7 +65,7 @@ impl<'d> SwapchainBuilder<'d>
 	}
 }
 
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
+#[cfg(feature = "FeImplements")]
 impl Swapchain
 {
 	/// Obtain the array of presentable images associated with a swapchain
@@ -122,7 +116,7 @@ impl Swapchain
 		unsafe { vkQueuePresentKHR(queue.native_ptr(), &pinfo) }.into_result().and_then(|_| res.into_result())
 	}
 }
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
+#[cfg(feature = "FeImplements")]
 impl ::Queue
 {
 	/// Queue images for presentation
@@ -149,7 +143,6 @@ impl ::Queue
 }
 
 /// Presentation mode supported for a surface
-#[cfg(feature = "VK_KHR_surface")]
 #[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum PresentMode
 {
@@ -172,7 +165,6 @@ pub enum PresentMode
 	FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR as _
 }
 
-#[cfg(feature = "VK_KHR_surface")]
 #[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum SurfaceTransform
 {
@@ -196,7 +188,6 @@ pub enum SurfaceTransform
 	Inherit = VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR as _
 }
 
-#[cfg(feature = "VK_KHR_surface")]
 #[repr(u32)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompositeAlpha
 {
@@ -214,13 +205,11 @@ pub enum CompositeAlpha
 	Inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR as _
 }
 
-#[cfg(feature = "VK_KHR_surface")]
 impl SurfaceTransform
 {
 	/// Does the value contains this bits
 	pub fn contains(self, value: u32) -> bool { (value | self as u32) != 0 }
 }
-#[cfg(feature = "VK_KHR_surface")]
 impl CompositeAlpha
 {
 	/// Does the value contains this bits

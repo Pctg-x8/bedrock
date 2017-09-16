@@ -97,6 +97,7 @@ VK_EXT_post_depth_coverage = []
 VK_EXT_shader_viewport_index_layer = []
 FeImplements = []
 FeMultithreaded = []
+FeWindowRendering = ["VK_KHR_surface", "VK_KHR_swapchain"]
 
 [dependencies]
 libc = "0.2"
