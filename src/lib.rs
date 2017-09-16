@@ -20,11 +20,16 @@ extern crate libc;
 extern crate winapi;
 #[cfg(any(feature = "VK_KHR_xlib_surface", feature = "VK_EXT_acquire_xlib_display"))]
 extern crate x11;
+#[cfg(feature = "VK_KHR_xcb_surface")]
+extern crate xcb;
+#[cfg(feature = "VK_KHR_wayland_surface")]
+extern crate wayland_client;
+#[cfg(feature = "VK_KHR_android_surface")]
+extern crate android_ffi;
 
 #[macro_use]
 mod vk;
 use vk::*;
-// use std::ffi::CString;
 
 #[cfg(feature = "FeImplements")] mod fnconv;
 

@@ -18,6 +18,75 @@ impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> 
 impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 } }
 impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.1 } }
 
+impl Surface
+{
+	/// Create a `Surface` object for an X11 window, using the Xlib client-side library
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "VK_KHR_xlib_surface")]
+	pub fn new_xlib(instance: &::Instance, display: *mut ::x11::xlib::Display, window: ::x11::xlib::Window) -> ::Result<Self>
+	{
+		let cinfo = VkXlibSurfaceCreateInfoKHR { dpy: display, window, .. Default::default() };
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateXlibSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Surface(h, instance.clone()))
+	}
+	/// Create a `Surface` object for a X11 window, using the XCB client-side library
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "VK_KHR_xcb_surface")]
+	pub fn new_xcb(instance: &::Instance, connection: *mut ::xcb::xcb_connection_t, window: ::xcb::xcb_window_t) -> ::Result<Self>
+	{
+		let cinfo = VkXcbSurfaceCreateInfoKHR { connection, window, .. Default::default() };
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateXcbSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Surface(h, instance.clone()))
+	}
+	/// Create a `Surface` object for a Wayland window
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "VK_KHR_wayland_surface")]
+	pub fn new_wayland(instance: &::Instance, display: *mut ::wayland_client::sys::wl_display, surface: *mut ::wayland_client::sys::wl_proxy) -> ::Result<Self>
+	{
+		let cinfo = VkWaylandSurfaceCreateInfoKHR { display, surface, .. Default::default() };
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateWaylandSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Surface(h, instance.clone()))
+	}
+	/// Create a `Surface` object for an Android native window
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "VK_KHR_android_surface")]
+	pub fn new_android(instance: &::Instance, window: *mut ::android_ffi::ANativeWindow) -> ::Result<Self>
+	{
+		let cinfo = VkAndroidSurfaceCreateInfo { window, .. Default::default() };
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateAndroidSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Surface(h, instance.clone()))
+	}
+	/// Create a `Surface` object for an Win32 native window
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "VK_KHR_win32_surface")]
+	pub fn new_win32(instance: &::Instance, hinstance: ::winapi::HINSTANCE, hwnd: ::winapi::HWND) -> ::Result<Self>
+	{
+		let cinfo = VkWin32SurfaceCreateInfo { hinstance, hwnd, .. Default::default() };
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Surface(h, instance.clone()))
+	}
+}
+
 /// Builder object to construct a `Swapchain`
 pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface, Vec<u32>);
 impl<'d> SwapchainBuilder<'d>

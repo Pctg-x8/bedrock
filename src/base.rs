@@ -240,4 +240,28 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceSurfacePresentModesKHR(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
 			.map(|_| unsafe { ::std::mem::transmute(v) })
 	}
+	/// Query physical device for presentation to X11 server using Xlib
+	#[cfg(feature = "VK_KHR_xlib_surface")]
+	pub fn xlib_presentation_support(&self, queue_family: u32, display: *mut ::x11::xlib::Display, visual: ::x11::xlib::VisualID) -> bool
+	{
+		unsafe { vkGetPhysicalDeviceXlibPresentationSupportKHR(self.0, queue_family, display, visual) != 0 }
+	}
+	/// Query physical device for presentation to X11 server using XCB
+	#[cfg(feature = "VK_KHR_xcb_surface")]
+	pub fn xcb_presentation_support(&self, queue_family: u32, connection: *mut ::xcb::xcb_connection_t, visual: ::xcb::xcb_visualid_t) -> bool
+	{
+		unsafe { vkGetPhysicalDeviceXcbPresentationSupportKHR(self.0, queue_family, connection, visual) != 0 }
+	}
+	/// Query physical device for presentation to Wayland
+	#[cfg(feature = "VK_KHR_wayland_surface")]
+	pub fn wayland_presentation_support(&self, queue_family: u32, display: *mut ::wayland_client::sys::wl_display) -> bool
+	{
+		unsafe { vkGetPhysicalDeviceWaylandPresentationSupportKHR(self.0, queue_family, display) != 0 }
+	}
+	/// Query queue family support for presentation on a Win32 display
+	#[cfg(feature = "VK_KHR_win32_surface")]
+	pub fn win32_presentation_support(&self, queue_family: u32) -> bool
+	{
+		unsafe { vkGetPhysicalDeviceWin32PresentationSupportKHR(self.0, queue_family) != 0 }
+	}
 }
