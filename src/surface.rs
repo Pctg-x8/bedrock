@@ -8,15 +8,16 @@ use {VkHandle, DeviceChild};
 struct SurfaceCell(VkSurfaceKHR, ::Instance);
 /// Opaque handle to a surface object
 #[derive(Clone)] pub struct Surface(RefCounter<SurfaceCell>);
+struct SwapchainCell(VkSwapchainKHR, ::Device, Surface, VkFormat);
 /// Opaque handle to a swapchain object
-pub struct Swapchain(VkSwapchainKHR, ::Device, Surface);
+#[derive(Clone)] pub struct Swapchain(RefCounter<SwapchainCell>);
 
 #[cfg(feature = "FeImplements")]
 impl Drop for SurfaceCell { fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for Swapchain[vkDestroySwapchainKHR] }
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for SwapchainCell[vkDestroySwapchainKHR] }
 impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
-impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 } }
-impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.1 } }
+impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 .0 } }
+impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.0 .1 } }
 
 /// Creation Procedures
 #[cfg(feature = "FeImplements")]
@@ -158,26 +159,14 @@ impl<'d> SwapchainBuilder<'d>
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateSwapchainKHR(device.native_ptr(), &self.0, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Swapchain(h, device.clone(), self.1.clone()))
+			.map(|_| Swapchain(RefCounter::new(SwapchainCell(h, device.clone(), self.1.clone(), self.0.imageFormat))))
 	}
 }
 
 #[cfg(feature = "FeImplements")]
 impl Swapchain
 {
-	/// Obtain the array of presentable images associated with a swapchain
-	/// # Failures
-	/// On failure, this command returns
-	///
-	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn get_images(&self) -> ::Result<Vec<VkImage>>
-	{
-		let mut n = 0;
-		unsafe { vkGetSwapchainImagesKHR(self.device().native_ptr(), self.native_ptr(), &mut n, ::std::ptr::null_mut()) }.into_result()?;
-		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkGetSwapchainImagesKHR(self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
-	}
+	pub fn format(&self) -> VkFormat { self.0 .3 }
 	/// Retrieve the index of the next available presentation image
 	/// # Failures
 	/// On failure, this command returns
@@ -210,7 +199,7 @@ impl Swapchain
 		let pinfo = VkPresentInfoKHR
 		{
 			waitSemaphoreCount: wait_semaphores.len() as _, pWaitSemaphores: wait_semaphores.as_ptr(),
-			swapchainCount: 1, pSwapchains: &self.0, pImageIndices: &index, pResults: &mut res,
+			swapchainCount: 1, pSwapchains: &self.native_ptr(), pImageIndices: &index, pResults: &mut res,
 			.. Default::default()
 		};
 		unsafe { vkQueuePresentKHR(queue.native_ptr(), &pinfo) }.into_result().and_then(|_| res.into_result())

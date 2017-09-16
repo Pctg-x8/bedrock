@@ -1,6 +1,7 @@
 //! Vulkan RenderPass/Framebuffer
 
 use vk::*;
+use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a render pass object
@@ -11,10 +12,10 @@ pub struct Framebuffer(VkFramebuffer, ::Device);
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for RenderPass[vkDestroyRenderPass], Framebuffer[vkDestroyFramebuffer]
 }
-impl ::VkHandle for RenderPass { type Handle = VkRenderPass; fn native_ptr(&self) -> VkRenderPass { self.0 } }
-impl ::VkHandle for Framebuffer { type Handle = VkFramebuffer; fn native_ptr(&self) -> VkFramebuffer { self.0 } }
-impl ::DeviceChild for RenderPass { fn device(&self) -> &::Device { &self.1 } }
-impl ::DeviceChild for Framebuffer { fn device(&self) -> &::Device { &self.1 } }
+impl VkHandle for RenderPass { type Handle = VkRenderPass; fn native_ptr(&self) -> VkRenderPass { self.0 } }
+impl VkHandle for Framebuffer { type Handle = VkFramebuffer; fn native_ptr(&self) -> VkFramebuffer { self.0 } }
+impl DeviceChild for RenderPass { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for Framebuffer { fn device(&self) -> &::Device { &self.1 } }
 
 /// Builder structure to construct the `VkSubpassDescription`
 pub struct SubpassDescription
@@ -131,7 +132,7 @@ impl Framebuffer
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(mold: &RenderPass, attachment_objects: &[&::ImageView], size: ::Extent2D, layers: u32) -> ::Result<Self>
 	{
-		let views = attachment_objects.iter().map(|x| x.0).collect::<Vec<_>>();
+		let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 		let cinfo = VkFramebufferCreateInfo
 		{
 			renderPass: mold.0, attachmentCount: views.len() as _, pAttachments: views.as_ptr(),

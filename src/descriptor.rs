@@ -1,6 +1,7 @@
 //! Vulkan Descriptors
 
 use vk::*;
+use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Opaque handle to a descriptor set layout object
@@ -10,10 +11,10 @@ pub struct DescriptorPool(VkDescriptorPool, ::Device);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[vkDestroyDescriptorSetLayout], DescriptorPool[vkDestroyDescriptorPool] }
 
-impl ::VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
-impl ::VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }
-impl ::DeviceChild for DescriptorSetLayout { fn device(&self) -> &::Device { &self.1 } }
-impl ::DeviceChild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
+impl VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
+impl VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }
+impl DeviceChild for DescriptorSetLayout { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
 
 /// Structure specifying a descriptor set layout binding
 ///
@@ -74,7 +75,7 @@ impl DSLBindings
     {
         self.check_registration(VK_DESCRIPTOR_TYPE_SAMPLER, "samplers");
         assert!(imm_samplers.is_empty() || imm_samplers.len() == count as usize);
-        self.imm_samplers_smp = imm_samplers.into_iter().map(|x| x.0).collect();
+        self.imm_samplers_smp = imm_samplers.into_iter().map(|x| x.native_ptr()).collect();
         let smps = if self.imm_samplers_smp.is_empty() { ::std::ptr::null() } else { self.imm_samplers_smp.as_ptr() };
         self.append(VK_DESCRIPTOR_TYPE_SAMPLER, count, shader_visibility, smps)
     }
@@ -82,7 +83,7 @@ impl DSLBindings
     {
         self.check_registration(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, "combined_image_samplers");
         assert!(imm_samplers.is_empty() || imm_samplers.len() == count as usize);
-        self.imm_samplers_cmb = imm_samplers.into_iter().map(|x| x.0).collect();
+        self.imm_samplers_cmb = imm_samplers.into_iter().map(|x| x.native_ptr()).collect();
         let smps = if self.imm_samplers_cmb.is_empty() { ::std::ptr::null() } else { self.imm_samplers_cmb.as_ptr() };
         self.append(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, count, shader_visibility, smps)
     }
