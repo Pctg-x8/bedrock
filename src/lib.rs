@@ -153,6 +153,7 @@ mod descriptor; pub use descriptor::*;
 mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;
 mod command; pub use command::*;
+mod surface; pub use surface::*;
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);

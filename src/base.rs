@@ -186,4 +186,57 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, v.as_mut_ptr()) };
 		v
 	}
+	/// Query if presentation is supported
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_SURFACE_LOST_KHR
+	#[cfg(feature = "VK_KHR_surface")]
+	pub fn surface_support(&self, queue_family: u32, surface: &::Surface) -> ::Result<bool>
+	{
+		let mut f = false as _;
+		unsafe { vkGetPhysicalDeviceSurfaceSupportKHR(self.0, queue_family, surface.native_ptr(), &mut f) }.into_result().map(|_| f as _)
+	}
+	/// Query surface capabilities
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_SURFACE_LOST_KHR
+	#[cfg(feature = "VK_KHR_surface")]
+	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR>
+	{
+		let mut s = unsafe { ::std::mem::zeroed() };
+		unsafe { vkGetPhysicalDeviceSurfaceCapabilitiesKHR(self.0, surface.native_ptr(), &mut s) }.into_result().map(|_| s)
+	}
+	/// Query color formats supported by surface
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_SURFACE_LOST_KHR
+	#[cfg(feature = "VK_KHR_surface")]
+	pub fn surface_formats(&self, surface: &::Surface) -> ::Result<Vec<VkSurfaceFormatKHR>>
+	{
+		let mut n = 0;
+		unsafe { vkGetPhysicalDeviceSurfaceFormatsKHR(self.0, surface.native_ptr(), &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetPhysicalDeviceSurfaceFormatsKHR(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+	}
+	/// Query supported presentation modes
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_SURFACE_LOST_KHR
+	#[cfg(feature = "VK_KHR_surface")]
+	pub fn surface_present_modes(&self, surface: &::Surface) -> ::Result<Vec<::PresentMode>>
+	{
+		let mut n = 0;
+		unsafe { vkGetPhysicalDeviceSurfacePresentModesKHR(self.0, surface.native_ptr(), &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetPhysicalDeviceSurfacePresentModesKHR(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
+			.map(|_| unsafe { ::std::mem::transmute(v) })
+	}
 }
