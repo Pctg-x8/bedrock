@@ -2,6 +2,7 @@
 
 use vk::*;
 use std::rc::Rc as RefCounter;
+use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 #[cfg(feature = "VK_KHR_surface")]
@@ -17,24 +18,24 @@ pub struct Swapchain(VkSwapchainKHR, ::Device, Surface);
 impl Drop for SurfaceCell { fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
 #[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))] DeviceChildCommonDrop! { for Swapchain[vkDestroySwapchainKHR] }
 #[cfg(feature = "VK_KHR_surface")]
-impl ::VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
+impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
 #[cfg(feature = "VK_KHR_swapchain")]
-impl ::VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 } }
+impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 } }
 #[cfg(feature = "VK_KHR_swapchain")]
-impl ::DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.1 } }
 
 /// Builder object to construct a `Swapchain`
 pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface, Vec<u32>);
 impl<'d> SwapchainBuilder<'d>
 {
-	pub fn new(surface: &'d Surface, min_image_count: u32, format: VkSurfaceFormatKHR, extent: ::Extent2D, usage: ::ImageUsageFlags) -> Self
+	pub fn new(surface: &'d Surface, min_image_count: u32, format: VkSurfaceFormatKHR, extent: ::Extent2D, usage: ::ImageUsage) -> Self
 	{
 		SwapchainBuilder(VkSwapchainCreateInfoKHR
 		{
 			surface: surface.native_ptr(), minImageCount: min_image_count, imageFormat: format.format, imageColorSpace: format.colorSpace,
-			imageExtent: unsafe { std::mem::transmute(extent) }, imageArrayLayers: 1, imageUsage: usage.0,
-			imageSharingMode: VK_SHARING_MODE_EXCLUSIVE, preTransform: VK_SURFACE_TRANSFORM_IDENTITY_BIT,
-			compositeAlpha: VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR, presentMode: PresentMode::FIFO as _, .. Default::default()
+			imageExtent: unsafe { ::std::mem::transmute(extent) }, imageArrayLayers: 1, imageUsage: usage.0,
+			imageSharingMode: VK_SHARING_MODE_EXCLUSIVE, preTransform: SurfaceTransform::Inherit as _,
+			compositeAlpha: CompositeAlpha::Inherit as _, presentMode: PresentMode::FIFO as _, .. Default::default()
 		}, surface, Vec::new())
 	}
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.0.imageArrayLayers = layers; self }
@@ -48,10 +49,10 @@ impl<'d> SwapchainBuilder<'d>
 	}
 	pub fn pre_transform(&mut self, tf: SurfaceTransform) -> &mut Self { self.0.preTransform = tf as _; self }
 	pub fn composite_alpha(&mut self, a: CompositeAlpha) -> &mut Self { self.0.compositeAlpha = a as _; self }
-	pub fn present_mode(&mut Self, mode: PresentMode) -> &mut Self { self.0.presentMode = mode as _; self }
+	pub fn present_mode(&mut self, mode: PresentMode) -> &mut Self { self.0.presentMode = mode as _; self }
 	/// Enables whether the Vulkan implementation is allowed to discard rendering operations
 	/// that affect regions of the surface which aren't visible
-	pub fn enable_clip(&mut Self) - &mut Self { self.0.clipped = true as _; self }
+	pub fn enable_clip(&mut self) -> &mut Self { self.0.clipped = true as _; self }
 
 	/// Create a swapchain
 	/// # Failures
@@ -96,7 +97,7 @@ impl Swapchain
 	pub fn acquire_next(&self, timeout: Option<u64>, semaphore: Option<&::Semaphore>, fence: Option<&::Fence>) -> ::Result<u32>
 	{
 		let mut n = 0;
-		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(std::u64::MAX),
+		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX),
 			semaphore.map(|x| x.native_ptr()).unwrap_or(VK_NULL_HANDLE as _), fence.map(|x| x.native_ptr()).unwrap_or(VK_NULL_HANDLE as _), &mut n) }
 			.into_result().map(|_| n)
 	}
@@ -136,12 +137,12 @@ impl ::Queue
 	{
 		let mut res = vec![0; swapchains.len()];
 		let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-		let (swapchains, indices): (Vec<_>, Vec<_>) = swapchains.iter().map(|(x, n)| (x.native_ptr(), n)).unzip();
+		let (swapchains, indices): (Vec<_>, Vec<_>) = swapchains.iter().map(|&(ref x, n)| (x.native_ptr(), n)).unzip();
 		let pinfo = VkPresentInfoKHR
 		{
-			waitSemaphoreCount: wait_sempahores.len() as _, pWaitSemaphores: wait_semaphores.as_ptr(),
+			waitSemaphoreCount: wait_semaphores.len() as _, pWaitSemaphores: wait_semaphores.as_ptr(),
 			swapchainCount: swapchains.len() as _, pSwapchains: swapchains.as_ptr(), pImageIndices: indices.as_ptr(),
-			pResults: res.as_mut_ptr()
+			pResults: res.as_mut_ptr(), .. Default::default()
 		};
 		unsafe { vkQueuePresentKHR(self.native_ptr(), &pinfo) }.into_result().map(|_| res)
 	}
@@ -196,7 +197,7 @@ pub enum SurfaceTransform
 }
 
 #[cfg(feature = "VK_KHR_surface")]
-#[repr(u32)] #[derive(Debug, Clone, Copy, ParitalEq, Eq)]
+#[repr(u32)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompositeAlpha
 {
 	/// The alpha channel, if it exists, of the image is ignored in the compositing process

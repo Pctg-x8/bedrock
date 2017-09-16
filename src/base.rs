@@ -4,6 +4,7 @@
 
 use vk::*;
 use std::ffi::CString;
+use VkHandle;
 #[cfg(feature = "FeImplements")]
 use VkResultHandler;
 #[cfg(feature = "FeImplements")]
@@ -16,8 +17,8 @@ pub struct Instance(VkInstance);
 /// Opaque handle to a physical device object
 pub struct PhysicalDevice(VkPhysicalDevice);
 
-impl ::VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 } }
-impl ::VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
+impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 } }
+impl VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
 
 /// Builder object for constructing a `Instance`
 pub struct InstanceBuilder
@@ -196,7 +197,7 @@ impl PhysicalDevice
 	pub fn surface_support(&self, queue_family: u32, surface: &::Surface) -> ::Result<bool>
 	{
 		let mut f = false as _;
-		unsafe { vkGetPhysicalDeviceSurfaceSupportKHR(self.0, queue_family, surface.native_ptr(), &mut f) }.into_result().map(|_| f as _)
+		unsafe { vkGetPhysicalDeviceSurfaceSupportKHR(self.0, queue_family, surface.native_ptr(), &mut f) }.into_result().map(|_| f != 0)
 	}
 	/// Query surface capabilities
 	/// # Failures

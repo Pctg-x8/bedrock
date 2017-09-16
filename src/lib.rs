@@ -50,7 +50,7 @@ impl std::error::Error for VkResultBox
             VK_TIMEOUT => "A wait operation has not completed in the specified time", VK_EVENT_SET => "An event is signaled",
             VK_EVENT_RESET => "An event is unsignaled", VK_INCOMPLETE => "A return array was too small for the result",
             #[cfg(feature = "VK_KHR_swapchain")]
-            VK_KHR_SUBOPTIMAL => "Sub-optimal swapchain",
+            VK_SUBOPTIMAL_KHR => "Sub-optimal swapchain",
             // Error Codes //
             VK_ERROR_OUT_OF_HOST_MEMORY => "A host memory allocation has failed",
             VK_ERROR_OUT_OF_DEVICE_MEMORY => "A device memory allocation has failed",

@@ -2,6 +2,7 @@
 
 use vk::*;
 use std::ffi::CString;
+use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 /// Bitmask specifying a pipeline stage
@@ -152,14 +153,14 @@ pub struct Pipeline(VkPipeline, ::Device);
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout]
 }
-impl ::VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
-impl ::VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
-impl ::VkHandle for PipelineLayout { type Handle = VkPipelineLayout; fn native_ptr(&self) -> VkPipelineLayout { self.0 } }
-impl ::VkHandle for Pipeline { type Handle = VkPipeline; fn native_ptr(&self) -> VkPipeline { self.0 } }
-impl ::DeviceChild for ShaderModule { fn device(&self) -> &::Device { &self.1 } }
-impl ::DeviceChild for PipelineCache { fn device(&self) -> &::Device { &self.1 } }
-impl ::DeviceChild for PipelineLayout { fn device(&self) -> &::Device { &self.1 } }
-impl ::DeviceChild for Pipeline { fn device(&self) -> &::Device { &self.1 } }
+impl VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
+impl VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
+impl VkHandle for PipelineLayout { type Handle = VkPipelineLayout; fn native_ptr(&self) -> VkPipelineLayout { self.0 } }
+impl VkHandle for Pipeline { type Handle = VkPipeline; fn native_ptr(&self) -> VkPipeline { self.0 } }
+impl DeviceChild for ShaderModule { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for PipelineCache { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for PipelineLayout { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for Pipeline { fn device(&self) -> &::Device { &self.1 } }
 
 #[cfg(feature = "FeImplements")]
 impl ShaderModule
@@ -239,8 +240,8 @@ impl PipelineLayout
 	/// Creates a new pipeline layout object
 	pub fn new(device: &::Device, layouts: &[&::DescriptorSetLayout], push_constants: &[(ShaderStage, ::std::ops::Range<u32>)]) -> ::Result<Self>
 	{
-		let layouts = layouts.into_iter().map(|x| x.0).collect::<Vec<_>>();
-		let push_constants = push_constants.iter().map(|x| VkPushConstantRange { stageFlags: x.0 .0, offset: x.1.start, size: x.1.end - x.1.start })
+		let layouts = layouts.into_iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+		let push_constants = push_constants.iter().map(|&(sh, ref r)| VkPushConstantRange { stageFlags: sh.0, offset: r.start, size: r.end - r.start })
 			.collect::<Vec<_>>();
 		let cinfo = VkPipelineLayoutCreateInfo
 		{
@@ -713,7 +714,7 @@ impl<'d> PipelineShader<'d>
 		}));
 		(VkPipelineShaderStageCreateInfo
 		{
-			stage: stage.0, module: self.module.0, pName: self.entry_name.as_ptr(),
+			stage: stage.0, module: self.module.native_ptr(), pName: self.entry_name.as_ptr(),
 			pSpecializationInfo: specinfo.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			.. Default::default()
 		}, specinfo)
@@ -760,7 +761,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		else { None };
 		let base = match self._base
 		{
-			BasePipeline::Handle(ref h) => Some(h.0), BasePipeline::None => None,
+			BasePipeline::Handle(ref h) => Some(h.native_ptr()), BasePipeline::None => None,
 			_ => panic!("Deriving from other info in same creation is invalid for single creation of pipeline")
 		};
 		let flags = self.flags | if base.is_some() { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
@@ -774,12 +775,12 @@ impl<'d> GraphicsPipelineBuilder<'d>
 			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
-			layout: self._layout.0, renderPass: self.rp.0, subpass: self.subpass,
-			basePipelineHandle: if let &BasePipeline::Handle(ref h) = &self._base { h.0 } else { VK_NULL_HANDLE as _ },
+			layout: self._layout.native_ptr(), renderPass: self.rp.native_ptr(), subpass: self.subpass,
+			basePipelineHandle: if let &BasePipeline::Handle(ref h) = &self._base { h.native_ptr() } else { VK_NULL_HANDLE as _ },
 			basePipelineIndex: -1, flags, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateGraphicsPipelines(device.native_ptr(), cache.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _),
+		unsafe { vkCreateGraphicsPipelines(device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
 			1, &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Pipeline(h, device.clone()))
 	}
 }
@@ -844,12 +845,12 @@ impl ::Device
 				pDepthStencilState: b.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pColorBlendState: b.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
-				layout: b._layout.0, renderPass: b.rp.0, subpass: b.subpass,
+				layout: b._layout.native_ptr(), renderPass: b.rp.native_ptr(), subpass: b.subpass,
 				basePipelineHandle: base_handle, basePipelineIndex: base_index, flags, .. Default::default()
 			}
 		}).collect::<Vec<_>>();
 		let mut hs = vec![VK_NULL_HANDLE as VkPipeline; builders.len()];
-		unsafe { vkCreateGraphicsPipelines(self.native_ptr(), cache.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _),
+		unsafe { vkCreateGraphicsPipelines(self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
 			cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), hs.as_mut_ptr()) }.into_result()
 			.map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
 	}
