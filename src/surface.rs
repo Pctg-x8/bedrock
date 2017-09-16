@@ -275,7 +275,6 @@ pub enum SurfaceTransform
 	/// The presentation transform is not specified, and is instead determined by platform-specific considerations and mechanisms outside Vulkan
 	Inherit = VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR as _
 }
-
 #[repr(u32)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompositeAlpha
 {
@@ -291,6 +290,21 @@ pub enum CompositeAlpha
 	/// The way in which the presentation engine treats the alpha channel in the images is unknown to the Vulkan API.
 	/// Instead, the application is responsible for setting the composite alpha blending mode using native window system commands
 	Inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR as _
+}
+/// Alpha blending type
+#[repr(u32)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DisplayPlaneAlpha
+{
+	/// The source image will be treated as opaque
+	Opaque = VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR as _,
+	/// A global alpha value must be specified that will be applied to all pixels in the source image
+	Global = VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR as _,
+	/// The alpha value will be determined by the alpha channel of the source image's pixels.
+	/// If the source format contains no alpha values, no blending will be applied.
+	/// The source alpha values are not premultiplied into the source image's other color channels
+	PerPixel = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR as _,
+	/// This is equivalent to `PerPixel` except the source alpha values are assumed to be premultiplied into the source image's other color channels
+	PrePixelPremultiplied = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR as _
 }
 
 impl SurfaceTransform
