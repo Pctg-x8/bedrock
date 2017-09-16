@@ -343,7 +343,7 @@ impl PhysicalDevice
 	/// On failure, this command returns
 	/// - VK_ERROR_OUT_OF_HOST_MEMORY
 	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	pub fn display_plane_capabilities(&self, mode: VkDisplayMode, plane_index: u32) -> ::Result<VkDisplayPlaneCapabilitiesKHR>
+	pub fn display_plane_capabilities(&self, mode: VkDisplayModeKHR, plane_index: u32) -> ::Result<VkDisplayPlaneCapabilitiesKHR>
 	{
 		let mut s = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetDisplayPlaneCapabilitiesKHR(self.0, mode, plane_index, &mut s) }.into_result().map(|_| s)

@@ -97,11 +97,11 @@ impl Surface
 		let cinfo = VkDisplaySurfaceCreateInfoKHR
 		{
 			displayMode: mode, planeIndex: plane_index, planeStackIndex: plane_stack_index,
-			transform: transform as _, globalAlpha: global_alpha, alphaMode: alpha_mode as _, extent: unsafe { ::std::mem::transmute(extent) },
+			transform: transform as _, globalAlpha: global_alpha, alphaMode: alpha_mode as _, imageExtent: unsafe { ::std::mem::transmute(extent) },
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateDisplaySurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateDisplayPlaneSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 }

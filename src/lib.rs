@@ -159,8 +159,8 @@ mod descriptor; pub use descriptor::*;
 mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;
 mod command; pub use command::*;
-#[cfg(feature = "FeWindowRendering")] mod surface;
-#[cfg(feature = "FeWindowRendering")] pub use surface::*;
+#[cfg(feature = "FePresentation")] mod surface;
+#[cfg(feature = "FePresentation")] pub use surface::*;
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
