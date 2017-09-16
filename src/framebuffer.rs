@@ -94,8 +94,9 @@ impl RenderPassBuilder
 	/// Create a new render pass object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn create(&self, device: &::Device) -> ::Result<RenderPass>
 	{
 		let subpasses = self.subpasses.iter().map(|x| VkSubpassDescription
@@ -125,8 +126,9 @@ impl Framebuffer
 	/// Create a new framebuffer object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(mold: &RenderPass, attachment_objects: &[&::ImageView], size: ::Extent2D, layers: u32) -> ::Result<Self>
 	{
 		let views = attachment_objects.iter().map(|x| x.0).collect::<Vec<_>>();

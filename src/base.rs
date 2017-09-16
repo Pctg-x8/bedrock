@@ -63,6 +63,16 @@ impl InstanceBuilder
 		let mut s = self;
 		for l in layers { s = s.add_layer(l); } s
 	}
+	/// Create a new Vulkan instance
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
+	/// * `VK_ERROR_LAYER_NOT_PRESENT`
+	/// * `VK_ERROR_EXTENSION_NOT_PRESENT`
+	/// * `VK_ERROR_INCOMPATIBLE_DRIVER`
 	#[cfg(feature = "FeImplements")]
 	pub fn create(mut self) -> ::Result<Instance>
 	{
@@ -95,9 +105,10 @@ impl Instance
 	/// Enumerates the physical devices accessible to a Vulkan instance
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_INITIALIZATION_FAILED
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
 	pub fn enumerate_physical_devices(&self) -> ::Result<Vec<PhysicalDevice>>
 	{
 		let mut n = 0;
@@ -109,8 +120,9 @@ impl Instance
 	/// Returns up to all of global layer properties
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn enumerate_layer_properties() -> ::Result<Vec<VkLayerProperties>>
 	{
 		let mut n = 0;
@@ -121,9 +133,10 @@ impl Instance
 	/// Returns up to all of global extension properties
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_LAYER_NOT_PRESENT
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_LAYER_NOT_PRESENT`
 	pub fn enumerate_extension_properties(layer_name: &str) -> ::Result<Vec<VkExtensionProperties>>
 	{
 		let cn = CString::new(layer_name).unwrap();
@@ -151,9 +164,10 @@ impl PhysicalDevice
 	/// Lists physical device's image format capabilities
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_FORMAT_NOT_SUPPORTED
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_FORMAT_NOT_SUPPORTED`
 	pub fn image_format_properties(&self, format: VkFormat, itype: VkImageType, tiling: VkImageTiling,
 		usage: ::ImageUsage, flags: ::ImageFlags) -> ::Result<VkImageFormatProperties>
 	{
@@ -194,9 +208,10 @@ impl PhysicalDevice
 	/// Query if presentation is supported
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_support(&self, queue_family: u32, surface: &::Surface) -> ::Result<bool>
 	{
@@ -206,9 +221,10 @@ impl PhysicalDevice
 	/// Query surface capabilities
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR>
 	{
@@ -218,9 +234,10 @@ impl PhysicalDevice
 	/// Query color formats supported by surface
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_formats(&self, surface: &::Surface) -> ::Result<Vec<VkSurfaceFormatKHR>>
 	{
@@ -232,9 +249,10 @@ impl PhysicalDevice
 	/// Query supported presentation modes
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_present_modes(&self, surface: &::Surface) -> ::Result<Vec<::PresentMode>>
 	{
@@ -277,8 +295,9 @@ impl PhysicalDevice
 	/// Query information about the available displays
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>>
 	{
 		let mut n = 0;
@@ -289,8 +308,9 @@ impl PhysicalDevice
 	/// Query the plane properties
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_plane_properties(&self) -> ::Result<Vec<VkDisplayPlanePropertiesKHR>>
 	{
 		let mut n = 0;
@@ -301,8 +321,9 @@ impl PhysicalDevice
 	/// Query the list of displays a plane supports
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_plane_supported_displays(&self, index: u32) -> ::Result<Vec<VkDisplayKHR>>
 	{
 		let mut n = 0;
@@ -313,8 +334,9 @@ impl PhysicalDevice
 	/// Query the set of mode properties supported by the display
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> ::Result<Vec<VkDisplayModePropertiesKHR>>
 	{
 		let mut n = 0;
@@ -325,9 +347,10 @@ impl PhysicalDevice
 	/// Create a display mode
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_INITIALIZATION_FAILED
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
 	pub fn new_display_mode(&self, display: VkDisplayKHR, region: ::Extent2D, refresh_rate: u32) -> ::Result<VkDisplayModeKHR>
 	{
 		let cinfo = VkDisplayModeCreateInfoKHR
@@ -341,8 +364,9 @@ impl PhysicalDevice
 	/// Query capabilities of a mode and plane combination
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_plane_capabilities(&self, mode: VkDisplayModeKHR, plane_index: u32) -> ::Result<VkDisplayPlaneCapabilitiesKHR>
 	{
 		let mut s = unsafe { ::std::mem::uninitialized() };

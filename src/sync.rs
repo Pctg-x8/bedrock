@@ -28,8 +28,9 @@ impl Fence
 	/// Create a new fence object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(device: &::Device, signaled: bool) -> ::Result<Self>
 	{
 		let mut h = VK_NULL_HANDLE as _;
@@ -44,8 +45,9 @@ impl Semaphore
 	/// Create a new queue semaphore object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(device: &::Device) -> ::Result<Self>
 	{
 		let mut h = VK_NULL_HANDLE as _;
@@ -59,8 +61,9 @@ impl Event
 	/// Create a new event object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(device: &::Device) -> ::Result<Self>
 	{
 		let mut h = VK_NULL_HANDLE as _;
@@ -75,9 +78,10 @@ impl Fence
 	/// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
 	pub fn wait_multiple(objects: &[&Self], wait_all: bool, timeout: Option<u64>) -> ::Result<bool>
 	{
 		let objects_ptr = objects.iter().map(|x| x.0).collect::<Vec<_>>();
@@ -87,9 +91,10 @@ impl Fence
 	/// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
 	pub fn wait_timeout(&self, timeout: u64) -> ::Result<bool>
 	{
 		let vr = unsafe { ::vk::vkWaitForFences(self.1.native_ptr(), 1, &self.0, false as _, timeout) };
@@ -98,8 +103,9 @@ impl Fence
 	/// Resets one or more fence objects
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset_multiple(objects: &[&Self]) -> ::Result<()>
 	{
 		let objects_ptr = objects.iter().map(|x| x.0).collect::<Vec<_>>();
@@ -108,8 +114,9 @@ impl Fence
 	/// Resets a fence object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetFences(self.1.native_ptr(), 1, &self.0) }.into_result() }
 }
 #[cfg(feature = "FeImplements")]
@@ -118,14 +125,16 @@ impl Event
 	/// Set an event to signaled state
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn set(&self) -> ::Result<()> { unsafe { ::vk::vkSetEvent(self.1.native_ptr(), self.0) }.into_result() }
 	/// Reset an event to non-signaled state
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetEvent(self.1.native_ptr(), self.0) }.into_result() }
 }
 
@@ -134,9 +143,10 @@ pub trait Status
 	/// Retrieve the status(which is signaled) of a synchronize object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
 	fn status(&self) -> ::Result<bool>;
 }
 #[cfg(feature = "FeImplements")]
@@ -163,8 +173,9 @@ impl ::Waitable for Fence
 	/// Wait for a fence to become signaled
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
 	fn wait(&self) -> ::Result<()> { self.wait_timeout(::std::u64::MAX).map(|_| ()) }
 }

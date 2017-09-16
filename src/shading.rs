@@ -168,8 +168,9 @@ impl ShaderModule
 	/// Creates a new shader module object from bytes on the memory
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn from_memory<Buffer: AsRef<[u8]> + ?Sized>(device: &::Device, buffer: &Buffer) -> ::Result<Self>
 	{
 		let cinfo = VkShaderModuleCreateInfo
@@ -183,8 +184,10 @@ impl ShaderModule
 	/// Creates a new shader module object from a file
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	///
 	/// IO Errors may be occured when reading file
 	pub fn from_file<FilePath: AsRef<::std::path::Path> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
 	{
@@ -199,8 +202,9 @@ impl PipelineCache
 	/// Creates a new pipeline cache
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new<Data: AsRef<[u8]> + ?Sized>(device: &::Device, initial: &Data) -> ::Result<Self>
 	{
 		let cinfo = VkPipelineCacheCreateInfo
@@ -214,8 +218,9 @@ impl PipelineCache
 	/// Get the data store from a pipeline cache
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn data(&self) -> ::Result<Vec<u8>>
 	{
 		let mut n = 0;
@@ -226,8 +231,9 @@ impl PipelineCache
 	/// Combine the data stores of pipeline caches into `self`
 	/// # Failures
 	/// On failure, this command returns
-	/// VK_ERROR_OUT_OF_HOST_MEMORY
-	/// VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn merge_into(&self, src: &[&PipelineCache]) -> ::Result<()>
 	{
 		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
@@ -238,6 +244,11 @@ impl PipelineCache
 impl PipelineLayout
 {
 	/// Creates a new pipeline layout object
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(device: &::Device, layouts: &[&::DescriptorSetLayout], push_constants: &[(ShaderStage, ::std::ops::Range<u32>)]) -> ::Result<Self>
 	{
 		let layouts = layouts.into_iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
@@ -333,10 +344,9 @@ impl<'d> PipelineShader<'d>
 		PipelineShader { module, entry_name: CString::new(entry_name).unwrap(), specinfo }
 	}
 }
+/// Shading State and Input Configuration
 impl<'d> GraphicsPipelineBuilder<'d>
 {
-	// Shading State and Input Configuration //
-
 	pub fn vertex_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.vs = Some(shader); self }
 	pub fn tessellation_control_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.tcs = Some(shader); self }
 	pub fn tessellation_evaluation_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.tes = Some(shader); self }
@@ -353,9 +363,12 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	{
 		self.vertex_shader(shader).vertex_input_state(bindings, attributes)
 	}
-	/// The primitive topology and primitiveRestartEnable: controls whether a special vertex index value is treated as restarting the assembly of primitives.
-	/// The special index value is either `0xFFFFFFFF` when the index type is equal to `VK_INDEX_TYPE_UINT32`,
-	/// or `0xFFFF` when the index type is equal to `VK_INDEX_TYPE_UINT16`
+	/// The primitive topology and primitiveRestartEnable: controls whether a special vertex index value is treated as restarting the assembly of primitives.  
+	/// The special index value is either
+	///
+	/// - `0xFFFFFFFF` when the index type is equal to `VK_INDEX_TYPE_UINT32`, or
+	/// - `0xFFFF` when the index type is equal to `VK_INDEX_TYPE_UINT16`.  
+	///
 	/// Primitive restart is not allowed for "list" topologies
 	pub fn primitive_topology(&mut self, topo: VkPrimitiveTopology, enable_restarting: bool) -> &mut Self
 	{
@@ -371,9 +384,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	{
 		self.tessellation_control_shader(control).tessellation_evaluation_shader(evaluation).patch_control_point_count(num_control_points)
 	}
+}
 
-	// Viewport / Scissor State //
-
+/// Viewport / Scissor State
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	/// # Safety
 	/// Application must guarantee that the number of viewports and scissors are identical
 	pub unsafe fn viewports(&mut self, vps: DynamicArrayState<VkViewport>) -> &mut Self
@@ -402,9 +417,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		assert_eq!(vps.count(), scissor.count());
 		unsafe { self.viewports(vps).scissors(scissor) }
 	}
+}
 
-	// Rasterization State //
-
+/// Rasterization State
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	/// Controls whether to clamp the fragment's depth values instead of clipping primitives to the z planes of the frustum,
 	/// as described in `Primitive Clipping` in Vulkan Specification
 	pub fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self { self.rasterizer_state.depthClampEnable = enable as _; self }
@@ -416,8 +433,9 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	pub fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self { self.rasterizer_state.cullMode = mode; self }
 	/// The front-facing triangle orientation to be used for culling
 	pub fn front_face(&mut self, face: VkFrontFace) -> &mut Self { self.rasterizer_state.frontFace = face; self }
-	/// Specify `None` to disable to bias fragment depth values.
+	/// Specify `None` to disable to bias fragment depth values.  
 	/// Tuple Member: (`ConstantFactor`, `Clamp`, `SlopeFactor`)
+	/// 
 	/// - `ConstantFactor`: A scalar factor controlling the constant depth value added to each fragment
 	/// - `Clamp`: The maximum (or minimum) depth bias of a fragment
 	/// - `SlopeFactor`: A scalar factor applied to a fragment's slope in depth bias calculations
@@ -439,9 +457,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self.dynamic_state_flags.line_width = width.is_none() as _;
 		self.rasterizer_state.lineWidth = width.unwrap_or(0.0); self
 	}
+}
 
-	// Multisample State //
-
+/// Multisample State
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	fn ms_ref(&mut self) -> &mut (Box<VkPipelineMultisampleStateCreateInfo>, Vec<VkSampleMask>)
 	{
 		if self.ms_state.is_none() { self.ms_state = Some((Default::default(), Vec::new())); }
@@ -466,9 +486,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self.ms_ref().0.pSampleMask = if self.ms_ref().1.is_empty() { ::std::ptr::null() } else { self.ms_ref().1.as_ptr() };
 		self
 	}
+}
 
-	// Depth / Stencil State //
-
+/// Depth/Stencil State
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	/// Clear depth/stencil state
 	pub fn clear_depth_stencil_state(&mut self) -> &mut Self { self.ds_state = None; self }
 	fn dss_ref(&mut self) -> &mut VkPipelineDepthStencilStateCreateInfo
@@ -567,9 +589,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self.dynamic_state_flags.depth_bounds = bounds.is_dynamic();
 		if let SwitchOrDynamicState::Static(r) = bounds { self.depth_bounds_range(r) } else { self }
 	}
+}
 
-	// Color Blending //
-
+/// Color Blending
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	fn cb_ref(&mut self) -> &mut (Box<VkPipelineColorBlendStateCreateInfo>, Vec<VkPipelineColorBlendAttachmentState>)
 	{
 		if self.color_blending.is_none() { self.color_blending = Some((Default::default(), Vec::new())) }
@@ -594,9 +618,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self.dynamic_state_flags.blend_constants = values.is_none();
 		self.cb_ref().0.blendConstants.copy_from_slice(&values.unwrap_or([0.0; 4])); self
 	}
+}
 
-	// Misc Configurations //
-
+/// Misc Configurations
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	/// The base pipeline handle/index to derive from
 	pub fn base(&mut self, b: BasePipeline<'d>) -> &mut Self { self._base = b; self }
 	/// The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
@@ -606,7 +632,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	{
 		self.rp = rpo; self.subpass = subpass; self
 	}
-	/// The created pipeline will or will not be optimized
+	/// The created pipeline will or will not be optimized.  
 	/// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
 	pub fn enable_optimization(&mut self, opt: bool) -> &mut Self
 	{
@@ -621,12 +647,15 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		else { self.flags &= !VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT };
 		self
 	}
+}
 
-	// Unsafe Utilities //
-
+/// Unsafe Utilities
+impl<'d> GraphicsPipelineBuilder<'d>
+{
 	/// Set the `VkPipelineVertexInputStateCreateInfo` structure directly
 	/// # Safety
 	/// Application must guarantee these constraints:
+	///
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn vertex_input_state_create_info(&mut self, state: VkPipelineVertexInputStateCreateInfo) -> &mut Self
@@ -636,6 +665,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Set the `VkPipelineInputAssemblyStateCreateInfo` structure directly
 	/// # Safety
 	/// Application must guarantee these constraints:
+	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn input_assembly_state_create_info(&mut self, state: VkPipelineInputAssemblyStateCreateInfo) -> &mut Self
@@ -645,6 +675,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Set the `VkPipelineTessellationStateCreateInfo` structure directly
 	/// # Safety
 	/// Application must guarantee these constraints:
+	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn tessellation_state_create_info(&mut self, state: Option<Box<VkPipelineTessellationStateCreateInfo>>) -> &mut Self
@@ -655,6 +686,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// This does not clear any dynamic states
 	/// # Safety
 	/// Application must guarantee these constraints:
+	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn viewport_state_create_info(&mut self, state: Option<Box<VkPipelineViewportStateCreateInfo>>) -> &mut Self
@@ -665,6 +697,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// This does not clear any dynamic states
 	/// # Safety
 	/// Application must guarantee these constraints:
+	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn rasterization_state_create_info(&mut self, state: VkPipelineRasterizationStateCreateInfo) -> &mut Self
@@ -675,6 +708,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// This does not clear any dynamic states
 	/// # Safety
 	/// Application must guarantee these constraints:
+	///
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn multisample_state_create_info(&mut self, state: Option<Box<VkPipelineMultisampleStateCreateInfo>>) -> &mut Self
@@ -685,6 +719,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// This does not clear any dynamic states
 	/// # Safety
 	/// Application must guarantee these constraints:
+	///
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn depth_stencil_state_create_info(&mut self, state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>) -> &mut Self
@@ -695,6 +730,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// This does not clear any dynamic states
 	/// # Safety
 	/// Application must guarantee these constraints:
+	///
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
 	pub unsafe fn color_blend_state_info(&mut self, state: Option<Box<VkPipelineColorBlendStateCreateInfo>>) -> &mut Self
@@ -726,8 +762,9 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Create a graphics pipeline
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[allow(unused_variables)]
 	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
 	{
@@ -791,8 +828,9 @@ impl ::Device
 	/// Create graphics pipelines
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn create_graphics_pipelines(&self, builders: &[GraphicsPipelineBuilder], cache: Option<&PipelineCache>) -> ::Result<Vec<Pipeline>>
 	{
 		let aggregates = builders.iter().map(|x|

@@ -95,6 +95,17 @@ impl<'p> DeviceBuilder<'p>
 	{
 		for q in queues { self = self.add_queue(q); } self
 	}
+	/// Create a new device instance
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
+	/// * `VK_ERROR_EXTENSION_NOT_PRESENT`
+	/// * `VK_ERROR_FEATURE_NOT_PRESENT`
+	/// * `VK_ERROR_TOO_MANY_OBJECTS`
+	/// * `VK_ERROR_DEVICE_LOST`
 	#[cfg(feature = "FeImplements")]
 	pub fn create(self) -> ::Result<Device>
 	{
@@ -232,9 +243,10 @@ impl Queue
 	/// Bind device memory to a sparse resource object
 	/// # Failure
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
 	pub fn bind_sparse(&self, batches: &[SparseBindingOpBatch], fence: Option<&::Fence>) -> ::Result<()>
 	{
 		let sem_ptrs = batches.iter().map(|x| (x.wait_semaphores.iter().map(|x| x.0).collect(), x.signal_semaphores.iter().map(|x| x.0).collect()));

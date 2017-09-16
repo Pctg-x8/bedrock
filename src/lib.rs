@@ -1,7 +1,7 @@
 //! Glue library between Vulkan and Rust
 //!
 //! # Copyright
-//! Some documentation comments are from Vulkan Manual Page.
+//! Some documentation comments are from Vulkan Manual Page.  
 //! Copyright (c) 2014-2017 Khronos Group.
 //!
 //! # Compile Options
@@ -28,7 +28,7 @@ extern crate wayland_client;
 extern crate android_ffi;
 
 #[macro_use]
-mod vk;
+pub mod vk;
 use vk::*;
 
 #[cfg(feature = "FeImplements")] mod fnconv;
@@ -123,7 +123,7 @@ macro_rules! DeviceChildCommonDrop
 	}
 }
 
-/// size elements
+// size elements //
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
 pub struct Extent1D(pub u32);
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
@@ -171,8 +171,9 @@ impl QueryPool
     /// Create a new query pool object
     /// # Failure
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// 
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     pub fn new(device: &Device, qtype: QueryType, count: u32) -> Result<Self>
     {
         let (qtype, stats) = match qtype
@@ -187,6 +188,12 @@ impl QueryPool
             .into_result().map(|_| QueryPool(h, device.clone()))
     }
     /// Copy results of queries in a query pool to a host memory region
+    /// # Failure
+    /// On failure, this command returns
+    /// 
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
     pub fn results64(&self, query_range: std::ops::Range<u32>, flags: QueryResultFlags) -> Result<Vec<u64>>
     {
         let mut v = Vec::with_capacity(query_range.len()); unsafe { v.set_len(query_range.len()) };
@@ -195,6 +202,12 @@ impl QueryPool
             .into_result().map(|_| v)
     }
     /// Copy results of queries in a query pool to a host memory region
+    /// # Failure
+    /// On failure, this command returns
+    /// 
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
     pub fn results32(&self, query_range: std::ops::Range<u32>, flags: QueryResultFlags) -> Result<Vec<u32>>
     {
         let mut v = Vec::with_capacity(query_range.len()); unsafe { v.set_len(query_range.len()) };

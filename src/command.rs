@@ -34,8 +34,9 @@ impl CommandPool
 	/// Create a new command pool object
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(device: &::Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> ::Result<Self>
 	{
 		let cinfo = VkCommandPoolCreateInfo
@@ -50,8 +51,9 @@ impl CommandPool
 	/// Allocate command buffers from an existing command pool
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn alloc(&self, count: u32, primary: bool) -> ::Result<Vec<CommandBuffer>>
 	{
 		let ainfo = VkCommandBufferAllocateInfo
@@ -68,8 +70,9 @@ impl CommandPool
     /// Application cannot use command buffers after this call
     /// # Failures
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset(&self, release_resources: bool) -> ::Result<()>
 	{
 		unsafe { vkResetCommandPool(self.1.native_ptr(), self.0, if release_resources { VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT } else { 0 }) }
@@ -88,8 +91,9 @@ impl CommandBuffer
 	/// Start recording a primary command buffer
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn begin(&self) -> ::Result<CmdRecord>
 	{
 		unsafe { vkBeginCommandBuffer(self.0, &Default::default()) }.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
@@ -97,8 +101,9 @@ impl CommandBuffer
 	/// Start recording a secondary command buffer
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn begin_inherit(&self, renderpass: Option<(&::Framebuffer, &::RenderPass, u32)>, query: Option<(OcclusionQuery, ::QueryPipelineStatisticFlags)>)
 		-> ::Result<CmdRecord>
 	{
@@ -384,7 +389,7 @@ impl<'d> CmdRecord<'d>
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
-	/// Fill a region of a buffer with a fixed value
+	/// Fill a region of a buffer with a fixed value.  
 	/// `size` is number of bytes to fill
 	pub fn fill_buffer(&mut self, dst: &::Buffer, dst_offset: usize, size: usize, data: u32) -> &mut Self
 	{

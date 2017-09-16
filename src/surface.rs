@@ -25,8 +25,9 @@ impl Surface
 	/// Create a `Surface` object for an X11 window, using the Xlib client-side library
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_xlib_surface")]
 	pub fn new_xlib(instance: &::Instance, display: *mut ::x11::xlib::Display, window: ::x11::xlib::Window) -> ::Result<Self>
 	{
@@ -38,8 +39,9 @@ impl Surface
 	/// Create a `Surface` object for a X11 window, using the XCB client-side library
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_xcb_surface")]
 	pub fn new_xcb(instance: &::Instance, connection: *mut ::xcb::ffi::xcb_connection_t, window: ::xcb::ffi::xcb_window_t) -> ::Result<Self>
 	{
@@ -51,8 +53,9 @@ impl Surface
 	/// Create a `Surface` object for a Wayland window
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_wayland_surface")]
 	pub fn new_wayland(instance: &::Instance, display: *mut ::wayland_client::sys::wl_display, surface: *mut ::wayland_client::sys::wl_proxy) -> ::Result<Self>
 	{
@@ -64,8 +67,9 @@ impl Surface
 	/// Create a `Surface` object for an Android native window
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_android_surface")]
 	pub fn new_android(instance: &::Instance, window: *mut ::android_ffi::ffi::ANativeWindow) -> ::Result<Self>
 	{
@@ -77,8 +81,9 @@ impl Surface
 	/// Create a `Surface` object for an Win32 native window
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_win32_surface")]
 	pub fn new_win32(instance: &::Instance, hinstance: ::winapi::HINSTANCE, hwnd: ::winapi::HWND) -> ::Result<Self>
 	{
@@ -90,8 +95,9 @@ impl Surface
 	/// Create a `Surface` object representing a display plane and mode
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_display")]
 	pub fn new_display_plane(instance: &::Instance, mode: VkDisplayModeKHR, plane_index: u32, plane_stack_index: u32,
 		transform: SurfaceTransform, global_alpha: f32, alpha_mode: DisplayPlaneAlpha, extent: ::Extent2D) -> ::Result<Self>
@@ -141,11 +147,12 @@ impl<'d> SwapchainBuilder<'d>
 	/// Create a swapchain
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
-	/// - VK_ERROR_SURFACE_LOST_KHR
-	/// - VK_ERROR_NATIVE_WINDOW_IN_USE_KHR
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
+	/// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
 	#[cfg(feature = "FeImplements")]
 	pub fn create(&self, device: &::Device) -> ::Result<Swapchain>
 	{
@@ -161,8 +168,9 @@ impl Swapchain
 	/// Obtain the array of presentable images associated with a swapchain
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn get_images(&self) -> ::Result<Vec<VkImage>>
 	{
 		let mut n = 0;
@@ -173,11 +181,12 @@ impl Swapchain
 	/// Retrieve the index of the next available presentation image
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
-	/// - VK_ERROR_OUT_OF_DATE_KHR
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
+	/// * `VK_ERROR_OUT_OF_DATE_KHR`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	pub fn acquire_next(&self, timeout: Option<u64>, semaphore: Option<&::Semaphore>, fence: Option<&::Fence>) -> ::Result<u32>
 	{
 		let mut n = 0;
@@ -188,11 +197,12 @@ impl Swapchain
 	/// Queue an image for presentation
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
-	/// - VK_ERROR_OUT_OF_DATE_KHR
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
+	/// * `VK_ERROR_OUT_OF_DATE_KHR`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	pub fn queue_present(&self, queue: &::Queue, index: u32, wait_semaphores: &[&::Semaphore]) -> ::Result<()>
 	{
 		let mut res = 0;
@@ -212,11 +222,12 @@ impl ::Queue
 	/// Queue images for presentation
 	/// # Failures
 	/// On failure, this command returns
-	/// - VK_ERROR_OUT_OF_HOST_MEMORY
-	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-	/// - VK_ERROR_DEVICE_LOST
-	/// - VK_ERROR_OUT_OF_DATE_KHR
-	/// - VK_ERROR_SURFACE_LOST_KHR
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
+	/// * `VK_ERROR_OUT_OF_DATE_KHR`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	pub fn present(&self, swapchains: &[(&Swapchain, u32)], wait_semaphores: &[&::Semaphore]) -> ::Result<Vec<VkResult>>
 	{
 		let mut res = vec![0; swapchains.len()];
