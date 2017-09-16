@@ -69,9 +69,36 @@ impl CommandPool
 			.into_result()
 	}
 	/// Free command buffers
-	pub fn free(&self, buffers: &[VkCommandBuffer])
+#[cfg(feature = "FeImplements")]
+impl CommandBuffer
+{
+	/// Start recording a primary command buffer
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn begin(&self) -> ::Result<CmdRecord>
 	{
-		unsafe { vkFreeCommandBuffers(self.1.native_ptr(), self.0, buffers.len() as _, buffers.as_ptr()) };
+		unsafe { vkBeginCommandBuffer(self.0, &Default::default()) }.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+	}
+	/// Start recording a secondary command buffer
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn begin_inherit(&self, renderpass: Option<(&::Framebuffer, &::RenderPass, u32)>, query: Option<(OcclusionQuery, ::QueryPipelineStatisticFlags)>)
+		-> ::Result<CmdRecord>
+	{
+		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.0, r.0, s)).unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
+		let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
+		let inherit = VkCommandBufferInheritanceInfo
+	{
+			framebuffer: fb, renderPass: rp, subpass: s, occlusionQueryEnable: (oq != OcclusionQuery::Disable) as _,
+			queryFlags: if oq == OcclusionQuery::Precise { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 }, pipelineStatistics: psq,
+			.. Default::default()
+		};
+		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, .. Default::default() };
+		unsafe { vkBeginCommandBuffer(self.0, &binfo) }.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
 	}
 }
 
