@@ -161,6 +161,8 @@ mod shading; pub use shading::*;
 mod command; pub use command::*;
 #[cfg(feature = "FePresentation")] mod surface;
 #[cfg(feature = "FePresentation")] pub use surface::*;
+#[cfg(feature = "VK_EXT_debug_report")] mod debug;
+#[cfg(feature = "VK_EXT_debug_report")] pub use debug::*;
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
