@@ -85,6 +85,25 @@ impl Surface
 		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
+	/// Create a `Surface` object representing a display plane and mode
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	#[cfg(feature = "VK_KHR_display")]
+	pub fn new_display_plane(instance: &::Instance, mode: VkDisplayModeKHR, plane_index: u32, plane_stack_index: u32,
+		transform: SurfaceTransform, global_alpha: f32, alpha_mode: DisplayPlaneAlpha, extent: ::Extent2D) -> ::Result<Self>
+	{
+		let cinfo = VkDisplaySurfaceCreateInfoKHR
+		{
+			displayMode: mode, planeIndex: plane_index, planeStackIndex: plane_stack_index,
+			transform: transform as _, globalAlpha: global_alpha, alphaMode: alpha_mode as _, extent: unsafe { ::std::mem::transmute(extent) },
+			.. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateDisplaySurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+	}
 }
 
 /// Builder object to construct a `Swapchain`

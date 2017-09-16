@@ -7,7 +7,7 @@
 //! # Compile Options
 //! - `FeImplements`: Enable Vulkan implementations(functions)
 //! - `FeMultithreaded`: Enables to use objects from some threads(experimental)
-//! - `FeWindowRendering`: Enable window rendering features(`VK_KHR_surface`/`VK_KHR_swapchain`)
+//! - `FePresentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 
 extern crate libc;

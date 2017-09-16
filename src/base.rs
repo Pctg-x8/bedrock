@@ -269,3 +269,83 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceWin32PresentationSupportKHR(self.0, queue_family) != 0 }
 	}
 }
+
+/// VK_KHR_display
+#[cfg(feature = "VK_KHR_display")]
+impl PhysicalDevice
+{
+	/// Query information about the available displays
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>>
+	{
+		let mut n = 0;
+		unsafe { vkGetPhysicalDeviceDisplayPropertiesKHR(self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetPhysicalDeviceDisplayPropertiesKHR(self.0, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+	}
+	/// Query the plane properties
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_plane_properties(&self) -> ::Result<Vec<VkDisplayPlanePropertiesKHR>>
+	{
+		let mut n = 0;
+		unsafe { vkGetPhysicalDeviceDisplayPlanePropertiesKHR(self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetPhysicalDeviceDisplayPlanePropertiesKHR(self.0, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+	}
+	/// Query the list of displays a plane supports
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_plane_supported_displays(&self, index: u32) -> ::Result<Vec<VkDisplayKHR>>
+	{
+		let mut n = 0;
+		unsafe { vkGetDisplayPlaneSupportedDisplaysKHR(self.0, index, &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetDisplayPlaneSupportedDisplaysKHR(self.0, index, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+	}
+	/// Query the set of mode properties supported by the display
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> ::Result<Vec<VkDisplayModePropertiesKHR>>
+	{
+		let mut n = 0;
+		unsafe { vkGetDisplayModePropertiesKHR(self.0, display, &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
+		unsafe { vkGetDisplayModePropertiesKHR(self.0, display, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+	}
+	/// Create a display mode
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	/// - VK_ERROR_INITIALIZATION_FAILED
+	pub fn new_display_mode(&self, display: VkDisplayKHR, region: ::Extent2D, refresh_rate: u32) -> ::Result<VkDisplayModeKHR>
+	{
+		let cinfo = VkDisplayModeCreateInfoKHR
+		{
+			parameters: VkDisplayModeParametersKHR { visibleRegion: unsafe { ::std::mem::transmute(region) }, refreshRate: refresh_rate },
+			.. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateDisplayModeKHR(self.0, display, &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| h)
+	}
+	/// Query capabilities of a mode and plane combination
+	/// # Failures
+	/// On failure, this command returns
+	/// - VK_ERROR_OUT_OF_HOST_MEMORY
+	/// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_plane_capabilities(&self, mode: VkDisplayMode, plane_index: u32) -> ::Result<VkDisplayPlaneCapabilitiesKHR>
+	{
+		let mut s = unsafe { ::std::mem::uninitialized() };
+		unsafe { vkGetDisplayPlaneCapabilitiesKHR(self.0, mode, plane_index, &mut s) }.into_result().map(|_| s)
+	}
+}
