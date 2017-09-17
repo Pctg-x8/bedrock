@@ -615,7 +615,10 @@ pub enum ImageLayout
 	/// must only be used as a source image of a transfer command
 	TransferSrcOpt = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL as _,
 	/// must only be used as a destination image of a transfer command
-	TransferDestOpt = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL as _
+	TransferDestOpt = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL as _,
+	/// must only be used for presenting a swapchain image for display
+	#[cfg(feature = "VK_KHR_swapchain")]
+	PresentSrc = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR as _
 }
 
 /// Structure specifying a color component mapping
