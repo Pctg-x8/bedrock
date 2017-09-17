@@ -3,6 +3,7 @@
 #![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
 
 use vk::*;
+#[cfg(feature = "FeImplements")] use VkHandle;
 #[cfg(feature = "FeImplements")] use {VkResultHandler, VkResultBox};
 
 /// Opaque handle to a fence object
