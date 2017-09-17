@@ -8,8 +8,6 @@ use VkHandle;
 #[cfg(feature = "FeImplements")]
 use VkResultHandler;
 #[cfg(feature = "FeImplements")]
-use std::mem::{uninitialized, zeroed, transmute};
-#[cfg(feature = "FeImplements")]
 use std::ptr::{null, null_mut};
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
@@ -19,7 +17,13 @@ struct InstanceCell(VkInstance);
 #[derive(Clone)] pub struct Instance(RefCounter<InstanceCell>);
 #[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Instance {}
 /// Opaque handle to a physical device object
-pub struct PhysicalDevice(VkPhysicalDevice);
+pub struct PhysicalDevice(VkPhysicalDevice, Instance);
+
+#[cfg(feature = "FeImplements")]
+impl Drop for InstanceCell { fn drop(&mut self)
+{
+	unsafe { vkDestroyInstance(self.0, ::std::ptr::null()); }
+} }
 
 impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 .0 } }
 impl VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
@@ -45,23 +49,25 @@ impl InstanceBuilder
 			}, cinfo: VkInstanceCreateInfo { .. Default::default() }
 		}
 	}
-	pub fn add_extension(mut self, extension: &str) -> Self
+	pub fn add_extension(&mut self, extension: &str) -> &mut Self
 	{
 		self.extensions.push(CString::new(extension).unwrap()); self
 	}
-	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(self, extensions: Extensions) -> Self
+	pub fn add_extension_zerotermed(&mut self, extension: &str) -> &mut Self
 	{
-		let mut s = self;
-		for ex in extensions { s = s.add_extension(ex); } s
+		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(extension.as_ptr() as *const _) }.to_owned()); self
 	}
-	pub fn add_layer(mut self, layer: &str) -> Self
+	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(&mut self, extensions: Extensions) -> &mut Self
+	{
+		for ex in extensions { self.add_extension(ex); } self
+	}
+	pub fn add_layer(&mut self, layer: &str) -> &mut Self
 	{
 		self.layers.push(CString::new(layer).unwrap()); self
 	}
-	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(self, layers: Layers) -> Self
+	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self
 	{
-		let mut s = self;
-		for l in layers { s = s.add_layer(l); } s
+		for l in layers { self.add_layer(l); } self
 	}
 	/// Create a new Vulkan instance
 	/// # Failures
@@ -74,19 +80,18 @@ impl InstanceBuilder
 	/// * `VK_ERROR_EXTENSION_NOT_PRESENT`
 	/// * `VK_ERROR_INCOMPATIBLE_DRIVER`
 	#[cfg(feature = "FeImplements")]
-	pub fn create(mut self) -> ::Result<Instance>
+	pub fn create(&mut self) -> ::Result<Instance>
 	{
-		let (layers, extensions): (Vec<_>, Vec<_>) = (self.layers.iter().map(|x| x.as_ptr()).collect(), self.extensions.iter().map(|x| x.as_ptr()).collect());
+		let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
+		let extensions: Vec<_> = self.extensions.iter().map(|x| x.as_ptr()).collect();
 		self.appinfo.pApplicationName = self.app_name.as_ptr(); self.appinfo.pEngineName = self.engine_name.as_ptr();
 		self.cinfo.enabledLayerCount = layers.len() as _; self.cinfo.ppEnabledLayerNames = layers.as_ptr();
 		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
 		self.cinfo.pApplicationInfo = &self.appinfo;
-		let mut h = unsafe { zeroed() };
-		unsafe { vkCreateInstance(&self.cinfo, null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell(h))))
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateInstance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell(h))))
 	}
 }
-#[cfg(feature = "FeImplements")]
-impl Drop for InstanceCell { fn drop(&mut self) { unsafe { vkDestroyInstance(self.0, null()); } } }
 #[cfg(feature = "FeImplements")]
 impl Instance
 {
@@ -99,7 +104,7 @@ impl Instance
 		else
 		{
 			let p = unsafe { vkGetInstanceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
-			if unsafe { transmute::<_, usize>(p) == 0 } { None } else { unsafe { Some(::fnconv::FnTransmute::from_fn(p)) } }
+			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
 		}
 	}
 	/// Enumerates the physical devices accessible to a Vulkan instance
@@ -115,7 +120,7 @@ impl Instance
 		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
 		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
-			.map(|_| unsafe { transmute(v) })
+			.map(|_| v.into_iter().map(|x| PhysicalDevice(x, self.clone())).collect())
 	}
 	/// Returns up to all of global layer properties
 	/// # Failures
@@ -149,16 +154,17 @@ impl Instance
 #[cfg(feature = "FeImplements")]
 impl PhysicalDevice
 {
+	pub fn parent(&self) -> &Instance { &self.1 }
 	/// Reports capabilities of a physical device.
 	pub fn features(&self) -> VkPhysicalDeviceFeatures
 	{
-		let mut p = unsafe { uninitialized() };
+		let mut p = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetPhysicalDeviceFeatures(self.0, &mut p) }; p
 	}
 	/// Lists physical device's format capabilities
 	pub fn format_properties(&self, format: VkFormat) -> VkFormatProperties
 	{
-		let mut p = unsafe { uninitialized() };
+		let mut p = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetPhysicalDeviceFormatProperties(self.0, format, &mut p) }; p
 	}
 	/// Lists physical device's image format capabilities
@@ -171,14 +177,14 @@ impl PhysicalDevice
 	pub fn image_format_properties(&self, format: VkFormat, itype: VkImageType, tiling: VkImageTiling,
 		usage: ::ImageUsage, flags: ::ImageFlags) -> ::Result<VkImageFormatProperties>
 	{
-		let mut p = unsafe { uninitialized() };
+		let mut p = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetPhysicalDeviceImageFormatProperties(self.0, format, itype, tiling, usage.0, flags.0, &mut p) }
 			.into_result().map(|_| p)
 	}
 	/// Returns properties of a physical device
 	pub fn properties(&self) -> VkPhysicalDeviceProperties
 	{
-		let mut p = unsafe { uninitialized() };
+		let mut p = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetPhysicalDeviceProperties(self.0, &mut p) }; p
 	}
 	/// Reports properties of the queues of the specified physical device
@@ -192,7 +198,7 @@ impl PhysicalDevice
 	/// Reports memory information for the specified physical device
 	pub fn memory_properties(&self) -> VkPhysicalDeviceMemoryProperties
 	{
-		let mut p = unsafe { uninitialized() };
+		let mut p = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetPhysicalDeviceMemoryProperties(self.0, &mut p) }; p
 	}
 	/// Retrieve properties of an image format applied to sparse images
@@ -228,7 +234,7 @@ impl PhysicalDevice
 	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR>
 	{
-		let mut s = unsafe { ::std::mem::zeroed() };
+		let mut s = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetPhysicalDeviceSurfaceCapabilitiesKHR(self.0, surface.native_ptr(), &mut s) }.into_result().map(|_| s)
 	}
 	/// Query color formats supported by surface

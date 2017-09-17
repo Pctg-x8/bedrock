@@ -55,7 +55,7 @@ impl QueueFamilies
 	pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &VkExtent3D { &self.0[family_index as usize].minImageTransferGranularity }
 }
 
-struct DeviceCell(VkDevice);
+struct DeviceCell(VkDevice, ::Instance);
 /// Opaque handle to a device object
 #[derive(Clone)]
 pub struct Device(RefCounter<DeviceCell>);
@@ -64,6 +64,9 @@ pub struct Device(RefCounter<DeviceCell>);
 pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
+
+#[cfg(feature = "FeImplements")]
+impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
 
 impl VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
 impl VkHandle for Queue  { type Handle = VkQueue;  fn native_ptr(&self) -> VkQueue  { self.0 } }
@@ -83,6 +86,10 @@ impl<'p> DeviceBuilder<'p>
 	}
 	pub fn add_layer(mut self, name: &str) -> Self { self.layers.push(CString::new(name).unwrap()); self }
 	pub fn add_extension(mut self, name: &str) -> Self { self.extensions.push(CString::new(name).unwrap()); self }
+	pub fn add_extension_zerotermed(mut self, name: &str) -> Self
+	{
+		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(name.as_ptr() as *const _) }.to_owned()); self
+	}
 	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(mut self, layers: Layers) -> Self
 	{
 		for l in layers { self = self.add_layer(l); } self
@@ -125,15 +132,9 @@ impl<'p> DeviceBuilder<'p>
 		};
 		let mut h = unsafe { ::std::mem::zeroed() };
 		unsafe { vkCreateDevice(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Device(RefCounter::new(DeviceCell(h))))
+			.map(|_| Device(RefCounter::new(DeviceCell(h, self.pdev_ref.parent().clone()))))
 	}
 }
-impl Device
-{
-	pub fn native_ptr(&self) -> VkDevice { (self.0).0 }
-}
-#[cfg(feature = "FeImplements")]
-impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
 #[cfg(feature = "FeImplements")]
 impl Device
 {
@@ -146,7 +147,7 @@ impl Device
 		else
 		{
 			let p = unsafe { vkGetDeviceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
-			if unsafe { ::std::mem::transmute::<_, usize>(p) == 0 } { None } else { unsafe { Some(::fnconv::FnTransmute::from_fn(p)) } }
+			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
 		}
 	}
 	/// Get a queue handle from a device

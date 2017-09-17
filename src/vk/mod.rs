@@ -2357,8 +2357,8 @@ pub type PFN_vkGetPhysicalDeviceImageFormatProperties = extern "system" fn(physi
 pub type PFN_vkGetPhysicalDeviceProperties = extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties);
 pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties = extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQuueFamilProperties: *mut VkQueueFamilyProperties);
 pub type PFN_vkGetPhysicalDeviceMemoryProperties = extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties);
-pub type PFN_vkGetInstanceProcAddr = extern "system" fn(instance: VkInstance, pName: *const c_char) -> PFN_vkVoidFunction;
-pub type PFN_vkGetDeviceProcAddr = extern "system" fn(device: VkDevice, pName: *const c_char) -> PFN_vkVoidFunction;
+pub type PFN_vkGetInstanceProcAddr = extern "system" fn(instance: VkInstance, pName: *const c_char) -> Option<PFN_vkVoidFunction>;
+pub type PFN_vkGetDeviceProcAddr = extern "system" fn(device: VkDevice, pName: *const c_char) -> Option<PFN_vkVoidFunction>;
 pub type PFN_vkCreateDevice = extern "system" fn(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult;
 pub type PFN_vkDestroyDevice = extern "system" fn(device: VkDevice, pAllocator: *const VkAllocationCallbacks);
 pub type PFN_vkEnumerateInstanceExtensionProperties = extern "system" fn(pLayerName: *const c_char, pPropertyCount: *mut u32, pProperties: VkExtensionProperties) -> VkResult;
@@ -2498,8 +2498,8 @@ pub type PFN_vkCmdExecuteCommands        = extern "system" fn(commandBuffer: VkC
     pub fn vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties);
     pub fn vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties);
     pub fn vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties);
-    pub fn vkGetInstanceProcAddr(instance: VkInstance, pName: *const c_char) -> PFN_vkVoidFunction;
-    pub fn vkGetDeviceProcAddr(device: VkDevice, pName: *const c_char) -> PFN_vkVoidFunction;
+    pub fn vkGetInstanceProcAddr(instance: VkInstance, pName: *const c_char) -> Option<PFN_vkVoidFunction>;
+    pub fn vkGetDeviceProcAddr(device: VkDevice, pName: *const c_char) -> Option<PFN_vkVoidFunction>;
     pub fn vkCreateDevice(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult;
     pub fn vkDestroyDevice(device: VkDevice, pAllocator: *const VkAllocationCallbacks);
     pub fn vkEnumerateInstanceExtensionProperties(pLayerName: *const c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
