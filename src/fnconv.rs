@@ -53,5 +53,12 @@ FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkBuffer, VkDeviceSize,
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkEvent, VkPipelineStageFlags));		// CmdSetEvent, CmdResetEvent
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkQueryPool, u32, u32));				// CmdBeginQuery, CmdResetQueryPool
 
+#[cfg(feature = "VK_KHR_surface")]
+FnTransmuteImpl!(for PFN_vkDestroySurfaceKHR, PFN_vkGetPhysicalDeviceSurfaceSupportKHR, PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR,
+	PFN_vkGetPhysicalDeviceSurfaceFormatsKHR, PFN_vkGetPhysicalDeviceSurfacePresentModesKHR);
+
 #[cfg(feature = "VK_EXT_debug_report")]
 FnTransmuteImpl!(for PFN_vkCreateDebugReportCallbackEXT, PFN_vkDebugReportMessageEXT, PFN_vkDestroyDebugReportCallbackEXT);
+
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR, PFN_vkGetPhysicalDeviceSurfaceFormats2KHR);
