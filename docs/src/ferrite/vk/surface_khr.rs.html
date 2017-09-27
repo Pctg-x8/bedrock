@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `src\vk\surface_khr.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>surface_khr.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc source">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! VK_KHR_surface extension</span>
+
+<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;64&quot;</span>)]</span>
+<span class="kw">mod</span> <span class="ident">nd_handle_base_ts</span> { <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">VkSurfaceKHR</span> {} }
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">VkSurfaceKHR</span> <span class="op">=</span> <span class="macro">VK_NON_DISPATCHABLE_HANDLE</span><span class="macro">!</span>(<span class="ident">VkSurfaceKHR</span>);
+
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_KHR_SURFACE_SPEC_VERSION</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">25</span>;
+<span class="kw">pub</span> <span class="kw">static</span> <span class="ident">VK_KHR_SURFACE_EXTENSION_NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLORSPACE_SRGB_NONLINEAR_KHR</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="ident">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>;
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="ident">i32</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">0</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_001</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_EXTENDED_SRGB_LINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_002</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_DCI_P3_LINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_003</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_DCI_P3_NONLINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_004</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_BT709_LINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_005</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_BT709_NONLINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_006</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_BT2020_LINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_007</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_HDR10_ST2084_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_008</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_DOLBYVISION_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_009</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_KDR10_HLG_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_010</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_ADOBERGB_LINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_011</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_ADOBERGB_NONLINEAR_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_012</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COLOR_SPACE_PASS_THROUGH_EXT</span>: <span class="ident">VkColorSpaceKHR</span> <span class="op">=</span> <span class="number">100_0104_013</span>;
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="ident">i32</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_PRESENT_MODE_IMMEDIATE_KHR</span>: <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="number">0</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_PRESENT_MODE_MAILBOX_KHR</span>: <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="number">1</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_PRESENT_MODE_FIFO_KHR</span>: <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="number">2</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_PRESENT_MODE_FIFO_RELAXED_KHR</span>: <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="number">3</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_PRESENT_MODE_SHARED_DEMAND_REFRESH_KHR</span>: <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="number">100_0111_000</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_PRESENT_MODE_SHARED_CONTINUOUS_REFRESH_KHR</span>: <span class="ident">VkPresentModeKHR</span> <span class="op">=</span> <span class="number">100_0111_001</span>;
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="ident">VkFlags</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0001</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0002</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0004</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0008</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0010</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0020</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0040</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0080</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span> <span class="op">=</span> <span class="number">0x0100</span>;
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">VkCompositeAlphaFlagsKHR</span> <span class="op">=</span> <span class="ident">VkFlags</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR</span>: <span class="ident">VkCompositeAlphaFlagsKHR</span> <span class="op">=</span> <span class="number">0x01</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR</span>: <span class="ident">VkCompositeAlphaFlagsKHR</span> <span class="op">=</span> <span class="number">0x02</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR</span>: <span class="ident">VkCompositeAlphaFlagsKHR</span> <span class="op">=</span> <span class="number">0x04</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR</span>: <span class="ident">VkCompositeAlphaFlagsKHR</span> <span class="op">=</span> <span class="number">0x08</span>;
+
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VkSurfaceCapabilitiesKHR</span>
+{
+    <span class="kw">pub</span> <span class="ident">minImageCount</span>: <span class="ident">u32</span>, <span class="kw">pub</span> <span class="ident">maxImageCount</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">currentExtent</span>: <span class="ident">VkExtent2D</span>, <span class="kw">pub</span> <span class="ident">minImageExtent</span>: <span class="ident">VkExtent2D</span>, <span class="kw">pub</span> <span class="ident">maxImageExtent</span>: <span class="ident">VkExtent2D</span>,
+    <span class="kw">pub</span> <span class="ident">maxImageArrayLayers</span>: <span class="ident">u32</span>, <span class="kw">pub</span> <span class="ident">supportedTransforms</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span>,
+    <span class="kw">pub</span> <span class="ident">currentTransform</span>: <span class="ident">VkSurfaceTransformFlagsKHR</span>, <span class="kw">pub</span> <span class="ident">supportedCompositeAlpha</span>: <span class="ident">VkCompositeAlphaFlagsKHR</span>,
+    <span class="kw">pub</span> <span class="ident">supportedUsageFlags</span>: <span class="ident">VkImageUsageFlags</span>
+}
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">VkSurfaceFormatKHR</span> { <span class="kw">pub</span> <span class="ident">format</span>: <span class="ident">VkFormat</span>, <span class="kw">pub</span> <span class="ident">colorSpace</span>: <span class="ident">VkColorSpaceKHR</span> }
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">VkSurfaceFormatKHR</span>
+{
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span>
+    {
+        <span class="ident">VkSurfaceFormatKHR</span> { <span class="ident">format</span>: <span class="ident">VK_FORMAT_UNDEFINED</span>, <span class="ident">colorSpace</span>: <span class="ident">VK_COLOR_SPACE_SRGB_NONLINEAR_KHR</span> }
+    }
+}
+
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkDestroySurfaceKHR</span> <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">instance</span>: <span class="ident">VkInstance</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pAllocator</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkAllocationCallbacks</span>);
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkGetPhysicalDeviceSurfaceSupportKHR</span> <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">queueFamilyIndex</span>: <span class="ident">u32</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pSupported</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkBool32</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span> <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pSurfaceCapabilities</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkSurfaceCapabilitiesKHR</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkGetPhysicalDeviceSurfaceFormatsKHR</span> <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pSurfaceFormatCount</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u32</span>, <span class="ident">pSurfaceFormats</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkSurfaceFormatKHR</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkGetPhysicalDeviceSurfacePresentModesKHR</span> <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pPresentModeCount</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u32</span>, <span class="ident">pPresentModes</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkPresentModeKHR</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">extern</span> <span class="string">&quot;system&quot;</span>
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkDestroySurfaceKHR</span>(<span class="ident">instance</span>: <span class="ident">VkInstance</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pAllocator</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkAllocationCallbacks</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkGetPhysicalDeviceSurfaceSupportKHR</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">queueFamilyIndex</span>: <span class="ident">u32</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pSupported</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkBool32</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pSurfaceCapabilities</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkSurfaceCapabilitiesKHR</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkGetPhysicalDeviceSurfaceFormatsKHR</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pSurfaceFormatCount</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u32</span>, <span class="ident">pSurfaceFormats</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkSurfaceFormatKHR</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(<span class="ident">physicalDevice</span>: <span class="ident">VkPhysicalDevice</span>, <span class="ident">surface</span>: <span class="ident">VkSurfaceKHR</span>, <span class="ident">pPresentModeCount</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u32</span>, <span class="ident">pPresentModes</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkPresentModeKHR</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
+}
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>

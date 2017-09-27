@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ferrite` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ferrite">
+
+    <title>ferrite - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Crate ferrite</p><div class="block items"><ul><li><a href="#reexports">Reexports</a></li><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'ferrite', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>ferrite</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/ferrite/lib.rs.html#1-489' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Glue library between Vulkan and Rust</p>
+
+<h1 id='copyright' class='section-header'><a href='#copyright'>Copyright</a></h1>
+<p>Some documentation comments are from Vulkan Manual Page.<br>
+Copyright (c) 2014-2017 Khronos Group.</p>
+
+<h1 id='compile-options' class='section-header'><a href='#compile-options'>Compile Options</a></h1>
+<ul>
+<li><code>FeImplements</code>: Enable Vulkan implementations(functions)</li>
+<li><code>FeMultithreaded</code>: Enables to use objects from some threads(experimental)</li>
+<li><code>FePresentation</code>: Enable rendering features to Window/Display(<code>VK_KHR_surface</code>/<code>VK_KHR_swapchain</code>/<code>VK_KHR_display</code>)</li>
+<li><code>VK_***</code>: Enable Vulkan extensions(same name as each extensions)</li>
+</ul>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use <a class="enum" href="../ferrite/enum.SwitchOrDynamicState.html" title="enum ferrite::SwitchOrDynamicState">SwitchOrDynamicState</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="vk/index.html"
+                                  title='mod ferrite::vk'>vk</a></td>
+                           <td class='docblock-short'>
+                                <p>Vulkan API Definitions 1.0.59.0</p>
+                           </td>
+                       </tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.VK_MAKE_VERSION.html"
+                                  title='macro ferrite::VK_MAKE_VERSION'>VK_MAKE_VERSION</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="macro" href="macro.VK_VERSION.html"
+                                  title='macro ferrite::VK_VERSION'>VK_VERSION</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.AspectMask.html"
+                                  title='struct ferrite::AspectMask'>AspectMask</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying which aspects of an image are included in a view</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Buffer.html"
+                                  title='struct ferrite::Buffer'>Buffer</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a buffer object(constructed via <code>BufferDesc</code>)</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.BufferDesc.html"
+                                  title='struct ferrite::BufferDesc'>BufferDesc</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder structure specifying the parameters of a newly created buffer object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.BufferUsage.html"
+                                  title='struct ferrite::BufferUsage'>BufferUsage</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying allowed usage of a buffer</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.BufferView.html"
+                                  title='struct ferrite::BufferView'>BufferView</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a buffer view object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.CmdRecord.html"
+                                  title='struct ferrite::CmdRecord'>CmdRecord</a></td>
+                           <td class='docblock-short'>
+                                <p>The recording state of commandbuffers</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.CommandBuffer.html"
+                                  title='struct ferrite::CommandBuffer'>CommandBuffer</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a command buffer object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.CommandPool.html"
+                                  title='struct ferrite::CommandPool'>CommandPool</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a command pool object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ComponentMapping.html"
+                                  title='struct ferrite::ComponentMapping'>ComponentMapping</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying a color component mapping</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DSLBindings.html"
+                                  title='struct ferrite::DSLBindings'>DSLBindings</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying a descriptor set layout binding</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DescriptorPool.html"
+                                  title='struct ferrite::DescriptorPool'>DescriptorPool</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a descriptor pool object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DescriptorPoolSize.html"
+                                  title='struct ferrite::DescriptorPoolSize'>DescriptorPoolSize</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying descriptor pool size</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DescriptorSetCopyInfo.html"
+                                  title='struct ferrite::DescriptorSetCopyInfo'>DescriptorSetCopyInfo</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying a copy descriptor set operation</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DescriptorSetLayout.html"
+                                  title='struct ferrite::DescriptorSetLayout'>DescriptorSetLayout</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a descriptor set layout object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DescriptorSetWriteInfo.html"
+                                  title='struct ferrite::DescriptorSetWriteInfo'>DescriptorSetWriteInfo</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying the parameters of a descriptor set write operation
+Element order: DescriptorSet, Binding, ArrayIndex, Description</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Device.html"
+                                  title='struct ferrite::Device'>Device</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a device object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DeviceBuilder.html"
+                                  title='struct ferrite::DeviceBuilder'>DeviceBuilder</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder object for constructing a <code>Device</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DeviceMemory.html"
+                                  title='struct ferrite::DeviceMemory'>DeviceMemory</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a device memory object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DeviceQueueCreateInfo.html"
+                                  title='struct ferrite::DeviceQueueCreateInfo'>DeviceQueueCreateInfo</a></td>
+                           <td class='docblock-short'>
+                                <p>Family Index, Queue Priorities</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.DynamicDataCell.html"
+                                  title='struct ferrite::DynamicDataCell'>DynamicDataCell</a></td>
+                           <td class='docblock-short'>
+                                <p>Untyped data cell</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Event.html"
+                                  title='struct ferrite::Event'>Event</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a event object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Extent1D.html"
+                                  title='struct ferrite::Extent1D'>Extent1D</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Extent2D.html"
+                                  title='struct ferrite::Extent2D'>Extent2D</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Extent3D.html"
+                                  title='struct ferrite::Extent3D'>Extent3D</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Fence.html"
+                                  title='struct ferrite::Fence'>Fence</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a fence object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.FormatQuery.html"
+                                  title='struct ferrite::FormatQuery'>FormatQuery</a></td>
+                           <td class='docblock-short'>
+                                <p>Format Selection Query</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.FormatTraits.html"
+                                  title='struct ferrite::FormatTraits'>FormatTraits</a></td>
+                           <td class='docblock-short'>
+                                <p>For testing format traits</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Framebuffer.html"
+                                  title='struct ferrite::Framebuffer'>Framebuffer</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a framebuffer object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.GraphicsPipelineBuilder.html"
+                                  title='struct ferrite::GraphicsPipelineBuilder'>GraphicsPipelineBuilder</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder struct to construct a <code>Pipeline</code> for graphics operations</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Image.html"
+                                  title='struct ferrite::Image'>Image</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a image object(constructed via <code>ImageDesc</code>)</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ImageDesc.html"
+                                  title='struct ferrite::ImageDesc'>ImageDesc</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder structure specifying the parameters of a newly created image object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ImageFlags.html"
+                                  title='struct ferrite::ImageFlags'>ImageFlags</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying additional parameters of an image</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ImageSubresourceRange.html"
+                                  title='struct ferrite::ImageSubresourceRange'>ImageSubresourceRange</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying a image subresource range</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ImageUsage.html"
+                                  title='struct ferrite::ImageUsage'>ImageUsage</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying intended usage of an image</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ImageView.html"
+                                  title='struct ferrite::ImageView'>ImageView</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a image view object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Instance.html"
+                                  title='struct ferrite::Instance'>Instance</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a instance object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.InstanceBuilder.html"
+                                  title='struct ferrite::InstanceBuilder'>InstanceBuilder</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder object for constructing a <code>Instance</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.MappedMemoryRange.html"
+                                  title='struct ferrite::MappedMemoryRange'>MappedMemoryRange</a></td>
+                           <td class='docblock-short'>
+                                <p>Specifies the block of mapped memory in a <code>DeviceMemory</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Offset1D.html"
+                                  title='struct ferrite::Offset1D'>Offset1D</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Offset2D.html"
+                                  title='struct ferrite::Offset2D'>Offset2D</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Offset3D.html"
+                                  title='struct ferrite::Offset3D'>Offset3D</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PhysicalDevice.html"
+                                  title='struct ferrite::PhysicalDevice'>PhysicalDevice</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a physical device object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Pipeline.html"
+                                  title='struct ferrite::Pipeline'>Pipeline</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a pipeline object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PipelineCache.html"
+                                  title='struct ferrite::PipelineCache'>PipelineCache</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a pipeline cache object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PipelineLayout.html"
+                                  title='struct ferrite::PipelineLayout'>PipelineLayout</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a pipeline layout object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PipelineShader.html"
+                                  title='struct ferrite::PipelineShader'>PipelineShader</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder struct to construct a shader stage in a <code>Pipeline</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PipelineStageFlags.html"
+                                  title='struct ferrite::PipelineStageFlags'>PipelineStageFlags</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying pipeline stages</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.QueryPipelineStatisticFlags.html"
+                                  title='struct ferrite::QueryPipelineStatisticFlags'>QueryPipelineStatisticFlags</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying queried pipeline statistics</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.QueryPool.html"
+                                  title='struct ferrite::QueryPool'>QueryPool</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a query pool object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.QueryResultFlags.html"
+                                  title='struct ferrite::QueryResultFlags'>QueryResultFlags</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying how and when query results are returned</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Queue.html"
+                                  title='struct ferrite::Queue'>Queue</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a queue object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.QueueFamilies.html"
+                                  title='struct ferrite::QueueFamilies'>QueueFamilies</a></td>
+                           <td class='docblock-short'>
+                                <p>List of queue families</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.QueueFlags.html"
+                                  title='struct ferrite::QueueFlags'>QueueFlags</a></td>
+                           <td class='docblock-short'>
+                                <p>Set of bit of queue flags</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.RenderPass.html"
+                                  title='struct ferrite::RenderPass'>RenderPass</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a render pass object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.RenderPassBuilder.html"
+                                  title='struct ferrite::RenderPassBuilder'>RenderPassBuilder</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder structure to construct the <code>RenderPass</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Sampler.html"
+                                  title='struct ferrite::Sampler'>Sampler</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a sampler object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SamplerBuilder.html"
+                                  title='struct ferrite::SamplerBuilder'>SamplerBuilder</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder object for constructing the sampler object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Semaphore.html"
+                                  title='struct ferrite::Semaphore'>Semaphore</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a semaphore object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ShaderModule.html"
+                                  title='struct ferrite::ShaderModule'>ShaderModule</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a shader module object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ShaderStage.html"
+                                  title='struct ferrite::ShaderStage'>ShaderStage</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying a pipeline stage</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SparseBindingOpBatch.html"
+                                  title='struct ferrite::SparseBindingOpBatch'>SparseBindingOpBatch</a></td>
+                           <td class='docblock-short'>
+                                <p>Sparse Binding operation batch</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SubpassDescription.html"
+                                  title='struct ferrite::SubpassDescription'>SubpassDescription</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder structure to construct the <code>VkSubpassDescription</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Surface.html"
+                                  title='struct ferrite::Surface'>Surface</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a surface object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Swapchain.html"
+                                  title='struct ferrite::Swapchain'>Swapchain</a></td>
+                           <td class='docblock-short'>
+                                <p>Opaque handle to a swapchain object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.SwapchainBuilder.html"
+                                  title='struct ferrite::SwapchainBuilder'>SwapchainBuilder</a></td>
+                           <td class='docblock-short'>
+                                <p>Builder object to construct a <code>Swapchain</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.VkResultBox.html"
+                                  title='struct ferrite::VkResultBox'>VkResultBox</a></td>
+                           <td class='docblock-short'>
+                                <p>Boxed version of <code>VkResult</code></p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.AddressingMode.html"
+                                  title='enum ferrite::AddressingMode'>AddressingMode</a></td>
+                           <td class='docblock-short'>
+                                <p>Specify behavior of sampling with texture coordinates outside an image</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.BasePipeline.html"
+                                  title='enum ferrite::BasePipeline'>BasePipeline</a></td>
+                           <td class='docblock-short'>
+                                <p>Which is pipeline state to derive from</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.BorderColor.html"
+                                  title='enum ferrite::BorderColor'>BorderColor</a></td>
+                           <td class='docblock-short'>
+                                <p>Specify border color used for texture lookups</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.BufferSparseBinding.html"
+                                  title='enum ferrite::BufferSparseBinding'>BufferSparseBinding</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitset specifying additional parameters of a buffer</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ClearValue.html"
+                                  title='enum ferrite::ClearValue'>ClearValue</a></td>
+                           <td class='docblock-short'>
+                                <p>The enum representation of <code>VkClearValue</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.CompareOp.html"
+                                  title='enum ferrite::CompareOp'>CompareOp</a></td>
+                           <td class='docblock-short'>
+                                <p>Stencil comparison function</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ComponentSwizzle.html"
+                                  title='enum ferrite::ComponentSwizzle'>ComponentSwizzle</a></td>
+                           <td class='docblock-short'>
+                                <p>Specify how a component is swizzled</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.CompositeAlpha.html"
+                                  title='enum ferrite::CompositeAlpha'>CompositeAlpha</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.DescriptorType.html"
+                                  title='enum ferrite::DescriptorType'>DescriptorType</a></td>
+                           <td class='docblock-short'>
+                                <p>Specified the type of a descriptor in a descriptor set</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.DescriptorUpdateInfo.html"
+                                  title='enum ferrite::DescriptorUpdateInfo'>DescriptorUpdateInfo</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure specifying the parameters of a descriptor set write/copy operations
+For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
+For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
+For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.DisplayPlaneAlpha.html"
+                                  title='enum ferrite::DisplayPlaneAlpha'>DisplayPlaneAlpha</a></td>
+                           <td class='docblock-short'>
+                                <p>Alpha blending type</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.DynamicArrayState.html"
+                                  title='enum ferrite::DynamicArrayState'>DynamicArrayState</a></td>
+                           <td class='docblock-short'>
+                                <p>Whether the state(type of array) is dynamic or static</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ElementType.html"
+                                  title='enum ferrite::ElementType'>ElementType</a></td>
+                           <td class='docblock-short'>
+                                <p>Containing component element in format</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.FilterMode.html"
+                                  title='enum ferrite::FilterMode'>FilterMode</a></td>
+                           <td class='docblock-short'>
+                                <p>Specify filter used for texture lookups</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.FormatComponents.html"
+                                  title='enum ferrite::FormatComponents'>FormatComponents</a></td>
+                           <td class='docblock-short'>
+                                <p>Containing Components in Format(Order is not considered)</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ImageCell.html"
+                                  title='enum ferrite::ImageCell'>ImageCell</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.ImageLayout.html"
+                                  title='enum ferrite::ImageLayout'>ImageLayout</a></td>
+                           <td class='docblock-short'>
+                                <p>Layouts of image and image subresources</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.IndexType.html"
+                                  title='enum ferrite::IndexType'>IndexType</a></td>
+                           <td class='docblock-short'>
+                                <p>Type of index buffer indices</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.LogicOp.html"
+                                  title='enum ferrite::LogicOp'>LogicOp</a></td>
+                           <td class='docblock-short'>
+                                <p>Framebuffer logical operations</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.MipmapFilterMode.html"
+                                  title='enum ferrite::MipmapFilterMode'>MipmapFilterMode</a></td>
+                           <td class='docblock-short'>
+                                <p>Specify mipmap mode used for texture lookups</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.OcclusionQuery.html"
+                                  title='enum ferrite::OcclusionQuery'>OcclusionQuery</a></td>
+                           <td class='docblock-short'>
+                                <p>Enabling or disabling the occlusion query</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.PresentMode.html"
+                                  title='enum ferrite::PresentMode'>PresentMode</a></td>
+                           <td class='docblock-short'>
+                                <p>Presentation mode supported for a surface</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.QueryType.html"
+                                  title='enum ferrite::QueryType'>QueryType</a></td>
+                           <td class='docblock-short'>
+                                <p>Specify the type of queries managed by a query pool</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.StencilFaceMask.html"
+                                  title='enum ferrite::StencilFaceMask'>StencilFaceMask</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying sets of stencil state for which to update the compare mask</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.StencilOp.html"
+                                  title='enum ferrite::StencilOp'>StencilOp</a></td>
+                           <td class='docblock-short'>
+                                <p>Stencil action function</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SurfaceTransform.html"
+                                  title='enum ferrite::SurfaceTransform'>SurfaceTransform</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.SwitchOrDynamicState.html"
+                                  title='enum ferrite::SwitchOrDynamicState'>SwitchOrDynamicState</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.ClearColorValue.html"
+                                  title='trait ferrite::ClearColorValue'>ClearColorValue</a></td>
+                           <td class='docblock-short'>
+                                <p>The trait representation of <code>VkClearColorValue</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.DeviceChild.html"
+                                  title='trait ferrite::DeviceChild'>DeviceChild</a></td>
+                           <td class='docblock-short'>
+                                <p>Child of a device object</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.ImageSize.html"
+                                  title='trait ferrite::ImageSize'>ImageSize</a></td>
+                           <td class='docblock-short'>
+                                <p>Image Dimension by corresponding extent type</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.MemoryBound.html"
+                                  title='trait ferrite::MemoryBound'>MemoryBound</a></td>
+                           <td class='docblock-short'>
+                                <p>Common operations for memory bound objects</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Status.html"
+                                  title='trait ferrite::Status'>Status</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.VkHandle.html"
+                                  title='trait ferrite::VkHandle'>VkHandle</a></td>
+                           <td class='docblock-short'>
+                                <p>Wrapping a Vulkan Dispatchable/Nondispatchable Handler</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.VkResultHandler.html"
+                                  title='trait ferrite::VkResultHandler'>VkResultHandler</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Waitable.html"
+                                  title='trait ferrite::Waitable'>Waitable</a></td>
+                           <td class='docblock-short'>
+                                <p>Supports blocking wait operation</p>
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.Result.html"
+                                  title='type ferrite::Result'>Result</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
