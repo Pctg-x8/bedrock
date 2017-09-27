@@ -266,6 +266,7 @@ impl PipelineLayout
 	}
 }
 
+/// Disabled, Specified in the command buffer or Specified in the pipeline state
 pub enum SwitchOrDynamicState<T> { Disabled, Dynamic, Static(T) }
 impl<T> SwitchOrDynamicState<T>
 {
@@ -344,20 +345,44 @@ impl<'d> PipelineShader<'d>
 		PipelineShader { module, entry_name: CString::new(entry_name).unwrap(), specinfo }
 	}
 }
+
+impl<'d> GraphicsPipelineBuilder<'d>
+{
+	/// Initialize the builder object
+	pub fn new(layout: &'d PipelineLayout, rpsp: (&'d ::RenderPass, u32)) -> Self
+	{
+		GraphicsPipelineBuilder
+		{
+			flags: 0, _layout: layout, rp: rpsp.0, subpass: rpsp.1, _base: BasePipeline::None,
+			vs: None, tcs: None, tes: None, gs: None, fs: None,
+			vi_state: (Default::default(), Vec::new(), Vec::new()),
+			ia_state: Default::default(), rasterizer_state: Default::default(),
+			tess_state: None, viewport_state: None, ms_state: None, ds_state: None, color_blending: None,
+			dynamic_state_flags: unsafe { ::std::mem::zeroed() }
+		}
+	}
+}
 /// Shading State and Input Configuration
 impl<'d> GraphicsPipelineBuilder<'d>
 {
+	/// Set the vertex shader in this pipeline
 	pub fn vertex_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.vs = Some(shader); self }
+	/// Set the tessellation control shader(hull shader) in this pipeline
 	pub fn tessellation_control_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.tcs = Some(shader); self }
+	/// Set the tessellation evaluation shader(domain shader) in this pipeline
 	pub fn tessellation_evaluation_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.tes = Some(shader); self }
+	/// Set the geometry shader in this pipeline
 	pub fn geometry_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.gs = Some(shader); self }
+	/// Set the fragment shader in this pipeline
 	pub fn fragment_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.fs = Some(shader); self }
+	/// Set the vertex input layout in this pipeline
 	pub fn vertex_input_state(&mut self, bindings: Vec<VkVertexInputBindingDescription>, attributes: Vec<VkVertexInputAttributeDescription>) -> &mut Self
 	{
 		self.vi_state.0.vertexBindingDescriptionCount = bindings.len() as _; self.vi_state.0.pVertexBindingDescriptions = bindings.as_ptr();
 		self.vi_state.0.vertexAttributeDescriptionCount = attributes.len() as _; self.vi_state.0.pVertexAttributeDescriptions = attributes.as_ptr();
 		self.vi_state.1 = bindings; self.vi_state.2 = attributes; self
 	}
+	/// Set the vertex processing state(a shader and an input layout) in this pipeline
 	pub fn vertex_processing(&mut self, shader: PipelineShader<'d>,
 		bindings: Vec<VkVertexInputBindingDescription>, attributes: Vec<VkVertexInputAttributeDescription>) -> &mut Self
 	{
@@ -380,6 +405,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		if self.tess_state.is_none() { self.tess_state = Some(Default::default()); }
 		self.tess_state.as_mut().unwrap().patchControlPoints = count; self
 	}
+	/// Set the tessellation processing state(hull/domain shaders and a number of control points)
 	pub fn tessellator_settings(&mut self, control: PipelineShader<'d>, evaluation: PipelineShader<'d>, num_control_points: u32) -> &mut Self
 	{
 		self.tessellation_control_shader(control).tessellation_evaluation_shader(evaluation).patch_control_point_count(num_control_points)

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\framebuffer.rs`.">
+    <meta name="description" content="Source to the Rust file `src/framebuffer.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>framebuffer.rs.html -- source</title>
@@ -261,11 +261,11 @@
 			<span class="ident">preserve_attachments</span>: <span class="ident">Vec</span>::<span class="ident">new</span>()
 		}
 	}
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_input</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">layout</span>: ::<span class="ident">ImageLayout</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_input</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">layout</span>: ::<span class="ident">ImageLayout</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
 	{
 		<span class="self">self</span>.<span class="ident">input_attachments</span>.<span class="ident">push</span>(<span class="ident">VkAttachmentReference</span> { <span class="ident">attachment</span>: <span class="ident">index</span>, <span class="ident">layout</span>: <span class="ident">layout</span> <span class="kw">as</span> _ }); <span class="self">self</span>
 	}
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_color_output</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">layout</span>: ::<span class="ident">ImageLayout</span>, <span class="ident">resolve</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">u32</span>, ::<span class="ident">ImageLayout</span>)<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_color_output</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">layout</span>: ::<span class="ident">ImageLayout</span>, <span class="ident">resolve</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">u32</span>, ::<span class="ident">ImageLayout</span>)<span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
 	{
 		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="ident">i</span>, <span class="ident">l</span>)) <span class="op">=</span> <span class="ident">resolve</span>
 		{
@@ -278,17 +278,17 @@
 		<span class="self">self</span>.<span class="ident">color_attachments</span>.<span class="ident">push</span>(<span class="ident">VkAttachmentReference</span> { <span class="ident">attachment</span>: <span class="ident">index</span>, <span class="ident">layout</span>: <span class="ident">layout</span> <span class="kw">as</span> _ });
 		<span class="self">self</span>
 	}
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">depth_stencil</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">layout</span>: ::<span class="ident">ImageLayout</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">depth_stencil</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>, <span class="ident">layout</span>: ::<span class="ident">ImageLayout</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
 	{
 		<span class="self">self</span>.<span class="ident">depth_stencil_attachment</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">VkAttachmentReference</span> { <span class="ident">attachment</span>: <span class="ident">index</span>, <span class="ident">layout</span>: <span class="ident">layout</span> <span class="kw">as</span> _ }); <span class="self">self</span>
 	}
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_preserve</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_preserve</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
 	{
 		<span class="self">self</span>.<span class="ident">preserve_attachments</span>.<span class="ident">push</span>(<span class="ident">index</span>); <span class="self">self</span>
 	}
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_preserves</span><span class="op">&lt;</span><span class="ident">Collection</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">u32</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">collection</span>: <span class="ident">Collection</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_preserves</span><span class="op">&lt;</span><span class="ident">Collection</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">u32</span><span class="op">&gt;&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">collection</span>: <span class="ident">Collection</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
 	{
-		<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">collection</span> { <span class="self">self</span>.<span class="ident">add_preserve</span>(<span class="ident">i</span>); } <span class="self">self</span>
+		<span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">collection</span> { <span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">add_preserve</span>(<span class="ident">i</span>); } <span class="self">self</span>
 	}
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>

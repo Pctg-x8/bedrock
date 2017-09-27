@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\resources.rs`.">
+    <meta name="description" content="Source to the Rust file `src/resources.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>resources.rs.html -- source</title>
@@ -869,6 +869,9 @@
 <span id="824">824</span>
 <span id="825">825</span>
 <span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Resources</span>
 
@@ -1487,7 +1490,10 @@
 	<span class="doccomment">/// must only be used as a source image of a transfer command</span>
 	<span class="ident">TransferSrcOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> <span class="kw">as</span> _,
 	<span class="doccomment">/// must only be used as a destination image of a transfer command</span>
-	<span class="ident">TransferDestOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span> <span class="kw">as</span> _
+	<span class="ident">TransferDestOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used for presenting a swapchain image for display</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+	<span class="ident">PresentSrc</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span> <span class="kw">as</span> _
 }
 
 <span class="doccomment">/// Structure specifying a color component mapping</span>

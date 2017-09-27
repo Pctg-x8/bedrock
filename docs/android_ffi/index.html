@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `android_ffi` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, android_ffi">
+
+    <title>android_ffi - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Crate android_ffi</p><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#statics">Statics</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'android_ffi', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>android_ffi</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/android_ffi/lib.rs.html#1-640' title='goto source code'>[src]</a></span></h1>
+<h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Motion.html"
+                                  title='struct android_ffi::Motion'>Motion</a></td>
+                           <td class='docblock-short'>
+                                <p>Data about a motion event.</p>
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.AssetError.html"
+                                  title='enum android_ffi::AssetError'>AssetError</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Event.html"
+                                  title='enum android_ffi::Event'>Event</a></td>
+                           <td class='docblock-short'>
+                                <p>An event triggered by the Android environment.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.MotionAction.html"
+                                  title='enum android_ffi::MotionAction'>MotionAction</a></td>
+                           <td class='docblock-short'>
+                                <p>The type of pointer action in a motion event.</p>
+                           </td>
+                       </tr></table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="static" href="static.ANDROID_APP.html"
+                                  title='static android_ffi::ANDROID_APP'>ANDROID_APP</a></td>
+                           <td class='docblock-short'>
+                                <p>This static variable  will store the android_app* on creation, and set it back to 0 at
+ destruction.
+Apart from this, the static is never written, so there is no risk of race condition.</p>
+                           </td>
+                       </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.SyncEventHandler.html"
+                                  title='trait android_ffi::SyncEventHandler'>SyncEventHandler</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.add_sender.html"
+                                  title='fn android_ffi::add_sender'>add_sender</a></td>
+                           <td class='docblock-short'>
+                                <p>Adds a sender where events will be sent to.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.add_sender_missing.html"
+                                  title='fn android_ffi::add_sender_missing'>add_sender_missing</a></td>
+                           <td class='docblock-short'>
+                                <p>Adds a sender where events will be sent to, but also sends
+any missing events to the sender object.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.add_sync_event_handler.html"
+                                  title='fn android_ffi::add_sync_event_handler'>add_sync_event_handler</a></td>
+                           <td class='docblock-short'>
+                                <p>Adds a SyncEventHandler which will process sync events from the polling loop.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_add_sender.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_add_sender'>cargo_apk_injected_glue_add_sender</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_add_sender_missing.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_add_sender_missing'>cargo_apk_injected_glue_add_sender_missing</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_add_sync_event_handler.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_add_sync_event_handler'>cargo_apk_injected_glue_add_sync_event_handler</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_get_native_window.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_get_native_window'>cargo_apk_injected_glue_get_native_window</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_load_asset.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_load_asset'>cargo_apk_injected_glue_load_asset</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_remove_sync_event_handler.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_remove_sync_event_handler'>cargo_apk_injected_glue_remove_sync_event_handler</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_set_multitouch.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_set_multitouch'>cargo_apk_injected_glue_set_multitouch</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_wake_event_loop.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_wake_event_loop'>cargo_apk_injected_glue_wake_event_loop</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.cargo_apk_injected_glue_write_log.html"
+                                  title='fn android_ffi::cargo_apk_injected_glue_write_log'>cargo_apk_injected_glue_write_log</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.get_app.html"
+                                  title='fn android_ffi::get_app'>get_app</a></td>
+                           <td class='docblock-short'>
+                                <p>Return a reference to the application structure.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.get_native_window.html"
+                                  title='fn android_ffi::get_native_window'>get_native_window</a><a title='unsafe function' href='#'><sup>⚠</sup></a></td>
+                           <td class='docblock-short'>
+                                <p>Returns a handle to the native window.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.inputs_callback.html"
+                                  title='fn android_ffi::inputs_callback'>inputs_callback</a></td>
+                           <td class='docblock-short'>
+                                <p>The callback for input.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.load_asset.html"
+                                  title='fn android_ffi::load_asset'>load_asset</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.remove_sync_event_handler.html"
+                                  title='fn android_ffi::remove_sync_event_handler'>remove_sync_event_handler</a></td>
+                           <td class='docblock-short'>
+                                <p>Removes a SyncEventHandler.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.set_multitouch.html"
+                                  title='fn android_ffi::set_multitouch'>set_multitouch</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_log.html"
+                                  title='fn android_ffi::write_log'>write_log</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.pthread_attr_t.html"
+                                  title='type android_ffi::pthread_attr_t'>pthread_attr_t</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.pthread_mutexattr_t.html"
+                                  title='type android_ffi::pthread_mutexattr_t'>pthread_mutexattr_t</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.pthread_t.html"
+                                  title='type android_ffi::pthread_t'>pthread_t</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "android_ffi";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\fnconv.rs`.">
+    <meta name="description" content="Source to the Rust file `src/fnconv.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>fnconv.rs.html -- source</title>
@@ -97,16 +97,6 @@
 <span id="52">52</span>
 <span id="53">53</span>
 <span id="54">54</span>
-<span id="55">55</span>
-<span id="56">56</span>
-<span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
-<span id="60">60</span>
-<span id="61">61</span>
-<span id="62">62</span>
-<span id="63">63</span>
-<span id="64">64</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! FFI Function Conversions</span>
 
@@ -162,16 +152,6 @@
 <span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkCommandBuffer</span>, <span class="ident">VkBuffer</span>, <span class="ident">VkDeviceSize</span>, <span class="ident">u32</span>, <span class="ident">u32</span>));	<span class="comment">// CmdDrawIndirect, CmdDrawIndexedIndirect</span>
 <span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkCommandBuffer</span>, <span class="ident">VkEvent</span>, <span class="ident">VkPipelineStageFlags</span>));		<span class="comment">// CmdSetEvent, CmdResetEvent</span>
 <span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkCommandBuffer</span>, <span class="ident">VkQueryPool</span>, <span class="ident">u32</span>, <span class="ident">u32</span>));				<span class="comment">// CmdBeginQuery, CmdResetQueryPool</span>
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>)]</span>
-<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkDestroySurfaceKHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfaceSupportKHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>,
-	<span class="ident">PFN_vkGetPhysicalDeviceSurfaceFormatsKHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfacePresentModesKHR</span>);
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_EXT_debug_report&quot;</span>)]</span>
-<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateDebugReportCallbackEXT</span>, <span class="ident">PFN_vkDebugReportMessageEXT</span>, <span class="ident">PFN_vkDestroyDebugReportCallbackEXT</span>);
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_get_surface_capabilities2&quot;</span>)]</span>
-<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfaceFormats2KHR</span>);
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

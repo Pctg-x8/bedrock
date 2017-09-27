@@ -124,13 +124,6 @@ Copyright (c) 2014-2017 Khronos Group.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.CmdRecord.html"
-                                  title='struct ferrite::CmdRecord'>CmdRecord</a></td>
-                           <td class='docblock-short'>
-                                <p>The recording state of commandbuffers</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.CommandBuffer.html"
                                   title='struct ferrite::CommandBuffer'>CommandBuffer</a></td>
                            <td class='docblock-short'>
@@ -524,27 +517,6 @@ Element order: DescriptorSet, Binding, ArrayIndex, Description</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Surface.html"
-                                  title='struct ferrite::Surface'>Surface</a></td>
-                           <td class='docblock-short'>
-                                <p>Opaque handle to a surface object</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Swapchain.html"
-                                  title='struct ferrite::Swapchain'>Swapchain</a></td>
-                           <td class='docblock-short'>
-                                <p>Opaque handle to a swapchain object</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.SwapchainBuilder.html"
-                                  title='struct ferrite::SwapchainBuilder'>SwapchainBuilder</a></td>
-                           <td class='docblock-short'>
-                                <p>Builder object to construct a <code>Swapchain</code></p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="struct" href="struct.VkResultBox.html"
                                   title='struct ferrite::VkResultBox'>VkResultBox</a></td>
                            <td class='docblock-short'>
@@ -602,13 +574,6 @@ Element order: DescriptorSet, Binding, ArrayIndex, Description</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.CompositeAlpha.html"
-                                  title='enum ferrite::CompositeAlpha'>CompositeAlpha</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="enum" href="enum.DescriptorType.html"
                                   title='enum ferrite::DescriptorType'>DescriptorType</a></td>
                            <td class='docblock-short'>
@@ -623,13 +588,6 @@ Element order: DescriptorSet, Binding, ArrayIndex, Description</p>
 For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
 For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
 For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.DisplayPlaneAlpha.html"
-                                  title='enum ferrite::DisplayPlaneAlpha'>DisplayPlaneAlpha</a></td>
-                           <td class='docblock-short'>
-                                <p>Alpha blending type</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -658,13 +616,6 @@ For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
                                   title='enum ferrite::FormatComponents'>FormatComponents</a></td>
                            <td class='docblock-short'>
                                 <p>Containing Components in Format(Order is not considered)</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.ImageCell.html"
-                                  title='enum ferrite::ImageCell'>ImageCell</a></td>
-                           <td class='docblock-short'>
-                                
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -703,13 +654,6 @@ For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.PresentMode.html"
-                                  title='enum ferrite::PresentMode'>PresentMode</a></td>
-                           <td class='docblock-short'>
-                                <p>Presentation mode supported for a surface</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="enum" href="enum.QueryType.html"
                                   title='enum ferrite::QueryType'>QueryType</a></td>
                            <td class='docblock-short'>
@@ -731,17 +675,10 @@ For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="enum" href="enum.SurfaceTransform.html"
-                                  title='enum ferrite::SurfaceTransform'>SurfaceTransform</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="enum" href="enum.SwitchOrDynamicState.html"
                                   title='enum ferrite::SwitchOrDynamicState'>SwitchOrDynamicState</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Disabled, Specified in the command buffer or Specified in the pipeline state</p>
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>

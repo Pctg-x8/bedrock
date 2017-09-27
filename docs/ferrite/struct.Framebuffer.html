@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct Framebuffer</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Framebuffer', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Framebuffer</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Framebuffer', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -50,21 +50,7 @@
                    </a>
                </span><a class='srclink' href='../src/ferrite/framebuffer.rs.html#10' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Framebuffer(_, _);</pre><div class='docblock'><p>Opaque handle to a framebuffer object</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Framebuffer.html" title="struct ferrite::Framebuffer">Framebuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/framebuffer.rs.html#125-145' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;mold: &amp;<a class="struct" href="../ferrite/struct.RenderPass.html" title="struct ferrite::RenderPass">RenderPass</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;attachment_objects: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a>&amp;<a class="struct" href="../ferrite/struct.ImageView.html" title="struct ferrite::ImageView">ImageView</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;size: <a class="struct" href="../ferrite/struct.Extent2D.html" title="struct ferrite::Extent2D">Extent2D</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;layers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;Self&gt;</code></span></h4>
-<div class='docblock'><p>Create a new framebuffer object</p>
-
-<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop">Drop</a> for <a class="struct" href="../ferrite/struct.Framebuffer.html" title="struct ferrite::Framebuffer">Framebuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#125' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
-<div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop">Read more</a></p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Framebuffer.html" title="struct ferrite::Framebuffer">Framebuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/framebuffer.rs.html#16' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Framebuffer.html" title="struct ferrite::Framebuffer">Framebuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/framebuffer.rs.html#16' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkFramebuffer.html" title="type ferrite::vk::VkFramebuffer">VkFramebuffer</a></code></span></h4>
 <h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkFramebuffer.html" title="type ferrite::vk::VkFramebuffer">VkFramebuffer</a></code></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>

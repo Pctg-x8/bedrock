@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct Device</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Device', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Device</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Device', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -50,37 +50,7 @@
                    </a>
                </span><a class='srclink' href='../src/ferrite/device.rs.html#61' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Device(_);</pre><div class='docblock'><p>Opaque handle to a device object</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#139-207' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.extra_procedure' class="method"><span id='extra_procedure.v' class='invisible'><code>fn <a href='#method.extra_procedure' class='fnname'>extra_procedure</a>&lt;F:&nbsp;FnTransmute&gt;(&amp;self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;F&gt;</code></span></h4>
-<div class='docblock'><p>Return a function pointer for a command</p>
-
-<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
-<p>If function is not provided by instance or <code>name</code> is empty, returns <code>None</code></p>
-</div><h4 id='method.queue' class="method"><span id='queue.v' class='invisible'><code>fn <a href='#method.queue' class='fnname'>queue</a>(&amp;self, family_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>, queue_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>) -&gt; <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span></h4>
-<div class='docblock'><p>Get a queue handle from a device</p>
-</div><h4 id='method.flush_memory_range' class="method"><span id='flush_memory_range.v' class='invisible'><code>fn <a href='#method.flush_memory_range' class='fnname'>flush_memory_range</a>(&amp;self, ranges: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&gt;) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
-<div class='docblock'><p>Flush <code>MappedMemoryRange</code>s
-Flushing the memory range allows that host writes to the memory ranges can
-be made available to device access</p>
-</div><h4 id='method.invalidate_memory_range' class="method"><span id='invalidate_memory_range.v' class='invisible'><code>fn <a href='#method.invalidate_memory_range' class='fnname'>invalidate_memory_range</a>(&amp;self, ranges: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&gt;) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
-<div class='docblock'><p>Invalidate <code>MappedMemoryRange</code>s
-Invalidating the memory range allows that device writes to the memory ranges
-which have been made visible to the <code>VK_ACCESS_HOST_WRITE_BIT</code> and <code>VK_ACCESS_HOST_READ_BIT</code>
-are made visible to the host</p>
-</div><h4 id='method.update_descriptor_sets' class="method"><span id='update_descriptor_sets.v' class='invisible'><code>fn <a href='#method.update_descriptor_sets' class='fnname'>update_descriptor_sets</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;write: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="struct" href="../ferrite/struct.DescriptorSetWriteInfo.html" title="struct ferrite::DescriptorSetWriteInfo">DescriptorSetWriteInfo</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;copy: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="struct" href="../ferrite/struct.DescriptorSetCopyInfo.html" title="struct ferrite::DescriptorSetCopyInfo">DescriptorSetCopyInfo</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>)</code></span></h4>
-<div class='docblock'><p>Update the contents of a descriptor set object</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#826-895' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.create_graphics_pipelines' class="method"><span id='create_graphics_pipelines.v' class='invisible'><code>fn <a href='#method.create_graphics_pipelines' class='fnname'>create_graphics_pipelines</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;builders: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="struct" href="../ferrite/struct.GraphicsPipelineBuilder.html" title="struct ferrite::GraphicsPipelineBuilder">GraphicsPipelineBuilder</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;cache: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="struct" href="../ferrite/struct.PipelineCache.html" title="struct ferrite::PipelineCache">PipelineCache</a>&gt;<br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/struct.Pipeline.html" title="struct ferrite::Pipeline">Pipeline</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Create graphics pipelines</p>
-
-<h1 id='failures-1' class='section-header'><a href='#failures-1'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#60' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#60' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span></h4>
 <div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
 </div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
@@ -89,9 +59,6 @@ are made visible to the host</p>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkDevice.html" title="type ferrite::vk::VkDevice">VkDevice</a></code></span></h4>
 <h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkDevice.html" title="type ferrite::vk::VkDevice">VkDevice</a></code></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.Waitable.html" title="trait ferrite::Waitable">Waitable</a> for <a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#216' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.wait' class="method"><span id='wait.v' class='invisible'><code>fn <a href='../ferrite/trait.Waitable.html#tymethod.wait' class='fnname'>wait</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
-<div class='docblock'><p>Wait for a object to become idle</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

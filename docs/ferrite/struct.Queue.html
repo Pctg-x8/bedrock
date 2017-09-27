@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct Queue</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Queue', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Queue</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Queue', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -50,42 +50,13 @@
                    </a>
                </span><a class='srclink' href='../src/ferrite/device.rs.html#64' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Queue(_, _);</pre><div class='docblock'><p>Opaque handle to a queue object</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#249-273' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.bind_sparse' class="method"><span id='bind_sparse.v' class='invisible'><code>fn <a href='#method.bind_sparse' class='fnname'>bind_sparse</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;batches: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="struct" href="../ferrite/struct.SparseBindingOpBatch.html" title="struct ferrite::SparseBindingOpBatch">SparseBindingOpBatch</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;fence: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="struct" href="../ferrite/struct.Fence.html" title="struct ferrite::Fence">Fence</a>&gt;<br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
-<div class='docblock'><p>Bind device memory to a sparse resource object</p>
-
-<h1 id='failure' class='section-header'><a href='#failure'>Failure</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_DEVICE_LOST</code></li>
-</ul>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/surface.rs.html#209-233' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.present' class="method"><span id='present.v' class='invisible'><code>fn <a href='#method.present' class='fnname'>present</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;swapchains: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a>&amp;<a class="struct" href="../ferrite/struct.Swapchain.html" title="struct ferrite::Swapchain">Swapchain</a>, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;wait_semaphores: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a>&amp;<a class="struct" href="../ferrite/struct.Semaphore.html" title="struct ferrite::Semaphore">Semaphore</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="type" href="../ferrite/vk/type.VkResult.html" title="type ferrite::vk::VkResult">VkResult</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Queue images for presentation</p>
-
-<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_DEVICE_LOST</code></li>
-<li><code>VK_ERROR_OUT_OF_DATE_KHR</code></li>
-<li><code>VK_ERROR_SURFACE_LOST_KHR</code></li>
-</ul>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#72' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#72' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkQueue.html" title="type ferrite::vk::VkQueue">VkQueue</a></code></span></h4>
 <h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkQueue.html" title="type ferrite::vk::VkQueue">VkQueue</a></code></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>
 </div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.DeviceChild.html" title="trait ferrite::DeviceChild">DeviceChild</a> for <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#73' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.device' class="method"><span id='device.v' class='invisible'><code>fn <a href='../ferrite/trait.DeviceChild.html#tymethod.device' class='fnname'>device</a>(&amp;self) -&gt; &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span></h4>
 <div class='docblock'><p>Retrieve a reference to a device object that creates this object</p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.Waitable.html" title="trait ferrite::Waitable">Waitable</a> for <a class="struct" href="../ferrite/struct.Queue.html" title="struct ferrite::Queue">Queue</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#218' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.wait' class="method"><span id='wait.v' class='invisible'><code>fn <a href='../ferrite/trait.Waitable.html#tymethod.wait' class='fnname'>wait</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
-<div class='docblock'><p>Wait for a object to become idle</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

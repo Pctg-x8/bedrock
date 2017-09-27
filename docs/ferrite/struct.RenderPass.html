@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct RenderPass</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'RenderPass', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct RenderPass</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'RenderPass', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -50,13 +50,7 @@
                    </a>
                </span><a class='srclink' href='../src/ferrite/framebuffer.rs.html#8' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct RenderPass(_, _);</pre><div class='docblock'><p>Opaque handle to a render pass object</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.RenderPass.html" title="struct ferrite::RenderPass">RenderPass</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/framebuffer.rs.html#148-156' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.optimal_granularity' class="method"><span id='optimal_granularity.v' class='invisible'><code>fn <a href='#method.optimal_granularity' class='fnname'>optimal_granularity</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.Extent2D.html" title="struct ferrite::Extent2D">Extent2D</a></code></span></h4>
-<div class='docblock'><p>Returns the granularity for optimal render area</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop">Drop</a> for <a class="struct" href="../ferrite/struct.RenderPass.html" title="struct ferrite::RenderPass">RenderPass</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#125' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
-<div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop">Read more</a></p>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.RenderPass.html" title="struct ferrite::RenderPass">RenderPass</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/framebuffer.rs.html#15' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.RenderPass.html" title="struct ferrite::RenderPass">RenderPass</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/framebuffer.rs.html#15' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkRenderPass.html" title="type ferrite::vk::VkRenderPass">VkRenderPass</a></code></span></h4>
 <h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkRenderPass.html" title="type ferrite::vk::VkRenderPass">VkRenderPass</a></code></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>

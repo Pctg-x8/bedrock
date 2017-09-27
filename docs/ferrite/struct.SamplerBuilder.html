@@ -48,9 +48,9 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ferrite/resources.rs.html#741' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/ferrite/resources.rs.html#744' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct SamplerBuilder(_);</pre><div class='docblock'><p>Builder object for constructing the sampler object</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.SamplerBuilder.html" title="struct ferrite::SamplerBuilder">SamplerBuilder</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#742-826' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.SamplerBuilder.html" title="struct ferrite::SamplerBuilder">SamplerBuilder</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#745-829' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; Self</code></span></h4>
 <h4 id='method.filter' class="method"><span id='filter.v' class='invisible'><code>fn <a href='#method.filter' class='fnname'>filter</a>(&amp;mut self, mag: <a class="enum" href="../ferrite/enum.FilterMode.html" title="enum ferrite::FilterMode">FilterMode</a>, min: <a class="enum" href="../ferrite/enum.FilterMode.html" title="enum ferrite::FilterMode">FilterMode</a>) -&gt; &amp;mut Self</code></span></h4>
 <div class='docblock'><p>The magnification and the minification filters to apply to lookups.<br>
@@ -86,17 +86,6 @@ Default: <code>false</code></p>
 
 <h1 id='safety' class='section-header'><a href='#safety'>Safety</a></h1>
 <p>User must meet the constraints as described in the &quot;Valid Usage&quot; section in the <code>VkSamplerCreateInfo</code> manual page</p>
-</div><h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self, device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a>&gt;</code></span></h4>
-<div class='docblock'><p>Create a new sampler object</p>
-
-<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_TOO_MANY_OBJECTS</code></li>
-</ul>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

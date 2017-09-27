@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct PhysicalDevice</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'PhysicalDevice', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct PhysicalDevice</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'PhysicalDevice', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -50,139 +50,7 @@
                    </a>
                </span><a class='srclink' href='../src/ferrite/base.rs.html#20' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct PhysicalDevice(_, _);</pre><div class='docblock'><p>Opaque handle to a physical device object</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.PhysicalDevice.html" title="struct ferrite::PhysicalDevice">PhysicalDevice</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/base.rs.html#155-295' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.parent' class="method"><span id='parent.v' class='invisible'><code>fn <a href='#method.parent' class='fnname'>parent</a>(&amp;self) -&gt; &amp;<a class="struct" href="../ferrite/struct.Instance.html" title="struct ferrite::Instance">Instance</a></code></span></h4>
-<h4 id='method.features' class="method"><span id='features.v' class='invisible'><code>fn <a href='#method.features' class='fnname'>features</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/vk/struct.VkPhysicalDeviceFeatures.html" title="struct ferrite::vk::VkPhysicalDeviceFeatures">VkPhysicalDeviceFeatures</a></code></span></h4>
-<div class='docblock'><p>Reports capabilities of a physical device.</p>
-</div><h4 id='method.format_properties' class="method"><span id='format_properties.v' class='invisible'><code>fn <a href='#method.format_properties' class='fnname'>format_properties</a>(&amp;self, format: <a class="type" href="../ferrite/vk/type.VkFormat.html" title="type ferrite::vk::VkFormat">VkFormat</a>) -&gt; <a class="struct" href="../ferrite/vk/struct.VkFormatProperties.html" title="struct ferrite::vk::VkFormatProperties">VkFormatProperties</a></code></span></h4>
-<div class='docblock'><p>Lists physical device&#39;s format capabilities</p>
-</div><h4 id='method.image_format_properties' class="method"><span id='image_format_properties.v' class='invisible'><code>fn <a href='#method.image_format_properties' class='fnname'>image_format_properties</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;format: <a class="type" href="../ferrite/vk/type.VkFormat.html" title="type ferrite::vk::VkFormat">VkFormat</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;itype: <a class="type" href="../ferrite/vk/type.VkImageType.html" title="type ferrite::vk::VkImageType">VkImageType</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;tiling: <a class="type" href="../ferrite/vk/type.VkImageTiling.html" title="type ferrite::vk::VkImageTiling">VkImageTiling</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;usage: <a class="struct" href="../ferrite/struct.ImageUsage.html" title="struct ferrite::ImageUsage">ImageUsage</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;flags: <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkImageFormatProperties.html" title="struct ferrite::vk::VkImageFormatProperties">VkImageFormatProperties</a>&gt;</code></span></h4>
-<div class='docblock'><p>Lists physical device&#39;s image format capabilities</p>
-
-<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_FORMAT_NOT_SUPPORTED</code></li>
-</ul>
-</div><h4 id='method.properties' class="method"><span id='properties.v' class='invisible'><code>fn <a href='#method.properties' class='fnname'>properties</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/vk/struct.VkPhysicalDeviceProperties.html" title="struct ferrite::vk::VkPhysicalDeviceProperties">VkPhysicalDeviceProperties</a></code></span></h4>
-<div class='docblock'><p>Returns properties of a physical device</p>
-</div><h4 id='method.queue_family_properties' class="method"><span id='queue_family_properties.v' class='invisible'><code>fn <a href='#method.queue_family_properties' class='fnname'>queue_family_properties</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.QueueFamilies.html" title="struct ferrite::QueueFamilies">QueueFamilies</a></code></span></h4>
-<div class='docblock'><p>Reports properties of the queues of the specified physical device</p>
-</div><h4 id='method.memory_properties' class="method"><span id='memory_properties.v' class='invisible'><code>fn <a href='#method.memory_properties' class='fnname'>memory_properties</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/vk/struct.VkPhysicalDeviceMemoryProperties.html" title="struct ferrite::vk::VkPhysicalDeviceMemoryProperties">VkPhysicalDeviceMemoryProperties</a></code></span></h4>
-<div class='docblock'><p>Reports memory information for the specified physical device</p>
-</div><h4 id='method.sparse_image_format_properties' class="method"><span id='sparse_image_format_properties.v' class='invisible'><code>fn <a href='#method.sparse_image_format_properties' class='fnname'>sparse_image_format_properties</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;format: <a class="type" href="../ferrite/vk/type.VkFormat.html" title="type ferrite::vk::VkFormat">VkFormat</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;itype: <a class="type" href="../ferrite/vk/type.VkImageType.html" title="type ferrite::vk::VkImageType">VkImageType</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;samples: <a class="type" href="../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;usage: <a class="struct" href="../ferrite/struct.ImageUsage.html" title="struct ferrite::ImageUsage">ImageUsage</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;tiling: <a class="type" href="../ferrite/vk/type.VkImageTiling.html" title="type ferrite::vk::VkImageTiling">VkImageTiling</a><br>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkSparseImageFormatProperties.html" title="struct ferrite::vk::VkSparseImageFormatProperties">VkSparseImageFormatProperties</a>&gt;</code></span></h4>
-<div class='docblock'><p>Retrieve properties of an image format applied to sparse images</p>
-</div><h4 id='method.surface_support' class="method"><span id='surface_support.v' class='invisible'><code>fn <a href='#method.surface_support' class='fnname'>surface_support</a>(&amp;self, queue_family: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>, surface: &amp;<a class="struct" href="../ferrite/struct.Surface.html" title="struct ferrite::Surface">Surface</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code></span></h4>
-<div class='docblock'><p>Query if presentation is supported</p>
-
-<h1 id='failures-1' class='section-header'><a href='#failures-1'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_SURFACE_LOST_KHR</code></li>
-</ul>
-</div><h4 id='method.surface_capabilities' class="method"><span id='surface_capabilities.v' class='invisible'><code>fn <a href='#method.surface_capabilities' class='fnname'>surface_capabilities</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;surface: &amp;<a class="struct" href="../ferrite/struct.Surface.html" title="struct ferrite::Surface">Surface</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkSurfaceCapabilitiesKHR.html" title="struct ferrite::vk::VkSurfaceCapabilitiesKHR">VkSurfaceCapabilitiesKHR</a>&gt;</code></span></h4>
-<div class='docblock'><p>Query surface capabilities</p>
-
-<h1 id='failures-2' class='section-header'><a href='#failures-2'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_SURFACE_LOST_KHR</code></li>
-</ul>
-</div><h4 id='method.surface_formats' class="method"><span id='surface_formats.v' class='invisible'><code>fn <a href='#method.surface_formats' class='fnname'>surface_formats</a>(&amp;self, surface: &amp;<a class="struct" href="../ferrite/struct.Surface.html" title="struct ferrite::Surface">Surface</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkSurfaceFormatKHR.html" title="struct ferrite::vk::VkSurfaceFormatKHR">VkSurfaceFormatKHR</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Query color formats supported by surface</p>
-
-<h1 id='failures-3' class='section-header'><a href='#failures-3'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_SURFACE_LOST_KHR</code></li>
-</ul>
-</div><h4 id='method.surface_present_modes' class="method"><span id='surface_present_modes.v' class='invisible'><code>fn <a href='#method.surface_present_modes' class='fnname'>surface_present_modes</a>(&amp;self, surface: &amp;<a class="struct" href="../ferrite/struct.Surface.html" title="struct ferrite::Surface">Surface</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="enum" href="../ferrite/enum.PresentMode.html" title="enum ferrite::PresentMode">PresentMode</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Query supported presentation modes</p>
-
-<h1 id='failures-4' class='section-header'><a href='#failures-4'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_SURFACE_LOST_KHR</code></li>
-</ul>
-</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.PhysicalDevice.html" title="struct ferrite::PhysicalDevice">PhysicalDevice</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/base.rs.html#299-381' title='goto source code'>[src]</a></span></h3>
-<div class='docblock'><p>VK_KHR_display</p>
-</div><div class='impl-items'><h4 id='method.display_properties' class="method"><span id='display_properties.v' class='invisible'><code>fn <a href='#method.display_properties' class='fnname'>display_properties</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkDisplayPropertiesKHR.html" title="struct ferrite::vk::VkDisplayPropertiesKHR">VkDisplayPropertiesKHR</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Query information about the available displays</p>
-
-<h1 id='failures-5' class='section-header'><a href='#failures-5'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div><h4 id='method.display_plane_properties' class="method"><span id='display_plane_properties.v' class='invisible'><code>fn <a href='#method.display_plane_properties' class='fnname'>display_plane_properties</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkDisplayPlanePropertiesKHR.html" title="struct ferrite::vk::VkDisplayPlanePropertiesKHR">VkDisplayPlanePropertiesKHR</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Query the plane properties</p>
-
-<h1 id='failures-6' class='section-header'><a href='#failures-6'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div><h4 id='method.display_plane_supported_displays' class="method"><span id='display_plane_supported_displays.v' class='invisible'><code>fn <a href='#method.display_plane_supported_displays' class='fnname'>display_plane_supported_displays</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="type" href="../ferrite/vk/type.VkDisplayKHR.html" title="type ferrite::vk::VkDisplayKHR">VkDisplayKHR</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Query the list of displays a plane supports</p>
-
-<h1 id='failures-7' class='section-header'><a href='#failures-7'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div><h4 id='method.display_mode_properties' class="method"><span id='display_mode_properties.v' class='invisible'><code>fn <a href='#method.display_mode_properties' class='fnname'>display_mode_properties</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;display: <a class="type" href="../ferrite/vk/type.VkDisplayKHR.html" title="type ferrite::vk::VkDisplayKHR">VkDisplayKHR</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkDisplayModePropertiesKHR.html" title="struct ferrite::vk::VkDisplayModePropertiesKHR">VkDisplayModePropertiesKHR</a>&gt;&gt;</code></span></h4>
-<div class='docblock'><p>Query the set of mode properties supported by the display</p>
-
-<h1 id='failures-8' class='section-header'><a href='#failures-8'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div><h4 id='method.new_display_mode' class="method"><span id='new_display_mode.v' class='invisible'><code>fn <a href='#method.new_display_mode' class='fnname'>new_display_mode</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;display: <a class="type" href="../ferrite/vk/type.VkDisplayKHR.html" title="type ferrite::vk::VkDisplayKHR">VkDisplayKHR</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;region: <a class="struct" href="../ferrite/struct.Extent2D.html" title="struct ferrite::Extent2D">Extent2D</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;refresh_rate: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="type" href="../ferrite/vk/type.VkDisplayModeKHR.html" title="type ferrite::vk::VkDisplayModeKHR">VkDisplayModeKHR</a>&gt;</code></span></h4>
-<div class='docblock'><p>Create a display mode</p>
-
-<h1 id='failures-9' class='section-header'><a href='#failures-9'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-<li><code>VK_ERROR_INITIALIZATION_FAILED</code></li>
-</ul>
-</div><h4 id='method.display_plane_capabilities' class="method"><span id='display_plane_capabilities.v' class='invisible'><code>fn <a href='#method.display_plane_capabilities' class='fnname'>display_plane_capabilities</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;mode: <a class="type" href="../ferrite/vk/type.VkDisplayModeKHR.html" title="type ferrite::vk::VkDisplayModeKHR">VkDisplayModeKHR</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;plane_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkDisplayPlaneCapabilitiesKHR.html" title="struct ferrite::vk::VkDisplayPlaneCapabilitiesKHR">VkDisplayPlaneCapabilitiesKHR</a>&gt;</code></span></h4>
-<div class='docblock'><p>Query capabilities of a mode and plane combination</p>
-
-<h1 id='failures-10' class='section-header'><a href='#failures-10'>Failures</a></h1>
-<p>On failure, this command returns</p>
-
-<ul>
-<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
-<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
-</ul>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.PhysicalDevice.html" title="struct ferrite::PhysicalDevice">PhysicalDevice</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/base.rs.html#29' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.PhysicalDevice.html" title="struct ferrite::PhysicalDevice">PhysicalDevice</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/base.rs.html#29' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkPhysicalDevice.html" title="type ferrite::vk::VkPhysicalDevice">VkPhysicalDevice</a></code></span></h4>
 <h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkPhysicalDevice.html" title="type ferrite::vk::VkPhysicalDevice">VkPhysicalDevice</a></code></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>

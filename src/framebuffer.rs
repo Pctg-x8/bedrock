@@ -59,11 +59,11 @@ impl SubpassDescription
 			preserve_attachments: Vec::new()
 		}
 	}
-	pub fn add_input(&mut self, index: u32, layout: ::ImageLayout) -> &mut Self
+	pub fn add_input(mut self, index: u32, layout: ::ImageLayout) -> Self
 	{
 		self.input_attachments.push(VkAttachmentReference { attachment: index, layout: layout as _ }); self
 	}
-	pub fn add_color_output(&mut self, index: u32, layout: ::ImageLayout, resolve: Option<(u32, ::ImageLayout)>) -> &mut Self
+	pub fn add_color_output(mut self, index: u32, layout: ::ImageLayout, resolve: Option<(u32, ::ImageLayout)>) -> Self
 	{
 		if let Some((i, l)) = resolve
 		{
@@ -76,17 +76,17 @@ impl SubpassDescription
 		self.color_attachments.push(VkAttachmentReference { attachment: index, layout: layout as _ });
 		self
 	}
-	pub fn depth_stencil(&mut self, index: u32, layout: ::ImageLayout) -> &mut Self
+	pub fn depth_stencil(mut self, index: u32, layout: ::ImageLayout) -> Self
 	{
 		self.depth_stencil_attachment = Some(VkAttachmentReference { attachment: index, layout: layout as _ }); self
 	}
-	pub fn add_preserve(&mut self, index: u32) -> &mut Self
+	pub fn add_preserve(mut self, index: u32) -> Self
 	{
 		self.preserve_attachments.push(index); self
 	}
-	pub fn add_preserves<Collection: IntoIterator<Item = u32>>(&mut self, collection: Collection) -> &mut Self
+	pub fn add_preserves<Collection: IntoIterator<Item = u32>>(mut self, collection: Collection) -> Self
 	{
-		for i in collection { self.add_preserve(i); } self
+		for i in collection { self = self.add_preserve(i); } self
 	}
 }
 #[cfg(feature = "FeImplements")]
