@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `VkPhysicalDeviceLimits` struct in crate `ferrite`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, VkPhysicalDeviceLimits">
+
+    <title>ferrite::vk::VkPhysicalDeviceLimits - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct VkPhysicalDeviceLimits</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>vk</a></p><script>window.sidebarCurrent = {name: 'VkPhysicalDeviceLimits', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>vk</a>::<wbr><a class="struct" href=''>VkPhysicalDeviceLimits</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1210-1257' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'><div class="docblock attributes">#[repr(C)]
+</div>pub struct VkPhysicalDeviceLimits {
+    pub maxImageDimension1D: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxImageDimension2D: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxImageDimension3D: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxImageDimensionCube: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxImageArrayLayers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTexelBufferElements: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxUniformBufferRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxStorageBufferRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPushConstantsSize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxMemoryAllocationCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxSamplerAlocationCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub bufferImageGranularity: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub sparseAddressSparseSize: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub maxBoudnDescriptorSets: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageDescriptorSample: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageDescriptorUniformBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageDescriptorStorageBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageDescriptorSampledImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageDescriptorStorageImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageDescriptorInputAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxPerStageResources: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetSamples: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetUniformBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetUniformBuffersDynamic: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetStorageBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetStorageBuffersDynamic: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetSampledImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetStorageImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDescriptorSetInputAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxVertexInputAttributes: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxVertexInputBindings: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxVertexInputAttributeOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxVertexInputBindingStride: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxVertexOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationGenerationLevel: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationPatchSize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationControlPerVertexInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationControlPerVertexOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationControlPerPatchOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationControlTotalOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationEvaluationInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxTessellationEvaluationOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxGeometryShaderInvocations: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxGeometryInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxGeometryOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxGeometryOutputVertices: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxGeometryTotalOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFragmentInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFragmentOutputAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFragmentDualSrcAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFragmentCombinedOutputResources: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxComputeSharedMemorySize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxComputeWorkGroupCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 3]</a>,
+    pub maxComputeWorkGroupInvocations: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxComputeWorkGroupSize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 3]</a>,
+    pub subPixelPrecisionBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub subTexelPrecisionBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub mipmapPrecisionBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDrawIndexedIndexValue: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxDrawIndirectCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxSamplerLodBias: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub maxSamplerAnisotropy: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub maxViewports: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxViewportDimensions: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a>,
+    pub viewportBoundsRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a>,
+    pub viewportSubPixelBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub minMemoryMapAlignment: <a class="type" href="../../libc/type.size_t.html" title="type libc::size_t">size_t</a>,
+    pub minTexelBufferOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub minUniformBufferOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub minStorageBufferOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub minTexelOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a>,
+    pub maxTexelOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub minTexelGatherOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a>,
+    pub maxTexelGatherOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub minInterpolationOffset: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub maxInterpolationOffset: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub subPixelInterpolationOffsetBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFramebufferWidth: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFramebufferHeight: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxFramebufferLayers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub framebufferColorSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub framebufferDepthSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub framebufferStencilSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub framebufferNoAttachmentsSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub maxColorAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub sampledImageColorSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub sampledImageIntegerSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub sampledImageDepthSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub sampledImageStencilSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub storageImageSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a>,
+    pub maxSampleMaskWords: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub timestampComputeAndGraphics: <a class="type" href="../../ferrite/vk/type.VkBool32.html" title="type ferrite::vk::VkBool32">VkBool32</a>,
+    pub timestampPeriod: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub maxClipDistances: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxCullDistances: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub maxCombinedClipAndCullDistances: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub discreteQueuePriorities: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
+    pub pointSizeRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a>,
+    pub lineWidthRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a>,
+    pub pointSizeGranularity: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub lineWidthGranularity: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a>,
+    pub strictLines: <a class="type" href="../../ferrite/vk/type.VkBool32.html" title="type ferrite::vk::VkBool32">VkBool32</a>,
+    pub standardSampleLocations: <a class="type" href="../../ferrite/vk/type.VkBool32.html" title="type ferrite::vk::VkBool32">VkBool32</a>,
+    pub optimalBufferCopyOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub optimalBufferCopyRowPitchAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+    pub nonCoherentAtomSize: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a>,
+}</pre><h2 id='fields' class='fields'>Fields</h2><span id='structfield.maxImageDimension1D' class="structfield">
+                           <span id='maxImageDimension1D.v' class='invisible'>
+                           <code>maxImageDimension1D: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxImageDimension2D' class="structfield">
+                           <span id='maxImageDimension2D.v' class='invisible'>
+                           <code>maxImageDimension2D: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxImageDimension3D' class="structfield">
+                           <span id='maxImageDimension3D.v' class='invisible'>
+                           <code>maxImageDimension3D: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxImageDimensionCube' class="structfield">
+                           <span id='maxImageDimensionCube.v' class='invisible'>
+                           <code>maxImageDimensionCube: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxImageArrayLayers' class="structfield">
+                           <span id='maxImageArrayLayers.v' class='invisible'>
+                           <code>maxImageArrayLayers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTexelBufferElements' class="structfield">
+                           <span id='maxTexelBufferElements.v' class='invisible'>
+                           <code>maxTexelBufferElements: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxUniformBufferRange' class="structfield">
+                           <span id='maxUniformBufferRange.v' class='invisible'>
+                           <code>maxUniformBufferRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxStorageBufferRange' class="structfield">
+                           <span id='maxStorageBufferRange.v' class='invisible'>
+                           <code>maxStorageBufferRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPushConstantsSize' class="structfield">
+                           <span id='maxPushConstantsSize.v' class='invisible'>
+                           <code>maxPushConstantsSize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxMemoryAllocationCount' class="structfield">
+                           <span id='maxMemoryAllocationCount.v' class='invisible'>
+                           <code>maxMemoryAllocationCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxSamplerAlocationCount' class="structfield">
+                           <span id='maxSamplerAlocationCount.v' class='invisible'>
+                           <code>maxSamplerAlocationCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.bufferImageGranularity' class="structfield">
+                           <span id='bufferImageGranularity.v' class='invisible'>
+                           <code>bufferImageGranularity: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.sparseAddressSparseSize' class="structfield">
+                           <span id='sparseAddressSparseSize.v' class='invisible'>
+                           <code>sparseAddressSparseSize: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.maxBoudnDescriptorSets' class="structfield">
+                           <span id='maxBoudnDescriptorSets.v' class='invisible'>
+                           <code>maxBoudnDescriptorSets: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageDescriptorSample' class="structfield">
+                           <span id='maxPerStageDescriptorSample.v' class='invisible'>
+                           <code>maxPerStageDescriptorSample: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageDescriptorUniformBuffers' class="structfield">
+                           <span id='maxPerStageDescriptorUniformBuffers.v' class='invisible'>
+                           <code>maxPerStageDescriptorUniformBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageDescriptorStorageBuffers' class="structfield">
+                           <span id='maxPerStageDescriptorStorageBuffers.v' class='invisible'>
+                           <code>maxPerStageDescriptorStorageBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageDescriptorSampledImages' class="structfield">
+                           <span id='maxPerStageDescriptorSampledImages.v' class='invisible'>
+                           <code>maxPerStageDescriptorSampledImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageDescriptorStorageImages' class="structfield">
+                           <span id='maxPerStageDescriptorStorageImages.v' class='invisible'>
+                           <code>maxPerStageDescriptorStorageImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageDescriptorInputAttachments' class="structfield">
+                           <span id='maxPerStageDescriptorInputAttachments.v' class='invisible'>
+                           <code>maxPerStageDescriptorInputAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxPerStageResources' class="structfield">
+                           <span id='maxPerStageResources.v' class='invisible'>
+                           <code>maxPerStageResources: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetSamples' class="structfield">
+                           <span id='maxDescriptorSetSamples.v' class='invisible'>
+                           <code>maxDescriptorSetSamples: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetUniformBuffers' class="structfield">
+                           <span id='maxDescriptorSetUniformBuffers.v' class='invisible'>
+                           <code>maxDescriptorSetUniformBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetUniformBuffersDynamic' class="structfield">
+                           <span id='maxDescriptorSetUniformBuffersDynamic.v' class='invisible'>
+                           <code>maxDescriptorSetUniformBuffersDynamic: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetStorageBuffers' class="structfield">
+                           <span id='maxDescriptorSetStorageBuffers.v' class='invisible'>
+                           <code>maxDescriptorSetStorageBuffers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetStorageBuffersDynamic' class="structfield">
+                           <span id='maxDescriptorSetStorageBuffersDynamic.v' class='invisible'>
+                           <code>maxDescriptorSetStorageBuffersDynamic: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetSampledImages' class="structfield">
+                           <span id='maxDescriptorSetSampledImages.v' class='invisible'>
+                           <code>maxDescriptorSetSampledImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetStorageImages' class="structfield">
+                           <span id='maxDescriptorSetStorageImages.v' class='invisible'>
+                           <code>maxDescriptorSetStorageImages: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDescriptorSetInputAttachments' class="structfield">
+                           <span id='maxDescriptorSetInputAttachments.v' class='invisible'>
+                           <code>maxDescriptorSetInputAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxVertexInputAttributes' class="structfield">
+                           <span id='maxVertexInputAttributes.v' class='invisible'>
+                           <code>maxVertexInputAttributes: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxVertexInputBindings' class="structfield">
+                           <span id='maxVertexInputBindings.v' class='invisible'>
+                           <code>maxVertexInputBindings: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxVertexInputAttributeOffset' class="structfield">
+                           <span id='maxVertexInputAttributeOffset.v' class='invisible'>
+                           <code>maxVertexInputAttributeOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxVertexInputBindingStride' class="structfield">
+                           <span id='maxVertexInputBindingStride.v' class='invisible'>
+                           <code>maxVertexInputBindingStride: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxVertexOutputComponents' class="structfield">
+                           <span id='maxVertexOutputComponents.v' class='invisible'>
+                           <code>maxVertexOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationGenerationLevel' class="structfield">
+                           <span id='maxTessellationGenerationLevel.v' class='invisible'>
+                           <code>maxTessellationGenerationLevel: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationPatchSize' class="structfield">
+                           <span id='maxTessellationPatchSize.v' class='invisible'>
+                           <code>maxTessellationPatchSize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationControlPerVertexInputComponents' class="structfield">
+                           <span id='maxTessellationControlPerVertexInputComponents.v' class='invisible'>
+                           <code>maxTessellationControlPerVertexInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationControlPerVertexOutputComponents' class="structfield">
+                           <span id='maxTessellationControlPerVertexOutputComponents.v' class='invisible'>
+                           <code>maxTessellationControlPerVertexOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationControlPerPatchOutputComponents' class="structfield">
+                           <span id='maxTessellationControlPerPatchOutputComponents.v' class='invisible'>
+                           <code>maxTessellationControlPerPatchOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationControlTotalOutputComponents' class="structfield">
+                           <span id='maxTessellationControlTotalOutputComponents.v' class='invisible'>
+                           <code>maxTessellationControlTotalOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationEvaluationInputComponents' class="structfield">
+                           <span id='maxTessellationEvaluationInputComponents.v' class='invisible'>
+                           <code>maxTessellationEvaluationInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxTessellationEvaluationOutputComponents' class="structfield">
+                           <span id='maxTessellationEvaluationOutputComponents.v' class='invisible'>
+                           <code>maxTessellationEvaluationOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxGeometryShaderInvocations' class="structfield">
+                           <span id='maxGeometryShaderInvocations.v' class='invisible'>
+                           <code>maxGeometryShaderInvocations: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxGeometryInputComponents' class="structfield">
+                           <span id='maxGeometryInputComponents.v' class='invisible'>
+                           <code>maxGeometryInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxGeometryOutputComponents' class="structfield">
+                           <span id='maxGeometryOutputComponents.v' class='invisible'>
+                           <code>maxGeometryOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxGeometryOutputVertices' class="structfield">
+                           <span id='maxGeometryOutputVertices.v' class='invisible'>
+                           <code>maxGeometryOutputVertices: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxGeometryTotalOutputComponents' class="structfield">
+                           <span id='maxGeometryTotalOutputComponents.v' class='invisible'>
+                           <code>maxGeometryTotalOutputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFragmentInputComponents' class="structfield">
+                           <span id='maxFragmentInputComponents.v' class='invisible'>
+                           <code>maxFragmentInputComponents: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFragmentOutputAttachments' class="structfield">
+                           <span id='maxFragmentOutputAttachments.v' class='invisible'>
+                           <code>maxFragmentOutputAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFragmentDualSrcAttachments' class="structfield">
+                           <span id='maxFragmentDualSrcAttachments.v' class='invisible'>
+                           <code>maxFragmentDualSrcAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFragmentCombinedOutputResources' class="structfield">
+                           <span id='maxFragmentCombinedOutputResources.v' class='invisible'>
+                           <code>maxFragmentCombinedOutputResources: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxComputeSharedMemorySize' class="structfield">
+                           <span id='maxComputeSharedMemorySize.v' class='invisible'>
+                           <code>maxComputeSharedMemorySize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxComputeWorkGroupCount' class="structfield">
+                           <span id='maxComputeWorkGroupCount.v' class='invisible'>
+                           <code>maxComputeWorkGroupCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 3]</a></code>
+                           </span></span><span id='structfield.maxComputeWorkGroupInvocations' class="structfield">
+                           <span id='maxComputeWorkGroupInvocations.v' class='invisible'>
+                           <code>maxComputeWorkGroupInvocations: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxComputeWorkGroupSize' class="structfield">
+                           <span id='maxComputeWorkGroupSize.v' class='invisible'>
+                           <code>maxComputeWorkGroupSize: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 3]</a></code>
+                           </span></span><span id='structfield.subPixelPrecisionBits' class="structfield">
+                           <span id='subPixelPrecisionBits.v' class='invisible'>
+                           <code>subPixelPrecisionBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.subTexelPrecisionBits' class="structfield">
+                           <span id='subTexelPrecisionBits.v' class='invisible'>
+                           <code>subTexelPrecisionBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.mipmapPrecisionBits' class="structfield">
+                           <span id='mipmapPrecisionBits.v' class='invisible'>
+                           <code>mipmapPrecisionBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDrawIndexedIndexValue' class="structfield">
+                           <span id='maxDrawIndexedIndexValue.v' class='invisible'>
+                           <code>maxDrawIndexedIndexValue: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxDrawIndirectCount' class="structfield">
+                           <span id='maxDrawIndirectCount.v' class='invisible'>
+                           <code>maxDrawIndirectCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxSamplerLodBias' class="structfield">
+                           <span id='maxSamplerLodBias.v' class='invisible'>
+                           <code>maxSamplerLodBias: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.maxSamplerAnisotropy' class="structfield">
+                           <span id='maxSamplerAnisotropy.v' class='invisible'>
+                           <code>maxSamplerAnisotropy: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.maxViewports' class="structfield">
+                           <span id='maxViewports.v' class='invisible'>
+                           <code>maxViewports: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxViewportDimensions' class="structfield">
+                           <span id='maxViewportDimensions.v' class='invisible'>
+                           <code>maxViewportDimensions: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a></code>
+                           </span></span><span id='structfield.viewportBoundsRange' class="structfield">
+                           <span id='viewportBoundsRange.v' class='invisible'>
+                           <code>viewportBoundsRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a></code>
+                           </span></span><span id='structfield.viewportSubPixelBits' class="structfield">
+                           <span id='viewportSubPixelBits.v' class='invisible'>
+                           <code>viewportSubPixelBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.minMemoryMapAlignment' class="structfield">
+                           <span id='minMemoryMapAlignment.v' class='invisible'>
+                           <code>minMemoryMapAlignment: <a class="type" href="../../libc/type.size_t.html" title="type libc::size_t">size_t</a></code>
+                           </span></span><span id='structfield.minTexelBufferOffsetAlignment' class="structfield">
+                           <span id='minTexelBufferOffsetAlignment.v' class='invisible'>
+                           <code>minTexelBufferOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.minUniformBufferOffsetAlignment' class="structfield">
+                           <span id='minUniformBufferOffsetAlignment.v' class='invisible'>
+                           <code>minUniformBufferOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.minStorageBufferOffsetAlignment' class="structfield">
+                           <span id='minStorageBufferOffsetAlignment.v' class='invisible'>
+                           <code>minStorageBufferOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.minTexelOffset' class="structfield">
+                           <span id='minTexelOffset.v' class='invisible'>
+                           <code>minTexelOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a></code>
+                           </span></span><span id='structfield.maxTexelOffset' class="structfield">
+                           <span id='maxTexelOffset.v' class='invisible'>
+                           <code>maxTexelOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.minTexelGatherOffset' class="structfield">
+                           <span id='minTexelGatherOffset.v' class='invisible'>
+                           <code>minTexelGatherOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a></code>
+                           </span></span><span id='structfield.maxTexelGatherOffset' class="structfield">
+                           <span id='maxTexelGatherOffset.v' class='invisible'>
+                           <code>maxTexelGatherOffset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.minInterpolationOffset' class="structfield">
+                           <span id='minInterpolationOffset.v' class='invisible'>
+                           <code>minInterpolationOffset: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.maxInterpolationOffset' class="structfield">
+                           <span id='maxInterpolationOffset.v' class='invisible'>
+                           <code>maxInterpolationOffset: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.subPixelInterpolationOffsetBits' class="structfield">
+                           <span id='subPixelInterpolationOffsetBits.v' class='invisible'>
+                           <code>subPixelInterpolationOffsetBits: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFramebufferWidth' class="structfield">
+                           <span id='maxFramebufferWidth.v' class='invisible'>
+                           <code>maxFramebufferWidth: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFramebufferHeight' class="structfield">
+                           <span id='maxFramebufferHeight.v' class='invisible'>
+                           <code>maxFramebufferHeight: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxFramebufferLayers' class="structfield">
+                           <span id='maxFramebufferLayers.v' class='invisible'>
+                           <code>maxFramebufferLayers: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.framebufferColorSampleCounts' class="structfield">
+                           <span id='framebufferColorSampleCounts.v' class='invisible'>
+                           <code>framebufferColorSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.framebufferDepthSampleCounts' class="structfield">
+                           <span id='framebufferDepthSampleCounts.v' class='invisible'>
+                           <code>framebufferDepthSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.framebufferStencilSampleCounts' class="structfield">
+                           <span id='framebufferStencilSampleCounts.v' class='invisible'>
+                           <code>framebufferStencilSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.framebufferNoAttachmentsSampleCounts' class="structfield">
+                           <span id='framebufferNoAttachmentsSampleCounts.v' class='invisible'>
+                           <code>framebufferNoAttachmentsSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.maxColorAttachments' class="structfield">
+                           <span id='maxColorAttachments.v' class='invisible'>
+                           <code>maxColorAttachments: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.sampledImageColorSampleCounts' class="structfield">
+                           <span id='sampledImageColorSampleCounts.v' class='invisible'>
+                           <code>sampledImageColorSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.sampledImageIntegerSampleCounts' class="structfield">
+                           <span id='sampledImageIntegerSampleCounts.v' class='invisible'>
+                           <code>sampledImageIntegerSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.sampledImageDepthSampleCounts' class="structfield">
+                           <span id='sampledImageDepthSampleCounts.v' class='invisible'>
+                           <code>sampledImageDepthSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.sampledImageStencilSampleCounts' class="structfield">
+                           <span id='sampledImageStencilSampleCounts.v' class='invisible'>
+                           <code>sampledImageStencilSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.storageImageSampleCounts' class="structfield">
+                           <span id='storageImageSampleCounts.v' class='invisible'>
+                           <code>storageImageSampleCounts: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
+                           </span></span><span id='structfield.maxSampleMaskWords' class="structfield">
+                           <span id='maxSampleMaskWords.v' class='invisible'>
+                           <code>maxSampleMaskWords: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.timestampComputeAndGraphics' class="structfield">
+                           <span id='timestampComputeAndGraphics.v' class='invisible'>
+                           <code>timestampComputeAndGraphics: <a class="type" href="../../ferrite/vk/type.VkBool32.html" title="type ferrite::vk::VkBool32">VkBool32</a></code>
+                           </span></span><span id='structfield.timestampPeriod' class="structfield">
+                           <span id='timestampPeriod.v' class='invisible'>
+                           <code>timestampPeriod: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.maxClipDistances' class="structfield">
+                           <span id='maxClipDistances.v' class='invisible'>
+                           <code>maxClipDistances: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxCullDistances' class="structfield">
+                           <span id='maxCullDistances.v' class='invisible'>
+                           <code>maxCullDistances: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.maxCombinedClipAndCullDistances' class="structfield">
+                           <span id='maxCombinedClipAndCullDistances.v' class='invisible'>
+                           <code>maxCombinedClipAndCullDistances: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.discreteQueuePriorities' class="structfield">
+                           <span id='discreteQueuePriorities.v' class='invisible'>
+                           <code>discreteQueuePriorities: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
+                           </span></span><span id='structfield.pointSizeRange' class="structfield">
+                           <span id='pointSizeRange.v' class='invisible'>
+                           <code>pointSizeRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a></code>
+                           </span></span><span id='structfield.lineWidthRange' class="structfield">
+                           <span id='lineWidthRange.v' class='invisible'>
+                           <code>lineWidthRange: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 2]</a></code>
+                           </span></span><span id='structfield.pointSizeGranularity' class="structfield">
+                           <span id='pointSizeGranularity.v' class='invisible'>
+                           <code>pointSizeGranularity: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.lineWidthGranularity' class="structfield">
+                           <span id='lineWidthGranularity.v' class='invisible'>
+                           <code>lineWidthGranularity: <a class="type" href="../../libc/type.c_float.html" title="type libc::c_float">c_float</a></code>
+                           </span></span><span id='structfield.strictLines' class="structfield">
+                           <span id='strictLines.v' class='invisible'>
+                           <code>strictLines: <a class="type" href="../../ferrite/vk/type.VkBool32.html" title="type ferrite::vk::VkBool32">VkBool32</a></code>
+                           </span></span><span id='structfield.standardSampleLocations' class="structfield">
+                           <span id='standardSampleLocations.v' class='invisible'>
+                           <code>standardSampleLocations: <a class="type" href="../../ferrite/vk/type.VkBool32.html" title="type ferrite::vk::VkBool32">VkBool32</a></code>
+                           </span></span><span id='structfield.optimalBufferCopyOffsetAlignment' class="structfield">
+                           <span id='optimalBufferCopyOffsetAlignment.v' class='invisible'>
+                           <code>optimalBufferCopyOffsetAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.optimalBufferCopyRowPitchAlignment' class="structfield">
+                           <span id='optimalBufferCopyRowPitchAlignment.v' class='invisible'>
+                           <code>optimalBufferCopyRowPitchAlignment: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><span id='structfield.nonCoherentAtomSize' class="structfield">
+                           <span id='nonCoherentAtomSize.v' class='invisible'>
+                           <code>nonCoherentAtomSize: <a class="type" href="../../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code>
+                           </span></span><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1209' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1209' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a></code></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html" title="trait core::cmp::PartialEq">PartialEq</a> for <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1209' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class="method"><span id='eq.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
+</div><h4 id='method.ne' class="method"><span id='ne.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

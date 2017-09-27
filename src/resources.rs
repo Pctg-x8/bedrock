@@ -3,7 +3,7 @@
 use vk::*;
 use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
-#[cfg(feature = "FeImplements")] use std::ops::Deref;
+#[allow(unused_imports)] use std::ops::Deref;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
