@@ -2487,7 +2487,9 @@ pub type PFN_vkCmdEndRenderPass          = extern "system" fn(commandBuffer: VkC
 pub type PFN_vkCmdExecuteCommands        = extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
 
 #[cfg(feature = "FeImplements")]
-#[link(name = "vulkan")] extern "system"
+#[cfg_attr(not(windows), link(name = "vulkan"))]
+#[cfg_attr(windows, link(name = "vulkan-1"))]
+extern "system"
 {
     pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
     pub fn vkDestroyInstance(instance: VkInstance, pAllocator: *const VkAllocationCallbacks);
