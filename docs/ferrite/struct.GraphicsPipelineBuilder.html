@@ -276,6 +276,17 @@ This does not clear any dynamic states</p>
 <li>The lifetime of the content in the structure is valid for this builder</li>
 <li>The content in the structure is valid</li>
 </ul>
+</div></div><h3 class='impl'><span class='in-band'><code>impl&lt;'d&gt; <a class="struct" href="../ferrite/struct.GraphicsPipelineBuilder.html" title="struct ferrite::GraphicsPipelineBuilder">GraphicsPipelineBuilder</a>&lt;'d&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#786-849' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>fn <a href='#method.create' class='fnname'>create</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;cache: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="struct" href="../ferrite/struct.PipelineCache.html" title="struct ferrite::PipelineCache">PipelineCache</a>&gt;<br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Pipeline.html" title="struct ferrite::Pipeline">Pipeline</a>&gt;</code></span></h4>
+<div class='docblock'><p>Create a graphics pipeline</p>
+
+<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+</ul>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

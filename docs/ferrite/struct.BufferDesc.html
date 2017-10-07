@@ -56,6 +56,16 @@
 <div class='docblock'><p>A list of queue families that will access this buffer</p>
 </div><h4 id='method.sparse_binding_opt' class="method"><span id='sparse_binding_opt.v' class='invisible'><code>fn <a href='#method.sparse_binding_opt' class='fnname'>sparse_binding_opt</a>(&amp;mut self, opt: <a class="enum" href="../ferrite/enum.BufferSparseBinding.html" title="enum ferrite::BufferSparseBinding">BufferSparseBinding</a>) -&gt; &amp;mut Self</code></span></h4>
 <div class='docblock'><p>A bitmask of <code>BufferSparseBinding</code> specifying additional parameters of the buffer</p>
+</div><h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self, device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Buffer.html" title="struct ferrite::Buffer">Buffer</a>&gt;</code></span></h4>
+<div class='docblock'><p>Create a new buffer object</p>
+
+<h1 id='failure' class='section-header'><a href='#failure'>Failure</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+</ul>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

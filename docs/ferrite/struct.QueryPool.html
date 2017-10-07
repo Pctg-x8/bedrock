@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct QueryPool</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'QueryPool', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct QueryPool</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'QueryPool', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -50,10 +50,46 @@
                    </a>
                </span><a class='srclink' href='../src/ferrite/lib.rs.html#172' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct QueryPool(_, _);</pre><div class='docblock'><p>Opaque handle to a query pool object</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.QueryPool.html" title="struct ferrite::QueryPool">QueryPool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#173' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.QueryPool.html" title="struct ferrite::QueryPool">QueryPool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#175-223' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>, qtype: <a class="enum" href="../ferrite/enum.QueryType.html" title="enum ferrite::QueryType">QueryType</a>, count: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;Self&gt;</code></span></h4>
+<div class='docblock'><p>Create a new query pool object</p>
+
+<h1 id='failure' class='section-header'><a href='#failure'>Failure</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+</ul>
+</div><h4 id='method.results64' class="method"><span id='results64.v' class='invisible'><code>fn <a href='#method.results64' class='fnname'>results64</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;query_range: <a class="struct" href="https://doc.rust-lang.org/nightly/core/ops/range/struct.Range.html" title="struct core::ops::range::Range">Range</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;flags: <a class="struct" href="../ferrite/struct.QueryResultFlags.html" title="struct ferrite::QueryResultFlags">QueryResultFlags</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Copy results of queries in a query pool to a host memory region</p>
+
+<h1 id='failure-1' class='section-header'><a href='#failure-1'>Failure</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+<li><code>VK_ERROR_DEVICE_LOST</code></li>
+</ul>
+</div><h4 id='method.results32' class="method"><span id='results32.v' class='invisible'><code>fn <a href='#method.results32' class='fnname'>results32</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;query_range: <a class="struct" href="https://doc.rust-lang.org/nightly/core/ops/range/struct.Range.html" title="struct core::ops::range::Range">Range</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;flags: <a class="struct" href="../ferrite/struct.QueryResultFlags.html" title="struct ferrite::QueryResultFlags">QueryResultFlags</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Copy results of queries in a query pool to a host memory region</p>
+
+<h1 id='failure-2' class='section-header'><a href='#failure-2'>Failure</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+<li><code>VK_ERROR_DEVICE_LOST</code></li>
+</ul>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.QueryPool.html" title="struct ferrite::QueryPool">QueryPool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#173' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkQueryPool.html" title="type ferrite::vk::VkQueryPool">VkQueryPool</a></code></span></h4>
 <h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkQueryPool.html" title="type ferrite::vk::VkQueryPool">VkQueryPool</a></code></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop">Drop</a> for <a class="struct" href="../ferrite/struct.QueryPool.html" title="struct ferrite::QueryPool">QueryPool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#125' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
+<div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop">Read more</a></p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

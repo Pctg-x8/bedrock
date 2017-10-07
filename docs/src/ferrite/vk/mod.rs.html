@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src/vk/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `src\vk\mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -2972,6 +2972,8 @@
 <span id="2927">2927</span>
 <span id="2928">2928</span>
 <span id="2929">2929</span>
+<span id="2930">2930</span>
+<span id="2931">2931</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan API Definitions 1.0.59.0</span>
 
@@ -5462,7 +5464,9 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkCmdExecuteCommands</span>        <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">commandBuffer</span>: <span class="ident">VkCommandBuffer</span>, <span class="ident">commandBufferCount</span>: <span class="ident">u32</span>, <span class="ident">pCommandBuffers</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkCommandBuffer</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="attribute">#[<span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;vulkan&quot;</span>)]</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;vulkan&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;vulkan-1&quot;</span>))]</span>
+<span class="kw">extern</span> <span class="string">&quot;system&quot;</span>
 {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkCreateInstance</span>(<span class="ident">pCreateInfo</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkInstanceCreateInfo</span>, <span class="ident">pAllocator</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkAllocationCallbacks</span>, <span class="ident">pInstance</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkInstance</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkDestroyInstance</span>(<span class="ident">instance</span>: <span class="ident">VkInstance</span>, <span class="ident">pAllocator</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkAllocationCallbacks</span>);

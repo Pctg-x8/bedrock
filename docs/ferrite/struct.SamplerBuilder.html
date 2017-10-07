@@ -86,6 +86,17 @@ Default: <code>false</code></p>
 
 <h1 id='safety' class='section-header'><a href='#safety'>Safety</a></h1>
 <p>User must meet the constraints as described in the &quot;Valid Usage&quot; section in the <code>VkSamplerCreateInfo</code> manual page</p>
+</div><h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self, device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a>&gt;</code></span></h4>
+<div class='docblock'><p>Create a new sampler object</p>
+
+<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+<li><code>VK_ERROR_TOO_MANY_OBJECTS</code></li>
+</ul>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

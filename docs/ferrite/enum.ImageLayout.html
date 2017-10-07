@@ -60,6 +60,7 @@
     ShaderReadOnlyOpt,
     TransferSrcOpt,
     TransferDestOpt,
+    PresentSrc,
 }</pre><div class='docblock'><p>Layouts of image and image subresources</p>
 </div><h2 id='variants' class='variants'>Variants</h2>
 <span id='variant.Undefined' class='variant'><span id='Undefined.v' class='invisible'><code>Undefined</code></span></span><div class='docblock'><p>does not support device access</p>
@@ -74,6 +75,7 @@ combined image/sampler and/or input attachment).</p>
 combined image/sampler and/or input attachment).</p>
 </div><span id='variant.TransferSrcOpt' class='variant'><span id='TransferSrcOpt.v' class='invisible'><code>TransferSrcOpt</code></span></span><div class='docblock'><p>must only be used as a source image of a transfer command</p>
 </div><span id='variant.TransferDestOpt' class='variant'><span id='TransferDestOpt.v' class='invisible'><code>TransferDestOpt</code></span></span><div class='docblock'><p>must only be used as a destination image of a transfer command</p>
+</div><span id='variant.PresentSrc' class='variant'><span id='PresentSrc.v' class='invisible'><code>PresentSrc</code></span></span><div class='docblock'><p>must only be used for presenting a swapchain image for display</p>
 </div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="enum" href="../ferrite/enum.ImageLayout.html" title="enum ferrite::ImageLayout">ImageLayout</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#595' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
 <div class='docblock'><p>Formats the value using the given formatter.</p>

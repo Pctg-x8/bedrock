@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct CommandBuffer</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'CommandBuffer', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct CommandBuffer</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'CommandBuffer', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -51,7 +51,28 @@
                </span><a class='srclink' href='../src/ferrite/command.rs.html#10' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'><div class="docblock attributes">#[repr(C)]
 </div>pub struct CommandBuffer(_);</pre><div class='docblock'><p>Opaque handle to a command buffer object</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.CommandBuffer.html" title="struct ferrite::CommandBuffer">CommandBuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/command.rs.html#10' title='goto source code'>[src]</a></span></h3>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.CommandBuffer.html" title="struct ferrite::CommandBuffer">CommandBuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/command.rs.html#89-121' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.begin' class="method"><span id='begin.v' class='invisible'><code>fn <a href='#method.begin' class='fnname'>begin</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.CmdRecord.html" title="struct ferrite::CmdRecord">CmdRecord</a>&gt;</code></span></h4>
+<div class='docblock'><p>Start recording a primary command buffer</p>
+
+<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+</ul>
+</div><h4 id='method.begin_inherit' class="method"><span id='begin_inherit.v' class='invisible'><code>fn <a href='#method.begin_inherit' class='fnname'>begin_inherit</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;renderpass: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a>&amp;<a class="struct" href="../ferrite/struct.Framebuffer.html" title="struct ferrite::Framebuffer">Framebuffer</a>, &amp;<a class="struct" href="../ferrite/struct.RenderPass.html" title="struct ferrite::RenderPass">RenderPass</a>, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;query: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">(</a><a class="enum" href="../ferrite/enum.OcclusionQuery.html" title="enum ferrite::OcclusionQuery">OcclusionQuery</a>, <a class="struct" href="../ferrite/struct.QueryPipelineStatisticFlags.html" title="struct ferrite::QueryPipelineStatisticFlags">QueryPipelineStatisticFlags</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">)</a>&gt;<br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.CmdRecord.html" title="struct ferrite::CmdRecord">CmdRecord</a>&gt;</code></span></h4>
+<div class='docblock'><p>Start recording a secondary command buffer</p>
+
+<h1 id='failures-1' class='section-header'><a href='#failures-1'>Failures</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+</ul>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.CommandBuffer.html" title="struct ferrite::CommandBuffer">CommandBuffer</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/command.rs.html#10' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.CommandBuffer.html" title="struct ferrite::CommandBuffer">CommandBuffer</a></code></span></h4>
 <div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
 </div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
