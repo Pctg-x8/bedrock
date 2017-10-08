@@ -43,7 +43,14 @@ impl QueueFamilies
 	#[allow(non_snake_case)]
 	pub fn find_matching_index(&self, flags: QueueFlags) -> Option<u32>
 	{
-		self.0.iter().enumerate().find(|&(_, &VkQueueFamilyProperties { queueFlags, .. })| (queueFlags & flags.0) != 0).map(|(n, _)| n as _)
+		self.0.iter().position(|&VkQueueFamilyProperties { queueFlags, .. }| (queueFlags & flags.0) != 0).map(|x| x as _)
+	}
+	/// Find a queue family index containing specified bitflags
+	#[allow(non_snake_case)]
+	pub fn find_another_matching_index(&self, flags: QueueFlags, exclude: u32) -> Option<u32>
+	{
+		self.0.iter().enumerate().find(|&(n, &VkQueueFamilyProperties { queueFlags, .. })| (queueFlags & flags.0) != 0 && exclude != n as u32)
+			.map(|(n, _)| n as _)
 	}
 	/// Number of queue families
 	pub fn count(&self) -> u32 { self.0.len() as _ }
