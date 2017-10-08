@@ -127,6 +127,12 @@ macro_rules! DeviceChildCommonDrop
 	}
 }
 
+/// All of traits
+pub mod traits
+{
+    pub use super::{VkResultBox, VkHandle, DeviceChild, ClearColorValue, ImageSize, MemoryBound, Status, Waitable};
+}
+
 // size elements //
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
 pub struct Extent1D(pub u32);
