@@ -295,6 +295,7 @@ impl ImageFlags
 	pub fn cube_compatible(&self) -> Self { ImageFlags(self.0 | Self::CUBE_COMPATIBLE.0) }
 }
 /// Builder structure specifying the parameters of a newly created image object
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImageDesc { cinfo: VkImageCreateInfo, sharing_queues: Vec<u32> }
 impl ImageDesc
 {
