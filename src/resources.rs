@@ -343,14 +343,14 @@ impl ImageDesc
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, std::ptr::null(), &mut h) }
+		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell(h, device.clone(), self.cinfo.imageType, self.cinfo.format))))
 	}
 	#[cfg(feature = "VK_KHR_swapchain")]
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, std::ptr::null(), &mut h) }
+		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell::DeviceChild(h, device.clone(), self.cinfo.imageType, self.cinfo.format))))
 	}
 }
