@@ -333,6 +333,7 @@ impl ImageDesc
 	{
 		self.cinfo.flags = opt.0; self
 	}
+	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.cinfo.arrayLayers = layers; self }
 	#[cfg(all(features = "FeImplements", not(features = "VK_KHR_swapchain")))]
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
