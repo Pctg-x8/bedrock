@@ -141,7 +141,7 @@ impl Event
 
 pub trait Status
 {
-	/// Retrieve the status(which is signaled) of a synchronize object
+	/// Retrieve the status(whether is signaled or not) of a synchronize object
 	/// # Failures
 	/// On failure, this command returns
 	/// 
