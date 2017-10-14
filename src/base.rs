@@ -196,10 +196,10 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceQueueFamilyProperties(self.0, &mut n, v.as_mut_ptr()) }; ::QueueFamilies(v)
 	}
 	/// Reports memory information for the specified physical device
-	pub fn memory_properties(&self) -> VkPhysicalDeviceMemoryProperties
+	pub fn memory_properties(&self) -> MemoryProperties
 	{
 		let mut p = unsafe { ::std::mem::uninitialized() };
-		unsafe { vkGetPhysicalDeviceMemoryProperties(self.0, &mut p) }; p
+		unsafe { vkGetPhysicalDeviceMemoryProperties(self.0, &mut p) }; MemoryProperties(p)
 	}
 	/// Retrieve properties of an image format applied to sparse images
 	pub fn sparse_image_format_properties(&self, format: VkFormat, itype: VkImageType, samples: VkSampleCountFlags,
@@ -378,4 +378,56 @@ impl PhysicalDevice
 		let mut s = unsafe { ::std::mem::uninitialized() };
 		unsafe { vkGetDisplayPlaneCapabilitiesKHR(self.0, mode, plane_index, &mut s) }.into_result().map(|_| s)
 	}
+}
+
+/// Device memory properties
+pub struct MemoryProperties(VkPhysicalDeviceMemoryProperties);
+impl MemoryProperties
+{
+	#[allow(non_snake_case)]
+	pub fn find_type_index(&self, mask: MemoryPropertyFlags, exclude: MemoryPropertyFlags) -> Option<u32>
+	{
+		self.0.memoryTypes[..self.0.memoryTypeCount as usize].iter()
+			.position(|&VkMemoryType { propertyFlags, .. }| (propertyFlags & mask.0) != 0 && (propertyFlags & exclude.0) == 0)
+			.map(|x| x as u32)
+	}
+	pub fn find_device_local_index(&self) -> Option<u32> { self.find_type_index(MemoryPropertyFlags::DEVICE_LOCAL, MemoryPropertyFlags::LAZILY_ALLOCATED) }
+	pub fn find_lazily_allocated_device_local_index(&self) -> Option<u32> { self.find_type_index(MemoryPropertyFlags::DEVICE_LOCAL.lazily_allocated(), MemoryPropertyFlags::EMPTY) }
+	pub fn find_host_visible_index(&self) -> Option<u32> { self.find_type_index(MemoryPropertyFlags::HOST_VISIBLE, MemoryPropertyFlags::EMPTY) }
+	pub fn is_coherent(&self, index: u32) -> bool { (self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_COHERENT.0) != 0 }
+	pub fn is_cached(&self, index: u32) -> bool { (self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_CACHED.0) != 0 }
+}
+
+/// Bitmask specifying properties for a memory type
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MemoryPropertyFlags(VkMemoryPropertyFlags);
+impl MemoryPropertyFlags
+{
+	/// Empty set
+	pub const EMPTY: Self = MemoryPropertyFlags(0);
+	/// Memory allocated with this type is the most efficient for device access
+	pub const DEVICE_LOCAL: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+	/// Memory allocated with this type can be mapped for host access using `vkMapMemory`
+	pub const HOST_VISIBLE: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+	/// The host cache management commands `vkFlushMappedmemoryRanges` and `vkInvalidateMappedMemoryRanges`
+	/// are not needed to flush host writes to the device or make device writes visible to the host, respectively.
+	pub const HOST_COHERENT: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	/// Memory allocated with this type is cached on the host.
+	/// Host memory accesses to uncached memory are slower than to cached memory, however uncached memory is always host coherent
+	pub const HOST_CACHED: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
+	/// The memory type only allows device access to the memory.
+	pub const LAZILY_ALLOCATED: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
+
+	/// Memory allocated with this type is the most efficient for device access
+	pub fn device_local(mut self) -> Self { self.0 |= Self::DEVICE_LOCAL.0; self }
+	/// Memory allocated with this type can be mapped for host access using `vkMapMemory`
+	pub fn host_visible(mut self) -> Self { self.0 |= Self::HOST_VISIBLE.0; self }
+	/// The host cache management commands `vkFlushMappedmemoryRanges` and `vkInvalidateMappedMemoryRanges`
+	/// are not needed to flush host writes to the device or make device writes visible to the host, respectively.
+	pub fn host_coherent(mut self) -> Self { self.0 |= Self::HOST_COHERENT.0; self }
+	/// Memory allocated with this type is cached on the host.
+	/// Host memory accesses to uncached memory are slower than to cached memory, however uncached memory is always host coherent
+	pub fn host_cached(mut self) -> Self { self.0 |= Self::HOST_CACHED.0; self }
+	/// The memory type only allows device access to the memory.
+	pub fn lazily_allocated(mut self) -> Self { self.0 |= Self::LAZILY_ALLOCATED.0; self }
 }
