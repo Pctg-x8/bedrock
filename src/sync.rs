@@ -180,3 +180,6 @@ impl ::Waitable for Fence
 	/// * `VK_ERROR_DEVICE_LOST`
 	fn wait(&self) -> ::Result<()> { self.wait_timeout(::std::u64::MAX).map(|_| ()) }
 }
+
+unsafe impl Send for Fence {}
+unsafe impl Sync for Fence {}
