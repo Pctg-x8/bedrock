@@ -281,3 +281,51 @@ impl Queue
 			.into_result()
 	}
 }
+
+/// Semaphore/Command submission operation batch
+pub struct SubmissionBatch<'d>
+{
+	pub wait_semaphores: Cow<'d, [(&'d ::Semaphore, ::PipelineStageFlags)]>,
+	pub command_buffers: Cow<'d, [&'d ::CommandBuffer]>,
+	pub signal_semaphores: Cow<'d, [&'d ::Semaphore]>
+}
+impl<'d> Default for SubmissionBatch<'d>
+{
+	fn default() -> Self
+	{
+		SubmissionBatch
+		{
+			wait_semaphores: Cow::Borrowed(&[]), command_buffers: Cow::Borrowed(&[]),
+			signal_semaphores: Cow::Borrowed(&[])
+		}
+	}
+}
+/// Following methods are enabled with [feature = "FeImplements"]
+#[cfg(feature = "FeImplements")]
+impl Queue
+{
+	/// Submits a sequence of semaphores or command buffers to a queue
+	/// # Failure
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
+	pub fn submit(&self, batches: &[SubmissionBatch], fence: Option<&::Fence>) -> ::Result<()>
+	{
+		let sem_ptrs = batches.iter().map(|x| (
+			x.wait_semaphores.iter().map(|&(ref x, p)| (x.native_ptr(), p.0)).unzip(),
+			x.command_buffers.iter().map(|x| x.native_ptr()).collect(),
+			x.signal_semaphores.iter().map(|x| x.native_ptr()).collect()
+		));
+		let batches: Vec<_> = sem_ptrs.map(|(ws, cbs, ss): ((Vec<_>, Vec<_>), Vec<_>, Vec<_>)| VkSubmitInfo
+		{
+			waitSemaphoreCount: ws.0.len() as _, pWaitSemaphores: ws.0.as_ptr(), pWaitDstStageMask: ws.1.as_ptr(),
+			commandBufferCount: cbs.len() as _, pCommandBuffers: cbs.as_ptr(),
+			signalSemaphoreCount: ss.len() as _, pSignalSemaphores: ss.as_ptr(),
+			.. Default::default()
+		}).collect();
+		unsafe { vkQueueSubmit(self.native_ptr(), batches.len() as _, batches.as_ptr(), fence.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _)) }
+			.into_result()
+	}
+}
