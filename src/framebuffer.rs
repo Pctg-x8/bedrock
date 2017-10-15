@@ -7,7 +7,7 @@ use {VkHandle, DeviceChild};
 /// Opaque handle to a render pass object
 pub struct RenderPass(VkRenderPass, ::Device);
 /// Opaque handle to a framebuffer object
-pub struct Framebuffer(VkFramebuffer, ::Device, ::Extent2D);
+pub struct Framebuffer(VkFramebuffer, ::Device, Vec<::ImageView>, ::Extent2D);
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
 	for RenderPass[vkDestroyRenderPass], Framebuffer[vkDestroyFramebuffer]
@@ -140,12 +140,13 @@ impl Framebuffer
 		};
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateFramebuffer(mold.1.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Framebuffer(h, mold.1.clone(), size.as_ref().clone()))
+			.map(|_| Framebuffer(h, mold.1.clone(), attachment_objects.iter().map(|&x| x.clone()).collect(), size.as_ref().clone()))
 	}
 }
 impl Framebuffer
 {
-	pub fn size(&self) -> &::Extent2D { &self.2 }
+	pub fn size(&self) -> &::Extent2D { &self.3 }
+	pub fn resources(&self) -> &[::ImageView] { &self.2 }
 }
 
 #[cfg(feature = "FeImplements")]

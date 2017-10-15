@@ -26,11 +26,13 @@ pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
 #[derive(Clone)] pub struct Image(RefCounter<ImageCell>);
 /// Opaque handle to a buffer view object
 pub struct BufferView(VkBufferView, Buffer);
+struct ImageViewCell(VkImageView, Image);
 /// Opaque handle to a image view object
-pub struct ImageView(VkImageView, Image);
+#[derive(Clone)]
+pub struct ImageView(RefCounter<ImageViewCell>);
 
 impl Deref for BufferView { type Target = Buffer; fn deref(&self) -> &Buffer { &self.1 } }
-impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &self.1 } }
+impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &self.0 .1 } }
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer] }
 #[cfg(feature = "FeImplements")] impl Drop for ImageCell
@@ -50,12 +52,12 @@ impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &sel
 #[cfg(feature = "FeImplements")]
 impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.device().native_ptr(), self.native_ptr(), null()) }; } }
 #[cfg(feature = "FeImplements")]
-impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.device().native_ptr(), self.native_ptr(), null()) }; } }
+impl Drop for ImageViewCell { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1.device().native_ptr(), self.0, null()) }; } }
 
 impl VkHandle for DeviceMemory { type Handle = VkDeviceMemory; fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 } }
 impl VkHandle for Buffer { type Handle = VkBuffer; fn native_ptr(&self) -> VkBuffer { self.0 .0 } }
 impl VkHandle for BufferView { type Handle = VkBufferView; fn native_ptr(&self) -> VkBufferView { self.0 } }
-impl VkHandle for ImageView  { type Handle = VkImageView;  fn native_ptr(&self) -> VkImageView  { self.0 } }
+impl VkHandle for ImageView  { type Handle = VkImageView;  fn native_ptr(&self) -> VkImageView  { self.0 .0 } }
 impl DeviceChild for DeviceMemory { fn device(&self) -> &::Device { &self.0 .1 } }
 impl DeviceChild for Buffer { fn device(&self) -> &::Device { &self.0 .1 } }
 impl DeviceChild for BufferView { fn device(&self) -> &::Device { self.deref().device() } }
@@ -443,7 +445,7 @@ impl Image
 		};
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateImageView(self.device().native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| ImageView(h, self.clone()))
+			.into_result().map(|_| ImageView(RefCounter::new(ImageViewCell(h, self.clone()))))
 	}
 	/// Retrieve information about an image subresource  
 	/// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
