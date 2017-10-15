@@ -491,8 +491,6 @@
 <span id="446">446</span>
 <span id="447">447</span>
 <span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Base Objects(Instance/PhysicalDevice)</span>
 
@@ -501,10 +499,8 @@
 <span class="kw">use</span> <span class="ident">vk</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">CString</span>;
 <span class="kw">use</span> <span class="ident">VkHandle</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">VkResultHandler</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>::{<span class="ident">null</span>, <span class="ident">null_mut</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">VkResultHandler</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(    <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeMultithreaded&quot;</span>) ]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span> <span class="kw">as</span> <span class="ident">RefCounter</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeMultithreaded&quot;</span>))]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">rc</span>::<span class="ident">Rc</span> <span class="kw">as</span> <span class="ident">RefCounter</span>;
 

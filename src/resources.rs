@@ -13,11 +13,11 @@ struct BufferCell(VkBuffer, ::Device);
 #[cfg(feature = "VK_KHR_swapchain")]
 pub enum ImageCell
 {
-	DeviceChild(VkImage, ::Device, VkImageType, VkFormat),
-	SwapchainChild(VkImage, ::Swapchain, VkFormat)
+	DeviceChild { obj: VkImage, dev: ::Device, dim: VkImageType, fmt: VkFormat, size: ::Extent3D },
+	SwapchainChild { obj: VkImage, owner: ::Swapchain, fmt: VkFormat }
 }
-#[cfg(not(feature = "VK_KHR_swapchain"))]
-struct ImageCell(VkImage, ::Device, VkImageType, VkFormat);
+#[cfg(not(feature = "VK_KHR_swapchain"))] #[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+struct ImageCell { obj: VkImage, dev: ::Device, dim: VkImageType, fmt: VkFormat, size: ::Extent3D }
 /// Opaque handle to a device memory object
 pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
 /// Opaque handle to a buffer object(constructed via `BufferDesc`)
@@ -38,19 +38,19 @@ impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &sel
 	fn drop(&mut self)
 	{
 		#[cfg(feature = "VK_KHR_swapchain")]
-		match self
+		match *self
 		{
-			&mut ImageCell::DeviceChild(v, ref p, _, _) => unsafe { vkDestroyImage(p.native_ptr(), v, null()); },
+			ImageCell::DeviceChild { obj, ref dev, .. } => unsafe { vkDestroyImage(dev.native_ptr(), obj, null()); },
 			_ => (/* No destroying performed */)
 		}
 		#[cfg(not(feature = "VK_KHR_swapchain"))]
-		unsafe { vkDestroyImage(self.1.native_ptr(), self.0, null()); }
+		unsafe { vkDestroyImage(self.dev.native_ptr(), self.obj, null()); }
 	}
 }
 #[cfg(feature = "FeImplements")]
-impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.1.device().native_ptr(), self.0, null()) }; } }
+impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.device().native_ptr(), self.native_ptr(), null()) }; } }
 #[cfg(feature = "FeImplements")]
-impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1.device().native_ptr(), self.0, null()) }; } }
+impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.device().native_ptr(), self.native_ptr(), null()) }; } }
 
 impl VkHandle for DeviceMemory { type Handle = VkDeviceMemory; fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 } }
 impl VkHandle for Buffer { type Handle = VkBuffer; fn native_ptr(&self) -> VkBuffer { self.0 .0 } }
@@ -58,8 +58,8 @@ impl VkHandle for BufferView { type Handle = VkBufferView; fn native_ptr(&self) 
 impl VkHandle for ImageView  { type Handle = VkImageView;  fn native_ptr(&self) -> VkImageView  { self.0 } }
 impl DeviceChild for DeviceMemory { fn device(&self) -> &::Device { &self.0 .1 } }
 impl DeviceChild for Buffer { fn device(&self) -> &::Device { &self.0 .1 } }
-impl DeviceChild for BufferView { fn device(&self) -> &::Device { self.1.device() } }
-impl DeviceChild for ImageView  { fn device(&self) -> &::Device { self.1.device() } }
+impl DeviceChild for BufferView { fn device(&self) -> &::Device { self.deref().device() } }
+impl DeviceChild for ImageView  { fn device(&self) -> &::Device { self.deref().device() } }
 
 #[cfg(feature = "VK_KHR_swapchain")]
 impl VkHandle for Image
@@ -67,10 +67,9 @@ impl VkHandle for Image
 	type Handle = VkImage;
 	fn native_ptr(&self) -> VkImage
 	{
-		match self.0.deref()
+		match *self.0
 		{
-			&ImageCell::DeviceChild(v, _, _, _) => v,
-			&ImageCell::SwapchainChild(v, _, _) => v
+			ImageCell::DeviceChild { obj, .. } | ImageCell::SwapchainChild { obj, .. } => obj
 		}
 	}
 }
@@ -79,17 +78,17 @@ impl DeviceChild for Image
 {
 	fn device(&self) -> &::Device
 	{
-		match self.0.deref()
+		match *self.0
 		{
-			&ImageCell::DeviceChild(_, ref d, _, _) => d,
-			&ImageCell::SwapchainChild(_, ref s, _) => s.device()
+			ImageCell::DeviceChild { ref dev, .. } => dev,
+			ImageCell::SwapchainChild { ref owner, .. } => owner.device()
 		}
 	}
 }
 #[cfg(not(feature = "VK_KHR_swapchain"))]
-impl VkHandle for Image { type Handle = VkImage; fn native_ptr(&self) -> VkImage { self.0 .0 } }
+impl VkHandle for Image { type Handle = VkImage; fn native_ptr(&self) -> VkImage { self.0.obj } }
 #[cfg(not(feature = "VK_KHR_swapchain"))]
-impl DeviceChild for Image { fn device(&self) -> &::Device { &self.0 .1 } }
+impl DeviceChild for Image { fn device(&self) -> &::Device { &self.0.dev } }
 
 /// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
@@ -108,7 +107,6 @@ impl DeviceMemory
 		unsafe { vkAllocateMemory(device.native_ptr(), &VkMemoryAllocateInfo { allocationSize: size as _, memoryTypeIndex: type_index, .. Default::default() },
 			::std::ptr::null(), &mut h) }.into_result().map(|_| DeviceMemory(RefCounter::new(DeviceMemoryCell(h, device.clone()))))
 	}
-	pub fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 }
 }
 
 /// Bitmask specifying allowed usage of a buffer
@@ -311,7 +309,7 @@ impl ImageDesc
 		{
 			cinfo: VkImageCreateInfo
 			{
-				imageType: Size::dimension(), extent: size.into().as_ref().clone(), format, usage: usage.0,
+				imageType: Size::DIMENSION, extent: size.into().as_ref().clone(), format, usage: usage.0,
 				mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
 				.. Default::default()
 			},
@@ -360,7 +358,11 @@ impl ImageDesc
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| Image(RefCounter::new(ImageCell::DeviceChild(h, device.clone(), self.cinfo.imageType, self.cinfo.format))))
+			.into_result().map(|_| Image(RefCounter::new(ImageCell::DeviceChild
+			{
+				obj: h, dev: device.clone(), dim: self.cinfo.imageType, fmt: self.cinfo.format,
+				size: ::Extent3D(self.cinfo.extent.width, self.cinfo.extent.height, self.cinfo.extent.depth)
+			})))
 	}
 }
 
@@ -370,20 +372,29 @@ impl Image
 	pub fn format(&self) -> VkFormat
 	{
 		#[cfg(feature = "VK_KHR_swapchain")]
-		match self.0.deref()
+		match *self.0 { ImageCell::DeviceChild { fmt, .. } | ImageCell::SwapchainChild { fmt, .. } => fmt }
+		#[cfg(not(feature = "VK_KHR_swapchain"))]
+		{ self.0.fmt }
+	}
+	/// The size of an image
+	pub fn size(&self) -> &::Extent3D
+	{
+		#[cfg(feature = "VK_KHR_swapchain")]
+		match *self.0
 		{
-			&ImageCell::DeviceChild(_, _, f, _) | &ImageCell::SwapchainChild(_, _, f) => f
+			ImageCell::DeviceChild { ref size, .. } => size,
+			ImageCell::SwapchainChild { ref owner, .. } => owner.size()
 		}
 		#[cfg(not(feature = "VK_KHR_swapchain"))]
-		{ self.0 .3 }
+		&self.0.size
 	}
 	#[cfg(feature = "FeImplements")]
 	fn dimension(&self) -> VkImageViewType
 	{
 		#[cfg(feature = "VK_KHR_swapchain")]
-		let dim = match self.0.deref() { &ImageCell::DeviceChild(_, _, _, d) => d, &ImageCell::SwapchainChild(_, _, _) => VK_IMAGE_TYPE_2D };
+		let dim = match *self.0 { ImageCell::DeviceChild { dim, .. } => dim, ImageCell::SwapchainChild { .. } => VK_IMAGE_TYPE_2D };
 		#[cfg(not(feature = "VK_KHR_swapchain"))]
-		let dim = self.0 .2;
+		let dim = self.0.dim;
 
 		match dim
 		{
@@ -535,20 +546,11 @@ impl Image
 /// Image Dimension by corresponding extent type
 pub trait ImageSize : Into<::Extent3D>
 {
-	fn dimension() -> VkImageType;
+	const DIMENSION: VkImageType;
 }
-impl ImageSize for ::Extent1D
-{
-	fn dimension() -> VkImageType { VK_IMAGE_TYPE_1D }
-}
-impl ImageSize for ::Extent2D
-{
-	fn dimension() -> VkImageType { VK_IMAGE_TYPE_2D }
-}
-impl ImageSize for ::Extent3D
-{
-	fn dimension() -> VkImageType { VK_IMAGE_TYPE_3D }
-}
+impl ImageSize for ::Extent1D { const DIMENSION: VkImageType = VK_IMAGE_TYPE_1D; }
+impl ImageSize for ::Extent2D { const DIMENSION: VkImageType = VK_IMAGE_TYPE_2D; }
+impl ImageSize for ::Extent3D { const DIMENSION: VkImageType = VK_IMAGE_TYPE_3D; }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
 pub struct MappedMemoryRange<'m>(&'m DeviceMemory, *mut u8, ::std::ops::Range<VkDeviceSize>);
@@ -604,7 +606,7 @@ impl ::Swapchain
 		unsafe { vkGetSwapchainImagesKHR(self.device().native_ptr(), self.native_ptr(), &mut n, ::std::ptr::null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
 		unsafe { vkGetSwapchainImagesKHR(self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
-			.map(|_| v.into_iter().map(|r| Image(RefCounter::new(ImageCell::SwapchainChild(r, self.clone(), self.format())))).collect())
+			.map(|_| v.into_iter().map(|r| Image(RefCounter::new(ImageCell::SwapchainChild { obj: r, owner: self.clone(), fmt: self.format() }))).collect())
 	}
 }
 

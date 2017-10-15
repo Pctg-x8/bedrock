@@ -4,20 +4,28 @@ use vk::*;
 use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "FeImplements")] use std::ptr::null;
 
 struct SurfaceCell(VkSurfaceKHR, ::Instance);
 /// Opaque handle to a surface object
 #[derive(Clone)] pub struct Surface(RefCounter<SurfaceCell>);
-struct SwapchainCell(VkSwapchainKHR, ::Device, Surface, VkFormat);
+struct SwapchainCell { obj: VkSwapchainKHR, dev: ::Device, #[allow(dead_code)] target: Surface, fmt: VkFormat, size: ::Extent3D }
 /// Opaque handle to a swapchain object
 #[derive(Clone)] pub struct Swapchain(RefCounter<SwapchainCell>);
 
 #[cfg(feature = "FeImplements")]
-impl Drop for SurfaceCell { fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for SwapchainCell[vkDestroySwapchainKHR] }
+impl Drop for SurfaceCell
+{
+	fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, null()); } }
+}
+#[cfg(feature = "FeImplements")]
+impl Drop for SwapchainCell
+{
+	fn drop(&mut self) { unsafe { vkDestroySwapchainKHR(self.dev.native_ptr(), self.obj, null()); } }
+}
 impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
-impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0 .0 } }
-impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.0 .1 } }
+impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0.obj } }
+impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.0.dev } }
 
 /// Creation Procedures
 #[cfg(feature = "FeImplements")]
@@ -34,7 +42,7 @@ impl Surface
 	{
 		let cinfo = VkXlibSurfaceCreateInfoKHR { dpy: display, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateXlibSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateXlibSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for a X11 window, using the XCB client-side library
@@ -48,7 +56,7 @@ impl Surface
 	{
 		let cinfo = VkXcbSurfaceCreateInfoKHR { connection, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateXcbSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateXcbSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for a Wayland window
@@ -62,7 +70,7 @@ impl Surface
 	{
 		let cinfo = VkWaylandSurfaceCreateInfoKHR { display, surface, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateWaylandSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateWaylandSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an Android native window
@@ -76,7 +84,7 @@ impl Surface
 	{
 		let cinfo = VkAndroidSurfaceCreateInfoKHR { window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateAndroidSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateAndroidSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an Win32 native window
@@ -90,7 +98,7 @@ impl Surface
 	{
 		let cinfo = VkWin32SurfaceCreateInfoKHR { hinstance, hwnd, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object representing a display plane and mode
@@ -110,7 +118,7 @@ impl Surface
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateDisplayPlaneSurfaceKHR(instance.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { vkCreateDisplayPlaneSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 }
@@ -158,15 +166,24 @@ impl<'d> SwapchainBuilder<'d>
 	pub fn create(&self, device: &::Device) -> ::Result<Swapchain>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateSwapchainKHR(device.native_ptr(), &self.0, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| Swapchain(RefCounter::new(SwapchainCell(h, device.clone(), self.1.clone(), self.0.imageFormat))))
+		unsafe { vkCreateSwapchainKHR(device.native_ptr(), &self.0, null(), &mut h) }.into_result()
+			.map(|_| Swapchain(RefCounter::new(SwapchainCell
+			{
+				obj: h, dev: device.clone(), target: self.1.clone(), fmt: self.0.imageFormat,
+				size: ::Extent3D(self.0.imageExtent.width, self.0.imageExtent.height, 1)
+			})))
 	}
+}
+
+impl Swapchain
+{
+	pub fn format(&self) -> VkFormat { self.0.fmt }
+	pub fn size(&self) -> &::Extent3D { &self.0.size }
 }
 
 #[cfg(feature = "FeImplements")]
 impl Swapchain
 {
-	pub fn format(&self) -> VkFormat { self.0 .3 }
 	/// Retrieve the index of the next available presentation image
 	/// # Failures
 	/// On failure, this command returns

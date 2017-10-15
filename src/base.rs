@@ -5,10 +5,8 @@
 use vk::*;
 use std::ffi::CString;
 use VkHandle;
-#[cfg(feature = "FeImplements")]
-use VkResultHandler;
-#[cfg(feature = "FeImplements")]
-use std::ptr::{null, null_mut};
+#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "FeImplements")] use std::ptr::null_mut;
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
 
