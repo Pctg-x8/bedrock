@@ -411,16 +411,25 @@ impl<'d> CmdRecord<'d>
 			ranges.len() as _, ranges.as_ptr()) };
 		self
 	}
-}
-
-/// [feature = "FeImplements"] Graphics Commands: Attachment clearing
-#[cfg(feature = "FeImplements")]
-impl<'d> CmdRecord<'d>
-{
 	/// Clear regions within currently bound framebuffer attachments
 	pub fn clear_attachments(&mut self, attachments: &[VkClearAttachment], rects: &[VkClearRect]) -> &mut Self
 	{
 		unsafe { vkCmdClearAttachments(self.ptr.native_ptr(), attachments.len() as _, attachments.as_ptr(), rects.len() as _, rects.as_ptr()) };
+		self
+	}
+}
+
+/// [feature = "FeImplements"] Graphics Commands: Executing Subcommands
+#[cfg(feature = "FeImplements")]
+impl<'d> CmdRecord<'d>
+{
+	/// Execute a secondary command buffer from a primary command buffer
+	/// # Safety
+	/// 
+	/// Caller must be primary buffer and must be in render pass when executing secondary command buffer
+	pub unsafe fn execute_commands(&mut self, buffers: &[&VkCommandBuffer]) -> &mut Self
+	{
+		vkCmdExecuteCommands(self.ptr.native_ptr(), buffers.len() as _, buffer.as_ptr());
 		self
 	}
 }
