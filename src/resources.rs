@@ -309,7 +309,7 @@ impl ImageDesc
 		{
 			cinfo: VkImageCreateInfo
 			{
-				imageType: Size::DIMENSION, extent: size.into().as_ref().clone(), format, usage: usage.0,
+				imageType: Size::DIMENSION, extent: AsRef::<VkExtent3D>::as_ref(&size.into()).clone(), format, usage: usage.0,
 				mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
 				.. Default::default()
 			},
