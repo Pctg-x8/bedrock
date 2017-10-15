@@ -1,3 +1,3 @@
 #!/bin/sh
 
-cargo doc --features=FeImplements,FePresentation && cp -rv target/doc/* docs/
+cargo doc --features=FeImplements,FePresentation && rsync --delete -auv target/doc/ docs
