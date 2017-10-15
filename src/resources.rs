@@ -5,6 +5,7 @@ use std::rc::Rc as RefCounter;
 use std::ops::Deref;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "FeImplements")] use std::ptr::null;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 struct BufferCell(VkBuffer, ::Device);
@@ -31,24 +32,24 @@ impl Deref for BufferView { type Target = Buffer; fn deref(&self) -> &Buffer { &
 impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &self.1 } }
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer] }
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
-impl Drop for ImageCell
+#[cfg(feature = "FeImplements")] impl Drop for ImageCell
 {
 	fn drop(&mut self)
 	{
+		#[cfg(feature = "VK_KHR_swapchain")]
 		match self
 		{
-			&mut ImageCell::DeviceChild(v, ref p, _, _) => unsafe { vkDestroyImage(p.native_ptr(), v, ::std::ptr::null()); },
-			_ => (/* no destroying performed */)
+			&mut ImageCell::DeviceChild(v, ref p, _, _) => unsafe { vkDestroyImage(p.native_ptr(), v, null()); },
+			_ => (/* No destroying performed */)
 		}
+		#[cfg(not(feature = "VK_KHR_swapchain"))]
+		unsafe { vkDestroyImage(self.1.native_ptr(), self.0, null()); }
 	}
 }
-#[cfg(all(feature = "FeImplements", not(feature = "VK_KHR_swapchain")))]
-DeviceChildCommonDrop! { for ImageCell[vkDestroyImage] }
 #[cfg(feature = "FeImplements")]
-impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.1.device().native_ptr(), self.0, ::std::ptr::null()) }; } }
+impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.1.device().native_ptr(), self.0, null()) }; } }
 #[cfg(feature = "FeImplements")]
-impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1.device().native_ptr(), self.0, ::std::ptr::null()) }; } }
+impl Drop for ImageView  { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1.device().native_ptr(), self.0, null()) }; } }
 
 impl VkHandle for DeviceMemory { type Handle = VkDeviceMemory; fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 } }
 impl VkHandle for Buffer { type Handle = VkBuffer; fn native_ptr(&self) -> VkBuffer { self.0 .0 } }
