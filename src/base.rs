@@ -17,6 +17,14 @@ struct InstanceCell(VkInstance);
 #[derive(Clone)] pub struct Instance(RefCounter<InstanceCell>);
 #[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Instance {}
 /// Opaque handle to a physical device object
+/// 
+/// ## Platform Dependent Methods: Presentation Support checking functions
+/// 
+/// * `xlib_presentation_support(&self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool`: VK_KHR_xlib_surface
+/// * `xcb_presentation_support(&self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool`: VK_KHR_xcb_surface
+/// * `wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool`: VK_KHR_wayland_surface
+/// * `win32_presentation_support(&self, queue_family: u32) -> bool`: VK_KHR_win32_surface
+/// * Methods for Android and Mir surfaces are not implemented
 pub struct PhysicalDevice(VkPhysicalDevice, Instance);
 
 #[cfg(feature = "FeImplements")]
@@ -69,7 +77,7 @@ impl InstanceBuilder
 	{
 		for l in layers { self.add_layer(l); } self
 	}
-	/// Create a new Vulkan instance
+	/// [feature = "FeImplements"] Create a new Vulkan instance
 	/// # Failures
 	/// On failure, this command returns
 	///
@@ -92,6 +100,7 @@ impl InstanceBuilder
 		unsafe { vkCreateInstance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell(h))))
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Instance
 {
@@ -151,6 +160,7 @@ impl Instance
 		unsafe { vkEnumerateInstanceExtensionProperties(cn.as_ptr(), &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl PhysicalDevice
 {
@@ -211,6 +221,12 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, v.as_mut_ptr()) };
 		v
 	}
+}
+
+/// [feature = "VK_KHR_surface" and feature = "FeImplements"] Surface functions
+#[cfg(all(feature = "FeImplements", feature = "VK_KHR_surface"))]
+impl PhysicalDevice
+{
 	/// Query if presentation is supported
 	/// # Failures
 	/// On failure, this command returns
@@ -218,7 +234,6 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_support(&self, queue_family: u32, surface: &::Surface) -> ::Result<bool>
 	{
 		let mut f = false as _;
@@ -231,7 +246,6 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR>
 	{
 		let mut s = unsafe { ::std::mem::uninitialized() };
@@ -244,7 +258,6 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_formats(&self, surface: &::Surface) -> ::Result<Vec<VkSurfaceFormatKHR>>
 	{
 		let mut n = 0;
@@ -259,7 +272,6 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	#[cfg(feature = "VK_KHR_surface")]
 	pub fn surface_present_modes(&self, surface: &::Surface) -> ::Result<Vec<::PresentMode>>
 	{
 		let mut n = 0;
@@ -268,25 +280,30 @@ impl PhysicalDevice
 		unsafe { vkGetPhysicalDeviceSurfacePresentModesKHR(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
 			.map(|_| unsafe { ::std::mem::transmute(v) })
 	}
-	/// Query physical device for presentation to X11 server using Xlib
+}
+
+#[cfg(feature = "FeImplements")]
+impl PhysicalDevice
+{
+	/// [feature = "VK_KHR_xlib_surface"] Query physical device for presentation to X11 server using Xlib
 	#[cfg(feature = "VK_KHR_xlib_surface")]
 	pub fn xlib_presentation_support(&self, queue_family: u32, display: *mut ::x11::xlib::Display, visual: ::x11::xlib::VisualID) -> bool
 	{
 		unsafe { vkGetPhysicalDeviceXlibPresentationSupportKHR(self.0, queue_family, display, visual) != 0 }
 	}
-	/// Query physical device for presentation to X11 server using XCB
+	/// [feature = "VK_KHR_xcb_surface"] Query physical device for presentation to X11 server using XCB
 	#[cfg(feature = "VK_KHR_xcb_surface")]
 	pub fn xcb_presentation_support(&self, queue_family: u32, connection: *mut ::xcb::ffi::xcb_connection_t, visual: ::xcb::ffi::xcb_visualid_t) -> bool
 	{
 		unsafe { vkGetPhysicalDeviceXcbPresentationSupportKHR(self.0, queue_family, connection, visual) != 0 }
 	}
-	/// Query physical device for presentation to Wayland
+	/// [feature = "VK_KHR_wayland_surface"] Query physical device for presentation to Wayland
 	#[cfg(feature = "VK_KHR_wayland_surface")]
 	pub fn wayland_presentation_support(&self, queue_family: u32, display: *mut ::wayland_client::sys::wl_display) -> bool
 	{
 		unsafe { vkGetPhysicalDeviceWaylandPresentationSupportKHR(self.0, queue_family, display) != 0 }
 	}
-	/// Query queue family support for presentation on a Win32 display
+	/// [feature = "VK_KHR_win32_surface"] Query queue family support for presentation on a Win32 display
 	#[cfg(feature = "VK_KHR_win32_surface")]
 	pub fn win32_presentation_support(&self, queue_family: u32) -> bool
 	{
@@ -294,7 +311,7 @@ impl PhysicalDevice
 	}
 }
 
-/// VK_KHR_display
+/// feature = "VK_KHR_display" functions (required to enable "FeImplements" feature)
 #[cfg(all(feature = "VK_KHR_display", feature = "FeImplements"))]
 impl PhysicalDevice
 {

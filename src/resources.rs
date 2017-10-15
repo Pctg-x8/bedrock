@@ -6,6 +6,7 @@ use std::ops::Deref;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 #[cfg(feature = "FeImplements")] use std::ptr::null;
+#[cfg(feature = "FeImplements")] use std::mem::uninitialized as resv;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 struct BufferCell(VkBuffer, ::Device);
@@ -90,6 +91,7 @@ impl VkHandle for Image { type Handle = VkImage; fn native_ptr(&self) -> VkImage
 #[cfg(not(feature = "VK_KHR_swapchain"))]
 impl DeviceChild for Image { fn device(&self) -> &::Device { &self.0 .1 } }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl DeviceMemory
 {
@@ -205,7 +207,7 @@ impl BufferDesc
 	{
 		self.cinfo.flags = opt as _; self
 	}
-	/// Create a new buffer object
+	/// [feature = "FeImplements"] Create a new buffer object
 	/// # Failure
 	/// On failure, this command returns
 	///
@@ -340,9 +342,11 @@ impl ImageDesc
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.cinfo.arrayLayers = layers; self }
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl ImageDesc
 {
+	/// Create an image
 	#[cfg(not(feature = "VK_KHR_swapchain"))]
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
@@ -350,6 +354,7 @@ impl ImageDesc
 		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell(h, device.clone(), self.cinfo.imageType, self.cinfo.format))))
 	}
+	/// Create an image
 	#[cfg(feature = "VK_KHR_swapchain")]
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
@@ -359,53 +364,28 @@ impl ImageDesc
 	}
 }
 
-#[cfg(feature = "FeImplements")]
-impl Buffer
-{
-	pub fn create_view(&self, format: VkFormat, range: ::std::ops::Range<u64>) -> ::Result<BufferView>
-	{
-		let cinfo = VkBufferViewCreateInfo
-		{
-			buffer: self.native_ptr(), format, offset: range.start, range: range.end - range.start, .. Default::default()
-		};
-		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkCreateBufferView(self.device().native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| BufferView(h, self.clone()))
-	}
-}
-#[cfg(feature = "FeImplements")]
 impl Image
 {
-	#[cfg(feature = "VK_KHR_swapchain")]
-	fn format(&self) -> VkFormat
+	/// The pixel format of an image
+	pub fn format(&self) -> VkFormat
 	{
+		#[cfg(feature = "VK_KHR_swapchain")]
 		match self.0.deref()
 		{
-			&ImageCell::DeviceChild(_, _, f, _) => f,
-			&ImageCell::SwapchainChild(_, _, f) => f
+			&ImageCell::DeviceChild(_, _, f, _) | &ImageCell::SwapchainChild(_, _, f) => f
 		}
+		#[cfg(not(feature = "VK_KHR_swapchain"))]
+		{ self.0 .3 }
 	}
-	#[cfg(not(feature = "VK_KHR_swapchain"))]
-	fn format(&self) -> VkFormat { self.0 .3 }
-	#[cfg(feature = "VK_KHR_swapchain")]
+	#[cfg(feature = "FeImplements")]
 	fn dimension(&self) -> VkImageViewType
 	{
-		match self.0.deref()
-		{
-			&ImageCell::DeviceChild(_, _, _, d) => match d
-			{
-				VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
-				VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
-				VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D,
-				_ => unreachable!()
-			},
-			&ImageCell::SwapchainChild(_, _, _) => VK_IMAGE_VIEW_TYPE_2D
-		}
-	}
-	#[cfg(not(feature = "VK_KHR_swapchain"))]
-	fn dimension(&self) -> VkImageViewType
-	{
-		match self.0 .2
+		#[cfg(feature = "VK_KHR_swapchain")]
+		let dim = match self.0.deref() { &ImageCell::DeviceChild(_, _, _, d) => d, &ImageCell::SwapchainChild(_, _, _) => VK_IMAGE_TYPE_2D };
+		#[cfg(not(feature = "VK_KHR_swapchain"))]
+		let dim = self.0 .2;
+
+		match dim
 		{
 			VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
 			VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
@@ -413,11 +393,33 @@ impl Image
 			_ => unreachable!()
 		}
 	}
+}
+
+/// Following methods are enabled with [feature = "FeImplements"]
+#[cfg(feature = "FeImplements")]
+impl Buffer
+{
+	/// Create a buffer view
+	pub fn create_view(&self, format: VkFormat, range: ::std::ops::Range<u64>) -> ::Result<BufferView>
+	{
+		let cinfo = VkBufferViewCreateInfo
+		{
+			buffer: self.native_ptr(), format, offset: range.start, range: range.end - range.start, .. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateBufferView(self.device().native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
+			.into_result().map(|_| BufferView(h, self.clone()))
+	}
+}
+/// Following methods are enabled with [feature = "FeImplements"]
+#[cfg(feature = "FeImplements")]
+impl Image
+{
+	/// Create an image view
 	pub fn create_view(&self, format: Option<VkFormat>, vtype: Option<VkImageViewType>, cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange)
 		-> ::Result<ImageView>
 	{
-		let format = format.unwrap_or(self.format());
-		let vtype = vtype.unwrap_or(self.dimension());
+		let (format, vtype) = (format.unwrap_or(self.format()), vtype.unwrap_or(self.dimension()));
 		let cinfo = VkImageViewCreateInfo
 		{
 			image: self.native_ptr(), viewType: vtype, format, components: unsafe { ::std::mem::transmute_copy(cmap) },
@@ -428,20 +430,21 @@ impl Image
 				baseArrayLayer: subresource_range.array_layers.start, layerCount: subresource_range.array_layers.len() as _
 			}, .. Default::default()
 		};
-		let mut h = unsafe { ::std::mem::zeroed() };
+		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateImageView(self.device().native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| ImageView(h, self.clone()))
 	}
-	/// Retrieve information about an image subresource
-	/// Subresource: (aspect, mipLevel, arrayLayer)
+	/// Retrieve information about an image subresource  
+	/// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
 	pub fn image_subresource_layout(&self, subres_aspect: AspectMask, subres_mip_level: u32, subres_array_layer: u32) -> VkSubresourceLayout
 	{
-		let mut s = unsafe { ::std::mem::uninitialized() };
+		let mut s = unsafe { resv() };
 		let subres = VkImageSubresource { aspectMask: subres_aspect.0, mipLevel: subres_mip_level, arrayLayer: subres_array_layer };
 		unsafe { vkGetImageSubresourceLayout(self.device().native_ptr(), self.native_ptr(), &subres, &mut s) }; s
 	}
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl DeviceMemory
 {
@@ -474,7 +477,8 @@ impl DeviceMemory
 	}
 }
 
-/// Common operations for memory bound objects
+/// [feature = "FeImplements"] Common operations for memory bound objects
+#[cfg(feature = "FeImplements")]
 pub trait MemoryBound
 {
 	/// Returns the memory requirements for specified Vulkan object
@@ -492,7 +496,7 @@ impl MemoryBound for Buffer
 {
 	fn requirements(&self) -> VkMemoryRequirements
 	{
-		let mut p = unsafe { ::std::mem::uninitialized() };
+		let mut p = unsafe { resv() };
 		unsafe { vkGetBufferMemoryRequirements(self.device().native_ptr(), self.native_ptr(), &mut p) }; p
 	}
 	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
@@ -505,7 +509,7 @@ impl MemoryBound for Image
 {
 	fn requirements(&self) -> VkMemoryRequirements
 	{
-		let mut p = unsafe { ::std::mem::uninitialized() };
+		let mut p = unsafe { resv() };
 		unsafe { vkGetImageMemoryRequirements(self.device().native_ptr(), self.native_ptr(), &mut p) }; p
 	}
 	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
@@ -513,6 +517,7 @@ impl MemoryBound for Image
 		unsafe { vkBindImageMemory(self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _) }.into_result()
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Image
 {
@@ -578,11 +583,12 @@ impl<'m> Drop for MappedMemoryRange<'m>
 {
 	fn drop(&mut self)
 	{
-		unsafe { vkFlushMappedMemoryRanges(self.0 .0 .1.native_ptr(), 1, &::std::mem::replace(self, ::std::mem::uninitialized()).manual_flush()) }
+		unsafe { vkFlushMappedMemoryRanges(self.0 .0 .1.native_ptr(), 1, &::std::mem::replace(self, resv()).manual_flush()) }
 			.into_result().unwrap();
 	}
 }
 
+/// Following methods are enabled with [feature = "FeImplements" and feature = "VK_KHR_swapchain"]
 #[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
 impl ::Swapchain
 {
@@ -823,7 +829,7 @@ impl SamplerBuilder
         self.0.unnormalizedCoordinates = use_unnormalized as _; self
     }
 
-    /// Create a new sampler object
+    /// [feature = "FeImplements"] Create a new sampler object
     /// # Failures
     /// On failure, this command returns
 	/// 

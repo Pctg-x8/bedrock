@@ -110,7 +110,7 @@ impl<'p> DeviceBuilder<'p>
 	{
 		for q in queues { self = self.add_queue(q); } self
 	}
-	/// Create a new device instance
+	/// [feature = "FeImplements"] Create a new device instance
 	/// # Failures
 	/// On failure, this command returns
 	///
@@ -142,6 +142,7 @@ impl<'p> DeviceBuilder<'p>
 			.map(|_| Device(RefCounter::new(DeviceCell(h, self.pdev_ref.parent().clone()))))
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Device
 {
@@ -213,7 +214,8 @@ impl Device
 	}
 }
 
-/// Supports blocking wait operation
+/// [feature = "FeImplements"] Supports blocking wait operation
+#[cfg(feature = "FeImplements")]
 pub trait Waitable
 {
 	/// Wait for a object to become idle
@@ -252,6 +254,7 @@ impl<'s> Default for SparseBindingOpBatch<'s>
 		}
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Queue
 {

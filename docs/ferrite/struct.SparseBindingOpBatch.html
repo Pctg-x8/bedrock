@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ferrite/device.rs.html#221-235' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/ferrite/device.rs.html#230-244' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct SparseBindingOpBatch&lt;'s&gt; {
     pub wait_semaphores: <a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'s, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a>&amp;'s <a class="struct" href="../ferrite/struct.Semaphore.html" title="struct ferrite::Semaphore">Semaphore</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;,
     pub buffer_binds: <a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'s, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a><a class="struct" href="../ferrite/vk/struct.VkSparseBufferMemoryBindInfo.html" title="struct ferrite::vk::VkSparseBufferMemoryBindInfo">VkSparseBufferMemoryBindInfo</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;,
@@ -56,7 +56,8 @@
     pub image_binds: <a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'s, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a><a class="struct" href="../ferrite/vk/struct.VkSparseImageMemoryBindInfo.html" title="struct ferrite::vk::VkSparseImageMemoryBindInfo">VkSparseImageMemoryBindInfo</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;,
     pub signal_semaphores: <a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'s, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a>&amp;'s <a class="struct" href="../ferrite/struct.Semaphore.html" title="struct ferrite::Semaphore">Semaphore</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;,
 }</pre><div class='docblock'><p>Sparse Binding operation batch</p>
-</div><h2 id='fields' class='fields'>Fields</h2><span id='structfield.wait_semaphores' class="structfield">
+</div><h2 id='fields' class='fields small-section-header'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.wait_semaphores' class="structfield">
                            <span id='wait_semaphores.v' class='invisible'>
                            <code>wait_semaphores: <a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'s, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a>&amp;'s <a class="struct" href="../ferrite/struct.Semaphore.html" title="struct ferrite::Semaphore">Semaphore</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;</code>
                            </span></span><div class='docblock'><p>An array of semaphores upon which to wait on before the sparse binding operations
@@ -78,8 +79,12 @@ for this batch begin execution</p>
                            <code>signal_semaphores: <a class="enum" href="https://doc.rust-lang.org/nightly/alloc/borrow/enum.Cow.html" title="enum alloc::borrow::Cow">Cow</a>&lt;'s, <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">[</a>&amp;'s <a class="struct" href="../ferrite/struct.Semaphore.html" title="struct ferrite::Semaphore">Semaphore</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>&gt;</code>
                            </span></span><div class='docblock'><p>An array of semaphores which will be signaled when the sparse binding
 operations for this batch have completed execution</p>
-</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'s&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../ferrite/struct.SparseBindingOpBatch.html" title="struct ferrite::SparseBindingOpBatch">SparseBindingOpBatch</a>&lt;'s&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#236-247' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; Self</code></span></h4>
+</div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Default' class='impl'><span class='in-band'><code>impl&lt;'s&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html" title="trait core::default::Default">Default</a> for <a class="struct" href="../ferrite/struct.SparseBindingOpBatch.html" title="struct ferrite::SparseBindingOpBatch">SparseBindingOpBatch</a>&lt;'s&gt;</code><a href='#impl-Default' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#245-256' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.default' class="method"><span id='default.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default' class='fnname'>default</a>() -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#247-255' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns the &quot;default value&quot; for a type. <a href="https://doc.rust-lang.org/nightly/core/default/trait.Default.html#tymethod.default">Read more</a></p>
 </div></div></section>
     <section id='search' class="content hidden"></section>

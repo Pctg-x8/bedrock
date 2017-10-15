@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\sync.rs`.">
+    <meta name="description" content="Source to the Rust file `src/sync.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>sync.rs.html -- source</title>
@@ -225,6 +225,15 @@
 <span id="180">180</span>
 <span id="181">181</span>
 <span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Synchronization Primitives(Fence, Semaphore, Event)</span>
 
@@ -251,6 +260,7 @@
 <span class="kw">impl</span> ::<span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Semaphore</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span> } }
 <span class="kw">impl</span> ::<span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Event</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span> } }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Fence</span>
 {
@@ -268,6 +278,7 @@
 			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Fence</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>()))
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Semaphore</span>
 {
@@ -284,6 +295,7 @@
 			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Semaphore</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>()))
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Event</span>
 {
@@ -301,6 +313,7 @@
 	}
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Fence</span>
 {
@@ -348,6 +361,7 @@
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reset</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> { <span class="kw">unsafe</span> { ::<span class="ident">vk</span>::<span class="ident">vkResetFences</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="number">1</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>) }.<span class="ident">into_result</span>() }
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Event</span>
 {
@@ -367,9 +381,10 @@
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reset</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> { <span class="kw">unsafe</span> { ::<span class="ident">vk</span>::<span class="ident">vkResetEvent</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>) }.<span class="ident">into_result</span>() }
 }
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Status</span>
 {
-	<span class="doccomment">/// Retrieve the status(which is signaled) of a synchronize object</span>
+	<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Retrieve the status(whether is signaled or not) of a synchronize object</span>
 	<span class="doccomment">/// # Failures</span>
 	<span class="doccomment">/// On failure, this command returns</span>
 	<span class="doccomment">/// </span>
@@ -399,7 +414,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> ::<span class="ident">Waitable</span> <span class="kw">for</span> <span class="ident">Fence</span>
 {
-	<span class="doccomment">/// Wait for a fence to become signaled</span>
+	<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Wait for a fence to become signaled</span>
 	<span class="doccomment">/// # Failures</span>
 	<span class="doccomment">/// On failure, this command returns</span>
 	<span class="doccomment">/// </span>
@@ -408,6 +423,9 @@
 	<span class="doccomment">/// * `VK_ERROR_DEVICE_LOST`</span>
 	<span class="kw">fn</span> <span class="ident">wait</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> { <span class="self">self</span>.<span class="ident">wait_timeout</span>(::<span class="ident">std</span>::<span class="ident">u64</span>::<span class="ident">MAX</span>).<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> ()) }
 }
+
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Send</span> <span class="kw">for</span> <span class="ident">Fence</span> {}
+<span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Fence</span> {}
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

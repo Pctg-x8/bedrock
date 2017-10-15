@@ -48,13 +48,21 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ferrite/shading.rs.html#279' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/ferrite/shading.rs.html#282' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct DynamicDataCell&lt;'d&gt; { /* fields omitted */ }</pre><div class='docblock'><p>Untyped data cell</p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'d&gt; <a class="struct" href="../ferrite/struct.DynamicDataCell.html" title="struct ferrite::DynamicDataCell">DynamicDataCell</a>&lt;'d&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#285-292' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.from_slice' class="method"><span id='from_slice.v' class='invisible'><code>fn <a href='#method.from_slice' class='fnname'>from_slice</a>&lt;T&gt;(s: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;'d [</a>T<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; Self</code></span></h4>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;'d&gt; <a class="struct" href="../ferrite/struct.DynamicDataCell.html" title="struct ferrite::DynamicDataCell">DynamicDataCell</a>&lt;'d&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#288-295' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.from_slice' class="method"><span id='from_slice.v' class='invisible'><code>fn <a href='#method.from_slice' class='fnname'>from_slice</a>&lt;T&gt;(s: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;'d [T]</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#291-294' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Construct borrowing a slice</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'d, T&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html" title="trait core::convert::From">From</a>&lt;&amp;'d T&gt; for <a class="struct" href="../ferrite/struct.DynamicDataCell.html" title="struct ferrite::DynamicDataCell">DynamicDataCell</a>&lt;'d&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#280-284' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.from' class="method"><span id='from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from' class='fnname'>from</a>(d: &amp;'d T) -&gt; Self</code></span></h4>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-From&lt;&amp;&#39;d T&gt;' class='impl'><span class='in-band'><code>impl&lt;'d, T&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/convert/trait.From.html" title="trait core::convert::From">From</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'d </a>T&gt; for <a class="struct" href="../ferrite/struct.DynamicDataCell.html" title="struct ferrite::DynamicDataCell">DynamicDataCell</a>&lt;'d&gt;</code><a href='#impl-From&lt;&amp;&#39;d T&gt;' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#283-287' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.from' class="method"><span id='from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#tymethod.from' class='fnname'>from</a>(d: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;'d </a>T) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/shading.rs.html#286' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Construct borrowing a data</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>

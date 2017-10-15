@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\descriptor.rs`.">
+    <meta name="description" content="Source to the Rust file `src/descriptor.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>descriptor.rs.html -- source</title>
@@ -326,6 +326,8 @@
 <span id="281">281</span>
 <span id="282">282</span>
 <span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Descriptors</span>
 
@@ -442,6 +444,7 @@
     }
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">DescriptorSetLayout</span>
 {
@@ -504,6 +507,7 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
     <span class="ident">InputAttachment</span> <span class="op">=</span> <span class="ident">VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT</span> <span class="kw">as</span> _
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">DescriptorPool</span>
 {
@@ -589,10 +593,10 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
     <span class="ident">UniformTexelBuffer</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">BufferView</span><span class="op">&gt;</span>),
     <span class="ident">StorageTexelBuffer</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">BufferView</span><span class="op">&gt;</span>)
 }
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">DescriptorUpdateInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decomposite</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">DescriptorType</span>, <span class="ident">u32</span>, <span class="kw-2">&amp;</span>[(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">Sampler</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">ImageView</span>, ::<span class="ident">ImageLayout</span>)], <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">Buffer</span>, ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>)], <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">BufferView</span>])
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">decomposite</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">DescriptorType</span>, <span class="ident">u32</span>, <span class="kw-2">&amp;</span>[(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">Sampler</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">ImageView</span>, ::<span class="ident">ImageLayout</span>)], <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">Buffer</span>, ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>)], <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="lifetime">&#39;d</span> ::<span class="ident">BufferView</span>])
     {
         <span class="kw">match</span> <span class="self">self</span>
         {

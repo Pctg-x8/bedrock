@@ -113,6 +113,7 @@ impl DSLBindings
     }
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl DescriptorSetLayout
 {
@@ -175,6 +176,7 @@ pub enum DescriptorType
     InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl DescriptorPool
 {
@@ -260,10 +262,10 @@ pub enum DescriptorUpdateInfo<'d>
     UniformTexelBuffer(Vec<&'d ::BufferView>),
     StorageTexelBuffer(Vec<&'d ::BufferView>)
 }
-#[cfg(feature = "FeImplements")]
 impl<'d> DescriptorUpdateInfo<'d>
 {
-    pub fn decomposite(&self) -> (DescriptorType, u32, &[(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)], &[(&'d ::Buffer, ::std::ops::Range<usize>)], &[&'d ::BufferView])
+	#[cfg(feature = "FeImplements")]
+    pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)], &[(&'d ::Buffer, ::std::ops::Range<usize>)], &[&'d ::BufferView])
     {
         match self
         {

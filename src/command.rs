@@ -28,6 +28,7 @@ impl<'d> Drop for CmdRecord<'d>
 	}
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl CommandPool
 {
@@ -85,6 +86,7 @@ impl CommandPool
 	}
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl CommandBuffer
 {
@@ -120,7 +122,7 @@ impl CommandBuffer
 	}
 }
 
-/// Graphics/Compute Commands: Pipeline Setup
+/// [feature = "FeImplements"] Graphics/Compute Commands: Pipeline Setup
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -217,7 +219,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics Commands: Updating dynamic states
+/// [feature = "FeImplements"] Graphics Commands: Updating dynamic states
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -273,7 +275,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics Commands: Binding Buffers
+/// [feature = "FeImplements"] Graphics Commands: Binding Buffers
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -292,7 +294,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics Commands: Inside a Render Pass
+/// [feature = "FeImplements"] Graphics Commands: Inside a Render Pass
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -322,7 +324,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Compute Commands: Dispatching kernels
+/// [feature = "FeImplements"] Compute Commands: Dispatching kernels
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -340,7 +342,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Transfer Commands: Copying resources
+/// [feature = "FeImplements"] Transfer Commands: Copying resources
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -385,7 +387,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics/Compute Commands: Transfer-like(clearing/filling) commands
+/// [feature = "FeImplements"] Graphics/Compute Commands: Transfer-like(clearing/filling) commands
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -411,7 +413,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics Commands: Attachment clearing
+/// [feature = "FeImplements"] Graphics Commands: Attachment clearing
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -423,7 +425,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics Commands: Resolving an image to another image
+/// [feature = "FeImplements"] Graphics Commands: Resolving an image to another image
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -435,7 +437,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics/Compute Commands: Synchronization between command buffers/queues
+/// [feature = "FeImplements"] Graphics/Compute Commands: Synchronization between command buffers/queues
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -470,7 +472,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics/Compute Commands: Querying
+/// [feature = "FeImplements"] Graphics/Compute Commands: Querying
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {
@@ -505,7 +507,7 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// Graphics Commands: Manipulating with Render Passes
+/// [feature = "FeImplements"] Graphics Commands: Manipulating with Render Passes
 #[cfg(feature = "FeImplements")]
 impl<'d> CmdRecord<'d>
 {

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\command.rs`.">
+    <meta name="description" content="Source to the Rust file `src/command.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>command.rs.html -- source</title>
@@ -619,6 +619,8 @@
 <span id="574">574</span>
 <span id="575">575</span>
 <span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Commands</span>
 
@@ -650,6 +652,7 @@
 	}
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">CommandPool</span>
 {
@@ -707,6 +710,7 @@
 	}
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">CommandBuffer</span>
 {
@@ -742,7 +746,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics/Compute Commands: Pipeline Setup</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics/Compute Commands: Pipeline Setup</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -839,7 +843,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics Commands: Updating dynamic states</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics Commands: Updating dynamic states</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -895,7 +899,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics Commands: Binding Buffers</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics Commands: Binding Buffers</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -914,7 +918,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics Commands: Inside a Render Pass</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics Commands: Inside a Render Pass</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -944,7 +948,7 @@
 	}
 }
 
-<span class="doccomment">/// Compute Commands: Dispatching kernels</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Compute Commands: Dispatching kernels</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -962,7 +966,7 @@
 	}
 }
 
-<span class="doccomment">/// Transfer Commands: Copying resources</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Transfer Commands: Copying resources</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -1007,7 +1011,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics/Compute Commands: Transfer-like(clearing/filling) commands</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics/Compute Commands: Transfer-like(clearing/filling) commands</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -1033,7 +1037,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics Commands: Attachment clearing</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics Commands: Attachment clearing</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -1045,7 +1049,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics Commands: Resolving an image to another image</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics Commands: Resolving an image to another image</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -1057,7 +1061,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics/Compute Commands: Synchronization between command buffers/queues</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics/Compute Commands: Synchronization between command buffers/queues</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -1092,7 +1096,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics/Compute Commands: Querying</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics/Compute Commands: Querying</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {
@@ -1127,7 +1131,7 @@
 	}
 }
 
-<span class="doccomment">/// Graphics Commands: Manipulating with Render Passes</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Graphics Commands: Manipulating with Render Passes</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span> <span class="ident">CmdRecord</span><span class="op">&lt;</span><span class="lifetime">&#39;d</span><span class="op">&gt;</span>
 {

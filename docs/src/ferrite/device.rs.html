@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\device.rs`.">
+    <meta name="description" content="Source to the Rust file `src/device.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>device.rs.html -- source</title>
@@ -316,6 +316,16 @@
 <span id="271">271</span>
 <span id="272">272</span>
 <span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Device and Queues</span>
 
@@ -362,7 +372,14 @@
 	<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_snake_case</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find_matching_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">flags</span>: <span class="ident">QueueFlags</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>
 	{
-		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>().<span class="ident">find</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(_, <span class="kw-2">&amp;</span><span class="ident">VkQueueFamilyProperties</span> { <span class="ident">queueFlags</span>, .. })<span class="op">|</span> (<span class="ident">queueFlags</span> <span class="op">&amp;</span> <span class="ident">flags</span>.<span class="number">0</span>) <span class="op">!=</span> <span class="number">0</span>).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">n</span>, _)<span class="op">|</span> <span class="ident">n</span> <span class="kw">as</span> _)
+		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">VkQueueFamilyProperties</span> { <span class="ident">queueFlags</span>, .. }<span class="op">|</span> (<span class="ident">queueFlags</span> <span class="op">&amp;</span> <span class="ident">flags</span>.<span class="number">0</span>) <span class="op">!=</span> <span class="number">0</span>).<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="kw">as</span> _)
+	}
+	<span class="doccomment">/// Find a queue family index containing specified bitflags</span>
+	<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_snake_case</span>)]</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find_another_matching_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">flags</span>: <span class="ident">QueueFlags</span>, <span class="ident">exclude</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>
+	{
+		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>().<span class="ident">find</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">n</span>, <span class="kw-2">&amp;</span><span class="ident">VkQueueFamilyProperties</span> { <span class="ident">queueFlags</span>, .. })<span class="op">|</span> (<span class="ident">queueFlags</span> <span class="op">&amp;</span> <span class="ident">flags</span>.<span class="number">0</span>) <span class="op">!=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">exclude</span> <span class="op">!=</span> <span class="ident">n</span> <span class="kw">as</span> <span class="ident">u32</span>)
+			.<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">n</span>, _)<span class="op">|</span> <span class="ident">n</span> <span class="kw">as</span> _)
 	}
 	<span class="doccomment">/// Number of queue families</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">count</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">len</span>() <span class="kw">as</span> _ }
@@ -422,7 +439,7 @@
 	{
 		<span class="kw">for</span> <span class="ident">q</span> <span class="kw">in</span> <span class="ident">queues</span> { <span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">add_queue</span>(<span class="ident">q</span>); } <span class="self">self</span>
 	}
-	<span class="doccomment">/// Create a new device instance</span>
+	<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Create a new device instance</span>
 	<span class="doccomment">/// # Failures</span>
 	<span class="doccomment">/// On failure, this command returns</span>
 	<span class="doccomment">///</span>
@@ -454,6 +471,7 @@
 			.<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Device</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">DeviceCell</span>(<span class="ident">h</span>, <span class="self">self</span>.<span class="ident">pdev_ref</span>.<span class="ident">parent</span>().<span class="ident">clone</span>()))))
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Device</span>
 {
@@ -525,7 +543,8 @@
 	}
 }
 
-<span class="doccomment">/// Supports blocking wait operation</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Supports blocking wait operation</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Waitable</span>
 {
 	<span class="doccomment">/// Wait for a object to become idle</span>
@@ -564,6 +583,7 @@
 		}
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Queue</span>
 {

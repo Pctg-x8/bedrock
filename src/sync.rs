@@ -23,6 +23,7 @@ impl ::DeviceChild for Fence { fn device(&self) -> &::Device { &self.1 } }
 impl ::DeviceChild for Semaphore { fn device(&self) -> &::Device { &self.1 } }
 impl ::DeviceChild for Event { fn device(&self) -> &::Device { &self.1 } }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Fence
 {
@@ -40,6 +41,7 @@ impl Fence
 			.into_result().map(|_| Fence(h, device.clone()))
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Semaphore
 {
@@ -56,6 +58,7 @@ impl Semaphore
 			.into_result().map(|_| Semaphore(h, device.clone()))
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Event
 {
@@ -73,6 +76,7 @@ impl Event
 	}
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Fence
 {
@@ -120,6 +124,7 @@ impl Fence
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetFences(self.1.native_ptr(), 1, &self.0) }.into_result() }
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Event
 {
@@ -139,9 +144,10 @@ impl Event
 	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetEvent(self.1.native_ptr(), self.0) }.into_result() }
 }
 
+#[cfg(feature = "FeImplements")]
 pub trait Status
 {
-	/// Retrieve the status(whether is signaled or not) of a synchronize object
+	/// [feature = "FeImplements"] Retrieve the status(whether is signaled or not) of a synchronize object
 	/// # Failures
 	/// On failure, this command returns
 	/// 
@@ -171,7 +177,7 @@ impl Status for Event
 #[cfg(feature = "FeImplements")]
 impl ::Waitable for Fence
 {
-	/// Wait for a fence to become signaled
+	/// [feature = "FeImplements"] Wait for a fence to become signaled
 	/// # Failures
 	/// On failure, this command returns
 	/// 

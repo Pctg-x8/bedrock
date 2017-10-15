@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\resources.rs`.">
+    <meta name="description" content="Source to the Rust file `src/resources.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>resources.rs.html -- source</title>
@@ -872,14 +872,33 @@
 <span id="827">827</span>
 <span id="828">828</span>
 <span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Resources</span>
 
 <span class="kw">use</span> <span class="ident">vk</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">rc</span>::<span class="ident">Rc</span> <span class="kw">as</span> <span class="ident">RefCounter</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Deref</span>;
 <span class="kw">use</span> {<span class="ident">VkHandle</span>, <span class="ident">DeviceChild</span>};
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_imports</span>)]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Deref</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">VkResultHandler</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span> <span class="kw">as</span> <span class="ident">resv</span>;
 
 <span class="kw">struct</span> <span class="ident">DeviceMemoryCell</span>(<span class="ident">VkDeviceMemory</span>, ::<span class="ident">Device</span>);
 <span class="kw">struct</span> <span class="ident">BufferCell</span>(<span class="ident">VkBuffer</span>, ::<span class="ident">Device</span>);
@@ -902,25 +921,28 @@
 <span class="doccomment">/// Opaque handle to a image view object</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageView</span>(<span class="ident">VkImageView</span>, <span class="ident">Image</span>);
 
+<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Buffer</span>; <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Buffer</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span> } }
+<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">ImageView</span> { <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Image</span>; <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Image</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span> } }
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="macro">DeviceChildCommonDrop</span><span class="macro">!</span> { <span class="kw">for</span> <span class="ident">DeviceMemoryCell</span>[<span class="ident">vkFreeMemory</span>], <span class="ident">BufferCell</span>[<span class="ident">vkDestroyBuffer</span>] }
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ImageCell</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ImageCell</span>
 {
 	<span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>)
 	{
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
 		<span class="kw">match</span> <span class="self">self</span>
 		{
-			<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(<span class="ident">v</span>, <span class="kw-2">ref</span> <span class="ident">p</span>, _, _) <span class="op">=&gt;</span> <span class="kw">unsafe</span> { <span class="ident">vkDestroyImage</span>(<span class="ident">p</span>.<span class="ident">native_ptr</span>(), <span class="ident">v</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>()); },
-			_ <span class="op">=&gt;</span> (<span class="comment">/* no destroying performed */</span>)
+			<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(<span class="ident">v</span>, <span class="kw-2">ref</span> <span class="ident">p</span>, _, _) <span class="op">=&gt;</span> <span class="kw">unsafe</span> { <span class="ident">vkDestroyImage</span>(<span class="ident">p</span>.<span class="ident">native_ptr</span>(), <span class="ident">v</span>, <span class="ident">null</span>()); },
+			_ <span class="op">=&gt;</span> (<span class="comment">/* No destroying performed */</span>)
 		}
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		<span class="kw">unsafe</span> { <span class="ident">vkDestroyImage</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>, <span class="ident">null</span>()); }
 	}
 }
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)))]</span>
-<span class="macro">DeviceChildCommonDrop</span><span class="macro">!</span> { <span class="kw">for</span> <span class="ident">ImageCell</span>[<span class="ident">vkDestroyImage</span>] }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="kw">unsafe</span> { <span class="ident">vkDestroyBufferView</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>()) }; } }
+<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="kw">unsafe</span> { <span class="ident">vkDestroyBufferView</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>, <span class="ident">null</span>()) }; } }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ImageView</span>  { <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="kw">unsafe</span> { <span class="ident">vkDestroyImageView</span> (<span class="self">self</span>.<span class="number">1</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>()) }; } }
+<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ImageView</span>  { <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="kw">unsafe</span> { <span class="ident">vkDestroyImageView</span> (<span class="self">self</span>.<span class="number">1</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>, <span class="ident">null</span>()) }; } }
 
 <span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">DeviceMemory</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkDeviceMemory</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkDeviceMemory</span> { <span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> } }
 <span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">Buffer</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkBuffer</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkBuffer</span> { <span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> } }
@@ -961,6 +983,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
 <span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Image</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span> .<span class="number">1</span> } }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">DeviceMemory</span>
 {
@@ -1076,7 +1099,7 @@
 	{
 		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">flags</span> <span class="op">=</span> <span class="ident">opt</span> <span class="kw">as</span> _; <span class="self">self</span>
 	}
-	<span class="doccomment">/// Create a new buffer object</span>
+	<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Create a new buffer object</span>
 	<span class="doccomment">/// # Failure</span>
 	<span class="doccomment">/// On failure, this command returns</span>
 	<span class="doccomment">///</span>
@@ -1170,6 +1193,7 @@
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cube_compatible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageFlags</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">CUBE_COMPATIBLE</span>.<span class="number">0</span>) }
 }
 <span class="doccomment">/// Builder structure specifying the parameters of a newly created image object</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageDesc</span> { <span class="ident">cinfo</span>: <span class="ident">VkImageCreateInfo</span>, <span class="ident">sharing_queues</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> }
 <span class="kw">impl</span> <span class="ident">ImageDesc</span>
 {
@@ -1207,69 +1231,53 @@
 	{
 		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">flags</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="number">0</span>; <span class="self">self</span>
 	}
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">features</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">not</span>(<span class="ident">features</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)))]</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array_layers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">layers</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">arrayLayers</span> <span class="op">=</span> <span class="ident">layers</span>; <span class="self">self</span> }
+}
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">ImageDesc</span>
+{
+	<span class="doccomment">/// Create an image</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
-		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, <span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
 			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>(), <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">imageType</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">format</span>))))
 	}
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">features</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">features</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+	<span class="doccomment">/// Create an image</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
-		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, <span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
 			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>(), <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">imageType</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">format</span>))))
 	}
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="kw">impl</span> <span class="ident">Buffer</span>
-{
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="ident">VkFormat</span>, <span class="ident">range</span>: ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufferView</span><span class="op">&gt;</span>
-	{
-		<span class="kw">let</span> <span class="ident">cinfo</span> <span class="op">=</span> <span class="ident">VkBufferViewCreateInfo</span>
-		{
-			<span class="ident">buffer</span>: <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">format</span>, <span class="ident">offset</span>: <span class="ident">range</span>.<span class="ident">start</span>, <span class="ident">range</span>: <span class="ident">range</span>.<span class="ident">end</span> <span class="op">-</span> <span class="ident">range</span>.<span class="ident">start</span>, .. <span class="ident">Default</span>::<span class="ident">default</span>()
-		};
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">zeroed</span>() };
-		<span class="kw">unsafe</span> { <span class="ident">vkCreateBufferView</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
-			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">BufferView</span>(<span class="ident">h</span>, <span class="self">self</span>.<span class="ident">clone</span>()))
-	}
-}
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Image</span>
 {
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
-	<span class="kw">fn</span> <span class="ident">format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkFormat</span>
+	<span class="doccomment">/// The pixel format of an image</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkFormat</span>
 	{
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
 		<span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">deref</span>()
 		{
-			<span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(_, _, <span class="ident">f</span>, _) <span class="op">=&gt;</span> <span class="ident">f</span>,
-			<span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span>(_, _, <span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">f</span>
+			<span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(_, _, <span class="ident">f</span>, _) <span class="op">|</span> <span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span>(_, _, <span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">f</span>
 		}
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		{ <span class="self">self</span>.<span class="number">0</span> .<span class="number">3</span> }
 	}
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
-	<span class="kw">fn</span> <span class="ident">format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkFormat</span> { <span class="self">self</span>.<span class="number">0</span> .<span class="number">3</span> }
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 	<span class="kw">fn</span> <span class="ident">dimension</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkImageViewType</span>
 	{
-		<span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">deref</span>()
-		{
-			<span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(_, _, _, <span class="ident">d</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">d</span>
-			{
-				<span class="ident">VK_IMAGE_TYPE_1D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_1D</span>,
-				<span class="ident">VK_IMAGE_TYPE_2D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_2D</span>,
-				<span class="ident">VK_IMAGE_TYPE_3D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_3D</span>,
-				_ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
-			},
-			<span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span>(_, _, _) <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_2D</span>
-		}
-	}
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
-	<span class="kw">fn</span> <span class="ident">dimension</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkImageViewType</span>
-	{
-		<span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> .<span class="number">2</span>
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+		<span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">deref</span>() { <span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>(_, _, _, <span class="ident">d</span>) <span class="op">=&gt;</span> <span class="ident">d</span>, <span class="kw-2">&amp;</span><span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span>(_, _, _) <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_TYPE_2D</span> };
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		<span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span> .<span class="number">2</span>;
+
+		<span class="kw">match</span> <span class="ident">dim</span>
 		{
 			<span class="ident">VK_IMAGE_TYPE_1D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_1D</span>,
 			<span class="ident">VK_IMAGE_TYPE_2D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_2D</span>,
@@ -1277,11 +1285,33 @@
 			_ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
 		}
 	}
+}
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Buffer</span>
+{
+	<span class="doccomment">/// Create a buffer view</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="ident">VkFormat</span>, <span class="ident">range</span>: ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufferView</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="ident">cinfo</span> <span class="op">=</span> <span class="ident">VkBufferViewCreateInfo</span>
+		{
+			<span class="ident">buffer</span>: <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">format</span>, <span class="ident">offset</span>: <span class="ident">range</span>.<span class="ident">start</span>, <span class="ident">range</span>: <span class="ident">range</span>.<span class="ident">end</span> <span class="op">-</span> <span class="ident">range</span>.<span class="ident">start</span>, .. <span class="ident">Default</span>::<span class="ident">default</span>()
+		};
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateBufferView</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">BufferView</span>(<span class="ident">h</span>, <span class="self">self</span>.<span class="ident">clone</span>()))
+	}
+}
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Image</span>
+{
+	<span class="doccomment">/// Create an image view</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VkFormat</span><span class="op">&gt;</span>, <span class="ident">vtype</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VkImageViewType</span><span class="op">&gt;</span>, <span class="ident">cmap</span>: <span class="kw-2">&amp;</span><span class="ident">ComponentMapping</span>, <span class="ident">subresource_range</span>: <span class="kw-2">&amp;</span><span class="ident">ImageSubresourceRange</span>)
 		<span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ImageView</span><span class="op">&gt;</span>
 	{
-		<span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">format</span>.<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">format</span>());
-		<span class="kw">let</span> <span class="ident">vtype</span> <span class="op">=</span> <span class="ident">vtype</span>.<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">dimension</span>());
+		<span class="kw">let</span> (<span class="ident">format</span>, <span class="ident">vtype</span>) <span class="op">=</span> (<span class="ident">format</span>.<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">format</span>()), <span class="ident">vtype</span>.<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">dimension</span>()));
 		<span class="kw">let</span> <span class="ident">cinfo</span> <span class="op">=</span> <span class="ident">VkImageViewCreateInfo</span>
 		{
 			<span class="ident">image</span>: <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">viewType</span>: <span class="ident">vtype</span>, <span class="ident">format</span>, <span class="ident">components</span>: <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute_copy</span>(<span class="ident">cmap</span>) },
@@ -1292,20 +1322,21 @@
 				<span class="ident">baseArrayLayer</span>: <span class="ident">subresource_range</span>.<span class="ident">array_layers</span>.<span class="ident">start</span>, <span class="ident">layerCount</span>: <span class="ident">subresource_range</span>.<span class="ident">array_layers</span>.<span class="ident">len</span>() <span class="kw">as</span> _
 			}, .. <span class="ident">Default</span>::<span class="ident">default</span>()
 		};
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">zeroed</span>() };
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
 		<span class="kw">unsafe</span> { <span class="ident">vkCreateImageView</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
 			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">ImageView</span>(<span class="ident">h</span>, <span class="self">self</span>.<span class="ident">clone</span>()))
 	}
-	<span class="doccomment">/// Retrieve information about an image subresource</span>
-	<span class="doccomment">/// Subresource: (aspect, mipLevel, arrayLayer)</span>
+	<span class="doccomment">/// Retrieve information about an image subresource  </span>
+	<span class="doccomment">/// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">image_subresource_layout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">subres_aspect</span>: <span class="ident">AspectMask</span>, <span class="ident">subres_mip_level</span>: <span class="ident">u32</span>, <span class="ident">subres_array_layer</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">VkSubresourceLayout</span>
 	{
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() };
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">resv</span>() };
 		<span class="kw">let</span> <span class="ident">subres</span> <span class="op">=</span> <span class="ident">VkImageSubresource</span> { <span class="ident">aspectMask</span>: <span class="ident">subres_aspect</span>.<span class="number">0</span>, <span class="ident">mipLevel</span>: <span class="ident">subres_mip_level</span>, <span class="ident">arrayLayer</span>: <span class="ident">subres_array_layer</span> };
 		<span class="kw">unsafe</span> { <span class="ident">vkGetImageSubresourceLayout</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">subres</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">s</span>) }; <span class="ident">s</span>
 	}
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">DeviceMemory</span>
 {
@@ -1338,7 +1369,8 @@
 	}
 }
 
-<span class="doccomment">/// Common operations for memory bound objects</span>
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Common operations for memory bound objects</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MemoryBound</span>
 {
 	<span class="doccomment">/// Returns the memory requirements for specified Vulkan object</span>
@@ -1356,7 +1388,7 @@
 {
 	<span class="kw">fn</span> <span class="ident">requirements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkMemoryRequirements</span>
 	{
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() };
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">resv</span>() };
 		<span class="kw">unsafe</span> { <span class="ident">vkGetBufferMemoryRequirements</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }; <span class="ident">p</span>
 	}
 	<span class="kw">fn</span> <span class="ident">bind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="ident">DeviceMemory</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
@@ -1369,7 +1401,7 @@
 {
 	<span class="kw">fn</span> <span class="ident">requirements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkMemoryRequirements</span>
 	{
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() };
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">resv</span>() };
 		<span class="kw">unsafe</span> { <span class="ident">vkGetImageMemoryRequirements</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }; <span class="ident">p</span>
 	}
 	<span class="kw">fn</span> <span class="ident">bind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="ident">DeviceMemory</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
@@ -1377,6 +1409,7 @@
 		<span class="kw">unsafe</span> { <span class="ident">vkBindImageMemory</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">memory</span>.<span class="ident">native_ptr</span>(), <span class="ident">offset</span> <span class="kw">as</span> _) }.<span class="ident">into_result</span>()
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Image</span>
 {
@@ -1442,11 +1475,12 @@
 {
 	<span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>)
 	{
-		<span class="kw">unsafe</span> { <span class="ident">vkFlushMappedMemoryRanges</span>(<span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> .<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="number">1</span>, <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="self">self</span>, ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>()).<span class="ident">manual_flush</span>()) }
+		<span class="kw">unsafe</span> { <span class="ident">vkFlushMappedMemoryRanges</span>(<span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> .<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="number">1</span>, <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="self">self</span>, <span class="ident">resv</span>()).<span class="ident">manual_flush</span>()) }
 			.<span class="ident">into_result</span>().<span class="ident">unwrap</span>();
 	}
 }
 
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot; and feature = &quot;VK_KHR_swapchain&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
 <span class="kw">impl</span> ::<span class="ident">Swapchain</span>
 {
@@ -1687,7 +1721,7 @@
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">unnormalizedCoordinates</span> <span class="op">=</span> <span class="ident">use_unnormalized</span> <span class="kw">as</span> _; <span class="self">self</span>
     }
 
-    <span class="doccomment">/// Create a new sampler object</span>
+    <span class="doccomment">/// [feature = &quot;FeImplements&quot;] Create a new sampler object</span>
     <span class="doccomment">/// # Failures</span>
     <span class="doccomment">/// On failure, this command returns</span>
 	<span class="doccomment">/// </span>

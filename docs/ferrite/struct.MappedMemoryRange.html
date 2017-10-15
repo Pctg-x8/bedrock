@@ -48,24 +48,32 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ferrite/resources.rs.html#538' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/ferrite/resources.rs.html#554' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct MappedMemoryRange&lt;'m&gt;(_, _, _);</pre><div class='docblock'><p>Specifies the block of mapped memory in a <code>DeviceMemory</code></p>
-</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'m&gt; <a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&lt;'m&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#539-564' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.get' class="method"><span id='get.v' class='invisible'><code>unsafe fn <a href='#method.get' class='fnname'>get</a>&lt;T&gt;(&amp;self, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; &amp;T</code></span></h4>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;'m&gt; <a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&lt;'m&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#555-580' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.get' class="method"><span id='get.v' class='invisible'><code>unsafe fn <a href='#method.get' class='fnname'>get</a>&lt;T&gt;(&amp;self, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>T</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#560-563' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Get a reference in mapped memory with byte offsets</p>
 
 <h1 id='safety' class='section-header'><a href='#safety'>Safety</a></h1>
 <p>Caller must guarantee that the pointer and its alignment are valid</p>
-</div><h4 id='method.get_mut' class="method"><span id='get_mut.v' class='invisible'><code>unsafe fn <a href='#method.get_mut' class='fnname'>get_mut</a>&lt;T&gt;(&amp;self, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; &amp;mut T</code></span></h4>
+</div><h4 id='method.get_mut' class="method"><span id='get_mut.v' class='invisible'><code>unsafe fn <a href='#method.get_mut' class='fnname'>get_mut</a>&lt;T&gt;(&amp;self, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>T</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#567-570' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Get a mutable reference in mapped memory with byte offsets</p>
 
 <h1 id='safety-1' class='section-header'><a href='#safety-1'>Safety</a></h1>
 <p>Caller must guarantee that the pointer and its alignment are valid</p>
-</div><h4 id='method.manual_flush' class="method"><span id='manual_flush.v' class='invisible'><code>fn <a href='#method.manual_flush' class='fnname'>manual_flush</a>(self) -&gt; <a class="struct" href="../ferrite/vk/struct.VkMappedMemoryRange.html" title="struct ferrite::vk::VkMappedMemoryRange">VkMappedMemoryRange</a></code></span></h4>
+</div><h4 id='method.manual_flush' class="method"><span id='manual_flush.v' class='invisible'><code>fn <a href='#method.manual_flush' class='fnname'>manual_flush</a>(self) -&gt; <a class="struct" href="../ferrite/vk/struct.VkMappedMemoryRange.html" title="struct ferrite::vk::VkMappedMemoryRange">VkMappedMemoryRange</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#572-579' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Flushes the memory range manually. Returns a structure for flush operation</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'m&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop">Drop</a> for <a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&lt;'m&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#566-573' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span></h4>
-<div class='docblock'><p>A method called when the value goes out of scope. <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop">Read more</a></p>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Drop' class='impl'><span class='in-band'><code>impl&lt;'m&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop">Drop</a> for <a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&lt;'m&gt;</code><a href='#impl-Drop' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#582-589' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#584-588' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Executes the destructor for this type. <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop">Read more</a></p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
 

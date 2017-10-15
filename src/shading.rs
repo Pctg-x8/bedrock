@@ -162,6 +162,7 @@ impl DeviceChild for PipelineCache { fn device(&self) -> &::Device { &self.1 } }
 impl DeviceChild for PipelineLayout { fn device(&self) -> &::Device { &self.1 } }
 impl DeviceChild for Pipeline { fn device(&self) -> &::Device { &self.1 } }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl ShaderModule
 {
@@ -196,6 +197,7 @@ impl ShaderModule
 		Self::from_memory(device, &bin).map_err(From::from)
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl PipelineCache
 {
@@ -240,6 +242,7 @@ impl PipelineCache
 		unsafe { vkMergePipelineCaches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl PipelineLayout
 {
@@ -782,6 +785,7 @@ impl<'d> PipelineShader<'d>
 		}, specinfo)
 	}
 }
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl<'d> GraphicsPipelineBuilder<'d>
 {
@@ -848,6 +852,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	}
 }
 
+/// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl ::Device
 {

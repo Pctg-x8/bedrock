@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ferrite/lib.rs.html#1-489' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/ferrite/lib.rs.html#1-497' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Glue library between Vulkan and Rust</p>
 
 <h1 id='copyright' class='section-header'><a href='#copyright'>Copyright</a></h1>
@@ -65,6 +65,13 @@ Copyright (c) 2014-2017 Khronos Group.</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>pub use <a class="enum" href="../ferrite/enum.SwitchOrDynamicState.html" title="enum ferrite::SwitchOrDynamicState">SwitchOrDynamicState</a>::*;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="traits/index.html"
+                                  title='mod ferrite::traits'>traits</a></td>
+                           <td class='docblock-short'>
+                                <p>All of traits</p>
+                           </td>
+                       </tr>
                        <tr class=' module-item'>
                            <td><a class="mod" href="vk/index.html"
                                   title='mod ferrite::vk'>vk</a></td>
@@ -353,6 +360,20 @@ Element order: DescriptorSet, Binding, ArrayIndex, Description</p>
                                   title='struct ferrite::MappedMemoryRange'>MappedMemoryRange</a></td>
                            <td class='docblock-short'>
                                 <p>Specifies the block of mapped memory in a <code>DeviceMemory</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.MemoryProperties.html"
+                                  title='struct ferrite::MemoryProperties'>MemoryProperties</a></td>
+                           <td class='docblock-short'>
+                                <p>Device memory properties</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.MemoryPropertyFlags.html"
+                                  title='struct ferrite::MemoryPropertyFlags'>MemoryPropertyFlags</a></td>
+                           <td class='docblock-short'>
+                                <p>Bitmask specifying properties for a memory type</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -770,7 +791,7 @@ For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
                            <td><a class="trait" href="trait.MemoryBound.html"
                                   title='trait ferrite::MemoryBound'>MemoryBound</a></td>
                            <td class='docblock-short'>
-                                <p>Common operations for memory bound objects</p>
+                                <p>[feature = &quot;FeImplements&quot;] Common operations for memory bound objects</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -798,7 +819,7 @@ For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView</p>
                            <td><a class="trait" href="trait.Waitable.html"
                                   title='trait ferrite::Waitable'>Waitable</a></td>
                            <td class='docblock-short'>
-                                <p>Supports blocking wait operation</p>
+                                <p>[feature = &quot;FeImplements&quot;] Supports blocking wait operation</p>
                            </td>
                        </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
 <table>

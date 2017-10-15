@@ -130,7 +130,9 @@ macro_rules! DeviceChildCommonDrop
 /// All of traits
 pub mod traits
 {
-    pub use super::{VkResultBox, VkHandle, DeviceChild, ClearColorValue, ImageSize, MemoryBound, Status, Waitable};
+    pub use super::{VkResultBox, VkHandle, DeviceChild, ClearColorValue, ImageSize};
+    #[cfg(feature = "FeImplements")]
+    pub use super::{MemoryBound, Status, Waitable};
 }
 
 // size elements //

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src\base.rs`.">
+    <meta name="description" content="Source to the Rust file `src/base.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>base.rs.html -- source</title>
@@ -424,6 +424,75 @@
 <span id="379">379</span>
 <span id="380">380</span>
 <span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Base Objects(Instance/PhysicalDevice)</span>
 
@@ -444,6 +513,14 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span> <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Instance</span>(<span class="ident">RefCounter</span><span class="op">&lt;</span><span class="ident">InstanceCell</span><span class="op">&gt;</span>);
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeMultithreaded&quot;</span>)]</span> <span class="kw">unsafe</span> <span class="kw">impl</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Instance</span> {}
 <span class="doccomment">/// Opaque handle to a physical device object</span>
+<span class="doccomment">/// </span>
+<span class="doccomment">/// ## Platform Dependent Methods: Presentation Support checking functions</span>
+<span class="doccomment">/// </span>
+<span class="doccomment">/// * `xlib_presentation_support(&amp;self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -&gt; bool`: VK_KHR_xlib_surface</span>
+<span class="doccomment">/// * `xcb_presentation_support(&amp;self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -&gt; bool`: VK_KHR_xcb_surface</span>
+<span class="doccomment">/// * `wayland_presentation_support(&amp;self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -&gt; bool`: VK_KHR_wayland_surface</span>
+<span class="doccomment">/// * `win32_presentation_support(&amp;self, queue_family: u32) -&gt; bool`: VK_KHR_win32_surface</span>
+<span class="doccomment">/// * Methods for Android and Mir surfaces are not implemented</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PhysicalDevice</span>(<span class="ident">VkPhysicalDevice</span>, <span class="ident">Instance</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
@@ -496,7 +573,7 @@
 	{
 		<span class="kw">for</span> <span class="ident">l</span> <span class="kw">in</span> <span class="ident">layers</span> { <span class="self">self</span>.<span class="ident">add_layer</span>(<span class="ident">l</span>); } <span class="self">self</span>
 	}
-	<span class="doccomment">/// Create a new Vulkan instance</span>
+	<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Create a new Vulkan instance</span>
 	<span class="doccomment">/// # Failures</span>
 	<span class="doccomment">/// On failure, this command returns</span>
 	<span class="doccomment">///</span>
@@ -519,6 +596,7 @@
 		<span class="kw">unsafe</span> { <span class="ident">vkCreateInstance</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Instance</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">InstanceCell</span>(<span class="ident">h</span>))))
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">Instance</span>
 {
@@ -578,6 +656,7 @@
 		<span class="kw">unsafe</span> { <span class="ident">vkEnumerateInstanceExtensionProperties</span>(<span class="ident">cn</span>.<span class="ident">as_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>()) }.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">v</span>)
 	}
 }
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
 <span class="kw">impl</span> <span class="ident">PhysicalDevice</span>
 {
@@ -623,10 +702,10 @@
 		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceQueueFamilyProperties</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>()) }; ::<span class="ident">QueueFamilies</span>(<span class="ident">v</span>)
 	}
 	<span class="doccomment">/// Reports memory information for the specified physical device</span>
-	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">memory_properties</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkPhysicalDeviceMemoryProperties</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">memory_properties</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">MemoryProperties</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() };
-		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceMemoryProperties</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }; <span class="ident">p</span>
+		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceMemoryProperties</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }; <span class="ident">MemoryProperties</span>(<span class="ident">p</span>)
 	}
 	<span class="doccomment">/// Retrieve properties of an image format applied to sparse images</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sparse_image_format_properties</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="ident">VkFormat</span>, <span class="ident">itype</span>: <span class="ident">VkImageType</span>, <span class="ident">samples</span>: <span class="ident">VkSampleCountFlags</span>,
@@ -638,6 +717,12 @@
 		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceSparseImageFormatProperties</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">format</span>, <span class="ident">itype</span>, <span class="ident">samples</span>, <span class="ident">usage</span>.<span class="number">0</span>, <span class="ident">tiling</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>()) };
 		<span class="ident">v</span>
 	}
+}
+
+<span class="doccomment">/// [feature = &quot;VK_KHR_surface&quot; and feature = &quot;FeImplements&quot;] Surface functions</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>))]</span>
+<span class="kw">impl</span> <span class="ident">PhysicalDevice</span>
+{
 	<span class="doccomment">/// Query if presentation is supported</span>
 	<span class="doccomment">/// # Failures</span>
 	<span class="doccomment">/// On failure, this command returns</span>
@@ -645,7 +730,6 @@
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_SURFACE_LOST_KHR`</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">surface_support</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_family</span>: <span class="ident">u32</span>, <span class="ident">surface</span>: <span class="kw-2">&amp;</span>::<span class="ident">Surface</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">f</span> <span class="op">=</span> <span class="bool-val">false</span> <span class="kw">as</span> _;
@@ -658,7 +742,6 @@
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_SURFACE_LOST_KHR`</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">surface_capabilities</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">surface</span>: <span class="kw-2">&amp;</span>::<span class="ident">Surface</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">VkSurfaceCapabilitiesKHR</span><span class="op">&gt;</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() };
@@ -671,7 +754,6 @@
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_SURFACE_LOST_KHR`</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">surface_formats</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">surface</span>: <span class="kw-2">&amp;</span>::<span class="ident">Surface</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VkSurfaceFormatKHR</span><span class="op">&gt;&gt;</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="number">0</span>;
@@ -686,7 +768,6 @@
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
 	<span class="doccomment">/// * `VK_ERROR_SURFACE_LOST_KHR`</span>
-	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">surface_present_modes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">surface</span>: <span class="kw-2">&amp;</span>::<span class="ident">Surface</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>::<span class="ident">PresentMode</span><span class="op">&gt;&gt;</span>
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="number">0</span>;
@@ -695,25 +776,30 @@
 		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceSurfacePresentModesKHR</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">surface</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>()) }.<span class="ident">into_result</span>()
 			.<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">v</span>) })
 	}
-	<span class="doccomment">/// Query physical device for presentation to X11 server using Xlib</span>
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">PhysicalDevice</span>
+{
+	<span class="doccomment">/// [feature = &quot;VK_KHR_xlib_surface&quot;] Query physical device for presentation to X11 server using Xlib</span>
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_xlib_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">xlib_presentation_support</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_family</span>: <span class="ident">u32</span>, <span class="ident">display</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> ::<span class="ident">x11</span>::<span class="ident">xlib</span>::<span class="ident">Display</span>, <span class="ident">visual</span>: ::<span class="ident">x11</span>::<span class="ident">xlib</span>::<span class="ident">VisualID</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
 	{
 		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceXlibPresentationSupportKHR</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">queue_family</span>, <span class="ident">display</span>, <span class="ident">visual</span>) <span class="op">!=</span> <span class="number">0</span> }
 	}
-	<span class="doccomment">/// Query physical device for presentation to X11 server using XCB</span>
+	<span class="doccomment">/// [feature = &quot;VK_KHR_xcb_surface&quot;] Query physical device for presentation to X11 server using XCB</span>
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_xcb_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">xcb_presentation_support</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_family</span>: <span class="ident">u32</span>, <span class="ident">connection</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> ::<span class="ident">xcb</span>::<span class="ident">ffi</span>::<span class="ident">xcb_connection_t</span>, <span class="ident">visual</span>: ::<span class="ident">xcb</span>::<span class="ident">ffi</span>::<span class="ident">xcb_visualid_t</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
 	{
 		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceXcbPresentationSupportKHR</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">queue_family</span>, <span class="ident">connection</span>, <span class="ident">visual</span>) <span class="op">!=</span> <span class="number">0</span> }
 	}
-	<span class="doccomment">/// Query physical device for presentation to Wayland</span>
+	<span class="doccomment">/// [feature = &quot;VK_KHR_wayland_surface&quot;] Query physical device for presentation to Wayland</span>
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_wayland_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">wayland_presentation_support</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_family</span>: <span class="ident">u32</span>, <span class="ident">display</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> ::<span class="ident">wayland_client</span>::<span class="ident">sys</span>::<span class="ident">wl_display</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
 	{
 		<span class="kw">unsafe</span> { <span class="ident">vkGetPhysicalDeviceWaylandPresentationSupportKHR</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">queue_family</span>, <span class="ident">display</span>) <span class="op">!=</span> <span class="number">0</span> }
 	}
-	<span class="doccomment">/// Query queue family support for presentation on a Win32 display</span>
+	<span class="doccomment">/// [feature = &quot;VK_KHR_win32_surface&quot;] Query queue family support for presentation on a Win32 display</span>
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_win32_surface&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">win32_presentation_support</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">queue_family</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
 	{
@@ -721,7 +807,7 @@
 	}
 }
 
-<span class="doccomment">/// VK_KHR_display</span>
+<span class="doccomment">/// feature = &quot;VK_KHR_display&quot; functions (required to enable &quot;FeImplements&quot; feature)</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_display&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>))]</span>
 <span class="kw">impl</span> <span class="ident">PhysicalDevice</span>
 {
@@ -805,6 +891,58 @@
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() };
 		<span class="kw">unsafe</span> { <span class="ident">vkGetDisplayPlaneCapabilitiesKHR</span>(<span class="self">self</span>.<span class="number">0</span>, <span class="ident">mode</span>, <span class="ident">plane_index</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">s</span>) }.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">s</span>)
 	}
+}
+
+<span class="doccomment">/// Device memory properties</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MemoryProperties</span>(<span class="ident">VkPhysicalDeviceMemoryProperties</span>);
+<span class="kw">impl</span> <span class="ident">MemoryProperties</span>
+{
+	<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_snake_case</span>)]</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find_type_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">mask</span>: <span class="ident">MemoryPropertyFlags</span>, <span class="ident">exclude</span>: <span class="ident">MemoryPropertyFlags</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>
+	{
+		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">memoryTypes</span>[..<span class="self">self</span>.<span class="number">0</span>.<span class="ident">memoryTypeCount</span> <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">iter</span>()
+			.<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">VkMemoryType</span> { <span class="ident">propertyFlags</span>, .. }<span class="op">|</span> (<span class="ident">propertyFlags</span> <span class="op">&amp;</span> <span class="ident">mask</span>.<span class="number">0</span>) <span class="op">!=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> (<span class="ident">propertyFlags</span> <span class="op">&amp;</span> <span class="ident">exclude</span>.<span class="number">0</span>) <span class="op">==</span> <span class="number">0</span>)
+			.<span class="ident">map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="kw">as</span> <span class="ident">u32</span>)
+	}
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find_device_local_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> { <span class="self">self</span>.<span class="ident">find_type_index</span>(<span class="ident">MemoryPropertyFlags</span>::<span class="ident">DEVICE_LOCAL</span>, <span class="ident">MemoryPropertyFlags</span>::<span class="ident">LAZILY_ALLOCATED</span>) }
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find_lazily_allocated_device_local_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> { <span class="self">self</span>.<span class="ident">find_type_index</span>(<span class="ident">MemoryPropertyFlags</span>::<span class="ident">DEVICE_LOCAL</span>.<span class="ident">lazily_allocated</span>(), <span class="ident">MemoryPropertyFlags</span>::<span class="ident">EMPTY</span>) }
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find_host_visible_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> { <span class="self">self</span>.<span class="ident">find_type_index</span>(<span class="ident">MemoryPropertyFlags</span>::<span class="ident">HOST_VISIBLE</span>, <span class="ident">MemoryPropertyFlags</span>::<span class="ident">EMPTY</span>) }
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_coherent</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { (<span class="self">self</span>.<span class="number">0</span>.<span class="ident">memoryTypes</span>[<span class="ident">index</span> <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">propertyFlags</span> <span class="op">&amp;</span> <span class="ident">MemoryPropertyFlags</span>::<span class="ident">HOST_COHERENT</span>.<span class="number">0</span>) <span class="op">!=</span> <span class="number">0</span> }
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_cached</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { (<span class="self">self</span>.<span class="number">0</span>.<span class="ident">memoryTypes</span>[<span class="ident">index</span> <span class="kw">as</span> <span class="ident">usize</span>].<span class="ident">propertyFlags</span> <span class="op">&amp;</span> <span class="ident">MemoryPropertyFlags</span>::<span class="ident">HOST_CACHED</span>.<span class="number">0</span>) <span class="op">!=</span> <span class="number">0</span> }
+}
+
+<span class="doccomment">/// Bitmask specifying properties for a memory type</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MemoryPropertyFlags</span>(<span class="ident">VkMemoryPropertyFlags</span>);
+<span class="kw">impl</span> <span class="ident">MemoryPropertyFlags</span>
+{
+	<span class="doccomment">/// Empty set</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EMPTY</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">MemoryPropertyFlags</span>(<span class="number">0</span>);
+	<span class="doccomment">/// Memory allocated with this type is the most efficient for device access</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DEVICE_LOCAL</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">MemoryPropertyFlags</span>(<span class="ident">VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT</span>);
+	<span class="doccomment">/// Memory allocated with this type can be mapped for host access using `vkMapMemory`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">HOST_VISIBLE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">MemoryPropertyFlags</span>(<span class="ident">VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT</span>);
+	<span class="doccomment">/// The host cache management commands `vkFlushMappedmemoryRanges` and `vkInvalidateMappedMemoryRanges`</span>
+	<span class="doccomment">/// are not needed to flush host writes to the device or make device writes visible to the host, respectively.</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">HOST_COHERENT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">MemoryPropertyFlags</span>(<span class="ident">VK_MEMORY_PROPERTY_HOST_COHERENT_BIT</span>);
+	<span class="doccomment">/// Memory allocated with this type is cached on the host.</span>
+	<span class="doccomment">/// Host memory accesses to uncached memory are slower than to cached memory, however uncached memory is always host coherent</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">HOST_CACHED</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">MemoryPropertyFlags</span>(<span class="ident">VK_MEMORY_PROPERTY_HOST_CACHED_BIT</span>);
+	<span class="doccomment">/// The memory type only allows device access to the memory.</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">LAZILY_ALLOCATED</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">MemoryPropertyFlags</span>(<span class="ident">VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</span>);
+
+	<span class="doccomment">/// Memory allocated with this type is the most efficient for device access</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">device_local</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="number">0</span> <span class="op">|=</span> <span class="self">Self</span>::<span class="ident">DEVICE_LOCAL</span>.<span class="number">0</span>; <span class="self">self</span> }
+	<span class="doccomment">/// Memory allocated with this type can be mapped for host access using `vkMapMemory`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">host_visible</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="number">0</span> <span class="op">|=</span> <span class="self">Self</span>::<span class="ident">HOST_VISIBLE</span>.<span class="number">0</span>; <span class="self">self</span> }
+	<span class="doccomment">/// The host cache management commands `vkFlushMappedmemoryRanges` and `vkInvalidateMappedMemoryRanges`</span>
+	<span class="doccomment">/// are not needed to flush host writes to the device or make device writes visible to the host, respectively.</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">host_coherent</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="number">0</span> <span class="op">|=</span> <span class="self">Self</span>::<span class="ident">HOST_COHERENT</span>.<span class="number">0</span>; <span class="self">self</span> }
+	<span class="doccomment">/// Memory allocated with this type is cached on the host.</span>
+	<span class="doccomment">/// Host memory accesses to uncached memory are slower than to cached memory, however uncached memory is always host coherent</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">host_cached</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="number">0</span> <span class="op">|=</span> <span class="self">Self</span>::<span class="ident">HOST_CACHED</span>.<span class="number">0</span>; <span class="self">self</span> }
+	<span class="doccomment">/// The memory type only allows device access to the memory.</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lazily_allocated</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="number">0</span> <span class="op">|=</span> <span class="self">Self</span>::<span class="ident">LAZILY_ALLOCATED</span>.<span class="number">0</span>; <span class="self">self</span> }
 }
 </pre>
 </section>
