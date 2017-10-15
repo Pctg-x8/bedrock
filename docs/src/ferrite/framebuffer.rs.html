@@ -199,6 +199,10 @@
 <span id="154">154</span>
 <span id="155">155</span>
 <span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan RenderPass/Framebuffer</span>
 
@@ -209,7 +213,7 @@
 <span class="doccomment">/// Opaque handle to a render pass object</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RenderPass</span>(<span class="ident">VkRenderPass</span>, ::<span class="ident">Device</span>);
 <span class="doccomment">/// Opaque handle to a framebuffer object</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Framebuffer</span>(<span class="ident">VkFramebuffer</span>, ::<span class="ident">Device</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Framebuffer</span>(<span class="ident">VkFramebuffer</span>, ::<span class="ident">Device</span>, ::<span class="ident">Extent2D</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="macro">DeviceChildCommonDrop</span><span class="macro">!</span>{
 	<span class="kw">for</span> <span class="ident">RenderPass</span>[<span class="ident">vkDestroyRenderPass</span>], <span class="ident">Framebuffer</span>[<span class="ident">vkDestroyFramebuffer</span>]
@@ -342,8 +346,12 @@
 		};
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
 		<span class="kw">unsafe</span> { <span class="ident">vkCreateFramebuffer</span>(<span class="ident">mold</span>.<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }.<span class="ident">into_result</span>()
-			.<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Framebuffer</span>(<span class="ident">h</span>, <span class="ident">mold</span>.<span class="number">1</span>.<span class="ident">clone</span>()))
+			.<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Framebuffer</span>(<span class="ident">h</span>, <span class="ident">mold</span>.<span class="number">1</span>.<span class="ident">clone</span>(), <span class="ident">size</span>.<span class="ident">as_ref</span>().<span class="ident">clone</span>()))
 	}
+}
+<span class="kw">impl</span> <span class="ident">Framebuffer</span>
+{
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Extent2D</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">2</span> }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
