@@ -427,9 +427,9 @@ impl<'d> CmdRecord<'d>
 	/// # Safety
 	/// 
 	/// Caller must be primary buffer and must be in render pass when executing secondary command buffer
-	pub unsafe fn execute_commands(&mut self, buffers: &[&VkCommandBuffer]) -> &mut Self
+	pub unsafe fn execute_commands(&mut self, buffers: &[VkCommandBuffer]) -> &mut Self
 	{
-		vkCmdExecuteCommands(self.ptr.native_ptr(), buffers.len() as _, buffer.as_ptr());
+		vkCmdExecuteCommands(self.ptr.native_ptr(), buffers.len() as _, buffers.as_ptr());
 		self
 	}
 }
