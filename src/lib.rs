@@ -188,6 +188,11 @@ impl AsRef<Offset2D> for Offset3D { fn as_ref(&self) -> &Offset2D { unsafe { &*(
 impl AsRef<Offset1D> for Offset3D { fn as_ref(&self) -> &Offset1D { unsafe { &*(self.as_ref() as *const [i32; 3] as *const Offset1D) } } }
 impl AsRef<Offset1D> for Offset2D { fn as_ref(&self) -> &Offset1D { unsafe { &*(self.as_ref() as *const [i32; 2] as *const Offset1D) } } }
 
+impl Into<VkRect2D> for Extent2D
+{
+    fn into(self) -> VkRect2D { VkRect2D { offset: VkOffset2D { x: 0, y: 0 }, extent: VkExtent2D { width: self.0, height: self.1 } } }
+}
+
 mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
