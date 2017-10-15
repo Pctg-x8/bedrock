@@ -142,12 +142,16 @@ pub struct Extent1D(pub u32);
 pub struct Extent2D(pub u32, pub u32);
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Extent3D(pub u32, pub u32, pub u32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Extent4D(pub u32, pub u32, pub u32, pub u32);
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
 pub struct Offset1D(pub i32);
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Offset2D(pub i32, pub i32);
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Offset3D(pub i32, pub i32, pub i32);
+#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Offset4D(pub i32, pub i32, pub i32, pub i32);
 // into conversion to larger dimension //
 impl Into<Extent2D> for Extent1D { fn into(self) -> Extent2D { Extent2D(self.0, 1) } }
 impl Into<Extent3D> for Extent1D { fn into(self) -> Extent3D { Extent3D(self.0, 1, 1) } }
@@ -159,9 +163,30 @@ impl Into<Offset3D> for Offset2D { fn into(self) -> Offset3D { Offset3D(self.0, 
 impl AsRef<u32> for Extent1D { fn as_ref(&self) -> &u32 { &self.0 } }
 impl AsRef<VkExtent2D> for Extent2D { fn as_ref(&self) -> &VkExtent2D { unsafe { std::mem::transmute(self) } } }
 impl AsRef<VkExtent3D> for Extent3D { fn as_ref(&self) -> &VkExtent3D { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[u32; 1]> for Extent1D { fn as_ref(&self) -> &[u32; 1] { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[u32; 2]> for Extent2D { fn as_ref(&self) -> &[u32; 2] { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[u32; 3]> for Extent3D { fn as_ref(&self) -> &[u32; 3] { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[u32; 4]> for Extent4D { fn as_ref(&self) -> &[u32; 4] { unsafe { std::mem::transmute(self) } } }
 impl AsRef<i32> for Offset1D { fn as_ref(&self) -> &i32 { &self.0 } }
 impl AsRef<VkOffset2D> for Offset2D { fn as_ref(&self) -> &VkOffset2D { unsafe { std::mem::transmute(self) } } }
 impl AsRef<VkOffset3D> for Offset3D { fn as_ref(&self) -> &VkOffset3D { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[i32; 1]> for Offset1D { fn as_ref(&self) -> &[i32; 1] { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[i32; 2]> for Offset2D { fn as_ref(&self) -> &[i32; 2] { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[i32; 3]> for Offset3D { fn as_ref(&self) -> &[i32; 3] { unsafe { std::mem::transmute(self) } } }
+impl AsRef<[i32; 4]> for Offset4D { fn as_ref(&self) -> &[i32; 4] { unsafe { std::mem::transmute(self) } } }
+// shrinking by cheap conversion //
+impl AsRef<Extent3D> for Extent4D { fn as_ref(&self) -> &Extent3D { unsafe { std::mem::transmute(&(self as &AsRef<[u32; 4]>).as_ref()[..3]) } } }
+impl AsRef<Extent2D> for Extent4D { fn as_ref(&self) -> &Extent2D { unsafe { std::mem::transmute(&(self as &AsRef<[u32; 4]>).as_ref()[..2]) } } }
+impl AsRef<Extent1D> for Extent4D { fn as_ref(&self) -> &Extent1D { unsafe { std::mem::transmute(&(self as &AsRef<[u32; 4]>).as_ref()[..1]) } } }
+impl AsRef<Extent2D> for Extent3D { fn as_ref(&self) -> &Extent2D { unsafe { std::mem::transmute(&(self as &AsRef<[u32; 3]>).as_ref()[..2]) } } }
+impl AsRef<Extent1D> for Extent3D { fn as_ref(&self) -> &Extent1D { unsafe { std::mem::transmute(&(self as &AsRef<[u32; 3]>).as_ref()[..1]) } } }
+impl AsRef<Extent1D> for Extent2D { fn as_ref(&self) -> &Extent1D { unsafe { std::mem::transmute(&(self as &AsRef<[u32; 2]>).as_ref()[..1]) } } }
+impl AsRef<Offset3D> for Offset4D { fn as_ref(&self) -> &Offset3D { unsafe { std::mem::transmute(&(self as &AsRef<[i32; 4]>).as_ref()[..3]) } } }
+impl AsRef<Offset2D> for Offset4D { fn as_ref(&self) -> &Offset2D { unsafe { std::mem::transmute(&(self as &AsRef<[i32; 4]>).as_ref()[..2]) } } }
+impl AsRef<Offset1D> for Offset4D { fn as_ref(&self) -> &Offset1D { unsafe { std::mem::transmute(&(self as &AsRef<[i32; 4]>).as_ref()[..1]) } } }
+impl AsRef<Offset2D> for Offset3D { fn as_ref(&self) -> &Offset2D { unsafe { std::mem::transmute(&(self as &AsRef<[i32; 3]>).as_ref()[..2]) } } }
+impl AsRef<Offset1D> for Offset3D { fn as_ref(&self) -> &Offset1D { unsafe { std::mem::transmute(&(self as &AsRef<[i32; 3]>).as_ref()[..1]) } } }
+impl AsRef<Offset1D> for Offset2D { fn as_ref(&self) -> &Offset1D { unsafe { std::mem::transmute(&(self as &AsRef<[i32; 2]>).as_ref()[..1]) } } }
 
 mod base; pub use base::*;
 mod device; pub use device::*;
