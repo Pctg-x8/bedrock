@@ -2,8 +2,8 @@
 
 use vk::*;
 use std::rc::Rc as RefCounter;
+use std::ops::Deref;
 use {VkHandle, DeviceChild};
-#[allow(unused_imports)] use std::ops::Deref;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
@@ -26,6 +26,9 @@ pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
 pub struct BufferView(VkBufferView, Buffer);
 /// Opaque handle to a image view object
 pub struct ImageView(VkImageView, Image);
+
+impl Deref for BufferView { type Target = Buffer; fn deref(&self) -> &Buffer { &self.1 } }
+impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &self.1 } }
 
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer] }
 #[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
