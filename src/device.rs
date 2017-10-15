@@ -313,12 +313,12 @@ impl Queue
 	/// * `VK_ERROR_DEVICE_LOST`
 	pub fn submit(&self, batches: &[SubmissionBatch], fence: Option<&::Fence>) -> ::Result<()>
 	{
-		let sem_ptrs = batches.iter().map(|x| (
+		let sem_ptrs: Vec<((Vec<_>, Vec<_>), Vec<_>, Vec<_>)> = batches.iter().map(|x| (
 			x.wait_semaphores.iter().map(|&(ref x, p)| (x.native_ptr(), p.0)).unzip(),
 			x.command_buffers.iter().map(|x| x.native_ptr()).collect(),
 			x.signal_semaphores.iter().map(|x| x.native_ptr()).collect()
-		));
-		let batches: Vec<_> = sem_ptrs.map(|(ws, cbs, ss): ((Vec<_>, Vec<_>), Vec<_>, Vec<_>)| VkSubmitInfo
+		)).collect();
+		let batches: Vec<_> = sem_ptrs.iter().map(|&(ref ws, ref cbs, ref ss)| VkSubmitInfo
 		{
 			waitSemaphoreCount: ws.0.len() as _, pWaitSemaphores: ws.0.as_ptr(), pWaitDstStageMask: ws.1.as_ptr(),
 			commandBufferCount: cbs.len() as _, pCommandBuffers: cbs.as_ptr(),
