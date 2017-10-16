@@ -187,6 +187,15 @@ impl AsRef<Offset1D> for Offset4D { fn as_ref(&self) -> &Offset1D { unsafe { &*(
 impl AsRef<Offset2D> for Offset3D { fn as_ref(&self) -> &Offset2D { unsafe { &*(self.as_ref() as *const [i32; 3] as *const Offset2D) } } }
 impl AsRef<Offset1D> for Offset3D { fn as_ref(&self) -> &Offset1D { unsafe { &*(self.as_ref() as *const [i32; 3] as *const Offset1D) } } }
 impl AsRef<Offset1D> for Offset2D { fn as_ref(&self) -> &Offset1D { unsafe { &*(self.as_ref() as *const [i32; 2] as *const Offset1D) } } }
+// AsRef for self //
+impl AsRef<Extent4D> for Extent4D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Extent3D> for Extent3D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Extent2D> for Extent2D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Extent1D> for Extent1D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Offset4D> for Offset4D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Offset3D> for Offset3D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Offset2D> for Offset2D { fn as_ref(&self) -> &Self { self } }
+impl AsRef<Offset1D> for Offset1D { fn as_ref(&self) -> &Self { self } }
 
 impl Into<VkRect2D> for Extent2D
 {
