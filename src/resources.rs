@@ -572,6 +572,20 @@ impl<'m> MappedMemoryRange<'m>
 	{
 		::std::mem::transmute(self.1.offset(offset as _))
 	}
+	/// Get a slice in mapped memory with byte offsets
+	/// # Safety
+	/// Caller must guarantee that the pointer and its alignment are valid
+	pub unsafe fn slice<T>(&self, offset: usize, count: usize) -> &[T]
+	{
+		::std::slice::from_raw_parts(self.1.offset(offset as _) as *const T, count)
+	}
+	/// Get a mutable slice in mapped memory with byte offsets
+	/// # Safety
+	/// Caller must guarantee that the pointer and its alignment are valid
+	pub unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T]
+	{
+		::std::slice::from_raw_parts_mut(self.1.offset(offset as _) as *mut T, count)
+	}
 	/// Flushes the memory range manually. Returns a structure for flush operation
 	pub fn manual_flush(self) -> VkMappedMemoryRange
 	{
