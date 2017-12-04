@@ -286,7 +286,7 @@ impl Queue
 pub struct SubmissionBatch<'d>
 {
 	pub wait_semaphores: Cow<'d, [(&'d ::Semaphore, ::PipelineStageFlags)]>,
-	pub command_buffers: Cow<'d, [&'d ::CommandBuffer]>,
+	pub command_buffers: Cow<'d, [::CommandBuffer]>,
 	pub signal_semaphores: Cow<'d, [&'d ::Semaphore]>
 }
 impl<'d> Default for SubmissionBatch<'d>
