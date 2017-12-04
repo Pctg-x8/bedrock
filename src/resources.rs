@@ -352,7 +352,11 @@ impl ImageDesc
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
-			.into_result().map(|_| Image(RefCounter::new(ImageCell(h, device.clone(), self.cinfo.imageType, self.cinfo.format))))
+			.into_result().map(|_| Image(RefCounter::new(ImageCell
+			{
+				obj: h, dev: device.clone(), dim: self.cinfo.imageType, fmt: self.cinfo.format,
+				size: ::Extent3D(self.cinfo.extent.width, self.cinfo.extent.height, self.cinfo.extent.depth)
+			})))
 	}
 	/// Create an image
 	#[cfg(feature = "VK_KHR_swapchain")]

@@ -100,6 +100,17 @@ impl CommandBuffer
 	{
 		unsafe { vkBeginCommandBuffer(self.0, &Default::default()) }.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
 	}
+	/// Start recording a primary command buffer that will be submitted once
+	/// # Failures
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	pub fn begin_once(&self) -> ::Result<CmdRecord>
+	{
+		unsafe { vkBeginCommandBuffer(self.0, &VkCommandBufferBeginInfo { flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, .. Default::default() }) }
+			.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+	}
 	/// Start recording a secondary command buffer
 	/// # Failures
 	/// On failure, this command returns
