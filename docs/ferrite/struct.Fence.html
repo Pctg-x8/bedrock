@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct Fence</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Fence', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Fence</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.wait_multiple">wait_multiple</a><a href="#method.wait_timeout">wait_timeout</a><a href="#method.reset_multiple">reset_multiple</a><a href="#method.reset">reset</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Drop">Drop</a><a href="#impl-VkHandle">VkHandle</a><a href="#impl-DeviceChild">DeviceChild</a><a href="#impl-Status">Status</a><a href="#impl-Waitable">Waitable</a><a href="#impl-Send">Send</a><a href="#impl-Sync">Sync</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Fence', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -56,7 +56,7 @@
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Fence.html" title="struct ferrite::Fence">Fence</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#28-43' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Following methods are enabled with [feature = &quot;FeImplements&quot;]</p>
-</div><div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>, signaled: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#36-42' title='goto source code'>[src]</a></span></h4>
+</div><div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>(device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>, signaled: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#36-42' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Create a new fence object</p>
 
 <h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
@@ -68,7 +68,7 @@
 </ul>
 </div></div><h3 id='impl-1' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Fence.html" title="struct ferrite::Fence">Fence</a></code><a href='#impl-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#81-126' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Following methods are enabled with [feature = &quot;FeImplements&quot;]</p>
-</div><div class='impl-items'><h4 id='method.wait_multiple' class="method"><span id='wait_multiple.v' class='invisible'><code>fn <a href='#method.wait_multiple' class='fnname'>wait_multiple</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;objects: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;wait_all: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;timeout: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;<br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#90-95' title='goto source code'>[src]</a></span></h4>
+</div><div class='impl-items'><h4 id='method.wait_multiple' class="method"><span id='wait_multiple.v' class='invisible'><code>pub fn <a href='#method.wait_multiple' class='fnname'>wait_multiple</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;objects: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;wait_all: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;timeout: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;<br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#90-95' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Wait for one or more fences to become signaled, returns <code>Ok(true)</code> if operation is timed out</p>
 
 <h1 id='failures-1' class='section-header'><a href='#failures-1'>Failures</a></h1>
@@ -79,7 +79,7 @@
 <li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
 <li><code>VK_ERROR_DEVICE_LOST</code></li>
 </ul>
-</div><h4 id='method.wait_timeout' class="method"><span id='wait_timeout.v' class='invisible'><code>fn <a href='#method.wait_timeout' class='fnname'>wait_timeout</a>(&amp;self, timeout: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#103-107' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.wait_timeout' class="method"><span id='wait_timeout.v' class='invisible'><code>pub fn <a href='#method.wait_timeout' class='fnname'>wait_timeout</a>(&amp;self, timeout: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#103-107' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Wait for a fence to become signaled, returns <code>Ok(true)</code> if operation is timed out</p>
 
 <h1 id='failures-2' class='section-header'><a href='#failures-2'>Failures</a></h1>
@@ -90,7 +90,7 @@
 <li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
 <li><code>VK_ERROR_DEVICE_LOST</code></li>
 </ul>
-</div><h4 id='method.reset_multiple' class="method"><span id='reset_multiple.v' class='invisible'><code>fn <a href='#method.reset_multiple' class='fnname'>reset_multiple</a>(objects: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#114-118' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.reset_multiple' class="method"><span id='reset_multiple.v' class='invisible'><code>pub fn <a href='#method.reset_multiple' class='fnname'>reset_multiple</a>(objects: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#114-118' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Resets one or more fence objects</p>
 
 <h1 id='failures-3' class='section-header'><a href='#failures-3'>Failures</a></h1>
@@ -100,7 +100,7 @@
 <li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
 <li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
 </ul>
-</div><h4 id='method.reset' class="method"><span id='reset.v' class='invisible'><code>fn <a href='#method.reset' class='fnname'>reset</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#125' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.reset' class="method"><span id='reset.v' class='invisible'><code>pub fn <a href='#method.reset' class='fnname'>reset</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#125' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Resets a fence object</p>
 
 <h1 id='failures-4' class='section-header'><a href='#failures-4'>Failures</a></h1>
@@ -128,7 +128,7 @@
 <div class='impl-items'><h4 id='method.status' class="method"><span id='status.v' class='invisible'><code>fn <a href='../ferrite/traits/trait.Status.html#tymethod.status' class='fnname'>status</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#162-166' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>[feature = &quot;FeImplements&quot;] Retrieve the status(whether is signaled or not) of a synchronize object # Failures On failure, this command returns <a href="../ferrite/traits/trait.Status.html#tymethod.status">Read more</a></p>
 </div></div><h3 id='impl-Waitable' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/traits/trait.Waitable.html" title="trait ferrite::traits::Waitable">Waitable</a> for <a class="struct" href="../ferrite/struct.Fence.html" title="struct ferrite::Fence">Fence</a></code><a href='#impl-Waitable' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#178-188' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.wait' class="method"><span id='wait.v' class='invisible'><code>fn <a href='../ferrite/traits/trait.Waitable.html#tymethod.wait' class='fnname'>wait</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#187' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.wait' class="method"><span id='wait.v' class='invisible'><code>fn <a href='../ferrite/traits/trait.Waitable.html#tymethod.wait' class='fnname'>wait</a>(&amp;self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/sync.rs.html#187' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>[feature = &quot;FeImplements&quot;] Wait for a fence to become signaled</p>
 
 <h1 id='failures-5' class='section-header'><a href='#failures-5'>Failures</a></h1>
@@ -158,13 +158,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

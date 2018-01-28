@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Enum BufferSparseBinding</p><div class="block items"><ul><li><a href="#variants">Variants</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'BufferSparseBinding', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Enum BufferSparseBinding</p><div class="block items"><a class="sidebar-title" href="#variants">Variants</a><div class="sidebar-links"><a href="#variant.None">None</a><a href="#variant.Bound">Bound</a><a href="#variant.Residency">Residency</a><a href="#variant.Aliased">Aliased</a><a href="#variant.Both">Both</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Clone">Clone</a><a href="#impl-Copy">Copy</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-Eq">Eq</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'BufferSparseBinding', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -59,19 +59,19 @@
 }</pre><div class='docblock'><p>Bitset specifying additional parameters of a buffer</p>
 </div><h2 id='variants' class='variants small-section-header'>
                    Variants<a href='#variants' class='anchor'></a></h2>
-<span id='variant.None' class='variant'><span id='None.v' class='invisible'><code>None</code></span></span><div class='docblock'><p>No sparse binding features</p>
-</div><span id='variant.Bound' class='variant'><span id='Bound.v' class='invisible'><code>Bound</code></span></span><div class='docblock'><p>the buffer will be backed using sparse memory binding</p>
-</div><span id='variant.Residency' class='variant'><span id='Residency.v' class='invisible'><code>Residency</code></span></span><div class='docblock'><p>the buffer can be partially backed using sparse memory binding.</p>
-</div><span id='variant.Aliased' class='variant'><span id='Aliased.v' class='invisible'><code>Aliased</code></span></span><div class='docblock'><p>the buffer will be backed using sparse memory binding with memory ranges
+<span id="variant.None" class="variant small-section-header"><a href="#variant.None" class="anchor field"></a><span id='None.v' class='invisible'><code>None</code></span></span><div class='docblock'><p>No sparse binding features</p>
+</div><span id="variant.Bound" class="variant small-section-header"><a href="#variant.Bound" class="anchor field"></a><span id='Bound.v' class='invisible'><code>Bound</code></span></span><div class='docblock'><p>the buffer will be backed using sparse memory binding</p>
+</div><span id="variant.Residency" class="variant small-section-header"><a href="#variant.Residency" class="anchor field"></a><span id='Residency.v' class='invisible'><code>Residency</code></span></span><div class='docblock'><p>the buffer can be partially backed using sparse memory binding.</p>
+</div><span id="variant.Aliased" class="variant small-section-header"><a href="#variant.Aliased" class="anchor field"></a><span id='Aliased.v' class='invisible'><code>Aliased</code></span></span><div class='docblock'><p>the buffer will be backed using sparse memory binding with memory ranges
 that might also simultaneously be backing another buffer (or another portion of the same buffer)</p>
-</div><span id='variant.Both' class='variant'><span id='Both.v' class='invisible'><code>Both</code></span></span><div class='docblock'><p>Aliased and Residency</p>
+</div><span id="variant.Both" class="variant small-section-header"><a href="#variant.Both" class="anchor field"></a><span id='Both.v' class='invisible'><code>Both</code></span></span><div class='docblock'><p>Aliased and Residency</p>
 </div>
             <h2 id='implementations' class='small-section-header'>
               Trait Implementations<a href='#implementations' class='anchor'></a>
             </h2>
         <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="enum" href="../ferrite/enum.BufferSparseBinding.html" title="enum ferrite::BufferSparseBinding">BufferSparseBinding</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#168' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#168' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
 </div></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="enum" href="../ferrite/enum.BufferSparseBinding.html" title="enum ferrite::BufferSparseBinding">BufferSparseBinding</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#168' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="enum" href="../ferrite/enum.BufferSparseBinding.html" title="enum ferrite::BufferSparseBinding">BufferSparseBinding</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#168' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
@@ -101,13 +101,15 @@ that might also simultaneously be backing another buffer (or another portion of 
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

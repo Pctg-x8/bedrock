@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct VkBindSparseInfo</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>vk</a></p><script>window.sidebarCurrent = {name: 'VkBindSparseInfo', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct VkBindSparseInfo</p><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.sType">sType</a><a href="#structfield.pNext">pNext</a><a href="#structfield.waitSemaphoreCount">waitSemaphoreCount</a><a href="#structfield.pWaitSemaphores">pWaitSemaphores</a><a href="#structfield.bufferBindCount">bufferBindCount</a><a href="#structfield.pBufferBinds">pBufferBinds</a><a href="#structfield.imageOpaqueBindCount">imageOpaqueBindCount</a><a href="#structfield.pImageOpaqueBinds">pImageOpaqueBinds</a><a href="#structfield.imageBindCount">imageBindCount</a><a href="#structfield.pImageBinds">pImageBinds</a><a href="#structfield.signalSemaphoreCount">signalSemaphoreCount</a><a href="#structfield.pSignalSemaphores">pSignalSemaphores</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Clone">Clone</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-Eq">Eq</a><a href="#impl-Default">Default</a></div></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>vk</a></p><script>window.sidebarCurrent = {name: 'VkBindSparseInfo', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -64,41 +64,53 @@
     pub signalSemaphoreCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
     pub pSignalSemaphores: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="type" href="../../ferrite/vk/type.VkSemaphore.html" title="type ferrite::vk::VkSemaphore">VkSemaphore</a>,
 }</pre><h2 id='fields' class='fields small-section-header'>
-                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.sType' class="structfield">
-                           <span id='sType.v' class='invisible'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.sType" class="structfield small-section-header">
+                           <a href="#structfield.sType" class="anchor field"></a>
+                           <span id="sType.v" class='invisible'>
                            <code>sType: <a class="type" href="../../ferrite/vk/type.VkStructureType.html" title="type ferrite::vk::VkStructureType">VkStructureType</a></code>
-                           </span></span><span id='structfield.pNext' class="structfield">
-                           <span id='pNext.v' class='invisible'>
+                           </span></span><span id="structfield.pNext" class="structfield small-section-header">
+                           <a href="#structfield.pNext" class="anchor field"></a>
+                           <span id="pNext.v" class='invisible'>
                            <code>pNext: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="enum" href="../../libc/enum.c_void.html" title="enum libc::c_void">c_void</a></code>
-                           </span></span><span id='structfield.waitSemaphoreCount' class="structfield">
-                           <span id='waitSemaphoreCount.v' class='invisible'>
+                           </span></span><span id="structfield.waitSemaphoreCount" class="structfield small-section-header">
+                           <a href="#structfield.waitSemaphoreCount" class="anchor field"></a>
+                           <span id="waitSemaphoreCount.v" class='invisible'>
                            <code>waitSemaphoreCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.pWaitSemaphores' class="structfield">
-                           <span id='pWaitSemaphores.v' class='invisible'>
+                           </span></span><span id="structfield.pWaitSemaphores" class="structfield small-section-header">
+                           <a href="#structfield.pWaitSemaphores" class="anchor field"></a>
+                           <span id="pWaitSemaphores.v" class='invisible'>
                            <code>pWaitSemaphores: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="type" href="../../ferrite/vk/type.VkSemaphore.html" title="type ferrite::vk::VkSemaphore">VkSemaphore</a></code>
-                           </span></span><span id='structfield.bufferBindCount' class="structfield">
-                           <span id='bufferBindCount.v' class='invisible'>
+                           </span></span><span id="structfield.bufferBindCount" class="structfield small-section-header">
+                           <a href="#structfield.bufferBindCount" class="anchor field"></a>
+                           <span id="bufferBindCount.v" class='invisible'>
                            <code>bufferBindCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.pBufferBinds' class="structfield">
-                           <span id='pBufferBinds.v' class='invisible'>
+                           </span></span><span id="structfield.pBufferBinds" class="structfield small-section-header">
+                           <a href="#structfield.pBufferBinds" class="anchor field"></a>
+                           <span id="pBufferBinds.v" class='invisible'>
                            <code>pBufferBinds: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="struct" href="../../ferrite/vk/struct.VkSparseBufferMemoryBindInfo.html" title="struct ferrite::vk::VkSparseBufferMemoryBindInfo">VkSparseBufferMemoryBindInfo</a></code>
-                           </span></span><span id='structfield.imageOpaqueBindCount' class="structfield">
-                           <span id='imageOpaqueBindCount.v' class='invisible'>
+                           </span></span><span id="structfield.imageOpaqueBindCount" class="structfield small-section-header">
+                           <a href="#structfield.imageOpaqueBindCount" class="anchor field"></a>
+                           <span id="imageOpaqueBindCount.v" class='invisible'>
                            <code>imageOpaqueBindCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.pImageOpaqueBinds' class="structfield">
-                           <span id='pImageOpaqueBinds.v' class='invisible'>
+                           </span></span><span id="structfield.pImageOpaqueBinds" class="structfield small-section-header">
+                           <a href="#structfield.pImageOpaqueBinds" class="anchor field"></a>
+                           <span id="pImageOpaqueBinds.v" class='invisible'>
                            <code>pImageOpaqueBinds: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="struct" href="../../ferrite/vk/struct.VkSparseImageOpaqueMemoryBindInfo.html" title="struct ferrite::vk::VkSparseImageOpaqueMemoryBindInfo">VkSparseImageOpaqueMemoryBindInfo</a></code>
-                           </span></span><span id='structfield.imageBindCount' class="structfield">
-                           <span id='imageBindCount.v' class='invisible'>
+                           </span></span><span id="structfield.imageBindCount" class="structfield small-section-header">
+                           <a href="#structfield.imageBindCount" class="anchor field"></a>
+                           <span id="imageBindCount.v" class='invisible'>
                            <code>imageBindCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.pImageBinds' class="structfield">
-                           <span id='pImageBinds.v' class='invisible'>
+                           </span></span><span id="structfield.pImageBinds" class="structfield small-section-header">
+                           <a href="#structfield.pImageBinds" class="anchor field"></a>
+                           <span id="pImageBinds.v" class='invisible'>
                            <code>pImageBinds: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="struct" href="../../ferrite/vk/struct.VkSparseImageMemoryBindInfo.html" title="struct ferrite::vk::VkSparseImageMemoryBindInfo">VkSparseImageMemoryBindInfo</a></code>
-                           </span></span><span id='structfield.signalSemaphoreCount' class="structfield">
-                           <span id='signalSemaphoreCount.v' class='invisible'>
+                           </span></span><span id="structfield.signalSemaphoreCount" class="structfield small-section-header">
+                           <a href="#structfield.signalSemaphoreCount" class="anchor field"></a>
+                           <span id="signalSemaphoreCount.v" class='invisible'>
                            <code>signalSemaphoreCount: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.pSignalSemaphores' class="structfield">
-                           <span id='pSignalSemaphores.v' class='invisible'>
+                           </span></span><span id="structfield.pSignalSemaphores" class="structfield small-section-header">
+                           <a href="#structfield.pSignalSemaphores" class="anchor field"></a>
+                           <span id="pSignalSemaphores.v" class='invisible'>
                            <code>pSignalSemaphores: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.pointer.html">*const </a><a class="type" href="../../ferrite/vk/type.VkSemaphore.html" title="type ferrite::vk::VkSemaphore">VkSemaphore</a></code>
                            </span></span>
             <h2 id='implementations' class='small-section-header'>
@@ -106,7 +118,7 @@
             </h2>
         <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../ferrite/vk/struct.VkBindSparseInfo.html" title="struct ferrite::vk::VkBindSparseInfo">VkBindSparseInfo</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1463' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1463' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
 </div></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../ferrite/vk/struct.VkBindSparseInfo.html" title="struct ferrite::vk::VkBindSparseInfo">VkBindSparseInfo</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1463' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../../ferrite/vk/struct.VkBindSparseInfo.html" title="struct ferrite::vk::VkBindSparseInfo">VkBindSparseInfo</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#1463' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
@@ -138,13 +150,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

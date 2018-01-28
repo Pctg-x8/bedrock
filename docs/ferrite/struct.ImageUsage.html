@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct ImageUsage</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'ImageUsage', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct ImageUsage</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.transfer_src">transfer_src</a><a href="#method.transfer_dest">transfer_dest</a><a href="#method.sampled">sampled</a><a href="#method.storage">storage</a><a href="#method.color_attachment">color_attachment</a><a href="#method.depth_stencil_attachment">depth_stencil_attachment</a><a href="#method.transient_attachment">transient_attachment</a><a href="#method.input_attachment">input_attachment</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Clone">Clone</a><a href="#impl-Copy">Copy</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-Eq">Eq</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'ImageUsage', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -91,24 +91,24 @@ or input attachment</p>
 <span class="ident">INPUT_ATTACHMENT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>)</pre>
 <p>The image can be used to create a <code>ImageView</code> suitable for occupying <code>DescriptorSet</code> slot of type <code>DescriptorType::InputAttachment</code>;
 be read from a shader as an input attachment; and be used as an input attachment in a framebuffer</p>
-</div><h4 id='method.transfer_src' class="method"><span id='transfer_src.v' class='invisible'><code>fn <a href='#method.transfer_src' class='fnname'>transfer_src</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#252' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.transfer_src' class="method"><span id='transfer_src.v' class='invisible'><code>pub fn <a href='#method.transfer_src' class='fnname'>transfer_src</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#252' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used as the source of a transfer command</p>
-</div><h4 id='method.transfer_dest' class="method"><span id='transfer_dest.v' class='invisible'><code>fn <a href='#method.transfer_dest' class='fnname'>transfer_dest</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#254' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.transfer_dest' class="method"><span id='transfer_dest.v' class='invisible'><code>pub fn <a href='#method.transfer_dest' class='fnname'>transfer_dest</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#254' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used as the destination of a transfer command</p>
-</div><h4 id='method.sampled' class="method"><span id='sampled.v' class='invisible'><code>fn <a href='#method.sampled' class='fnname'>sampled</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#257' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.sampled' class="method"><span id='sampled.v' class='invisible'><code>pub fn <a href='#method.sampled' class='fnname'>sampled</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#257' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used to create <code>ImageView</code> suitable for occupying a <code>DescriptorSet</code> slot
 either of type <code>DescriptorType::SampledImage</code> or <code>DescriptorType::CombinedImageSampler</code>, and be sampled by a shader</p>
-</div><h4 id='method.storage' class="method"><span id='storage.v' class='invisible'><code>fn <a href='#method.storage' class='fnname'>storage</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#259' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.storage' class="method"><span id='storage.v' class='invisible'><code>pub fn <a href='#method.storage' class='fnname'>storage</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#259' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used to create a <code>ImageView</code> suitable for occupying a <code>DescriptorSet</code> slot of type <code>DescriptorType::StorageImage</code></p>
-</div><h4 id='method.color_attachment' class="method"><span id='color_attachment.v' class='invisible'><code>fn <a href='#method.color_attachment' class='fnname'>color_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#261' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.color_attachment' class="method"><span id='color_attachment.v' class='invisible'><code>pub fn <a href='#method.color_attachment' class='fnname'>color_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#261' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used to create a <code>ImageView</code> suitable for use as a color or resolve attachment in a <code>Framebuffer</code></p>
-</div><h4 id='method.depth_stencil_attachment' class="method"><span id='depth_stencil_attachment.v' class='invisible'><code>fn <a href='#method.depth_stencil_attachment' class='fnname'>depth_stencil_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#263' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.depth_stencil_attachment' class="method"><span id='depth_stencil_attachment.v' class='invisible'><code>pub fn <a href='#method.depth_stencil_attachment' class='fnname'>depth_stencil_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#263' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used to create a <code>ImageView</code> suitable for use as a depth/stencil attachment in a <code>Framebuffer</code></p>
-</div><h4 id='method.transient_attachment' class="method"><span id='transient_attachment.v' class='invisible'><code>fn <a href='#method.transient_attachment' class='fnname'>transient_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#267' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.transient_attachment' class="method"><span id='transient_attachment.v' class='invisible'><code>pub fn <a href='#method.transient_attachment' class='fnname'>transient_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#267' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The memory bound to this image will have been allocated with the <code>VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT</code>
 This bit can be set for any image that can be used to create a <code>ImageView</code> suitable for use as a color, resolve, depth/stencil,
 or input attachment</p>
-</div><h4 id='method.input_attachment' class="method"><span id='input_attachment.v' class='invisible'><code>fn <a href='#method.input_attachment' class='fnname'>input_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#270' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.input_attachment' class="method"><span id='input_attachment.v' class='invisible'><code>pub fn <a href='#method.input_attachment' class='fnname'>input_attachment</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#270' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>The image can be used to create a <code>ImageView</code> suitable for occupying <code>DescriptorSet</code> slot of type <code>DescriptorType::InputAttachment</code>;
 be read from a shader as an input attachment; and be used as an input attachment in a framebuffer</p>
 </div></div>
@@ -117,7 +117,7 @@ be read from a shader as an input attachment; and be used as an input attachment
             </h2>
         <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../ferrite/struct.ImageUsage.html" title="struct ferrite::ImageUsage">ImageUsage</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#226' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#226' title='goto source code'>[src]</a></span></h4>
-<div class='docblock'><p>Formats the value using the given formatter.</p>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
 </div></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.ImageUsage.html" title="struct ferrite::ImageUsage">ImageUsage</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#226' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.ImageUsage.html" title="struct ferrite::ImageUsage">ImageUsage</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#226' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
@@ -147,13 +147,15 @@ be read from a shader as an input attachment; and be used as an input attachment
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct DeviceMemory</p><div class="block items"><ul><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'DeviceMemory', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct DeviceMemory</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.allocate">allocate</a><a href="#method.map">map</a><a href="#method.unmap">unmap</a><a href="#method.commitment_bytes">commitment_bytes</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-VkHandle">VkHandle</a><a href="#impl-DeviceChild">DeviceChild</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'DeviceMemory', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -56,7 +56,7 @@
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#97-112' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Following methods are enabled with [feature = &quot;FeImplements&quot;]</p>
-</div><div class='impl-items'><h4 id='method.allocate' class="method"><span id='allocate.v' class='invisible'><code>fn <a href='#method.allocate' class='fnname'>allocate</a>(device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>, size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, type_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#106-111' title='goto source code'>[src]</a></span></h4>
+</div><div class='impl-items'><h4 id='method.allocate' class="method"><span id='allocate.v' class='invisible'><code>pub fn <a href='#method.allocate' class='fnname'>allocate</a>(device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>, size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, type_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;Self&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#106-111' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Allocate GPU memory</p>
 
 <h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
@@ -67,9 +67,9 @@
 <li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
 <li><code>VK_ERROR_TOO_MANY_OBJECTS</code></li>
 </ul>
-</div></div><h3 id='impl-1' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a></code><a href='#impl-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#462-491' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-1' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a></code><a href='#impl-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#466-495' title='goto source code'>[src]</a></span></h3>
 <div class='docblock'><p>Following methods are enabled with [feature = &quot;FeImplements&quot;]</p>
-</div><div class='impl-items'><h4 id='method.map' class="method"><span id='map.v' class='invisible'><code>fn <a href='#method.map' class='fnname'>map</a>(&amp;self, range: <a class="struct" href="https://doc.rust-lang.org/nightly/core/ops/range/struct.Range.html" title="struct core::ops::range::Range">Range</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>&gt;) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#471-476' title='goto source code'>[src]</a></span></h4>
+</div><div class='impl-items'><h4 id='method.map' class="method"><span id='map.v' class='invisible'><code>pub fn <a href='#method.map' class='fnname'>map</a>(&amp;self, range: <a class="struct" href="https://doc.rust-lang.org/nightly/core/ops/range/struct.Range.html" title="struct core::ops::range::Range">Range</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>&gt;) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.MappedMemoryRange.html" title="struct ferrite::MappedMemoryRange">MappedMemoryRange</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#475-480' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Map a memory object into application address space</p>
 
 <h1 id='failure' class='section-header'><a href='#failure'>Failure</a></h1>
@@ -80,13 +80,13 @@
 <li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
 <li><code>VK_ERROR_MEMORY_MAP_FAILED</code></li>
 </ul>
-</div><h4 id='method.unmap' class="method"><span id='unmap.v' class='invisible'><code>unsafe fn <a href='#method.unmap' class='fnname'>unmap</a>(&amp;self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#481-484' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.unmap' class="method"><span id='unmap.v' class='invisible'><code>pub unsafe fn <a href='#method.unmap' class='fnname'>unmap</a>(&amp;self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#485-488' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Unmap a previously mapped memory object</p>
 
 <h1 id='safety' class='section-header'><a href='#safety'>Safety</a></h1>
 <p>Caller must guarantee that there is no <code>MappedMemoryRange</code> alives.<br>
 Accessing the mapped memory after this call has undefined behavior</p>
-</div><h4 id='method.commitment_bytes' class="method"><span id='commitment_bytes.v' class='invisible'><code>fn <a href='#method.commitment_bytes' class='fnname'>commitment_bytes</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#486-490' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.commitment_bytes' class="method"><span id='commitment_bytes.v' class='invisible'><code>pub fn <a href='#method.commitment_bytes' class='fnname'>commitment_bytes</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkDeviceSize.html" title="type ferrite::vk::VkDeviceSize">VkDeviceSize</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#490-494' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Query the current commitment for a <code>DeviceMemory</code></p>
 </div></div>
             <h2 id='implementations' class='small-section-header'>
@@ -116,13 +116,15 @@ Accessing the mapped memory after this call has undefined behavior</p>
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

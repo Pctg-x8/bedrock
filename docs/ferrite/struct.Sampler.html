@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct Sampler</p><div class="block items"><ul><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Sampler', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct Sampler</p><div class="block items"><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Drop">Drop</a><a href="#impl-VkHandle">VkHandle</a><a href="#impl-DeviceChild">DeviceChild</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Sampler', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../src/ferrite/resources.rs.html#721' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../src/ferrite/resources.rs.html#725' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Sampler(_, _);</pre><div class='docblock'><p>Opaque handle to a sampler object</p>
 </div>
             <h2 id='implementations' class='small-section-header'>
@@ -57,12 +57,12 @@
         <h3 id='impl-Drop' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html" title="trait core::ops::drop::Drop">Drop</a> for <a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a></code><a href='#impl-Drop' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#125' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='method.drop' class="method"><span id='drop.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop' class='fnname'>drop</a>(&amp;mut self)</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/lib.rs.html#125' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Executes the destructor for this type. <a href="https://doc.rust-lang.org/nightly/core/ops/drop/trait.Drop.html#tymethod.drop">Read more</a></p>
-</div></div><h3 id='impl-VkHandle' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a></code><a href='#impl-VkHandle' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#724' title='goto source code'>[src]</a></span></h3>
+</div></div><h3 id='impl-VkHandle' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a></code><a href='#impl-VkHandle' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#728' title='goto source code'>[src]</a></span></h3>
 <div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkSampler.html" title="type ferrite::vk::VkSampler">VkSampler</a></code></span></h4>
-<h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkSampler.html" title="type ferrite::vk::VkSampler">VkSampler</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#724' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkSampler.html" title="type ferrite::vk::VkSampler">VkSampler</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#728' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Retrieve an underlying handle</p>
-</div></div><h3 id='impl-DeviceChild' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.DeviceChild.html" title="trait ferrite::DeviceChild">DeviceChild</a> for <a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a></code><a href='#impl-DeviceChild' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#725' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.device' class="method"><span id='device.v' class='invisible'><code>fn <a href='../ferrite/trait.DeviceChild.html#tymethod.device' class='fnname'>device</a>(&amp;self) -&gt; &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#725' title='goto source code'>[src]</a></span></h4>
+</div></div><h3 id='impl-DeviceChild' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.DeviceChild.html" title="trait ferrite::DeviceChild">DeviceChild</a> for <a class="struct" href="../ferrite/struct.Sampler.html" title="struct ferrite::Sampler">Sampler</a></code><a href='#impl-DeviceChild' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#729' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.device' class="method"><span id='device.v' class='invisible'><code>fn <a href='../ferrite/trait.DeviceChild.html#tymethod.device' class='fnname'>device</a>(&amp;self) -&gt; &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#729' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>Retrieve a reference to a device object that creates this object</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>
@@ -81,13 +81,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

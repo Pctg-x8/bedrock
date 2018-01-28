@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct BufferDesc</p><div class="block items"><ul><li><a href="#methods">Methods</a></li></ul></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'BufferDesc', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct BufferDesc</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.sharing_queue_families">sharing_queue_families</a><a href="#method.sparse_binding_opt">sparse_binding_opt</a><a href="#method.create">create</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'BufferDesc', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -55,12 +55,12 @@
                       Methods<a href='#methods' class='anchor'></a>
                     </h2>
                 <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.BufferDesc.html" title="struct ferrite::BufferDesc">BufferDesc</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#184-223' title='goto source code'>[src]</a></span></h3>
-<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(byte_size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, usage: <a class="struct" href="../ferrite/struct.BufferUsage.html" title="struct ferrite::BufferUsage">BufferUsage</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#186-195' title='goto source code'>[src]</a></span></h4>
-<h4 id='method.sharing_queue_families' class="method"><span id='sharing_queue_families.v' class='invisible'><code>fn <a href='#method.sharing_queue_families' class='fnname'>sharing_queue_families</a>(&amp;mut self, indices: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#197-204' title='goto source code'>[src]</a></span></h4>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>(byte_size: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>, usage: <a class="struct" href="../ferrite/struct.BufferUsage.html" title="struct ferrite::BufferUsage">BufferUsage</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#186-195' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.sharing_queue_families' class="method"><span id='sharing_queue_families.v' class='invisible'><code>pub fn <a href='#method.sharing_queue_families' class='fnname'>sharing_queue_families</a>(&amp;mut self, indices: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#197-204' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>A list of queue families that will access this buffer</p>
-</div><h4 id='method.sparse_binding_opt' class="method"><span id='sparse_binding_opt.v' class='invisible'><code>fn <a href='#method.sparse_binding_opt' class='fnname'>sparse_binding_opt</a>(&amp;mut self, opt: <a class="enum" href="../ferrite/enum.BufferSparseBinding.html" title="enum ferrite::BufferSparseBinding">BufferSparseBinding</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#206-209' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.sparse_binding_opt' class="method"><span id='sparse_binding_opt.v' class='invisible'><code>pub fn <a href='#method.sparse_binding_opt' class='fnname'>sparse_binding_opt</a>(&amp;mut self, opt: <a class="enum" href="../ferrite/enum.BufferSparseBinding.html" title="enum ferrite::BufferSparseBinding">BufferSparseBinding</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;mut </a>Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#206-209' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>A bitmask of <code>BufferSparseBinding</code> specifying additional parameters of the buffer</p>
-</div><h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self, device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Buffer.html" title="struct ferrite::Buffer">Buffer</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#217-222' title='goto source code'>[src]</a></span></h4>
+</div><h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>pub fn <a href='#method.create' class='fnname'>create</a>(&amp;self, device: &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Buffer.html" title="struct ferrite::Buffer">Buffer</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#217-222' title='goto source code'>[src]</a></span></h4>
 <div class='docblock'><p>[feature = &quot;FeImplements&quot;] Create a new buffer object</p>
 
 <h1 id='failure' class='section-header'><a href='#failure'>Failure</a></h1>
@@ -87,13 +87,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

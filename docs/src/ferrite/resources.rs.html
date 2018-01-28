@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `src/resources.rs`.">
+    <meta name="description" content="Source to the Rust file `src\resources.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>resources.rs.html -- source</title>
@@ -907,6 +907,10 @@
 <span id="862">862</span>
 <span id="863">863</span>
 <span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan Resources</span>
 
@@ -1262,7 +1266,11 @@
 	{
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
 		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
-			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>(), <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">imageType</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">format</span>))))
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>
+			{
+				<span class="ident">obj</span>: <span class="ident">h</span>, <span class="ident">dev</span>: <span class="ident">device</span>.<span class="ident">clone</span>(), <span class="ident">dim</span>: <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">imageType</span>, <span class="ident">fmt</span>: <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">format</span>,
+				<span class="ident">size</span>: ::<span class="ident">Extent3D</span>(<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">width</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">height</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">depth</span>)
+			})))
 	}
 	<span class="doccomment">/// Create an image</span>
 	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
@@ -1790,13 +1798,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

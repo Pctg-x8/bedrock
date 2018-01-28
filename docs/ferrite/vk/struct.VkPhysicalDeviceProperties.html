@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Struct VkPhysicalDeviceProperties</p><div class="block items"><ul><li><a href="#fields">Fields</a></li></ul></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>vk</a></p><script>window.sidebarCurrent = {name: 'VkPhysicalDeviceProperties', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Struct VkPhysicalDeviceProperties</p><div class="block items"><a class="sidebar-title" href="#fields">Fields</a><div class="sidebar-links"><a href="#structfield.apiVersion">apiVersion</a><a href="#structfield.driverVersion">driverVersion</a><a href="#structfield.vendorID">vendorID</a><a href="#structfield.deviceID">deviceID</a><a href="#structfield.deviceType">deviceType</a><a href="#structfield.deviceName">deviceName</a><a href="#structfield.pipelineCacheUUID">pipelineCacheUUID</a><a href="#structfield.limits">limits</a><a href="#structfield.sparseProperties">sparseProperties</a></div></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>vk</a></p><script>window.sidebarCurrent = {name: 'VkPhysicalDeviceProperties', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -56,37 +56,46 @@
     pub vendorID: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
     pub deviceID: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,
     pub deviceType: <a class="type" href="../../ferrite/vk/type.VkPhysicalDeviceType.html" title="type ferrite::vk::VkPhysicalDeviceType">VkPhysicalDeviceType</a>,
-    pub deviceName: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html" title="type libc::unix::notbsd::linux::other::b64::x86_64::c_char">c_char</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 256]</a>,
+    pub deviceName: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/windows/type.c_char.html" title="type libc::windows::c_char">c_char</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 256]</a>,
     pub pipelineCacheUUID: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 16]</a>,
     pub limits: <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a>,
     pub sparseProperties: <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceSparseProperties.html" title="struct ferrite::vk::VkPhysicalDeviceSparseProperties">VkPhysicalDeviceSparseProperties</a>,
 }</pre><h2 id='fields' class='fields small-section-header'>
-                       Fields<a href='#fields' class='anchor'></a></h2><span id='structfield.apiVersion' class="structfield">
-                           <span id='apiVersion.v' class='invisible'>
+                       Fields<a href='#fields' class='anchor'></a></h2><span id="structfield.apiVersion" class="structfield small-section-header">
+                           <a href="#structfield.apiVersion" class="anchor field"></a>
+                           <span id="apiVersion.v" class='invisible'>
                            <code>apiVersion: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.driverVersion' class="structfield">
-                           <span id='driverVersion.v' class='invisible'>
+                           </span></span><span id="structfield.driverVersion" class="structfield small-section-header">
+                           <a href="#structfield.driverVersion" class="anchor field"></a>
+                           <span id="driverVersion.v" class='invisible'>
                            <code>driverVersion: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.vendorID' class="structfield">
-                           <span id='vendorID.v' class='invisible'>
+                           </span></span><span id="structfield.vendorID" class="structfield small-section-header">
+                           <a href="#structfield.vendorID" class="anchor field"></a>
+                           <span id="vendorID.v" class='invisible'>
                            <code>vendorID: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.deviceID' class="structfield">
-                           <span id='deviceID.v' class='invisible'>
+                           </span></span><span id="structfield.deviceID" class="structfield small-section-header">
+                           <a href="#structfield.deviceID" class="anchor field"></a>
+                           <span id="deviceID.v" class='invisible'>
                            <code>deviceID: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a></code>
-                           </span></span><span id='structfield.deviceType' class="structfield">
-                           <span id='deviceType.v' class='invisible'>
+                           </span></span><span id="structfield.deviceType" class="structfield small-section-header">
+                           <a href="#structfield.deviceType" class="anchor field"></a>
+                           <span id="deviceType.v" class='invisible'>
                            <code>deviceType: <a class="type" href="../../ferrite/vk/type.VkPhysicalDeviceType.html" title="type ferrite::vk::VkPhysicalDeviceType">VkPhysicalDeviceType</a></code>
-                           </span></span><span id='structfield.deviceName' class="structfield">
-                           <span id='deviceName.v' class='invisible'>
-                           <code>deviceName: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/unix/notbsd/linux/other/b64/x86_64/type.c_char.html" title="type libc::unix::notbsd::linux::other::b64::x86_64::c_char">c_char</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 256]</a></code>
-                           </span></span><span id='structfield.pipelineCacheUUID' class="structfield">
-                           <span id='pipelineCacheUUID.v' class='invisible'>
+                           </span></span><span id="structfield.deviceName" class="structfield small-section-header">
+                           <a href="#structfield.deviceName" class="anchor field"></a>
+                           <span id="deviceName.v" class='invisible'>
+                           <code>deviceName: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="type" href="../../libc/windows/type.c_char.html" title="type libc::windows::c_char">c_char</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 256]</a></code>
+                           </span></span><span id="structfield.pipelineCacheUUID" class="structfield small-section-header">
+                           <a href="#structfield.pipelineCacheUUID" class="anchor field"></a>
+                           <span id="pipelineCacheUUID.v" class='invisible'>
                            <code>pipelineCacheUUID: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.array.html">; 16]</a></code>
-                           </span></span><span id='structfield.limits' class="structfield">
-                           <span id='limits.v' class='invisible'>
+                           </span></span><span id="structfield.limits" class="structfield small-section-header">
+                           <a href="#structfield.limits" class="anchor field"></a>
+                           <span id="limits.v" class='invisible'>
                            <code>limits: <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceLimits.html" title="struct ferrite::vk::VkPhysicalDeviceLimits">VkPhysicalDeviceLimits</a></code>
-                           </span></span><span id='structfield.sparseProperties' class="structfield">
-                           <span id='sparseProperties.v' class='invisible'>
+                           </span></span><span id="structfield.sparseProperties" class="structfield small-section-header">
+                           <a href="#structfield.sparseProperties" class="anchor field"></a>
+                           <span id="sparseProperties.v" class='invisible'>
                            <code>sparseProperties: <a class="struct" href="../../ferrite/vk/struct.VkPhysicalDeviceSparseProperties.html" title="struct ferrite::vk::VkPhysicalDeviceSparseProperties">VkPhysicalDeviceSparseProperties</a></code>
                            </span></span></section>
     <section id='search' class="content hidden"></section>
@@ -105,13 +114,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>

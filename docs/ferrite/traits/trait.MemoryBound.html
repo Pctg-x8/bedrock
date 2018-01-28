@@ -29,7 +29,7 @@
 
     <nav class="sidebar">
         
-        <p class='location'>Trait MemoryBound</p><div class="block items"><ul><li><a href="#required-methods">Required Methods</a></li><li><a href="#implementors">Implementors</a></li></ul></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>traits</a></p><script>window.sidebarCurrent = {name: 'MemoryBound', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+        <p class='location'>Trait MemoryBound</p><div class="block items"><a class="sidebar-title" href="#required-methods">Required Methods</a><div class="sidebar-links"><a href="#tymethod.requirements">requirements</a><a href="#tymethod.bind">bind</a></div><a class="sidebar-title" href="#implementors">Implementors</a></div><p class='location'><a href='../index.html'>ferrite</a>::<wbr><a href='index.html'>traits</a></p><script>window.sidebarCurrent = {name: 'MemoryBound', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
     </nav>
 
     <nav class="sub">
@@ -48,10 +48,10 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/ferrite/resources.rs.html#495-506' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/ferrite/resources.rs.html#499-510' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait MemoryBound {
     fn <a href='#tymethod.requirements' class='fnname'>requirements</a>(&amp;self) -&gt; <a class="struct" href="../../ferrite/vk/struct.VkMemoryRequirements.html" title="struct ferrite::vk::VkMemoryRequirements">VkMemoryRequirements</a>;
-<div class='item-spacer'></div>    fn <a href='#tymethod.bind' class='fnname'>bind</a>(&amp;self, memory: &amp;<a class="struct" href="../../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a>, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="../../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;;
+<div class='item-spacer'></div>    fn <a href='#tymethod.bind' class='fnname'>bind</a>(&amp;self, memory: &amp;<a class="struct" href="../../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a>, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="../../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;;
 }</pre><div class='docblock'><p>[feature = &quot;FeImplements&quot;] Common operations for memory bound objects</p>
 </div>
             <h2 id='required-methods' class='small-section-header'>
@@ -59,7 +59,7 @@
             </h2>
             <div class='methods'>
         <h3 id='tymethod.requirements' class='method'><span id='requirements.v' class='invisible'><code>fn <a href='#tymethod.requirements' class='fnname'>requirements</a>(&amp;self) -&gt; <a class="struct" href="../../ferrite/vk/struct.VkMemoryRequirements.html" title="struct ferrite::vk::VkMemoryRequirements">VkMemoryRequirements</a></code></span></h3><div class='docblock'><p>Returns the memory requirements for specified Vulkan object</p>
-</div><h3 id='tymethod.bind' class='method'><span id='bind.v' class='invisible'><code>fn <a href='#tymethod.bind' class='fnname'>bind</a>(&amp;self, memory: &amp;<a class="struct" href="../../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a>, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="../../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h3><div class='docblock'><p>Bind device memory to the object</p>
+</div><h3 id='tymethod.bind' class='method'><span id='bind.v' class='invisible'><code>fn <a href='#tymethod.bind' class='fnname'>bind</a>(&amp;self, memory: &amp;<a class="struct" href="../../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a>, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="../../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span></h3><div class='docblock'><p>Bind device memory to the object</p>
 
 <h1 id='failure' class='section-header'><a href='#failure'>Failure</a></h1>
 <p>On failure, this command returns</p>
@@ -73,8 +73,8 @@
           Implementors<a href='#implementors' class='anchor'></a>
         </h2>
         <ul class='item-list' id='implementors-list'>
-    <li><code>impl MemoryBound for <a class="struct" href="../../ferrite/struct.Buffer.html" title="struct ferrite::Buffer">Buffer</a></code></li>
-<li><code>impl MemoryBound for <a class="struct" href="../../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code></li>
+    <li><div class='out-of-band'><a class='srclink' href='../../src/ferrite/resources.rs.html#512-523' title='goto source code'>[src]</a></div><code>impl MemoryBound for <a class="struct" href="../../ferrite/struct.Buffer.html" title="struct ferrite::Buffer">Buffer</a></code></li>
+<li><div class='out-of-band'><a class='srclink' href='../../src/ferrite/resources.rs.html#525-536' title='goto source code'>[src]</a></div><code>impl MemoryBound for <a class="struct" href="../../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code></li>
 </ul><script type="text/javascript" async
                          src="../../implementors/ferrite/traits/trait.MemoryBound.js">
                  </script></section>
@@ -94,13 +94,15 @@
                     <dd>Show this help dialog</dd>
                     <dt>S</dt>
                     <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
+                    <dt>↑</dt>
                     <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
+                    <dt>↓</dt>
                     <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
                     <dt>&#9166;</dt>
                     <dd>Go to active search result</dd>
-                    <dt>+</dt>
+                    <dt style="width:31px;">+ / -</dt>
                     <dd>Collapse/expand all sections</dd>
                 </dl>
             </div>
