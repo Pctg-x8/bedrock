@@ -3,6 +3,7 @@
 use vk::*;
 use VkHandle;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
+use Instance;
 
 /// Opaque object to a debug report callback object
 pub struct DebugReportCallback(VkDebugReportCallbackEXT, ::Instance, PFN_vkDestroyDebugReportCallbackEXT);
@@ -15,6 +16,35 @@ impl Drop for DebugReportCallback
 
 impl VkHandle for DebugReportCallback { type Handle = VkDebugReportCallbackEXT; fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 } }
 
+pub struct DebugReportCallbackBuilder<'i> { instance: &'i Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT }
+impl<'i> DebugReportCallbackBuilder<'i>
+{
+	/// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
+	pub fn new(instance: &'i Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self
+	{
+		DebugReportCallbackBuilder { instance, flags: 0, callback }
+	}
+	/// Reports an error that may cause undefined results, including an application crash
+	pub fn report_error(&mut self) -> &mut Self { self.flags |= VK_DEBUG_REPORT_ERROR_BIT_EXT; self }
+	/// Reports an unexpected use. e.g. Not destroying objects prior to destroying the containing object or potential inconsistencies between descriptor set layout
+	/// and the layout in the corresponding shader, etc
+	pub fn report_warning(&mut self) -> &mut Self { self.flags |= VK_DEBUG_REPORT_WARNING_BIT_EXT; self }
+	/// Reports a potentially non-optimal use of Vulkan. e.g. using `vkCmdClearColorImage` when a RenderPass load_op would have worked
+	pub fn report_performance_warning(&mut self) -> &mut Self { self.flags |= VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT; self }
+	/// Reports an informational message such as resource details that may be handy when debugging an application
+	pub fn report_information(&mut self) -> &mut Self { self.flags |= VK_DEBUG_REPORT_INFORMATION_BIT_EXT; self }
+	/// Reports diagnostic information from the loader and layers
+	pub fn report_debug_information(&mut self) -> &mut Self { self.flags |= VK_DEBUG_REPORT_DEBUG_BIT_EXT; self }
+
+	/// Register a debug report callback
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	#[cfg(feature = "FeImplements")]
+	pub fn create(&mut self) -> ::Result<Self> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
+}
+
 #[cfg(feature = "FeImplements")]
 impl DebugReportCallback
 {
@@ -23,64 +53,31 @@ impl DebugReportCallback
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	pub fn new<T>(instance: &::Instance, flags: DebugReportFlags, callback: PFN_vkDebugReportCallbackEXT, user_data: Option<&T>) -> ::Result<Self>
+	fn new<T>(instance: &::Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> ::Result<Self>
 	{
-		let cons: PFN_vkCreateDebugReportCallbackEXT = instance.extra_procedure("vkCreateDebugReportCallbackEXT")
+		let ctor: PFN_vkCreateDebugReportCallbackEXT = instance.extra_procedure("vkCreateDebugReportCallbackEXT")
 			.expect("Requiring vkCreateDebugReportCallbackEXT function");
-		let des: PFN_vkDestroyDebugReportCallbackEXT = instance.extra_procedure("vkDestroyDebugReportCallbackEXT")
+		let dtor: PFN_vkDestroyDebugReportCallbackEXT = instance.extra_procedure("vkDestroyDebugReportCallbackEXT")
 			.expect("Requiring vkDestroyDebugReportCallbackEXT function");
-		let s = VkDebugReportCallbackCreateInfoEXT
-		{
-			flags: flags.0, pfnCallback: callback, pUserData: user_data.map(|x| x as *const T as *mut _).unwrap_or(::std::ptr::null_mut()),
-			.. Default::default()
-		};
+		let s = VkDebugReportCallbackCreateInfoEXT { flags, pfnCallback: callback, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		cons(instance.native_ptr(), &s, ::std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), des))
+		ctor(instance.native_ptr(), &s, ::std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), dtor))
 	}
 }
 #[cfg(feature = "FeImplements")]
-impl ::Instance
+impl Instance
 {
 	/// Inject its own messages into the debug stream
-	pub fn debug_message(&self, flags: DebugReportFlags, object_type: DebugReportObjectType, object: u64, location: ::libc::size_t,
+	pub fn debug_message(&self, flags: VkDebugReportFlagsEXT, object_type: DebugReportObjectType, object: u64, location: ::libc::size_t,
 		message_count: i32, layer_prefix: &str, message: &str)
 	{
-		let lp = ::std::ffi::CString::new(layer_prefix).unwrap();
-		let msg = ::std::ffi::CString::new(message).unwrap();
+		use std::ffi::CString;
+
+		let (lp, msg) = (CString::new(layer_prefix).unwrap(), CString::new(message).unwrap());
 		let msgf: PFN_vkDebugReportMessageEXT = self.extra_procedure("vkDebugReportMessageEXT")
 			.expect("Requiring vkDebugReportMessageEXT function");
-		msgf(self.native_ptr(), flags.0, object_type as _, object, location, message_count, lp.as_ptr(), msg.as_ptr());
+		msgf(self.native_ptr(), flags, object_type as _, object, location, message_count, lp.as_ptr(), msg.as_ptr());
 	}
-}
-
-/// Indicates which events will cause this callback to be called
-#[repr(C)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct DebugReportFlags(pub VkDebugReportFlagsEXT);
-impl DebugReportFlags
-{
-	/// An error that may cause undefined results, including an application crash
-	pub const ERROR: Self = DebugReportFlags(VK_DEBUG_REPORT_ERROR_BIT_EXT);
-	/// An unexpected use. e.g. Not destroying objects prior to destroying the containing object or potential inconsistencies between descriptor set layout
-	/// and the layout in the corresponding shader, etc
-	pub const WARNING: Self = DebugReportFlags(VK_DEBUG_REPORT_WARNING_BIT_EXT);
-	/// A potentially non-optimal use of Vulkan. e.g. using `vkCmdClearColorImage` when a RenderPass load_op would have worked
-	pub const PERFORMANCE_WARNING: Self = DebugReportFlags(VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT);
-	/// An informational message such as resource details that may be handy when debugging an application
-	pub const INFORMATION: Self = DebugReportFlags(VK_DEBUG_REPORT_INFORMATION_BIT_EXT);
-	/// Diagnostic information from the loader and layers
-	pub const DEBUG: Self = DebugReportFlags(VK_DEBUG_REPORT_DEBUG_BIT_EXT);
-
-	/// An error that may cause undefined results, including an application crash
-	pub fn error(&self) -> Self { DebugReportFlags(self.0 | Self::ERROR.0) }
-	/// An unexpected use. e.g. Not destroying objects prior to destroying the containing object or potential inconsistencies between descriptor set layout
-	/// and the layout in the corresponding shader, etc
-	pub fn warning(&self) -> Self { DebugReportFlags(self.0 | Self::WARNING.0) }
-	/// A potentially non-optimal use of Vulkan. e.g. using `vkCmdClearColorImage` when a RenderPass load_op would have worked
-	pub fn performance_warning(&self) -> Self { DebugReportFlags(self.0 | Self::PERFORMANCE_WARNING.0) }
-	/// An informational message such as resource details that may be handy when debugging an application
-	pub fn information(&self) -> Self { DebugReportFlags(self.0 | Self::INFORMATION.0) }
-	/// Diagnostic information from the loader and layers
-	pub fn debug(&self) -> Self { DebugReportFlags(self.0 | Self::DEBUG.0) }
 }
 
 /// The type of an object passed to the `VkDebugMarkerObjectNameInfoEXT` and `VkDebugMarkerObjectTagInfoEXT` commands
