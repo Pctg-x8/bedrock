@@ -354,13 +354,17 @@ impl QueryResultFlags
 }
 
 /// For testing format traits
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct FormatTraits(pub vk::VkFormat);
-impl FormatTraits
+pub trait PixelFormat
 {
-    pub fn bit_width(self) -> usize
+    fn bit_width(self) -> usize;
+    fn components(self) -> FormatComponents;
+    fn element_type(self) -> ElementType;
+}
+impl PixelFormat for vk::VkFormat
+{
+    fn bit_width(self) -> usize
     {
-        match self.0
+        match self
         {
             VK_FORMAT_R4G4_UNORM_PACK8 | VK_FORMAT_R8_UNORM | VK_FORMAT_R8_SNORM |
             VK_FORMAT_R8_USCALED | VK_FORMAT_R8_SSCALED | VK_FORMAT_R8_UINT | VK_FORMAT_R8_SINT |
@@ -408,9 +412,9 @@ impl FormatTraits
             _ => 0
         }
     }
-    pub fn components(self) -> FormatComponents
+    fn components(self) -> FormatComponents
     {
-        match self.0
+        match self
         {
             VK_FORMAT_UNDEFINED => FormatComponents::Undefined,
             VK_FORMAT_R8_UNORM | VK_FORMAT_R8_SNORM | VK_FORMAT_R8_USCALED | VK_FORMAT_R8_SSCALED |
@@ -449,9 +453,9 @@ impl FormatTraits
         }
     }
     #[allow(non_upper_case_globals)]
-    pub fn etype(self) -> ElementType
+    fn element_type(self) -> ElementType
     {
-        match self.0
+        match self
         {
             VK_FORMAT_UNDEFINED => ElementType::Undefined,
             VK_FORMAT_R4G4_UNORM_PACK8 | VK_FORMAT_R4G4B4A4_UNORM_PACK16 | VK_FORMAT_B4G4R4A4_UNORM_PACK16 | VK_FORMAT_R5G6B5_UNORM_PACK16 |
@@ -508,15 +512,13 @@ impl FormatQuery
 {
     pub fn eq_bit_width(self, w: usize) -> Self
     {
-        if FormatTraits(self.0).bit_width() == w { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+        if self.0.bit_width() == w { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
     }
-    pub fn has_components(self, c: FormatComponents) -> Self
-    {
-        if FormatTraits(self.0).components() == c { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
-    }
+    pub fn has_components(self, c: FormatComponents) -> Self { if c.satisfy(self.0) { self } else { FormatQuery(VK_FORMAT_UNDEFINED) } }
+    pub fn is_component_of(self, c: FormatComponents) -> Self { if c.satisfy_eq(self.0) { self } else { FormatQuery(VK_FORMAT_UNDEFINED) } }
     pub fn has_element_of(self, e: ElementType) -> Self
     {
-        if FormatTraits(self.0).etype() == e { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+        if self.0.element_type() == e { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
     }
     pub fn passed(self) -> bool { self.0 != VK_FORMAT_UNDEFINED }
 }
@@ -533,4 +535,23 @@ pub enum ElementType
 {
     Undefined, UNORM, SNORM, UINT, SINT, SFLOAT, UFLOAT, SRGB, USCALED, SSCALED,
     Compound
+}
+
+impl FormatComponents
+{
+    pub fn has(self, o: Self) -> bool
+    {
+        use self::FormatComponents::*;
+        match self
+        {
+            R => o == R || o == RG || o == RGB || o == RGBA,
+            RG => o == RG || o == RGB || o == RGBA,
+            RGB => o == RGB || o == RGBA,
+            D => o == D || o == DS,
+            S => o == S || o == DS,
+            t => t == o
+        }
+    }
+    pub fn satisfy(self, f: vk::VkFormat) -> bool { self.has(f.components()) }
+    pub fn satisfy_eq(self, f: vk::VkFormat) -> bool { f.components() == self }
 }
