@@ -59,7 +59,7 @@
 <li>配列の各要素は、シェーダにおける入力アタッチメントユニットの番号に対応している。<br>
 
 <ul>
-<li>例: シェーダ内で<code>layout(input_attachment_index=X, set=Y, binding=Z)</code>と指定された入力変数は、<code>add_input(X, ...)</code>にて指定されたアタッチメントを使用する。<br></li>
+<li>例: シェーダ内で<code>layout(input_attachment_index=X, set=Y, binding=Z)</code>と指定された入力変数は、X番目に<code>add_input(...)</code>されたアタッチメントを使用する。<br></li>
 </ul></li>
 <li>また、入力アタッチメントは Descriptor Set を通してパイプラインにバインドされている必要がある。このとき、入力アタッチメントデスクリプタは(set=Y, binding=Z)の位置に置かれている必要がある。</li>
 <li>フラグメントシェーダは、サブパス入力変数(subpass input variables)を通して入力アタッチメントの内容にアクセスできる。ただし、シェーダが現在処理しているフレームバッファ上の座標点(x, y, layer)の内容のみ。</li>

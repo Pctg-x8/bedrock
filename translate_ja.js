@@ -49,7 +49,7 @@ conversions[path.join("ferrite", "struct.SubpassDescription.html")] = data => da
     .replace("Each element of the array corresponds to an input attachment unit number in the shader.",
         "配列の各要素は、シェーダにおける入力アタッチメントユニットの番号に対応している。")
     .replace("i. e. if the shader declares an input variable <code>layout(input_attachment_index=X, set=Y, binding=Z)</code>\nthen it uses the attachment provided in <code>input_attachments[X]</code>.",
-        "例: シェーダ内で<code>layout(input_attachment_index=X, set=Y, binding=Z)</code>と指定された入力変数は、<code>add_input(X, ...)</code>にて指定されたアタッチメントを使用する。")
+        "例: シェーダ内で<code>layout(input_attachment_index=X, set=Y, binding=Z)</code>と指定された入力変数は、X番目に<code>add_input(...)</code>されたアタッチメントを使用する。")
     .replace("Input attachments <em>must</em> also be bound to the pipeline with a descriptor set, with the input attachment descriptor\nwritten in the location (set=Y, binding=Z).",
         "また、入力アタッチメントは Descriptor Set を通してパイプラインにバインドされている必要がある。このとき、入力アタッチメントデスクリプタは(set=Y, binding=Z)の位置に置かれている必要がある。")
     .replace("Fragment shaders <em>can</em> use subpass input variables to access the contents of an input attachment at the fragment&#39;s\n(x, y, layer) framebuffer coordinates.",
