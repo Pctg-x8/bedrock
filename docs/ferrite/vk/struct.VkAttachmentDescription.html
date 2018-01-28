@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#2056-2062' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#2056-2148' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'><div class="docblock attributes">#[repr(C)]
 </div>pub struct VkAttachmentDescription {
     pub flags: <a class="type" href="../../ferrite/vk/type.VkAttachmentDescriptionFlags.html" title="type ferrite::vk::VkAttachmentDescriptionFlags">VkAttachmentDescriptionFlags</a>,
@@ -65,39 +65,143 @@
                            <a href="#structfield.flags" class="anchor field"></a>
                            <span id="flags.v" class='invisible'>
                            <code>flags: <a class="type" href="../../ferrite/vk/type.VkAttachmentDescriptionFlags.html" title="type ferrite::vk::VkAttachmentDescriptionFlags">VkAttachmentDescriptionFlags</a></code>
-                           </span></span><span id="structfield.format" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>A bitmask of <code>VkAttachmentDescriptionFlagBits</code> specifying additional properties of the attachment.</p>
+
+<h2 id='possible-bitmasks' class='section-header'><a href='#possible-bitmasks'>Possible Bitmasks</a></h2>
+<ul>
+<li>0: No flags</li>
+<li><code>VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT</code>: The attachment aliases the same device memory as other attachments</li>
+</ul>
+</div><span id="structfield.format" class="structfield small-section-header">
                            <a href="#structfield.format" class="anchor field"></a>
                            <span id="format.v" class='invisible'>
                            <code>format: <a class="type" href="../../ferrite/vk/type.VkFormat.html" title="type ferrite::vk::VkFormat">VkFormat</a></code>
-                           </span></span><span id="structfield.samples" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>A <code>VkFormat</code> value specifying the format of the image that will be used for the attachment</p>
+</div><span id="structfield.samples" class="structfield small-section-header">
                            <a href="#structfield.samples" class="anchor field"></a>
                            <span id="samples.v" class='invisible'>
                            <code>samples: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
-                           </span></span><span id="structfield.loadOp" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>The number of samples of the image as defined in <code>VkSampleCountFlagBits</code></p>
+
+<h2 id='possible-values' class='section-header'><a href='#possible-values'>Possible Values</a></h2>
+<p>1, 2, 4, 8, 16, 32, 64</p>
+</div><span id="structfield.loadOp" class="structfield small-section-header">
                            <a href="#structfield.loadOp" class="anchor field"></a>
                            <span id="loadOp.v" class='invisible'>
                            <code>loadOp: <a class="type" href="../../ferrite/vk/type.VkAttachmentLoadOp.html" title="type ferrite::vk::VkAttachmentLoadOp">VkAttachmentLoadOp</a></code>
-                           </span></span><span id="structfield.storeOp" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>A <code>VkAttachmentLoadOp</code> value specifying how the contents of color and depth components of the attachment are
+treated at the beginning of the subpass where it is first used</p>
+
+<h2 id='possible-values-1' class='section-header'><a href='#possible-values-1'>Possible Values</a></h2>
+<ul>
+<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code>: The previous contents of the image within the render are will be preserved.</li>
+<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code>: The contents within the render are will be cleared to a uniform value,
+which is specified when a render pass instance is begun.</li>
+<li><code>VK_ATTACHMENT_LOAD_OP_DONT_CARE</code>: The previous contents within the area need not be preserved;
+the contents of the attachment will be undefined inside the render area.</li>
+</ul>
+
+<h2 id='access-type-requirements' class='section-header'><a href='#access-type-requirements'>Access Type Requirements</a></h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>For attachments with a depth format</th>
+<th>For attachments with a color format</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>VK_ATTACHMENT_LOAD_OP_LOAD</code></td>
+<td><code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT</code></td>
+<td><code>VK_ACCESS_COLOR_ATTTACHMENT_READ_BIT</code></td>
+</tr>
+<tr>
+<td><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code></td>
+<td><code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</code></td>
+<td><code>VK_ACCESS_COLOR_ATTTACHMENT_WRITE_BIT</code></td>
+</tr>
+<tr>
+<td><code>VK_ATTACHMENT_LOAD_OP_DONT_CARE</code></td>
+<td><code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</code></td>
+<td><code>VK_ACCESS_COLOR_ATTTACHMENT_WRITE_BIT</code></td>
+</tr>
+</tbody>
+</table>
+</div><span id="structfield.storeOp" class="structfield small-section-header">
                            <a href="#structfield.storeOp" class="anchor field"></a>
                            <span id="storeOp.v" class='invisible'>
                            <code>storeOp: <a class="type" href="../../ferrite/vk/type.VkAttachmentStoreOp.html" title="type ferrite::vk::VkAttachmentStoreOp">VkAttachmentStoreOp</a></code>
-                           </span></span><span id="structfield.stencilLoadOp" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>A <code>VkAttachmentStoreOp</code> value specifying how the contents of color and depth components of the attachment are
+treated at the end of the subpass where it is last used.</p>
+
+<h2 id='possible-values-2' class='section-header'><a href='#possible-values-2'>Possible Values</a></h2>
+<ul>
+<li><code>VK_ATTACHMENT_STORE_OP_STORE</code>: The contents generated during the render pass and within the render area are
+written to memory.</li>
+<li><code>VK_ATTACHMENT_STORE_OP_DONT_CARE</code>: The contents within the render area are not needed after rendering,
+and <em>may</em> be discarded; the contents of the attachment will be undefined inside the render area.</li>
+</ul>
+
+<h2 id='access-type-requirements-1' class='section-header'><a href='#access-type-requirements-1'>Access Type Requirements</a></h2>
+<ul>
+<li>For attachments with a depth format: Both values require <code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</code></li>
+<li>For attachments with a color format: Both values require <code>VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT</code></li>
+</ul>
+</div><span id="structfield.stencilLoadOp" class="structfield small-section-header">
                            <a href="#structfield.stencilLoadOp" class="anchor field"></a>
                            <span id="stencilLoadOp.v" class='invisible'>
                            <code>stencilLoadOp: <a class="type" href="../../ferrite/vk/type.VkAttachmentLoadOp.html" title="type ferrite::vk::VkAttachmentLoadOp">VkAttachmentLoadOp</a></code>
-                           </span></span><span id="structfield.stencilStoreOp" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>A <code>VkAttachmentLoadOp</code> value specifying how the contents of stencil components of the attachment are
+treated at the beginning of the subpass where it is first used</p>
+
+<h2 id='possible-values-3' class='section-header'><a href='#possible-values-3'>Possible Values</a></h2>
+<ul>
+<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code>: The previous contents of the image within the render are will be preserved.</li>
+<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code>: The contents within the render are will be cleared to a uniform value,
+which is specified when a render pass instance is begun.</li>
+<li><code>VK_ATTACHMENT_LOAD_OP_DONT_CARE</code>: The previous contents within the area need not be preserved;
+the contents of the attachment will be undefined inside the render area.</li>
+</ul>
+
+<h2 id='access-type-requirements-2' class='section-header'><a href='#access-type-requirements-2'>Access Type Requirements</a></h2>
+<ul>
+<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code> requires <code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT</code></li>
+<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code> requires <code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</code></li>
+<li><code>VK_ATTACHMENT_LOAD_OP_DONT_CARE</code> requires <code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</code></li>
+</ul>
+</div><span id="structfield.stencilStoreOp" class="structfield small-section-header">
                            <a href="#structfield.stencilStoreOp" class="anchor field"></a>
                            <span id="stencilStoreOp.v" class='invisible'>
                            <code>stencilStoreOp: <a class="type" href="../../ferrite/vk/type.VkAttachmentStoreOp.html" title="type ferrite::vk::VkAttachmentStoreOp">VkAttachmentStoreOp</a></code>
-                           </span></span><span id="structfield.initialLayout" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>A <code>VkAttachmentStoreOp</code> value specifying how the contents of stencil components of the attachment are
+treated at the end of the subpass where it is last used.</p>
+
+<h2 id='possible-values-4' class='section-header'><a href='#possible-values-4'>Possible Values</a></h2>
+<ul>
+<li><code>VK_ATTACHMENT_STORE_OP_STORE</code>: The contents generated during the render pass and within the render area are
+written to memory.</li>
+<li><code>VK_ATTACHMENT_STORE_OP_DONT_CARE</code>: The contents within the render area are not needed after rendering,
+and <em>may</em> be discarded; the contents of the attachment will be undefined inside the render area.</li>
+</ul>
+
+<h2 id='access-type-requirements-3' class='section-header'><a href='#access-type-requirements-3'>Access Type Requirements</a></h2>
+<ul>
+<li>Both values require <code>VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT</code></li>
+</ul>
+</div><span id="structfield.initialLayout" class="structfield small-section-header">
                            <a href="#structfield.initialLayout" class="anchor field"></a>
                            <span id="initialLayout.v" class='invisible'>
                            <code>initialLayout: <a class="type" href="../../ferrite/vk/type.VkImageLayout.html" title="type ferrite::vk::VkImageLayout">VkImageLayout</a></code>
-                           </span></span><span id="structfield.finalLayout" class="structfield small-section-header">
+                           </span></span><div class='docblock'><p>The layout the attachment image subresource will be in when a render pass instance begins.</p>
+</div><span id="structfield.finalLayout" class="structfield small-section-header">
                            <a href="#structfield.finalLayout" class="anchor field"></a>
                            <span id="finalLayout.v" class='invisible'>
                            <code>finalLayout: <a class="type" href="../../ferrite/vk/type.VkImageLayout.html" title="type ferrite::vk::VkImageLayout">VkImageLayout</a></code>
-                           </span></span>
+                           </span></span><div class='docblock'><p>The layout the attachment image subresource will be transitioned to when a render pass instance ends.
+During a render pass instance, an attachment <em>can</em> use a different layoutin each subpass, if desired.</p>
+</div>
             <h2 id='implementations' class='small-section-header'>
               Trait Implementations<a href='#implementations' class='anchor'></a>
             </h2>

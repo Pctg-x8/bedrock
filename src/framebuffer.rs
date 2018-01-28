@@ -18,6 +18,21 @@ impl DeviceChild for RenderPass { fn device(&self) -> &::Device { &self.1 } }
 impl DeviceChild for Framebuffer { fn device(&self) -> &::Device { &self.1 } }
 
 /// Builder structure to construct the `VkSubpassDescription`
+/// 
+/// ## The `layout` parameter of each attachment
+/// 
+/// The `layout` parameter describes what layout the attachment will be in during the subpass.
+/// 
+/// ## How *input attachments* work
+/// 
+/// * Each element of the array corresponds to an input attachment unit number in the shader.  
+///   * i. e. if the shader declares an input variable `layout(input_attachment_index=X, set=Y, binding=Z)`
+///     then it uses the attachment provided in `input_attachments[X]`.  
+/// * Input attachments *must* also be bound to the pipeline with a descriptor set, with the input attachment descriptor
+///   written in the location (set=Y, binding=Z).
+/// * Fragment shaders *can* use subpass input variables to access the contents of an input attachment at the fragment's
+///   (x, y, layer) framebuffer coordinates.
+/// 
 pub struct SubpassDescription
 {
 	input_attachments: Vec<VkAttachmentReference>, color_attachments: Vec<VkAttachmentReference>,

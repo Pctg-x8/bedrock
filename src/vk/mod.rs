@@ -2055,17 +2055,116 @@ impl Default for VkFramebufferCreateInfo
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkAttachmentDescription
 {
-    pub flags: VkAttachmentDescriptionFlags, pub format: VkFormat, pub samples: VkSampleCountFlags,
-    pub loadOp: VkAttachmentLoadOp, pub storeOp: VkAttachmentStoreOp,
-    pub stencilLoadOp: VkAttachmentLoadOp, pub stencilStoreOp: VkAttachmentStoreOp,
-    pub initialLayout: VkImageLayout, pub finalLayout: VkImageLayout
+    /// A bitmask of `VkAttachmentDescriptionFlagBits` specifying additional properties of the attachment.
+    /// 
+    /// ## Possible Bitmasks
+    /// 
+    /// * 0: No flags
+    /// * `VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT`: The attachment aliases the same device memory as other attachments
+    /// 
+    pub flags: VkAttachmentDescriptionFlags,
+    /// A `VkFormat` value specifying the format of the image that will be used for the attachment
+    pub format: VkFormat,
+    /// The number of samples of the image as defined in `VkSampleCountFlagBits`
+    /// 
+    /// ## Possible Bitmasks
+    /// 
+    /// 1, 2, 4, 8, 16, 32, 64
+    /// 
+    pub samples: VkSampleCountFlags,
+    /// A `VkAttachmentLoadOp` value specifying how the contents of color and depth components of the attachment are
+    /// treated at the beginning of the subpass where it is first used
+    /// 
+    /// ## Possible Values
+    /// 
+    /// * `VK_ATTACHMENT_LOAD_OP_LOAD`: The previous contents of the image within the render are will be preserved.
+    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR`: The contents within the render are will be cleared to a uniform value,
+    ///   which is specified when a render pass instance is begun.
+    /// * `VK_ATTACHMENT_LOAD_OP_DONT_CARE`: The previous contents within the area need not be preserved;
+    ///   the contents of the attachment will be undefined inside the render area.
+    /// 
+    /// ## Access Type Requirements
+    /// 
+    /// |                                   | For attachments with a depth format            | For attachments with a color format     |
+    /// |-----------------------------------|------------------------------------------------|-----------------------------------------|
+    /// | `VK_ATTACHMENT_LOAD_OP_LOAD`      | `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT`  | `VK_ACCESS_COLOR_ATTTACHMENT_READ_BIT`  |
+    /// | `VK_ATTACHMENT_LOAD_OP_CLEAR`     | `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT` | `VK_ACCESS_COLOR_ATTTACHMENT_WRITE_BIT` |
+    /// | `VK_ATTACHMENT_LOAD_OP_DONT_CARE` | `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT` | `VK_ACCESS_COLOR_ATTTACHMENT_WRITE_BIT` |
+    /// 
+    pub loadOp: VkAttachmentLoadOp,
+    /// A `VkAttachmentStoreOp` value specifying how the contents of color and depth components of the attachment are
+    /// treated at the end of the subpass where it is last used.
+    /// 
+    /// ## Possible Values
+    /// 
+    /// * `VK_ATTACHMENT_STORE_OP_STORE`: The contents generated during the render pass and within the render area are
+    ///   written to memory.
+    /// * `VK_ATTACHMENT_STORE_OP_DONT_CARE`: The contents within the render area are not needed after rendering,
+    ///   and *may* be discarded; the contents of the attachment will be undefined inside the render area.
+    /// 
+    /// ## Access Type Requirements
+    /// 
+    /// * For attachments with a depth format: Both values require `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT`
+    /// * For attachments with a color format: Both values require `VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT`
+    /// 
+    pub storeOp: VkAttachmentStoreOp,
+    /// A `VkAttachmentLoadOp` value specifying how the contents of stencil components of the attachment are
+    /// treated at the beginning of the subpass where it is first used
+    /// 
+    /// ## Possible Values
+    /// 
+    /// * `VK_ATTACHMENT_LOAD_OP_LOAD`: The previous contents of the image within the render are will be preserved.
+    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR`: The contents within the render are will be cleared to a uniform value,
+    ///   which is specified when a render pass instance is begun.
+    /// * `VK_ATTACHMENT_LOAD_OP_DONT_CARE`: The previous contents within the area need not be preserved;
+    ///   the contents of the attachment will be undefined inside the render area.
+    /// 
+    /// ## Access Type Requirements
+    /// 
+    /// * `VK_ATTACHMENT_LOAD_OP_LOAD` requires `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT`
+    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR` requires `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT`
+    /// * `VK_ATTACHMENT_LOAD_OP_DONT_CARE` requires `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT`
+    /// 
+    pub stencilLoadOp: VkAttachmentLoadOp,
+    /// A `VkAttachmentStoreOp` value specifying how the contents of stencil components of the attachment are
+    /// treated at the end of the subpass where it is last used.
+    /// 
+    /// ## Possible Values
+    /// 
+    /// * `VK_ATTACHMENT_STORE_OP_STORE`: The contents generated during the render pass and within the render area are
+    ///   written to memory.
+    /// * `VK_ATTACHMENT_STORE_OP_DONT_CARE`: The contents within the render area are not needed after rendering,
+    ///   and *may* be discarded; the contents of the attachment will be undefined inside the render area.
+    /// 
+    /// ## Access Type Requirements
+    /// 
+    /// * Both values require `VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT`
+    /// 
+    pub stencilStoreOp: VkAttachmentStoreOp,
+    /// The layout the attachment image subresource will be in when a render pass instance begins.
+    pub initialLayout: VkImageLayout,
+    /// The layout the attachment image subresource will be transitioned to when a render pass instance ends.
+    /// During a render pass instance, an attachment *can* use a different layoutin each subpass, if desired.
+    pub finalLayout: VkImageLayout
 }
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkAttachmentReference { pub attachment: u32, pub layout: VkImageLayout }
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSubpassDescription
 {
-    pub flags: VkSubpassDescriptionFlags, pub pipelineBindPoint: VkPipelineBindPoint,
+    /// A bitmask of `VkSubpassDescriptionFlagBits` specifying usage of the subpass.
+    /// 
+    /// ## Possible Bitmasks
+    /// 
+    /// * 0: No flags
+    pub flags: VkSubpassDescriptionFlags,
+    /// A `VkPipelineBindPoint` value specifying whether this is a compute or graphics subpass.
+    /// 
+    /// ## Possible Values
+    /// 
+    /// * `VK_PIPELINE_BIND_POINT_GRAPHICS`: Binding as a graphics pipeline.
+    /// * ~~`VK_PIPELINE_BIND_POINT_COMPUTE`: Binding as a compute pipeline.~~ (Currently unsupported)
+    pub pipelineBindPoint: VkPipelineBindPoint,
     pub inputAttachmentCount: u32, pub pInputAttachments: *const VkAttachmentReference,
     pub colorAttachmentCount: u32, pub pColorAttachments: *const VkAttachmentReference,
     pub pResolveAttachments: *const VkAttachmentReference, pub pDepthStencilAttachment: *const VkAttachmentReference,
