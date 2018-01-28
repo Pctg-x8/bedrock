@@ -42,7 +42,7 @@ impl<'i> DebugReportCallbackBuilder<'i>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	#[cfg(feature = "FeImplements")]
-	pub fn create(&mut self) -> ::Result<Self> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
+	pub fn create(&mut self) -> ::Result<DebugReportCallback> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
 }
 
 #[cfg(feature = "FeImplements")]
@@ -53,7 +53,7 @@ impl DebugReportCallback
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	fn new<T>(instance: &::Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> ::Result<Self>
+	fn new(instance: &::Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> ::Result<Self>
 	{
 		let ctor: PFN_vkCreateDebugReportCallbackEXT = instance.extra_procedure("vkCreateDebugReportCallbackEXT")
 			.expect("Requiring vkCreateDebugReportCallbackEXT function");
