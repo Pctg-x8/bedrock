@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `src\resources.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>resources.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc source">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
+<span id="693">693</span>
+<span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
+<span id="711">711</span>
+<span id="712">712</span>
+<span id="713">713</span>
+<span id="714">714</span>
+<span id="715">715</span>
+<span id="716">716</span>
+<span id="717">717</span>
+<span id="718">718</span>
+<span id="719">719</span>
+<span id="720">720</span>
+<span id="721">721</span>
+<span id="722">722</span>
+<span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
+<span id="726">726</span>
+<span id="727">727</span>
+<span id="728">728</span>
+<span id="729">729</span>
+<span id="730">730</span>
+<span id="731">731</span>
+<span id="732">732</span>
+<span id="733">733</span>
+<span id="734">734</span>
+<span id="735">735</span>
+<span id="736">736</span>
+<span id="737">737</span>
+<span id="738">738</span>
+<span id="739">739</span>
+<span id="740">740</span>
+<span id="741">741</span>
+<span id="742">742</span>
+<span id="743">743</span>
+<span id="744">744</span>
+<span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! Vulkan Resources</span>
+
+<span class="kw">use</span> <span class="ident">vk</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">rc</span>::<span class="ident">Rc</span> <span class="kw">as</span> <span class="ident">RefCounter</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Deref</span>;
+<span class="kw">use</span> {<span class="ident">VkHandle</span>, <span class="ident">DeviceChild</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">VkResultHandler</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span> <span class="kw">as</span> <span class="ident">resv</span>;
+
+<span class="kw">struct</span> <span class="ident">DeviceMemoryCell</span>(<span class="ident">VkDeviceMemory</span>, ::<span class="ident">Device</span>);
+<span class="kw">struct</span> <span class="ident">BufferCell</span>(<span class="ident">VkBuffer</span>, ::<span class="ident">Device</span>);
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ImageCell</span>
+{
+	<span class="ident">DeviceChild</span> { <span class="ident">obj</span>: <span class="ident">VkImage</span>, <span class="ident">dev</span>: ::<span class="ident">Device</span>, <span class="ident">dim</span>: <span class="ident">VkImageType</span>, <span class="ident">fmt</span>: <span class="ident">VkFormat</span>, <span class="ident">size</span>: ::<span class="ident">Extent3D</span> },
+	<span class="ident">SwapchainChild</span> { <span class="ident">obj</span>: <span class="ident">VkImage</span>, <span class="ident">owner</span>: ::<span class="ident">Swapchain</span>, <span class="ident">fmt</span>: <span class="ident">VkFormat</span> }
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span> <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>), <span class="ident">allow</span>(<span class="ident">dead_code</span>))]</span>
+<span class="kw">struct</span> <span class="ident">ImageCell</span> { <span class="ident">obj</span>: <span class="ident">VkImage</span>, <span class="ident">dev</span>: ::<span class="ident">Device</span>, <span class="ident">dim</span>: <span class="ident">VkImageType</span>, <span class="ident">fmt</span>: <span class="ident">VkFormat</span>, <span class="ident">size</span>: ::<span class="ident">Extent3D</span> }
+<span class="doccomment">/// Opaque handle to a device memory object</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DeviceMemory</span>(<span class="ident">RefCounter</span><span class="op">&lt;</span><span class="ident">DeviceMemoryCell</span><span class="op">&gt;</span>);
+<span class="doccomment">/// Opaque handle to a buffer object(constructed via `BufferDesc`)</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span> <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Buffer</span>(<span class="ident">RefCounter</span><span class="op">&lt;</span><span class="ident">BufferCell</span><span class="op">&gt;</span>);
+<span class="doccomment">/// Opaque handle to a image object(constructed via `ImageDesc`)</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span> <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span><span class="op">&lt;</span><span class="ident">ImageCell</span><span class="op">&gt;</span>);
+<span class="doccomment">/// Opaque handle to a buffer view object</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BufferView</span>(<span class="ident">VkBufferView</span>, <span class="ident">Buffer</span>);
+<span class="kw">struct</span> <span class="ident">ImageViewCell</span>(<span class="ident">VkImageView</span>, <span class="ident">Image</span>);
+<span class="doccomment">/// Opaque handle to a image view object</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageView</span>(<span class="ident">RefCounter</span><span class="op">&lt;</span><span class="ident">ImageViewCell</span><span class="op">&gt;</span>);
+
+<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Buffer</span>; <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Buffer</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span> } }
+<span class="kw">impl</span> <span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">ImageView</span> { <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">Image</span>; <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Image</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span> .<span class="number">1</span> } }
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="macro">DeviceChildCommonDrop</span><span class="macro">!</span> { <span class="kw">for</span> <span class="ident">DeviceMemoryCell</span>[<span class="ident">vkFreeMemory</span>], <span class="ident">BufferCell</span>[<span class="ident">vkDestroyBuffer</span>] }
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ImageCell</span>
+{
+	<span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>)
+	{
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+		<span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>
+		{
+			<span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span> { <span class="ident">obj</span>, <span class="kw-2">ref</span> <span class="ident">dev</span>, .. } <span class="op">=&gt;</span> <span class="kw">unsafe</span> { <span class="ident">vkDestroyImage</span>(<span class="ident">dev</span>.<span class="ident">native_ptr</span>(), <span class="ident">obj</span>, <span class="ident">null</span>()); },
+			_ <span class="op">=&gt;</span> (<span class="comment">/* No destroying performed */</span>)
+		}
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		<span class="kw">unsafe</span> { <span class="ident">vkDestroyImage</span>(<span class="self">self</span>.<span class="ident">dev</span>.<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">obj</span>, <span class="ident">null</span>()); }
+	}
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="kw">unsafe</span> { <span class="ident">vkDestroyBufferView</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">null</span>()) }; } }
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ImageViewCell</span> { <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) { <span class="kw">unsafe</span> { <span class="ident">vkDestroyImageView</span> (<span class="self">self</span>.<span class="number">1</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="number">0</span>, <span class="ident">null</span>()) }; } }
+
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">DeviceMemory</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkDeviceMemory</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkDeviceMemory</span> { <span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> } }
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">Buffer</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkBuffer</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkBuffer</span> { <span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> } }
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkBufferView</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkBufferView</span> { <span class="self">self</span>.<span class="number">0</span> } }
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">ImageView</span>  { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkImageView</span>;  <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkImageView</span>  { <span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> } }
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">DeviceMemory</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span> .<span class="number">1</span> } }
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Buffer</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span> .<span class="number">1</span> } }
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">BufferView</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="self">self</span>.<span class="ident">deref</span>().<span class="ident">device</span>() } }
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">ImageView</span>  { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="self">self</span>.<span class="ident">deref</span>().<span class="ident">device</span>() } }
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">Image</span>
+{
+	<span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkImage</span>;
+	<span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkImage</span>
+	{
+		<span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>
+		{
+			<span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span> { <span class="ident">obj</span>, .. } <span class="op">|</span> <span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span> { <span class="ident">obj</span>, .. } <span class="op">=&gt;</span> <span class="ident">obj</span>
+		}
+	}
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Image</span>
+{
+	<span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span>
+	{
+		<span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>
+		{
+			<span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span> { <span class="kw-2">ref</span> <span class="ident">dev</span>, .. } <span class="op">=&gt;</span> <span class="ident">dev</span>,
+			<span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span> { <span class="kw-2">ref</span> <span class="ident">owner</span>, .. } <span class="op">=&gt;</span> <span class="ident">owner</span>.<span class="ident">device</span>()
+		}
+	}
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">Image</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkImage</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkImage</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">obj</span> } }
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Image</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.<span class="ident">dev</span> } }
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">DeviceMemory</span>
+{
+	<span class="doccomment">/// Allocate GPU memory</span>
+	<span class="doccomment">/// # Failures</span>
+	<span class="doccomment">/// On failure, this command returns</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_TOO_MANY_OBJECTS`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">allocate</span>(<span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>, <span class="ident">size</span>: <span class="ident">usize</span>, <span class="ident">type_index</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkAllocateMemory</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">VkMemoryAllocateInfo</span> { <span class="ident">allocationSize</span>: <span class="ident">size</span> <span class="kw">as</span> _, <span class="ident">memoryTypeIndex</span>: <span class="ident">type_index</span>, .. <span class="ident">Default</span>::<span class="ident">default</span>() },
+			::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">DeviceMemory</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">DeviceMemoryCell</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>()))))
+	}
+}
+
+<span class="doccomment">/// Bitmask specifying allowed usage of a buffer</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BufferUsage</span>(<span class="kw">pub</span> <span class="ident">VkBufferUsageFlags</span>);
+<span class="kw">impl</span> <span class="ident">BufferUsage</span>
+{
+	<span class="doccomment">/// Specifies that the buffer can be used as the source of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TRANSFER_SRC</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_TRANSFER_SRC_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer can be used as the destination of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TRANSFER_DEST</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_TRANSFER_DST_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer can be used to create a `BufferView` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UNIFORM_TEXEL_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer can be used to create a `BufferView` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">STORAGE_TEXEL_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">UNIFORM_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">STORAGE_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_STORAGE_BUFFER_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer is suitable for passing as the `buffer` parameter to `DrawCommandBuffer::bind_index_buffer`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">INDEX_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_INDEX_BUFFER_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer is suitable for passing as an element of the `buffers` array to `DrawCommandBuffer::bind_vertex_buffers`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">VERTEX_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_VERTEX_BUFFER_BIT</span>);
+	<span class="doccomment">/// Specifies that the buffer is suitable for passing as the `buffer` parameter to</span>
+	<span class="doccomment">/// `DrawCommandBuffer::draw_indirect`, `DrawCommandBuffer::draw_indexed_indirect`, or `ComputeCommandBuffer::dispatch_indirect`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">INDIRECT_BUFFER</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">BufferUsage</span>(<span class="ident">VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT</span>);
+
+	<span class="doccomment">/// Specifies that the buffer can be used as the source of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transfer_src</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">TRANSFER_SRC</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer can be used as the destination of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transfer_dest</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">TRANSFER_DEST</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer can be used to create a `BufferView` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">uniform_texel_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">UNIFORM_TEXEL_BUFFER</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer can be used to create a `BufferView` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">storage_texel_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">STORAGE_TEXEL_BUFFER</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">uniform_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">UNIFORM_BUFFER</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for</span>
+	<span class="doccomment">/// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">storage_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">STORAGE_BUFFER</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer is suitable for passing as the `buffer` parameter to `DrawCommandBuffer::bind_index_buffer`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">index_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">INDEX_BUFFER</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer is suitable for passing as an element of the `buffers` array to `DrawCommandBuffer::bind_vertex_buffers`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vertex_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">VERTEX_BUFFER</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// Specifies that the buffer is suitable for passing as the `buffer` parameter to</span>
+	<span class="doccomment">/// `DrawCommandBuffer::draw_indirect`, `DrawCommandBuffer::draw_indexed_indirect`, or `ComputeCommandBuffer::dispatch_indirect`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">indirect_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">BufferUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">INDIRECT_BUFFER</span>.<span class="number">0</span>) }
+}
+<span class="doccomment">/// Bitset specifying additional parameters of a buffer</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span> <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BufferSparseBinding</span>
+{
+	<span class="doccomment">/// No sparse binding features</span>
+	<span class="prelude-val">None</span> <span class="op">=</span> <span class="number">0</span>,
+	<span class="doccomment">/// the buffer will be backed using sparse memory binding</span>
+	<span class="ident">Bound</span> <span class="op">=</span> <span class="ident">VK_BUFFER_CREATE_SPARSE_BINDING_BIT</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the buffer can be partially backed using sparse memory binding.</span>
+	<span class="ident">Residency</span> <span class="op">=</span> (<span class="ident">VK_BUFFER_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span> <span class="ident">VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT</span>) <span class="kw">as</span> _,
+	<span class="doccomment">/// the buffer will be backed using sparse memory binding with memory ranges</span>
+	<span class="doccomment">/// that might also simultaneously be backing another buffer (or another portion of the same buffer)</span>
+	<span class="ident">Aliased</span> <span class="op">=</span> (<span class="ident">VK_BUFFER_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span> <span class="ident">VK_BUFFER_CREATE_SPARSE_ALIASED_BIT</span>) <span class="kw">as</span> _,
+	<span class="doccomment">/// Aliased and Residency</span>
+	<span class="ident">Both</span> <span class="op">=</span> (<span class="ident">VK_BUFFER_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span> <span class="ident">VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT</span> <span class="op">|</span> <span class="ident">VK_BUFFER_CREATE_SPARSE_ALIASED_BIT</span>) <span class="kw">as</span> _
+}
+<span class="doccomment">/// Builder structure specifying the parameters of a newly created buffer object</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BufferDesc</span> { <span class="ident">cinfo</span>: <span class="ident">VkBufferCreateInfo</span>, <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span> <span class="ident">sharing_queues</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> }
+<span class="kw">impl</span> <span class="ident">BufferDesc</span>
+{
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">byte_size</span>: <span class="ident">usize</span>, <span class="ident">usage</span>: <span class="ident">BufferUsage</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
+	{
+		<span class="ident">BufferDesc</span>
+		{
+			<span class="ident">cinfo</span>: <span class="ident">VkBufferCreateInfo</span>
+			{
+				<span class="ident">size</span>: <span class="ident">byte_size</span> <span class="kw">as</span> _, <span class="ident">usage</span>: <span class="ident">usage</span>.<span class="number">0</span>, .. <span class="ident">Default</span>::<span class="ident">default</span>()
+			}, <span class="ident">sharing_queues</span>: <span class="ident">Vec</span>::<span class="ident">new</span>()
+		}
+	}
+	<span class="doccomment">/// A list of queue families that will access this buffer</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sharing_queue_families</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">indices</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	{
+		<span class="self">self</span>.<span class="ident">sharing_queues</span> <span class="op">=</span> <span class="ident">indices</span>;
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">sharingMode</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">sharing_queues</span>.<span class="ident">is_empty</span>() { <span class="ident">VK_SHARING_MODE_EXCLUSIVE</span> } <span class="kw">else</span> { <span class="ident">VK_SHARING_MODE_CONCURRENT</span> };
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">queueFamilyIndexCount</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sharing_queues</span>.<span class="ident">len</span>() <span class="kw">as</span> _;
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">pQueueFamilyIndices</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sharing_queues</span>.<span class="ident">as_ptr</span>();
+		<span class="self">self</span>
+	}
+	<span class="doccomment">/// A bitmask of `BufferSparseBinding` specifying additional parameters of the buffer</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sparse_binding_opt</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">opt</span>: <span class="ident">BufferSparseBinding</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	{
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">flags</span> <span class="op">=</span> <span class="ident">opt</span> <span class="kw">as</span> _; <span class="self">self</span>
+	}
+	<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Create a new buffer object</span>
+	<span class="doccomment">/// # Failure</span>
+	<span class="doccomment">/// On failure, this command returns</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Buffer</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateBuffer</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Buffer</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">BufferCell</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>()))))
+	}
+}
+
+<span class="doccomment">/// Bitmask specifying intended usage of an image</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageUsage</span>(<span class="kw">pub</span> <span class="ident">VkImageUsageFlags</span>);
+<span class="kw">impl</span> <span class="ident">ImageUsage</span>
+{
+	<span class="doccomment">/// The image can be used as the source of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TRANSFER_SRC</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_TRANSFER_SRC_BIT</span>);
+	<span class="doccomment">/// The image can be used as the destination of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TRANSFER_DEST</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_TRANSFER_DST_BIT</span>);
+	<span class="doccomment">/// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot</span>
+	<span class="doccomment">/// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SAMPLED</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_SAMPLED_BIT</span>);
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">STORAGE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_STORAGE_BIT</span>);
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">COLOR_ATTACHMENT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT</span>);
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DEPTH_STENCIL_ATTACHMENT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT</span>);
+	<span class="doccomment">/// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`</span>
+	<span class="doccomment">/// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,</span>
+	<span class="doccomment">/// or input attachment</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TRANSIENT_ATTACHMENT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT</span>);
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;</span>
+	<span class="doccomment">/// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">INPUT_ATTACHMENT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageUsage</span>(<span class="ident">VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT</span>);
+
+	<span class="doccomment">/// The image can be used as the source of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transfer_src</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">TRANSFER_SRC</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used as the destination of a transfer command</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transfer_dest</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">TRANSFER_DEST</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot</span>
+	<span class="doccomment">/// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sampled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">SAMPLED</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">storage</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">STORAGE</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">color_attachment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">COLOR_ATTACHMENT</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">depth_stencil_attachment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">DEPTH_STENCIL_ATTACHMENT</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`</span>
+	<span class="doccomment">/// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,</span>
+	<span class="doccomment">/// or input attachment</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">transient_attachment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">TRANSIENT_ATTACHMENT</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;</span>
+	<span class="doccomment">/// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">input_attachment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageUsage</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">INPUT_ATTACHMENT</span>.<span class="number">0</span>) }
+}
+<span class="doccomment">/// Bitmask specifying additional parameters of an image</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageFlags</span>(<span class="kw">pub</span> <span class="ident">VkImageCreateFlags</span>);
+<span class="kw">impl</span> <span class="ident">ImageFlags</span>
+{
+	<span class="doccomment">/// Empty bits</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">EMPTY</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="number">0</span>);
+	<span class="doccomment">/// The image will be backed using sparse memory binding</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPARSE_BINDING</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span>);
+	<span class="doccomment">/// The image can be partially backed using sparse memory binding. This bit is with `SPARSE_BINDING` implicitly</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPARSE_RESIDENCY</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span> <span class="ident">VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT</span>);
+	<span class="doccomment">/// The image will be backed using sparse memory binding with memory ranges</span>
+	<span class="doccomment">/// that might also simultaneously be backing another image. This bit is with `SPARSE_BINDING` implicitly</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SPARSE_ALIASED</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span> <span class="ident">VK_IMAGE_CREATE_SPARSE_ALIASED_BIT</span>);
+	<span class="doccomment">/// The image can be used to create a `ImageView` with a different format from the image</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">MUTABLE_FORMAT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT</span>);
+	<span class="doccomment">/// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">CUBE_COMPATIBLE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT</span>);
+
+	<span class="doccomment">/// The image will be backed using sparse memory binding</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sparse_binding</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageFlags</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">SPARSE_BINDING</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be partially backed using sparse memory binding. This bit is with `SPARSE_BINDING` implicitly</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sparse_residency</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageFlags</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">SPARSE_RESIDENCY</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image will be backed using sparse memory binding with memory ranges</span>
+	<span class="doccomment">/// that might also simultaneously be backing another image. This bit is with `SPARSE_BINDING` implicitly</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sparse_aliased</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageFlags</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">SPARSE_ALIASED</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create a `ImageView` with a different format from the image</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mutable_format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageFlags</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">MUTABLE_FORMAT</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">cube_compatible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ImageFlags</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">CUBE_COMPATIBLE</span>.<span class="number">0</span>) }
+}
+<span class="doccomment">/// Builder structure specifying the parameters of a newly created image object</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageDesc</span> { <span class="ident">cinfo</span>: <span class="ident">VkImageCreateInfo</span>, <span class="ident">sharing_queues</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> }
+<span class="kw">impl</span> <span class="ident">ImageDesc</span>
+{
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">Size</span>: <span class="ident">ImageSize</span><span class="op">&gt;</span>(<span class="ident">size</span>: <span class="ident">Size</span>, <span class="ident">format</span>: <span class="ident">VkFormat</span>, <span class="ident">usage</span>: <span class="ident">ImageUsage</span>, <span class="ident">initial_layout</span>: <span class="ident">ImageLayout</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
+	{
+		<span class="ident">ImageDesc</span>
+		{
+			<span class="ident">cinfo</span>: <span class="ident">VkImageCreateInfo</span>
+			{
+				<span class="ident">imageType</span>: <span class="ident">Size</span>::<span class="ident">DIMENSION</span>, <span class="ident">extent</span>: <span class="ident">AsRef</span>::<span class="op">&lt;</span><span class="ident">VkExtent3D</span><span class="op">&gt;</span>::<span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="ident">size</span>.<span class="ident">into</span>()).<span class="ident">clone</span>(), <span class="ident">format</span>, <span class="ident">usage</span>: <span class="ident">usage</span>.<span class="number">0</span>,
+				<span class="ident">mipLevels</span>: <span class="number">1</span>, <span class="ident">arrayLayers</span>:<span class="number">1</span>, <span class="ident">samples</span>: <span class="number">1</span>, <span class="ident">initialLayout</span>: <span class="ident">initial_layout</span> <span class="kw">as</span> _,
+				.. <span class="ident">Default</span>::<span class="ident">default</span>()
+			},
+			<span class="ident">sharing_queues</span>: <span class="ident">Vec</span>::<span class="ident">new</span>()
+		}
+	}
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sharing_queue_families</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">indices</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	{
+		<span class="self">self</span>.<span class="ident">sharing_queues</span> <span class="op">=</span> <span class="ident">indices</span>;
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">sharingMode</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">sharing_queues</span>.<span class="ident">is_empty</span>() { <span class="ident">VK_SHARING_MODE_EXCLUSIVE</span> } <span class="kw">else</span> { <span class="ident">VK_SHARING_MODE_CONCURRENT</span> };
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">queueFamilyIndexCount</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sharing_queues</span>.<span class="ident">len</span>() <span class="kw">as</span> _;
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">pQueueFamilyIndices</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sharing_queues</span>.<span class="ident">as_ptr</span>();
+		<span class="self">self</span>
+	}
+	<span class="doccomment">/// bitmask of 1, 2, 4, 8, 16, 32, 64</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sample_counts</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">count_bits</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	{
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">samples</span> <span class="op">=</span> <span class="ident">count_bits</span>; <span class="self">self</span>
+	}
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">use_linear_tiling</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	{
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">tiling</span> <span class="op">=</span> <span class="ident">VK_IMAGE_TILING_LINEAR</span>; <span class="self">self</span>
+	}
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">flags</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">opt</span>: <span class="ident">ImageFlags</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+	{
+		<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">flags</span> <span class="op">=</span> <span class="ident">opt</span>.<span class="number">0</span>; <span class="self">self</span>
+	}
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array_layers</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">layers</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">arrayLayers</span> <span class="op">=</span> <span class="ident">layers</span>; <span class="self">self</span> }
+}
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">ImageDesc</span>
+{
+	<span class="doccomment">/// Create an image</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>
+			{
+				<span class="ident">obj</span>: <span class="ident">h</span>, <span class="ident">dev</span>: <span class="ident">device</span>.<span class="ident">clone</span>(), <span class="ident">dim</span>: <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">imageType</span>, <span class="ident">fmt</span>: <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">format</span>,
+				<span class="ident">size</span>: ::<span class="ident">Extent3D</span>(<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">width</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">height</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">depth</span>)
+			})))
+	}
+	<span class="doccomment">/// Create an image</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateImage</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span>
+			{
+				<span class="ident">obj</span>: <span class="ident">h</span>, <span class="ident">dev</span>: <span class="ident">device</span>.<span class="ident">clone</span>(), <span class="ident">dim</span>: <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">imageType</span>, <span class="ident">fmt</span>: <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">format</span>,
+				<span class="ident">size</span>: ::<span class="ident">Extent3D</span>(<span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">width</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">height</span>, <span class="self">self</span>.<span class="ident">cinfo</span>.<span class="ident">extent</span>.<span class="ident">depth</span>)
+			})))
+	}
+}
+
+<span class="kw">impl</span> <span class="ident">Image</span>
+{
+	<span class="doccomment">/// The pixel format of an image</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">format</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkFormat</span>
+	{
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+		<span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span> { <span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span> { <span class="ident">fmt</span>, .. } <span class="op">|</span> <span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span> { <span class="ident">fmt</span>, .. } <span class="op">=&gt;</span> <span class="ident">fmt</span> }
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		{ <span class="self">self</span>.<span class="number">0</span>.<span class="ident">fmt</span> }
+	}
+	<span class="doccomment">/// The size of an image</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Extent3D</span>
+	{
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+		<span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span>
+		{
+			<span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span> { <span class="kw-2">ref</span> <span class="ident">size</span>, .. } <span class="op">=&gt;</span> <span class="ident">size</span>,
+			<span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span> { <span class="kw-2">ref</span> <span class="ident">owner</span>, .. } <span class="op">=&gt;</span> <span class="ident">owner</span>.<span class="ident">size</span>()
+		}
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.<span class="ident">size</span>
+	}
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+	<span class="kw">fn</span> <span class="ident">dimension</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkImageViewType</span>
+	{
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+		<span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span> { <span class="ident">ImageCell</span>::<span class="ident">DeviceChild</span> { <span class="ident">dim</span>, .. } <span class="op">=&gt;</span> <span class="ident">dim</span>, <span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span> { .. } <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_TYPE_2D</span> };
+		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+		<span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">dim</span>;
+
+		<span class="kw">match</span> <span class="ident">dim</span>
+		{
+			<span class="ident">VK_IMAGE_TYPE_1D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_1D</span>,
+			<span class="ident">VK_IMAGE_TYPE_2D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_2D</span>,
+			<span class="ident">VK_IMAGE_TYPE_3D</span> <span class="op">=&gt;</span> <span class="ident">VK_IMAGE_VIEW_TYPE_3D</span>,
+			_ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
+		}
+	}
+}
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Buffer</span>
+{
+	<span class="doccomment">/// Create a buffer view</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="ident">VkFormat</span>, <span class="ident">range</span>: ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">BufferView</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="ident">cinfo</span> <span class="op">=</span> <span class="ident">VkBufferViewCreateInfo</span>
+		{
+			<span class="ident">buffer</span>: <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">format</span>, <span class="ident">offset</span>: <span class="ident">range</span>.<span class="ident">start</span>, <span class="ident">range</span>: <span class="ident">range</span>.<span class="ident">end</span> <span class="op">-</span> <span class="ident">range</span>.<span class="ident">start</span>, .. <span class="ident">Default</span>::<span class="ident">default</span>()
+		};
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateBufferView</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">BufferView</span>(<span class="ident">h</span>, <span class="self">self</span>.<span class="ident">clone</span>()))
+	}
+}
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Image</span>
+{
+	<span class="doccomment">/// Create an image view</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">format</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VkFormat</span><span class="op">&gt;</span>, <span class="ident">vtype</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VkImageViewType</span><span class="op">&gt;</span>, <span class="ident">cmap</span>: <span class="kw-2">&amp;</span><span class="ident">ComponentMapping</span>, <span class="ident">subresource_range</span>: <span class="kw-2">&amp;</span><span class="ident">ImageSubresourceRange</span>)
+		<span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ImageView</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> (<span class="ident">format</span>, <span class="ident">vtype</span>) <span class="op">=</span> (<span class="ident">format</span>.<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">format</span>()), <span class="ident">vtype</span>.<span class="ident">unwrap_or</span>(<span class="self">self</span>.<span class="ident">dimension</span>()));
+		<span class="kw">let</span> <span class="ident">cinfo</span> <span class="op">=</span> <span class="ident">VkImageViewCreateInfo</span>
+		{
+			<span class="ident">image</span>: <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">viewType</span>: <span class="ident">vtype</span>, <span class="ident">format</span>, <span class="ident">components</span>: <span class="kw">unsafe</span> { ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute_copy</span>(<span class="ident">cmap</span>) },
+			<span class="ident">subresourceRange</span>: <span class="ident">VkImageSubresourceRange</span>
+			{
+				<span class="ident">aspectMask</span>: <span class="ident">subresource_range</span>.<span class="ident">aspect_mask</span>.<span class="number">0</span>,
+				<span class="ident">baseMipLevel</span>: <span class="ident">subresource_range</span>.<span class="ident">mip_levels</span>.<span class="ident">start</span>, <span class="ident">levelCount</span>: <span class="ident">subresource_range</span>.<span class="ident">mip_levels</span>.<span class="ident">len</span>() <span class="kw">as</span> _,
+				<span class="ident">baseArrayLayer</span>: <span class="ident">subresource_range</span>.<span class="ident">array_layers</span>.<span class="ident">start</span>, <span class="ident">layerCount</span>: <span class="ident">subresource_range</span>.<span class="ident">array_layers</span>.<span class="ident">len</span>() <span class="kw">as</span> _
+			}, .. <span class="ident">Default</span>::<span class="ident">default</span>()
+		};
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+		<span class="kw">unsafe</span> { <span class="ident">vkCreateImageView</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">cinfo</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+			.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">ImageView</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageViewCell</span>(<span class="ident">h</span>, <span class="self">self</span>.<span class="ident">clone</span>()))))
+	}
+	<span class="doccomment">/// Retrieve information about an image subresource  </span>
+	<span class="doccomment">/// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">image_subresource_layout</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">subres_aspect</span>: <span class="ident">AspectMask</span>, <span class="ident">subres_mip_level</span>: <span class="ident">u32</span>, <span class="ident">subres_array_layer</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">VkSubresourceLayout</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">resv</span>() };
+		<span class="kw">let</span> <span class="ident">subres</span> <span class="op">=</span> <span class="ident">VkImageSubresource</span> { <span class="ident">aspectMask</span>: <span class="ident">subres_aspect</span>.<span class="number">0</span>, <span class="ident">mipLevel</span>: <span class="ident">subres_mip_level</span>, <span class="ident">arrayLayer</span>: <span class="ident">subres_array_layer</span> };
+		<span class="kw">unsafe</span> { <span class="ident">vkGetImageSubresourceLayout</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="ident">subres</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">s</span>) }; <span class="ident">s</span>
+	}
+}
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">DeviceMemory</span>
+{
+	<span class="doccomment">/// Map a memory object into application address space</span>
+	<span class="doccomment">/// # Failure</span>
+	<span class="doccomment">/// On failure, this command returns</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_MEMORY_MAP_FAILED`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">map</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range</span>: ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MappedMemoryRange</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>();
+		<span class="kw">unsafe</span> { <span class="ident">vkMapMemory</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">range</span>.<span class="ident">start</span> <span class="kw">as</span> _, (<span class="ident">range</span>.<span class="ident">end</span> <span class="op">-</span> <span class="ident">range</span>.<span class="ident">start</span>) <span class="kw">as</span> _,
+			<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }.<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">MappedMemoryRange</span>(<span class="self">self</span>, <span class="ident">p</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _, <span class="ident">range</span>.<span class="ident">start</span> <span class="kw">as</span> _ .. <span class="ident">range</span>.<span class="ident">end</span> <span class="kw">as</span> _))
+	}
+	<span class="doccomment">/// Unmap a previously mapped memory object</span>
+	<span class="doccomment">/// # Safety</span>
+	<span class="doccomment">/// Caller must guarantee that there is no `MappedMemoryRange` alives.  </span>
+	<span class="doccomment">/// Accessing the mapped memory after this call has undefined behavior</span>
+	<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">unmap</span>(<span class="kw-2">&amp;</span><span class="self">self</span>)
+	{
+		<span class="ident">vkUnmapMemory</span>(<span class="self">self</span>.<span class="number">0</span> .<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>());
+	}
+	<span class="doccomment">/// Query the current commitment for a `DeviceMemory`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">commitment_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkDeviceSize</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">b</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">unsafe</span> { <span class="ident">vkGetDeviceMemoryCommitment</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">b</span>) }; <span class="ident">b</span>
+	}
+}
+
+<span class="doccomment">/// [feature = &quot;FeImplements&quot;] Common operations for memory bound objects</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MemoryBound</span>
+{
+	<span class="doccomment">/// Returns the memory requirements for specified Vulkan object</span>
+	<span class="kw">fn</span> <span class="ident">requirements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkMemoryRequirements</span>;
+	<span class="doccomment">/// Bind device memory to the object</span>
+	<span class="doccomment">/// # Failure</span>
+	<span class="doccomment">/// On failure, this command returns</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
+	<span class="kw">fn</span> <span class="ident">bind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="ident">DeviceMemory</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">MemoryBound</span> <span class="kw">for</span> <span class="ident">Buffer</span>
+{
+	<span class="kw">fn</span> <span class="ident">requirements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkMemoryRequirements</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">resv</span>() };
+		<span class="kw">unsafe</span> { <span class="ident">vkGetBufferMemoryRequirements</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }; <span class="ident">p</span>
+	}
+	<span class="kw">fn</span> <span class="ident">bind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="ident">DeviceMemory</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+	{
+		<span class="kw">unsafe</span> { <span class="ident">vkBindBufferMemory</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">memory</span>.<span class="ident">native_ptr</span>(), <span class="ident">offset</span> <span class="kw">as</span> _) }.<span class="ident">into_result</span>()
+	}
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">MemoryBound</span> <span class="kw">for</span> <span class="ident">Image</span>
+{
+	<span class="kw">fn</span> <span class="ident">requirements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkMemoryRequirements</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">p</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">resv</span>() };
+		<span class="kw">unsafe</span> { <span class="ident">vkGetImageMemoryRequirements</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">p</span>) }; <span class="ident">p</span>
+	}
+	<span class="kw">fn</span> <span class="ident">bind</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">memory</span>: <span class="kw-2">&amp;</span><span class="ident">DeviceMemory</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+	{
+		<span class="kw">unsafe</span> { <span class="ident">vkBindImageMemory</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="ident">memory</span>.<span class="ident">native_ptr</span>(), <span class="ident">offset</span> <span class="kw">as</span> _) }.<span class="ident">into_result</span>()
+	}
+}
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span> <span class="ident">Image</span>
+{
+	<span class="doccomment">/// Query the memory requirements for a sparse image</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sparse_requirements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">VkSparseImageMemoryRequirements</span><span class="op">&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">unsafe</span> { <span class="ident">vkGetImageSparseMemoryRequirements</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>()) };
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">n</span> <span class="kw">as</span> _); <span class="kw">unsafe</span> { <span class="ident">v</span>.<span class="ident">set_len</span>(<span class="ident">n</span> <span class="kw">as</span> _) };
+		<span class="kw">unsafe</span> { <span class="ident">vkGetImageSparseMemoryRequirements</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>()) };
+		<span class="ident">v</span>
+	}
+}
+
+<span class="doccomment">/// Image Dimension by corresponding extent type</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ImageSize</span> : <span class="ident">Into</span><span class="op">&lt;</span>::<span class="ident">Extent3D</span><span class="op">&gt;</span>
+{
+	<span class="kw">const</span> <span class="ident">DIMENSION</span>: <span class="ident">VkImageType</span>;
+}
+<span class="kw">impl</span> <span class="ident">ImageSize</span> <span class="kw">for</span> ::<span class="ident">Extent1D</span> { <span class="kw">const</span> <span class="ident">DIMENSION</span>: <span class="ident">VkImageType</span> <span class="op">=</span> <span class="ident">VK_IMAGE_TYPE_1D</span>; }
+<span class="kw">impl</span> <span class="ident">ImageSize</span> <span class="kw">for</span> ::<span class="ident">Extent2D</span> { <span class="kw">const</span> <span class="ident">DIMENSION</span>: <span class="ident">VkImageType</span> <span class="op">=</span> <span class="ident">VK_IMAGE_TYPE_2D</span>; }
+<span class="kw">impl</span> <span class="ident">ImageSize</span> <span class="kw">for</span> ::<span class="ident">Extent3D</span> { <span class="kw">const</span> <span class="ident">DIMENSION</span>: <span class="ident">VkImageType</span> <span class="op">=</span> <span class="ident">VK_IMAGE_TYPE_3D</span>; }
+
+<span class="doccomment">/// Specifies the block of mapped memory in a `DeviceMemory`</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MappedMemoryRange</span><span class="op">&lt;</span><span class="lifetime">&#39;m</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;m</span> <span class="ident">DeviceMemory</span>, <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u8</span>, ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">VkDeviceSize</span><span class="op">&gt;</span>);
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;m</span><span class="op">&gt;</span> <span class="ident">MappedMemoryRange</span><span class="op">&lt;</span><span class="lifetime">&#39;m</span><span class="op">&gt;</span>
+{
+	<span class="doccomment">/// Get a reference in mapped memory with byte offsets</span>
+	<span class="doccomment">/// # Safety</span>
+	<span class="doccomment">/// Caller must guarantee that the pointer and its alignment are valid</span>
+	<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">T</span>
+	{
+		::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">offset</span>(<span class="ident">offset</span> <span class="kw">as</span> _))
+	}
+	<span class="doccomment">/// Get a mutable reference in mapped memory with byte offsets</span>
+	<span class="doccomment">/// # Safety</span>
+	<span class="doccomment">/// Caller must guarantee that the pointer and its alignment are valid</span>
+	<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">get_mut</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>
+	{
+		::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">offset</span>(<span class="ident">offset</span> <span class="kw">as</span> _))
+	}
+	<span class="doccomment">/// Get a slice in mapped memory with byte offsets</span>
+	<span class="doccomment">/// # Safety</span>
+	<span class="doccomment">/// Caller must guarantee that the pointer and its alignment are valid</span>
+	<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">slice</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>, <span class="ident">count</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">T</span>]
+	{
+		::<span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">offset</span>(<span class="ident">offset</span> <span class="kw">as</span> _) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">count</span>)
+	}
+	<span class="doccomment">/// Get a mutable slice in mapped memory with byte offsets</span>
+	<span class="doccomment">/// # Safety</span>
+	<span class="doccomment">/// Caller must guarantee that the pointer and its alignment are valid</span>
+	<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">slice_mut</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>, <span class="ident">count</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">T</span>]
+	{
+		::<span class="ident">std</span>::<span class="ident">slice</span>::<span class="ident">from_raw_parts_mut</span>(<span class="self">self</span>.<span class="number">1</span>.<span class="ident">offset</span>(<span class="ident">offset</span> <span class="kw">as</span> _) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span>, <span class="ident">count</span>)
+	}
+	<span class="doccomment">/// Flushes the memory range manually. Returns a structure for flush operation</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">manual_flush</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkMappedMemoryRange</span>
+	{
+		<span class="kw">let</span> (<span class="ident">m</span>, <span class="ident">r</span>) <span class="op">=</span> (<span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> .<span class="number">0</span>, <span class="self">self</span>.<span class="number">2</span>.<span class="ident">clone</span>()); ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">forget</span>(<span class="self">self</span>);
+		<span class="ident">VkMappedMemoryRange</span>
+		{
+			<span class="ident">offset</span>: <span class="ident">r</span>.<span class="ident">start</span>, <span class="ident">size</span>: <span class="ident">r</span>.<span class="ident">end</span> <span class="op">-</span> <span class="ident">r</span>.<span class="ident">start</span>, <span class="ident">memory</span>: <span class="ident">m</span>, .. <span class="ident">Default</span>::<span class="ident">default</span>()
+		}
+	}
+}
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;m</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">MappedMemoryRange</span><span class="op">&lt;</span><span class="lifetime">&#39;m</span><span class="op">&gt;</span>
+{
+	<span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>)
+	{
+		<span class="kw">unsafe</span> { <span class="ident">vkFlushMappedMemoryRanges</span>(<span class="self">self</span>.<span class="number">0</span> .<span class="number">0</span> .<span class="number">1</span>.<span class="ident">native_ptr</span>(), <span class="number">1</span>, <span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="self">self</span>, <span class="ident">resv</span>()).<span class="ident">manual_flush</span>()) }
+			.<span class="ident">into_result</span>().<span class="ident">unwrap</span>();
+	}
+}
+
+<span class="doccomment">/// Following methods are enabled with [feature = &quot;FeImplements&quot; and feature = &quot;VK_KHR_swapchain&quot;]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>))]</span>
+<span class="kw">impl</span> ::<span class="ident">Swapchain</span>
+{
+	<span class="doccomment">/// Obtain the array of presentable images associated with a swapchain</span>
+	<span class="doccomment">/// # Failures</span>
+	<span class="doccomment">/// On failure, this command returns</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
+	<span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_images</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Image</span><span class="op">&gt;&gt;</span>
+	{
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">n</span> <span class="op">=</span> <span class="number">0</span>;
+		<span class="kw">unsafe</span> { <span class="ident">vkGetSwapchainImagesKHR</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null_mut</span>()) }.<span class="ident">into_result</span>()<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">n</span> <span class="kw">as</span> _); <span class="kw">unsafe</span> { <span class="ident">v</span>.<span class="ident">set_len</span>(<span class="ident">n</span> <span class="kw">as</span> _) };
+		<span class="kw">unsafe</span> { <span class="ident">vkGetSwapchainImagesKHR</span>(<span class="self">self</span>.<span class="ident">device</span>().<span class="ident">native_ptr</span>(), <span class="self">self</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">n</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>()) }.<span class="ident">into_result</span>()
+			.<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">v</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">r</span><span class="op">|</span> <span class="ident">Image</span>(<span class="ident">RefCounter</span>::<span class="ident">new</span>(<span class="ident">ImageCell</span>::<span class="ident">SwapchainChild</span> { <span class="ident">obj</span>: <span class="ident">r</span>, <span class="ident">owner</span>: <span class="self">self</span>.<span class="ident">clone</span>(), <span class="ident">fmt</span>: <span class="self">self</span>.<span class="ident">format</span>() }))).<span class="ident">collect</span>())
+	}
+}
+
+<span class="doccomment">/// Layouts of image and image subresources</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u32</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ImageLayout</span>
+{
+	<span class="doccomment">/// does not support device access</span>
+	<span class="ident">Undefined</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_UNDEFINED</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// does not support device access. host can be written to this memory immediately</span>
+	<span class="ident">Preinitialized</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_PREINITIALIZED</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// supports all types of device access</span>
+	<span class="ident">General</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_GENERAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used as a color or resolve attachment in a `Framebuffer`</span>
+	<span class="ident">ColorAttachmentOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used as a depth/stencil attachment in a `Framebuffer`</span>
+	<span class="ident">DepthStencilAttachmentOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used as a read-only depth/stencil attachment in a `Framebuffer`</span>
+	<span class="doccomment">/// and/or as a read-only image in a shader (which can be read as a sampled image,</span>
+	<span class="doccomment">/// combined image/sampler and/or input attachment).</span>
+	<span class="ident">DepthStencilReadOnlyOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used as a read-only image in a shader (which can be read as a sampled image,</span>
+	<span class="doccomment">/// combined image/sampler and/or input attachment).</span>
+	<span class="ident">ShaderReadOnlyOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used as a source image of a transfer command</span>
+	<span class="ident">TransferSrcOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used as a destination image of a transfer command</span>
+	<span class="ident">TransferDestOpt</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// must only be used for presenting a swapchain image for display</span>
+	<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_swapchain&quot;</span>)]</span>
+	<span class="ident">PresentSrc</span> <span class="op">=</span> <span class="ident">VK_IMAGE_LAYOUT_PRESENT_SRC_KHR</span> <span class="kw">as</span> _
+}
+
+<span class="doccomment">/// Structure specifying a color component mapping</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ComponentMapping</span>(<span class="kw">pub</span> <span class="ident">ComponentSwizzle</span>, <span class="kw">pub</span> <span class="ident">ComponentSwizzle</span>, <span class="kw">pub</span> <span class="ident">ComponentSwizzle</span>, <span class="kw">pub</span> <span class="ident">ComponentSwizzle</span>);
+<span class="doccomment">/// Specify how a component is swizzled</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">u32</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ComponentSwizzle</span>
+{
+	<span class="doccomment">/// the component is set to the identity swizzle</span>
+	<span class="ident">Identity</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_IDENTITY</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the component is set to zero</span>
+	<span class="ident">Zero</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_ZERO</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the component is set to either 1 or 1.0, depending on whether</span>
+	<span class="doccomment">/// the type of the image view format is integer of floating-pointer respectively</span>
+	<span class="ident">One</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_ONE</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the component is set to the value of the R component of the image</span>
+	<span class="ident">R</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_R</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the component is set to the value of the G component of the image</span>
+	<span class="ident">G</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_G</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the component is set to the value of the B component of the image</span>
+	<span class="ident">B</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_B</span> <span class="kw">as</span> _,
+	<span class="doccomment">/// the component is set to the value of the A component of the image</span>
+	<span class="ident">A</span> <span class="op">=</span> <span class="ident">VK_COMPONENT_SWIZZLE_A</span> <span class="kw">as</span> _
+}
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ComponentMapping</span> { <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="self">Self</span>::<span class="ident">all</span>(<span class="ident">ComponentSwizzle</span>::<span class="ident">Identity</span>) } }
+<span class="kw">impl</span> <span class="ident">ComponentMapping</span>
+{
+	<span class="doccomment">/// Set same value to all component</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">all</span>(<span class="ident">s</span>: <span class="ident">ComponentSwizzle</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ComponentMapping</span>(<span class="ident">s</span>, <span class="ident">s</span>, <span class="ident">s</span>, <span class="ident">s</span>) }
+	<span class="doccomment">/// Set 2 values with repeating</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set2</span>(<span class="ident">a</span>: <span class="ident">ComponentSwizzle</span>, <span class="ident">b</span>: <span class="ident">ComponentSwizzle</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">ComponentMapping</span>(<span class="ident">a</span>, <span class="ident">b</span>, <span class="ident">a</span>, <span class="ident">b</span>) }
+}
+<span class="doccomment">/// Structure specifying a image subresource range</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ImageSubresourceRange</span>
+{
+	<span class="kw">pub</span> <span class="ident">aspect_mask</span>: <span class="ident">AspectMask</span>, <span class="kw">pub</span> <span class="ident">mip_levels</span>: ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>, <span class="kw">pub</span> <span class="ident">array_layers</span>: ::<span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Range</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>
+}
+<span class="doccomment">/// Bitmask specifying which aspects of an image are included in a view</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span> <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AspectMask</span>(<span class="kw">pub</span> <span class="ident">VkImageAspectFlags</span>);
+<span class="kw">impl</span> <span class="ident">AspectMask</span>
+{
+	<span class="doccomment">/// The color aspect</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">COLOR</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">AspectMask</span>(<span class="ident">VK_IMAGE_ASPECT_COLOR_BIT</span>);
+	<span class="doccomment">/// The depth aspect</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">DEPTH</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">AspectMask</span>(<span class="ident">VK_IMAGE_ASPECT_DEPTH_BIT</span>);
+	<span class="doccomment">/// The stencil aspect</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">STENCIL</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">AspectMask</span>(<span class="ident">VK_IMAGE_ASPECT_STENCIL_BIT</span>);
+	<span class="doccomment">/// The metadata aspect, used for sparse sparse resource operations</span>
+	<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">METADATA</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">AspectMask</span>(<span class="ident">VK_IMAGE_ASPECT_METADATA_BIT</span>);
+
+	<span class="doccomment">/// The color aspect</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">color</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">AspectMask</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">COLOR</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The depth aspect</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">depth</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">AspectMask</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">DEPTH</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The stencil aspect</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stencil</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">AspectMask</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">STENCIL</span>.<span class="number">0</span>) }
+	<span class="doccomment">/// The metadata aspect, used for sparse sparse resource oeprations</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">metadata</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">AspectMask</span>(<span class="self">self</span>.<span class="number">0</span> <span class="op">|</span> <span class="self">Self</span>::<span class="ident">METADATA</span>.<span class="number">0</span>) }
+}
+
+<span class="doccomment">/// Opaque handle to a sampler object</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Sampler</span>(<span class="ident">VkSampler</span>, ::<span class="ident">Device</span>);
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span> <span class="macro">DeviceChildCommonDrop</span><span class="macro">!</span>{ <span class="kw">for</span> <span class="ident">Sampler</span>[<span class="ident">vkDestroySampler</span>] }
+
+<span class="kw">impl</span> <span class="ident">VkHandle</span> <span class="kw">for</span> <span class="ident">Sampler</span> { <span class="kw">type</span> <span class="ident">Handle</span> <span class="op">=</span> <span class="ident">VkSampler</span>; <span class="kw">fn</span> <span class="ident">native_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">VkSampler</span> { <span class="self">self</span>.<span class="number">0</span> } }
+<span class="kw">impl</span> <span class="ident">DeviceChild</span> <span class="kw">for</span> <span class="ident">Sampler</span> { <span class="kw">fn</span> <span class="ident">device</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>::<span class="ident">Device</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">1</span> } }
+
+<span class="doccomment">/// Specify behavior of sampling with texture coordinates outside an image</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">AddressingMode</span>
+{
+    <span class="doccomment">/// The repeat wrap mode</span>
+    <span class="ident">Repeat</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_ADDRESS_MODE_REPEAT</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// The mirrored repeat wrap mode</span>
+    <span class="ident">MirroredRepeat</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// The clamp to edge wrap mode</span>
+    <span class="ident">ClampToEdge</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// The clamp to border wrap mode</span>
+    <span class="ident">ClampToBorder</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// The mirror clamp to edge wrap mode</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_mirror_clamp_to_edge&quot;</span>)]</span>
+    <span class="ident">MirrorClampToEdge</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE</span> <span class="kw">as</span> _
+}
+<span class="doccomment">/// Specify filter used for texture lookups</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FilterMode</span>
+{
+    <span class="doccomment">/// Nearest filtering</span>
+    <span class="ident">Nearest</span> <span class="op">=</span> <span class="ident">VK_FILTER_NEAREST</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// Linear filtering</span>
+    <span class="ident">Linear</span> <span class="op">=</span> <span class="ident">VK_FILTER_LINEAR</span> <span class="kw">as</span> _
+}
+<span class="doccomment">/// Specify mipmap mode used for texture lookups</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">MipmapFilterMode</span>
+{
+    <span class="doccomment">/// Nearest filtering</span>
+    <span class="ident">Nearest</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_MIPMAP_MODE_NEAREST</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// Linear filtering</span>
+    <span class="ident">Linear</span> <span class="op">=</span> <span class="ident">VK_SAMPLER_MIPMAP_MODE_LINEAR</span> <span class="kw">as</span> _
+}
+<span class="doccomment">/// Specify border color used for texture lookups</span>
+<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span> <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BorderColor</span>
+{
+    <span class="doccomment">/// A transparent, floating-point format, black color</span>
+    <span class="ident">TransparentBlackF</span> <span class="op">=</span> <span class="ident">VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// A transparent, integer format, black color</span>
+    <span class="ident">TransparentBlackI</span> <span class="op">=</span> <span class="ident">VK_BORDER_COLOR_INT_TRANSPARENT_BLACK</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// An opaque, floating-point format, black color</span>
+    <span class="ident">OpaqueBlackF</span> <span class="op">=</span> <span class="ident">VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// An opaque, integer format, black color</span>
+    <span class="ident">OpaqueBlackI</span> <span class="op">=</span> <span class="ident">VK_BORDER_COLOR_INT_OPAQUE_BLACK</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// An opaque, floating-point format, white color</span>
+    <span class="ident">OpaqueWhiteF</span> <span class="op">=</span> <span class="ident">VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE</span> <span class="kw">as</span> _,
+    <span class="doccomment">/// An opaque, integer format, white color</span>
+    <span class="ident">OpaqueWhiteI</span> <span class="op">=</span> <span class="ident">VK_BORDER_COLOR_INT_OPAQUE_WHITE</span> <span class="kw">as</span> _
+}
+<span class="doccomment">/// Builder object for constructing the sampler object</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SamplerBuilder</span>(<span class="ident">VkSamplerCreateInfo</span>);
+<span class="kw">impl</span> <span class="ident">SamplerBuilder</span>
+{
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="self">Self</span>
+    {
+        <span class="ident">SamplerBuilder</span>(<span class="ident">VkSamplerCreateInfo</span>
+        {
+            <span class="ident">magFilter</span>: <span class="ident">FilterMode</span>::<span class="ident">Linear</span> <span class="kw">as</span> _, <span class="ident">minFilter</span>: <span class="ident">FilterMode</span>::<span class="ident">Linear</span> <span class="kw">as</span> _, <span class="ident">mipmapMode</span>: <span class="ident">MipmapFilterMode</span>::<span class="ident">Linear</span> <span class="kw">as</span> _,
+            <span class="ident">addressModeU</span>: <span class="ident">AddressingMode</span>::<span class="ident">Repeat</span> <span class="kw">as</span> _, <span class="ident">addressModeV</span>: <span class="ident">AddressingMode</span>::<span class="ident">Repeat</span> <span class="kw">as</span> _, <span class="ident">addressModeW</span>: <span class="ident">AddressingMode</span>::<span class="ident">Repeat</span> <span class="kw">as</span> _,
+            <span class="ident">mipLodBias</span>: <span class="number">0.0</span>, <span class="ident">anisotropyEnable</span>: <span class="bool-val">false</span> <span class="kw">as</span> _, <span class="ident">compareEnable</span>: <span class="bool-val">false</span> <span class="kw">as</span> _, <span class="ident">compareOp</span>: ::<span class="ident">CompareOp</span>::<span class="ident">Always</span> <span class="kw">as</span> _,
+            <span class="ident">minLod</span>: <span class="number">0.0</span>, <span class="ident">maxLod</span>: <span class="number">0.0</span>, <span class="ident">borderColor</span>: <span class="ident">BorderColor</span>::<span class="ident">TransparentBlackF</span> <span class="kw">as</span> _, <span class="ident">unnormalizedCoordinates</span>: <span class="bool-val">false</span> <span class="kw">as</span> _,
+            .. <span class="ident">Default</span>::<span class="ident">default</span>()
+        })
+    }
+    <span class="doccomment">/// The magnification and the minification filters to apply to lookups.  </span>
+    <span class="doccomment">/// Default: Magnification=`FilterMode::Linear`, Minification=`FilterMode::Linear`</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mag</span>: <span class="ident">FilterMode</span>, <span class="ident">min</span>: <span class="ident">FilterMode</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">magFilter</span> <span class="op">=</span> <span class="ident">mag</span> <span class="kw">as</span> _; <span class="self">self</span>.<span class="number">0</span>.<span class="ident">minFilter</span> <span class="op">=</span> <span class="ident">min</span> <span class="kw">as</span> _; <span class="self">self</span>
+    }
+    <span class="doccomment">/// The mipmap filter to apply to lookups.  </span>
+	<span class="doccomment">/// Default: `MipmapFilterMode::Linear`</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">mip_filter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">MipmapFilterMode</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">mipmapMode</span> <span class="op">=</span> <span class="ident">f</span> <span class="kw">as</span> _; <span class="self">self</span>
+    }
+    <span class="doccomment">/// The addressing mode for outside [0..1] range for U, V and W coordinates.  </span>
+    <span class="doccomment">/// Default: U=`AddressingMode::Repeat`, V=`AddressinMode::Repeat`, W=`AddressingMode::Repeat`</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">addressing</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">u</span>: <span class="ident">AddressingMode</span>, <span class="ident">v</span>: <span class="ident">AddressingMode</span>, <span class="ident">w</span>: <span class="ident">AddressingMode</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">addressModeU</span> <span class="op">=</span> <span class="ident">u</span> <span class="kw">as</span> _; <span class="self">self</span>.<span class="number">0</span>.<span class="ident">addressModeV</span> <span class="op">=</span> <span class="ident">v</span> <span class="kw">as</span> _; <span class="self">self</span>.<span class="number">0</span>.<span class="ident">addressModeW</span> <span class="op">=</span> <span class="ident">w</span> <span class="kw">as</span> _; <span class="self">self</span>
+    }
+    <span class="doccomment">/// The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V,</span>
+    <span class="doccomment">/// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  </span>
+    <span class="doccomment">/// Default: 0.0</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lod_bias</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">bias</span>: <span class="ident">f32</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">mipLodBias</span> <span class="op">=</span> <span class="ident">bias</span>; <span class="self">self</span> }
+    <span class="doccomment">/// The anisotropy value clamp. Specifying `None` switches off the anisotropic filtering  </span>
+    <span class="doccomment">/// Default: `None`</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">max_anisotropy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">level</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">anisotropyEnable</span> <span class="op">=</span> <span class="ident">level</span>.<span class="ident">is_some</span>() <span class="kw">as</span> _;
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">maxAnisotropy</span> <span class="op">=</span> <span class="ident">level</span>.<span class="ident">unwrap_or_default</span>(); <span class="self">self</span>
+    }
+    <span class="doccomment">/// The comparison function to apply to fetched data before filtering</span>
+    <span class="doccomment">/// as described in the `Depth Compare Operation` section in Vulkan Specification.</span>
+    <span class="doccomment">/// Specifying `None` switches off the comparison against a reference value during lookups.  </span>
+    <span class="doccomment">/// Default: `None`</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">comparison</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">op</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span>::<span class="ident">CompareOp</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">compareEnable</span> <span class="op">=</span> <span class="ident">op</span>.<span class="ident">is_some</span>() <span class="kw">as</span> _;
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">compareOp</span> <span class="op">=</span> <span class="ident">op</span>.<span class="ident">unwrap_or</span>(::<span class="ident">CompareOp</span>::<span class="ident">Always</span>) <span class="kw">as</span> _; <span class="self">self</span>
+    }
+    <span class="doccomment">/// The values used to clamp the computed level-of-detail value,</span>
+    <span class="doccomment">/// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  </span>
+    <span class="doccomment">/// Default: min_lod=0.0, max_lod=0.0</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">/// `max_lod` must be greater than or equal to `min_lod`</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lod_clamp</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">min_lod</span>: <span class="ident">f32</span>, <span class="ident">max_lod</span>: <span class="ident">f32</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">max_lod</span> <span class="op">&gt;=</span> <span class="ident">min_lod</span>);
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">minLod</span> <span class="op">=</span> <span class="ident">min_lod</span>; <span class="self">self</span>.<span class="number">0</span>.<span class="ident">maxLod</span> <span class="op">=</span> <span class="ident">max_lod</span>; <span class="self">self</span>
+    }
+    <span class="doccomment">/// Whether to use unnormalized or normalized texel coordinates to address texels of the image.  </span>
+    <span class="doccomment">/// Default: `false`</span>
+    <span class="doccomment">/// # Safety</span>
+    <span class="doccomment">/// User must meet the constraints as described in the &quot;Valid Usage&quot; section in the `VkSamplerCreateInfo` manual page</span>
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">unnormalized_coordinates</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">use_unnormalized</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">unnormalizedCoordinates</span> <span class="op">=</span> <span class="ident">use_unnormalized</span> <span class="kw">as</span> _; <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// [feature = &quot;FeImplements&quot;] Create a new sampler object</span>
+    <span class="doccomment">/// # Failures</span>
+    <span class="doccomment">/// On failure, this command returns</span>
+	<span class="doccomment">/// </span>
+    <span class="doccomment">/// * `VK_ERROR_OUT_OF_HOST_MEMORY`</span>
+    <span class="doccomment">/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`</span>
+    <span class="doccomment">/// * `VK_ERROR_TOO_MANY_OBJECTS`</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">device</span>: <span class="kw-2">&amp;</span>::<span class="ident">Device</span>) <span class="op">-&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Sampler</span><span class="op">&gt;</span>
+    {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">VK_NULL_HANDLE</span> <span class="kw">as</span> _;
+        <span class="kw">unsafe</span> { <span class="ident">vkCreateSampler</span>(<span class="ident">device</span>.<span class="ident">native_ptr</span>(), <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>, ::<span class="ident">std</span>::<span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">h</span>) }
+            .<span class="ident">into_result</span>().<span class="ident">map</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">Sampler</span>(<span class="ident">h</span>, <span class="ident">device</span>.<span class="ident">clone</span>()))
+    }
+}
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt style="width:31px;">+ / -</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

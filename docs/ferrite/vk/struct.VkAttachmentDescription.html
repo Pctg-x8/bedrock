@@ -48,7 +48,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#2056-2148' title='goto source code'>[src]</a></span></h1>
+               </span><a class='srclink' href='../../src/ferrite/vk/mod.rs.html#2056-2149' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'><div class="docblock attributes">#[repr(C)]
 </div>pub struct VkAttachmentDescription {
     pub flags: <a class="type" href="../../ferrite/vk/type.VkAttachmentDescriptionFlags.html" title="type ferrite::vk::VkAttachmentDescriptionFlags">VkAttachmentDescriptionFlags</a>,
@@ -83,7 +83,7 @@
                            <code>samples: <a class="type" href="../../ferrite/vk/type.VkSampleCountFlags.html" title="type ferrite::vk::VkSampleCountFlags">VkSampleCountFlags</a></code>
                            </span></span><div class='docblock'><p>The number of samples of the image as defined in <code>VkSampleCountFlagBits</code></p>
 
-<h2 id='possible-values' class='section-header'><a href='#possible-values'>Possible Values</a></h2>
+<h2 id='possible-bitmasks-1' class='section-header'><a href='#possible-bitmasks-1'>Possible Bitmasks</a></h2>
 <p>1, 2, 4, 8, 16, 32, 64</p>
 </div><span id="structfield.loadOp" class="structfield small-section-header">
                            <a href="#structfield.loadOp" class="anchor field"></a>
@@ -92,10 +92,10 @@
                            </span></span><div class='docblock'><p>A <code>VkAttachmentLoadOp</code> value specifying how the contents of color and depth components of the attachment are
 treated at the beginning of the subpass where it is first used</p>
 
-<h2 id='possible-values-1' class='section-header'><a href='#possible-values-1'>Possible Values</a></h2>
+<h2 id='possible-values' class='section-header'><a href='#possible-values'>Possible Values</a></h2>
 <ul>
-<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code>: The previous contents of the image within the render are will be preserved.</li>
-<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code>: The contents within the render are will be cleared to a uniform value,
+<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code>: The previous contents of the image within the render area will be preserved.</li>
+<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code>: The contents within the render area will be cleared to a uniform value,
 which is specified when a render pass instance is begun.</li>
 <li><code>VK_ATTACHMENT_LOAD_OP_DONT_CARE</code>: The previous contents within the area need not be preserved;
 the contents of the attachment will be undefined inside the render area.</li>
@@ -136,7 +136,7 @@ the contents of the attachment will be undefined inside the render area.</li>
                            </span></span><div class='docblock'><p>A <code>VkAttachmentStoreOp</code> value specifying how the contents of color and depth components of the attachment are
 treated at the end of the subpass where it is last used.</p>
 
-<h2 id='possible-values-2' class='section-header'><a href='#possible-values-2'>Possible Values</a></h2>
+<h2 id='possible-values-1' class='section-header'><a href='#possible-values-1'>Possible Values</a></h2>
 <ul>
 <li><code>VK_ATTACHMENT_STORE_OP_STORE</code>: The contents generated during the render pass and within the render area are
 written to memory.</li>
@@ -156,10 +156,10 @@ and <em>may</em> be discarded; the contents of the attachment will be undefined 
                            </span></span><div class='docblock'><p>A <code>VkAttachmentLoadOp</code> value specifying how the contents of stencil components of the attachment are
 treated at the beginning of the subpass where it is first used</p>
 
-<h2 id='possible-values-3' class='section-header'><a href='#possible-values-3'>Possible Values</a></h2>
+<h2 id='possible-values-2' class='section-header'><a href='#possible-values-2'>Possible Values</a></h2>
 <ul>
-<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code>: The previous contents of the image within the render are will be preserved.</li>
-<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code>: The contents within the render are will be cleared to a uniform value,
+<li><code>VK_ATTACHMENT_LOAD_OP_LOAD</code>: The previous contents of the image within the render area will be preserved.</li>
+<li><code>VK_ATTACHMENT_LOAD_OP_CLEAR</code>: The contents within the render area will be cleared to a uniform value,
 which is specified when a render pass instance is begun.</li>
 <li><code>VK_ATTACHMENT_LOAD_OP_DONT_CARE</code>: The previous contents within the area need not be preserved;
 the contents of the attachment will be undefined inside the render area.</li>
@@ -178,7 +178,7 @@ the contents of the attachment will be undefined inside the render area.</li>
                            </span></span><div class='docblock'><p>A <code>VkAttachmentStoreOp</code> value specifying how the contents of stencil components of the attachment are
 treated at the end of the subpass where it is last used.</p>
 
-<h2 id='possible-values-4' class='section-header'><a href='#possible-values-4'>Possible Values</a></h2>
+<h2 id='possible-values-3' class='section-header'><a href='#possible-values-3'>Possible Values</a></h2>
 <ul>
 <li><code>VK_ATTACHMENT_STORE_OP_STORE</code>: The contents generated during the render pass and within the render area are
 written to memory.</li>
@@ -200,7 +200,7 @@ and <em>may</em> be discarded; the contents of the attachment will be undefined 
                            <span id="finalLayout.v" class='invisible'>
                            <code>finalLayout: <a class="type" href="../../ferrite/vk/type.VkImageLayout.html" title="type ferrite::vk::VkImageLayout">VkImageLayout</a></code>
                            </span></span><div class='docblock'><p>The layout the attachment image subresource will be transitioned to when a render pass instance ends.
-During a render pass instance, an attachment <em>can</em> use a different layoutin each subpass, if desired.</p>
+During a render pass instance, an attachment <em>can</em> use a different layout in each subpass, if desired.</p>
 </div>
             <h2 id='implementations' class='small-section-header'>
               Trait Implementations<a href='#implementations' class='anchor'></a>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="Source to the Rust file `src\fnconv.rs`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang">
+
+    <title>fnconv.rs.html -- source</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc source">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<span id="2"> 2</span>
+<span id="3"> 3</span>
+<span id="4"> 4</span>
+<span id="5"> 5</span>
+<span id="6"> 6</span>
+<span id="7"> 7</span>
+<span id="8"> 8</span>
+<span id="9"> 9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+</pre><pre class="rust ">
+<span class="doccomment">//! FFI Function Conversions</span>
+
+<span class="kw">use</span> <span class="ident">vk</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">std</span>;
+
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">FnTransmute</span> : <span class="ident">Sized</span>
+{
+	<span class="doccomment">/// Transmute unknown function pointer into another function pointer</span>
+	<span class="doccomment">/// # Safety</span>
+	<span class="doccomment">/// If source pointer is not pointed valid function entry point, calling returned pointer has undefined behavior</span>
+	<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_fn</span>(<span class="ident">p</span>: <span class="ident">PFN_vkVoidFunction</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+}
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">FnTransmuteImpl</span>
+{
+	(<span class="kw">for</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>: <span class="ident">ty</span>),<span class="kw-2">*</span>) <span class="op">=&gt;</span>
+	{
+		$(<span class="kw">impl</span> <span class="ident">FnTransmute</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> { <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_fn</span>(<span class="ident">p</span>: <span class="ident">PFN_vkVoidFunction</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">p</span>) } })<span class="op">*</span>
+	}
+}
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateInstance</span>, <span class="ident">PFN_vkDestroyInstance</span>, <span class="ident">PFN_vkEnumeratePhysicalDevices</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetPhysicalDeviceFeatures</span>, <span class="ident">PFN_vkGetPhysicalDeviceFormatProperties</span>, <span class="ident">PFN_vkGetPhysicalDeviceImageFormatProperties</span>,
+	<span class="ident">PFN_vkGetPhysicalDeviceProperties</span>, <span class="ident">PFN_vkGetPhysicalDeviceQueueFamilyProperties</span>, <span class="ident">PFN_vkGetPhysicalDeviceMemoryProperties</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetInstanceProcAddr</span>, <span class="ident">PFN_vkGetDeviceProcAddr</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateDevice</span>, <span class="ident">PFN_vkDestroyDevice</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkEnumerateInstanceExtensionProperties</span>, <span class="ident">PFN_vkEnumerateDeviceExtensionProperties</span>,
+	<span class="ident">PFN_vkEnumerateInstanceLayerProperties</span>, <span class="ident">PFN_vkEnumerateDeviceLayerProperties</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetDeviceQueue</span>, <span class="ident">PFN_vkQueueSubmit</span>, <span class="ident">PFN_vkQueueWaitIdle</span>, <span class="ident">PFN_vkDeviceWaitIdle</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkAllocateMemory</span>, <span class="ident">PFN_vkFreeMemory</span>, <span class="ident">PFN_vkMapMemory</span>, <span class="ident">PFN_vkUnmapMemory</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkDevice</span>, <span class="ident">u32</span>, <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkMappedMemoryRange</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>); <span class="comment">// FlushMappedMemoryRanges, InvalidateMappedMemoryRanges</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetDeviceMemoryCommitment</span>,
+	<span class="ident">PFN_vkBindBufferMemory</span>, <span class="ident">PFN_vkBindImageMemory</span>, <span class="ident">PFN_vkGetBufferMemoryRequirements</span>, <span class="ident">PFN_vkGetImageMemoryRequirements</span>, <span class="ident">PFN_vkGetImageSparseMemoryRequirements</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetPhysicalDeviceSparseImageFormatProperties</span>, <span class="ident">PFN_vkQueueBindSparse</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateFence</span>, <span class="ident">PFN_vkDestroyFence</span>, <span class="ident">PFN_vkResetFences</span>, <span class="ident">PFN_vkGetFenceStatus</span>, <span class="ident">PFN_vkWaitForFences</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateSemaphore</span>, <span class="ident">PFN_vkDestroySemaphore</span>, <span class="ident">PFN_vkCreateEvent</span>, <span class="ident">PFN_vkDestroyEvent</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkDevice</span>, <span class="ident">VkEvent</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>);	<span class="comment">// SetEvent, ResetEvent, GetEventStatus</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateQueryPool</span>, <span class="ident">PFN_vkDestroyQueryPool</span>, <span class="ident">PFN_vkGetQueryPoolResults</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateBuffer</span>, <span class="ident">PFN_vkDestroyBuffer</span>, <span class="ident">PFN_vkCreateBufferView</span>, <span class="ident">PFN_vkDestroyBufferView</span>,
+	<span class="ident">PFN_vkCreateImage</span>, <span class="ident">PFN_vkDestroyImage</span>, <span class="ident">PFN_vkCreateImageView</span>, <span class="ident">PFN_vkGetImageSubresourceLayout</span>, <span class="ident">PFN_vkDestroyImageView</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateShaderModule</span>, <span class="ident">PFN_vkDestroyShaderModule</span>, <span class="ident">PFN_vkCreatePipelineCache</span>, <span class="ident">PFN_vkDestroyPipelineCache</span>, <span class="ident">PFN_vkGetPipelineCacheData</span>,
+	<span class="ident">PFN_vkMergePipelineCaches</span>, <span class="ident">PFN_vkCreateGraphicsPipelines</span>, <span class="ident">PFN_vkCreateComputePipelines</span>, <span class="ident">PFN_vkDestroyPipeline</span>,
+	<span class="ident">PFN_vkCreatePipelineLayout</span>, <span class="ident">PFN_vkDestroyPipelineLayout</span>, <span class="ident">PFN_vkCreateSampler</span>, <span class="ident">PFN_vkDestroySampler</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateDescriptorSetLayout</span>, <span class="ident">PFN_vkDestroyDescriptorSetLayout</span>, <span class="ident">PFN_vkCreateDescriptorPool</span>, <span class="ident">PFN_vkDestroyDescriptorPool</span>,
+	<span class="ident">PFN_vkResetDescriptorPool</span>, <span class="ident">PFN_vkAllocateDescriptorSets</span>, <span class="ident">PFN_vkFreeDescriptorSets</span>, <span class="ident">PFN_vkUpdateDescriptorSets</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateFramebuffer</span>, <span class="ident">PFN_vkDestroyFramebuffer</span>, <span class="ident">PFN_vkCreateRenderPass</span>, <span class="ident">PFN_vkDestroyRenderPass</span>, <span class="ident">PFN_vkGetRenderAreaGranularity</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateCommandPool</span>, <span class="ident">PFN_vkDestroyCommandPool</span>, <span class="ident">PFN_vkAllocateCommandBuffers</span>, <span class="ident">PFN_vkFreeCommandBuffers</span>, <span class="ident">PFN_vkBeginCommandBuffer</span>, <span class="ident">PFN_vkEndCommandBuffer</span>, <span class="ident">PFN_vkResetCommandBuffer</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCmdBindPipeline</span>, <span class="ident">PFN_vkCmdSetViewport</span>, <span class="ident">PFN_vkCmdSetScissor</span>, <span class="ident">PFN_vkCmdSetLineWidth</span>, <span class="ident">PFN_vkCmdSetDepthBias</span>, <span class="ident">PFN_vkCmdSetBlendConstants</span>, <span class="ident">PFN_vkCmdSetDepthBounds</span>, <span class="ident">PFN_vkCmdSetStencilCompareMask</span>,
+	<span class="ident">PFN_vkCmdBindDescriptorSets</span>, <span class="ident">PFN_vkCmdBindIndexBuffer</span>, <span class="ident">PFN_vkCmdBindVertexBuffers</span>, <span class="ident">PFN_vkCmdDraw</span>, <span class="ident">PFN_vkCmdDrawIndexed</span>, <span class="ident">PFN_vkCmdDispatch</span>, <span class="ident">PFN_vkCmdDispatchIndirect</span>,
+	<span class="ident">PFN_vkCmdCopyBuffer</span>, <span class="ident">PFN_vkCmdCopyImage</span>, <span class="ident">PFN_vkCmdBlitImage</span>, <span class="ident">PFN_vkCmdCopyBufferToImage</span>, <span class="ident">PFN_vkCmdCopyImageToBuffer</span>, <span class="ident">PFN_vkCmdUpdateBuffer</span>,
+	<span class="ident">PFN_vkCmdFillBuffer</span>, <span class="ident">PFN_vkCmdClearColorImage</span>, <span class="ident">PFN_vkCmdClearDepthStencilImage</span>, <span class="ident">PFN_vkCmdClearAttachments</span>,
+	<span class="ident">PFN_vkCmdResolveImage</span>, <span class="ident">PFN_vkCmdWaitEvents</span>, <span class="ident">PFN_vkCmdPipelineBarrier</span>, <span class="ident">PFN_vkCmdEndQuery</span>, <span class="ident">PFN_vkCmdWriteTimestamp</span>, <span class="ident">PFN_vkCmdCopyQueryPoolResults</span>,
+	<span class="ident">PFN_vkCmdPushConstants</span>, <span class="ident">PFN_vkCmdBeginRenderPass</span>, <span class="ident">PFN_vkCmdNextSubpass</span>, <span class="ident">PFN_vkCmdEndRenderPass</span>, <span class="ident">PFN_vkCmdExecuteCommands</span>);
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkCommandBuffer</span>, <span class="ident">VkBuffer</span>, <span class="ident">VkDeviceSize</span>, <span class="ident">u32</span>, <span class="ident">u32</span>));	<span class="comment">// CmdDrawIndirect, CmdDrawIndexedIndirect</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkCommandBuffer</span>, <span class="ident">VkEvent</span>, <span class="ident">VkPipelineStageFlags</span>));		<span class="comment">// CmdSetEvent, CmdResetEvent</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">VkCommandBuffer</span>, <span class="ident">VkQueryPool</span>, <span class="ident">u32</span>, <span class="ident">u32</span>));				<span class="comment">// CmdBeginQuery, CmdResetQueryPool</span>
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_surface&quot;</span>)]</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkDestroySurfaceKHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfaceSupportKHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR</span>,
+	<span class="ident">PFN_vkGetPhysicalDeviceSurfaceFormatsKHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfacePresentModesKHR</span>);
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_EXT_debug_report&quot;</span>)]</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkCreateDebugReportCallbackEXT</span>, <span class="ident">PFN_vkDebugReportMessageEXT</span>, <span class="ident">PFN_vkDestroyDebugReportCallbackEXT</span>);
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;VK_KHR_get_surface_capabilities2&quot;</span>)]</span>
+<span class="macro">FnTransmuteImpl</span><span class="macro">!</span>(<span class="kw">for</span> <span class="ident">PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR</span>, <span class="ident">PFN_vkGetPhysicalDeviceSurfaceFormats2KHR</span>);
+</pre>
+</section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt style="width:31px;">+ / -</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

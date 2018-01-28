@@ -2077,8 +2077,8 @@ pub struct VkAttachmentDescription
     /// 
     /// ## Possible Values
     /// 
-    /// * `VK_ATTACHMENT_LOAD_OP_LOAD`: The previous contents of the image within the render are will be preserved.
-    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR`: The contents within the render are will be cleared to a uniform value,
+    /// * `VK_ATTACHMENT_LOAD_OP_LOAD`: The previous contents of the image within the render area will be preserved.
+    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR`: The contents within the render area will be cleared to a uniform value,
     ///   which is specified when a render pass instance is begun.
     /// * `VK_ATTACHMENT_LOAD_OP_DONT_CARE`: The previous contents within the area need not be preserved;
     ///   the contents of the attachment will be undefined inside the render area.
@@ -2113,8 +2113,8 @@ pub struct VkAttachmentDescription
     /// 
     /// ## Possible Values
     /// 
-    /// * `VK_ATTACHMENT_LOAD_OP_LOAD`: The previous contents of the image within the render are will be preserved.
-    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR`: The contents within the render are will be cleared to a uniform value,
+    /// * `VK_ATTACHMENT_LOAD_OP_LOAD`: The previous contents of the image within the render area will be preserved.
+    /// * `VK_ATTACHMENT_LOAD_OP_CLEAR`: The contents within the render area will be cleared to a uniform value,
     ///   which is specified when a render pass instance is begun.
     /// * `VK_ATTACHMENT_LOAD_OP_DONT_CARE`: The previous contents within the area need not be preserved;
     ///   the contents of the attachment will be undefined inside the render area.
@@ -2144,7 +2144,7 @@ pub struct VkAttachmentDescription
     /// The layout the attachment image subresource will be in when a render pass instance begins.
     pub initialLayout: VkImageLayout,
     /// The layout the attachment image subresource will be transitioned to when a render pass instance ends.
-    /// During a render pass instance, an attachment *can* use a different layoutin each subpass, if desired.
+    /// During a render pass instance, an attachment *can* use a different layout in each subpass, if desired.
     pub finalLayout: VkImageLayout
 }
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `DeviceBuilder` struct in crate `ferrite`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, DeviceBuilder">
+
+    <title>ferrite::DeviceBuilder - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct DeviceBuilder</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.new">new</a><a href="#method.add_layer">add_layer</a><a href="#method.add_extension">add_extension</a><a href="#method.add_extension_zerotermed">add_extension_zerotermed</a><a href="#method.add_layers">add_layers</a><a href="#method.add_extensions">add_extensions</a><a href="#method.add_queue">add_queue</a><a href="#method.add_queues">add_queues</a><a href="#method.create">create</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'DeviceBuilder', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>ferrite</a>::<wbr><a class="struct" href=''>DeviceBuilder</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/ferrite/device.rs.html#83-87' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct DeviceBuilder&lt;'p&gt; { /* fields omitted */ }</pre><div class='docblock'><p>Builder object for constructing a <code>Device</code></p>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl&lt;'p&gt; <a class="struct" href="../ferrite/struct.DeviceBuilder.html" title="struct ferrite::DeviceBuilder">DeviceBuilder</a>&lt;'p&gt;</code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#88-144' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>pub fn <a href='#method.new' class='fnname'>new</a>(pdev: &amp;'p <a class="struct" href="../ferrite/struct.PhysicalDevice.html" title="struct ferrite::PhysicalDevice">PhysicalDevice</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#90-93' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_layer' class="method"><span id='add_layer.v' class='invisible'><code>pub fn <a href='#method.add_layer' class='fnname'>add_layer</a>(self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#94' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_extension' class="method"><span id='add_extension.v' class='invisible'><code>pub fn <a href='#method.add_extension' class='fnname'>add_extension</a>(self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#95' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_extension_zerotermed' class="method"><span id='add_extension_zerotermed.v' class='invisible'><code>pub fn <a href='#method.add_extension_zerotermed' class='fnname'>add_extension_zerotermed</a>(self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#96-99' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_layers' class="method"><span id='add_layers.v' class='invisible'><code>pub fn <a href='#method.add_layers' class='fnname'>add_layers</a>&lt;'s, Layers:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = &amp;'s <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;layers: Layers<br>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#100-103' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_extensions' class="method"><span id='add_extensions.v' class='invisible'><code>pub fn <a href='#method.add_extensions' class='fnname'>add_extensions</a>&lt;'s, Extensions:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = &amp;'s <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;extensions: Extensions<br>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#104-107' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_queue' class="method"><span id='add_queue.v' class='invisible'><code>pub fn <a href='#method.add_queue' class='fnname'>add_queue</a>(self, info: <a class="struct" href="../ferrite/struct.DeviceQueueCreateInfo.html" title="struct ferrite::DeviceQueueCreateInfo">DeviceQueueCreateInfo</a>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#108' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.add_queues' class="method"><span id='add_queues.v' class='invisible'><code>pub fn <a href='#method.add_queues' class='fnname'>add_queues</a>&lt;Queues:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/core/iter/traits/trait.IntoIterator.html" title="trait core::iter::traits::IntoIterator">IntoIterator</a>&lt;Item = <a class="struct" href="../ferrite/struct.DeviceQueueCreateInfo.html" title="struct ferrite::DeviceQueueCreateInfo">DeviceQueueCreateInfo</a>&gt;&gt;(<br>&nbsp;&nbsp;&nbsp;&nbsp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;queues: Queues<br>) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#109-112' title='goto source code'>[src]</a></span></h4>
+<h4 id='method.create' class="method"><span id='create.v' class='invisible'><code>pub fn <a href='#method.create' class='fnname'>create</a>(self) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/device.rs.html#125-143' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>[feature = &quot;FeImplements&quot;] Create a new device instance</p>
+
+<h1 id='failures' class='section-header'><a href='#failures'>Failures</a></h1>
+<p>On failure, this command returns</p>
+
+<ul>
+<li><code>VK_ERROR_OUT_OF_HOST_MEMORY</code></li>
+<li><code>VK_ERROR_OUT_OF_DEVICE_MEMORY</code></li>
+<li><code>VK_ERROR_INITIALIZATION_FAILED</code></li>
+<li><code>VK_ERROR_EXTENSION_NOT_PRESENT</code></li>
+<li><code>VK_ERROR_FEATURE_NOT_PRESENT</code></li>
+<li><code>VK_ERROR_TOO_MANY_OBJECTS</code></li>
+<li><code>VK_ERROR_DEVICE_LOST</code></li>
+</ul>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt style="width:31px;">+ / -</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

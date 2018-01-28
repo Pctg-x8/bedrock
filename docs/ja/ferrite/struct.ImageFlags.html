@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ImageFlags` struct in crate `ferrite`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ImageFlags">
+
+    <title>ferrite::ImageFlags - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct ImageFlags</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.sparse_binding">sparse_binding</a><a href="#method.sparse_residency">sparse_residency</a><a href="#method.sparse_aliased">sparse_aliased</a><a href="#method.mutable_format">mutable_format</a><a href="#method.cube_compatible">cube_compatible</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Debug">Debug</a><a href="#impl-Clone">Clone</a><a href="#impl-Copy">Copy</a><a href="#impl-PartialEq">PartialEq</a><a href="#impl-Eq">Eq</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'ImageFlags', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>ferrite</a>::<wbr><a class="struct" href=''>ImageFlags</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/ferrite/resources.rs.html#274' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct ImageFlags(pub <a class="type" href="../ferrite/vk/type.VkImageCreateFlags.html" title="type ferrite::vk::VkImageCreateFlags">VkImageCreateFlags</a>);</pre><div class='docblock'><p>Bitmask specifying additional parameters of an image</p>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#275-302' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedconstant.EMPTY' class="associatedconstant"><span id='EMPTY.v' class='invisible'><code>const <a href='#associatedconstant.EMPTY' class="constant"><b>EMPTY</b></a>: Self</code></span></h4>
+<div class='docblock'><pre class="rust ">
+<span class="ident">EMPTY</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="number">0</span>)</pre>
+<p>Empty bits</p>
+</div><h4 id='associatedconstant.SPARSE_BINDING' class="associatedconstant"><span id='SPARSE_BINDING.v' class='invisible'><code>const <a href='#associatedconstant.SPARSE_BINDING' class="constant"><b>SPARSE_BINDING</b></a>: Self</code></span></h4>
+<div class='docblock'><pre class="rust ">
+<span class="ident">SPARSE_BINDING</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span>)</pre>
+<p>The image will be backed using sparse memory binding</p>
+</div><h4 id='associatedconstant.SPARSE_RESIDENCY' class="associatedconstant"><span id='SPARSE_RESIDENCY.v' class='invisible'><code>const <a href='#associatedconstant.SPARSE_RESIDENCY' class="constant"><b>SPARSE_RESIDENCY</b></a>: Self</code></span></h4>
+<div class='docblock'><pre class="rust ">
+<span class="ident">SPARSE_RESIDENCY</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span>
+               <span class="ident">VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT</span>)</pre>
+<p>The image can be partially backed using sparse memory binding. This bit is with <code>SPARSE_BINDING</code> implicitly</p>
+</div><h4 id='associatedconstant.SPARSE_ALIASED' class="associatedconstant"><span id='SPARSE_ALIASED.v' class='invisible'><code>const <a href='#associatedconstant.SPARSE_ALIASED' class="constant"><b>SPARSE_ALIASED</b></a>: Self</code></span></h4>
+<div class='docblock'><pre class="rust ">
+<span class="ident">SPARSE_ALIASED</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_SPARSE_BINDING_BIT</span> <span class="op">|</span>
+               <span class="ident">VK_IMAGE_CREATE_SPARSE_ALIASED_BIT</span>)</pre>
+<p>The image will be backed using sparse memory binding with memory ranges
+that might also simultaneously be backing another image. This bit is with <code>SPARSE_BINDING</code> implicitly</p>
+</div><h4 id='associatedconstant.MUTABLE_FORMAT' class="associatedconstant"><span id='MUTABLE_FORMAT.v' class='invisible'><code>const <a href='#associatedconstant.MUTABLE_FORMAT' class="constant"><b>MUTABLE_FORMAT</b></a>: Self</code></span></h4>
+<div class='docblock'><pre class="rust ">
+<span class="ident">MUTABLE_FORMAT</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT</span>)</pre>
+<p>The image can be used to create a <code>ImageView</code> with a different format from the image</p>
+</div><h4 id='associatedconstant.CUBE_COMPATIBLE' class="associatedconstant"><span id='CUBE_COMPATIBLE.v' class='invisible'><code>const <a href='#associatedconstant.CUBE_COMPATIBLE' class="constant"><b>CUBE_COMPATIBLE</b></a>: Self</code></span></h4>
+<div class='docblock'><pre class="rust ">
+<span class="ident">CUBE_COMPATIBLE</span>: <span class="self">Self</span> <span class="op">=</span> <span class="ident">ImageFlags</span>(<span class="ident">VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT</span>)</pre>
+<p>The image can be used to create a <code>ImageView</code> of type <code>ImageViewType::Cube</code> or <code>ImageViewType::CubeArray</code></p>
+</div><h4 id='method.sparse_binding' class="method"><span id='sparse_binding.v' class='invisible'><code>pub fn <a href='#method.sparse_binding' class='fnname'>sparse_binding</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#292' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The image will be backed using sparse memory binding</p>
+</div><h4 id='method.sparse_residency' class="method"><span id='sparse_residency.v' class='invisible'><code>pub fn <a href='#method.sparse_residency' class='fnname'>sparse_residency</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#294' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The image can be partially backed using sparse memory binding. This bit is with <code>SPARSE_BINDING</code> implicitly</p>
+</div><h4 id='method.sparse_aliased' class="method"><span id='sparse_aliased.v' class='invisible'><code>pub fn <a href='#method.sparse_aliased' class='fnname'>sparse_aliased</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#297' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The image will be backed using sparse memory binding with memory ranges
+that might also simultaneously be backing another image. This bit is with <code>SPARSE_BINDING</code> implicitly</p>
+</div><h4 id='method.mutable_format' class="method"><span id='mutable_format.v' class='invisible'><code>pub fn <a href='#method.mutable_format' class='fnname'>mutable_format</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#299' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The image can be used to create a <code>ImageView</code> with a different format from the image</p>
+</div><h4 id='method.cube_compatible' class="method"><span id='cube_compatible.v' class='invisible'><code>pub fn <a href='#method.cube_compatible' class='fnname'>cube_compatible</a>(&amp;self) -&gt; Self</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#301' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The image can be used to create a <code>ImageView</code> of type <code>ImageViewType::Cube</code> or <code>ImageViewType::CubeArray</code></p>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Debug' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code><a href='#impl-Debug' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter. <a href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt">Read more</a></p>
+</div></div><h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 id='impl-Copy' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/marker/trait.Copy.html" title="trait core::marker::Copy">Copy</a> for <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code><a href='#impl-Copy' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'></div><h3 id='impl-PartialEq' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html" title="trait core::cmp::PartialEq">PartialEq</a> for <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code><a href='#impl-PartialEq' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class="method"><span id='eq.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
+</div><h4 id='method.ne' class="method"><span id='ne.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div><h3 id='impl-Eq' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html" title="trait core::cmp::Eq">Eq</a> for <a class="struct" href="../ferrite/struct.ImageFlags.html" title="struct ferrite::ImageFlags">ImageFlags</a></code><a href='#impl-Eq' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#273' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt style="width:31px;">+ / -</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

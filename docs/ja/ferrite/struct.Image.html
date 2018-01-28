@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Image` struct in crate `ferrite`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Image">
+
+    <title>ferrite::Image - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct Image</p><div class="block items"><a class="sidebar-title" href="#methods">Methods</a><div class="sidebar-links"><a href="#method.format">format</a><a href="#method.size">size</a><a href="#method.create_view">create_view</a><a href="#method.image_subresource_layout">image_subresource_layout</a><a href="#method.sparse_requirements">sparse_requirements</a></div><a class="sidebar-title" href="#implementations">Trait Implementations</a><div class="sidebar-links"><a href="#impl-Clone">Clone</a><a href="#impl-VkHandle">VkHandle</a><a href="#impl-DeviceChild">DeviceChild</a><a href="#impl-MemoryBound">MemoryBound</a></div></div><p class='location'><a href='index.html'>ferrite</a></p><script>window.sidebarCurrent = {name: 'Image', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>ferrite</a>::<wbr><a class="struct" href=''>Image</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/ferrite/resources.rs.html#26' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Image(_);</pre><div class='docblock'><p>Opaque handle to a image object(constructed via <code>ImageDesc</code>)</p>
+</div>
+                    <h2 id='methods' class='small-section-header'>
+                      Methods<a href='#methods' class='anchor'></a>
+                    </h2>
+                <h3 id='impl' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#375-413' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.format' class="method"><span id='format.v' class='invisible'><code>pub fn <a href='#method.format' class='fnname'>format</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkFormat.html" title="type ferrite::vk::VkFormat">VkFormat</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#378-384' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The pixel format of an image</p>
+</div><h4 id='method.size' class="method"><span id='size.v' class='invisible'><code>pub fn <a href='#method.size' class='fnname'>size</a>(&amp;self) -&gt; &amp;<a class="struct" href="../ferrite/struct.Extent3D.html" title="struct ferrite::Extent3D">Extent3D</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#386-396' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>The size of an image</p>
+</div></div><h3 id='impl-1' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl-1' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#433-462' title='goto source code'>[src]</a></span></h3>
+<div class='docblock'><p>Following methods are enabled with [feature = &quot;FeImplements&quot;]</p>
+</div><div class='impl-items'><h4 id='method.create_view' class="method"><span id='create_view.v' class='invisible'><code>pub fn <a href='#method.create_view' class='fnname'>create_view</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;format: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="../ferrite/vk/type.VkFormat.html" title="type ferrite::vk::VkFormat">VkFormat</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;vtype: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="type" href="../ferrite/vk/type.VkImageViewType.html" title="type ferrite::vk::VkImageViewType">VkImageViewType</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;cmap: &amp;<a class="struct" href="../ferrite/struct.ComponentMapping.html" title="struct ferrite::ComponentMapping">ComponentMapping</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;subresource_range: &amp;<a class="struct" href="../ferrite/struct.ImageSubresourceRange.html" title="struct ferrite::ImageSubresourceRange">ImageSubresourceRange</a><br>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="struct" href="../ferrite/struct.ImageView.html" title="struct ferrite::ImageView">ImageView</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#436-453' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Create an image view</p>
+</div><h4 id='method.image_subresource_layout' class="method"><span id='image_subresource_layout.v' class='invisible'><code>pub fn <a href='#method.image_subresource_layout' class='fnname'>image_subresource_layout</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;subres_aspect: <a class="struct" href="../ferrite/struct.AspectMask.html" title="struct ferrite::AspectMask">AspectMask</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;subres_mip_level: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;subres_array_layer: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a><br>) -&gt; <a class="struct" href="../ferrite/vk/struct.VkSubresourceLayout.html" title="struct ferrite::vk::VkSubresourceLayout">VkSubresourceLayout</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#456-461' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Retrieve information about an image subresource<br>
+Subresource: (<code>aspect</code>, <code>mipLevel</code>, <code>arrayLayer</code>)</p>
+</div></div><h3 id='impl-2' class='impl'><span class='in-band'><code>impl <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl-2' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#539-550' title='goto source code'>[src]</a></span></h3>
+<div class='docblock'><p>Following methods are enabled with [feature = &quot;FeImplements&quot;]</p>
+</div><div class='impl-items'><h4 id='method.sparse_requirements' class="method"><span id='sparse_requirements.v' class='invisible'><code>pub fn <a href='#method.sparse_requirements' class='fnname'>sparse_requirements</a>(&amp;self) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="struct" href="../ferrite/vk/struct.VkSparseImageMemoryRequirements.html" title="struct ferrite::vk::VkSparseImageMemoryRequirements">VkSparseImageMemoryRequirements</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#542-549' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Query the memory requirements for a sparse image</p>
+</div></div>
+            <h2 id='implementations' class='small-section-header'>
+              Trait Implementations<a href='#implementations' class='anchor'></a>
+            </h2>
+        <h3 id='impl-Clone' class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl-Clone' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#26' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#26' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.reference.html">&amp;</a>Self)</code></span><span class='out-of-band'><div class='ghost'></div><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div><a class='srclink' href='https://doc.rust-lang.org/nightly/src/core/clone.rs.html#112-114' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 id='impl-VkHandle' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.VkHandle.html" title="trait ferrite::VkHandle">VkHandle</a> for <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl-VkHandle' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#67-77' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Handle' class="type"><span id='Handle.t' class='invisible'><code>type <a href='../ferrite/trait.VkHandle.html#associatedtype.Handle' class="type">Handle</a> = <a class="type" href="../ferrite/vk/type.VkImage.html" title="type ferrite::vk::VkImage">VkImage</a></code></span></h4>
+<h4 id='method.native_ptr' class="method"><span id='native_ptr.v' class='invisible'><code>fn <a href='../ferrite/trait.VkHandle.html#tymethod.native_ptr' class='fnname'>native_ptr</a>(&amp;self) -&gt; <a class="type" href="../ferrite/vk/type.VkImage.html" title="type ferrite::vk::VkImage">VkImage</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#70-76' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Retrieve an underlying handle</p>
+</div></div><h3 id='impl-DeviceChild' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/trait.DeviceChild.html" title="trait ferrite::DeviceChild">DeviceChild</a> for <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl-DeviceChild' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#79-89' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.device' class="method"><span id='device.v' class='invisible'><code>fn <a href='../ferrite/trait.DeviceChild.html#tymethod.device' class='fnname'>device</a>(&amp;self) -&gt; &amp;<a class="struct" href="../ferrite/struct.Device.html" title="struct ferrite::Device">Device</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#81-88' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Retrieve a reference to a device object that creates this object</p>
+</div></div><h3 id='impl-MemoryBound' class='impl'><span class='in-band'><code>impl <a class="trait" href="../ferrite/traits/trait.MemoryBound.html" title="trait ferrite::traits::MemoryBound">MemoryBound</a> for <a class="struct" href="../ferrite/struct.Image.html" title="struct ferrite::Image">Image</a></code><a href='#impl-MemoryBound' class='anchor'></a></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#525-536' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.requirements' class="method"><span id='requirements.v' class='invisible'><code>fn <a href='../ferrite/traits/trait.MemoryBound.html#tymethod.requirements' class='fnname'>requirements</a>(&amp;self) -&gt; <a class="struct" href="../ferrite/vk/struct.VkMemoryRequirements.html" title="struct ferrite::vk::VkMemoryRequirements">VkMemoryRequirements</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#527-531' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Returns the memory requirements for specified Vulkan object</p>
+</div><h4 id='method.bind' class="method"><span id='bind.v' class='invisible'><code>fn <a href='../ferrite/traits/trait.MemoryBound.html#tymethod.bind' class='fnname'>bind</a>(&amp;self, memory: &amp;<a class="struct" href="../ferrite/struct.DeviceMemory.html" title="struct ferrite::DeviceMemory">DeviceMemory</a>, offset: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="../ferrite/type.Result.html" title="type ferrite::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.unit.html">()</a>&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/ferrite/resources.rs.html#532-535' title='goto source code'>[src]</a></span></h4>
+<div class='docblock'><p>Bind device memory to the object # Failure On failure, this command returns <a href="../ferrite/traits/trait.MemoryBound.html#tymethod.bind">Read more</a></p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>↑</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>↓</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>↹</dt>
+                    <dd>Switch tab</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt style="width:31px;">+ / -</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "ferrite";
+    </script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
