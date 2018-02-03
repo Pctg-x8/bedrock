@@ -108,7 +108,7 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_MVK_macos_surface")]
-	pub fn new_macos(instance: &::Instance, view_ptr: *const c_void) -> ::Result<Self>
+	pub fn new_macos(instance: &::Instance, view_ptr: *const ::libc::c_void) -> ::Result<Self>
 	{
 		let cinfo = VkMacOSSurfaceCreateInfoMVK { pView: view_ptr, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
