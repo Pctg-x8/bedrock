@@ -101,6 +101,20 @@ impl Surface
 		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
+	/// Create a `Surface` object for an macOS native window
+	/// # Failures
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	#[cfg(feature = "VK_MVK_macos_surface")]
+	pub fn new_macos(instance: &::Instance, view_ptr: *const c_void) -> ::Result<Self>
+	{
+		let cinfo = VkMacOSSurfaceCreateInfoMVK { pView: view_ptr, .. Default::default() };
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe { vkCreateMacOSSurfaceMVK(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+	}
 	/// Create a `Surface` object representing a display plane and mode
 	/// # Failures
 	/// On failure, this command returns
