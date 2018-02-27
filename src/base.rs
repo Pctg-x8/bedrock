@@ -63,7 +63,7 @@ impl InstanceBuilder
 	{
 		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(extension.as_ptr() as *const _) }.to_owned()); self
 	}
-	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(&mut self, extensions: Extensions) -> &mut Self
+	pub fn add_extensions<'s, Extensions: Iterator<Item = &'s str>>(&mut self, extensions: Extensions) -> &mut Self
 	{
 		for ex in extensions { self.add_extension(ex); } self
 	}
@@ -71,7 +71,7 @@ impl InstanceBuilder
 	{
 		self.layers.push(CString::new(layer).unwrap()); self
 	}
-	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self
+	pub fn add_layers<'s, Layers: Iterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self
 	{
 		for l in layers { self.add_layer(l); } self
 	}
