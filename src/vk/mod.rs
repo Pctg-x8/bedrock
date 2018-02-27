@@ -2586,8 +2586,9 @@ pub type PFN_vkCmdEndRenderPass          = extern "system" fn(commandBuffer: VkC
 pub type PFN_vkCmdExecuteCommands        = extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
 
 #[cfg(feature = "FeImplements")]
-#[cfg_attr(not(windows), link(name = "vulkan"))]
+#[cfg_attr(all(not(windows), not(macos)), link(name = "vulkan"))]
 #[cfg_attr(windows, link(name = "vulkan-1"))]
+#[cfg_attr(macos, link(name = "MoltenVK", kind = "framework"))]
 extern "system"
 {
     pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
