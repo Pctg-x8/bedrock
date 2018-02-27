@@ -6,7 +6,7 @@ use vk::*;
 use std::ffi::CString;
 use VkHandle;
 #[cfg(feature = "FeImplements")] use VkResultHandler;
-#[cfg(feature = "FeImplements")] use std::ptr::null_mut;
+#[cfg(feature = "FeImplements")] use std::ptr::{null, null_mut};
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
 
@@ -149,13 +149,13 @@ impl Instance
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_LAYER_NOT_PRESENT`
-	pub fn enumerate_extension_properties(layer_name: &str) -> ::Result<Vec<VkExtensionProperties>>
+	pub fn enumerate_extension_properties(layer_name: Option<&str>) -> ::Result<Vec<VkExtensionProperties>>
 	{
-		let cn = CString::new(layer_name).unwrap();
+		let cn = layer_name.map(|s| CString::new(s).unwrap());
 		let mut n = 0;
-		unsafe { vkEnumerateInstanceExtensionProperties(cn.as_ptr(), &mut n, null_mut()) }.into_result()?;
+		unsafe { vkEnumerateInstanceExtensionProperties(cn.map(|s| s.as_ptr()).unwrap_or(null()), &mut n, null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkEnumerateInstanceExtensionProperties(cn.as_ptr(), &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+		unsafe { vkEnumerateInstanceExtensionProperties(cn.map(|s| s.as_ptr()).unwrap_or(null()), &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
 	}
 }
 /// Following methods are enabled with [feature = "FeImplements"]
