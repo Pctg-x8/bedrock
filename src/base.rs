@@ -152,10 +152,11 @@ impl Instance
 	pub fn enumerate_extension_properties(layer_name: Option<&str>) -> ::Result<Vec<VkExtensionProperties>>
 	{
 		let cn = layer_name.map(|s| CString::new(s).unwrap());
+		let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or(null());
 		let mut n = 0;
-		unsafe { vkEnumerateInstanceExtensionProperties(cn.map(|s| s.as_ptr()).unwrap_or(null()), &mut n, null_mut()) }.into_result()?;
+		unsafe { vkEnumerateInstanceExtensionProperties(cptr, &mut n, null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkEnumerateInstanceExtensionProperties(cn.map(|s| s.as_ptr()).unwrap_or(null()), &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+		unsafe { vkEnumerateInstanceExtensionProperties(cptr, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
 	}
 }
 /// Following methods are enabled with [feature = "FeImplements"]
