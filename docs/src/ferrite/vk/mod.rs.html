@@ -3073,6 +3073,8 @@
 <span id="3028">3028</span>
 <span id="3029">3029</span>
 <span id="3030">3030</span>
+<span id="3031">3031</span>
+<span id="3032">3032</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Vulkan API Definitions 1.0.59.0</span>
 
@@ -5662,8 +5664,10 @@
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">PFN_vkCmdExecuteCommands</span>        <span class="op">=</span> <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(<span class="ident">commandBuffer</span>: <span class="ident">VkCommandBuffer</span>, <span class="ident">commandBufferCount</span>: <span class="ident">u32</span>, <span class="ident">pCommandBuffers</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkCommandBuffer</span>);
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;FeImplements&quot;</span>)]</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;vulkan&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">windows</span>), <span class="ident">not</span>(<span class="ident">target_os</span><span class="op">=</span><span class="string">&quot;macos&quot;</span>)), <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;vulkan&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">windows</span>, <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;vulkan-1&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">target_os</span><span class="op">=</span><span class="string">&quot;macos&quot;</span>, <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;MoltenVK&quot;</span>, <span class="ident">kind</span> <span class="op">=</span> <span class="string">&quot;framework&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">target_os</span><span class="op">=</span><span class="string">&quot;macos&quot;</span>, <span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;Metal&quot;</span>, <span class="ident">kind</span> <span class="op">=</span> <span class="string">&quot;framework&quot;</span>))]</span>
 <span class="kw">extern</span> <span class="string">&quot;system&quot;</span>
 {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">vkCreateInstance</span>(<span class="ident">pCreateInfo</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkInstanceCreateInfo</span>, <span class="ident">pAllocator</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">VkAllocationCallbacks</span>, <span class="ident">pInstance</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">VkInstance</span>) <span class="op">-&gt;</span> <span class="ident">VkResult</span>;

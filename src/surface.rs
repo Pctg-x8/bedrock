@@ -195,6 +195,10 @@ impl Swapchain
 	pub fn size(&self) -> &::Extent3D { &self.0.size }
 }
 
+use {Fence, Semaphore};
+/// A semaphore or a fence
+pub enum CompletionHandler<'s> { Host(&'s Fence), Device(&'s Semaphore) }
+
 #[cfg(feature = "FeImplements")]
 impl Swapchain
 {
@@ -207,11 +211,15 @@ impl Swapchain
 	/// * `VK_ERROR_DEVICE_LOST`
 	/// * `VK_ERROR_OUT_OF_DATE_KHR`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn acquire_next(&self, timeout: Option<u64>, semaphore: Option<&::Semaphore>, fence: Option<&::Fence>) -> ::Result<u32>
+	pub fn acquire_next(&self, timeout: Option<u64>, completion: CompletionHandler) -> ::Result<u32>
 	{
 		let mut n = 0;
-		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX),
-			semaphore.map(|x| x.native_ptr()).unwrap_or(VK_NULL_HANDLE as _), fence.map(|x| x.native_ptr()).unwrap_or(VK_NULL_HANDLE as _), &mut n) }
+		let (semaphore, fence) = match completion
+		{
+			CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
+			CompletionHandler::Device(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
+		};
+		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
 			.into_result().map(|_| n)
 	}
 	/// Queue an image for presentation
