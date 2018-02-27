@@ -2589,6 +2589,7 @@ pub type PFN_vkCmdExecuteCommands        = extern "system" fn(commandBuffer: VkC
 #[cfg_attr(all(not(windows), not(target_os="macos")), link(name = "vulkan"))]
 #[cfg_attr(windows, link(name = "vulkan-1"))]
 #[cfg_attr(target_os="macos", link(name = "MoltenVK", kind = "framework"))]
+#[cfg_attr(target_os="macos", link(name = "Metal", kind = "framework"))]
 extern "system"
 {
     pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
