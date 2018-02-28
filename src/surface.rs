@@ -94,7 +94,7 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_win32_surface")]
-	pub fn new_win32(instance: &::Instance, hinstance: ::winapi::HINSTANCE, hwnd: ::winapi::HWND) -> ::Result<Self>
+	pub fn new_win32(instance: &::Instance, hinstance: ::winapi::shared::minwindef::HINSTANCE, hwnd: ::winapi::shared::windef::HWND) -> ::Result<Self>
 	{
 		let cinfo = VkWin32SurfaceCreateInfoKHR { hinstance, hwnd, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
