@@ -17,8 +17,11 @@ impl DeviceChild for DescriptorSetLayout { fn device(&self) -> &::Device { &self
 impl DeviceChild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
 
 /// Structure specifying a descriptor set layout binding
+/// 
+/// # Examples
 ///
 /// ```
+/// # use ferrite::*;
 /// // Create bindings for 1 uniform buffer (at binding #0) and 2 combined image samplers (at binding #1)
 /// let bindings = DSLBindings::new().uniform_buffers(1, ShaderStage::VERTEX)
 ///   .combined_image_samplers(2, ShaderStage::FRAGMENT);
