@@ -1,7 +1,8 @@
 //! VK_KHR_win32_surface extensions
 
 use super::*;
-use winapi::*;
+use winapi::shared::windef::HWND;
+use winapi::shared::minwindef::HINSTANCE;
 use libc::c_void;
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
