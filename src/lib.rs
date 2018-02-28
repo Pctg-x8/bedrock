@@ -514,13 +514,38 @@ impl FormatQuery
     {
         if self.0.bit_width() == w { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
     }
-    pub fn has_components(self, c: FormatComponents) -> Self { if c.satisfy(self.0) { self } else { FormatQuery(VK_FORMAT_UNDEFINED) } }
-    pub fn is_component_of(self, c: FormatComponents) -> Self { if c.satisfy_eq(self.0) { self } else { FormatQuery(VK_FORMAT_UNDEFINED) } }
+    pub fn has_components(self, c: FormatComponents) -> Self
+    {
+        if c.satisfy(self.0) { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+    }
+    pub fn is_component_of(self, c: FormatComponents) -> Self
+    {
+        if c.satisfy_eq(self.0) { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
+    }
     pub fn has_element_of(self, e: ElementType) -> Self
     {
         if self.0.element_type() == e { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
     }
     pub fn passed(self) -> bool { self.0 != VK_FORMAT_UNDEFINED }
+}
+/// Predication style of Format Selection Query
+#[derive(Clone)]
+pub struct FormatQueryPred
+{
+    bit_width: Option<usize>, req_components: Option<FormatComponents>, req_elements_of: Option<ElementType>
+}
+impl FormatQueryPred
+{
+    pub fn new() -> Self { FormatQueryPred { bit_width: None, req_components: None, req_elements_of: None } }
+    pub fn bit(&mut self, b: usize) -> &mut Self { self.bit_width = Some(b); self }
+    pub fn components(&mut self, c: FormatComponents) -> &mut Self { self.req_components = Some(c); self }
+    pub fn elements(&mut self, e: ElementType) -> &mut Self { self.req_elements_of = Some(e); self }
+
+    pub fn satisfy(&self, f: vk::VkFormat) -> bool
+    {
+        self.bit_width.map_or(true, |b| f.bit_width() == b) && self.req_components.map_or(true, |c| c.satisfy(f))
+            && self.req_elements_of.map_or(true, |e| f.element_type() == e)
+    }
 }
 
 /// Containing Components in Format(Order is not considered)

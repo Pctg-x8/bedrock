@@ -213,12 +213,13 @@ impl Swapchain
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	pub fn acquire_next(&self, timeout: Option<u64>, completion: CompletionHandler) -> ::Result<u32>
 	{
-		let mut n = 0;
 		let (semaphore, fence) = match completion
 		{
 			CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
 			CompletionHandler::Device(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
 		};
+		let mut n = 0;
+		println!("Calling: {:p}, {:p}, {:x}, {:p}, {:p}, {:p}", self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n);
 		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
 			.into_result().map(|_| n)
 	}
