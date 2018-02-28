@@ -1,1 +1,0 @@
-initSidebarItems({"trait":[["ClearColorValue","The trait representation of `VkClearColorValue`"],["ImageSize","Image Dimension by corresponding extent type"],["MemoryBound","[feature = \"FeImplements\"] Common operations for memory bound objects"],["Status",""],["Waitable","[feature = \"FeImplements\"] Supports blocking wait operation"]]});
