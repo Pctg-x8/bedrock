@@ -219,7 +219,6 @@ impl Swapchain
 			CompletionHandler::Device(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
 		};
 		let mut n = 0;
-		println!("Calling: {:p}, {:p}, {:x}, {:p}, {:p}, {:p}", self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n);
 		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
 			.into_result().map(|_| n)
 	}
