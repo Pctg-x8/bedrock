@@ -25,6 +25,31 @@ struct InstanceCell(VkInstance);
 /// * Methods for Android and Mir surfaces are not implemented
 pub struct PhysicalDevice(VkPhysicalDevice, Instance);
 
+pub struct IterPhysicalDevices<'i>(Vec<VkPhysicalDevice>, usize, &'i Instance);
+impl<'i> Iterator for IterPhysicalDevices<'i>
+{
+	type Item = PhysicalDevice;
+
+	fn next(&mut self) -> Option<PhysicalDevice>
+	{
+		if self.0.len() <= self.1 { None }
+		else { self.1 += 1; Some(PhysicalDevice(self.0[self.1 - 1], self.2.clone())) }
+	}
+	fn size_hint(&self) -> (usize, Option<usize>) { (self.0.len(), Some(self.0.len())) }
+}
+impl<'i> ExactSizeIterator for IterPhysicalDevices<'i>
+{
+	fn len(&self) -> usize { self.0.len() }
+	// fn is_empty(&self) -> bool { self.0.len() <= self.1 }
+}
+impl<'i> DoubleEndedIterator for IterPhysicalDevices<'i>
+{
+	fn next_back(&mut self) -> Option<PhysicalDevice>
+	{
+		if self.0.len() <= self.1 { None } else { self.0.pop().map(|p| PhysicalDevice(p, self.2.clone())) }
+	}
+}
+
 #[cfg(feature = "FeImplements")]
 impl Drop for InstanceCell { fn drop(&mut self)
 {
@@ -123,11 +148,24 @@ impl Instance
 	/// * `VK_ERROR_INITIALIZATION_FAILED`
 	pub fn enumerate_physical_devices(&self) -> ::Result<Vec<PhysicalDevice>>
 	{
+		self.iter_physical_devices().map(|iter| iter.collect())
+	}
+	/// Lazyly enumerates the physical devices accessible to a Vulkan instance
+	/// 
+	/// # Failures
+	/// 
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
+	pub fn iter_physical_devices(&self) -> ::Result<IterPhysicalDevices>
+	{
 		let mut n = 0;
-		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, null_mut()) }.into_result()?;
-		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
-			.map(|_| v.into_iter().map(|x| PhysicalDevice(x, self.clone())).collect())
+		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, null_mut()).into_result()?; }
+		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _); }
+		unsafe { vkEnumeratePhysicalDevices(self.native_ptr(), &mut n, v.as_mut_ptr()).into_result()?; }
+		Ok(IterPhysicalDevices(v, 0, self))
 	}
 	/// Returns up to all of global layer properties
 	/// # Failures
