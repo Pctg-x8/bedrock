@@ -638,7 +638,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Per target attachment states
 	pub fn add_attachment_blend(&mut self, blend: VkPipelineColorBlendAttachmentState) -> &mut Self
 	{
-		self.cb_ref().1.push(blend); self
+		{
+			let cb = self.cb_ref();
+			cb.1.push(blend); cb.0.attachmentCount = cb.1.len() as _; cb.0.pAttachments = cb.1.as_ptr();
+		}
+		self
 	}
 	/// Array of four values used as the R, G, B, and A components of the blend constant that are used in blending, depending on the blend factor.
 	/// Specifying `None` means that the `blendConstants` parameter is a dynamic state
