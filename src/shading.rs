@@ -837,9 +837,9 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		let flags = self.flags | if base.is_some() { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
 		let cinfo = VkGraphicsPipelineCreateInfo
 		{
-			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &self.vi_state.0,
+			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &self.vi_state,
 			pInputAssemblyState: &self.ia_state, pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pViewportState: self.viewport_state.as_ref().map(|&(ref x, _, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
+			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pRasterizationState: &self.rasterizer_state as *const _,
 			pMultisampleState: self.ms_state.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
@@ -909,9 +909,9 @@ impl ::Device
 			let flags = b.flags | if base_handle != VK_NULL_HANDLE as _ || base_index >= 0 { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
 			VkGraphicsPipelineCreateInfo
 			{
-				stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &b.vi_state.0,
+				stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &b.vi_state,
 				pInputAssemblyState: &b.ia_state, pTessellationState: b.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-				pViewportState: b.viewport_state.as_ref().map(|&(ref x, _, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
+				pViewportState: b.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pRasterizationState: &b.rasterizer_state as *const _,
 				pMultisampleState: b.ms_state.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pDepthStencilState: b.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
