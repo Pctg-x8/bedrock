@@ -300,7 +300,7 @@ pub struct PipelineShader<'d>
 	module: &'d ShaderModule, entry_name: CString, specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
 }
 /// Whether the state(type of array) is dynamic or static
-pub enum DynamicArrayState<T> { Dynamic(usize), Static(Vec<T>) }
+pub enum DynamicArrayState<'d, T: 'd> { Dynamic(usize), Static(&'d [T]) }
 /// Build struct holding dynamic state flags
 struct DynamicStateFlags
 {
@@ -324,17 +324,16 @@ pub struct GraphicsPipelineBuilder<'d>
 	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout, rp: &'d ::RenderPass, subpass: u32, _base: BasePipeline<'d>,
 	vs: Option<PipelineShader<'d>>, tcs: Option<PipelineShader<'d>>, tes: Option<PipelineShader<'d>>,
 	gs: Option<PipelineShader<'d>>, fs: Option<PipelineShader<'d>>,
-	vi_state: (VkPipelineVertexInputStateCreateInfo, Vec<VkVertexInputBindingDescription>, Vec<VkVertexInputAttributeDescription>),
-	ia_state: VkPipelineInputAssemblyStateCreateInfo,
+	vi_state: VkPipelineVertexInputStateCreateInfo, ia_state: VkPipelineInputAssemblyStateCreateInfo,
 	rasterizer_state: VkPipelineRasterizationStateCreateInfo,
 	tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
-	viewport_state: Option<(Box<VkPipelineViewportStateCreateInfo>, Vec<VkViewport>, Vec<VkRect2D>)>,
+	viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
 	ms_state: Option<(Box<VkPipelineMultisampleStateCreateInfo>, Vec<VkSampleMask>)>,
 	ds_state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>,
 	color_blending: Option<(Box<VkPipelineColorBlendStateCreateInfo>, Vec<VkPipelineColorBlendAttachmentState>)>,
 	dynamic_state_flags: DynamicStateFlags
 }
-impl<T> DynamicArrayState<T>
+impl<'d, T> DynamicArrayState<'d, T>
 {
 	fn count(&self) -> usize { match self { &DynamicArrayState::Dynamic(s) => s, &DynamicArrayState::Static(ref v) => v.len() } }
 	fn as_ptr(&self) -> *const T { match self { &DynamicArrayState::Static(ref v) => v.as_ptr(), _ => ::std::ptr::null() } }
@@ -358,8 +357,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		{
 			flags: 0, _layout: layout, rp: rpsp.0, subpass: rpsp.1, _base: BasePipeline::None,
 			vs: None, tcs: None, tes: None, gs: None, fs: None,
-			vi_state: (Default::default(), Vec::new(), Vec::new()),
-			ia_state: Default::default(), rasterizer_state: Default::default(),
+			vi_state: Default::default(), ia_state: Default::default(), rasterizer_state: Default::default(),
 			tess_state: None, viewport_state: None, ms_state: None, ds_state: None, color_blending: None,
 			dynamic_state_flags: unsafe { ::std::mem::zeroed() }
 		}
@@ -379,15 +377,18 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Set the fragment shader in this pipeline
 	pub fn fragment_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.fs = Some(shader); self }
 	/// Set the vertex input layout in this pipeline
-	pub fn vertex_input_state(&mut self, bindings: Vec<VkVertexInputBindingDescription>, attributes: Vec<VkVertexInputAttributeDescription>) -> &mut Self
+	pub fn vertex_input_state(&mut self,
+		bindings: &[VkVertexInputBindingDescription], attributes: &[VkVertexInputAttributeDescription]) -> &mut Self
 	{
-		self.vi_state.0.vertexBindingDescriptionCount = bindings.len() as _; self.vi_state.0.pVertexBindingDescriptions = bindings.as_ptr();
-		self.vi_state.0.vertexAttributeDescriptionCount = attributes.len() as _; self.vi_state.0.pVertexAttributeDescriptions = attributes.as_ptr();
-		self.vi_state.1 = bindings; self.vi_state.2 = attributes; self
+		self.vi_state.vertexBindingDescriptionCount = bindings.len() as _;
+		self.vi_state.pVertexBindingDescriptions = bindings.as_ptr();
+		self.vi_state.vertexAttributeDescriptionCount = attributes.len() as _;
+		self.vi_state.pVertexAttributeDescriptions = attributes.as_ptr();
+		self
 	}
 	/// Set the vertex processing state(a shader and an input layout) in this pipeline
 	pub fn vertex_processing(&mut self, shader: PipelineShader<'d>,
-		bindings: Vec<VkVertexInputBindingDescription>, attributes: Vec<VkVertexInputAttributeDescription>) -> &mut Self
+		bindings: &[VkVertexInputBindingDescription], attributes: &[VkVertexInputAttributeDescription]) -> &mut Self
 	{
 		self.vertex_shader(shader).vertex_input_state(bindings, attributes)
 	}
@@ -422,22 +423,20 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Application must guarantee that the number of viewports and scissors are identical
 	pub unsafe fn viewports(&mut self, vps: DynamicArrayState<VkViewport>) -> &mut Self
 	{
-		if self.viewport_state.is_none() { self.viewport_state = Some((Default::default(), Vec::new(), Vec::new())); }
-		self.viewport_state.as_mut().unwrap().0.viewportCount = vps.count() as _;
-		self.viewport_state.as_mut().unwrap().0.pViewports = vps.as_ptr();
+		if self.viewport_state.is_none() { self.viewport_state = Some(Default::default()); }
+		self.viewport_state.as_mut().unwrap().viewportCount = vps.count() as _;
+		self.viewport_state.as_mut().unwrap().pViewports = vps.as_ptr();
 		self.dynamic_state_flags.viewport = vps.is_dynamic();
-		if let DynamicArrayState::Static(v) = vps { self.viewport_state.as_mut().unwrap().1 = v; }
 		self
 	}
 	/// # Safety
 	/// Application must guarantee that the number of viewports and scissors are identical
 	pub unsafe fn scissors(&mut self, scs: DynamicArrayState<VkRect2D>) -> &mut Self
 	{
-		if self.viewport_state.is_none() { self.viewport_state = Some((Default::default(), Vec::new(), Vec::new())); }
-		self.viewport_state.as_mut().unwrap().0.scissorCount = scs.count() as _;
-		self.viewport_state.as_mut().unwrap().0.pScissors = scs.as_ptr();
+		if self.viewport_state.is_none() { self.viewport_state = Some(Default::default()); }
+		self.viewport_state.as_mut().unwrap().scissorCount = scs.count() as _;
+		self.viewport_state.as_mut().unwrap().pScissors = scs.as_ptr();
 		self.dynamic_state_flags.scissor = scs.is_dynamic();
-		if let DynamicArrayState::Static(v) = scs { self.viewport_state.as_mut().unwrap().2 = v; }
 		self
 	}
 	/// Safety way calling `viewports` and `scissors`
@@ -693,7 +692,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// - The content in the structure is valid
 	pub unsafe fn vertex_input_state_create_info(&mut self, state: VkPipelineVertexInputStateCreateInfo) -> &mut Self
 	{
-		self.vi_state = (state, Vec::new(), Vec::new()); self
+		self.vi_state = state; self
 	}
 	/// Set the `VkPipelineInputAssemblyStateCreateInfo` structure directly
 	/// # Safety
@@ -724,7 +723,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// - The content in the structure is valid
 	pub unsafe fn viewport_state_create_info(&mut self, state: Option<Box<VkPipelineViewportStateCreateInfo>>) -> &mut Self
 	{
-		self.viewport_state = state.map(|x| (x, Vec::new(), Vec::new())); self
+		self.viewport_state = state; self
 	}
 	/// Set the `VkPipelineRasterizationStateCreateInfo` structure directly.
 	/// This does not clear any dynamic states
