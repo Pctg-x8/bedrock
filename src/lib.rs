@@ -205,7 +205,7 @@ impl Into<VkRect2D> for Extent2D
 mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
-mod resources; pub use resources::*;
+pub mod resources; pub use resources::*;
 mod descriptor; pub use descriptor::*;
 mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;

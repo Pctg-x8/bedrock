@@ -1,4 +1,120 @@
 //! Vulkan Resources
+//! 
+//! (以下メモ)
+//! 
+//! ## バッファの作成
+//! 
+//! [`BufferDesc`]で作成する
+//! 
+//! ```rust,ignore
+//! let buffer = BufferDesc::new(4 * 4 * 3, BufferUsage::VERTEX_BUFFER.transfer_dest()).crete(&device)?;
+//! ```
+//! 
+//! `new`から`create`までにメソッドチェーンを用いて以下のようなバッファの詳細を指定できる。
+//! 
+//! - [`sparse_binding_opt`](BufferDesc::sparse_binding_opt): SparseBinding時の許可される挙動を指定する。デフォルトでは"なし"
+//!   - [`BufferSparseBinding::Bound`]でSparseBindingによってメモリにバインドできることを示す
+//!   - [`BufferSparseBinding::Residency`]で部分的にメモリにバインドできることを示す
+//!   - [`BufferSparseBinding::Aliased`]で、バインド先のメモリ範囲が他のバッファに同時に使われる可能性を示す
+//!   - [`BufferSparseBinding::Both`]は`Residency`と`Aliased`の両方を示す
+//! - [`sharing_queue_families`](BufferDesc::sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
+//! 
+//! ## イメージの作成
+//! 
+//! [`ImageDesc`]で作成する
+//! 
+//! ```rust,ignore
+//! let image = ImageDesc::new(&Extent2D(128, 128), VK_FORMAT_R8G8B8A8_UNORM, ImageUsage::SAMPLED.color_attachment(), ImageLayout::General)
+//! 	.create(&device)?;
+//! ```
+//! 
+//! [`ImageDesc::new`]の第一引数に
+//! 
+//! - `Extent1D`を指定すると1Dテクスチャ
+//! - `Extent2D`を指定すると2Dテクスチャ
+//! - `Extent3D`を指定すると3Dテクスチャ
+//! 
+//! を生成するようになる。
+//! `new`から`create`までにメソッドチェーンを用いて以下のようなイメージの詳細を指定できる。
+//! 
+//! - [`sample_counts`](ImageDesc::sample_counts): イメージの要素ごとのサンプル数を2^nの値(1, 2, 4, 8, 16, 32, 64)で指定する。デフォルトは1。
+//!   以下の条件を一つでも満たす場合は1を設定する必要がある。
+//!   - 最適タイリング(`VK_IMAGE_TILING_OPTIMAL`)が使われていない(`use_linear_tiling`を併用する場合)
+//!   - 2Dテクスチャではない(`new`の第一引数が`Extent2D`でない場合)
+//!   - キューブテクスチャである(`flags`に`ImageFlags::CUBE_COMPATIBLE`を指定している場合)
+//!   - 指定したフォーマットがカラーアタッチメントもしくは深度/ステンシルアタッチメントとしての利用に対応していない場合
+//!     - RGBAフォーマットやDSフォーマットを指定している分には気にする必要はない
+//! - [`use_linear_tiling`](ImageDesc::use_linear_tiling): イメージデータのメモリ上での配列を線形に強制する(デフォルトではデバイス最適な並びを使うようになっている)
+//!   - ディスクから読み込んだピクセルデータなどを`map`して流し込む場合はこれが必要
+//! - [`array_layers`](ImageDesc::array_layers): 配列イメージの要素数を指定する。デフォルトは1(配列ではない)
+//! - [`sharing_queue_families`](ImageDesc::sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
+//! - [`flags`](ImageDesc::flags): [`ImageFlags`]を指定する。デフォルトでは"なし"
+//! 
+//! 
+//! ## [`BufferUsage`]の種類
+//! 
+//! `BufferUsage`はメソッドチェーンを利用してビットフラグを指定する。メソッド名は定数名をすべて小文字にしたもの。
+//! 
+//! ```rust,ignore
+//! BufferUsage::VERTEX_BUFFER.transfer_dest()
+//! ```
+//! 
+//! ### 入力/利用形態系
+//! 
+//! - `VERTEX_BUFFER`: **頂点バッファ**として頂点入力時に使用できる
+//! - `INDEX_BUFFER`: **インデックスバッファ**として頂点入力時に使用できる
+//! - `UNIFORM_BUFFER`: **定数バッファ**としてデスクリプタ入力時に使用できる
+//! - `STORAGE_BUFFER`: **ストレージバッファ**としてデスクリプタ入力時に使用できる
+//!   - 定数バッファより大容量
+//! - `UNIFORM_TEXEL_BUFFER`: 1Dのイメージアイテムとして適用可能な定数バッファとしてデスクリプタ入力時に使用できる
+//! - `STORAGE_TEXEL_BUFFER`: 1Dのイメージアイテムとして適用可能なストレージバッファとしてデスクリプタ入力時に使用できる
+//! - `INDIRECT_BUFFER`: 間接実行コマンドの**引数バッファ**として使用できる
+//! 
+//! ### 転送系
+//! 
+//! - `TRANSFER_SRC`: 転送コマンドでソースアイテムとして指定可能であることを示す
+//! - `TRANSFER_DEST`: 転送コマンドで対象アイテムとして指定可能であることを示す
+//!   - *このバッファに対してクリア、値埋めコマンドを適用したい場合もこれを指定する必要がある*
+//! 
+//! ## [`ImageUsage`]の種類
+//! 
+//! `ImageUsage`もメソッドチェーンを利用してビットフラグを指定する。
+//! 
+//! ```rust,ignore
+//! ImageUsage::SAMPLED.color_attachment()
+//! ```
+//! 
+//! ### シェーダ入力系
+//! 
+//! - `SAMPLED`: シェーダによってサンプル可能であることを示す
+//!   - シェーダで**テクスチャ**として使用できるようにする場合はこれ
+//! - `INPUT_ATTACHMENT`: シェーダによって入力アタッチメントとしての扱いを受けることができる
+//!   - シェーダで入力アタッチメントとして指定したい場合(中間バッファなど)はこれ
+//! - `STORAGE`: シェーダのイメージ入力として使用可能であることを示す
+//!   - `SAMPLED`との違いは、こちらはサンプラーによるサンプリングを使用できない点
+//! 
+//! ### 出力系
+//! 
+//! - `COLOR_ATTACHMENT`: [`Framebuffer`]の出力(カラーもしくはマルチサンプル解決)アイテムとして利用可能であることを示す
+//!   - 要するに、**コマンドで描画した結果を受け取る**ことができる
+//!   - プロシージャルテクスチャの作成やオフスクリーンレンダリングの出力として使いたい場合はこれ
+//! - `DEPTH_STENCIL_ATTACHMENT`: [`Framebuffer`]での深度/ステンシルバッファとして利用可能であることを示す
+//!   - オフスクリーンレンダリングなどで深度バッファが必要な場合はこれ
+//! 
+//! ### 転送系
+//! 
+//! - `TRANSFER_SRC`: 転送コマンドでソースアイテムとして指定可能であることを示す
+//!   - このテクスチャが何らかのコピー元になる場合はこれ
+//! - `TRANSFER_DEST`: 転送コマンドで対象アイテムとして指定可能であることを示す
+//!   - このテクスチャが何らかのコピー先になる場合はこれ
+//!   - このテクスチャに対してクリア、値埋めコマンドを適用したい場合はこれ
+//! 
+//! ### その他
+//! 
+//! - `TRANSIENT_ATTACHMENT`: 色、深度/ステンシル、マルチサンプル解決、および入力アイテムとして指定可能であることを示す
+//!   - テクスチャが`VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`が指定された[`DeviceMemory`]にバインドされることを想定している
+//!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
+//! 
 
 use vk::*;
 use std::rc::Rc as RefCounter;
@@ -180,7 +296,7 @@ impl BufferUsage
 	Both = (VK_BUFFER_CREATE_SPARSE_BINDING_BIT | VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT | VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _
 }
 /// Builder structure specifying the parameters of a newly created buffer object
-pub struct BufferDesc { cinfo: VkBufferCreateInfo, #[allow(dead_code)] sharing_queues: Vec<u32> }
+pub struct BufferDesc { cinfo: VkBufferCreateInfo }
 impl BufferDesc
 {
 	pub fn new(byte_size: usize, usage: BufferUsage) -> Self
@@ -190,16 +306,15 @@ impl BufferDesc
 			cinfo: VkBufferCreateInfo
 			{
 				size: byte_size as _, usage: usage.0, .. Default::default()
-			}, sharing_queues: Vec::new()
+			}
 		}
 	}
 	/// A list of queue families that will access this buffer
-	pub fn sharing_queue_families(&mut self, indices: Vec<u32>) -> &mut Self
+	pub fn sharing_queue_families(&mut self, indices: &[u32]) -> &mut Self
 	{
-		self.sharing_queues = indices;
-		self.cinfo.sharingMode = if self.sharing_queues.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
-		self.cinfo.queueFamilyIndexCount = self.sharing_queues.len() as _;
-		self.cinfo.pQueueFamilyIndices = self.sharing_queues.as_ptr();
+		self.cinfo.sharingMode = if indices.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
+		self.cinfo.queueFamilyIndexCount = indices.len() as _;
+		self.cinfo.pQueueFamilyIndices = indices.as_ptr();
 		self
 	}
 	/// A bitmask of `BufferSparseBinding` specifying additional parameters of the buffer
@@ -302,43 +417,44 @@ impl ImageFlags
 }
 /// Builder structure specifying the parameters of a newly created image object
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ImageDesc { cinfo: VkImageCreateInfo, sharing_queues: Vec<u32> }
+pub struct ImageDesc { cinfo: VkImageCreateInfo }
 impl ImageDesc
 {
-	pub fn new<Size: ImageSize>(size: Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self
+	pub fn new<Size: ImageSize>(size: &Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self
 	{
 		ImageDesc
 		{
 			cinfo: VkImageCreateInfo
 			{
-				imageType: Size::DIMENSION, extent: AsRef::<VkExtent3D>::as_ref(&size.into()).clone(), format, usage: usage.0,
+				imageType: Size::DIMENSION, extent: size.conv(), format, usage: usage.0,
 				mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
 				.. Default::default()
-			},
-			sharing_queues: Vec::new()
+			}
 		}
 	}
-	pub fn sharing_queue_families(&mut self, indices: Vec<u32>) -> &mut Self
+	pub fn sharing_queue_families(&mut self, indices: &[u32]) -> &mut Self
 	{
-		self.sharing_queues = indices;
-		self.cinfo.sharingMode = if self.sharing_queues.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
-		self.cinfo.queueFamilyIndexCount = self.sharing_queues.len() as _;
-		self.cinfo.pQueueFamilyIndices = self.sharing_queues.as_ptr();
+		self.cinfo.sharingMode = if indices.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
+		self.cinfo.queueFamilyIndexCount = indices.len() as _;
+		self.cinfo.pQueueFamilyIndices = indices.as_ptr();
 		self
 	}
-	/// bitmask of 1, 2, 4, 8, 16, 32, 64
+	/// bitmask of 1(default), 2, 4, 8, 16, 32, 64
 	pub fn sample_counts(&mut self, count_bits: u32) -> &mut Self
 	{
 		self.cinfo.samples = count_bits; self
 	}
+	/// default: using optimal tiling
 	pub fn use_linear_tiling(&mut self) -> &mut Self
 	{
 		self.cinfo.tiling = VK_IMAGE_TILING_LINEAR; self
 	}
+	/// default: none
 	pub fn flags(&mut self, opt: ImageFlags) -> &mut Self
 	{
 		self.cinfo.flags = opt.0; self
 	}
+	/// default: 1
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.cinfo.arrayLayers = layers; self }
 }
 
@@ -550,13 +666,26 @@ impl Image
 }
 
 /// Image Dimension by corresponding extent type
-pub trait ImageSize : Into<::Extent3D>
+pub trait ImageSize
 {
 	const DIMENSION: VkImageType;
+	fn conv(&self) -> VkExtent3D;
 }
-impl ImageSize for ::Extent1D { const DIMENSION: VkImageType = VK_IMAGE_TYPE_1D; }
-impl ImageSize for ::Extent2D { const DIMENSION: VkImageType = VK_IMAGE_TYPE_2D; }
-impl ImageSize for ::Extent3D { const DIMENSION: VkImageType = VK_IMAGE_TYPE_3D; }
+impl ImageSize for ::Extent1D
+{
+	const DIMENSION: VkImageType = VK_IMAGE_TYPE_1D;
+	fn conv(&self) -> VkExtent3D { VkExtent3D { width: self.0, height: 1, depth: 1 } }
+}
+impl ImageSize for ::Extent2D
+{
+	const DIMENSION: VkImageType = VK_IMAGE_TYPE_2D;
+	fn conv(&self) -> VkExtent3D { VkExtent3D { width: self.0, height: self.1, depth: 1 } }
+}
+impl ImageSize for ::Extent3D
+{
+	const DIMENSION: VkImageType = VK_IMAGE_TYPE_3D;
+	fn conv(&self) -> VkExtent3D { AsRef::<VkExtent3D>::as_ref(self).clone() }
+}
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
 pub struct MappedMemoryRange<'m>(&'m DeviceMemory, *mut u8, ::std::ops::Range<VkDeviceSize>);
