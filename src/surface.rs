@@ -151,7 +151,7 @@ impl<'d> SwapchainBuilder<'d>
 			imageArrayLayers: 1, imageUsage: usage.0, imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
 			preTransform: SurfaceTransform::Inherit as _, compositeAlpha: CompositeAlpha::Inherit as _,
 			presentMode: PresentMode::FIFO as _, .. Default::default()
-		}, surface, Vec::new())
+		}, surface)
 	}
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.0.imageArrayLayers = layers; self }
 	pub fn share(&mut self, queue_families: &[u32]) -> &mut Self
