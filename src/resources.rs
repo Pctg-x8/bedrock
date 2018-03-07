@@ -279,6 +279,22 @@ impl BufferUsage
 	/// Specifies that the buffer is suitable for passing as the `buffer` parameter to
 	/// `DrawCommandBuffer::draw_indirect`, `DrawCommandBuffer::draw_indexed_indirect`, or `ComputeCommandBuffer::dispatch_indirect`
 	pub fn indirect_buffer(&self) -> Self { BufferUsage(self.0 | Self::INDIRECT_BUFFER.0) }
+
+	/// Generates a default access type mask
+	pub fn default_access_mask(&self) -> VkAccessFlags
+	{
+		let mut bits = 0;
+		if (self.0 & Self::TRANSFER_SRC.0) != 0 { bits |= VK_ACCESS_TRANSFER_READ_BIT; }
+		if (self.0 & Self::TRANSFER_DEST.0) != 0 { bits |= VK_ACCESS_TRANSFER_WRITE_BIT; }
+		if (self.0 & Self::UNIFORM_TEXEL_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::STORAGE_TEXEL_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::UNIFORM_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::STORAGE_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::INDEX_BUFFER.0) != 0 { bits |= VK_ACCESS_INDEX_READ_BIT; }
+		if (self.0 & Self::VERTEX_BUFFER.0) != 0 { bits |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT; }
+		if (self.0 & Self::INDIRECT_BUFFER.0) != 0 { bits |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT; }
+		bits
+	}
 }
 /// Bitset specifying additional parameters of a buffer
 #[derive(Debug, Clone, Copy, PartialEq, Eq)] #[repr(C)] pub enum BufferSparseBinding
