@@ -47,9 +47,9 @@
 //! - [`use_linear_tiling`](ImageDesc::use_linear_tiling): イメージデータのメモリ上での配列を線形に強制する(デフォルトではデバイス最適な並びを使うようになっている)
 //!   - ディスクから読み込んだピクセルデータなどを`map`して流し込む場合はこれが必要
 //! - [`array_layers`](ImageDesc::array_layers): 配列イメージの要素数を指定する。デフォルトは1(配列ではない)
+//! - [`mip_levels`](ImageDesc::mip_levels): ミップマップの最大縮小レベルを指定する。デフォルトは1(ミップマップを使用しない)
 //! - [`sharing_queue_families`](ImageDesc::sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
 //! - [`flags`](ImageDesc::flags): [`ImageFlags`]を指定する。デフォルトでは"なし"
-//! 
 //! 
 //! ## [`BufferUsage`]の種類
 //! 
@@ -432,6 +432,8 @@ impl ImageDesc
 			}
 		}
 	}
+	/// A list of queue families that will access this image,
+	/// or an empty list if no queue families can access this image simultaneously
 	pub fn sharing_queue_families(&mut self, indices: &[u32]) -> &mut Self
 	{
 		self.cinfo.sharingMode = if indices.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
@@ -439,23 +441,30 @@ impl ImageDesc
 		self.cinfo.pQueueFamilyIndices = indices.as_ptr();
 		self
 	}
+	/// The number of sub-data element samples in the image  
 	/// bitmask of 1(default), 2, 4, 8, 16, 32, 64
 	pub fn sample_counts(&mut self, count_bits: u32) -> &mut Self
 	{
 		self.cinfo.samples = count_bits; self
 	}
-	/// default: using optimal tiling
+	/// Sets the tiling arrangement of the data elements in memory as "linear tiling"  
+	/// default: optimal tiling
 	pub fn use_linear_tiling(&mut self) -> &mut Self
 	{
 		self.cinfo.tiling = VK_IMAGE_TILING_LINEAR; self
 	}
+	/// A bitmask of `ImageFlags`describing additional parameters of the image  
 	/// default: none
 	pub fn flags(&mut self, opt: ImageFlags) -> &mut Self
 	{
 		self.cinfo.flags = opt.0; self
 	}
+	/// The number of layers in the image  
 	/// default: 1
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.cinfo.arrayLayers = layers; self }
+	/// The number of levels of detail available for minified sampling of the image  
+	/// default: 1
+	pub fn mip_levels(&mut self, levels: u32) -> &mut Self { self.cinfo.mipLevels = levels; self }
 }
 
 /// Following methods are enabled with [feature = "FeImplements"]
