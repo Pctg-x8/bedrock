@@ -16,7 +16,7 @@ impl DeviceChild for CommandPool { fn device(&self) -> &::Device { &self.1 } }
 
 /// The recording state of commandbuffers
 #[cfg(feature = "FeImplements")]
-pub struct CmdRecord<'d> { ptr: &'d CommandBuffer, layout: [Option<&'d ::PipelineLayout>; 2] }
+pub struct CmdRecord<'d> { ptr: &'d CommandBuffer, layout: [Option<VkPipelineLayout>; 2] }
 
 /// Implicitly closing the recording state. This may cause a panic when there are errors in commands
 #[cfg(feature = "FeImplements")]
@@ -138,24 +138,24 @@ impl CommandBuffer
 impl<'d> CmdRecord<'d>
 {
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_graphics_pipeline(&mut self, pipeline: &::Pipeline, layout: &'d ::PipelineLayout) -> &mut Self
+	pub fn bind_graphics_pipeline(&mut self, pipeline: &::Pipeline, layout: &::PipelineLayout) -> &mut Self
 	{
 		unsafe { vkCmdBindPipeline(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.native_ptr()) };
-		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout);
+		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout.native_ptr());
 		self
 	}
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_compute_pipeline(&mut self, pipeline: &::Pipeline, layout: &'d ::PipelineLayout) -> &mut Self
+	pub fn bind_compute_pipeline(&mut self, pipeline: &::Pipeline, layout: &::PipelineLayout) -> &mut Self
 	{
 		unsafe { vkCmdBindPipeline(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.native_ptr()) };
-		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout);
+		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout.native_ptr());
 		self
 	}
 	/// Binds descriptor sets to a command buffer
 	pub fn bind_graphics_descriptor_sets(&mut self, first: u32, descriptor_sets: &[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
 	{
 		unsafe { vkCmdBindDescriptorSets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
-			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline").native_ptr(),
+			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline"),
 			first, descriptor_sets.len() as _, descriptor_sets.as_ptr(), dynamic_offsets.len() as _, dynamic_offsets.as_ptr()) };
 		self
 	}
@@ -163,7 +163,7 @@ impl<'d> CmdRecord<'d>
 	pub fn bind_compute_descriptor_sets(&mut self, first: u32, descriptor_sets:&[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
 	{
 		unsafe { vkCmdBindDescriptorSets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
-			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for compute pipeline").native_ptr(),
+			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for compute pipeline"),
 			first, descriptor_sets.len() as _, descriptor_sets.as_ptr(), dynamic_offsets.len() as _, dynamic_offsets.as_ptr()) };
 		self
 	}
@@ -171,7 +171,7 @@ impl<'d> CmdRecord<'d>
 	pub fn push_graphics_constants<T>(&mut self, stage: ::ShaderStage, offset: u32, values: &[T]) -> &mut Self
 	{
 		unsafe { vkCmdPushConstants(self.ptr.native_ptr(),
-			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline").native_ptr(),
+			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline"),
 			stage.0, offset, values.len() as _, values.as_ptr() as *const _) };
 		self
 	}
@@ -179,7 +179,7 @@ impl<'d> CmdRecord<'d>
 	pub fn push_compute_constants<T>(&mut self, stage: ::ShaderStage, offset: u32, values: &[T]) -> &mut Self
 	{
 		unsafe { vkCmdPushConstants(self.ptr.native_ptr(),
-			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for graphics pipeline").native_ptr(),
+			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for graphics pipeline"),
 			stage.0, offset, values.len() as _, values.as_ptr() as *const _) };
 		self
 	}
