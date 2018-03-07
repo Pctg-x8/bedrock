@@ -1844,7 +1844,14 @@ pub struct VkPipelineColorBlendAttachmentState
 }
 impl Default for VkPipelineColorBlendAttachmentState
 {
-    fn default() -> Self { unsafe { std::mem::zeroed() } }
+    fn default() -> Self
+    {
+        VkPipelineColorBlendAttachmentState
+        {
+            colorWriteMask: VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT,
+            .. unsafe { std::mem::zeroed() }
+        }
+    }
 }
 #[repr(C)] #[derive(Debug, Clone, PartialEq)]
 pub struct VkPipelineColorBlendStateCreateInfo
