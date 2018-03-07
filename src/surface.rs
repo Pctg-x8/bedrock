@@ -138,26 +138,28 @@ impl Surface
 }
 
 /// Builder object to construct a `Swapchain`
-pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface, Vec<u32>);
+pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface);
 impl<'d> SwapchainBuilder<'d>
 {
-	pub fn new(surface: &'d Surface, min_image_count: u32, format: VkSurfaceFormatKHR, extent: ::Extent2D, usage: ::ImageUsage) -> Self
+	pub fn new(surface: &'d Surface, min_image_count: u32, format: &VkSurfaceFormatKHR,
+		extent: &::Extent2D, usage: ::ImageUsage) -> Self
 	{
 		SwapchainBuilder(VkSwapchainCreateInfoKHR
 		{
-			surface: surface.native_ptr(), minImageCount: min_image_count, imageFormat: format.format, imageColorSpace: format.colorSpace,
-			imageExtent: unsafe { ::std::mem::transmute(extent) }, imageArrayLayers: 1, imageUsage: usage.0,
-			imageSharingMode: VK_SHARING_MODE_EXCLUSIVE, preTransform: SurfaceTransform::Inherit as _,
-			compositeAlpha: CompositeAlpha::Inherit as _, presentMode: PresentMode::FIFO as _, .. Default::default()
+			surface: surface.native_ptr(), minImageCount: min_image_count, imageFormat: format.format,
+			imageColorSpace: format.colorSpace, imageExtent: unsafe { ::std::mem::transmute_copy(extent) },
+			imageArrayLayers: 1, imageUsage: usage.0, imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
+			preTransform: SurfaceTransform::Inherit as _, compositeAlpha: CompositeAlpha::Inherit as _,
+			presentMode: PresentMode::FIFO as _, .. Default::default()
 		}, surface, Vec::new())
 	}
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.0.imageArrayLayers = layers; self }
-	pub fn share(&mut self, queue_families: Vec<u32>) -> &mut Self
+	pub fn share(&mut self, queue_families: &[u32]) -> &mut Self
 	{
-		self.2 = queue_families;
-		self.0.imageSharingMode = if self.2.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
-		self.0.queueFamilyIndexCount = self.2.len() as _;
-		self.0.pQueueFamilyIndices = self.2.as_ptr();
+		self.0.imageSharingMode =
+			if queue_families.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
+		self.0.queueFamilyIndexCount = queue_families.len() as _;
+		self.0.pQueueFamilyIndices = queue_families.as_ptr();
 		self
 	}
 	pub fn pre_transform(&mut self, tf: SurfaceTransform) -> &mut Self { self.0.preTransform = tf as _; self }
