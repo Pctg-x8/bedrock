@@ -4,7 +4,7 @@
 //! 
 //! ## バッファの作成
 //! 
-//! [`BufferDesc`]で作成する
+//! [`BufferDesc`](struct.BufferDesc.html)で作成する
 //! 
 //! ```rust,ignore
 //! let buffer = BufferDesc::new(4 * 4 * 3, BufferUsage::VERTEX_BUFFER.transfer_dest()).crete(&device)?;
@@ -12,23 +12,23 @@
 //! 
 //! `new`から`create`までにメソッドチェーンを用いて以下のようなバッファの詳細を指定できる。
 //! 
-//! - [`sparse_binding_opt`](BufferDesc::sparse_binding_opt): SparseBinding時の許可される挙動を指定する。デフォルトでは"なし"
+//! - [`sparse_binding_opt`](struct.BufferDesc.html#method.sparse_binding_opt): SparseBinding時の許可される挙動を指定する。デフォルトでは"なし"
 //!   - [`BufferSparseBinding::Bound`]でSparseBindingによってメモリにバインドできることを示す
 //!   - [`BufferSparseBinding::Residency`]で部分的にメモリにバインドできることを示す
 //!   - [`BufferSparseBinding::Aliased`]で、バインド先のメモリ範囲が他のバッファに同時に使われる可能性を示す
 //!   - [`BufferSparseBinding::Both`]は`Residency`と`Aliased`の両方を示す
-//! - [`sharing_queue_families`](BufferDesc::sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
+//! - [`sharing_queue_families`](struct.BufferDesc.html#method.sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
 //! 
 //! ## イメージの作成
 //! 
-//! [`ImageDesc`]で作成する
+//! [`ImageDesc`](struct.ImageDesc.html)で作成する
 //! 
 //! ```rust,ignore
 //! let image = ImageDesc::new(&Extent2D(128, 128), VK_FORMAT_R8G8B8A8_UNORM, ImageUsage::SAMPLED.color_attachment(), ImageLayout::General)
 //! 	.create(&device)?;
 //! ```
 //! 
-//! [`ImageDesc::new`]の第一引数に
+//! [`ImageDesc::new`](struct.ImageDesc.html#method.new)の第一引数に
 //! 
 //! - `Extent1D`を指定すると1Dテクスチャ
 //! - `Extent2D`を指定すると2Dテクスチャ
@@ -37,23 +37,23 @@
 //! を生成するようになる。
 //! `new`から`create`までにメソッドチェーンを用いて以下のようなイメージの詳細を指定できる。
 //! 
-//! - [`sample_counts`](ImageDesc::sample_counts): イメージの要素ごとのサンプル数を2^nの値(1, 2, 4, 8, 16, 32, 64)で指定する。デフォルトは1。
+//! - [`sample_counts`](struct.ImageDesc.html#method.sample_counts): イメージの要素ごとのサンプル数を2^nの値(1, 2, 4, 8, 16, 32, 64)で指定する。デフォルトは1。
 //!   以下の条件を一つでも満たす場合は1を設定する必要がある。
 //!   - 最適タイリング(`VK_IMAGE_TILING_OPTIMAL`)が使われていない(`use_linear_tiling`を併用する場合)
 //!   - 2Dテクスチャではない(`new`の第一引数が`Extent2D`でない場合)
 //!   - キューブテクスチャである(`flags`に`ImageFlags::CUBE_COMPATIBLE`を指定している場合)
 //!   - 指定したフォーマットがカラーアタッチメントもしくは深度/ステンシルアタッチメントとしての利用に対応していない場合
 //!     - RGBAフォーマットやDSフォーマットを指定している分には気にする必要はない
-//! - [`use_linear_tiling`](ImageDesc::use_linear_tiling): イメージデータのメモリ上での配列を線形に強制する(デフォルトではデバイス最適な並びを使うようになっている)
+//! - [`use_linear_tiling`](struct.ImageDesc.html#method.use_linear_tiling): イメージデータのメモリ上での配列を線形に強制する(デフォルトではデバイス最適な並びを使うようになっている)
 //!   - ディスクから読み込んだピクセルデータなどを`map`して流し込む場合はこれが必要
-//! - [`array_layers`](ImageDesc::array_layers): 配列イメージの要素数を指定する。デフォルトは1(配列ではない)
-//! - [`mip_levels`](ImageDesc::mip_levels): ミップマップの最大縮小レベルを指定する。デフォルトは1(ミップマップを使用しない)
-//! - [`sharing_queue_families`](ImageDesc::sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
-//! - [`flags`](ImageDesc::flags): [`ImageFlags`]を指定する。デフォルトでは"なし"
+//! - [`array_layers`](struct.ImageDesc.html#method.array_layers): 配列イメージの要素数を指定する。デフォルトは1(配列ではない)
+//! - [`mip_levels`](struct.ImageDesc.html#method.mip_levels): ミップマップの最大縮小レベルを指定する。デフォルトは1(ミップマップを使用しない)
+//! - [`sharing_queue_families`](struct.ImageDesc.html#method.sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
+//! - [`flags`](struct.ImageDesc.html#method.flags): [`ImageFlags`]を指定する。デフォルトでは"なし"
 //! 
-//! ## [`BufferUsage`]の種類
+//! ## `BufferUsage`の種類
 //! 
-//! `BufferUsage`はメソッドチェーンを利用してビットフラグを指定する。メソッド名は定数名をすべて小文字にしたもの。
+//! [`BufferUsage`](enum.BufferUsage.html)はメソッドチェーンを利用してビットフラグを指定する。メソッド名は定数名をすべて小文字にしたもの。
 //! 
 //! ```rust,ignore
 //! BufferUsage::VERTEX_BUFFER.transfer_dest()
@@ -76,9 +76,9 @@
 //! - `TRANSFER_DEST`: 転送コマンドで対象アイテムとして指定可能であることを示す
 //!   - *このバッファに対してクリア、値埋めコマンドを適用したい場合もこれを指定する必要がある*
 //! 
-//! ## [`ImageUsage`]の種類
+//! ## `ImageUsage`の種類
 //! 
-//! `ImageUsage`もメソッドチェーンを利用してビットフラグを指定する。
+//! [`ImageUsage`](enum.ImageUsage.html)もメソッドチェーンを利用してビットフラグを指定する。
 //! 
 //! ```rust,ignore
 //! ImageUsage::SAMPLED.color_attachment()
