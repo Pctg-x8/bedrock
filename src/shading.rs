@@ -844,6 +844,7 @@ impl<'d> PipelineShader<'d>
 		}, specinfo)
 	}
 }
+#[cfg(feature = "FeImplements")]
 impl<'d> VertexProcessingStages<'d>
 {
 	pub fn generate_stages(&self) -> (Vec<VkPipelineShaderStageCreateInfo>, Vec<Option<Box<VkSpecializationInfo>>>)
