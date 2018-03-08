@@ -49,11 +49,11 @@
 //! - [`array_layers`](struct.ImageDesc.html#method.array_layers): 配列イメージの要素数を指定する。デフォルトは1(配列ではない)
 //! - [`mip_levels`](struct.ImageDesc.html#method.mip_levels): ミップマップの最大縮小レベルを指定する。デフォルトは1(ミップマップを使用しない)
 //! - [`sharing_queue_families`](struct.ImageDesc.html#method.sharing_queue_families): 複数のキューでアイテムを共有する際に、共有したいキューファミリの番号を指定する。デフォルトは空(占有)
-//! - [`flags`](struct.ImageDesc.html#method.flags): [`ImageFlags`]を指定する。デフォルトでは"なし"
+//! - [`flags`](struct.ImageDesc.html#method.flags): [`ImageFlags`](struct.ImageFlags.html)を指定する。デフォルトでは"なし"
 //! 
 //! ## `BufferUsage`の種類
 //! 
-//! [`BufferUsage`](enum.BufferUsage.html)はメソッドチェーンを利用してビットフラグを指定する。メソッド名は定数名をすべて小文字にしたもの。
+//! [`BufferUsage`](struct.BufferUsage.html)はメソッドチェーンを利用してビットフラグを指定する。メソッド名は定数名をすべて小文字にしたもの。
 //! 
 //! ```rust,ignore
 //! BufferUsage::VERTEX_BUFFER.transfer_dest()
@@ -61,14 +61,14 @@
 //! 
 //! ### 入力/利用形態系
 //! 
-//! - `VERTEX_BUFFER`: **頂点バッファ**として頂点入力時に使用できる
-//! - `INDEX_BUFFER`: **インデックスバッファ**として頂点入力時に使用できる
-//! - `UNIFORM_BUFFER`: **定数バッファ**としてデスクリプタ入力時に使用できる
-//! - `STORAGE_BUFFER`: **ストレージバッファ**としてデスクリプタ入力時に使用できる
+//! - `VERTEX_BUFFER`: **頂点バッファ** として頂点入力時に使用できる
+//! - `INDEX_BUFFER`: **インデックスバッファ** として頂点入力時に使用できる
+//! - `UNIFORM_BUFFER`: **定数バッファ** としてデスクリプタ入力時に使用できる
+//! - `STORAGE_BUFFER`: **ストレージバッファ** としてデスクリプタ入力時に使用できる
 //!   - 定数バッファより大容量
 //! - `UNIFORM_TEXEL_BUFFER`: 1Dのイメージアイテムとして適用可能な定数バッファとしてデスクリプタ入力時に使用できる
 //! - `STORAGE_TEXEL_BUFFER`: 1Dのイメージアイテムとして適用可能なストレージバッファとしてデスクリプタ入力時に使用できる
-//! - `INDIRECT_BUFFER`: 間接実行コマンドの**引数バッファ** として使用できる
+//! - `INDIRECT_BUFFER`: 間接実行コマンドの **引数バッファ** として使用できる
 //! 
 //! ### 転送系
 //! 
@@ -78,7 +78,7 @@
 //! 
 //! ## `ImageUsage`の種類
 //! 
-//! [`ImageUsage`](enum.ImageUsage.html)もメソッドチェーンを利用してビットフラグを指定する。
+//! [`ImageUsage`](struct.ImageUsage.html)もメソッドチェーンを利用してビットフラグを指定する。
 //! 
 //! ```rust,ignore
 //! ImageUsage::SAMPLED.color_attachment()
@@ -87,7 +87,7 @@
 //! ### シェーダ入力系
 //! 
 //! - `SAMPLED`: シェーダによってサンプル可能であることを示す
-//!   - シェーダで**テクスチャ** として使用できるようにする場合はこれ
+//!   - シェーダで **テクスチャ** として使用できるようにする場合はこれ
 //! - `INPUT_ATTACHMENT`: シェーダによって入力アタッチメントとしての扱いを受けることができる
 //!   - シェーダで入力アタッチメントとして指定したい場合(中間バッファなど)はこれ
 //! - `STORAGE`: シェーダのイメージ入力として使用可能であることを示す
@@ -96,7 +96,7 @@
 //! ### 出力系
 //! 
 //! - `COLOR_ATTACHMENT`: [`Framebuffer`]の出力(カラーもしくはマルチサンプル解決)アイテムとして利用可能であることを示す
-//!   - 要するに、**コマンドで描画した結果を受け取る** ことができる
+//!   - 要するに、 **コマンドで描画した結果を受け取る** ことができる
 //!   - プロシージャルテクスチャの作成やオフスクリーンレンダリングの出力として使いたい場合はこれ
 //! - `DEPTH_STENCIL_ATTACHMENT`: [`Framebuffer`]での深度/ステンシルバッファとして利用可能であることを示す
 //!   - オフスクリーンレンダリングなどで深度バッファが必要な場合はこれ
@@ -279,6 +279,22 @@ impl BufferUsage
 	/// Specifies that the buffer is suitable for passing as the `buffer` parameter to
 	/// `DrawCommandBuffer::draw_indirect`, `DrawCommandBuffer::draw_indexed_indirect`, or `ComputeCommandBuffer::dispatch_indirect`
 	pub fn indirect_buffer(&self) -> Self { BufferUsage(self.0 | Self::INDIRECT_BUFFER.0) }
+
+	/// Generates a default access type mask
+	pub fn default_access_mask(&self) -> VkAccessFlags
+	{
+		let mut bits = 0;
+		if (self.0 & Self::TRANSFER_SRC.0) != 0 { bits |= VK_ACCESS_TRANSFER_READ_BIT; }
+		if (self.0 & Self::TRANSFER_DEST.0) != 0 { bits |= VK_ACCESS_TRANSFER_WRITE_BIT; }
+		if (self.0 & Self::UNIFORM_TEXEL_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::STORAGE_TEXEL_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::UNIFORM_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::STORAGE_BUFFER.0) != 0 { bits |= VK_ACCESS_UNIFORM_READ_BIT; }
+		if (self.0 & Self::INDEX_BUFFER.0) != 0 { bits |= VK_ACCESS_INDEX_READ_BIT; }
+		if (self.0 & Self::VERTEX_BUFFER.0) != 0 { bits |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT; }
+		if (self.0 & Self::INDIRECT_BUFFER.0) != 0 { bits |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT; }
+		bits
+	}
 }
 /// Bitset specifying additional parameters of a buffer
 #[derive(Debug, Clone, Copy, PartialEq, Eq)] #[repr(C)] pub enum BufferSparseBinding
