@@ -3,6 +3,7 @@
 use vk::*;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
+use std::mem::size_of;
 
 /// Opaque handle to a command pool object
 #[derive(Clone)] pub struct CommandPool(VkCommandPool, ::Device);
@@ -172,7 +173,7 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe { vkCmdPushConstants(self.ptr.native_ptr(),
 			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline"),
-			stage.0, offset, values.len() as _, values.as_ptr() as *const _) };
+			stage.0, offset, (values.len() * size_of::<T>()) as _, values.as_ptr() as *const _) };
 		self
 	}
 	/// Update the values of push constants
@@ -180,7 +181,7 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe { vkCmdPushConstants(self.ptr.native_ptr(),
 			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for graphics pipeline"),
-			stage.0, offset, values.len() as _, values.as_ptr() as *const _) };
+			stage.0, offset, (values.len() * size_of::<T>()) as _, values.as_ptr() as *const _) };
 		self
 	}
 
