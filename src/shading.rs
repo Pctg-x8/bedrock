@@ -384,14 +384,14 @@ impl<'d> VertexProcessingStages<'d>
 		self.vertex = vsh; return self;
 	}
 	/// Update the geometry shader, or disable geometry shader stage
-	pub fn geometry_shader(&mut self, gsh: Option<PipelineShader<'d>>) -> &mut Self
+	pub fn geometry_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, gsh: S) -> &mut Self
 	{
-		self.geometry = gsh; return self;
+		self.geometry = gsh.into(); return self;
 	}
 	/// Update the fragment shader, or disable fragment shader stage
-	pub fn fragment_shader(&mut self, fsh: Option<PipelineShader<'d>>) -> &mut Self
+	pub fn fragment_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, fsh: S) -> &mut Self
 	{
-		self.fragment = fsh; return self;
+		self.fragment = fsh.into(); return self;
 	}
 	/// Update the vertex binding description
 	pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self
