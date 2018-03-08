@@ -813,6 +813,26 @@ pub enum ImageLayout
 	#[cfg(feature = "VK_KHR_swapchain")]
 	PresentSrc = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR as _
 }
+impl ImageLayout
+{
+	/// Commonly used access types with the layout
+	pub fn default_access_mask(&self) -> VkAccessFlags
+	{
+		match *self
+		{
+			ImageLayout::Undefined | ImageLayout::Preinitialized => 0,
+			ImageLayout::General => VK_ACCESS_MEMORY_READ_BIT,
+			ImageLayout::ColorAttachmentOpt => VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+			ImageLayout::DepthStencilAttachmentOpt => VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+			ImageLayout::DepthStencilReadOnlyOpt => VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
+			ImageLayout::ShaderReadOnlyOpt => VK_ACCESS_SHADER_READ_BIT,
+			ImageLayout::TransferSrcOpt => VK_ACCESS_TRANSFER_READ_BIT,
+			ImageLayout::TransferDestOpt => VK_ACCESS_TRANSFER_WRITE_BIT,
+			#[cfg(feature = "VK_KHR_swapchain")]
+			ImageLayout::PresentSrc => VK_ACCESS_MEMORY_READ_BIT
+		}
+	}
+}
 
 /// Structure specifying a color component mapping
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]

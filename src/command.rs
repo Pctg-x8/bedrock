@@ -483,12 +483,17 @@ impl<'d> CmdRecord<'d>
 	}
 	/// Insert a memory dependency
 	pub fn pipeline_barrier(&mut self, src_stage_mask: ::PipelineStageFlags, dst_stage_mask: ::PipelineStageFlags, by_region: bool,
-		memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[VkBufferMemoryBarrier], image_memory_barriers: &[VkImageMemoryBarrier]) -> &mut Self
+		memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[BufferMemoryBarrier], image_memory_barriers: &[ImageMemoryBarrier]) -> &mut Self
 	{
-		unsafe { vkCmdPipelineBarrier(self.ptr.native_ptr(), src_stage_mask.0, dst_stage_mask.0, if by_region { VK_DEPENDENCY_BY_REGION_BIT } else { 0 },
-			memory_barriers.len() as _, memory_barriers.as_ptr(), buffer_memory_barriers.len() as _, buffer_memory_barriers.as_ptr(),
-			image_memory_barriers.len() as _, image_memory_barriers.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdPipelineBarrier(self.ptr.native_ptr(), src_stage_mask.0, dst_stage_mask.0,
+				if by_region { VK_DEPENDENCY_BY_REGION_BIT } else { 0 },
+				memory_barriers.len() as _, memory_barriers.as_ptr(),
+				buffer_memory_barriers.len() as _, buffer_memory_barriers.as_ptr() as _,
+				image_memory_barriers.len() as _, image_memory_barriers.as_ptr() as _)
+		};
+		return self;
 	}
 }
 
@@ -595,4 +600,149 @@ pub enum OcclusionQuery
 	Disable, Enable,
 	/// `VK_QUERY_CONTROL_PRECISE_BIT`
 	Precise
+}
+
+/// Access Types
+pub struct AccessFlags { pub read: VkAccessFlags, pub write: VkAccessFlags }
+impl AccessFlags
+{
+	/// Specifies read access to an indirect command structure read as part of an indirect drawing or dispatch command.
+	pub const INDIRECT_COMMAND_READ: VkAccessFlags = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+	/// Specifies read access to an index buffer as part of an indexed drawing command, bound by `vkCmdBindIndexBuffer`.
+	pub const INDEX_READ: VkAccessFlags = VK_ACCESS_INDEX_READ_BIT;
+	/// Specifies read access to a vertex buffer as part of a drawing command, bound by `vkCmdBindVertexBuffers`.
+	pub const VERTEX_ATTRIBUTE_READ: VkAccessFlags = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+	/// Specifies read access to a [uniform buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformbuffer).
+	pub const UNIFORM_READ: VkAccessFlags = VK_ACCESS_UNIFORM_READ_BIT;
+	/// Specifies read access to an [input attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass) within a render pass during fragment shading.
+	pub const INPUT_ATTACHMENT_READ: VkAccessFlags = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+	/// Specifies read/write access to a [storage buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagebuffer),
+	/// [uniform texel buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformtexelbuffer)(read only),
+	/// [storage texel buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagetexelbuffer),
+	/// [samples image](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-sampledimage)(read only),
+	/// or [storage image](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storageimage).
+	pub const SHADER: Self = AccessFlags { read: VK_ACCESS_SHADER_READ_BIT, write: VK_ACCESS_SHADER_WRITE_BIT };
+	/// - `read`: Specifies read access to a [color attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass),
+	///   such as via [blending](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#framebuffer-blending),
+	///   [logic operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#framebuffer-logicop),
+	///   or via certain [subpass load operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#framebuffer-logicop).
+	/// - `write`: specifies write access to a [color or resolve attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass)
+	///   during a [render pass](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass)
+	///   or via certain [subpass load and store operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass-load-store-ops).
+	pub const COLOR_ATTACHMENT: Self = AccessFlags
+	{
+		read: VK_ACCESS_COLOR_ATTACHMENT_READ_BIT, write: VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT
+	};
+	/// - `read`: Specifies read access to a [depth/stencil attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass),
+	///   via [depth or stencil operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-ds-state)
+	///   or via certain [subpass load operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass-load-store-ops).
+	/// - `write`: Specifies write access to a [depth/stencil attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass),
+	///   via [depth or stencil operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-ds-state)
+	///   or via certain [subpass load and store operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass-load-store-ops).
+	pub const DEPTH_STENCIL_ATTACHMENT: Self = AccessFlags
+	{
+		read: VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT, write: VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT
+	};
+	/// Specifies read/write access to an image or buffer in a [clear](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#clears)(write only)
+	/// or [copy](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#copies) operation.
+	pub const TRANSFER: Self = AccessFlags { read: VK_ACCESS_TRANSFER_READ_BIT, write: VK_ACCESS_TRANSFER_WRITE_BIT };
+	/// Specifies read/write access by a host operation.
+	/// Accesses of this type are not performed through a resource, but directly on memory.
+	pub const HOST: Self = AccessFlags { read: VK_ACCESS_HOST_READ_BIT, write: VK_ACCESS_HOST_WRITE_BIT };
+	/// Specifies read/write access via non-specific entities.
+	/// These entities include the Vulkan device and host, but *may* also include entities external to the Vulkan device
+	/// or otherwise not part of the core Vulkan pipeline.
+	/// 
+	/// - When the `write` mask included in a source access mask, all writes that are performed by entities known to the
+	///   Vulkan device are made available.
+	/// - When included in a destination access mask, makes all available writes visible to all future read accesses on
+	///   entities known to the Vulkan device.
+	pub const MEMORY: Self = AccessFlags { read: VK_ACCESS_MEMORY_READ_BIT, write: VK_ACCESS_MEMORY_WRITE_BIT };
+}
+
+use {Image, Buffer, ImageLayout};
+use std::ops::Range;
+use std::mem::replace;
+/// Image Subresource Slice
+#[derive(Clone)]
+pub struct ImageSubref<'d>(&'d Image, VkImageSubresourceRange);
+impl<'d> ImageSubref<'d>
+{
+	/// Construct a slice for the Color aspect(`VK_IMAGE_ASPECT_COLOR_BIT`)
+	pub fn color(image: &'d Image, mip_levels: Range<usize>, array_layers: Range<usize>) -> Self
+	{
+		ImageSubref(image, VkImageSubresourceRange
+		{
+			aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
+			baseMipLevel: mip_levels.start as _, baseArrayLayer: array_layers.start as _,
+			levelCount: (mip_levels.end - mip_levels.start) as _, layerCount: (array_layers.end - array_layers.start) as _
+		})
+	}
+}
+
+/// Wrapper object of `VkImageMemoryBarrier`, derscribes a memory barrier of an image.
+#[derive(Clone)]
+pub struct ImageMemoryBarrier(VkImageMemoryBarrier);
+impl ImageMemoryBarrier
+{
+	/// Construct a new barrier descriptor
+	pub fn new(img: &ImageSubref, old_layout: ImageLayout, new_layout: ImageLayout) -> Self
+	{
+		ImageMemoryBarrier(VkImageMemoryBarrier
+		{
+			image: img.0.native_ptr(), subresourceRange: img.1.clone(),
+			oldLayout: old_layout as _, newLayout: new_layout as _,
+			srcAccessMask: old_layout.default_access_mask(),
+			dstAccessMask: new_layout.default_access_mask(), .. Default::default()
+		})
+	}
+	/// Update the source access mask
+	pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self
+	{
+		self.0.srcAccessMask = mask; return self;
+	}
+	/// Update the destination access mask
+	pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self
+	{
+		self.0.dstAccessMask = mask; return self;
+	}
+	/// Flip access masks and image layouts
+	pub fn flip(mut self) -> Self
+	{
+		self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
+		self.0.newLayout = replace(&mut self.0.oldLayout, self.0.newLayout);
+		return self;
+	}
+}
+/// Wrapper object of `VkBufferMemoryBarrier`, describes a memory barrier of a buffer.
+#[derive(Clone)]
+pub struct BufferMemoryBarrier(VkBufferMemoryBarrier);
+impl BufferMemoryBarrier
+{
+	/// Construct a new buffer descriptor
+	pub fn new(buf: &Buffer, range: Range<usize>, src_access_mask: VkAccessFlags, dst_access_mask: VkAccessFlags)
+		-> Self
+	{
+		BufferMemoryBarrier(VkBufferMemoryBarrier
+		{
+			buffer: buf.native_ptr(), offset: range.start as _, size: (range.end - range.start) as _,
+			srcAccessMask: src_access_mask, dstAccessMask: dst_access_mask, .. Default::default()
+		})
+	}
+	/// Update the source access mask
+	pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self
+	{
+		self.0.srcAccessMask = mask; return self;
+	}
+	/// Update the destination access mask
+	pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self
+	{
+		self.0.dstAccessMask = mask; return self;
+	}
+	/// Flip access masks
+	pub fn flip(mut self) -> Self
+	{
+		self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
+		return self;
+	}
 }
