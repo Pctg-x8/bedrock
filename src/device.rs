@@ -68,6 +68,7 @@ struct DeviceCell(VkDevice, ::Instance);
 pub struct Device(RefCounter<DeviceCell>);
 #[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Device {}
 /// Opaque handle to a queue object
+#[derive(Clone)]
 pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
