@@ -2386,14 +2386,22 @@ impl Default for VkMemoryBarrier
 {
     fn default() -> Self
     {
-        VkMemoryBarrier { sType: VK_STRUCTURE_TYPE_MEMORY_BARRIER, .. unsafe { std::mem::zeroed() } }
+        VkMemoryBarrier
+        {
+            sType: VK_STRUCTURE_TYPE_MEMORY_BARRIER, .. unsafe { std::mem::zeroed() }
+        }
     }
 }
 impl Default for VkBufferMemoryBarrier
 {
     fn default() -> Self
     {
-        VkBufferMemoryBarrier { sType: VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER, .. unsafe { std::mem::zeroed() } }
+        VkBufferMemoryBarrier
+        {
+            sType: VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED, dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+            .. unsafe { std::mem::zeroed() }
+        }
     }
 }
 impl Default for VkImageMemoryBarrier
@@ -2403,6 +2411,7 @@ impl Default for VkImageMemoryBarrier
         VkImageMemoryBarrier
         {
             sType: VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED, dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
             subresourceRange: Default::default(), .. unsafe { std::mem::zeroed() }
         }
     }
