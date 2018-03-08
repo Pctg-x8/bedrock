@@ -4,6 +4,8 @@ use vk::*;
 use std::ffi::CString;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
+use std::ptr::null;
+use std::marker::PhantomData;
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -278,7 +280,7 @@ impl<T> SwitchOrDynamicState<T>
 }
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
-#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))] #[derive(Clone)]
 pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: ::std::marker::PhantomData<&'d ()> }
 impl<'d, T> From<&'d T> for DynamicDataCell<'d>
 {
@@ -294,7 +296,7 @@ impl<'d> DynamicDataCell<'d>
 	}
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
-#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))] #[derive(Clone)]
 pub struct PipelineShader<'d>
 {
 	module: &'d ShaderModule, entry_name: CString, specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
@@ -322,13 +324,11 @@ pub enum BasePipeline<'d>
 pub struct GraphicsPipelineBuilder<'d>
 {
 	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout, rp: &'d ::RenderPass, subpass: u32, _base: BasePipeline<'d>,
-	vs: Option<PipelineShader<'d>>, tcs: Option<PipelineShader<'d>>, tes: Option<PipelineShader<'d>>,
-	gs: Option<PipelineShader<'d>>, fs: Option<PipelineShader<'d>>,
-	vi_state: VkPipelineVertexInputStateCreateInfo, ia_state: VkPipelineInputAssemblyStateCreateInfo,
+	vp: Option<VertexProcessingStages<'d>>,
 	rasterizer_state: VkPipelineRasterizationStateCreateInfo,
 	tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
 	viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
-	ms_state: Option<(Box<VkPipelineMultisampleStateCreateInfo>, Vec<VkSampleMask>)>,
+	ms_state: Option<&'d MultisampleState>,
 	ds_state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>,
 	color_blending: Option<(Box<VkPipelineColorBlendStateCreateInfo>, Vec<VkPipelineColorBlendAttachmentState>)>,
 	dynamic_state_flags: DynamicStateFlags
@@ -348,6 +348,141 @@ impl<'d> PipelineShader<'d>
 	}
 }
 
+/// PipelineStateDesc: Shader Stages and Input descriptions
+#[derive(Clone)] pub struct VertexProcessingStages<'d>
+{
+	pub vertex: PipelineShader<'d>, pub vi: VkPipelineVertexInputStateCreateInfo,
+	pub ia: VkPipelineInputAssemblyStateCreateInfo,
+	pub geometry: Option<PipelineShader<'d>>, pub fragment: Option<PipelineShader<'d>>,
+	pub _holder: PhantomData<(&'d [VkVertexInputBindingDescription], &'d [VkVertexInputAttributeDescription])>
+}
+impl<'d> VertexProcessingStages<'d>
+{
+	pub fn new(vsh: PipelineShader<'d>,
+		vbind: &'d [VkVertexInputBindingDescription], vattr: &'d [VkVertexInputAttributeDescription],
+		primitive_topo: VkPrimitiveTopology) -> Self
+	{
+		VertexProcessingStages
+		{
+			vertex: vsh, vi: VkPipelineVertexInputStateCreateInfo
+			{
+				vertexBindingDescriptionCount: vbind.len() as _,
+				pVertexBindingDescriptions: vbind.as_ptr(),
+				vertexAttributeDescriptionCount: vattr.len() as _,
+				pVertexAttributeDescriptions: vattr.as_ptr(), .. Default::default()
+			},
+			ia: VkPipelineInputAssemblyStateCreateInfo
+			{
+				topology: primitive_topo, .. Default::default()
+			},
+			geometry: None, fragment: None, _holder: PhantomData
+		}
+	}
+	/// Update the vertex shader
+	pub fn vertex_shader(&mut self, vsh: PipelineShader<'d>) -> &mut Self
+	{
+		self.vertex = vsh; return self;
+	}
+	/// Update the geometry shader, or disable geometry shader stage
+	pub fn geometry_shader(&mut self, gsh: Option<PipelineShader<'d>>) -> &mut Self
+	{
+		self.geometry = gsh; return self;
+	}
+	/// Update the fragment shader, or disable fragment shader stage
+	pub fn fragment_shader(&mut self, fsh: Option<PipelineShader<'d>>) -> &mut Self
+	{
+		self.fragment = fsh; return self;
+	}
+	/// Update the vertex binding description
+	pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self
+	{
+		self.vi.vertexBindingDescriptionCount = vbind.len() as _;
+		self.vi.pVertexBindingDescriptions = vbind.as_ptr(); return self;
+	}
+	/// Update the vertex attribute description
+	pub fn vertex_attributes(&mut self, vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self
+	{
+		self.vi.vertexAttributeDescriptionCount = vattr.len() as _;
+		self.vi.pVertexAttributeDescriptions = vattr.as_ptr(); return self;
+	}
+	/// Update the vertex input description
+	pub fn vertex_input(&mut self, vbind: &'d [VkVertexInputBindingDescription],
+		vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self
+	{
+		self.vertex_binding(vbind).vertex_attributes(vattr)
+	}
+	/// Update the vertex shader and the vertex input description
+	pub fn vertex_processing(&mut self, vsh: PipelineShader<'d>,
+		vbind: &'d [VkVertexInputBindingDescription], vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self
+	{
+		self.vertex_shader(vsh).vertex_input(vbind, vattr)
+	}
+	/// Controls whether a special vertex index value is treated as restarting the assembly of primitives.
+	/// This enable only applies to indexed draws, and the special index value is either
+	/// 
+	/// * `0xffff_ffff` when the `indexType` parameter of `vkCmdBindIndexBuffer` is equal to `VK_INDEX_TYPE_UINT32`, or
+	/// * `0xffff` when `indexType` is equal to `VK_INDEX_TYPE_UINT16`.
+	/// 
+	/// Primitive restart is not allowed for "list" topologies.
+	pub fn enable_primitive_restart(&mut self, w: bool) -> &mut Self
+	{
+		self.ia.primitiveRestartEnable = w as _; return self;
+	}
+}
+/// PipelineStateDesc: Multisample State
+#[derive(Clone)] pub struct MultisampleState(VkPipelineMultisampleStateCreateInfo);
+unsafe impl Sync for MultisampleState {}
+unsafe impl Send for MultisampleState {}
+impl MultisampleState
+{
+	pub fn new() -> Self
+	{
+		MultisampleState(VkPipelineMultisampleStateCreateInfo
+		{
+			rasterizationSamples: 1, .. Default::default()
+		})
+	}
+	/// Specifies the number of samples per pixel used in rasterization. default=1
+	pub fn rasterization_samples(&mut self, samples: usize) -> &mut Self
+	{
+		self.0.rasterizationSamples = samples as _; return self;
+	}
+	/// A bitmask of static coverage information that is ANDed with the coverage information generated
+	/// during rasterization, as described in [Sample Mask](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-samplemask).
+	pub fn sample_mask(&mut self, mask: &[VkSampleMask]) -> &mut Self
+	{
+		if mask.is_empty() { self.0.pSampleMask = null(); }
+		else
+		{
+			assert_eq!(mask.len(), (self.0.rasterizationSamples as usize + 31) / 32);
+			self.0.pSampleMask = mask.as_ptr();
+		}
+		return self;
+	}
+	/// Specifies a minimum fraction of sample shading(must be in the range [0, 1]).
+	/// Pass a `None` to disable [Sample Shading](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#primsrast-sampleshading).
+	pub fn sample_shading(&mut self, min_sample_shading: Option<f32>) -> &mut Self
+	{
+		self.0.sampleShadingEnable = min_sample_shading.is_some() as _;
+		if let Some(m) = min_sample_shading
+		{
+			assert!(0.0 <= m && m <= 1.0,
+				"Invalid usage: VkPipelineMultisampleStateCreateInfo::minSampleShading must be in the range [0, 1]");
+			self.0.minSampleShading = m as _;
+		}
+		return self;
+	}
+	/// Controls whether a temporary coverage value is generated based on the alpha component of the fragment's
+	/// first color output as specified in the [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg) section.
+	pub fn enable_alpha_to_coverage(&mut self, w: bool) -> &mut Self
+	{
+		self.0.alphaToCoverageEnable = w as _; return self;
+	}
+	/// Controls whether the alpha component of the fragment's first color output is replaced with one as described in
+	/// [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg).
+	pub fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self { self.0.alphaToOneEnable = w as _; return self; }
+}
+
 impl<'d> GraphicsPipelineBuilder<'d>
 {
 	/// Initialize the builder object
@@ -356,8 +491,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		GraphicsPipelineBuilder
 		{
 			flags: 0, _layout: layout, rp: rpsp.0, subpass: rpsp.1, _base: BasePipeline::None,
-			vs: None, tcs: None, tes: None, gs: None, fs: None,
-			vi_state: Default::default(), ia_state: Default::default(), rasterizer_state: Default::default(),
+			vp: None, rasterizer_state: Default::default(),
 			tess_state: None, viewport_state: None, ms_state: None, ds_state: None, color_blending: None,
 			dynamic_state_flags: unsafe { ::std::mem::zeroed() }
 		}
@@ -366,43 +500,17 @@ impl<'d> GraphicsPipelineBuilder<'d>
 /// Shading State and Input Configuration
 impl<'d> GraphicsPipelineBuilder<'d>
 {
-	/// Set the vertex shader in this pipeline
-	pub fn vertex_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.vs = Some(shader); self }
+	/// Set the vertex processing stages in this pipeline
+	pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d>) -> &mut Self
+	{
+		self.vp = Some(vp); return self;
+	}
+	/// **TODO: Implement Tessellation Control Description**
 	/// Set the tessellation control shader(hull shader) in this pipeline
-	pub fn tessellation_control_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.tcs = Some(shader); self }
+	pub fn tessellation_control_shader(&mut self, _shader: PipelineShader<'d>) -> &mut Self { /*self.tcs = Some(shader);*/ self }
+	/// **TODO: Implement Tessellation Control Description**
 	/// Set the tessellation evaluation shader(domain shader) in this pipeline
-	pub fn tessellation_evaluation_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.tes = Some(shader); self }
-	/// Set the geometry shader in this pipeline
-	pub fn geometry_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.gs = Some(shader); self }
-	/// Set the fragment shader in this pipeline
-	pub fn fragment_shader(&mut self, shader: PipelineShader<'d>) -> &mut Self { self.fs = Some(shader); self }
-	/// Set the vertex input layout in this pipeline
-	pub fn vertex_input_state(&mut self,
-		bindings: &[VkVertexInputBindingDescription], attributes: &[VkVertexInputAttributeDescription]) -> &mut Self
-	{
-		self.vi_state.vertexBindingDescriptionCount = bindings.len() as _;
-		self.vi_state.pVertexBindingDescriptions = bindings.as_ptr();
-		self.vi_state.vertexAttributeDescriptionCount = attributes.len() as _;
-		self.vi_state.pVertexAttributeDescriptions = attributes.as_ptr();
-		self
-	}
-	/// Set the vertex processing state(a shader and an input layout) in this pipeline
-	pub fn vertex_processing(&mut self, shader: PipelineShader<'d>,
-		bindings: &[VkVertexInputBindingDescription], attributes: &[VkVertexInputAttributeDescription]) -> &mut Self
-	{
-		self.vertex_shader(shader).vertex_input_state(bindings, attributes)
-	}
-	/// The primitive topology and primitiveRestartEnable: controls whether a special vertex index value is treated as restarting the assembly of primitives.  
-	/// The special index value is either
-	///
-	/// - `0xFFFFFFFF` when the index type is equal to `VK_INDEX_TYPE_UINT32`, or
-	/// - `0xFFFF` when the index type is equal to `VK_INDEX_TYPE_UINT16`.  
-	///
-	/// Primitive restart is not allowed for "list" topologies
-	pub fn primitive_topology(&mut self, topo: VkPrimitiveTopology, enable_restarting: bool) -> &mut Self
-	{
-		self.ia_state.topology = topo; self.ia_state.primitiveRestartEnable = enable_restarting as _; self
-	}
+	pub fn tessellation_evaluation_shader(&mut self, _shader: PipelineShader<'d>) -> &mut Self { /*self.tes = Some(shader);*/ self }
 	/// Number of control points per patch
 	pub fn patch_control_point_count(&mut self, count: u32) -> &mut Self
 	{
@@ -490,29 +598,9 @@ impl<'d> GraphicsPipelineBuilder<'d>
 /// Multisample State
 impl<'d> GraphicsPipelineBuilder<'d>
 {
-	fn ms_ref(&mut self) -> &mut (Box<VkPipelineMultisampleStateCreateInfo>, Vec<VkSampleMask>)
+	pub fn multisample_state(&mut self, state: Option<&'d MultisampleState>) -> &mut Self
 	{
-		if self.ms_state.is_none() { self.ms_state = Some((Default::default(), Vec::new())); }
-		self.ms_state.as_mut().unwrap()
-	}
-	/// Fragment shading executed per-sample(`true`), or per-fragment(`false`), as described in `Sample Shading` in Vulkan Specification
-	pub fn shading_per_sample(&mut self, flag: bool) -> &mut Self { self.ms_ref().0.sampleShadingEnable = flag as _; self }
-	/// The minimum fraction of sample shading, as described in `Sample Shading` in Vulkan Specification
-	pub fn min_sample_shading(&mut self, frac: f32) -> &mut Self { self.ms_ref().0.minSampleShading = frac; self }
-	/// Controls whether a temporary coverage value is generated based on the alpha component of the fragment's first color output as
-	/// specified in the `Multisample Coverage` section in Vulkan Specification
-	pub fn alpha_to_coverage_enable(&mut self, enable: bool) -> &mut Self { self.ms_ref().0.alphaToCoverageEnable = enable as _; self }
-	/// Controls whether the alpha component of the fragment's first color output is replaced with one
-	/// as described in `Multisample Coverage` section in Vulkan Specification
-	pub fn alpha_to_one_enable(&mut self, enable: bool) -> &mut Self { self.ms_ref().0.alphaToOneEnable = enable as _; self }
-	/// A sample count bits specifying the number of samples per pixel used in rasterization
-	pub fn rasterization_samples(&mut self, bits: u32, sample_masks: Vec<VkSampleMask>) -> &mut Self
-	{
-		assert!(sample_masks.is_empty() || sample_masks.len() == bits as usize / 32);
-		self.ms_ref().0.rasterizationSamples = bits;
-		self.ms_ref().1 = sample_masks;
-		self.ms_ref().0.pSampleMask = if self.ms_ref().1.is_empty() { ::std::ptr::null() } else { self.ms_ref().1.as_ptr() };
-		self
+		self.ms_state = state; return self;
 	}
 }
 
@@ -684,26 +772,6 @@ impl<'d> GraphicsPipelineBuilder<'d>
 /// Unsafe Utilities
 impl<'d> GraphicsPipelineBuilder<'d>
 {
-	/// Set the `VkPipelineVertexInputStateCreateInfo` structure directly
-	/// # Safety
-	/// Application must guarantee these constraints:
-	///
-	/// - The lifetime of the content in the structure is valid for this builder
-	/// - The content in the structure is valid
-	pub unsafe fn vertex_input_state_create_info(&mut self, state: VkPipelineVertexInputStateCreateInfo) -> &mut Self
-	{
-		self.vi_state = state; self
-	}
-	/// Set the `VkPipelineInputAssemblyStateCreateInfo` structure directly
-	/// # Safety
-	/// Application must guarantee these constraints:
-	/// 
-	/// - The lifetime of the content in the structure is valid for this builder
-	/// - The content in the structure is valid
-	pub unsafe fn input_assembly_state_create_info(&mut self, state: VkPipelineInputAssemblyStateCreateInfo) -> &mut Self
-	{
-		self.ia_state = state; self
-	}
 	/// Set the `VkPipelineTessellationStateCreateInfo` structure directly
 	/// # Safety
 	/// Application must guarantee these constraints:
@@ -736,17 +804,6 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	{
 		self.rasterizer_state = state; self
 	}
-	/// Set the `VkPipelineMultisampleStateCreateInfo` structure directly.
-	/// This does not clear any dynamic states
-	/// # Safety
-	/// Application must guarantee these constraints:
-	///
-	/// - The lifetime of the content in the structure is valid for this builder
-	/// - The content in the structure is valid
-	pub unsafe fn multisample_state_create_info(&mut self, state: Option<Box<VkPipelineMultisampleStateCreateInfo>>) -> &mut Self
-	{
-		self.ms_state = state.map(|x| (x, Vec::new())); self
-	}
 	/// Set the `VkPipelineDepthStencilStateCreateInfo` structure directly.
 	/// This does not clear any dynamic states
 	/// # Safety
@@ -774,7 +831,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 #[cfg(feature = "FeImplements")]
 impl<'d> PipelineShader<'d>
 {
-	fn createinfo_native(&self, stage: ShaderStage) -> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>)
+	fn createinfo_native(&self, stage: ShaderStage)
+		-> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>)
 	{
 		let specinfo = self.specinfo.as_ref().map(|&(ref m, ref d)| Box::new(VkSpecializationInfo
 		{
@@ -783,15 +841,33 @@ impl<'d> PipelineShader<'d>
 		(VkPipelineShaderStageCreateInfo
 		{
 			stage: stage.0, module: self.module.native_ptr(), pName: self.entry_name.as_ptr(),
-			pSpecializationInfo: specinfo.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
+			pSpecializationInfo: specinfo.as_ref().map(|x| &**x as *const _).unwrap_or_else(null),
 			.. Default::default()
 		}, specinfo)
+	}
+}
+impl<'d> VertexProcessingStages<'d>
+{
+	pub fn generate_stages(&self) -> (Vec<VkPipelineShaderStageCreateInfo>, Vec<Option<Box<VkSpecializationInfo>>>)
+	{
+		let mut stages = Vec::with_capacity(3);
+		stages.push(self.vertex.createinfo_native(ShaderStage::VERTEX));
+		if let Some(ref s) = self.geometry { stages.push(s.createinfo_native(ShaderStage::GEOMETRY)); }
+		if let Some(ref s) = self.fragment { stages.push(s.createinfo_native(ShaderStage::FRAGMENT)); }
+		stages.into_iter().unzip()
 	}
 }
 /// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl<'d> GraphicsPipelineBuilder<'d>
 {
+	fn rasterized(&self) -> bool { self.rasterizer_state.rasterizerDiscardEnable == false as _ }
+	fn ms_state_ptr(&self, default: &MultisampleState) -> *const VkPipelineMultisampleStateCreateInfo
+	{
+		self.ms_state.as_ref().map(|&x| x as *const _)
+			.unwrap_or_else(||if self.rasterized() { default as _ } else { null() }) as _
+	}
+
 	/// Create a graphics pipeline
 	/// # Failures
 	/// On failure, this command returns
@@ -801,16 +877,14 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	#[allow(unused_variables)]
 	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
 	{
-		let (vs, vs_) = self.vs.as_ref().expect("Required the VertexShader in Graphics Pipeline").createinfo_native(ShaderStage::VERTEX);
-		let tcs = self.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
-		let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
-		let gs = self.gs.as_ref().map(|x| x.createinfo_native(ShaderStage::GEOMETRY));
-		let fs = self.fs.as_ref().map(|x| x.createinfo_native(ShaderStage::FRAGMENT));
-		let mut stages = vec![vs];
-		let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
-		let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
-		let gs_ = if let Some((s, sp)) = gs { stages.push(s); Some(sp) } else { None };
-		let fs_ = if let Some((s, sp)) = fs { stages.push(s); Some(sp) } else { None };
+		// VERTEX PROCESSING //
+		let vp = self.vp.as_ref().expect("Required the Vertex Processing Stages for Graphics Pipeline");
+		let (stages, _specinfo) = vp.generate_stages();
+
+		// let tcs = self.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
+		// let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
+		// let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
+		// let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
 		let mut dynamic_states = Vec::new();
 		if self.dynamic_state_flags.viewport { dynamic_states.push(VK_DYNAMIC_STATE_VIEWPORT); }
 		if self.dynamic_state_flags.scissor  { dynamic_states.push(VK_DYNAMIC_STATE_SCISSOR); }
@@ -835,13 +909,14 @@ impl<'d> GraphicsPipelineBuilder<'d>
 			_ => panic!("Deriving from other info in same creation is invalid for single creation of pipeline")
 		};
 		let flags = self.flags | if base.is_some() { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
+		let ms_empty = MultisampleState::new();
+		
 		let cinfo = VkGraphicsPipelineCreateInfo
 		{
-			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &self.vi_state,
-			pInputAssemblyState: &self.ia_state, pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
+			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
+			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pRasterizationState: &self.rasterizer_state as *const _,
-			pMultisampleState: self.ms_state.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
+			pRasterizationState: &self.rasterizer_state as *const _, pMultisampleState: self.ms_state_ptr(&ms_empty),
 			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
@@ -869,16 +944,14 @@ impl ::Device
 	{
 		let aggregates = builders.iter().map(|x|
 		{
-			let (vs, vs_) = x.vs.as_ref().expect("Required the VertexShader in Graphics Pipeline").createinfo_native(ShaderStage::VERTEX);
-			let tcs = x.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
-			let tes = x.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
-			let gs = x.gs.as_ref().map(|x| x.createinfo_native(ShaderStage::GEOMETRY));
-			let fs = x.fs.as_ref().map(|x| x.createinfo_native(ShaderStage::FRAGMENT));
-			let mut stages = vec![vs];
-			let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
-			let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
-			let gs_ = if let Some((s, sp)) = gs { stages.push(s); Some(sp) } else { None };
-			let fs_ = if let Some((s, sp)) = fs { stages.push(s); Some(sp) } else { None };
+			// VERTEX PROCESSING //
+			let vp = x.vp.as_ref().expect("Required the Vertex Processing Stages for Graphics Pipeline");
+			let (stages, _specinfo) = vp.generate_stages();
+			// let tcs = x.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
+			// let tes = x.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
+			// let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
+			// let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
+
 			let mut dynamic_states = Vec::new();
 			if x.dynamic_state_flags.viewport { dynamic_states.push(VK_DYNAMIC_STATE_VIEWPORT); }
 			if x.dynamic_state_flags.scissor  { dynamic_states.push(VK_DYNAMIC_STATE_SCISSOR); }
@@ -897,9 +970,10 @@ impl ::Device
 				})
 			}
 			else { None };
-			(stages, ds, vs_, tcs_, tes_, gs_, fs_, dynamic_states)
+			(vp, stages, ds, _specinfo, dynamic_states)
 		}).collect::<Vec<_>>();
-		let cinfos = builders.iter().zip(aggregates.iter()).map(|(b, &(ref stages, ref ds, _, _, _, _, _, _))|
+		let ms_empty = MultisampleState::new();
+		let cinfos = builders.iter().zip(aggregates.iter()).map(|(b, &(ref vp, ref stages, ref ds, _, _))|
 		{
 			let (base_handle, base_index) = match b._base
 			{
@@ -907,13 +981,13 @@ impl ::Device
 				BasePipeline::Index(x) => (VK_NULL_HANDLE as _, x as i32)
 			};
 			let flags = b.flags | if base_handle != VK_NULL_HANDLE as _ || base_index >= 0 { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
+
 			VkGraphicsPipelineCreateInfo
 			{
-				stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &b.vi_state,
-				pInputAssemblyState: &b.ia_state, pTessellationState: b.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
+				stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
+				pTessellationState: b.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pViewportState: b.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-				pRasterizationState: &b.rasterizer_state as *const _,
-				pMultisampleState: b.ms_state.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
+				pRasterizationState: &b.rasterizer_state as *const _, pMultisampleState: b.ms_state_ptr(&ms_empty),
 				pDepthStencilState: b.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pColorBlendState: b.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
 				pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
