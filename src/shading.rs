@@ -281,11 +281,11 @@ impl<T> SwitchOrDynamicState<T>
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
 #[cfg_attr(not(feature = "FeImplements"), allow(dead_code))] #[derive(Clone)]
-pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: ::std::marker::PhantomData<&'d ()> }
+pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: PhantomData<&'d ()> }
 impl<'d, T> From<&'d T> for DynamicDataCell<'d>
 {
 	/// Construct borrowing a data
-	fn from(d: &'d T) -> Self { DynamicDataCell { size: ::std::mem::size_of::<T>(), data: d as *const T as *const _, ph: ::std::marker::PhantomData } }
+	fn from(d: &'d T) -> Self { DynamicDataCell { size: ::std::mem::size_of::<T>(), data: d as *const T as *const _, ph: PhantomData } }
 }
 impl<'d> DynamicDataCell<'d>
 {
@@ -351,10 +351,10 @@ impl<'d> PipelineShader<'d>
 /// PipelineStateDesc: Shader Stages and Input descriptions
 #[derive(Clone)] pub struct VertexProcessingStages<'d>
 {
-	pub vertex: PipelineShader<'d>, pub vi: VkPipelineVertexInputStateCreateInfo,
-	pub ia: VkPipelineInputAssemblyStateCreateInfo,
-	pub geometry: Option<PipelineShader<'d>>, pub fragment: Option<PipelineShader<'d>>,
-	pub _holder: PhantomData<(&'d [VkVertexInputBindingDescription], &'d [VkVertexInputAttributeDescription])>
+	vertex: PipelineShader<'d>, vi: VkPipelineVertexInputStateCreateInfo,
+	ia: VkPipelineInputAssemblyStateCreateInfo,
+	geometry: Option<PipelineShader<'d>>, fragment: Option<PipelineShader<'d>>,
+	_holder: PhantomData<(&'d [VkVertexInputBindingDescription], &'d [VkVertexInputAttributeDescription])>
 }
 impl<'d> VertexProcessingStages<'d>
 {
@@ -431,8 +431,6 @@ impl<'d> VertexProcessingStages<'d>
 }
 /// PipelineStateDesc: Multisample State
 #[derive(Clone)] pub struct MultisampleState(VkPipelineMultisampleStateCreateInfo);
-unsafe impl Sync for MultisampleState {}
-unsafe impl Send for MultisampleState {}
 impl MultisampleState
 {
 	pub fn new() -> Self
