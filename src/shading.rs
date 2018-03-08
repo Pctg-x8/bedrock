@@ -705,6 +705,105 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	}
 }
 
+/// Blending Factor
+#[repr(C)] #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum BlendFactor
+{
+	Zero = VK_BLEND_FACTOR_ZERO as _,
+	One = VK_BLEND_FACTOR_ONE as _,
+	SourceColor = VK_BLEND_FACTOR_SRC_COLOR as _,
+	OneMinusSourceColor = VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR as _,
+	DestColor = VK_BLEND_FACTOR_DST_COLOR as _,
+	OneMinusDestColor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR as _,
+	SourceAlpha = VK_BLEND_FACTOR_SRC_ALPHA as _,
+	OneMinusSourceAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA as _,
+	DestAlpha = VK_BLEND_FACTOR_DST_ALPHA as _,
+	OneMinusDestAlpha = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA as _,
+	ConstantColor = VK_BLEND_FACTOR_CONSTANT_COLOR as _,
+	OneMinusConstantColor = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR as _,
+	ConstantAlpha = VK_BLEND_FACTOR_CONSTANT_ALPHA as _,
+	OneMinusConstantAlpha = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA as _,
+	/// (f, f, f, 1) where f = min(Source Alpha, 1 - Dest Alpha)
+	SrcAlphaSat = VK_BLEND_FACTOR_SRC_ALPHA_SATURATE as _,
+	AltSourceColor = VK_BLEND_FACTOR_SRC1_COLOR as _,
+	OneMinusAltSourceColor = VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR as _,
+	AltSourceAlpha = VK_BLEND_FACTOR_SRC1_ALPHA as _,
+	OneMinusAltSourceAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA as _
+}
+/// Blending Op
+#[repr(C)] #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum BlendOp
+{
+	Add = VK_BLEND_OP_ADD as _,
+	Sub = VK_BLEND_OP_SUBTRACT as _,
+	/// Reverse subtraction order(subtract source from destination)
+	RevSub = VK_BLEND_OP_REVERSE_SUBTRACT as _,
+	Min = VK_BLEND_OP_MIN as _,
+	Max = VK_BLEND_OP_MAX as _
+}
+
+/// Structure specifying a pipeline color blend attachment state
+#[derive(Clone)] pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
+impl AttachmentColorBlendState
+{
+	pub const NOBLEND: Self = AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
+	{
+		blendEnable: false as _,
+		srcColorBlendFactor: 0, dstColorBlendFactor: 0, colorBlendOp: 0,
+		srcAlphaBlendFactor: 0, dstAlphaBlendFactor: 0, alphaBlendOp: 0,
+		colorWriteMask: VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+	});
+	// https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
+	pub const PREMULTIPLIED: Self = AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
+	{
+		blendEnable: true as _,
+		srcColorBlendFactor: BlendFactor::SourceAlpha as _,
+		dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
+		colorBlendOp: BlendOp::Add as _,
+		srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
+		dstAlphaBlendFactor: BlendFactor::One as _,
+		alphaBlendOp: BlendOp::Add as _,
+		colorWriteMask: VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+	});
+
+	pub fn enable(&mut self, w: bool) -> &mut Self
+	{
+		self.0.blendEnable = w as _; return self;
+	}
+	pub fn color_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self
+	{
+		self.0.srcColorBlendFactor = f as _; return self;
+	}
+	pub fn color_blend_factor_dst(&mut self, f: BlendFactor) -> &mut Self
+	{
+		self.0.dstColorBlendFactor = f as _; return self;
+	}
+	pub fn alpha_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self
+	{
+		self.0.srcAlphaBlendFactor = f as _; return self;
+	}
+	pub fn alpha_blend_factor_dst(&mut self, f: BlendFactor) -> &mut Self
+	{
+		self.0.dstAlphaBlendFactor = f as _; return self;
+	}
+	pub fn color_blend_op(&mut self, op: BlendOp) -> &mut Self
+	{
+		self.0.colorBlendOp = op as _; return self;
+	}
+	pub fn alpha_blend_op(&mut self, op: BlendOp) -> &mut Self
+	{
+		self.0.alphaBlendOp = op as _; return self;
+	}
+	pub fn color_blend(&mut self, src: BlendFactor, op: BlendOp, dst: BlendFactor) -> &mut Self
+	{
+		self.color_blend_factor_src(src).color_blend_op(op).color_blend_factor_dst(dst)
+	}
+	pub fn alpha_blend(&mut self, src: BlendFactor, op: BlendOp, dst: BlendFactor) -> &mut Self
+	{
+		self.alpha_blend_factor_src(src).alpha_blend_op(op).alpha_blend_factor_dst(dst)
+	}
+}
+
 /// Color Blending
 impl<'d> GraphicsPipelineBuilder<'d>
 {
@@ -721,11 +820,11 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self
 	}
 	/// Per target attachment states
-	pub fn add_attachment_blend(&mut self, blend: VkPipelineColorBlendAttachmentState) -> &mut Self
+	pub fn add_attachment_blend(&mut self, blend: AttachmentColorBlendState) -> &mut Self
 	{
 		{
 			let cb = self.cb_ref();
-			cb.1.push(blend); cb.0.attachmentCount = cb.1.len() as _; cb.0.pAttachments = cb.1.as_ptr();
+			cb.1.push(blend.0); cb.0.attachmentCount = cb.1.len() as _; cb.0.pAttachments = cb.1.as_ptr();
 		}
 		self
 	}
