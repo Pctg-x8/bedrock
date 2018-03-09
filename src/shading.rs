@@ -746,30 +746,23 @@ pub enum BlendOp
 #[derive(Clone)] pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
 impl AttachmentColorBlendState
 {
-	pub const NOBLEND: Self = AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
-	{
-		blendEnable: false as _,
-		srcColorBlendFactor: 0, dstColorBlendFactor: 0, colorBlendOp: 0,
-		srcAlphaBlendFactor: 0, dstAlphaBlendFactor: 0, alphaBlendOp: 0,
-		colorWriteMask: VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
-	});
+	pub fn noblend() -> Self { AttachmentColorBlendState(Default::default()) }
 	// https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
-	pub const PREMULTIPLIED: Self = AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
+	pub fn premultiplied() -> Self
 	{
-		blendEnable: true as _,
-		srcColorBlendFactor: BlendFactor::SourceAlpha as _,
-		dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
-		colorBlendOp: BlendOp::Add as _,
-		srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
-		dstAlphaBlendFactor: BlendFactor::One as _,
-		alphaBlendOp: BlendOp::Add as _,
-		colorWriteMask: VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
-	});
-
-	pub fn enable(&mut self, w: bool) -> &mut Self
-	{
-		self.0.blendEnable = w as _; return self;
+		AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
+		{
+			blendEnable: true as _,
+			srcColorBlendFactor: BlendFactor::SourceAlpha as _,
+			dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
+			colorBlendOp: BlendOp::Add as _,
+			srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
+			dstAlphaBlendFactor: BlendFactor::One as _,
+			alphaBlendOp: BlendOp::Add as _, .. Default::default()
+		})
 	}
+
+	pub fn enable(&mut self, w: bool) -> &mut Self { self.0.blendEnable = w as _; return self; }
 	pub fn color_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self
 	{
 		self.0.srcColorBlendFactor = f as _; return self;
@@ -786,14 +779,8 @@ impl AttachmentColorBlendState
 	{
 		self.0.dstAlphaBlendFactor = f as _; return self;
 	}
-	pub fn color_blend_op(&mut self, op: BlendOp) -> &mut Self
-	{
-		self.0.colorBlendOp = op as _; return self;
-	}
-	pub fn alpha_blend_op(&mut self, op: BlendOp) -> &mut Self
-	{
-		self.0.alphaBlendOp = op as _; return self;
-	}
+	pub fn color_blend_op(&mut self, op: BlendOp) -> &mut Self { self.0.colorBlendOp = op as _; return self; }
+	pub fn alpha_blend_op(&mut self, op: BlendOp) -> &mut Self { self.0.alphaBlendOp = op as _; return self; }
 	pub fn color_blend(&mut self, src: BlendFactor, op: BlendOp, dst: BlendFactor) -> &mut Self
 	{
 		self.color_blend_factor_src(src).color_blend_op(op).color_blend_factor_dst(dst)
