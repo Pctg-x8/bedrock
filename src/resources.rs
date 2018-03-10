@@ -118,7 +118,7 @@
 
 use vk::*;
 use std::rc::Rc as RefCounter;
-use std::ops::Deref;
+use std::ops::{Deref, Range};
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 #[cfg(feature = "FeImplements")] use std::ptr::null;
@@ -865,12 +865,6 @@ impl ComponentMapping
 	/// Set 2 values with repeating
 	pub fn set2(a: ComponentSwizzle, b: ComponentSwizzle) -> Self { ComponentMapping(a, b, a, b) }
 }
-/// Structure specifying a image subresource range
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ImageSubresourceRange
-{
-	pub aspect_mask: AspectMask, pub mip_levels: ::std::ops::Range<u32>, pub array_layers: ::std::ops::Range<u32>
-}
 /// Bitmask specifying which aspects of an image are included in a view
 #[derive(Debug, Clone, PartialEq, Eq, Copy)] #[repr(C)]
 pub struct AspectMask(pub VkImageAspectFlags);
@@ -893,6 +887,36 @@ impl AspectMask
 	pub fn stencil(&self) -> Self { AspectMask(self.0 | Self::STENCIL.0) }
 	/// The metadata aspect, used for sparse sparse resource oeprations
 	pub fn metadata(&self) -> Self { AspectMask(self.0 | Self::METADATA.0) }
+}
+
+// A single Number or a Range
+pub trait AnalogNumRange<T> { fn begin(&self) -> T; fn end(&self) -> T; }
+impl<T> AnalogNumRange<T> for T where T: ::std::ops::Add<u32, Output = T> + Copy
+{
+	fn begin(&self) -> T { *self } fn end(&self) -> T { *self + 1 }
+}
+impl<T> AnalogNumRange<T> for Range<T> where T: Copy
+{
+	fn begin(&self) -> T { self.start } fn end(&self) -> T { self.end }
+}
+/// Structure specifying a image subresource range
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ImageSubresourceRange
+{
+	pub aspect_mask: AspectMask, pub mip_levels: Range<u32>, pub array_layers: Range<u32>
+}
+impl ImageSubresourceRange
+{
+	/// Specify color subresource
+	pub fn color<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
+		Levels: AnalogNumRange<u32>, Layers: AnalogNumRange<u32>
+	{
+		ImageSubresourceRange
+		{
+			aspect_mask: AspectMask::COLOR, mip_levels: mip_levels.begin() .. mip_levels.end(),
+			array_layers: array_layers.begin() .. array_layers.end()
+		}
+	}
 }
 
 /// Opaque handle to a sampler object
