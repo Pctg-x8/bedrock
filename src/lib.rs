@@ -505,7 +505,7 @@ impl PixelFormat for vk::VkFormat
     }
 }
 
-/// Format Selection Query
+/// Arbitrary queries of Format
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct FormatQuery(pub vk::VkFormat);
 impl FormatQuery
@@ -527,6 +527,22 @@ impl FormatQuery
         if self.0.element_type() == e { self } else { FormatQuery(VK_FORMAT_UNDEFINED) }
     }
     pub fn passed(self) -> bool { self.0 != VK_FORMAT_UNDEFINED }
+
+    /// convert UNORM to SRGB if exists
+    pub fn srgb(self) -> Option<VkFormat>
+    {
+        match self.0
+        {
+            VK_FORMAT_R8_UNORM => Some(VK_FORMAT_R8_SRGB),
+            VK_FORMAT_R8G8_UNORM => Some(VK_FORMAT_R8G8_SRGB),
+            VK_FORMAT_R8G8B8_UNORM => Some(VK_FORMAT_R8G8B8_SRGB),
+            VK_FORMAT_B8G8R8_UNORM => Some(VK_FORMAT_B8G8R8_SRGB),
+            VK_FORMAT_R8G8B8A8_UNORM => Some(VK_FORMAT_R8G8B8A8_SRGB),
+            VK_FORMAT_B8G8R8A8_UNORM => Some(VK_FORMAT_B8G8R8A8_SRGB),
+            VK_FORMAT_A8B8G8R8_UNORM_PACK32 => Some(VK_FORMAT_A8B8G8R8_SRGB_PACK32),
+            _ => None
+        }
+    }
 }
 /// Predication style of Format Selection Query
 #[derive(Clone)]
