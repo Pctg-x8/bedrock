@@ -753,11 +753,13 @@ impl AttachmentColorBlendState
 		AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
 		{
 			blendEnable: true as _,
-			srcColorBlendFactor: BlendFactor::SourceAlpha as _,
+			srcColorBlendFactor: BlendFactor::One as _,
 			dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
 			colorBlendOp: BlendOp::Add as _,
-			srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
-			dstAlphaBlendFactor: BlendFactor::One as _,
+			// srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
+			// dstAlphaBlendFactor: BlendFactor::One as _,
+			srcAlphaBlendFactor: BlendFactor::One as _,
+			dstAlphaBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
 			alphaBlendOp: BlendOp::Add as _, .. Default::default()
 		})
 	}
