@@ -222,33 +222,40 @@ impl DescriptorPool
 /// Structure specifying the parameters of a descriptor set write operation
 /// Element order: DescriptorSet, Binding, ArrayIndex, Description
 #[derive(Clone)]
-pub struct DescriptorSetWriteInfo<'d>(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo<'d>);
+pub struct DescriptorSetWriteInfo(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo);
 /// Structure specifying a copy descriptor set operation
 #[derive(Clone)]
 pub struct DescriptorSetCopyInfo { pub src: (VkDescriptorSet, u32, u32), pub dst: (VkDescriptorSet, u32, u32), pub count: u32 }
-/// Structure specifying the parameters of a descriptor set write/copy operations
-/// For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
-/// For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
-/// For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView
+/// Structure specifying the parameters of a descriptor set write/copy operations.
+/// 
+/// * For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
+/// * For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
+/// * For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView
+/// 
+/// ## Safety
+/// 
+/// Please ensure that resources are alive while updating
 #[derive(Clone)]
-pub enum DescriptorUpdateInfo<'d>
+pub enum DescriptorUpdateInfo
 {
-    Sampler(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
-    CombinedImageSampler(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
-    SampledImage(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
-    StorageImage(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
-    InputAttachment(Vec<(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)>),
-    UniformBuffer(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
-    StorageBuffer(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
-    UniformBufferDynamic(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
-    StorageBufferDynamic(Vec<(&'d ::Buffer, ::std::ops::Range<usize>)>),
-    UniformTexelBuffer(Vec<&'d ::BufferView>),
-    StorageTexelBuffer(Vec<&'d ::BufferView>)
+    Sampler(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
+    CombinedImageSampler(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
+    SampledImage(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
+    StorageImage(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
+    InputAttachment(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
+    UniformBuffer(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
+    StorageBuffer(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
+    UniformBufferDynamic(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
+    StorageBufferDynamic(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
+    UniformTexelBuffer(Vec<VkBufferView>),
+    StorageTexelBuffer(Vec<VkBufferView>)
 }
-impl<'d> DescriptorUpdateInfo<'d>
+#[cfg(feature = "FeImplements")]
+use std::ops::Range;
+impl DescriptorUpdateInfo
 {
 	#[cfg(feature = "FeImplements")]
-    pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<&'d ::Sampler>, &'d ::ImageView, ::ImageLayout)], &[(&'d ::Buffer, ::std::ops::Range<usize>)], &[&'d ::BufferView])
+    pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<VkSampler>, VkImageView, ::ImageLayout)], &[(VkBuffer, Range<usize>)], &[VkBufferView])
     {
         match self
         {

@@ -189,17 +189,16 @@ impl Device
 		// save flatten results
 		let wt = write.iter().map(|x|
 		{
-			let p = x.3.decomposite();
-			(x.0, x.1, x.2, p.0, p.1,
-				p.2.iter().map(|&(s, v, l)| VkDescriptorImageInfo
+			let (ty, count, imgs, bufs, bufviews) = x.3.decomposite();
+			(x.0, x.1, x.2, ty, count,
+				imgs.iter().map(|&(s, v, l)| VkDescriptorImageInfo
 				{
-					sampler: s.map(|x| x.native_ptr()).unwrap_or(VK_NULL_HANDLE as _), imageView: v.native_ptr(), imageLayout: l as _
+					sampler: s.unwrap_or(VK_NULL_HANDLE as _), imageView: v, imageLayout: l as _
 				}).collect::<Vec<_>>(),
-				p.3.iter().map(|&(b, ref r)| VkDescriptorBufferInfo
+				bufs.iter().map(|&(b, ref r)| VkDescriptorBufferInfo
 				{
-					buffer: b.native_ptr(), offset: r.start as _, range: (r.end - r.start) as _
-				}).collect::<Vec<_>>(),
-				p.4.iter().map(|x| x.native_ptr()).collect::<Vec<_>>())
+					buffer: b, offset: r.start as _, range: (r.end - r.start) as _
+				}).collect::<Vec<_>>(), bufviews)
 		}).collect::<Vec<_>>();
 		let w = wt.iter().map(|&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet
 		{
