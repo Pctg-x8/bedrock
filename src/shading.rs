@@ -503,6 +503,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	{
 		self.vp = Some(vp); return self;
 	}
+	/// Modify the vertex processing stages in this pipeline
+	pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d> { self.vp.as_mut().unwrap() }
 	/// **TODO: Implement Tessellation Control Description**
 	/// Set the tessellation control shader(hull shader) in this pipeline
 	pub fn tessellation_control_shader(&mut self, _shader: PipelineShader<'d>) -> &mut Self { /*self.tcs = Some(shader);*/ self }
