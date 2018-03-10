@@ -152,35 +152,69 @@ impl<'d> CmdRecord<'d>
 		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout.native_ptr());
 		self
 	}
+	fn current_pipeline_layout_g(&self) -> VkPipelineLayout
+	{
+		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for Graphics")
+	}
+	fn current_pipeline_layout_c(&self) -> VkPipelineLayout
+	{
+		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for Compute")
+	}
 	/// Binds descriptor sets to a command buffer
 	pub fn bind_graphics_descriptor_sets(&mut self, first: u32, descriptor_sets: &[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
 	{
-		unsafe { vkCmdBindDescriptorSets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
-			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline"),
-			first, descriptor_sets.len() as _, descriptor_sets.as_ptr(), dynamic_offsets.len() as _, dynamic_offsets.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdBindDescriptorSets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
+				self.current_pipeline_layout_g(),
+				first, descriptor_sets.len() as _, descriptor_sets.as_ptr(),
+				dynamic_offsets.len() as _, dynamic_offsets.as_ptr())
+		};
+		return self;
 	}
 	/// Binds descriptor sets to a command buffer
 	pub fn bind_compute_descriptor_sets(&mut self, first: u32, descriptor_sets:&[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
 	{
-		unsafe { vkCmdBindDescriptorSets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
-			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for compute pipeline"),
-			first, descriptor_sets.len() as _, descriptor_sets.as_ptr(), dynamic_offsets.len() as _, dynamic_offsets.as_ptr()) };
-		self
+		unsafe
+		{ 
+			vkCmdBindDescriptorSets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
+				self.current_pipeline_layout_c(),
+				first, descriptor_sets.len() as _, descriptor_sets.as_ptr(),
+				dynamic_offsets.len() as _, dynamic_offsets.as_ptr())
+		};
+		return self;
+	}
+	/// Update the value of push constant
+	pub fn push_graphics_constant<T>(&mut self, stage: ::ShaderStage, offset: u32, value: &T) -> &mut Self
+	{
+		unsafe
+		{
+			vkCmdPushConstants(self.ptr.native_ptr(), self.current_pipeline_layout_g(),
+				stage.0, offset, size_of::<T>() as _, value as *const T as *const _);
+		}
+		return self;
+	}
+	/// Update the value of push constant
+	pub fn push_compute_constant<T>(&mut self, stage: ::ShaderStage, offset: u32, value: &T) -> &mut Self
+	{
+		unsafe
+		{
+			vkCmdPushConstants(self.ptr.native_ptr(), self.current_pipeline_layout_c(),
+				stage.0, offset, size_of::<T>() as _, value as *const T as *const _);
+		}
+		return self;
 	}
 	/// Update the values of push constants
 	pub fn push_graphics_constants<T>(&mut self, stage: ::ShaderStage, offset: u32, values: &[T]) -> &mut Self
 	{
-		unsafe { vkCmdPushConstants(self.ptr.native_ptr(),
-			self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for graphics pipeline"),
+		unsafe { vkCmdPushConstants(self.ptr.native_ptr(), self.current_pipeline_layout_g(),
 			stage.0, offset, (values.len() * size_of::<T>()) as _, values.as_ptr() as *const _) };
 		self
 	}
 	/// Update the values of push constants
 	pub fn push_compute_constants<T>(&mut self, stage: ::ShaderStage, offset: u32, values: &[T]) -> &mut Self
 	{
-		unsafe { vkCmdPushConstants(self.ptr.native_ptr(),
-			self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for graphics pipeline"),
+		unsafe { vkCmdPushConstants(self.ptr.native_ptr(), self.current_pipeline_layout_c(),
 			stage.0, offset, (values.len() * size_of::<T>()) as _, values.as_ptr() as *const _) };
 		self
 	}
