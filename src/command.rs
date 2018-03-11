@@ -6,7 +6,7 @@ use {VkHandle, Device, DeviceChild};
 use std::mem::{size_of, transmute};
 use std::ops::Range;
 use std::borrow::Borrow;
-use {Image, Buffer, ImageLayout, ImageSubresourceRange};
+use {Image, Buffer, ImageLayout};
 use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
 use {StencilFaceMask, FilterMode, Event};
 use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
@@ -838,11 +838,12 @@ impl ImageMemoryBarrier
 		})
 	}
 	/// Construct a new barrier descriptor from discrete pair of resource and subresource range
-	pub fn new_raw(res: &Image, subres: &ImageSubresourceRange, old: ImageLayout, new: ImageLayout) -> Self
+	pub fn new_raw<SR>(res: &Image, subres: &SR, old: ImageLayout, new: ImageLayout) -> Self
+		where SR: Borrow<VkImageSubresourceRange>
 	{
 		ImageMemoryBarrier(VkImageMemoryBarrier
 		{
-			image: res.native_ptr(), subresourceRange: Borrow::<VkImageSubresourceRange>::borrow(subres).clone(),
+			image: res.native_ptr(), subresourceRange: subres.borrow().clone(),
 			oldLayout: old as _, newLayout: new as _,
 			srcAccessMask: old.default_access_mask(), dstAccessMask: new.default_access_mask(), .. Default::default()
 		})
