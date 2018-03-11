@@ -1092,7 +1092,7 @@ impl ::Device
 }
 
 /// Bitmask specifying pipeline stages
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct PipelineStageFlags(pub VkPipelineStageFlags);
 impl PipelineStageFlags
 {
