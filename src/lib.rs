@@ -152,6 +152,11 @@ pub struct Offset2D(pub i32, pub i32);
 pub struct Offset3D(pub i32, pub i32, pub i32);
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Offset4D(pub i32, pub i32, pub i32, pub i32);
+// Native conversion //
+impl From<Extent2D> for VkExtent2D { fn from(v: Extent2D) -> Self { VkExtent2D { width: v.0, height: v.1 } } }
+impl From<Extent3D> for VkExtent3D { fn from(v: Extent3D) -> Self { VkExtent3D { width: v.0, height: v.1, depth: v.2 } } }
+impl From<Offset2D> for VkOffset2D { fn from(v: Offset2D) -> Self { VkOffset2D { x: v.0, y: v.1 } } }
+impl From<Offset3D> for VkOffset3D { fn from(v: Offset3D) -> Self { VkOffset3D { x: v.0, y: v.1, z: v.2 } } }
 // into conversion to larger dimension //
 impl Into<Extent2D> for Extent1D { fn into(self) -> Extent2D { Extent2D(self.0, 1) } }
 impl Into<Extent3D> for Extent1D { fn into(self) -> Extent3D { Extent3D(self.0, 1, 1) } }
