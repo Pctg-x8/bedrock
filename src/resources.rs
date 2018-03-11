@@ -119,7 +119,7 @@
 use vk::*;
 use std::rc::Rc as RefCounter;
 use std::ops::{Deref, Range};
-use {VkHandle, DeviceChild};
+use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 #[cfg(feature = "FeImplements")] use std::ptr::null;
 #[cfg(feature = "FeImplements")] use std::mem::uninitialized as resv;
@@ -180,10 +180,10 @@ impl DeviceChild for Buffer { fn device(&self) -> &::Device { &self.0 .1 } }
 impl DeviceChild for BufferView { fn device(&self) -> &::Device { self.deref().device() } }
 impl DeviceChild for ImageView  { fn device(&self) -> &::Device { self.deref().device() } }
 
-#[cfg(feature = "VK_KHR_swapchain")]
 impl VkHandle for Image
 {
 	type Handle = VkImage;
+	#[cfg(feature = "VK_KHR_swapchain")]
 	fn native_ptr(&self) -> VkImage
 	{
 		match *self.0
@@ -191,11 +191,13 @@ impl VkHandle for Image
 			ImageCell::DeviceChild { obj, .. } | ImageCell::SwapchainChild { obj, .. } => obj
 		}
 	}
+	#[cfg(not(feature = "VK_KHR_swapchain"))]
+	fn native_ptr(&self) -> VkImage { self.0.obj }
 }
-#[cfg(feature = "VK_KHR_swapchain")]
 impl DeviceChild for Image
 {
-	fn device(&self) -> &::Device
+	#[cfg(feature = "VK_KHR_swapchain")]
+	fn device(&self) -> &Device
 	{
 		match *self.0
 		{
@@ -203,11 +205,9 @@ impl DeviceChild for Image
 			ImageCell::SwapchainChild { ref owner, .. } => owner.device()
 		}
 	}
+	#[cfg(not(feature = "VK_KHR_swapchain"))]
+	fn device(&self) -> &Device { &self.0.dev }
 }
-#[cfg(not(feature = "VK_KHR_swapchain"))]
-impl VkHandle for Image { type Handle = VkImage; fn native_ptr(&self) -> VkImage { self.0.obj } }
-#[cfg(not(feature = "VK_KHR_swapchain"))]
-impl DeviceChild for Image { fn device(&self) -> &::Device { &self.0.dev } }
 
 /// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]

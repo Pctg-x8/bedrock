@@ -1,9 +1,15 @@
 //! Vulkan Commands
 
 use vk::*;
-use {VkHandle, DeviceChild};
+use {VkHandle, Device, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
-use std::mem::size_of;
+use std::mem::{size_of, transmute};
+use std::ops::Range;
+use std::borrow::Borrow;
+use {Image, Buffer, ImageLayout, ImageSubresourceRange};
+use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
+use {StencilFaceMask, FilterMode, Event};
+use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
 
 /// Opaque handle to a command pool object
 #[derive(Clone)] pub struct CommandPool(VkCommandPool, ::Device);
@@ -13,7 +19,7 @@ use std::mem::size_of;
 #[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for CommandPool[vkDestroyCommandPool] }
 impl VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
 impl VkHandle for CommandBuffer { type Handle = VkCommandBuffer; fn native_ptr(&self) -> VkCommandBuffer { self.0 } }
-impl DeviceChild for CommandPool { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for CommandPool { fn device(&self) -> &Device { &self.1 } }
 
 /// The recording state of commandbuffers
 #[cfg(feature = "FeImplements")]
@@ -25,7 +31,10 @@ impl<'d> Drop for CmdRecord<'d>
 {
 	fn drop(&mut self)
 	{
-		unsafe { vkEndCommandBuffer(self.ptr.native_ptr()) }.into_result().expect("Error closing command recording state");
+		unsafe
+		{
+			vkEndCommandBuffer(self.ptr.native_ptr()).into_result().expect("Error closing command recording state");
+		}
 	}
 }
 
@@ -39,7 +48,7 @@ impl CommandPool
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new(device: &::Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> ::Result<Self>
+	pub fn new(device: &Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> ::Result<Self>
 	{
 		let cinfo = VkCommandPoolCreateInfo
 		{
@@ -48,7 +57,11 @@ impl CommandPool
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateCommandPool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| CommandPool(h, device.clone()))
+		unsafe
+		{
+			vkCreateCommandPool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h)
+				.into_result().map(|_| CommandPool(h, device.clone()))
+		}
 	}
 	/// Allocate command buffers from an existing command pool
 	/// # Failures
@@ -64,8 +77,10 @@ impl CommandPool
 			commandPool: self.0, .. Default::default()
 		};
 		let mut hs = vec![VK_NULL_HANDLE as _; count as _];
-		unsafe { vkAllocateCommandBuffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }.into_result()
-			.map(|_| unsafe { ::std::mem::transmute(hs) })
+		unsafe
+		{
+			vkAllocateCommandBuffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()).into_result().map(|_| transmute(hs))
+		}
 	}
     /// Resets a command pool
     /// # Safety
@@ -77,8 +92,8 @@ impl CommandPool
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset(&self, release_resources: bool) -> ::Result<()>
 	{
-		unsafe { vkResetCommandPool(self.1.native_ptr(), self.0, if release_resources { VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT } else { 0 }) }
-			.into_result()
+		let flags = if release_resources { VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT } else { 0 };
+		unsafe { vkResetCommandPool(self.1.native_ptr(), self.0, flags).into_result() }
 	}
 	/// Free command buffers
 	pub fn free(&self, buffers: &[CommandBuffer])
@@ -99,7 +114,11 @@ impl CommandBuffer
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn begin(&self) -> ::Result<CmdRecord>
 	{
-		unsafe { vkBeginCommandBuffer(self.0, &Default::default()) }.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+		unsafe
+		{
+			vkBeginCommandBuffer(self.0, &Default::default()).into_result()
+				.map(|_| CmdRecord { ptr: self, layout: [None, None] })
+		}
 	}
 	/// Start recording a primary command buffer that will be submitted once
 	/// # Failures
@@ -109,8 +128,11 @@ impl CommandBuffer
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn begin_once(&self) -> ::Result<CmdRecord>
 	{
-		unsafe { vkBeginCommandBuffer(self.0, &VkCommandBufferBeginInfo { flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, .. Default::default() }) }
-			.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+		let info = VkCommandBufferBeginInfo { flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, .. Default::default() };
+		unsafe
+		{
+			vkBeginCommandBuffer(self.0, &info).into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+		}
 	}
 	/// Start recording a secondary command buffer
 	/// # Failures
@@ -118,19 +140,23 @@ impl CommandBuffer
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn begin_inherit(&self, renderpass: Option<(&::Framebuffer, &::RenderPass, u32)>, query: Option<(OcclusionQuery, ::QueryPipelineStatisticFlags)>)
-		-> ::Result<CmdRecord>
+	pub fn begin_inherit(&self, renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
+		query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>) -> ::Result<CmdRecord>
 	{
-		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.native_ptr(), r.native_ptr(), s)).unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
+		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.native_ptr(), r.native_ptr(), s))
+			.unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
 		let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
 		let inherit = VkCommandBufferInheritanceInfo
 		{
 			framebuffer: fb, renderPass: rp, subpass: s, occlusionQueryEnable: (oq != OcclusionQuery::Disable) as _,
-			queryFlags: if oq == OcclusionQuery::Precise { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 }, pipelineStatistics: psq,
-			.. Default::default()
+			queryFlags: if oq == OcclusionQuery::Precise { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 },
+			pipelineStatistics: psq, .. Default::default()
 		};
 		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, .. Default::default() };
-		unsafe { vkBeginCommandBuffer(self.0, &binfo) }.into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+		unsafe
+		{
+			vkBeginCommandBuffer(self.0, &binfo).into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+		}
 	}
 }
 
@@ -139,18 +165,18 @@ impl CommandBuffer
 impl<'d> CmdRecord<'d>
 {
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_graphics_pipeline(&mut self, pipeline: &::Pipeline, layout: &::PipelineLayout) -> &mut Self
+	pub fn bind_graphics_pipeline(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
 	{
 		unsafe { vkCmdBindPipeline(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.native_ptr()) };
 		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout.native_ptr());
-		self
+		return self;
 	}
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_compute_pipeline(&mut self, pipeline: &::Pipeline, layout: &::PipelineLayout) -> &mut Self
+	pub fn bind_compute_pipeline(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
 	{
 		unsafe { vkCmdBindPipeline(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.native_ptr()) };
 		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout.native_ptr());
-		self
+		return self;
 	}
 	fn current_pipeline_layout_g(&self) -> VkPipelineLayout
 	{
@@ -161,7 +187,8 @@ impl<'d> CmdRecord<'d>
 		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for Compute")
 	}
 	/// Binds descriptor sets to a command buffer
-	pub fn bind_graphics_descriptor_sets(&mut self, first: u32, descriptor_sets: &[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
+	pub fn bind_graphics_descriptor_sets(&mut self, first: u32,
+		descriptor_sets: &[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
 	{
 		unsafe
 		{
@@ -173,7 +200,8 @@ impl<'d> CmdRecord<'d>
 		return self;
 	}
 	/// Binds descriptor sets to a command buffer
-	pub fn bind_compute_descriptor_sets(&mut self, first: u32, descriptor_sets:&[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
+	pub fn bind_compute_descriptor_sets(&mut self, first: u32,
+		descriptor_sets:&[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
 	{
 		unsafe
 		{ 
@@ -185,7 +213,7 @@ impl<'d> CmdRecord<'d>
 		return self;
 	}
 	/// Update the value of push constant
-	pub fn push_graphics_constant<T>(&mut self, stage: ::ShaderStage, offset: u32, value: &T) -> &mut Self
+	pub fn push_graphics_constant<T>(&mut self, stage: ShaderStage, offset: u32, value: &T) -> &mut Self
 	{
 		unsafe
 		{
@@ -195,7 +223,7 @@ impl<'d> CmdRecord<'d>
 		return self;
 	}
 	/// Update the value of push constant
-	pub fn push_compute_constant<T>(&mut self, stage: ::ShaderStage, offset: u32, value: &T) -> &mut Self
+	pub fn push_compute_constant<T>(&mut self, stage: ShaderStage, offset: u32, value: &T) -> &mut Self
 	{
 		unsafe
 		{
@@ -203,20 +231,6 @@ impl<'d> CmdRecord<'d>
 				stage.0, offset, size_of::<T>() as _, value as *const T as *const _);
 		}
 		return self;
-	}
-	/// Update the values of push constants
-	pub fn push_graphics_constants<T>(&mut self, stage: ::ShaderStage, offset: u32, values: &[T]) -> &mut Self
-	{
-		unsafe { vkCmdPushConstants(self.ptr.native_ptr(), self.current_pipeline_layout_g(),
-			stage.0, offset, (values.len() * size_of::<T>()) as _, values.as_ptr() as *const _) };
-		self
-	}
-	/// Update the values of push constants
-	pub fn push_compute_constants<T>(&mut self, stage: ::ShaderStage, offset: u32, values: &[T]) -> &mut Self
-	{
-		unsafe { vkCmdPushConstants(self.ptr.native_ptr(), self.current_pipeline_layout_c(),
-			stage.0, offset, (values.len() * size_of::<T>()) as _, values.as_ptr() as *const _) };
-		self
 	}
 
 	/// Push descriptor updates into a command buffer
@@ -226,20 +240,27 @@ impl<'d> CmdRecord<'d>
 		// save flatten results
 		let wt = writes.iter().map(|x|
 		{
-			let p = x.3.decomposite();
-			(x.0, x.1, x.2, p.0, p.1,
-				p.2.iter().map(|&(s, v, l)| VkDescriptorImageInfo { sampler: s.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _), imageView: v.0, imageLayout: l as _ }).collect::<Vec<_>>(),
-				p.3.iter().map(|&(b, ref r)| VkDescriptorBufferInfo { buffer: b.native_ptr(), offset: r.start as _, range: (r.end - r.start) as _ }).collect::<Vec<_>>(),
-				p.4.iter().map(|x| x.0).collect::<Vec<_>>())
+			let (ty, cnt, iv, bv, bvv) = x.3.decomposite();
+			let ivs = iv.iter().map(|&(s, v, l)| VkDescriptorImageInfo
+			{
+				sampler: s.unwrap_or(VK_NULL_HANDLE as _), imageView: v, imageLayout: l as _
+			}).collect::<Vec<_>>();
+			let bvs = bv.iter()
+				.map(|&(b, ref r)| VkDescriptorBufferInfo { buffer: b, offset: r.start as _, range: r.len() as _ })
+				.collect::<Vec<_>>();
+			(x.0, x.1, x.2, ty, cnt, ivs, bvs, bvv)
 		}).collect::<Vec<_>>();
 		let w = wt.iter().map(|&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet
 		{
 			dstSet: set, dstBinding: binding, dstArrayElement: array, descriptorType: dty as _, descriptorCount: count,
 			pImageInfo: iv.as_ptr(), pBufferInfo: bv.as_ptr(), pTexelBufferView: bvv.as_ptr(), .. Default::default()
 		}).collect::<Vec<_>>();
-		unsafe { vkCmdPushDescriptorSetKHR(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS, self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS].0,
-			set, w.len() as _, w.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdPushDescriptorSetKHR(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
+				self.current_pipeline_layout_g(), set, w.len() as _, w.as_ptr())
+		};
+		return self;
 	}
 	/// Push descriptor updates into a command buffer
 	#[cfg(feature = "VK_KHR_push_descriptor")]
@@ -248,20 +269,27 @@ impl<'d> CmdRecord<'d>
 		// save flatten results
 		let wt = writes.iter().map(|x|
 		{
-			let p = x.3.decomposite();
-			(x.0, x.1, x.2, p.0, p.1,
-				p.2.iter().map(|&(s, v, l)| VkDescriptorImageInfo { sampler: s.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _), imageView: v.0, imageLayout: l as _ }).collect::<Vec<_>>(),
-				p.3.iter().map(|&(b, ref r)| VkDescriptorBufferInfo { buffer: b.native_ptr(), offset: r.start as _, range: (r.end - r.start) as _ }).collect::<Vec<_>>(),
-				p.4.iter().map(|x| x.0).collect::<Vec<_>>())
+			let (ty, cnt, iv, bv, bvv) = x.3.decomposite();
+			let ivs = iv.iter().map(|&(s, v, l)| VkDescriptorImageInfo
+			{
+				sampler: s.unwrap_or(VK_NULL_HANDLE as _), imageView: v, imageLayout: l as _
+			}).collect::<Vec<_>>();
+			let bvs = bv.iter()
+				.map(|&(b, ref r)| VkDescriptorBufferInfo { buffer: b, offset: r.start as _, range: r.len() as _ })
+				.collect::<Vec<_>>();
+			(x.0, x.1, x.2, ty, cnt, ivs, bvs, bvv)
 		}).collect::<Vec<_>>();
 		let w = wt.iter().map(|&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet
 		{
 			dstSet: set, dstBinding: binding, dstArrayElement: array, descriptorType: dty as _, descriptorCount: count,
 			pImageInfo: iv.as_ptr(), pBufferInfo: bv.as_ptr(), pTexelBufferView: bvv.as_ptr(), .. Default::default()
 		}).collect::<Vec<_>>();
-		unsafe { vkCmdPushDescriptorSetKHR(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE, self.layout[VK_PIPELINE_BIND_POINT_COMPUTE].0,
-			set, w.len() as _, w.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdPushDescriptorSetKHR(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
+				self.current_pipeline_layout_c(), set, w.len() as _, w.as_ptr())
+		};
+		return self;
 	}
 }
 
@@ -273,51 +301,55 @@ impl<'d> CmdRecord<'d>
 	pub fn set_viewport(&mut self, first: u32, viewports: &[VkViewport]) -> &mut Self
 	{
 		unsafe { vkCmdSetViewport(self.ptr.native_ptr(), first, viewports.len() as _, viewports.as_ptr()) };
-		self
+		return self;
 	}
 	/// Set the dynamic scissor rectangles on a command buffer
 	pub fn set_scissor(&mut self, first: u32, scissors: &[VkRect2D]) -> &mut Self
 	{
 		unsafe { vkCmdSetScissor(self.ptr.native_ptr(), first, scissors.len() as _, scissors.as_ptr()) };
-		self
+		return self;
 	}
 	/// Set the dynamic line width state
-	pub fn set_line_width(&mut self, w: f32) -> &Self { unsafe { vkCmdSetLineWidth(self.ptr.native_ptr(), w) }; self }
+	pub fn set_line_width(&mut self, w: f32) -> &Self
+	{
+		unsafe { vkCmdSetLineWidth(self.ptr.native_ptr(), w) };
+		return self;
+	}
 	/// Set the depth bias dynamic state
 	pub fn set_depth_bias(&mut self, constant_factor: f32, clamp: f32, slope_factor: f32) -> &mut Self
 	{
 		unsafe { vkCmdSetDepthBias(self.ptr.native_ptr(), constant_factor, clamp, slope_factor) };
-		self
+		return self;
 	}
 	/// Set the values of blend constants
 	pub fn set_blend_constants(&mut self, blend_constants: [f32; 4]) -> &mut Self
 	{
 		unsafe { vkCmdSetBlendConstants(self.ptr.native_ptr(), blend_constants) };
-		self
+		return self;
 	}
 	/// Set the depth bounds test values for a command buffer
-	pub fn set_depth_bounds(&mut self, bounds: ::std::ops::Range<f32>) -> &mut Self
+	pub fn set_depth_bounds(&mut self, bounds: Range<f32>) -> &mut Self
 	{
 		unsafe { vkCmdSetDepthBounds(self.ptr.native_ptr(), bounds.start, bounds.end) };
-		self
+		return self;
 	}
 	/// Set the stencil compare mask dynamic state
-	pub fn set_stencil_compare_mask(&mut self, face_mask: ::StencilFaceMask, compare_mask: u32) -> &mut Self
+	pub fn set_stencil_compare_mask(&mut self, face_mask: StencilFaceMask, compare_mask: u32) -> &mut Self
 	{
 		unsafe { vkCmdSetStencilCompareMask(self.ptr.native_ptr(), face_mask as _, compare_mask) };
-		self
+		return self;
 	}
 	/// Set the stencil write mask dynamic state
-	pub fn set_stencil_write_mask(&mut self, face_mask: ::StencilFaceMask, write_mask: u32) -> &mut Self
+	pub fn set_stencil_write_mask(&mut self, face_mask: StencilFaceMask, write_mask: u32) -> &mut Self
 	{
 		unsafe { vkCmdSetStencilWriteMask(self.ptr.native_ptr(), face_mask as _, write_mask) };
-		self
+		return self;
 	}
 	/// Set the stencil reference dynamic state
-	pub fn set_stencil_reference(&mut self, face_mask: ::StencilFaceMask, reference: u32) -> &mut Self
+	pub fn set_stencil_reference(&mut self, face_mask: StencilFaceMask, reference: u32) -> &mut Self
 	{
 		unsafe { vkCmdSetStencilReference(self.ptr.native_ptr(), face_mask as _, reference) };
-		self
+		return self;
 	}
 }
 
@@ -326,17 +358,18 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Bind an index buffer to a command buffer
-	pub fn bind_index_buffer(&mut self, buffer: &::Buffer, offset: usize, index_type: IndexType) -> &mut Self
+	pub fn bind_index_buffer(&mut self, buffer: &Buffer, offset: usize, index_type: IndexType) -> &mut Self
 	{
 		unsafe { vkCmdBindIndexBuffer(self.ptr.native_ptr(), buffer.native_ptr(), offset as _, index_type as _) };
-		self
+		return self;
 	}
 	/// Bind vertex buffers to a command buffer
-	pub fn bind_vertex_buffers(&mut self, first: u32, buffers: &[(&::Buffer, usize)]) -> &mut Self
+	pub fn bind_vertex_buffers(&mut self, first: u32, buffers: &[(&Buffer, usize)]) -> &mut Self
 	{
-		let (bufs, ofs): (Vec<_>, Vec<_>) = buffers.into_iter().map(|&(b, o)| (b.native_ptr(), o as VkDeviceSize)).unzip();
+		let (bufs, ofs): (Vec<_>, Vec<_>) =
+			buffers.into_iter().map(|&(b, o)| (b.native_ptr(), o as VkDeviceSize)).unzip();
 		unsafe { vkCmdBindVertexBuffers(self.ptr.native_ptr(), first, bufs.len() as _, bufs.as_ptr(), ofs.as_ptr()) };
-		self
+		return self;
 	}
 }
 
@@ -348,25 +381,33 @@ impl<'d> CmdRecord<'d>
 	pub fn draw(&mut self, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) -> &mut Self
 	{
 		unsafe { vkCmdDraw(self.ptr.native_ptr(), vertex_count, instance_count, first_vertex, first_instance) };
-		self
+		return self;
 	}
 	/// Issue an indexed draw into a command buffer
-	pub fn draw_indexed(&mut self, index_count: u32, instance_count: u32, first_index: u32, vertex_offset: i32, first_instance: u32) -> &mut Self
+	pub fn draw_indexed(&mut self, index_count: u32, instance_count: u32,
+		first_index: u32, vertex_offset: i32, first_instance: u32) -> &mut Self
 	{
-		unsafe { vkCmdDrawIndexed(self.ptr.native_ptr(), index_count, instance_count, first_index, vertex_offset, first_instance) };
-		self
+		unsafe
+		{
+			vkCmdDrawIndexed(self.ptr.native_ptr(), index_count, instance_count,
+				first_index, vertex_offset, first_instance)
+		};
+		return self;
 	}
 	/// Issue an indirect draw into a command buffer
-	pub fn draw_indirect(&mut self, buffer: &::Buffer, offset: usize, draw_count: u32, stride: u32) -> &mut Self
+	pub fn draw_indirect(&mut self, buffer: &Buffer, offset: usize, draw_count: u32, stride: u32) -> &mut Self
 	{
 		unsafe { vkCmdDrawIndirect(self.ptr.native_ptr(), buffer.native_ptr(), offset as _, draw_count, stride) };
-		self
+		return self;
 	}
 	/// Perform an indexed indirect draw
-	pub fn draw_indexed_indirect(&mut self, buffer: &::Buffer, offset: usize, draw_count: u32, stride: u32) -> &mut Self
+	pub fn draw_indexed_indirect(&mut self, buffer: &Buffer, offset: usize, draw_count: u32, stride: u32) -> &mut Self
 	{
-		unsafe { vkCmdDrawIndexedIndirect(self.ptr.native_ptr(), buffer.native_ptr(), offset as _, draw_count, stride) };
-		self
+		unsafe
+		{
+			vkCmdDrawIndexedIndirect(self.ptr.native_ptr(), buffer.native_ptr(), offset as _, draw_count, stride)
+		};
+		return self;
 	}
 }
 
@@ -378,13 +419,13 @@ impl<'d> CmdRecord<'d>
 	pub fn dispatch(&mut self, group_count_x: u32, group_count_y: u32, group_count_z: u32) -> &mut Self
 	{
 		unsafe { vkCmdDispatch(self.ptr.native_ptr(), group_count_x, group_count_y, group_count_z) };
-		self
+		return self;
 	}
 	/// Dispatch compute work items using indirect parameters
-	pub fn dispatch_indirect(&mut self, buffer: &::Buffer, offset: usize) -> &mut Self
+	pub fn dispatch_indirect(&mut self, buffer: &Buffer, offset: usize) -> &mut Self
 	{
 		unsafe { vkCmdDispatchIndirect(self.ptr.native_ptr(), buffer.native_ptr(), offset as _) };
-		self
+		return self;
 	}
 }
 
@@ -393,43 +434,69 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Copy data between buffer regions
-	pub fn copy_buffer(&mut self, src: &::Buffer, dst: &::Buffer, regions: &[VkBufferCopy]) -> &mut Self
+	pub fn copy_buffer(&mut self, src: &Buffer, dst: &Buffer, regions: &[VkBufferCopy]) -> &mut Self
 	{
-		unsafe { vkCmdCopyBuffer(self.ptr.native_ptr(), src.native_ptr(), dst.native_ptr(), regions.len() as _, regions.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdCopyBuffer(self.ptr.native_ptr(), src.native_ptr(),
+				dst.native_ptr(), regions.len() as _, regions.as_ptr())
+		};
+		return self;
 	}
 	/// Copy data between images
-	pub fn copy_image(&mut self, src: &::Image, src_layout: ::ImageLayout, dst: &::Image, dst_layout: ::ImageLayout, regions: &[VkImageCopy]) -> &mut Self
+	pub fn copy_image(&mut self, src: &Image, src_layout: ImageLayout,
+		dst: &Image, dst_layout: ImageLayout, regions: &[VkImageCopy]) -> &mut Self
 	{
-		unsafe { vkCmdCopyImage(self.ptr.native_ptr(), src.native_ptr(), src_layout as _, dst.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdCopyImage(self.ptr.native_ptr(), src.native_ptr(), src_layout as _,
+				dst.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr())
+		};
+		return self;
 	}
 	/// Copy regions of an image, potentially performing format conversion
-	pub fn blit_image(&mut self, src: &::Image, src_layout: ::ImageLayout, dst: &::Image, dst_layout: ::ImageLayout,
-		regions: &[VkImageBlit], filter: ::FilterMode) -> &mut Self
+	pub fn blit_image(&mut self, src: &Image, src_layout: ImageLayout, dst: &Image, dst_layout: ImageLayout,
+		regions: &[VkImageBlit], filter: FilterMode) -> &mut Self
 	{
-		unsafe { vkCmdBlitImage(self.ptr.native_ptr(), src.native_ptr(), src_layout as _, dst.native_ptr(), dst_layout as _,
-			regions.len() as _, regions.as_ptr(), filter as _) };
-		self
+		unsafe
+		{
+			vkCmdBlitImage(self.ptr.native_ptr(), src.native_ptr(), src_layout as _, dst.native_ptr(), dst_layout as _,
+				regions.len() as _, regions.as_ptr(), filter as _)
+		};
+		return self;
 	}
 	/// Copy data from a buffer into an image
-	pub fn copy_buffer_to_image(&mut self, src_buffer: &::Buffer, dst_image: &::Image, dst_layout: ::ImageLayout, regions: &[VkBufferImageCopy]) -> &mut Self
+	pub fn copy_buffer_to_image(&mut self, src_buffer: &Buffer, dst_image: &Image, dst_layout: ImageLayout,
+		regions: &[VkBufferImageCopy]) -> &mut Self
 	{
-		unsafe { vkCmdCopyBufferToImage(self.ptr.native_ptr(), src_buffer.native_ptr(), dst_image.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdCopyBufferToImage(self.ptr.native_ptr(), src_buffer.native_ptr(),
+				dst_image.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr())
+		};
+		return self;
 	}
 	/// Copy image data into a buffer
-	pub fn copy_image_to_buffer(&mut self, src_image: &::Image, src_layout: ::ImageLayout, dst_buffer: &::Buffer, regions: &[VkBufferImageCopy]) -> &mut Self
+	pub fn copy_image_to_buffer(&mut self, src_image: &Image, src_layout: ImageLayout, dst_buffer: &Buffer,
+		regions: &[VkBufferImageCopy]) -> &mut Self
 	{
-		unsafe { vkCmdCopyImageToBuffer(self.ptr.native_ptr(), src_image.native_ptr(), src_layout as _, dst_buffer.native_ptr(), regions.len() as _, regions.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdCopyImageToBuffer(self.ptr.native_ptr(), src_image.native_ptr(), src_layout as _,
+				dst_buffer.native_ptr(), regions.len() as _, regions.as_ptr())
+		};
+		return self;
 	}
 	/// Update a buffer's contents from host memory
-	pub fn update_buffer<T>(&mut self, dst: &::Buffer, dst_offset: usize, size: usize, data: &T) -> &mut Self
+	pub fn update_buffer<T>(&mut self, dst: &Buffer, dst_offset: usize, size: usize, data: &T) -> &mut Self
 	{
-		assert!(size <= ::std::mem::size_of::<T>());
-		unsafe { vkCmdUpdateBuffer(self.ptr.native_ptr(), dst.native_ptr(), dst_offset as _, size as _, data as *const T as *const _) };
-		self
+		assert!(size <= size_of::<T>(), "Updated size exceeds size of datatype");
+		unsafe
+		{
+			vkCmdUpdateBuffer(self.ptr.native_ptr(), dst.native_ptr(), dst_offset as _, size as _,
+				data as *const T as *const _)
+		};
+		return self;
 	}
 }
 
@@ -439,29 +506,42 @@ impl<'d> CmdRecord<'d>
 {
 	/// Fill a region of a buffer with a fixed value.  
 	/// `size` is number of bytes to fill
-	pub fn fill_buffer(&mut self, dst: &::Buffer, dst_offset: usize, size: usize, data: u32) -> &mut Self
+	pub fn fill_buffer(&mut self, dst: &Buffer, dst_offset: usize, size: usize, data: u32) -> &mut Self
 	{
 		unsafe { vkCmdFillBuffer(self.ptr.native_ptr(), dst.native_ptr(), dst_offset as _, size as _, data) };
-		self
+		return self;
 	}
 	/// Clear regions of a color image
-	pub fn clear_color_image<T: ClearColorValue>(&mut self, image: &::Image, layout: ::ImageLayout, color: &T, ranges: &[VkImageSubresourceRange]) -> &mut Self
+	pub fn clear_color_image<T: ClearColorValue>(&mut self, image: &Image, layout: ImageLayout,
+		color: &T, ranges: &[VkImageSubresourceRange]) -> &mut Self
 	{
-		unsafe { vkCmdClearColorImage(self.ptr.native_ptr(), image.native_ptr(), layout as _, color.represent(), ranges.len() as _, ranges.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdClearColorImage(self.ptr.native_ptr(), image.native_ptr(), layout as _,
+				color.represent(), ranges.len() as _, ranges.as_ptr())
+		};
+		return self;
 	}
 	/// Fill regions of a combined depth/stencil image
-	pub fn clear_depth_stencil_image(&mut self, image: &::Image, layout: ::ImageLayout, depth: f32, stencil: u32, ranges: &[VkImageSubresourceRange]) -> &mut Self
+	pub fn clear_depth_stencil_image(&mut self, image: &Image, layout: ImageLayout, depth: f32, stencil: u32,
+		ranges: &[VkImageSubresourceRange]) -> &mut Self
 	{
-		unsafe { vkCmdClearDepthStencilImage(self.ptr.native_ptr(), image.native_ptr(), layout as _, &VkClearDepthStencilValue { depth, stencil },
-			ranges.len() as _, ranges.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdClearDepthStencilImage(self.ptr.native_ptr(), image.native_ptr(),
+				layout as _, &VkClearDepthStencilValue { depth, stencil }, ranges.len() as _, ranges.as_ptr())
+		};
+		return self;
 	}
 	/// Clear regions within currently bound framebuffer attachments
 	pub fn clear_attachments(&mut self, attachments: &[VkClearAttachment], rects: &[VkClearRect]) -> &mut Self
 	{
-		unsafe { vkCmdClearAttachments(self.ptr.native_ptr(), attachments.len() as _, attachments.as_ptr(), rects.len() as _, rects.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdClearAttachments(self.ptr.native_ptr(), attachments.len() as _,
+				attachments.as_ptr(), rects.len() as _, rects.as_ptr())
+		};
+		return self;
 	}
 }
 
@@ -472,11 +552,11 @@ impl<'d> CmdRecord<'d>
 	/// Execute a secondary command buffer from a primary command buffer
 	/// # Safety
 	/// 
-	/// Caller must be primary buffer and must be in render pass when executing secondary command buffer
+	/// Caller must be primary buffer and in the render pass when executing secondary command buffer
 	pub unsafe fn execute_commands(&mut self, buffers: &[VkCommandBuffer]) -> &mut Self
 	{
 		vkCmdExecuteCommands(self.ptr.native_ptr(), buffers.len() as _, buffers.as_ptr());
-		self
+		return self;
 	}
 }
 
@@ -485,10 +565,15 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Resolve regions of an image
-	pub fn resolve_image(&mut self, src: &::Image, src_layout: ::ImageLayout, dst: &::Image, dst_layout: ::ImageLayout, regions: &[VkImageResolve]) -> &mut Self
+	pub fn resolve_image(&mut self, src: &Image, src_layout: ImageLayout, dst: &Image, dst_layout: ImageLayout,
+		regions: &[VkImageResolve]) -> &mut Self
 	{
-		unsafe { vkCmdResolveImage(self.ptr.native_ptr(), src.native_ptr(), src_layout as _, dst.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdResolveImage(self.ptr.native_ptr(), src.native_ptr(), src_layout as _,
+				dst.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr())
+		};
+		return self;
 	}
 }
 
@@ -497,28 +582,35 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Set an event object to signaled state
-	pub fn set_event(&mut self, event: &::Event, stage_mask: ::PipelineStageFlags) -> &mut Self
+	pub fn set_event(&mut self, event: &Event, stage_mask: PipelineStageFlags) -> &mut Self
 	{
-		unsafe { vkCmdSetEvent(self.ptr.native_ptr(), event.0, stage_mask.0) }; self
+		unsafe { vkCmdSetEvent(self.ptr.native_ptr(), event.0, stage_mask.0) }; return self;
 	}
 	/// Reset an event object to non-signaled state
-	pub fn reset_event(&mut self, event: &::Event, stage_mask: ::PipelineStageFlags) -> &mut Self
+	pub fn reset_event(&mut self, event: &Event, stage_mask: PipelineStageFlags) -> &mut Self
 	{
-		unsafe { vkCmdResetEvent(self.ptr.native_ptr(), event.0, stage_mask.0) }; self
+		unsafe { vkCmdResetEvent(self.ptr.native_ptr(), event.0, stage_mask.0) }; return self;
 	}
 	/// Wait for one or more events and insert a set of memory
-	pub fn wait_events(&mut self, events: &[&::Event], src_stage_mask: ::PipelineStageFlags, dst_stage_mask: ::PipelineStageFlags,
-		memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[VkBufferMemoryBarrier], image_memory_barriers: &[VkImageMemoryBarrier]) -> &mut Self
+	pub fn wait_events(&mut self, events: &[&Event],
+		src_stage_mask: PipelineStageFlags, dst_stage_mask: PipelineStageFlags,
+		memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[VkBufferMemoryBarrier],
+		image_memory_barriers: &[VkImageMemoryBarrier]) -> &mut Self
 	{
 		let evs = events.into_iter().map(|x| x.0).collect::<Vec<_>>();
-		unsafe { vkCmdWaitEvents(self.ptr.native_ptr(), evs.len() as _, evs.as_ptr(), src_stage_mask.0, dst_stage_mask.0,
-			memory_barriers.len() as _, memory_barriers.as_ptr(), buffer_memory_barriers.len() as _, buffer_memory_barriers.as_ptr(),
-			image_memory_barriers.len() as _, image_memory_barriers.as_ptr()) };
-		self
+		unsafe
+		{
+			vkCmdWaitEvents(self.ptr.native_ptr(), evs.len() as _, evs.as_ptr(), src_stage_mask.0, dst_stage_mask.0,
+				memory_barriers.len() as _, memory_barriers.as_ptr(),
+				buffer_memory_barriers.len() as _, buffer_memory_barriers.as_ptr(),
+				image_memory_barriers.len() as _, image_memory_barriers.as_ptr())
+		};
+		return self;
 	}
 	/// Insert a memory dependency
-	pub fn pipeline_barrier(&mut self, src_stage_mask: ::PipelineStageFlags, dst_stage_mask: ::PipelineStageFlags, by_region: bool,
-		memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[BufferMemoryBarrier], image_memory_barriers: &[ImageMemoryBarrier]) -> &mut Self
+	pub fn pipeline_barrier(&mut self, src_stage_mask: PipelineStageFlags, dst_stage_mask: PipelineStageFlags,
+		by_region: bool, memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[BufferMemoryBarrier],
+		image_memory_barriers: &[ImageMemoryBarrier]) -> &mut Self
 	{
 		unsafe
 		{
@@ -537,33 +629,42 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Begin a query
-	pub fn begin_query(&mut self, pool: &::QueryPool, query: u32, precise_query: bool) -> &mut Self
+	pub fn begin_query(&mut self, pool: &QueryPool, query: u32, precise_query: bool) -> &mut Self
 	{
-		unsafe { vkCmdBeginQuery(self.ptr.native_ptr(), pool.0, query, if precise_query { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 }) };
-		self
+		unsafe
+		{
+			vkCmdBeginQuery(self.ptr.native_ptr(), pool.0, query,
+				if precise_query { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 })
+		};
+		return self;
 	}
 	/// Ends a query
-	pub fn end_query(&mut self, pool: &::QueryPool, query: u32) -> &mut Self
+	pub fn end_query(&mut self, pool: &QueryPool, query: u32) -> &mut Self
 	{
-		unsafe { vkCmdEndQuery(self.ptr.native_ptr(), pool.0, query) }; self
+		unsafe { vkCmdEndQuery(self.ptr.native_ptr(), pool.0, query) }; return self;
 	}
 	/// Reset queries in a query pool
-	pub fn reset_query_pool(&mut self, pool: &::QueryPool, range: ::std::ops::Range<u32>) -> &mut Self
+	pub fn reset_query_pool(&mut self, pool: &QueryPool, range: Range<u32>) -> &mut Self
 	{
-		unsafe { vkCmdResetQueryPool(self.ptr.native_ptr(), pool.0, range.start, range.end - range.start) }; self
+		unsafe { vkCmdResetQueryPool(self.ptr.native_ptr(), pool.0, range.start, range.end - range.start) };
+		return self;
 	}
 	/// Write a device timestamp into a query object
-	pub fn write_timestamp(&mut self, stage: ::PipelineStageFlags, pool: &::QueryPool, query: u32) -> &mut Self
+	pub fn write_timestamp(&mut self, stage: PipelineStageFlags, pool: &QueryPool, query: u32) -> &mut Self
 	{
-		unsafe { vkCmdWriteTimestamp(self.ptr.native_ptr(), stage.0, pool.0, query) }; self
+		unsafe { vkCmdWriteTimestamp(self.ptr.native_ptr(), stage.0, pool.0, query) }; return self;
 	}
 	/// Copy the results of queries in a query pool to a buffer object
-	pub fn copy_query_pool_results(&mut self, pool: &::QueryPool, range: ::std::ops::Range<u32>, dst: &::Buffer, dst_offset: usize, stride: usize,
-		wide_result: bool, flags: ::QueryResultFlags) -> &mut Self
+	pub fn copy_query_pool_results(&mut self, pool: &QueryPool, range: Range<u32>, dst: &Buffer, dst_offset: usize,
+		stride: usize, wide_result: bool, flags: QueryResultFlags) -> &mut Self
 	{
-		unsafe { vkCmdCopyQueryPoolResults(self.ptr.native_ptr(), pool.0, range.start, range.end - range.start,
-			dst.native_ptr(), dst_offset as _, stride as _, flags.0 | if wide_result { VK_QUERY_RESULT_64_BIT } else { 0 }) };
-		self
+		unsafe
+		{
+			vkCmdCopyQueryPoolResults(self.ptr.native_ptr(), pool.0, range.start, range.end - range.start,
+				dst.native_ptr(), dst_offset as _, stride as _,
+				flags.0 | if wide_result { VK_QUERY_RESULT_64_BIT } else { 0 })
+		};
+		return self;
 	}
 }
 
@@ -572,32 +673,39 @@ impl<'d> CmdRecord<'d>
 impl<'d> CmdRecord<'d>
 {
 	/// Begin a new render pass
-	pub fn begin_render_pass(&mut self, pass: &::RenderPass, framebuffer: &::Framebuffer, render_area: VkRect2D, clear_values: &[ClearValue],
-		inline_commands: bool) -> &mut Self
+	pub fn begin_render_pass(&mut self, pass: &RenderPass, framebuffer: &Framebuffer, render_area: VkRect2D,
+		clear_values: &[ClearValue], inline_commands: bool) -> &mut Self
 	{
 		let cvalues = clear_values.into_iter().map(|x| match x
 		{
 			&ClearValue::Color(ref color) => VkClearValue { color: VkClearColorValue { float32: color.clone() } },
-			&ClearValue::DepthStencil(depth, stencil) => VkClearValue { depthStencil: VkClearDepthStencilValue { depth, stencil } }
+			&ClearValue::DepthStencil(depth, stencil) =>
+				VkClearValue { depthStencil: VkClearDepthStencilValue { depth, stencil } }
 		}).collect::<Vec<_>>();
 		let binfo = VkRenderPassBeginInfo
 		{
-			renderPass: pass.native_ptr(), framebuffer: framebuffer.native_ptr(), renderArea: render_area, clearValueCount: cvalues.len() as _,
-			pClearValues: cvalues.as_ptr(), .. Default::default()
+			renderPass: pass.native_ptr(), framebuffer: framebuffer.native_ptr(), renderArea: render_area,
+			clearValueCount: cvalues.len() as _, pClearValues: cvalues.as_ptr(), .. Default::default()
 		};
-		unsafe { vkCmdBeginRenderPass(self.ptr.native_ptr(), &binfo,
-			if inline_commands { VK_SUBPASS_CONTENTS_INLINE } else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS }) };
-		self
+		unsafe
+		{
+			vkCmdBeginRenderPass(self.ptr.native_ptr(), &binfo,
+				if inline_commands { VK_SUBPASS_CONTENTS_INLINE } else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS })
+		};
+		return self;
 	}
 	/// Transition to the next subpass of a render pass
 	pub fn next_subpass(&mut self, inline_commands: bool) -> &mut Self
 	{
-		unsafe { vkCmdNextSubpass(self.ptr.native_ptr(),
-			if inline_commands { VK_SUBPASS_CONTENTS_INLINE } else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS }) };
-		self
+		unsafe
+		{
+			vkCmdNextSubpass(self.ptr.native_ptr(),
+				if inline_commands { VK_SUBPASS_CONTENTS_INLINE } else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS })
+		};
+		return self;
 	}
 	/// End the current render pass
-	pub fn end_render_pass(&mut self) -> &mut Self { unsafe { vkCmdEndRenderPass(self.ptr.native_ptr()) }; self }
+	pub fn end_render_pass(&mut self) -> &mut Self { unsafe { vkCmdEndRenderPass(self.ptr.native_ptr()) }; return self; }
 }
 
 /// The trait representation of `VkClearColorValue`
@@ -695,8 +803,6 @@ impl AccessFlags
 	pub const MEMORY: Self = AccessFlags { read: VK_ACCESS_MEMORY_READ_BIT, write: VK_ACCESS_MEMORY_WRITE_BIT };
 }
 
-use {Image, Buffer, ImageLayout};
-use std::ops::Range;
 use std::mem::replace;
 /// Image Subresource Slice
 #[derive(Clone)]
@@ -729,6 +835,16 @@ impl ImageMemoryBarrier
 			oldLayout: old_layout as _, newLayout: new_layout as _,
 			srcAccessMask: old_layout.default_access_mask(),
 			dstAccessMask: new_layout.default_access_mask(), .. Default::default()
+		})
+	}
+	/// Construct a new barrier descriptor from discrete pair of resource and subresource range
+	pub fn new_raw(res: &Image, subres: &ImageSubresourceRange, old: ImageLayout, new: ImageLayout) -> Self
+	{
+		ImageMemoryBarrier(VkImageMemoryBarrier
+		{
+			image: res.native_ptr(), subresourceRange: Borrow::<VkImageSubresourceRange>::borrow(subres).clone(),
+			oldLayout: old as _, newLayout: new as _,
+			srcAccessMask: old.default_access_mask(), dstAccessMask: new.default_access_mask(), .. Default::default()
 		})
 	}
 	/// Update the source access mask
