@@ -700,17 +700,17 @@ use std::ops::Range;
 use std::mem::replace;
 /// Image Subresource Slice
 #[derive(Clone)]
-pub struct ImageSubref<'d>(&'d Image, VkImageSubresourceRange);
+pub struct ImageSubref<'d>(pub &'d Image, pub VkImageSubresourceRange);
 impl<'d> ImageSubref<'d>
 {
 	/// Construct a slice for the Color aspect(`VK_IMAGE_ASPECT_COLOR_BIT`)
-	pub fn color(image: &'d Image, mip_levels: Range<usize>, array_layers: Range<usize>) -> Self
+	pub fn color(image: &'d Image, mip_levels: Range<u32>, array_layers: Range<u32>) -> Self
 	{
 		ImageSubref(image, VkImageSubresourceRange
 		{
 			aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
-			baseMipLevel: mip_levels.start as _, baseArrayLayer: array_layers.start as _,
-			levelCount: (mip_levels.end - mip_levels.start) as _, layerCount: (array_layers.end - array_layers.start) as _
+			baseMipLevel: mip_levels.start, baseArrayLayer: array_layers.start,
+			levelCount: mip_levels.end - mip_levels.start, layerCount: array_layers.end - array_layers.start
 		})
 	}
 }

@@ -123,6 +123,7 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 #[cfg(feature = "FeImplements")] use std::ptr::null;
 #[cfg(feature = "FeImplements")] use std::mem::uninitialized as resv;
+use std::borrow::Borrow; use std::mem::transmute;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 struct BufferCell(VkBuffer, ::Device);
@@ -574,19 +575,14 @@ impl Buffer
 impl Image
 {
 	/// Create an image view
-	pub fn create_view(&self, format: Option<VkFormat>, vtype: Option<VkImageViewType>, cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange)
-		-> ::Result<ImageView>
+	pub fn create_view(&self, format: Option<VkFormat>, vtype: Option<VkImageViewType>,
+		cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange) -> ::Result<ImageView>
 	{
 		let (format, vtype) = (format.unwrap_or(self.format()), vtype.unwrap_or(self.dimension()));
 		let cinfo = VkImageViewCreateInfo
 		{
 			image: self.native_ptr(), viewType: vtype, format, components: unsafe { ::std::mem::transmute_copy(cmap) },
-			subresourceRange: VkImageSubresourceRange
-			{
-				aspectMask: subresource_range.aspect_mask.0,
-				baseMipLevel: subresource_range.mip_levels.start, levelCount: subresource_range.mip_levels.len() as _,
-				baseArrayLayer: subresource_range.array_layers.start, layerCount: subresource_range.array_layers.len() as _
-			}, .. Default::default()
+			subresourceRange: subresource_range.0.clone(), .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { vkCreateImageView(self.device().native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
@@ -890,7 +886,14 @@ impl AspectMask
 }
 
 // A single Number or a Range
-pub trait AnalogNumRange<T> { fn begin(&self) -> T; fn end(&self) -> T; }
+pub trait AnalogNumRange<T>
+{
+	fn begin(&self) -> T; fn end(&self) -> T;
+	fn count(&self) -> T where T: ::std::ops::Sub<T, Output = T> + Copy
+	{
+		self.end() - self.begin()
+	}
+}
 impl<T> AnalogNumRange<T> for T where T: ::std::ops::Add<u32, Output = T> + Copy
 {
 	fn begin(&self) -> T { *self } fn end(&self) -> T { *self + 1 }
@@ -901,9 +904,10 @@ impl<T> AnalogNumRange<T> for Range<T> where T: Copy
 }
 /// Structure specifying a image subresource range
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ImageSubresourceRange
+pub struct ImageSubresourceRange(VkImageSubresourceRange);
+impl Borrow<VkImageSubresourceRange> for ImageSubresourceRange
 {
-	pub aspect_mask: AspectMask, pub mip_levels: Range<u32>, pub array_layers: Range<u32>
+	fn borrow(&self) -> &VkImageSubresourceRange { unsafe { transmute(self) } }
 }
 impl ImageSubresourceRange
 {
@@ -911,11 +915,12 @@ impl ImageSubresourceRange
 	pub fn color<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
 		Levels: AnalogNumRange<u32>, Layers: AnalogNumRange<u32>
 	{
-		ImageSubresourceRange
+		ImageSubresourceRange(VkImageSubresourceRange
 		{
-			aspect_mask: AspectMask::COLOR, mip_levels: mip_levels.begin() .. mip_levels.end(),
-			array_layers: array_layers.begin() .. array_layers.end()
-		}
+			aspectMask: AspectMask::COLOR.0,
+			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
+			levelCount: mip_levels.count(), layerCount: array_layers.count()
+		})
 	}
 }
 
