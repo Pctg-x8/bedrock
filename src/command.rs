@@ -165,18 +165,38 @@ impl CommandBuffer
 impl<'d> CmdRecord<'d>
 {
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_graphics_pipeline(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
+	pub fn bind_graphics_pipeline(&mut self, pipeline: &Pipeline) -> &mut Self
 	{
 		unsafe { vkCmdBindPipeline(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.native_ptr()) };
-		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout.native_ptr());
 		return self;
 	}
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_compute_pipeline(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
+	pub fn bind_compute_pipeline(&mut self, pipeline: &Pipeline) -> &mut Self
 	{
 		unsafe { vkCmdBindPipeline(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.native_ptr()) };
+		return self;
+	}
+	/// Bind a pipeline layout object to a command buffer
+	pub fn bind_graphics_pipeline_layout(&mut self, layout: &PipelineLayout) -> &mut Self
+	{
+		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout.native_ptr());
+		return self;
+	}
+	/// Bind a pipeline layout object to a command buffer
+	pub fn bind_compute_pipeline_layout(&mut self, layout: &PipelineLayout) -> &mut Self
+	{
 		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout.native_ptr());
 		return self;
+	}
+	/// Bind a pipeline object and a pipeline layout object to a command buffer
+	pub fn bind_graphics_pipeline_pair(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
+	{
+		self.bind_graphics_pipeline_layout(layout).bind_graphics_pipeline(pipeline)
+	}
+	/// Bind a pipeline object and a pipeline layout object to a command buffer
+	pub fn bind_compute_pipeline_pair(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
+	{
+		self.bind_compute_pipeline_layout(layout).bind_compute_pipeline(pipeline)
 	}
 	fn current_pipeline_layout_g(&self) -> VkPipelineLayout
 	{
