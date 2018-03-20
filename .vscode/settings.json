@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "rust.features": ["FeImplements", "VK_EXT_debug_report", "VK_AMD_shader_fragment_mask", "VK_EXT_sample_locations", "VK_EXT_validation_cache"]
+    "rust.features": ["FeImplements", "VK_KHR_bind_memory2", "VK_KHR_image_format_list", "VK_KHR_maintenance2", "VK_KHR_sampler_ycbcr_conversion"]
 }

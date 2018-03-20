@@ -2895,6 +2895,9 @@ extern "system"
 #[cfg(feature = "VK_KHR_external_fence_fd")] mod external_fence_fd_khr;
 #[cfg(feature = "VK_KHR_external_fence_fd")] pub use self::external_fence_fd_khr::*;
 
+#[cfg(feature = "VK_KHR_maintenance2")] mod maintenance2_khr;
+#[cfg(feature = "VK_KHR_maintenance2")] pub use self::maintenance2_khr::*;
+
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")] mod get_surface_capabilities2_khr;
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")] pub use self::get_surface_capabilities2_khr::*;
 
@@ -2912,6 +2915,12 @@ extern "system"
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")] mod get_memory_requirements2_khr;
 #[cfg(feature = "VK_KHR_get_memory_requirements2")] pub use self::get_memory_requirements2_khr::*;
+
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")] mod sampler_ycbcr_conversion_khr;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")] pub use self::sampler_ycbcr_conversion_khr::*;
+
+#[cfg(feature = "VK_KHR_bind_memory2")] mod bind_memory2_khr;
+#[cfg(feature = "VK_KHR_bind_memory2")] pub use self::bind_memory2_khr::*;
 
 #[cfg(feature = "VK_EXT_debug_report")] mod debug_report_ext;
 #[cfg(feature = "VK_EXT_debug_report")] pub use self::debug_report_ext::*;
