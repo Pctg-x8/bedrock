@@ -631,6 +631,42 @@ impl DeviceMemory
 	}
 }
 
+#[cfg(feature = "FeImplements")]
+impl Device
+{
+	/// Multiple Binding for Buffers
+	pub fn bind_buffers(&self, bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)]) -> ::Result<()>
+	{
+		let infos: Vec<_> = bounds.iter().map(|&(b, m, offs)| VkBindBufferMemoryInfo
+		{
+			buffer: b.native_ptr(), memory: m.native_ptr(), memoryOffset: offs, .. Default::default()
+		}).collect();
+		unsafe
+		{
+			vkBindBufferMemory2(self.native_ptr(), infos.len() as _, infos.as_ptr()).into_result()
+		}
+	}
+	/// Multiple Binding for Images
+	pub fn bind_images(&self, bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> ::Result<()>
+	{
+		let infos: Vec<_> = bounds.iter().map(|&(i, m, offs)| VkBindImageMemoryInfo
+		{
+			image: i.native_ptr(), memory: m.native_ptr(), memoryOffset: offs, .. Default::default()
+		}).collect();
+		unsafe
+		{
+			vkBindImageMemory2(self.native_ptr(), infos.len() as _, infos.as_ptr()).into_result()
+		}
+	}
+	/// Multiple Binding for both resources
+	pub fn bind_resources(&self, buf_bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)],
+		img_bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> ::Result<()>
+	{
+		// 必ず両方実行されるようにする
+		self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
+	}
+}
+
 /// [feature = "FeImplements"] Common operations for memory bound objects
 #[cfg(feature = "FeImplements")]
 pub trait MemoryBound
