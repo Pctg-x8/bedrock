@@ -3086,3 +3086,6 @@ extern "system"
 
 #[cfg(feature = "VK_EXT_shader_viewport_index_layer")] mod shader_viewport_index_layer_ext;
 #[cfg(feature = "VK_EXT_shader_viewport_index_layer")] pub use self::shader_viewport_index_layer_ext::*;
+
+#[cfg(feature = "VK_EXT_global_priority")] mod global_priority_ext;
+#[cfg(feature = "VK_EXT_global_priority")] pub use self::global_priority_ext::*;
