@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "rust.features": ["FeImplements", "VK_EXT_global_priority"]
+    "rust.features": ["FeImplements", "VK_AMD_shader_info"]
 }

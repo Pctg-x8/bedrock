@@ -2961,6 +2961,9 @@ extern "system"
 #[cfg(feature = "VK_AMD_texture_gather_bias_lod")] mod texture_gather_bias_lod_amd;
 #[cfg(feature = "VK_AMD_texture_gather_bias_lod")] pub use self::texture_gather_bias_lod_amd::*;
 
+#[cfg(feature = "VK_AMD_shader_info")] mod shader_info_amd;
+#[cfg(feature = "VK_AMD_shader_info")] pub use self::shader_info_amd::*;
+
 #[cfg(feature = "VK_AMD_shader_image_load_store_lod")] mod shader_image_load_store_lod_amd;
 #[cfg(feature = "VK_AMD_shader_image_load_store_lod")] pub use self::shader_image_load_store_lod_amd::*;
 
