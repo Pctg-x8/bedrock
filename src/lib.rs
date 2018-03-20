@@ -211,6 +211,7 @@ mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
 pub mod resources; pub use resources::*;
+#[macro_use]
 mod descriptor; pub use descriptor::*;
 mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;

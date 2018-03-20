@@ -3825,7 +3825,7 @@ pub struct VkDescriptorUpdateTemplateCreateInfo
     pub sType: VkStructureType, pub pNext: *mut c_void,
     pub flags: VkDescriptorUpdateTemplateCreateFlags,
     pub descriptorUpdateEntryCount: u32,
-    pub pDescrptorUpdateEntries: *const VkDescriptorUpdateTemplateEntry,
+    pub pDescriptorUpdateEntries: *const VkDescriptorUpdateTemplateEntry,
     pub templateType: VkDescriptorUpdateTemplateType,
     pub descriptorSetLayout: VkDescriptorSetLayout, pub pipelineBindPoint: VkPipelineBindPoint,
     pub pipelineLayout: VkPipelineLayout, pub set: u32

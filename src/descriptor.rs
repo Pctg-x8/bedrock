@@ -6,6 +6,7 @@ use {VkHandle, DeviceChild};
 use ShaderStage;
 #[cfg(feature = "FeImplements")]
 use std::ptr::null;
+#[cfg(feature = "FeImplements")] use std::mem::zeroed;
 
 /// Opaque handle to a descriptor set layout object
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, ::Device);
@@ -273,4 +274,66 @@ impl DescriptorUpdateInfo
             &DescriptorUpdateInfo::StorageTexelBuffer(ref bvv) => (DescriptorType::StorageTexelBuffer, bvv.len() as _, &[], &[], bvv)
         }
     }
+}
+
+#[macro_export]
+macro_rules! DescriptorUpdateTemplateEntry
+{
+    { ($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr } =>
+    {
+        VkDescriptorUpdateTemplateEntry
+        {
+            descriptorType: $ty, descriptorCount: $c,
+            dstBinding: $b, dstArrayElement: $a, offset: $o, stride: $s
+        }
+    };
+}
+#[macro_export]
+macro_rules! DescriptorUpdateTemplateEntries
+{
+    { { $(($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr),* } } =>
+    { {
+        $(DescriptorUpdateTemplateEntry! { ($b, $a) ..: [$ty; $c] = $o, $s }),*
+    } };
+}
+
+pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DescriptorUpdateTemplate[vkDestroyDescriptorUpdateTemplate] }
+#[cfg(feature = "FeImplements")]
+impl DescriptorUpdateTemplate
+{
+    /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
+    pub fn new(device: &::Device, entries: &[VkDescriptorUpdateTemplateEntry], dsl: Option<&DescriptorSetLayout>) -> ::Result<Self>
+    {
+        let cinfo = VkDescriptorUpdateTemplateCreateInfo
+        {
+            descriptorUpdateEntryCount: entries.len() as _, pDescriptorUpdateEntries: entries.as_ptr(),
+            templateType: if dsl.is_none() { VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS }
+                else { VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET },
+            descriptorSetLayout: dsl.map_or(unsafe { zeroed() }, |x| x.native_ptr()),
+            .. Default::default()
+        };
+        let mut handle = unsafe { zeroed() };
+        unsafe
+        {
+            vkCreateDescriptorUpdateTemplate(device.native_ptr(), &cinfo, null(), &mut handle)
+                .into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
+        }
+    }
+    pub fn update_set<T>(&self, set: VkDescriptorSet, data: &[T])
+    {
+        unsafe
+        {
+            vkUpdateDescriptorSetWithTemplate(self.device().native_ptr(), set, self.native_ptr(),
+                data.as_ptr() as *const _)
+        }
+    }
+}
+impl VkHandle for DescriptorUpdateTemplate
+{
+    type Handle = VkDescriptorUpdateTemplate; fn native_ptr(&self) -> VkDescriptorUpdateTemplate { self.0 }
+}
+impl DeviceChild for DescriptorUpdateTemplate
+{
+    fn device(&self) -> &::Device { &self.1 }
 }
