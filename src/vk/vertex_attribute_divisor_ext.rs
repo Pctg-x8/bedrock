@@ -18,7 +18,7 @@ impl Default for VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT
     {
         VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT
         {
-            sType: VK_STRUCTURE_TYPE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
+            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
             .. unsafe { zeroed() }
         }
     }
