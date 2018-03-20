@@ -51,10 +51,7 @@ impl<'i> DoubleEndedIterator for IterPhysicalDevices<'i>
 }
 
 #[cfg(feature = "FeImplements")]
-impl Drop for InstanceCell { fn drop(&mut self)
-{
-	unsafe { vkDestroyInstance(self.0, ::std::ptr::null()); }
-} }
+impl Drop for InstanceCell { fn drop(&mut self) { unsafe { vkDestroyInstance(self.0, ::std::ptr::null()); } } }
 
 impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 .0 } }
 impl VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
@@ -257,6 +254,15 @@ impl PhysicalDevice
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
 		unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(self.0, format, itype, samples, usage.0, tiling, &mut n, v.as_mut_ptr()) };
 		v
+	}
+
+	/// [feature = "VK_EXT_sample_locations"]
+	#[cfg(feature = "VK_EXT_sample_locations")]
+	pub fn multisample_properties(&self, samples: VkSampleCountFlags) -> VkMultisamplePropertiesEXT
+	{
+		let mut r = unsafe { ::std::mem::uninitialized() };
+		unsafe { vkGetPhysicalDeviceMultisamplePropertiesEXT(self.0, samples, &mut r) };
+		return r;
 	}
 }
 

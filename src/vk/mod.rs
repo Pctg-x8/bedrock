@@ -1,4 +1,4 @@
-//! Vulkan API Definitions 1.0.59.0
+//! Vulkan API Definitions 1.0.68.0
 
 /*
 ** Copyright (c) 2015-2017 The Khronos Group Inc.
@@ -320,6 +320,11 @@ pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR: VkStructureType =
 pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR: VkStructureType = 100_0127_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT: VkStructureType = 100_0130_000;
 pub const VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT: VkStructureType = 100_0130_001;
+pub const VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT: VkStructureType = 100_0143_000;
+pub const VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT: VkStructureType = 100_0143_001;
+pub const VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT: VkStructureType = 100_0143_002;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT: VkStructureType = 100_0143_003;
+pub const VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT: VkStructureType = 100_0143_004;
 pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 100_0146_000;
 pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 100_0146_001;
 pub const VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2_KHR: VkStructureType = 100_0146_002;
@@ -330,6 +335,20 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_
 pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT: VkStructureType = 100_0148_002;
 pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV: VkStructureType = 100_0149_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: VkStructureType = 100_0152_000;
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CRETAE_INFO_KHR: VkStructureType = 100_0156_000;
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR: VkStructureType = 100_0156_001;
+pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR: VkStructureType = 100_0156_002;
+pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR: VkStructureType = 100_0156_003;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR: VkStructureType = 100_0156_004;
+pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 100_0156_005;
+pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = 100_0157_000;
+pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = 100_0157_001;
+pub const VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 100_0160_000;
+pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 100_0160_001;
+pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT: VkStructureType = 100_0174_000;
+pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT: VkStructureType = 100_0178_000;
+pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType = 100_0178_001;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROEPRTIES_EXT: VkStructureType = 100_0178_002;
 
 pub type VkSystemAllocationScope = i32;
 pub const VK_SYSTEM_ALLOCATION_SCOPE_COMMAND: VkSystemAllocationScope = 0;
@@ -3029,6 +3048,12 @@ extern "system"
 #[cfg(feature = "VK_AMD_mixed_attachment_samples")] mod mixed_attachment_samples_amd;
 #[cfg(feature = "VK_AMD_mixed_attachment_samples")] pub use self::mixed_attachment_samples_amd::*;
 
+#[cfg(feature = "VK_AMD_shader_fragment_mask")] mod shader_fragment_mask_amd;
+#[cfg(feature = "VK_AMD_shader_fragment_mask")] pub use self::shader_fragment_mask_amd::*;
+
+#[cfg(feature = "VK_EXT_sample_locations")] mod sample_locations_ext;
+#[cfg(feature = "VK_EXT_sample_locations")] pub use self::sample_locations_ext::*;
+
 #[cfg(feature = "VK_EXT_blend_operation_advanced")] mod blend_operation_advanced_ext;
 #[cfg(feature = "VK_EXT_blend_operation_advanced")] pub use self::blend_operation_advanced_ext::*;
 
@@ -3043,6 +3068,9 @@ extern "system"
 
 #[cfg(feature = "VK_EXT_post_depth_coverage")] mod post_depth_coverage_ext;
 #[cfg(feature = "VK_EXT_post_depth_coverage")] pub use self::post_depth_coverage_ext::*;
+
+#[cfg(feature = "VK_EXT_validation_cache")] mod validation_cache_ext;
+#[cfg(feature = "VK_EXT_validation_cache")] pub use self::validation_cache_ext::*;
 
 #[cfg(feature = "VK_EXT_shader_viewport_index_layer")] mod shader_viewport_index_layer_ext;
 #[cfg(feature = "VK_EXT_shader_viewport_index_layer")] pub use self::shader_viewport_index_layer_ext::*;

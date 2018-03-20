@@ -4,6 +4,7 @@ use vk::*;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 use ShaderStage;
+#[cfg(feature = "FeImplements")]
 use std::ptr::null;
 
 /// Opaque handle to a descriptor set layout object
@@ -113,7 +114,7 @@ impl DescriptorSetLayout
         {
             bindingCount: n_bindings.len() as _, pBindings: n_bindings.as_ptr(), .. Default::default()
         };
-        unsafe { vkCreateDescriptorSetLayout(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
+        unsafe { vkCreateDescriptorSetLayout(device.native_ptr(), &cinfo, null(), &mut h) }
             .into_result().map(|_| DescriptorSetLayout(h, device.clone()))
     }
 }
@@ -176,7 +177,7 @@ impl DescriptorPool
             maxSets: max_sets, flags: if allow_free { VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT } else { 0 },
             poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr() as *const _, .. Default::default()
         };
-        unsafe { vkCreateDescriptorPool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }
+        unsafe { vkCreateDescriptorPool(device.native_ptr(), &cinfo, null(), &mut h) }
             .into_result().map(|_| DescriptorPool(h, device.clone()))
     }
     /// Allocate one or more descriptor sets

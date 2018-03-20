@@ -2,13 +2,18 @@
 
 use vk::*;
 use {VkHandle, Device, DeviceChild};
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "FeImplements")]
+use VkResultHandler;
+#[cfg(feature = "FeImplements")]
 use std::mem::{size_of, transmute};
 use std::ops::Range;
 use std::borrow::Borrow;
 use {Image, Buffer, ImageLayout};
+#[cfg(feature = "FeImplements")]
 use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
+#[cfg(feature = "FeImplements")]
 use {StencilFaceMask, FilterMode, Event};
+#[cfg(feature = "FeImplements")]
 use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
 
 /// Opaque handle to a command pool object
@@ -369,6 +374,14 @@ impl<'d> CmdRecord<'d>
 	pub fn set_stencil_reference(&mut self, face_mask: StencilFaceMask, reference: u32) -> &mut Self
 	{
 		unsafe { vkCmdSetStencilReference(self.ptr.native_ptr(), face_mask as _, reference) };
+		return self;
+	}
+	/// [feature = "VK_EXT_sample_locations"]
+	/// Set the sample locations state
+	#[cfg(feature = "VK_EXT_sample_locations")]
+	pub fn set_sample_locations(&mut self, info: &VkSampleLocationsInfoEXT) -> &mut Self
+	{
+		unsafe { vkCmdSetSampleLocationsEXT(self.ptr.native_ptr(), info as _); }
 		return self;
 	}
 }
