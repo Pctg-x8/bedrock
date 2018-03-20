@@ -2796,308 +2796,117 @@ extern "system"
 }
 
 // --- Extension Definitions --- //
-
-#[cfg(feature = "VK_KHR_surface")] mod surface_khr;
-#[cfg(feature = "VK_KHR_surface")] pub use self::surface_khr::*;
-
-#[cfg(feature = "VK_KHR_swapchain")] mod swapchain_khr;
-#[cfg(feature = "VK_KHR_swapchain")] pub use self::swapchain_khr::*;
-
-#[cfg(feature = "VK_KHR_display")] mod display_khr;
-#[cfg(feature = "VK_KHR_display")] pub use self::display_khr::*;
-
-#[cfg(feature = "VK_KHR_display_swapchain")] mod display_swapchain_khr;
-#[cfg(feature = "VK_KHR_display_swapchain")] pub use self::display_swapchain_khr::*;
-
-#[cfg(feature = "VK_KHR_xlib_surface")] mod xlib_surface_khr;
-#[cfg(feature = "VK_KHR_xlib_surface")] pub use self::xlib_surface_khr::*;
+macro_rules! ExportExtensions
+{
+    ($fname: tt: $mname: ident) =>
+    {
+        #[cfg(feature = $fname)] mod $mname;
+        #[cfg(feature = $fname)] pub use self::$mname::*;
+    }
+}
 
 #[cfg(feature = "VK_KHR_xcb_surface")] extern crate xcb;
-#[cfg(feature = "VK_KHR_xcb_surface")] mod xcb_surface_khr;
-#[cfg(feature = "VK_KHR_xcb_surface")] pub use self::xcb_surface_khr::*;
-
-#[cfg(feature = "VK_KHR_wayland_surface")] extern crate wayland_client;
-#[cfg(feature = "VK_KHR_wayland_surface")] mod wayland_surface_khr;
-#[cfg(feature = "VK_KHR_wayland_surface")] pub use self::wayland_surface_khr::*;
-
-// TODO: Mir support
-
+#[cfg(feature = "VK_KHR_wayland_surface")] extern crate wayland;
 #[cfg(feature = "VK_KHR_android_surface")] extern crate android_ffi;
-#[cfg(feature = "VK_KHR_android_surface")] mod android_surface_khr;
-#[cfg(feature = "VK_KHR_android_surface")] pub use self::android_surface_khr::*;
 
-#[cfg(feature = "VK_KHR_win32_surface")] mod win32_surface_khr;
-#[cfg(feature = "VK_KHR_win32_surface")] pub use self::win32_surface_khr::*;
-
-#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")] mod sampler_mirror_clamp_to_edge_khr;
-#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")] pub use self::sampler_mirror_clamp_to_edge_khr::*;
-
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")] mod get_physical_device_properties2_khr;
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")] pub use self::get_physical_device_properties2_khr::*;
-
-#[cfg(feature = "VK_KHR_shader_draw_parameters")] mod shader_draw_parameters_khr;
-#[cfg(feature = "VK_KHR_shader_draw_parameters")] pub use self::shader_draw_parameters_khr::*;
-
-#[cfg(feature = "VK_KHR_maintenance1")] mod maintenance1_khr;
-#[cfg(feature = "VK_KHR_maintenance1")] pub use self::maintenance1_khr::*;
-
-#[cfg(feature = "VK_KHR_external_memory_capabilities")] mod external_memory_capabilities_khr;
-#[cfg(feature = "VK_KHR_external_memory_capabilities")] pub use self::external_memory_capabilities_khr::*;
-
-#[cfg(feature = "VK_KHR_external_memory")] mod external_memory_khr;
-#[cfg(feature = "VK_KHR_external_memory")] pub use self::external_memory_khr::*;
-
-#[cfg(feature = "VK_KHR_external_memory_win32")] mod external_memory_win32_khr;
-#[cfg(feature = "VK_KHR_external_memory_win32")] pub use self::external_memory_win32_khr::*;
-
-#[cfg(feature = "VK_KHR_external_memory_fd")] mod external_memory_fd_khr;
-#[cfg(feature = "VK_KHR_external_memory_fd")] pub use self::external_memory_fd_khr::*;
-
-#[cfg(feature = "VK_KHR_win32_keyed_mutex")] mod win32_keyed_mutex_khr;
-#[cfg(feature = "VK_KHR_win32_keyed_mutex")] pub use self::win32_keyed_mutex_khr::*;
-
-#[cfg(feature = "VK_KHR_external_semaphore_capabilities")] mod external_semaphore_capabilities_khr;
-#[cfg(feature = "VK_KHR_external_semaphore_capabilities")] pub use self::external_semaphore_capabilities_khr::*;
-
-#[cfg(feature = "VK_KHR_external_semaphore")] mod external_semaphore_khr;
-#[cfg(feature = "VK_KHR_external_semaphore")] pub use self::external_semaphore_khr::*;
-
-#[cfg(featuers = "VK_KHR_external_semaphore_win32")] mod external_semaphore_win32_khr;
-#[cfg(feature = "VK_KHR_external_semaphore_win32")] pub use self::external_semaphore_win32_khr::*;
-
-#[cfg(feature = "VK_KHR_external_semaphore_fd")] mod external_semaphore_fd_khr;
-#[cfg(feature = "VK_KHR_external_semaphore_fd")] pub use self::external_semaphore_fd_khr::*;
-
-#[cfg(feature = "VK_KHR_push_descriptor")] mod push_descriptor_khr;
-#[cfg(feature = "VK_KHR_push_descriptor")] pub use self::push_descriptor_khr::*;
-
-#[cfg(feature = "VK_KHR_16bit_storage")] mod halfbit_storage_khr;
-#[cfg(feature = "VK_KHR_16bit_storage")] pub use self::halfbit_storage_khr::*;
-
-#[cfg(feature = "VK_KHR_incremental_present")] mod incremental_present_khr;
-#[cfg(feature = "VK_KHR_incremental_present")] pub use self::incremental_present_khr::*;
-
-#[cfg(feature = "VK_KHR_descriptor_update_template")] mod descriptor_update_template_khr;
-#[cfg(feature = "VK_KHR_descriptor_update_template")] pub use self::descriptor_update_template_khr::*;
-
-#[cfg(feature = "VK_KHR_shared_presentable_image")] mod shared_presentable_image_khr;
-#[cfg(feature = "VK_KHR_shared_presentable_image")] pub use self::shared_presentable_image_khr::*;
-
-#[cfg(feature = "VK_KHR_external_fence_capabilities")] mod external_fence_capabilities_khr;
-#[cfg(feature = "VK_KHR_external_fence_capabilities")] pub use self::external_fence_capabilities_khr::*;
-
-#[cfg(feature = "VK_KHR_external_fence")] mod external_fence_khr;
-#[cfg(feature = "VK_KHR_external_fence")] pub use self::external_fence_khr::*;
-
-#[cfg(feature = "VK_KHR_external_fence_win32")] mod external_fence_win32_khr;
-#[cfg(feature = "VK_KHR_external_fence_win32")] pub use self::external_fence_win32_khr::*;
-
-#[cfg(feature = "VK_KHR_external_fence_fd")] mod external_fence_fd_khr;
-#[cfg(feature = "VK_KHR_external_fence_fd")] pub use self::external_fence_fd_khr::*;
-
-#[cfg(feature = "VK_KHR_maintenance2")] mod maintenance2_khr;
-#[cfg(feature = "VK_KHR_maintenance2")] pub use self::maintenance2_khr::*;
-
-#[cfg(feature = "VK_KHR_get_surface_capabilities2")] mod get_surface_capabilities2_khr;
-#[cfg(feature = "VK_KHR_get_surface_capabilities2")] pub use self::get_surface_capabilities2_khr::*;
-
-#[cfg(feature = "VK_KHR_variable_pointers")] mod variable_pointers_khr;
-#[cfg(feature = "VK_KHR_variable_pointers")] pub use self::variable_pointers_khr::*;
-
-#[cfg(feature = "VK_KHR_dedicated_allocation")] mod dedicated_allocation_khr;
-#[cfg(feature = "VK_KHR_dedicated_allocation")] pub use self::dedicated_allocation_khr::*;
-
-#[cfg(feature = "VK_KHR_storage_buffer_storage_class")] mod storage_buffer_storage_class_khr;
-#[cfg(feature = "VK_KHR_storage_buffer_storage_class")] pub use self::storage_buffer_storage_class_khr::*;
-
-#[cfg(feature = "VK_KHR_relaxed_block_layout")] mod relaxed_block_layout_khr;
-#[cfg(feature = "VK_KHR_relaxed_block_layout")] pub use self::relaxed_block_layout_khr::*;
-
-#[cfg(feature = "VK_KHR_get_memory_requirements2")] mod get_memory_requirements2_khr;
-#[cfg(feature = "VK_KHR_get_memory_requirements2")] pub use self::get_memory_requirements2_khr::*;
-
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")] mod sampler_ycbcr_conversion_khr;
-#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")] pub use self::sampler_ycbcr_conversion_khr::*;
-
-#[cfg(feature = "VK_KHR_bind_memory2")] mod bind_memory2_khr;
-#[cfg(feature = "VK_KHR_bind_memory2")] pub use self::bind_memory2_khr::*;
-
-#[cfg(feature = "VK_EXT_debug_report")] mod debug_report_ext;
-#[cfg(feature = "VK_EXT_debug_report")] pub use self::debug_report_ext::*;
-
-#[cfg(feature = "VK_NV_glsl_shader")] mod glsl_shader_nv;
-#[cfg(feature = "VK_NV_glsl_shader")] pub use self::glsl_shader_nv::*;
-
-#[cfg(feature = "VK_EXT_depth_range_unrestricted")] mod depth_range_unrestricted_ext;
-#[cfg(feature = "VK_EXT_depth_range_unrestricted")] pub use self::depth_range_unrestricted::*;
-
-#[cfg(feature = "VK_IMG_filter_cubic")] mod filter_cubic_img;
-#[cfg(feature = "VK_IMG_filter_cubic")] pub use self::filter_cubic_img::*;
-
-#[cfg(feature = "VK_AMD_rasterization_order")] mod rasterization_order_amd;
-#[cfg(feature = "VK_AMD_rasterization_order")] pub use self::rasterization_order_amd::*;
-
-#[cfg(feature = "VK_EXT_debug_marker")] mod debug_marker_ext;
-#[cfg(feature = "VK_EXT_debug_marker")] pub use self::debug_marker_ext::*;
-
-#[cfg(feature = "VK_AMD_gcn_shader")] mod gcn_shader_amd;
-#[cfg(feature = "VK_AMD_gcn_shader")] pub use self::gcn_shader_amd::*;
-
-#[cfg(feature = "VK_NV_dedicated_allocation")] mod dedicated_allocation_nv;
-#[cfg(feature = "VK_NV_dedicated_allocation")] pub use self::dedicated_allocation_nv::*;
-
-#[cfg(feature = "VK_AMD_draw_indirect_count")] mod draw_indirect_count_amd;
-#[cfg(feature = "VK_AMD_draw_indirect_count")] pub use self::draw_indirect_count_amd::*;
-
-#[cfg(feature = "VK_AMD_negative_viewport_height")] mod negative_viewport_height_amd;
-#[cfg(feature = "VK_AMD_negative_viewport_height")] pub use self::negative_viewport_height_amd::*;
-
-#[cfg(feature = "VK_AMD_gpu_shader_half_float")] mod gpu_shader_half_float_amd;
-#[cfg(feature = "VK_AMD_gpu_shader_half_float")] pub use self::gpu_shader_half_float_amd::*;
-
-#[cfg(feature = "VK_AMD_shader_ballot")] mod shader_ballot_amd;
-#[cfg(feature = "VK_AMD_shader_ballot")] pub use self::shader_ballot_amd::*;
-
-#[cfg(feature = "VK_AMD_texture_gather_bias_lod")] mod texture_gather_bias_lod_amd;
-#[cfg(feature = "VK_AMD_texture_gather_bias_lod")] pub use self::texture_gather_bias_lod_amd::*;
-
-#[cfg(feature = "VK_AMD_shader_info")] mod shader_info_amd;
-#[cfg(feature = "VK_AMD_shader_info")] pub use self::shader_info_amd::*;
-
-#[cfg(feature = "VK_AMD_shader_image_load_store_lod")] mod shader_image_load_store_lod_amd;
-#[cfg(feature = "VK_AMD_shader_image_load_store_lod")] pub use self::shader_image_load_store_lod_amd::*;
-
-#[cfg(feature = "VK_KHX_multiview")] mod multiview_khx;
-#[cfg(feature = "VK_KHX_multiview")] pub use self::multiview_khx::*;
-
-#[cfg(feature = "VK_IMG_format_pvrtc")] mod format_pvrtc_img;
-#[cfg(feature = "VK_IMG_format_pvrtc")] pub use self::format_pvrtc_img::*;
-
-#[cfg(feature = "VK_NV_external_memory_capabilities")] mod external_memory_capabilities_nv;
-#[cfg(feature = "VK_NV_external_memory_capabilities")] pub use self::external_memory_capabilities_nv::*;
-
-#[cfg(feature = "VK_NV_external_memory")] mod external_memory_nv;
-#[cfg(feature = "VK_NV_external_memory")] pub use self::external_memory_nv::*;
-
-#[cfg(feature = "VK_NV_external_memory_win32")] mod external_memory_win32_nv;
-#[cfg(feature = "VK_NV_external_memory_win32")] pub use self::external_memory_win32_nv::*;
-
-#[cfg(feature = "VK_NV_win32_keyed_mutex")] mod win32_keyed_mutex_nv;
-#[cfg(feature = "VK_NV_win32_keyed_mutex")] pub use self::win32_keyed_mutex_nv::*;
-
-#[cfg(feature = "VK_KHX_device_group")] mod device_group_khx;
-#[cfg(feature = "VK_KHX_device_group")] pub use self::device_group_khx::*;
-
-#[cfg(feature = "VK_EXT_validation_flags")] mod validation_flags_ext;
-#[cfg(feature = "VK_EXT_validation_flags")] pub use self::validation_flags_ext::*;
-
-#[cfg(feature = "VK_NN_vi_surface")] mod vi_surface_nn;
-#[cfg(feature = "VK_NN_vi_surface")] pub use self::vi_surface_nn::*;
-
-#[cfg(feature = "VK_EXT_shader_group_ballot")] mod shader_group_ballot_ext;
-#[cfg(feature = "VK_EXT_shader_group_ballot")] pub use self::shader_group_ballot_ext::*;
-
-#[cfg(feature = "VK_EXT_shader_subgroup_vote")] mod shader_subgroup_vote_ext;
-#[cfg(feature = "VK_EXT_shader_subgroup_vote")] pub use self::shader_subgroup_vote_ext::*;
-
-#[cfg(feature = "VK_KHX_device_group_creation")] mod device_group_creation_khx;
-#[cfg(feature = "VK_KHX_device_group_creation")] pub use self::device_group_creation_khx::*;
-
-#[cfg(feature = "VK_NVX_device_generated_commands")] mod device_generated_commands_nvx;
-#[cfg(feature = "VK_NVX_device_generated_commands")] pub use self::device_generated_commands_nvx::*;
-
-#[cfg(feature = "VK_NV_clip_space_w_scaling")] mod clip_space_w_scaling_nv;
-#[cfg(feature = "VK_NV_clip_space_w_scaling")] pub use self::clip_space_w_scaling_nv::*;
-
-#[cfg(feature = "VK_EXT_direct_mode_display")] mod direct_mode_display_ext;
-#[cfg(feature = "VK_EXT_direct_mode_display")] pub use self::direct_mode_display_ext::*;
-
-#[cfg(feature = "VK_EXT_acquire_xlib_display")] mod acquire_xlib_display_ext;
-#[cfg(feature = "VK_EXT_acquire_xlib_display")] pub use self::acquire_xlib_display_ext::*;
-
-#[cfg(feature = "VK_EXT_display_surface_counter")] mod display_surface_counter_ext;
-#[cfg(feature = "VK_EXT_display_surface_counter")] pub use self::display_surface_counter_ext::*;
-
-#[cfg(feature = "VK_EXT_display_control")] mod display_control_ext;
-#[cfg(feature = "VK_EXT_display_control")] pub use self::display_control_ext::*;
-
-#[cfg(feature = "VK_GOOGLE_display_timing")] mod display_timing_google;
-#[cfg(feature = "VK_GOOGLE_display_timing")] pub use self::display_timing_google::*;
-
-#[cfg(feature = "VK_NV_sample_mask_override_coverage")] mod sample_mask_override_coverage_nv;
-#[cfg(feature = "VK_NV_sample_mask_override_coverage")] pub use self::sample_mask_override_coverage_nv::*;
-
-#[cfg(feature = "VK_NV_geometry_shader_passthrough")] mod geometry_shader_passthrough_nv;
-#[cfg(feature = "VK_NV_geometry_shader_passthrough")] pub use self::geometry_shader_passthrough_nv::*;
-
-#[cfg(feature = "VK_NV_viewport_array2")] mod viewport_array2_nv;
-#[cfg(feature = "VK_NV_viewport_array2")] pub use self::viewport_array2_nv::*;
-
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")] mod multiview_per_view_attributes_nvx;
-#[cfg(feature = "VK_NVX_multiview_per_view_attributes")] pub use self::multiview_per_view_attributes_nvx::*;
-
-#[cfg(feature = "VK_NV_viewport_swizzle")] mod viewport_swizzle_nv;
-#[cfg(feature = "VK_NV_viewport_swizzle")] pub use self::viewport_swizzle_nv::*;
-
-#[cfg(feature = "VK_EXT_discard_rectangles")] mod discard_rectangles_ext;
-#[cfg(feature = "VK_EXT_discard_rectangles")] pub use self::discard_rectangles_ext::*;
-
-#[cfg(feature = "VK_EXT_swapchain_colorspace")] mod swapchain_colorspace_ext;
-#[cfg(feature = "VK_EXT_swapchain_colorspace")] pub use self::swapchain_colorspace_ext::*;
-
-#[cfg(feature = "VK_EXT_hdr_metadata")] mod hdr_metadata_ext;
-#[cfg(feature = "VK_EXT_hdr_metadata")] pub use self::hdr_metadata_ext::*;
-
-#[cfg(feature = "VK_MVK_ios_surface")] mod ios_surface_mvk;
-#[cfg(feature = "VK_MVK_ios_surface")] pub use self::ios_surface_mvk::*;
-
-#[cfg(feature = "VK_MVK_macos_surface")] mod macos_surface_mvk;
-#[cfg(feature = "VK_MVK_macos_surface")] pub use self::macos_surface_mvk::*;
-
-#[cfg(feature = "VK_EXT_external_memory_dma_buf")] mod external_memory_dma_buf_ext;
-#[cfg(feature = "VK_EXT_external_memory_dma_buf")] pub use self::external_memory_dma_buf_ext::*;
-
-#[cfg(feature = "VK_EXT_queue_family_foreign")] mod queue_family_foreign_ext;
-#[cfg(feature = "VK_EXT_queue_family_foreign")] pub use self::queue_family_foreign_ext::*;
-
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")] mod sampler_filter_minmax_ext;
-#[cfg(feature = "VK_EXT_sampler_filter_minmax")] pub use self::sampler_filter_minmax_ext::*;
-
-#[cfg(feature = "VK_AMD_gpu_shader_int16")] mod gpu_shader_int16_amd;
-#[cfg(feature = "VK_AMD_gpu_shader_int16")] pub use self::gpu_shader_int16_amd::*;
-
-#[cfg(feature = "VK_AMD_mixed_attachment_samples")] mod mixed_attachment_samples_amd;
-#[cfg(feature = "VK_AMD_mixed_attachment_samples")] pub use self::mixed_attachment_samples_amd::*;
-
-#[cfg(feature = "VK_AMD_shader_fragment_mask")] mod shader_fragment_mask_amd;
-#[cfg(feature = "VK_AMD_shader_fragment_mask")] pub use self::shader_fragment_mask_amd::*;
-
-#[cfg(feature = "VK_EXT_sample_locations")] mod sample_locations_ext;
-#[cfg(feature = "VK_EXT_sample_locations")] pub use self::sample_locations_ext::*;
-
-#[cfg(feature = "VK_EXT_blend_operation_advanced")] mod blend_operation_advanced_ext;
-#[cfg(feature = "VK_EXT_blend_operation_advanced")] pub use self::blend_operation_advanced_ext::*;
-
-#[cfg(feature = "VK_NV_fragment_coverage_to_color")] mod fragment_coverage_to_color_nv;
-#[cfg(feature = "VK_NV_fragment_coverage_to_color")] pub use self::fragment_coverage_to_color_nv::*;
-
-#[cfg(feature = "VK_NV_framebuffer_mixed_samples")] mod framebuffer_mixed_samples_nv;
-#[cfg(feature = "VK_NV_framebuffer_mixed_samples")] pub use self::framebuffer_mixed_samples_nv::*;
-
-#[cfg(feature = "VK_NV_fill_rectangle")] mod fill_rectangle_nv;
-#[cfg(feature = "VK_NV_fill_rectangle")] pub use self::fill_rectangle_nv::*;
-
-#[cfg(feature = "VK_EXT_post_depth_coverage")] mod post_depth_coverage_ext;
-#[cfg(feature = "VK_EXT_post_depth_coverage")] pub use self::post_depth_coverage_ext::*;
-
-#[cfg(feature = "VK_EXT_validation_cache")] mod validation_cache_ext;
-#[cfg(feature = "VK_EXT_validation_cache")] pub use self::validation_cache_ext::*;
-
-#[cfg(feature = "VK_EXT_shader_viewport_index_layer")] mod shader_viewport_index_layer_ext;
-#[cfg(feature = "VK_EXT_shader_viewport_index_layer")] pub use self::shader_viewport_index_layer_ext::*;
-
-#[cfg(feature = "VK_EXT_global_priority")] mod global_priority_ext;
-#[cfg(feature = "VK_EXT_global_priority")] pub use self::global_priority_ext::*;
-
-#[cfg(feature = "VK_EXT_external_memory_host")] mod external_memory_host_ext;
-#[cfg(feature = "VK_EXT_external_memory_host")] pub use self::external_memory_host_ext::*;
+ExportExtensions!("VK_KHR_surface": surface_khr);
+ExportExtensions!("VK_KHR_swapchain": swapchain_khr);
+ExportExtensions!("VK_KHR_display": display_khr);
+ExportExtensions!("VK_KHR_display_swapchain": display_swapchain_khr);
+ExportExtensions!("VK_KHR_xlib_surface": xlib_surface_khr);
+ExportExtensions!("VK_KHR_xcb_surface": xcb_surface_khr);
+ExportExtensions!("VK_KHR_wayland_surface": wayland_surface_khr);
+// TODO: Mir support
+ExportExtensions!("VK_KHR_android_surface": android_surface_khr);
+ExportExtensions!("VK_KHR_win32_surface": win32_surface_khr);
+ExportExtensions!("VK_KHR_sampler_mirror_clamp_to_edge": sampler_mirror_clamp_to_edge_khr);
+ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_properties2_khr);
+ExportExtensions!("VK_KHR_shader_draw_parameters": shader_draw_parameters_khr);
+ExportExtensions!("VK_KHR_maintenance1": maintenance1_khr);
+ExportExtensions!("VK_KHR_external_memory_capabilities": external_memory_capabilities_khr);
+ExportExtensions!("VK_KHR_external_memory": external_memory_khr);
+ExportExtensions!("VK_KHR_external_memory_win32": external_memory_win32_khr);
+ExportExtensions!("VK_KHR_external_memory_fd": external_memory_fd_khr);
+ExportExtensions!("VK_KHR_win32_keyed_mutex": win32_keyed_mutex_khr);
+ExportExtensions!("VK_KHR_external_semaphore_capabilities": external_semaphore_capabilities_khr);
+ExportExtensions!("VK_KHR_external_semaphore": external_semaphore_khr);
+ExportExtensions!("VK_KHR_external_semaphore_win32": external_semaphore_win32_khr);
+ExportExtensions!("VK_KHR_external_semaphore_fd": external_semaphore_fd_khr);
+ExportExtensions!("VK_KHR_push_descriptor": push_descriptor_khr);
+ExportExtensions!("VK_KHR_16bit_storage": halfbit_storage_khr);
+ExportExtensions!("VK_KHR_incremental_present": incremental_present_khr);
+ExportExtensions!("VK_KHR_descriptor_update_template": descriptor_update_template_khr);
+ExportExtensions!("VK_KHR_shared_presentable_image": shared_presentable_image_khr);
+ExportExtensions!("VK_KHR_external_fence_capabilities": external_fence_capabilities_khr);
+ExportExtensions!("VK_KHR_external_fence": external_fence_khr);
+ExportExtensions!("VK_KHR_external_fence_win32": external_fence_win32_khr);
+ExportExtensions!("VK_KHR_external_fence_fd": external_fence_fd_khr);
+ExportExtensions!("VK_KHR_maintenance2": maintenance2_khr);
+ExportExtensions!("VK_KHR_get_surface_capabilities2": get_surface_capabilities2_khr);
+ExportExtensions!("VK_KHR_variable_pointers": variable_pointers_khr);
+ExportExtensions!("VK_KHR_dedicated_allocation": dedicated_allocation_khr);
+ExportExtensions!("VK_KHR_storage_buffer_storage_class": storage_buffer_storage_class_khr);
+ExportExtensions!("VK_KHR_relaxed_block_layout": relaxed_block_layout_khr);
+ExportExtensions!("VK_KHR_get_memory_requirements2": get_memory_requirements2_khr);
+ExportExtensions!("VK_KHR_sampler_ycbcr_conversion": sampler_ycbcr_conversion_khr);
+ExportExtensions!("VK_KHR_bind_memory2": bind_memory2_khr);
+ExportExtensions!("VK_EXT_debug_report": debug_report_ext);
+ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
+ExportExtensions!("VK_EXT_depth_range_unrestricted": depth_range_unrestricted_ext);
+ExportExtensions!("VK_IMG_filter_cubic": filter_cubic_img);
+ExportExtensions!("VK_AMD_rasterization_order": rasterization_order_amd);
+ExportExtensions!("VK_EXT_debug_marker": debug_marker_ext);
+ExportExtensions!("VK_AMD_gcn_shader": gcn_shader_amd);
+ExportExtensions!("VK_NV_dedicated_allocation": dedicated_allocation_nv);
+ExportExtensions!("VK_AMD_draw_indirect_count": draw_indirect_count_amd);
+ExportExtensions!("VK_AMD_negative_viewport_height": negative_viewport_height_amd);
+ExportExtensions!("VK_AMD_gpu_shader_half_float": gpu_shader_half_float_amd);
+ExportExtensions!("VK_AMD_shader_ballot": shader_ballot_amd);
+ExportExtensions!("VK_AMD_texture_gather_bias_lod": texture_gather_bias_lod_amd);
+ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
+ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_lod_amd);
+ExportExtensions!("VK_KHX_multiview": multiview_khx);
+ExportExtensions!("VK_IMG_format_pvrtc": format_pvrtc_img);
+ExportExtensions!("VK_NV_external_memory_capabilities": external_memory_capabilities_nv);
+ExportExtensions!("VK_NV_external_memory": external_memory_nv);
+ExportExtensions!("VK_NV_external_memory_win32": external_memory_win32_nv);
+ExportExtensions!("VK_NV_win32_keyed_mutex": win32_keyed_mutex_nv);
+ExportExtensions!("VK_KHX_device_group": device_group_khx);
+ExportExtensions!("VK_EXT_validation_flags": validation_flags_ext);
+ExportExtensions!("VK_NN_vi_surface": vi_surface_nn);
+ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
+ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
+ExportExtensions!("VK_KHX_device_group_creation": device_group_creation_khx);
+ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_nvx);
+ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
+ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
+ExportExtensions!("VK_EXT_acquire_xlib_display": acquire_xlib_display_ext);
+ExportExtensions!("VK_EXT_display_surface_counter": display_surface_counter_ext);
+ExportExtensions!("VK_EXT_display_control": display_control_ext);
+ExportExtensions!("VK_GOOGLE_display_timing": display_timing_google);
+ExportExtensions!("VK_NV_sample_mask_override_coverage": sample_mask_override_coverage_nv);
+ExportExtensions!("VK_NV_geometry_shader_passthrough": geometry_shader_passthrough_nv);
+ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);
+ExportExtensions!("VK_NVX_multiview_per_view_attributes": multiview_per_view_attributes_nvx);
+ExportExtensions!("VK_NV_viewport_swizzle": viewport_swizzle_nv);
+ExportExtensions!("VK_EXT_discard_rectangles": discard_rectangles_ext);
+ExportExtensions!("VK_EXT_swapchain_colorspace": swapchain_colorspace_ext);
+ExportExtensions!("VK_EXT_hdr_metadata": hdr_metadata_ext);
+ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
+ExportExtensions!("VK_MVK_macos_surface": macos_surface_mvk);
+ExportExtensions!("VK_EXT_external_memory_dma_buf": external_memory_dma_buf_ext);
+ExportExtensions!("VK_EXT_queue_family_foreign": queue_family_foreign);
+ExportExtensions!("VK_EXT_sampler_filter_minmax": sampler_filter_minmax_ext);
+ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);
+ExportExtensions!("VK_AMD_mixed_attachment_samples": mixed_attachment_samples_amd);
+ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);
+ExportExtensions!("VK_EXT_sample_locations": sample_locations_ext);
+ExportExtensions!("VK_EXT_blend_operation_advanced": blend_operation_advanced_ext);
+ExportExtensions!("VK_NV_fragment_coverage_to_color": fragment_coverage_to_color_nv);
+ExportExtensions!("VK_NV_framebuffer_mixed_samples": framebuffer_mixed_samples_nv);
+ExportExtensions!("VK_NV_fill_rectangle": fill_rectangle_nv);
+ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
+ExportExtensions!("VK_EXT_validation_cache": validation_cache_ext);
+ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
+ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
+ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);
