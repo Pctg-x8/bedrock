@@ -38,7 +38,7 @@ macro_rules! VK_VERSION
     (PATCH $v: expr) => ($v as usize & 0xfff);
 }
 /// Version of this file
-pub const VK_HEADER_VERSION: u32 = 59;
+pub const VK_HEADER_VERSION: u32 = 70;
 
 pub const VK_NULL_HANDLE: *mut c_void = 0 as *mut c_void;
 
