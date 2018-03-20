@@ -4295,7 +4295,6 @@ ExportExtensions!("VK_KHR_descriptor_update_template": descriptor_update_templat
 ExportExtensions!("VK_KHR_shared_presentable_image": shared_presentable_image_khr);
 ExportExtensions!("VK_KHR_external_fence_win32": external_fence_win32_khr);
 ExportExtensions!("VK_KHR_external_fence_fd": external_fence_fd_khr);
-ExportExtensions!("VK_KHR_maintenance2": maintenance2_khr);
 ExportExtensions!("VK_KHR_get_surface_capabilities2": get_surface_capabilities2_khr);
 ExportExtensions!("VK_KHR_storage_buffer_storage_class": storage_buffer_storage_class_khr);
 ExportExtensions!("VK_KHR_relaxed_block_layout": relaxed_block_layout_khr);
