@@ -109,6 +109,7 @@ VK_EXT_shader_viewport_index_layer = []
 VK_EXT_global_priority = []
 VK_EXT_external_memory_host = []
 VK_AMD_buffer_marker = []
+VK_EXT_vertex_attribute_divisor = []
 
 FeImplements = []
 FeMultithreaded = []
