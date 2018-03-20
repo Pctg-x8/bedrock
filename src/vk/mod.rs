@@ -3054,6 +3054,12 @@ extern "system"
 #[cfg(feature = "VK_MVK_macos_surface")] mod macos_surface_mvk;
 #[cfg(feature = "VK_MVK_macos_surface")] pub use self::macos_surface_mvk::*;
 
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")] mod external_memory_dma_buf_ext;
+#[cfg(feature = "VK_EXT_external_memory_dma_buf")] pub use self::external_memory_dma_buf_ext::*;
+
+#[cfg(feature = "VK_EXT_queue_family_foreign")] mod queue_family_foreign_ext;
+#[cfg(feature = "VK_EXT_queue_family_foreign")] pub use self::queue_family_foreign_ext::*;
+
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")] mod sampler_filter_minmax_ext;
 #[cfg(feature = "VK_EXT_sampler_filter_minmax")] pub use self::sampler_filter_minmax_ext::*;
 
@@ -3092,3 +3098,6 @@ extern "system"
 
 #[cfg(feature = "VK_EXT_global_priority")] mod global_priority_ext;
 #[cfg(feature = "VK_EXT_global_priority")] pub use self::global_priority_ext::*;
+
+#[cfg(feature = "VK_EXT_external_memory_host")] mod external_memory_host_ext;
+#[cfg(feature = "VK_EXT_external_memory_host")] pub use self::external_memory_host_ext::*;
