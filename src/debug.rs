@@ -16,7 +16,14 @@ impl Drop for DebugReportCallback
 
 impl VkHandle for DebugReportCallback { type Handle = VkDebugReportCallbackEXT; fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 } }
 
-pub struct DebugReportCallbackBuilder<'i> { instance: &'i Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT }
+pub struct DebugReportCallbackBuilder<'i>
+{
+	#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+	instance: &'i Instance,
+	flags: VkDebugReportFlagsEXT,
+	#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+	callback: PFN_vkDebugReportCallbackEXT
+}
 impl<'i> DebugReportCallbackBuilder<'i>
 {
 	/// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
