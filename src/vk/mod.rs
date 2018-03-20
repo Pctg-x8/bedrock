@@ -2913,3 +2913,4 @@ ExportExtensions!("VK_EXT_validation_cache": validation_cache_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
 ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);
+ExportExtensions!("VK_AMD_buffer_marker": buffer_marker_amd);
