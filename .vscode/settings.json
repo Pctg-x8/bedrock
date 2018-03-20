@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "rust.features": ["FeImplements", "VK_EXT_external_memory_host", "VK_EXT_external_memory_dma_buf", "VK_EXT_queue_family_foreign"]
+    "rust.features": ["FeImplements", "VK_EXT_conservative_rasterization"]
 }

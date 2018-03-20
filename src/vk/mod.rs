@@ -300,6 +300,8 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPER
 pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV: VkStructureType = 100_0098_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT: VkStructureType = 100_0099_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT: VkStructureType = 100_0099_001;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT: VkStructureType = 100_0101_000;
+pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: VkStructureType = 100_0101_001;
 pub const VK_STRUCTURE_TYPE_HDR_METADATA_EXT: VkStructureType = 100_0105_000;
 pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: VkStructureType = 100_0111_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR: VkStructureType = 100_0112_000;
@@ -2890,6 +2892,7 @@ ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);
 ExportExtensions!("VK_NVX_multiview_per_view_attributes": multiview_per_view_attributes_nvx);
 ExportExtensions!("VK_NV_viewport_swizzle": viewport_swizzle_nv);
 ExportExtensions!("VK_EXT_discard_rectangles": discard_rectangles_ext);
+ExportExtensions!("VK_EXT_conservative_rasterization": conservative_rasterization_ext);
 ExportExtensions!("VK_EXT_swapchain_colorspace": swapchain_colorspace_ext);
 ExportExtensions!("VK_EXT_hdr_metadata": hdr_metadata_ext);
 ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
