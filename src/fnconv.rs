@@ -52,6 +52,7 @@ FnTransmuteImpl!(for PFN_vkCmdBindPipeline, PFN_vkCmdSetViewport, PFN_vkCmdSetSc
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkBuffer, VkDeviceSize, u32, u32));	// CmdDrawIndirect, CmdDrawIndexedIndirect
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkEvent, VkPipelineStageFlags));		// CmdSetEvent, CmdResetEvent
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkQueryPool, u32, u32));				// CmdBeginQuery, CmdResetQueryPool
+FnTransmuteImpl!(for PFN_vkCreateDescriptorUpdateTemplate, PFN_vkDestroyDescriptorUpdateTemplate);
 
 #[cfg(feature = "VK_KHR_surface")]
 FnTransmuteImpl!(for PFN_vkDestroySurfaceKHR, PFN_vkGetPhysicalDeviceSurfaceSupportKHR, PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR,

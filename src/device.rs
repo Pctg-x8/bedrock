@@ -143,6 +143,10 @@ impl<'p> DeviceBuilder<'p>
 			.map(|_| Device(RefCounter::new(DeviceCell(h, self.pdev_ref.parent().clone()))))
 	}
 }
+impl Device
+{
+	pub(crate) fn instance(&self) -> &::Instance { &self.0 .1 }
+}
 /// Following methods are enabled with [feature = "FeImplements"]
 #[cfg(feature = "FeImplements")]
 impl Device

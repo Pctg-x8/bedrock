@@ -10,7 +10,34 @@ use VkHandle;
 #[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
 
-struct InstanceCell(VkInstance);
+#[cfg(not(feature = "FeMultithreaded"))] struct LazyCell<T>(::std::cell::RefCell<Option<T>>);
+#[cfg(feature = "FeMultithreaded")] struct LazyCell<T>(::std::sync::RwLock<Option<T>>);
+impl<T> LazyCell<T>
+{
+	pub fn new() -> Self
+	{
+		#[cfg(feature = "FeMultithreaded")] { LazyCell(::std::sync::RwLock::new(None)) }
+		#[cfg(not(feature = "FeMultithreaded"))] { LazyCell(::std::cell::RefCell::new(None)) }
+	}
+	#[cfg(not(feature = "FeMultithreaded"))]
+	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::cell::Ref<T>
+	{
+		if self.0.borrow().is_none() { *self.0.borrow_mut() = Some(initializer()); }
+		::std::cell::Ref::map(self.0.borrow(), |o| o.as_ref().unwrap())
+	}
+	#[cfg(feature = "FeMultithreaded")]
+	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::sync::RwLockReadGuard<T>
+	{
+		if self.0.read().is_none() { *self.0.write() = Some(initializer()); }
+		::std::sync::RwLockReadGuard::map(self.0.read(), |o| o.as_ref().unwrap())
+	}
+}
+
+struct InstanceCell
+{
+	n: VkInstance, vk_create_descriptor_update_template: LazyCell<PFN_vkCreateDescriptorUpdateTemplate>,
+	vk_destroy_descriptor_update_template: LazyCell<PFN_vkDestroyDescriptorUpdateTemplate>
+}
 /// Opaque handle to a instance object
 #[derive(Clone)] pub struct Instance(RefCounter<InstanceCell>);
 #[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Instance {}
@@ -51,9 +78,9 @@ impl<'i> DoubleEndedIterator for IterPhysicalDevices<'i>
 }
 
 #[cfg(feature = "FeImplements")]
-impl Drop for InstanceCell { fn drop(&mut self) { unsafe { vkDestroyInstance(self.0, ::std::ptr::null()); } } }
+impl Drop for InstanceCell { fn drop(&mut self) { unsafe { vkDestroyInstance(self.n, ::std::ptr::null()); } } }
 
-impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 .0 } }
+impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0.n } }
 impl VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
 
 /// Builder object for constructing a `Instance`
@@ -117,7 +144,10 @@ impl InstanceBuilder
 		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
 		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateInstance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell(h))))
+		unsafe { vkCreateInstance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
+		{
+			n: h, vk_create_descriptor_update_template: LazyCell::new(), vk_destroy_descriptor_update_template: LazyCell::new()
+		})))
 	}
 }
 /// Following methods are enabled with [feature = "FeImplements"]
@@ -192,6 +222,23 @@ impl Instance
 		unsafe { vkEnumerateInstanceExtensionProperties(cptr, &mut n, null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
 		unsafe { vkEnumerateInstanceExtensionProperties(cptr, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+	}
+}
+impl Instance
+{
+	pub(crate) unsafe fn create_descriptor_update_template(&self, device: VkDevice, info: &VkDescriptorUpdateTemplateCreateInfo,
+		alloc: *const VkAllocationCallbacks, handle: &mut VkDescriptorUpdateTemplate) -> VkResult
+	{
+		let f = self.0.vk_create_descriptor_update_template
+			.get(|| self.extra_procedure("vkCreateDescriptorUpdateTemplate").unwrap());
+		f(device, info, alloc, handle)
+	}
+	pub(crate) unsafe fn destroy_descriptor_update_template(&self, device: VkDevice, handle: VkDescriptorUpdateTemplate,
+		alloc: *const VkAllocationCallbacks)
+	{
+		let f = self.0.vk_destroy_descriptor_update_template
+			.get(|| self.extra_procedure("vkDestroyDescriptorUpdateTemplate").unwrap());
+		f(device, handle, alloc)
 	}
 }
 /// Following methods are enabled with [feature = "FeImplements"]

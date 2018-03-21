@@ -298,7 +298,16 @@ macro_rules! DescriptorUpdateTemplateEntries
 }
 
 pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DescriptorUpdateTemplate[vkDestroyDescriptorUpdateTemplate] }
+#[cfg(feature = "FeImplements")] impl Drop for DescriptorUpdateTemplate
+{
+    fn drop(&mut self)
+    {
+        unsafe
+        {
+            self.1.instance().destroy_descriptor_update_template(self.1.native_ptr(), self.0, null());
+        }
+    }
+}
 #[cfg(feature = "FeImplements")]
 impl DescriptorUpdateTemplate
 {
@@ -315,7 +324,7 @@ impl DescriptorUpdateTemplate
         let mut handle = unsafe { zeroed() };
         unsafe
         {
-            vkCreateDescriptorUpdateTemplate(device.native_ptr(), &cinfo, null(), &mut handle)
+            device.instance().create_descriptor_update_template(device.native_ptr(), &cinfo, null(), &mut handle)
                 .into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
         }
     }
