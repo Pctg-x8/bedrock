@@ -298,7 +298,7 @@ macro_rules! DescriptorUpdateTemplateEntries
 }
 
 pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DescriptorUpdateTemplate[vkDestroyDescriptorUpdateTemplate] }
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DescriptorUpdateTemplate[vkDestroyDescriptorUpdateTemplateKHR] }
 #[cfg(feature = "FeImplements")]
 impl DescriptorUpdateTemplate
 {
@@ -310,13 +310,12 @@ impl DescriptorUpdateTemplate
             descriptorUpdateEntryCount: entries.len() as _, pDescriptorUpdateEntries: entries.as_ptr(),
             templateType: if dsl.is_none() { VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS }
                 else { VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET },
-            descriptorSetLayout: dsl.map_or(unsafe { zeroed() }, |x| x.native_ptr()),
-            .. Default::default()
+            descriptorSetLayout: dsl.native_ptr(), .. Default::default()
         };
         let mut handle = unsafe { zeroed() };
         unsafe
         {
-            vkCreateDescriptorUpdateTemplate(device.native_ptr(), &cinfo, null(), &mut handle)
+            vkCreateDescriptorUpdateTemplateKHR(device.native_ptr(), &cinfo, null(), &mut handle)
                 .into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
         }
     }

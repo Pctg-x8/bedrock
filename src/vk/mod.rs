@@ -4242,6 +4242,12 @@ extern "system"
         pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
     pub fn vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
         pAllocator: *const VkAllocationCallbacks);
+    // khr equivalent
+    pub fn vkCreateDescriptorUpdateTemplateKHR(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
+        pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
+    // khr equivalent
+    pub fn vkDestroyDescriptorUpdateTemplateKHR(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
+        pAllocator: *const VkAllocationCallbacks);
     pub fn vkUpdateDescriptorSetWithTemplate(device: VkDevice, descriptorSet: VkDescriptorSet,
         descriptorUpdateTemplate: VkDescriptorUpdateTemplate, pData: *const c_void);
     pub fn vkGetPhysicalDeviceExternalBufferProperties(physicalDevice: VkPhysicalDevice,
