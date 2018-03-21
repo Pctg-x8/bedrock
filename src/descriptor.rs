@@ -320,12 +320,12 @@ impl DescriptorUpdateTemplate
                 .into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
         }
     }
-    pub fn update_set<T>(&self, set: VkDescriptorSet, data: &[T])
+    pub fn update_set<T>(&self, set: VkDescriptorSet, data: &T)
     {
         unsafe
         {
             vkUpdateDescriptorSetWithTemplate(self.device().native_ptr(), set, self.native_ptr(),
-                data.as_ptr() as *const _)
+                data as *const T as *const _)
         }
     }
 }

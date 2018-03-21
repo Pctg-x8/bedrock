@@ -4238,7 +4238,7 @@ extern "system"
         pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversion) -> VkResult;
     pub fn vkDestroySamplerYcbcrConversion(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversion,
         pAllocator: *const VkAllocationCallbacks);
-    pub fn vkCreateDescriptorUpdateTemplate (device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
+    pub fn vkCreateDescriptorUpdateTemplate(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
         pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
     pub fn vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
         pAllocator: *const VkAllocationCallbacks);
