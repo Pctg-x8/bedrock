@@ -116,6 +116,14 @@ pub trait DeviceChild
     fn device(&self) -> &Device;
 }
 
+/// Unwrapping Option-ed Reference to VkHandles.  
+/// Returns "Empty Handle" when the value is `None`.
+impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H>
+{
+    type Handle = <H as VkHandle>::Handle;
+    fn native_ptr(&self) -> Self::Handle { self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr()) }
+}
+
 #[cfg(feature = "FeImplements")]
 macro_rules! DeviceChildCommonDrop
 {
