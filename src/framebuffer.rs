@@ -43,6 +43,7 @@ impl AttachmentDescription
 	pub fn fin_layout(mut self, layout: ImageLayout) -> Self { self.0.finalLayout = layout as _; self }
 	pub fn may_alias_attachment(mut self) -> Self { self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
 	pub fn no_alias_attachment(mut self) -> Self { self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
+	pub fn samples(mut self, count: u32) -> Self { self.0.samples = count; return self; }
 
 	pub fn mod_format(&mut self, fmt: VkFormat) -> &mut Self { self.0.format = fmt; self }
 	pub fn mod_load_op(&mut self, op: LoadOp) -> &mut Self { self.0.loadOp = op as _; self }
@@ -53,6 +54,7 @@ impl AttachmentDescription
 	pub fn mod_fin_layout(&mut self, layout: ImageLayout) -> &mut Self { self.0.finalLayout = layout as _; self }
 	pub fn mod_may_alias_attachment(&mut self) -> &mut Self { self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
 	pub fn mod_no_alias_attachment(&mut self) -> &mut Self { self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
+	pub fn mod_samples(&mut self, count: u32) -> &mut Self { self.0.samples = count; return self; }
 }
 impl Borrow<AttachmentDescription> for VkAttachmentDescription
 {
