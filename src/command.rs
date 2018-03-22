@@ -853,6 +853,17 @@ impl<'d> ImageSubref<'d>
 			levelCount: mip_levels.count(), layerCount: array_layers.count()
 		})
 	}
+	/// Construct a slice for the Stencil aspect(`VK_IMAGE_ASPECT_STENCIL_BIT`)
+	pub fn stencil<Levels, Layers>(image: &'d Image, mip_levels: Levels, array_layers: Layers) -> Self
+		where Levels: ::AnalogNumRange<u32>, Layers: ::AnalogNumRange<u32>
+	{
+		ImageSubref(image, VkImageSubresourceRange
+		{
+			aspectMask: VK_IMAGE_ASPECT_STENCIL_BIT,
+			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
+			levelCount: mip_levels.count(), layerCount: array_layers.count()
+		})
+	}
 }
 
 /// Wrapper object of `VkImageMemoryBarrier`, derscribes a memory barrier of an image.
