@@ -143,6 +143,14 @@ impl<'p> DeviceBuilder<'p>
 			.map(|_| Device(RefCounter::new(DeviceCell(h, self.pdev_ref.parent().clone()))))
 	}
 }
+/// Tweaking features
+impl<'p> DeviceBuilder<'p>
+{
+	pub fn enable_fill_mode_nonsolid(&mut self) -> &mut Self
+	{
+		self.features.fillModeNonSolid = true as _; return self;
+	}
+}
 impl Device
 {
 	pub(crate) fn instance(&self) -> &::Instance { &self.0 .1 }
