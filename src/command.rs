@@ -843,13 +843,14 @@ pub struct ImageSubref<'d>(pub &'d Image, pub VkImageSubresourceRange);
 impl<'d> ImageSubref<'d>
 {
 	/// Construct a slice for the Color aspect(`VK_IMAGE_ASPECT_COLOR_BIT`)
-	pub fn color(image: &'d Image, mip_levels: Range<u32>, array_layers: Range<u32>) -> Self
+	pub fn color<Levels, Layers>(image: &'d Image, mip_levels: Levels, array_layers: Layers) -> Self
+		where Levels: ::AnalogNumRange<u32>, Layers: ::AnalogNumRange<u32>
 	{
 		ImageSubref(image, VkImageSubresourceRange
 		{
 			aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
-			baseMipLevel: mip_levels.start, baseArrayLayer: array_layers.start,
-			levelCount: mip_levels.end - mip_levels.start, layerCount: array_layers.end - array_layers.start
+			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
+			levelCount: mip_levels.count(), layerCount: array_layers.count()
 		})
 	}
 }

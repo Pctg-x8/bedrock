@@ -118,7 +118,7 @@
 
 use vk::*;
 use std::rc::Rc as RefCounter;
-use std::ops::{Deref, Range};
+use std::ops::Deref;
 use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "FeImplements")] use VkResultHandler;
 #[cfg(feature = "FeImplements")] use std::ptr::null;
@@ -917,23 +917,6 @@ impl AspectMask
 	pub fn metadata(&self) -> Self { AspectMask(self.0 | Self::METADATA.0) }
 }
 
-// A single Number or a Range
-pub trait AnalogNumRange<T>
-{
-	fn begin(&self) -> T; fn end(&self) -> T;
-	fn count(&self) -> T where T: ::std::ops::Sub<T, Output = T> + Copy
-	{
-		self.end() - self.begin()
-	}
-}
-impl<T> AnalogNumRange<T> for T where T: ::std::ops::Add<u32, Output = T> + Copy
-{
-	fn begin(&self) -> T { *self } fn end(&self) -> T { *self + 1 }
-}
-impl<T> AnalogNumRange<T> for Range<T> where T: Copy
-{
-	fn begin(&self) -> T { self.start } fn end(&self) -> T { self.end }
-}
 /// Structure specifying a image subresource range
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImageSubresourceRange(VkImageSubresourceRange);
@@ -945,7 +928,7 @@ impl ImageSubresourceRange
 {
 	/// Specify color subresource
 	pub fn color<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
-		Levels: AnalogNumRange<u32>, Layers: AnalogNumRange<u32>
+		Levels: ::AnalogNumRange<u32>, Layers: ::AnalogNumRange<u32>
 	{
 		ImageSubresourceRange(VkImageSubresourceRange
 		{
@@ -956,7 +939,7 @@ impl ImageSubresourceRange
 	}
 	/// Specify stencil subresource
 	pub fn stencil<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
-		Levels: AnalogNumRange<u32>, Layers: AnalogNumRange<u32>
+		Levels: ::AnalogNumRange<u32>, Layers: ::AnalogNumRange<u32>
 	{
 		ImageSubresourceRange(VkImageSubresourceRange
 		{

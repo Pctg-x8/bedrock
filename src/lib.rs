@@ -135,10 +135,28 @@ macro_rules! DeviceChildCommonDrop
 	}
 }
 
+// A single Number or a Range
+pub trait AnalogNumRange<T>
+{
+	fn begin(&self) -> T; fn end(&self) -> T;
+	fn count(&self) -> T where T: ::std::ops::Sub<T, Output = T> + Copy
+	{
+		self.end() - self.begin()
+	}
+}
+impl<T> AnalogNumRange<T> for T where T: std::ops::Add<u32, Output = T> + Copy
+{
+	fn begin(&self) -> T { *self } fn end(&self) -> T { *self + 1 }
+}
+impl<T> AnalogNumRange<T> for std::ops::Range<T> where T: Copy
+{
+	fn begin(&self) -> T { self.start } fn end(&self) -> T { self.end }
+}
+
 /// All of traits
 pub mod traits
 {
-    pub use super::{VkResultBox, VkHandle, DeviceChild, ClearColorValue, ImageSize};
+    pub use super::{VkResultBox, VkHandle, DeviceChild, ClearColorValue, ImageSize, AnalogNumRange};
     #[cfg(feature = "FeImplements")]
     pub use super::{MemoryBound, Status, Waitable};
 }
