@@ -433,55 +433,51 @@ impl ImageFlags
 	pub fn cube_compatible(&self) -> Self { ImageFlags(self.0 | Self::CUBE_COMPATIBLE.0) }
 }
 /// Builder structure specifying the parameters of a newly created image object
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ImageDesc { cinfo: VkImageCreateInfo }
+#[derive(Debug, Clone, PartialEq, Eq)] pub struct ImageDesc(VkImageCreateInfo);
 impl ImageDesc
 {
 	pub fn new<Size: ImageSize>(size: &Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self
 	{
-		ImageDesc
+		ImageDesc(VkImageCreateInfo
 		{
-			cinfo: VkImageCreateInfo
-			{
-				imageType: Size::DIMENSION, extent: size.conv(), format, usage: usage.0,
-				mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
-				.. Default::default()
-			}
-		}
+			imageType: Size::DIMENSION, extent: size.conv(), format, usage: usage.0,
+			mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
+			.. Default::default()
+		})
 	}
 	/// A list of queue families that will access this image,
 	/// or an empty list if no queue families can access this image simultaneously
 	pub fn sharing_queue_families(&mut self, indices: &[u32]) -> &mut Self
 	{
-		self.cinfo.sharingMode = if indices.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
-		self.cinfo.queueFamilyIndexCount = indices.len() as _;
-		self.cinfo.pQueueFamilyIndices = indices.as_ptr();
+		self.0.sharingMode = if indices.is_empty() { VK_SHARING_MODE_EXCLUSIVE } else { VK_SHARING_MODE_CONCURRENT };
+		self.0.queueFamilyIndexCount = indices.len() as _;
+		self.0.pQueueFamilyIndices = indices.as_ptr();
 		self
 	}
 	/// The number of sub-data element samples in the image  
 	/// bitmask of 1(default), 2, 4, 8, 16, 32, 64
 	pub fn sample_counts(&mut self, count_bits: u32) -> &mut Self
 	{
-		self.cinfo.samples = count_bits; self
+		self.0.samples = count_bits; self
 	}
 	/// Sets the tiling arrangement of the data elements in memory as "linear tiling"  
 	/// default: optimal tiling
 	pub fn use_linear_tiling(&mut self) -> &mut Self
 	{
-		self.cinfo.tiling = VK_IMAGE_TILING_LINEAR; self
+		self.0.tiling = VK_IMAGE_TILING_LINEAR; self
 	}
 	/// A bitmask of `ImageFlags`describing additional parameters of the image  
 	/// default: none
 	pub fn flags(&mut self, opt: ImageFlags) -> &mut Self
 	{
-		self.cinfo.flags = opt.0; self
+		self.0.flags = opt.0; self
 	}
 	/// The number of layers in the image  
 	/// default: 1
-	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.cinfo.arrayLayers = layers; self }
+	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.0.arrayLayers = layers; self }
 	/// The number of levels of detail available for minified sampling of the image  
 	/// default: 1
-	pub fn mip_levels(&mut self, levels: u32) -> &mut Self { self.cinfo.mipLevels = levels; self }
+	pub fn mip_levels(&mut self, levels: u32) -> &mut Self { self.0.mipLevels = levels; self }
 }
 
 /// Following methods are enabled with [feature = "FeImplements"]
@@ -493,11 +489,11 @@ impl ImageDesc
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
+		unsafe { vkCreateImage(device.native_ptr(), &self.0, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell
 			{
-				obj: h, dev: device.clone(), dim: self.cinfo.imageType, fmt: self.cinfo.format,
-				size: ::Extent3D(self.cinfo.extent.width, self.cinfo.extent.height, self.cinfo.extent.depth)
+				obj: h, dev: device.clone(), dim: self.0.imageType, fmt: self.0.format,
+				size: ::Extent3D(self.0.extent.width, self.0.extent.height, self.0.extent.depth)
 			})))
 	}
 	/// Create an image
