@@ -224,6 +224,7 @@ impl Instance
 		unsafe { vkEnumerateInstanceExtensionProperties(cptr, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
 	}
 }
+#[cfg(feature = "FeImplements")]
 impl Instance
 {
 	pub(crate) unsafe fn create_descriptor_update_template(&self, device: VkDevice, info: &VkDescriptorUpdateTemplateCreateInfo,
