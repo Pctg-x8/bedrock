@@ -557,6 +557,21 @@ impl FormatQuery
             _ => None
         }
     }
+    /// convert to UNORM if exists
+    pub fn unorm(self) -> Option<VkFormat>
+    {
+        match self.0
+        {
+            VK_FORMAT_R8_SRGB => Some(VK_FORMAT_R8_UNORM),
+            VK_FORMAT_R8G8_SRGB => Some(VK_FORMAT_R8G8_UNORM),
+            VK_FORMAT_R8G8B8_SRGB => Some(VK_FORMAT_R8G8B8_UNORM),
+            VK_FORMAT_B8G8R8_SRGB => Some(VK_FORMAT_B8G8R8_UNORM),
+            VK_FORMAT_R8G8B8A8_SRGB => Some(VK_FORMAT_R8G8B8A8_UNORM),
+            VK_FORMAT_B8G8R8A8_SRGB => Some(VK_FORMAT_B8G8R8A8_UNORM),
+            VK_FORMAT_A8B8G8R8_SRGB_PACK32 => Some(VK_FORMAT_A8B8G8R8_UNORM_PACK32),
+            _ => None
+        }
+    }
 }
 /// Predication style of Format Selection Query
 #[derive(Clone)]
