@@ -154,6 +154,10 @@ impl<'p> DeviceBuilder<'p>
 	{
 		self.features.fillModeNonSolid = true as _; return self;
 	}
+	pub fn enable_sample_rate_shading(&mut self) -> &mut Self
+	{
+		self.features.sampleRateShading = true as _; return self;
+	}
 }
 impl Device
 {
