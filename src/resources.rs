@@ -954,6 +954,17 @@ impl ImageSubresourceRange
 			levelCount: mip_levels.count(), layerCount: array_layers.count()
 		})
 	}
+	/// Specify stencil subresource
+	pub fn stencil<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
+		Levels: AnalogNumRange<u32>, Layers: AnalogNumRange<u32>
+	{
+		ImageSubresourceRange(VkImageSubresourceRange
+		{
+			aspectMask: AspectMask::STENCIL.0,
+			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
+			levelCount: mip_levels.count(), layerCount: array_layers.count()
+		})
+	}
 }
 
 /// Opaque handle to a sampler object
