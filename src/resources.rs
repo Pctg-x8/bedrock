@@ -501,11 +501,11 @@ impl ImageDesc
 	pub fn create(&self, device: &::Device) -> ::Result<Image>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateImage(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
+		unsafe { vkCreateImage(device.native_ptr(), &self.0, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Image(RefCounter::new(ImageCell::DeviceChild
 			{
-				obj: h, dev: device.clone(), dim: self.cinfo.imageType, fmt: self.cinfo.format,
-				size: ::Extent3D(self.cinfo.extent.width, self.cinfo.extent.height, self.cinfo.extent.depth)
+				obj: h, dev: device.clone(), dim: self.0.imageType, fmt: self.0.format,
+				size: ::Extent3D(self.0.extent.width, self.0.extent.height, self.0.extent.depth)
 			})))
 	}
 }
