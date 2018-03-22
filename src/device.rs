@@ -92,24 +92,28 @@ impl<'p> DeviceBuilder<'p>
 	{
 		DeviceBuilder { pdev_ref: pdev, queue_infos: Vec::new(), layers: Vec::new(), extensions: Vec::new(), features: VkPhysicalDeviceFeatures::default() }
 	}
-	pub fn add_layer(mut self, name: &str) -> Self { self.layers.push(CString::new(name).unwrap()); self }
-	pub fn add_extension(mut self, name: &str) -> Self { self.extensions.push(CString::new(name).unwrap()); self }
-	pub fn add_extension_zerotermed(mut self, name: &str) -> Self
+	pub fn add_layer(&mut self, name: &str) -> &mut Self { self.layers.push(CString::new(name).unwrap()); return self; }
+	pub fn add_extension(&mut self, name: &str) -> &mut Self
 	{
-		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(name.as_ptr() as *const _) }.to_owned()); self
+		self.extensions.push(CString::new(name).unwrap()); return self;
 	}
-	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(mut self, layers: Layers) -> Self
+	pub fn add_extension_zerotermed(&mut self, name: &str) -> &mut Self
 	{
-		for l in layers { self = self.add_layer(l); } self
+		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(name.as_ptr() as *const _) }.to_owned());
+		return self;
 	}
-	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(mut self, extensions: Extensions) -> Self
+	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self
 	{
-		for e in extensions { self = self.add_extension(e); } self
+		for l in layers { self.add_layer(l); } return self;
 	}
-	pub fn add_queue(mut self, info: DeviceQueueCreateInfo) -> Self { self.queue_infos.push(info); self }
-	pub fn add_queues<Queues: IntoIterator<Item = DeviceQueueCreateInfo>>(mut self, queues: Queues) -> Self
+	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(&mut self, extensions: Extensions) -> &mut Self
 	{
-		for q in queues { self = self.add_queue(q); } self
+		for e in extensions { self.add_extension(e); } return self;
+	}
+	pub fn add_queue(&mut self, info: DeviceQueueCreateInfo) -> &mut Self { self.queue_infos.push(info); return self; }
+	pub fn add_queues<Queues: IntoIterator<Item = DeviceQueueCreateInfo>>(&mut self, queues: Queues) -> &mut Self
+	{
+		for q in queues { self.add_queue(q); } return self;
 	}
 	/// [feature = "FeImplements"] Create a new device instance
 	/// # Failures
@@ -123,7 +127,7 @@ impl<'p> DeviceBuilder<'p>
 	/// * `VK_ERROR_TOO_MANY_OBJECTS`
 	/// * `VK_ERROR_DEVICE_LOST`
 	#[cfg(feature = "FeImplements")]
-	pub fn create(self) -> ::Result<Device>
+	pub fn create(&self) -> ::Result<Device>
 	{
 		let qinfos = self.queue_infos.iter().map(|&DeviceQueueCreateInfo(fi, ref ps)| ::vk::VkDeviceQueueCreateInfo
 		{
