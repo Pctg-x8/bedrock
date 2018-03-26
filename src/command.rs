@@ -148,6 +148,7 @@ impl CommandBuffer
 	pub fn begin_inherit(&self, renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
 		query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>) -> ::Result<CmdRecord>
 	{
+		let flags = if renderpass.is_some() { VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT } else { 0 };
 		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.native_ptr(), r.native_ptr(), s))
 			.unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
 		let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
@@ -157,7 +158,7 @@ impl CommandBuffer
 			queryFlags: if oq == OcclusionQuery::Precise { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 },
 			pipelineStatistics: psq, .. Default::default()
 		};
-		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, .. Default::default() };
+		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, flags, .. Default::default() };
 		unsafe
 		{
 			vkBeginCommandBuffer(self.0, &binfo).into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
