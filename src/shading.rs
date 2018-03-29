@@ -152,8 +152,9 @@ pub struct PipelineLayout(VkPipelineLayout, ::Device);
 /// Opaque handle to a pipeline object
 pub struct Pipeline(VkPipeline, ::Device);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
-	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout]
+#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! {
+	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout],
+	Pipeline[vkDestroyPipeline]
 }
 impl VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
 impl VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
