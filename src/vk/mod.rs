@@ -2314,6 +2314,17 @@ pub struct VkSubpassDependency
     pub srcAccessMask: VkAccessFlags, pub dstAccessMask: VkAccessFlags,
     pub dependencyFlags: VkDependencyFlags
 }
+/// srcSubpass = External, dstSubpass = External, otherwise = 0
+impl Default for VkSubpassDependency
+{
+    fn default() -> Self
+    {
+        VkSubpassDependency
+        {
+            srcSubpass: VK_SUBPASS_EXTERNAL, dstSubpass: VK_SUBPASS_EXTERNAL, .. unsafe { std::mem::zeroed() }
+        }
+    }
+}
 
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkRenderPassCreateInfo
