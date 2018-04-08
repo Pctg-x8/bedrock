@@ -772,6 +772,20 @@ impl<'m> MappedMemoryRange<'m>
 	{
 		::std::slice::from_raw_parts_mut(self.1.offset(offset as _) as *mut T, count)
 	}
+	/// Clone data from slice at the specified offset in mapped memory.
+	/// # Safety
+	/// Caller must guarantee that the pointer and its alignment are valid
+	pub unsafe fn clone_from_slice_at<T: Clone>(&self, offset: usize, src: &[T])
+	{
+		self.slice_mut(offset, src.len()).clone_from_slice(src);
+	}
+	/// Clone data from slice at the specified offset in mapped memory.
+	/// # Safety
+	/// Caller must guarantee that the pointer and its alignment are valid
+	pub unsafe fn clone_at<T: Clone>(&self, offset: usize, src: &T)
+	{
+		*self.get_mut(offset) = src.clone();
+	}
 	/// Flushes the memory range manually. Returns a structure for flush operation
 	pub fn manual_flush(self) -> VkMappedMemoryRange
 	{
