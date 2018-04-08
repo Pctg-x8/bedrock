@@ -429,6 +429,11 @@ impl<'d> VertexProcessingStages<'d>
 	{
 		self.ia.primitiveRestartEnable = w as _; return self;
 	}
+	/// Update the input primitive topology
+	pub fn primitive_topology(&mut self, topo: fe::vk::VkPrimitiveTopology) -> &mut Self
+	{
+		self.ia.topology = topo; return self;
+	}
 }
 /// PipelineStateDesc: Multisample State
 #[derive(Clone)] pub struct MultisampleState(VkPipelineMultisampleStateCreateInfo);
