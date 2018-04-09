@@ -242,8 +242,8 @@ mod descriptor; pub use descriptor::*;
 mod framebuffer; pub use framebuffer::*;
 mod shading; pub use shading::*;
 mod command; pub use command::*;
-#[cfg(feature = "FePresentation")] mod surface;
-#[cfg(feature = "FePresentation")] pub use surface::*;
+#[cfg(feature = "Presentation")] mod surface;
+#[cfg(feature = "Presentation")] pub use surface::*;
 #[cfg(feature = "VK_EXT_debug_report")] mod debug;
 #[cfg(feature = "VK_EXT_debug_report")] pub use debug::*;
 
