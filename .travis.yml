@@ -11,5 +11,5 @@ deploy:
   on:
     branch: master
 script:
-- cargo test --features FePresentation,VK_EXT_debug_report
+- cargo test --features Presentation,VK_EXT_debug_report
 - ./update_doc.sh
