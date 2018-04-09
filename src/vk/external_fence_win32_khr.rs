@@ -64,7 +64,7 @@ impl Default for VkFenceGetWin32HandleInfoKHR
 pub type PFN_vkImportFenceWin32HandleKHR = extern "system" fn(device: VkDevice, pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR) -> VkResult;
 pub type PFN_vkGetFenceWin32HandleKHR = extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR, pHandle: *mut HANDLE) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkImportFenceWin32HandleKHR(device: VkDevice, pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR) -> VkResult;

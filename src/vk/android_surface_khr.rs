@@ -25,7 +25,7 @@ impl Default for VkAndroidSurfaceCreateInfoKHR
 
 pub type PFN_vkCreateAndroidSurfaceKHR = extern "system" fn(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkCreateAndroidSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;

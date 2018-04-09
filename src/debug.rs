@@ -2,13 +2,13 @@
 
 use vk::*;
 use VkHandle;
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use VkResultHandler;
 use Instance;
 
 /// Opaque object to a debug report callback object
 pub struct DebugReportCallback(VkDebugReportCallbackEXT, ::Instance, PFN_vkDestroyDebugReportCallbackEXT);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for DebugReportCallback
 {
 	fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), ::std::ptr::null()); }
@@ -18,10 +18,10 @@ impl VkHandle for DebugReportCallback { type Handle = VkDebugReportCallbackEXT; 
 
 pub struct DebugReportCallbackBuilder<'i>
 {
-	#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+	#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 	instance: &'i Instance,
 	flags: VkDebugReportFlagsEXT,
-	#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+	#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 	callback: PFN_vkDebugReportCallbackEXT
 }
 impl<'i> DebugReportCallbackBuilder<'i>
@@ -48,11 +48,11 @@ impl<'i> DebugReportCallbackBuilder<'i>
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
 	pub fn create(&mut self) -> ::Result<DebugReportCallback> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl DebugReportCallback
 {
 	/// Register a debug report callback
@@ -71,7 +71,7 @@ impl DebugReportCallback
 		ctor(instance.native_ptr(), &s, ::std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), dtor))
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Instance
 {
 	/// Inject its own messages into the debug stream

@@ -59,7 +59,7 @@ impl Default for VkMemoryGetFdInfoKHR
 pub type PFN_vkGetMemoryFdKHR = extern "system" fn(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
 pub type PFN_vkGetMemoryFdPropetiesKHR = extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, fd: c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkGetMemoryFdKHR(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut c_int) -> VkResult;

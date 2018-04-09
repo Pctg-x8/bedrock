@@ -2731,7 +2731,7 @@ pub type PFN_vkCmdNextSubpass            = extern "system" fn(commandBuffer: VkC
 pub type PFN_vkCmdEndRenderPass          = extern "system" fn(commandBuffer: VkCommandBuffer);
 pub type PFN_vkCmdExecuteCommands        = extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 #[cfg_attr(all(not(windows), not(target_os="macos")), link(name = "vulkan"))]
 #[cfg_attr(windows, link(name = "vulkan-1"))]
 #[cfg_attr(target_os="macos", link(name = "MoltenVK", kind = "framework"))]
@@ -4212,7 +4212,7 @@ pub type PFN_vkGetPhysicalDeviceExternalSemaphoreProperties = extern "system" fn
 pub type PFN_vkGetDescriptorSetLayoutSupport = extern "system" fn(device: VkDevice,
     pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 #[cfg_attr(all(not(windows), not(target_os="macos")), link(name = "vulkan"))]
 #[cfg_attr(windows, link(name = "vulkan-1"))]
 #[cfg_attr(target_os="macos", link(name = "MoltenVK", kind = "framework"))]

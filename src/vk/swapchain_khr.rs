@@ -51,7 +51,7 @@ pub type PFN_vkGetSwapchainImagesKHR = extern "system" fn(device: VkDevice, swap
 pub type PFN_vkAcquireNextImageKHR = extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult;
 pub type PFN_vkQueuePresentKHR = extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkCreateSwapchainKHR(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult;

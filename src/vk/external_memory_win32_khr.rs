@@ -81,7 +81,7 @@ impl Default for VkMemoryGetWin32HandleInfoKHR
 pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut HANDLE) -> VkResult;
 pub type PFN_vkGetMemoryWin32HandlePropertiesKHR = extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, handle: HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkGetMemoryWin32HandleKHR(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut HANDLE) -> VkResult;

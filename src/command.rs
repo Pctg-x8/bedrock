@@ -2,18 +2,18 @@
 
 use vk::*;
 use {VkHandle, Device, DeviceChild};
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use VkResultHandler;
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use std::mem::{size_of, transmute};
 use std::ops::Range;
 use std::borrow::Borrow;
 use {Image, Buffer, ImageLayout};
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use {StencilFaceMask, FilterMode, Event};
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
 
 /// Opaque handle to a command pool object
@@ -21,17 +21,17 @@ use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
 /// Opaque handle to a command buffer object
 #[repr(C)] #[derive(Clone, Copy)] pub struct CommandBuffer(VkCommandBuffer);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for CommandPool[vkDestroyCommandPool] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for CommandPool[vkDestroyCommandPool] }
 impl VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
 impl VkHandle for CommandBuffer { type Handle = VkCommandBuffer; fn native_ptr(&self) -> VkCommandBuffer { self.0 } }
 impl DeviceChild for CommandPool { fn device(&self) -> &Device { &self.1 } }
 
 /// The recording state of commandbuffers
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 pub struct CmdRecord<'d> { ptr: &'d CommandBuffer, layout: [Option<VkPipelineLayout>; 2] }
 
 /// Implicitly closing the recording state. This may cause a panic when there are errors in commands
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl<'d> Drop for CmdRecord<'d>
 {
 	fn drop(&mut self)
@@ -43,8 +43,8 @@ impl<'d> Drop for CmdRecord<'d>
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl CommandPool
 {
 	/// Create a new command pool object
@@ -107,8 +107,8 @@ impl CommandPool
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl CommandBuffer
 {
 	/// Start recording a primary command buffer
@@ -166,8 +166,8 @@ impl CommandBuffer
 	}
 }
 
-/// [feature = "FeImplements"] Graphics/Compute Commands: Pipeline Setup
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics/Compute Commands: Pipeline Setup
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Bind a pipeline object to a command buffer
@@ -319,8 +319,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics Commands: Updating dynamic states
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics Commands: Updating dynamic states
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Set the viewport on a command buffer
@@ -387,8 +387,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics Commands: Binding Buffers
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics Commands: Binding Buffers
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Bind an index buffer to a command buffer
@@ -407,8 +407,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics Commands: Inside a Render Pass
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics Commands: Inside a Render Pass
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Draw primitives
@@ -445,8 +445,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Compute Commands: Dispatching kernels
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Compute Commands: Dispatching kernels
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Dispatch compute work items
@@ -463,8 +463,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Transfer Commands: Copying resources
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Transfer Commands: Copying resources
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Copy data between buffer regions
@@ -534,8 +534,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics/Compute Commands: Transfer-like(clearing/filling) commands
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics/Compute Commands: Transfer-like(clearing/filling) commands
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Fill a region of a buffer with a fixed value.  
@@ -579,8 +579,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics Commands: Executing Subcommands
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics Commands: Executing Subcommands
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Execute a secondary command buffer from a primary command buffer
@@ -594,8 +594,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics Commands: Resolving an image to another image
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics Commands: Resolving an image to another image
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Resolve regions of an image
@@ -611,8 +611,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics/Compute Commands: Synchronization between command buffers/queues
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics/Compute Commands: Synchronization between command buffers/queues
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Set an event object to signaled state
@@ -658,8 +658,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics/Compute Commands: Querying
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics/Compute Commands: Querying
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Begin a query
@@ -702,8 +702,8 @@ impl<'d> CmdRecord<'d>
 	}
 }
 
-/// [feature = "FeImplements"] Graphics Commands: Manipulating with Render Passes
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Graphics Commands: Manipulating with Render Passes
+#[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d>
 {
 	/// Begin a new render pass

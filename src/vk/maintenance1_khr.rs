@@ -8,7 +8,7 @@ use super::*;
 pub type VkCommandPoolTrimFlagsKHR = VkFlags;
 pub type PFN_vkTrimCommandPoolKHR = extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkTrimCommandPoolKHR(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);

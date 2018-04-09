@@ -65,7 +65,7 @@ pub type PFN_vkCmdDebugMarkerBeginEXT = extern "system" fn(commandBuffer: VkComm
 pub type PFN_vkCmdDebugMarkerEndEXT = extern "system" fn(commandBuffer: VkCommandBuffer);
 pub type PFN_vkCmdDebugMarkerInsertEXT = extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkDebugMarkerSetObjectTagEXT(device: VkDevice, pTagInfo: *const VkDebugMarkerObjectTagInfoEXT) -> VkResult;

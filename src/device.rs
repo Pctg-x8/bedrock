@@ -1,15 +1,15 @@
 //! Vulkan Device and Queues
 
-#![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+#![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
 use vk::*;
 use PhysicalDevice;
 use std::ffi::CString;
 use std::borrow::Cow;
 use VkHandle;
-#[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
-#[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
+#[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
+#[cfg(feature = "Implements")] use VkResultHandler;
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -66,14 +66,14 @@ struct DeviceCell(VkDevice, ::Instance);
 /// Opaque handle to a device object
 #[derive(Clone)]
 pub struct Device(RefCounter<DeviceCell>);
-#[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Device {}
+#[cfg(feature = "Multithreaded")] unsafe impl Sync for Device {}
 /// Opaque handle to a queue object
 #[derive(Clone)]
 pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
 
 impl VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
@@ -115,7 +115,7 @@ impl<'p> DeviceBuilder<'p>
 	{
 		for q in queues { self.add_queue(q); } return self;
 	}
-	/// [feature = "FeImplements"] Create a new device instance
+	/// [feature = "Implements"] Create a new device instance
 	/// # Failures
 	/// On failure, this command returns
 	///
@@ -126,7 +126,7 @@ impl<'p> DeviceBuilder<'p>
 	/// * `VK_ERROR_FEATURE_NOT_PRESENT`
 	/// * `VK_ERROR_TOO_MANY_OBJECTS`
 	/// * `VK_ERROR_DEVICE_LOST`
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
 	pub fn create(&self) -> ::Result<Device>
 	{
 		let qinfos = self.queue_infos.iter().map(|&DeviceQueueCreateInfo(fi, ref ps)| ::vk::VkDeviceQueueCreateInfo
@@ -163,8 +163,8 @@ impl Device
 {
 	pub(crate) fn instance(&self) -> &::Instance { &self.0 .1 }
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Device
 {
 	/// Return a function pointer for a command
@@ -234,16 +234,16 @@ impl Device
 	}
 }
 
-/// [feature = "FeImplements"] Supports blocking wait operation
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Supports blocking wait operation
+#[cfg(feature = "Implements")]
 pub trait Waitable
 {
 	/// Wait for a object to become idle
 	fn wait(&self) -> ::Result<()>;
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Waitable for Device { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkDeviceWaitIdle(self.native_ptr()) }.into_result() } }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Waitable for Queue { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkQueueWaitIdle(self.0) }.into_result() } }
 
 /// Sparse Binding operation batch
@@ -274,8 +274,8 @@ impl<'s> Default for SparseBindingOpBatch<'s>
 		}
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Queue
 {
 	/// Bind device memory to a sparse resource object
@@ -320,8 +320,8 @@ impl<'d> Default for SubmissionBatch<'d>
 		}
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Queue
 {
 	/// Submits a sequence of semaphores or command buffers to a queue

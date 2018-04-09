@@ -3,7 +3,7 @@
 use vk::*;
 use std::ffi::CString;
 use {VkHandle, DeviceChild};
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use VkResultHandler;
 use std::ptr::null;
 use std::marker::PhantomData;
 
@@ -152,7 +152,7 @@ pub struct PipelineLayout(VkPipelineLayout, ::Device);
 /// Opaque handle to a pipeline object
 pub struct Pipeline(VkPipeline, ::Device);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! {
+#[cfg(feature = "Implements")] DeviceChildCommonDrop! {
 	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout],
 	Pipeline[vkDestroyPipeline]
 }
@@ -165,8 +165,8 @@ impl DeviceChild for PipelineCache { fn device(&self) -> &::Device { &self.1 } }
 impl DeviceChild for PipelineLayout { fn device(&self) -> &::Device { &self.1 } }
 impl DeviceChild for Pipeline { fn device(&self) -> &::Device { &self.1 } }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl ShaderModule
 {
 	/// Creates a new shader module object from bytes on the memory
@@ -200,8 +200,8 @@ impl ShaderModule
 		Self::from_memory(device, &bin).map_err(From::from)
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl PipelineCache
 {
 	/// Creates a new pipeline cache
@@ -245,8 +245,8 @@ impl PipelineCache
 		unsafe { vkMergePipelineCaches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl PipelineLayout
 {
 	/// Creates a new pipeline layout object
@@ -281,7 +281,7 @@ impl<T> SwitchOrDynamicState<T>
 }
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
-#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))] #[derive(Clone)]
+#[cfg_attr(not(feature = "Implements"), allow(dead_code))] #[derive(Clone)]
 pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: PhantomData<&'d ()> }
 impl<'d, T> From<&'d T> for DynamicDataCell<'d>
 {
@@ -297,7 +297,7 @@ impl<'d> DynamicDataCell<'d>
 	}
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
-#[cfg_attr(not(feature = "FeImplements"), allow(dead_code))] #[derive(Clone)]
+#[cfg_attr(not(feature = "Implements"), allow(dead_code))] #[derive(Clone)]
 pub struct PipelineShader<'d>
 {
 	module: &'d ShaderModule, entry_name: CString, specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
@@ -922,7 +922,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	}
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl<'d> PipelineShader<'d>
 {
 	fn createinfo_native(&self, stage: ShaderStage)
@@ -940,7 +940,7 @@ impl<'d> PipelineShader<'d>
 		}, specinfo)
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl<'d> VertexProcessingStages<'d>
 {
 	pub fn generate_stages(&self) -> (Vec<VkPipelineShaderStageCreateInfo>, Vec<Option<Box<VkSpecializationInfo>>>)
@@ -952,8 +952,8 @@ impl<'d> VertexProcessingStages<'d>
 		stages.into_iter().unzip()
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl<'d> GraphicsPipelineBuilder<'d>
 {
 	fn rasterized(&self) -> bool { self.rasterizer_state.rasterizerDiscardEnable == false as _ }
@@ -1025,8 +1025,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl ::Device
 {
 	/// Create graphics pipelines

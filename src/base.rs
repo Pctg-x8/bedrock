@@ -1,31 +1,31 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
-#![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+#![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
 use vk::*;
 use std::ffi::CString;
 use VkHandle;
-#[cfg(feature = "FeImplements")] use VkResultHandler;
-#[cfg(feature = "FeImplements")] use std::ptr::{null, null_mut};
-#[cfg(    feature = "FeMultithreaded") ] use std::sync::Arc as RefCounter;
-#[cfg(not(feature = "FeMultithreaded"))] use std::rc::Rc as RefCounter;
+#[cfg(feature = "Implements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
+#[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
+#[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 
-#[cfg(not(feature = "FeMultithreaded"))] struct LazyCell<T>(::std::cell::RefCell<Option<T>>);
-#[cfg(feature = "FeMultithreaded")] struct LazyCell<T>(::std::sync::RwLock<Option<T>>);
+#[cfg(not(feature = "Multithreaded"))] struct LazyCell<T>(::std::cell::RefCell<Option<T>>);
+#[cfg(feature = "Multithreaded")] struct LazyCell<T>(::std::sync::RwLock<Option<T>>);
 impl<T> LazyCell<T>
 {
 	pub fn new() -> Self
 	{
-		#[cfg(feature = "FeMultithreaded")] { LazyCell(::std::sync::RwLock::new(None)) }
-		#[cfg(not(feature = "FeMultithreaded"))] { LazyCell(::std::cell::RefCell::new(None)) }
+		#[cfg(feature = "Multithreaded")] { LazyCell(::std::sync::RwLock::new(None)) }
+		#[cfg(not(feature = "Multithreaded"))] { LazyCell(::std::cell::RefCell::new(None)) }
 	}
-	#[cfg(not(feature = "FeMultithreaded"))]
+	#[cfg(not(feature = "Multithreaded"))]
 	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::cell::Ref<T>
 	{
 		if self.0.borrow().is_none() { *self.0.borrow_mut() = Some(initializer()); }
 		::std::cell::Ref::map(self.0.borrow(), |o| o.as_ref().unwrap())
 	}
-	#[cfg(feature = "FeMultithreaded")]
+	#[cfg(feature = "Multithreaded")]
 	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::sync::RwLockReadGuard<T>
 	{
 		if self.0.read().is_none() { *self.0.write() = Some(initializer()); }
@@ -40,7 +40,7 @@ struct InstanceCell
 }
 /// Opaque handle to a instance object
 #[derive(Clone)] pub struct Instance(RefCounter<InstanceCell>);
-#[cfg(feature = "FeMultithreaded")] unsafe impl Sync for Instance {}
+#[cfg(feature = "Multithreaded")] unsafe impl Sync for Instance {}
 /// Opaque handle to a physical device object
 /// 
 /// ## Platform Dependent Methods: Presentation Support checking functions
@@ -77,7 +77,7 @@ impl<'i> DoubleEndedIterator for IterPhysicalDevices<'i>
 	}
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for InstanceCell { fn drop(&mut self) { unsafe { vkDestroyInstance(self.n, ::std::ptr::null()); } } }
 
 impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0.n } }
@@ -124,7 +124,7 @@ impl InstanceBuilder
 	{
 		for l in layers { self.add_layer(l); } self
 	}
-	/// [feature = "FeImplements"] Create a new Vulkan instance
+	/// [feature = "Implements"] Create a new Vulkan instance
 	/// # Failures
 	/// On failure, this command returns
 	///
@@ -134,7 +134,7 @@ impl InstanceBuilder
 	/// * `VK_ERROR_LAYER_NOT_PRESENT`
 	/// * `VK_ERROR_EXTENSION_NOT_PRESENT`
 	/// * `VK_ERROR_INCOMPATIBLE_DRIVER`
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
 	pub fn create(&mut self) -> ::Result<Instance>
 	{
 		let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
@@ -150,8 +150,8 @@ impl InstanceBuilder
 		})))
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Instance
 {
 	/// Return a function pointer for a command
@@ -224,7 +224,7 @@ impl Instance
 		unsafe { vkEnumerateInstanceExtensionProperties(cptr, &mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Instance
 {
 	pub(crate) unsafe fn create_descriptor_update_template(&self, device: VkDevice, info: &VkDescriptorUpdateTemplateCreateInfo,
@@ -242,8 +242,8 @@ impl Instance
 		f(device, handle, alloc)
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl PhysicalDevice
 {
 	pub fn parent(&self) -> &Instance { &self.1 }
@@ -314,8 +314,8 @@ impl PhysicalDevice
 	}
 }
 
-/// [feature = "VK_KHR_surface" and feature = "FeImplements"] Surface functions
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_surface"))]
+/// [feature = "VK_KHR_surface" and feature = "Implements"] Surface functions
+#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 impl PhysicalDevice
 {
 	/// Query if presentation is supported
@@ -373,7 +373,7 @@ impl PhysicalDevice
 	}
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl PhysicalDevice
 {
 	/// [feature = "VK_KHR_xlib_surface"] Query physical device for presentation to X11 server using Xlib
@@ -402,8 +402,8 @@ impl PhysicalDevice
 	}
 }
 
-/// feature = "VK_KHR_display" functions (required to enable "FeImplements" feature)
-#[cfg(all(feature = "VK_KHR_display", feature = "FeImplements"))]
+/// feature = "VK_KHR_display" functions (required to enable "Implements" feature)
+#[cfg(all(feature = "VK_KHR_display", feature = "Implements"))]
 impl PhysicalDevice
 {
 	/// Query information about the available displays

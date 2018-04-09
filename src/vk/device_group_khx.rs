@@ -163,7 +163,7 @@ pub type PFN_vkGetDeviceGroupSurfacePresentModesKHX = extern "system" fn(device:
 pub type PFN_vkAcquireNextImage2KHX = extern "system" fn(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHX, pImageIndex: *mut u32) -> VkResult;
 pub type PNF_vkGetPhysicalDevicePresentRectanglesKHX = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkBindBufferMemory2KHX(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHX) -> VkResult;

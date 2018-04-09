@@ -5,9 +5,9 @@
 //! Copyright (c) 2014-2017 Khronos Group.
 //!
 //! # Compile Options
-//! - `FeImplements`: Enable Vulkan implementations(functions)
-//! - `FeMultithreaded`: Enables to use objects from some threads(experimental)
-//! - `FePresentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
+//! - `Implements`: Enable Vulkan implementations(functions)
+//! - `Multithreaded`: Enables to use objects from some threads(experimental)
+//! - `Presentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 
 extern crate libc;
@@ -31,7 +31,7 @@ extern crate android_ffi;
 pub mod vk;
 use vk::*;
 
-#[cfg(feature = "FeImplements")] mod fnconv;
+#[cfg(feature = "Implements")] mod fnconv;
 
 pub type Result<T> = std::result::Result<T, VkResultBox>;
 pub trait VkResultHandler
@@ -124,7 +124,7 @@ impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H>
     fn native_ptr(&self) -> Self::Handle { self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr()) }
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 macro_rules! DeviceChildCommonDrop
 {
 	{ for $($t: ty [$d: expr]),* } =>
@@ -157,7 +157,7 @@ impl<T> AnalogNumRange<T> for std::ops::Range<T> where T: Copy
 pub mod traits
 {
     pub use super::{VkResultBox, VkHandle, DeviceChild, ClearColorValue, ImageSize, AnalogNumRange};
-    #[cfg(feature = "FeImplements")]
+    #[cfg(feature = "Implements")]
     pub use super::{MemoryBound, Status, Waitable};
 }
 
@@ -250,7 +250,7 @@ mod command; pub use command::*;
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
 impl VkHandle for QueryPool { type Handle = VkQueryPool; fn native_ptr(&self) -> VkQueryPool { self.0 } }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl QueryPool
 {
     /// Create a new query pool object
@@ -300,7 +300,7 @@ impl QueryPool
             4 * query_range.len(), v.as_mut_ptr() as *mut _, 4, flags.0) }.into_result().map(|_| v)
     }
 }
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for QueryPool[vkDestroyQueryPool] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for QueryPool[vkDestroyQueryPool] }
 /// Specify the type of queries managed by a query pool
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryType

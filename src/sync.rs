@@ -1,10 +1,10 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
-#![cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+#![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
 use vk::*;
-#[cfg(feature = "FeImplements")] use VkHandle;
-#[cfg(feature = "FeImplements")] use {VkResultHandler, VkResultBox};
+#[cfg(feature = "Implements")] use VkHandle;
+#[cfg(feature = "Implements")] use {VkResultHandler, VkResultBox};
 
 /// Opaque handle to a fence object
 pub struct Fence(pub VkFence, ::Device);
@@ -13,7 +13,7 @@ pub struct Semaphore(pub VkSemaphore, ::Device);
 /// Opaque handle to a event object
 pub struct Event(pub VkEvent, ::Device);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{
 	for Fence[vkDestroyFence], Semaphore[vkDestroySemaphore], Event[vkDestroyEvent]
 }
 impl ::VkHandle for Fence { type Handle = VkFence; fn native_ptr(&self) -> VkFence { self.0 } }
@@ -23,8 +23,8 @@ impl ::DeviceChild for Fence { fn device(&self) -> &::Device { &self.1 } }
 impl ::DeviceChild for Semaphore { fn device(&self) -> &::Device { &self.1 } }
 impl ::DeviceChild for Event { fn device(&self) -> &::Device { &self.1 } }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Fence
 {
 	/// Create a new fence object
@@ -41,8 +41,8 @@ impl Fence
 			.into_result().map(|_| Fence(h, device.clone()))
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Semaphore
 {
 	/// Create a new queue semaphore object
@@ -58,8 +58,8 @@ impl Semaphore
 			.into_result().map(|_| Semaphore(h, device.clone()))
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Event
 {
 	/// Create a new event object
@@ -76,8 +76,8 @@ impl Event
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Fence
 {
 	/// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
@@ -124,8 +124,8 @@ impl Fence
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetFences(self.1.native_ptr(), 1, &self.0) }.into_result() }
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Event
 {
 	/// Set an event to signaled state
@@ -144,10 +144,10 @@ impl Event
 	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetEvent(self.1.native_ptr(), self.0) }.into_result() }
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 pub trait Status
 {
-	/// [feature = "FeImplements"] Retrieve the status(whether is signaled or not) of a synchronize object
+	/// [feature = "Implements"] Retrieve the status(whether is signaled or not) of a synchronize object
 	/// # Failures
 	/// On failure, this command returns
 	/// 
@@ -156,7 +156,7 @@ pub trait Status
 	/// * `VK_ERROR_DEVICE_LOST`
 	fn status(&self) -> ::Result<bool>;
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Status for Fence
 {
 	fn status(&self) -> ::Result<bool>
@@ -165,7 +165,7 @@ impl Status for Fence
 		match vr { ::vk::VK_SUCCESS => Ok(true), ::vk::VK_NOT_READY => Ok(false), _ => Err(VkResultBox(vr)) }
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Status for Event
 {
 	fn status(&self) -> ::Result<bool>
@@ -174,10 +174,10 @@ impl Status for Event
 		match vr { ::vk::VK_EVENT_SET => Ok(true), ::vk::VK_EVENT_RESET => Ok(false), _ => Err(VkResultBox(vr)) }
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl ::Waitable for Fence
 {
-	/// [feature = "FeImplements"] Wait for a fence to become signaled
+	/// [feature = "Implements"] Wait for a fence to become signaled
 	/// # Failures
 	/// On failure, this command returns
 	/// 

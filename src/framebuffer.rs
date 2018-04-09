@@ -2,7 +2,7 @@
 
 use vk::*;
 use {VkHandle, DeviceChild};
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use VkResultHandler;
 use std::borrow::{Borrow, BorrowMut};
 use std::mem::transmute;
 use ImageLayout;
@@ -12,7 +12,7 @@ pub struct RenderPass(VkRenderPass, ::Device);
 /// Opaque handle to a framebuffer object
 pub struct Framebuffer(VkFramebuffer, ::Device, Vec<::ImageView>, ::Extent2D);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{
 	for RenderPass[vkDestroyRenderPass], Framebuffer[vkDestroyFramebuffer]
 }
 impl VkHandle for RenderPass { type Handle = VkRenderPass; fn native_ptr(&self) -> VkRenderPass { self.0 } }
@@ -222,7 +222,7 @@ impl SubpassDescription
 		for i in collection { self.add_preserve_borrow(i); } self
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl RenderPassBuilder
 {
 	/// Create a new render pass object
@@ -254,7 +254,7 @@ impl RenderPassBuilder
 			.map(|_| RenderPass(h, device.clone()))
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Framebuffer
 {
 	/// Create a new framebuffer object
@@ -282,7 +282,7 @@ impl Framebuffer
 	pub fn resources(&self) -> &[::ImageView] { &self.2 }
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl RenderPass
 {
 	/// Returns the granularity for optimal render area

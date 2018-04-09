@@ -45,7 +45,7 @@ impl Default for VkSemaphoreGetFdInfoKHR
 pub type PFN_vkImportSemaphoreFdKHR = extern "system" fn(device: VkDevice, pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR) -> VkResult;
 pub type PFN_vkGetSemaphoreFdKHR = extern "system" fn(device: VkDevice, pGetFdInfo: *const VkSemaphoreGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkImportSemaphoreFdKHR(device: VkDevice, pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR) -> VkResult;

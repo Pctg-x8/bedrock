@@ -76,7 +76,7 @@ pub type PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = extern "system" fn(phys
 pub type PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
 pub type PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);

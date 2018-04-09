@@ -3,8 +3,8 @@
 use vk::*;
 use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
-#[cfg(feature = "FeImplements")] use VkResultHandler;
-#[cfg(feature = "FeImplements")] use std::ptr::null;
+#[cfg(feature = "Implements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use std::ptr::null;
 
 struct SurfaceCell(VkSurfaceKHR, ::Instance);
 /// Opaque handle to a surface object
@@ -13,12 +13,12 @@ struct SwapchainCell { obj: VkSwapchainKHR, dev: ::Device, #[allow(dead_code)] t
 /// Opaque handle to a swapchain object
 #[derive(Clone)] pub struct Swapchain(RefCounter<SwapchainCell>);
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for SurfaceCell
 {
 	fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, null()); } }
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for SwapchainCell
 {
 	fn drop(&mut self) { unsafe { vkDestroySwapchainKHR(self.dev.native_ptr(), self.obj, null()); } }
@@ -28,7 +28,7 @@ impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self)
 impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.0.dev } }
 
 /// Creation Procedures
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Surface
 {
 	/// Create a `Surface` object for an X11 window, using the Xlib client-side library
@@ -178,7 +178,7 @@ impl<'d> SwapchainBuilder<'d>
 	/// * `VK_ERROR_DEVICE_LOST`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	/// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
 	pub fn create(&self, device: &::Device) -> ::Result<Swapchain>
 	{
 		let mut h = VK_NULL_HANDLE as _;
@@ -201,7 +201,7 @@ use {Fence, Semaphore};
 /// A semaphore or a fence
 pub enum CompletionHandler<'s> { Host(&'s Fence), Device(&'s Semaphore) }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Swapchain
 {
 	/// Retrieve the index of the next available presentation image
@@ -246,7 +246,7 @@ impl Swapchain
 		unsafe { vkQueuePresentKHR(queue.native_ptr(), &pinfo) }.into_result().and_then(|_| res.into_result())
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl ::Queue
 {
 	/// Queue images for presentation

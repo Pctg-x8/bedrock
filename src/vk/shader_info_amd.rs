@@ -30,6 +30,7 @@ pub type PFN_vkGetShaderInfoKHR = extern "system" fn(device: VkDevice, pipeline:
     shaderStage: VkShaderStageFlags, infoType: VkShaderInfoTypeAMD,
     pInfoSize: *mut size_t, pInfo: *mut c_void) -> VkResult;
 
+#[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkGetShaderInfoKHR(device: VkDevice, pipeline: VkPipeline, shaderStage: VkShaderStageFlags,

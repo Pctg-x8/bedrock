@@ -120,9 +120,9 @@ use vk::*;
 use std::rc::Rc as RefCounter;
 use std::ops::Deref;
 use {VkHandle, DeviceChild, Device};
-#[cfg(feature = "FeImplements")] use VkResultHandler;
-#[cfg(feature = "FeImplements")] use std::ptr::null;
-#[cfg(feature = "FeImplements")] use std::mem::uninitialized as resv;
+#[cfg(feature = "Implements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use std::ptr::null;
+#[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
 use std::borrow::Borrow; use std::mem::transmute;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
@@ -133,7 +133,7 @@ pub enum ImageCell
 	DeviceChild { obj: VkImage, dev: ::Device, dim: VkImageType, fmt: VkFormat, size: ::Extent3D },
 	SwapchainChild { obj: VkImage, owner: ::Swapchain, fmt: VkFormat }
 }
-#[cfg(not(feature = "VK_KHR_swapchain"))] #[cfg_attr(not(feature = "FeImplements"), allow(dead_code))]
+#[cfg(not(feature = "VK_KHR_swapchain"))] #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 struct ImageCell { obj: VkImage, dev: ::Device, dim: VkImageType, fmt: VkFormat, size: ::Extent3D }
 /// Opaque handle to a device memory object
 pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
@@ -151,8 +151,8 @@ pub struct ImageView(RefCounter<ImageViewCell>);
 impl Deref for BufferView { type Target = Buffer; fn deref(&self) -> &Buffer { &self.1 } }
 impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &self.0 .1 } }
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop! { for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer] }
-#[cfg(feature = "FeImplements")] impl Drop for ImageCell
+#[cfg(feature = "Implements")] DeviceChildCommonDrop! { for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer] }
+#[cfg(feature = "Implements")] impl Drop for ImageCell
 {
 	fn drop(&mut self)
 	{
@@ -166,9 +166,9 @@ impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &sel
 		unsafe { vkDestroyImage(self.dev.native_ptr(), self.obj, null()); }
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for BufferView { fn drop(&mut self) { unsafe { vkDestroyBufferView(self.device().native_ptr(), self.native_ptr(), null()) }; } }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Drop for ImageViewCell { fn drop(&mut self) { unsafe { vkDestroyImageView (self.1.device().native_ptr(), self.0, null()) }; } }
 
 impl VkHandle for DeviceMemory { type Handle = VkDeviceMemory; fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 } }
@@ -209,8 +209,8 @@ impl DeviceChild for Image
 	fn device(&self) -> &Device { &self.0.dev }
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl DeviceMemory
 {
 	/// Allocate GPU memory
@@ -339,13 +339,13 @@ impl BufferDesc
 	{
 		self.cinfo.flags = opt as _; self
 	}
-	/// [feature = "FeImplements"] Create a new buffer object
+	/// [feature = "Implements"] Create a new buffer object
 	/// # Failure
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
 	pub fn create(&self, device: &::Device) -> ::Result<Buffer>
 	{
 		let mut h = VK_NULL_HANDLE as _;
@@ -480,8 +480,8 @@ impl ImageDesc
 	pub fn mip_levels(&mut self, levels: u32) -> &mut Self { self.0.mipLevels = levels; self }
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl ImageDesc
 {
 	/// Create an image
@@ -532,7 +532,7 @@ impl Image
 		#[cfg(not(feature = "VK_KHR_swapchain"))]
 		&self.0.size
 	}
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
 	fn dimension(&self) -> VkImageViewType
 	{
 		#[cfg(feature = "VK_KHR_swapchain")]
@@ -550,8 +550,8 @@ impl Image
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Buffer
 {
 	/// Create a buffer view
@@ -566,8 +566,8 @@ impl Buffer
 			.into_result().map(|_| BufferView(h, self.clone()))
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Image
 {
 	/// Create an image view
@@ -594,8 +594,8 @@ impl Image
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl DeviceMemory
 {
 	/// Map a memory object into application address space
@@ -627,7 +627,7 @@ impl DeviceMemory
 	}
 }
 
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl Device
 {
 	/// Multiple Binding for Buffers
@@ -663,8 +663,8 @@ impl Device
 	}
 }
 
-/// [feature = "FeImplements"] Common operations for memory bound objects
-#[cfg(feature = "FeImplements")]
+/// [feature = "Implements"] Common operations for memory bound objects
+#[cfg(feature = "Implements")]
 pub trait MemoryBound
 {
 	/// Returns the memory requirements for specified Vulkan object
@@ -677,7 +677,7 @@ pub trait MemoryBound
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>;
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl MemoryBound for Buffer
 {
 	fn requirements(&self) -> VkMemoryRequirements
@@ -690,7 +690,7 @@ impl MemoryBound for Buffer
 		unsafe { vkBindBufferMemory(self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _) }.into_result()
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl MemoryBound for Image
 {
 	fn requirements(&self) -> VkMemoryRequirements
@@ -703,8 +703,8 @@ impl MemoryBound for Image
 		unsafe { vkBindImageMemory(self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _) }.into_result()
 	}
 }
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl Image
 {
 	/// Query the memory requirements for a sparse image
@@ -796,7 +796,7 @@ impl<'m> MappedMemoryRange<'m>
 		}
 	}
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl<'m> Drop for MappedMemoryRange<'m>
 {
 	fn drop(&mut self)
@@ -806,8 +806,8 @@ impl<'m> Drop for MappedMemoryRange<'m>
 	}
 }
 
-/// Following methods are enabled with [feature = "FeImplements" and feature = "VK_KHR_swapchain"]
-#[cfg(all(feature = "FeImplements", feature = "VK_KHR_swapchain"))]
+/// Following methods are enabled with [feature = "Implements" and feature = "VK_KHR_swapchain"]
+#[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
 impl ::Swapchain
 {
 	/// Obtain the array of presentable images associated with a swapchain
@@ -966,7 +966,7 @@ impl ImageSubresourceRange
 
 /// Opaque handle to a sampler object
 pub struct Sampler(VkSampler, ::Device);
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for Sampler[vkDestroySampler] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for Sampler[vkDestroySampler] }
 
 impl VkHandle for Sampler { type Handle = VkSampler; fn native_ptr(&self) -> VkSampler { self.0 } }
 impl DeviceChild for Sampler { fn device(&self) -> &::Device { &self.1 } }
@@ -1094,14 +1094,14 @@ impl SamplerBuilder
         self.0.unnormalizedCoordinates = use_unnormalized as _; self
     }
 
-    /// [feature = "FeImplements"] Create a new sampler object
+    /// [feature = "Implements"] Create a new sampler object
     /// # Failures
     /// On failure, this command returns
 	/// 
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[cfg(feature = "FeImplements")]
+    #[cfg(feature = "Implements")]
     pub fn create(&self, device: &::Device) -> ::Result<Sampler>
     {
         let mut h = VK_NULL_HANDLE as _;

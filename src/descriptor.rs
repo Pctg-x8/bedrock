@@ -2,18 +2,18 @@
 
 use vk::*;
 use {VkHandle, DeviceChild};
-#[cfg(feature = "FeImplements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use VkResultHandler;
 use ShaderStage;
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use std::ptr::null;
-#[cfg(feature = "FeImplements")] use std::mem::zeroed;
+#[cfg(feature = "Implements")] use std::mem::zeroed;
 
 /// Opaque handle to a descriptor set layout object
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, ::Device);
 /// Opaque handle to a descriptor pool object
 pub struct DescriptorPool(VkDescriptorPool, ::Device);
 
-#[cfg(feature = "FeImplements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[vkDestroyDescriptorSetLayout], DescriptorPool[vkDestroyDescriptorPool] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[vkDestroyDescriptorSetLayout], DescriptorPool[vkDestroyDescriptorPool] }
 
 impl VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
 impl VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }
@@ -61,8 +61,8 @@ impl DSLBindings
     }
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl DescriptorSetLayout
 {
     /// Create a new descriptor set layout
@@ -161,8 +161,8 @@ pub enum DescriptorType
     InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _
 }
 
-/// Following methods are enabled with [feature = "FeImplements"]
-#[cfg(feature = "FeImplements")]
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
 impl DescriptorPool
 {
     /// Creates a descriptor pool object
@@ -252,11 +252,11 @@ pub enum DescriptorUpdateInfo
     UniformTexelBuffer(Vec<VkBufferView>),
     StorageTexelBuffer(Vec<VkBufferView>)
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 use std::ops::Range;
 impl DescriptorUpdateInfo
 {
-	#[cfg(feature = "FeImplements")]
+	#[cfg(feature = "Implements")]
     pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<VkSampler>, VkImageView, ::ImageLayout)], &[(VkBuffer, Range<usize>)], &[VkBufferView])
     {
         match self
@@ -298,7 +298,7 @@ macro_rules! DescriptorUpdateTemplateEntries
 }
 
 pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
-#[cfg(feature = "FeImplements")] impl Drop for DescriptorUpdateTemplate
+#[cfg(feature = "Implements")] impl Drop for DescriptorUpdateTemplate
 {
     fn drop(&mut self)
     {
@@ -308,7 +308,7 @@ pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
         }
     }
 }
-#[cfg(feature = "FeImplements")]
+#[cfg(feature = "Implements")]
 impl DescriptorUpdateTemplate
 {
     /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
