@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const docpath = path.join("docs", "ja");
 let conversions = {};
-conversions[path.join("ferrite", "index.html")] = data => data
+conversions[path.join("bedrock", "index.html")] = data => data
     .replace("Glue library between Vulkan and Rust", "Ferrite: Vulkan と Rust のグルーライブラリ (部分的に日本語版)")
     .replace("Some documentation comments are from Vulkan Manual Page.", "いくつかのドキュメントコメントは Vulkan のマニュアルページの簡易翻訳である。")
     .replace("Enable Vulkan implementations(functions)", "Vulkan の実装(関数)を有効にする")
@@ -11,7 +11,7 @@ conversions[path.join("ferrite", "index.html")] = data => data
     .replace("Enable rendering features to Window/Display", "ウィンドウ/ディスプレイへの描画機能を有効にする")
     .replace("Enable Vulkan extensions(same name as each extensions)", "Vulkan の機能を有効にする(拡張名がそのまま使える)")
     .replace("Compile Options", "コンパイルオプション").replace("All of traits", "全トレイト").replace("Vulkan API Definitions", "Vulkan の API 定義");
-conversions[path.join("ferrite", "vk", "struct.VkAttachmentDescription.html")] = data => data
+conversions[path.join("bedrock", "vk", "struct.VkAttachmentDescription.html")] = data => data
     .replace("A bitmask of <code>VkAttachmentDescriptionFlagBits</code> specifying additional properties of the attachment.", "<code>VkAttachmentDescriptionFlagBits</code>のビットマスクで、アタッチメントの追加プロパティを指定する")
     .replace(/Possible Bitmasks/g, "適用可能なビットマスク").replace(/Possible Values/g, "適用可能な値").replace(/Access Type Requirements/g, "必要なアクセスタイプ")
     .replace("No flags", "指定なし").replace("The attachment aliases the same device memory as other attachments", "このアタッチメントは同一メモリ上の他のアタッチメントをエイリアスしていることを表す")
@@ -41,7 +41,7 @@ conversions[path.join("ferrite", "vk", "struct.VkAttachmentDescription.html")] =
     .replace("The layout the attachment image subresource will be in when a render pass instance begins.", "RenderPass が開始する際のイメージレイアウト")
     .replace("The layout the attachment image subresource will be transitioned to when a render pass instance ends.", "RenderPass が終了する際に遷移するイメージレイアウト。")
     .replace("During a render pass instance, an attachment <em>can</em> use a different layout in each subpass, if desired.", "必要であれば、同一の RenderPass の各 Subpass で異なるイメージレイアウトを使うことができる。");
-conversions[path.join("ferrite", "struct.SubpassDescription.html")] = data => data
+conversions[path.join("bedrock", "struct.SubpassDescription.html")] = data => data
     .replace("Builder structure to construct the <code>VkSubpassDescription</code>", "<code>VkSubpassDescription</code>のビルダーオブジェクト")
     .replace("The <code>layout</code> parameter of each attachment", "各アタッチメントの<code>layout</code>パラメータについて")
     .replace("The <code>layout</code> parameter describes what layout the attachment will be in during the subpass", "<code>layout</code>パラメータには、Subpass 中でアタッチメントがとるべきイメージレイアウトを指定する")
