@@ -504,6 +504,39 @@ impl MemoryProperties
 	pub fn find_host_visible_index(&self) -> Option<u32> { self.find_type_index(MemoryPropertyFlags::HOST_VISIBLE, MemoryPropertyFlags::EMPTY) }
 	pub fn is_coherent(&self, index: u32) -> bool { (self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_COHERENT.0) != 0 }
 	pub fn is_cached(&self, index: u32) -> bool { (self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_CACHED.0) != 0 }
+
+	pub fn types(&self) -> MemoryTypeIter { MemoryTypeIter(&self.0, 0) }
+	pub fn heaps(&self) -> MemoryHeapIter { MemoryHeapIter(&self.0, 0) }
+}
+/// Iterating each elements of memory types
+pub struct MemoryTypeIter<'d>(&'d MemoryProperties, usize);
+impl<'d> Iterator for MemoryTypeIter<'d>
+{
+	type Item = &'d VkMemoryType;
+	fn next(&mut self)
+	{
+		if self.1 < self.0.memoryTypeCount
+		{
+			let r = &self.0.memoryTypes[self.1]; self.1 += 1;
+			return Some(r);
+		}
+		else { return None; }
+	}
+}
+/// Iterating each elements of memory heaps
+pub struct MemoryHeapIter<'d>(&'d MemoryProperties, usize);
+impl<'d> Iterator for MemoryHeapIter<'d>
+{
+	type Item = &'d VkMemoryHeap;
+	fn next(&mut self)
+	{
+		if self.1 < self.0.memoryHeapCount
+		{
+			let r = &self.0.memoryHeaps[self.1]; self.1 += 1;
+			return Some(r);
+		}
+		else { return None; }
+	}
 }
 
 /// Bitmask specifying properties for a memory type
