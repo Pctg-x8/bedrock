@@ -515,7 +515,7 @@ impl<'d> Iterator for MemoryTypeIter<'d>
 	type Item = &'d VkMemoryType;
 	fn next(&mut self) -> Option<Self::Item>
 	{
-		if self.1 < self.0.memoryTypeCount
+		if self.1 < self.0.memoryTypeCount as usize
 		{
 			let r = &self.0.memoryTypes[self.1]; self.1 += 1;
 			return Some(r);
@@ -530,7 +530,7 @@ impl<'d> Iterator for MemoryHeapIter<'d>
 	type Item = &'d VkMemoryHeap;
 	fn next(&mut self) -> Option<Self::Item>
 	{
-		if self.1 < self.0.memoryHeapCount
+		if self.1 < self.0.memoryHeapCount as usize
 		{
 			let r = &self.0.memoryHeaps[self.1]; self.1 += 1;
 			return Some(r);
