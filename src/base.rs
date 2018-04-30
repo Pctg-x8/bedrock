@@ -513,7 +513,7 @@ pub struct MemoryTypeIter<'d>(&'d MemoryProperties, usize);
 impl<'d> Iterator for MemoryTypeIter<'d>
 {
 	type Item = &'d VkMemoryType;
-	fn next(&mut self)
+	fn next(&mut self) -> Option<Self::Item>
 	{
 		if self.1 < self.0.memoryTypeCount
 		{
@@ -528,7 +528,7 @@ pub struct MemoryHeapIter<'d>(&'d MemoryProperties, usize);
 impl<'d> Iterator for MemoryHeapIter<'d>
 {
 	type Item = &'d VkMemoryHeap;
-	fn next(&mut self)
+	fn next(&mut self) -> Option<Self::Item>
 	{
 		if self.1 < self.0.memoryHeapCount
 		{
