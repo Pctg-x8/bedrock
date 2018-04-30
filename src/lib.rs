@@ -232,6 +232,13 @@ impl Into<VkRect2D> for Extent2D
 {
     fn into(self) -> VkRect2D { VkRect2D { offset: VkOffset2D { x: 0, y: 0 }, extent: VkExtent2D { width: self.0, height: self.1 } } }
 }
+impl Into<VkRect2D> for VkViewport
+{
+    fn into(self) -> VkRect2D
+    {
+        VkRect2D { offset: VkOffset2D { x: self.x, y: self.y }, extent: VkExtent2D { width: self.width, height: self.height } }
+    }
+}
 
 mod base; pub use base::*;
 mod device; pub use device::*;
