@@ -236,7 +236,7 @@ impl Into<VkRect2D> for VkViewport
 {
     fn into(self) -> VkRect2D
     {
-        VkRect2D { offset: VkOffset2D { x: self.x, y: self.y }, extent: VkExtent2D { width: self.width, height: self.height } }
+        VkRect2D { offset: VkOffset2D { x: self.x as _, y: self.y as _ }, extent: VkExtent2D { width: self.width as _, height: self.height as _ } }
     }
 }
 
