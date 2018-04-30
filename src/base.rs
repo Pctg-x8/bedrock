@@ -509,7 +509,7 @@ impl MemoryProperties
 	pub fn heaps(&self) -> MemoryHeapIter { MemoryHeapIter(&self.0, 0) }
 }
 /// Iterating each elements of memory types
-pub struct MemoryTypeIter<'d>(&'d MemoryProperties, usize);
+pub struct MemoryTypeIter<'d>(&'d VkPhysicalDeviceMemoryProperties, usize);
 impl<'d> Iterator for MemoryTypeIter<'d>
 {
 	type Item = &'d VkMemoryType;
@@ -524,7 +524,7 @@ impl<'d> Iterator for MemoryTypeIter<'d>
 	}
 }
 /// Iterating each elements of memory heaps
-pub struct MemoryHeapIter<'d>(&'d MemoryProperties, usize);
+pub struct MemoryHeapIter<'d>(&'d VkPhysicalDeviceMemoryProperties, usize);
 impl<'d> Iterator for MemoryHeapIter<'d>
 {
 	type Item = &'d VkMemoryHeap;
