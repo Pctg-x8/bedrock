@@ -183,13 +183,17 @@ impl From<Extent2D> for VkExtent2D { fn from(v: Extent2D) -> Self { VkExtent2D {
 impl From<Extent3D> for VkExtent3D { fn from(v: Extent3D) -> Self { VkExtent3D { width: v.0, height: v.1, depth: v.2 } } }
 impl From<Offset2D> for VkOffset2D { fn from(v: Offset2D) -> Self { VkOffset2D { x: v.0, y: v.1 } } }
 impl From<Offset3D> for VkOffset3D { fn from(v: Offset3D) -> Self { VkOffset3D { x: v.0, y: v.1, z: v.2 } } }
+impl From<VkExtent2D> for Extent2D { fn from(v: VkExtent2D) -> Self { Extent2D(v.width, v.height) } }
+impl From<VkExtent3D> for Extent3D { fn from(v: VkExtent3D) -> Self { Extent3D(v.width, v.height, v.depth) } }
+impl From<VkOffset2D> for Offset2D { fn from(v: VkOffset2D) -> Self { Offset2D(v.x, v.y) } }
+impl From<VkOffset3D> for Offset3D { fn from(v: VkOffset3D) -> Self { Offset3D(v.x, v.y, v.z) } }
 // into conversion to larger dimension //
-impl Into<Extent2D> for Extent1D { fn into(self) -> Extent2D { Extent2D(self.0, 1) } }
-impl Into<Extent3D> for Extent1D { fn into(self) -> Extent3D { Extent3D(self.0, 1, 1) } }
-impl Into<Extent3D> for Extent2D { fn into(self) -> Extent3D { Extent3D(self.0, self.1, 1) } }
-impl Into<Offset2D> for Offset1D { fn into(self) -> Offset2D { Offset2D(self.0, 0) } }
-impl Into<Offset3D> for Offset1D { fn into(self) -> Offset3D { Offset3D(self.0, 0, 0) } }
-impl Into<Offset3D> for Offset2D { fn into(self) -> Offset3D { Offset3D(self.0, self.1, 0) } }
+impl From<Extent1D> for Extent2D { fn from(v: Extent1D) -> Self { Extent2D(v.0, 1) } }
+impl From<Extent1D> for Extent3D { fn from(v: Extent1D) -> Self { Extent3D(v.0, 1, 1) } }
+impl From<Extent2D> for Extent3D { fn from(v: Extent2D) -> Self { Extent3D(v.0, v.1, 1) } }
+impl From<Offset1D> for Offset2D { fn from(v: Offset1D) -> Self { Offset2D(v.0, 0) } }
+impl From<Offset1D> for Offset3D { fn from(v: Offset1D) -> Self { Offset3D(v.0, 0, 0) } }
+impl From<Offset2D> for Offset3D { fn from(v: Offset2D) -> Self { Offset3D(v.0, v.1, 0) } }
 // cheap conversion by transmuting //
 impl AsRef<u32> for Extent1D { fn as_ref(&self) -> &u32 { &self.0 } }
 impl AsRef<VkExtent2D> for Extent2D { fn as_ref(&self) -> &VkExtent2D { unsafe { std::mem::transmute(self) } } }
