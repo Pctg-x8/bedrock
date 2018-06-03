@@ -571,4 +571,6 @@ impl MemoryPropertyFlags
 	pub fn host_cached(mut self) -> Self { self.0 |= Self::HOST_CACHED.0; self }
 	/// The memory type only allows device access to the memory.
 	pub fn lazily_allocated(mut self) -> Self { self.0 |= Self::LAZILY_ALLOCATED.0; self }
+
+	pub fn bits(&self) -> VkMemoryPropertyFlags { self.0 }
 }
