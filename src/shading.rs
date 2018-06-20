@@ -8,7 +8,7 @@ use std::ptr::null;
 use std::marker::PhantomData;
 
 /// Bitmask specifying a pipeline stage
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
 pub struct ShaderStage(pub VkShaderStageFlags);
 impl ShaderStage
 {
