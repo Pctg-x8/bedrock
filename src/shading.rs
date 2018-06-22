@@ -300,7 +300,8 @@ impl<'d> DynamicDataCell<'d>
 #[cfg_attr(not(feature = "Implements"), allow(dead_code))] #[derive(Clone)]
 pub struct PipelineShader<'d>
 {
-	module: &'d ShaderModule, entry_name: CString, specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
+	pub module: &'d ShaderModule, pub entry_name: CString,
+	pub specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
 }
 /// Whether the state(type of array) is dynamic or static
 pub enum DynamicArrayState<'d, T: 'd> { Dynamic(usize), Static(&'d [T]) }
@@ -340,14 +341,6 @@ impl<'d, T> DynamicArrayState<'d, T>
 	fn as_ptr(&self) -> *const T { match self { &DynamicArrayState::Static(ref v) => v.as_ptr(), _ => ::std::ptr::null() } }
 	fn is_dynamic(&self) -> bool { match self { &DynamicArrayState::Dynamic(_) => true, _ => false } }
 }
-impl<'d> PipelineShader<'d>
-{
-	/// Construct a shader stage in the pipeline
-	pub fn new(module: &'d ShaderModule, entry_name: &str, specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>) -> Self
-	{
-		PipelineShader { module, entry_name: CString::new(entry_name).unwrap(), specinfo }
-	}
-}
 
 /// PipelineStateDesc: Shader Stages and Input descriptions
 #[derive(Clone)] pub struct VertexProcessingStages<'d>
@@ -384,16 +377,22 @@ impl<'d> VertexProcessingStages<'d>
 	{
 		self.vertex = vsh; return self;
 	}
+	/// Get the vertex shader for modifying.
+	pub fn mod_vertex_shader(&mut self) -> &mut PipelineShader<'d> { &mut self.vertex }
 	/// Update the geometry shader, or disable geometry shader stage
 	pub fn geometry_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, gsh: S) -> &mut Self
 	{
 		self.geometry = gsh.into(); return self;
 	}
+	/// Get the geometry shader for modifying.
+	pub fn mod_geometry_shader(&mut self) -> &mut PipelineShader<'d> { &mut self.geometry }
 	/// Update the fragment shader, or disable fragment shader stage
 	pub fn fragment_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, fsh: S) -> &mut Self
 	{
 		self.fragment = fsh.into(); return self;
 	}
+	/// Get the fragment shader for modifying.
+	pub fn mod_fragment_shader(&mut self) -> &mut PipelineShader<'d> { &mut self.fragment }
 	/// Update the vertex binding description
 	pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self
 	{
