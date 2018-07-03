@@ -6,6 +6,8 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::null;
 
+#[cfg(feature = "VK_KHR_android_surface")] use android::ANativeWindow;
+
 struct SurfaceCell(VkSurfaceKHR, ::Instance);
 /// Opaque handle to a surface object
 #[derive(Clone)] pub struct Surface(RefCounter<SurfaceCell>);
@@ -80,7 +82,7 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_android_surface")]
-	pub fn new_android(instance: &::Instance, window: *mut ::android_ffi::ffi::ANativeWindow) -> ::Result<Self>
+	pub fn new_android(instance: &::Instance, window: *mut ANativeWindow) -> ::Result<Self>
 	{
 		let cinfo = VkAndroidSurfaceCreateInfoKHR { window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;

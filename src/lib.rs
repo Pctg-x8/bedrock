@@ -25,7 +25,7 @@ extern crate xcb;
 #[cfg(feature = "VK_KHR_wayland_surface")]
 extern crate wayland_client;
 #[cfg(feature = "VK_KHR_android_surface")]
-extern crate android_ffi;
+extern crate android;
 
 #[macro_use]
 pub mod vk;
