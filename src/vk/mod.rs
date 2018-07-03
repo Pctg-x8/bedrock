@@ -4290,7 +4290,7 @@ macro_rules! ExportExtensions
 
 #[cfg(feature = "VK_KHR_xcb_surface")] extern crate xcb;
 #[cfg(feature = "VK_KHR_wayland_surface")] extern crate wayland;
-#[cfg(feature = "VK_KHR_android_surface")] extern crate android_ffi;
+#[cfg(feature = "VK_KHR_android_surface")] extern crate android;
 
 ExportExtensions!("VK_KHR_surface": surface_khr);
 ExportExtensions!("VK_KHR_swapchain": swapchain_khr);
