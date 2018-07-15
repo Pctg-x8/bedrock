@@ -133,10 +133,10 @@ impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H>
 #[cfg(feature = "Implements")]
 macro_rules! DeviceChildCommonDrop
 {
-	{ for $($t: ty [$d: expr]),* } =>
+	{ for $($t: ty [$d: ident]),* } =>
 	{
 		$(
-			impl Drop for $t { fn drop(&mut self) { unsafe { $d(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
+			impl Drop for $t { fn drop(&mut self) { unsafe { Resolver::get().$d(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
 		)*
 	}
 }
@@ -321,7 +321,7 @@ impl QueryPool
             4 * query_range.len(), v.as_mut_ptr() as *mut _, 4, flags.0) }.into_result().map(|_| v)
     }
 }
-#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for QueryPool[vkDestroyQueryPool] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for QueryPool[destroy_query_pool] }
 /// Specify the type of queries managed by a query pool
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryType

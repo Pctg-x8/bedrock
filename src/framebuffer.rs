@@ -14,7 +14,7 @@ pub struct RenderPass(VkRenderPass, ::Device);
 pub struct Framebuffer(VkFramebuffer, ::Device, Vec<::ImageView>, ::Extent2D);
 
 #[cfg(feature = "Implements")] DeviceChildCommonDrop!{
-	for RenderPass[vkDestroyRenderPass], Framebuffer[vkDestroyFramebuffer]
+	for RenderPass[destroy_render_pass], Framebuffer[destroy_framebuffer]
 }
 impl VkHandle for RenderPass { type Handle = VkRenderPass; fn native_ptr(&self) -> VkRenderPass { self.0 } }
 impl VkHandle for Framebuffer { type Handle = VkFramebuffer; fn native_ptr(&self) -> VkFramebuffer { self.0 } }

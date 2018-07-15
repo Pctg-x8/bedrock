@@ -17,7 +17,7 @@ use {Image, Buffer, ImageLayout};
 /// Opaque handle to a command buffer object
 #[repr(C)] #[derive(Clone, Copy)] pub struct CommandBuffer(VkCommandBuffer);
 
-#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for CommandPool[vkDestroyCommandPool] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for CommandPool[destroy_command_pool] }
 impl VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
 impl VkHandle for CommandBuffer { type Handle = VkCommandBuffer; fn native_ptr(&self) -> VkCommandBuffer { self.0 } }
 impl DeviceChild for CommandPool { fn device(&self) -> &Device { &self.1 } }

@@ -15,7 +15,7 @@ pub struct Semaphore(pub VkSemaphore, ::Device);
 pub struct Event(pub VkEvent, ::Device);
 
 #[cfg(feature = "Implements")] DeviceChildCommonDrop!{
-	for Fence[vkDestroyFence], Semaphore[vkDestroySemaphore], Event[vkDestroyEvent]
+	for Fence[destroy_fence], Semaphore[destroy_semaphore], Event[destroy_event]
 }
 impl ::VkHandle for Fence { type Handle = VkFence; fn native_ptr(&self) -> VkFence { self.0 } }
 impl ::VkHandle for Semaphore { type Handle = VkSemaphore; fn native_ptr(&self) -> VkSemaphore { self.0 } }

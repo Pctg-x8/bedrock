@@ -152,7 +152,7 @@ pub struct ImageView(RefCounter<ImageViewCell>);
 impl Deref for BufferView { type Target = Buffer; fn deref(&self) -> &Buffer { &self.1 } }
 impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &self.0 .1 } }
 
-#[cfg(feature = "Implements")] DeviceChildCommonDrop! { for DeviceMemoryCell[vkFreeMemory], BufferCell[vkDestroyBuffer] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop! { for DeviceMemoryCell[free_memory], BufferCell[destroy_buffer] }
 #[cfg(feature = "Implements")] impl Drop for ImageCell
 {
 	fn drop(&mut self)
@@ -967,7 +967,7 @@ impl ImageSubresourceRange
 
 /// Opaque handle to a sampler object
 pub struct Sampler(VkSampler, ::Device);
-#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for Sampler[vkDestroySampler] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for Sampler[destroy_sampler] }
 
 impl VkHandle for Sampler { type Handle = VkSampler; fn native_ptr(&self) -> VkSampler { self.0 } }
 impl DeviceChild for Sampler { fn device(&self) -> &::Device { &self.1 } }

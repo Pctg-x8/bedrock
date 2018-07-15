@@ -13,7 +13,7 @@ pub struct DescriptorSetLayout(VkDescriptorSetLayout, ::Device);
 /// Opaque handle to a descriptor pool object
 pub struct DescriptorPool(VkDescriptorPool, ::Device);
 
-#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[vkDestroyDescriptorSetLayout], DescriptorPool[vkDestroyDescriptorPool] }
+#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[destroy_descriptor_set_layout], DescriptorPool[destroy_descriptor_pool] }
 
 impl VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
 impl VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }

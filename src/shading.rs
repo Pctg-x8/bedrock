@@ -154,8 +154,8 @@ pub struct PipelineLayout(VkPipelineLayout, ::Device);
 pub struct Pipeline(VkPipeline, ::Device);
 
 #[cfg(feature = "Implements")] DeviceChildCommonDrop! {
-	for ShaderModule[vkDestroyShaderModule], PipelineCache[vkDestroyPipelineCache], PipelineLayout[vkDestroyPipelineLayout],
-	Pipeline[vkDestroyPipeline]
+	for ShaderModule[destroy_shader_module], PipelineCache[destroy_pipeline_cache], PipelineLayout[destroy_pipeline_layout],
+	Pipeline[destroy_pipeline]
 }
 impl VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
 impl VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
