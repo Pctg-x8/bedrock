@@ -290,7 +290,7 @@ impl QueryPool
         };
         let cinfo = VkQueryPoolCreateInfo { queryType: qtype, queryCount: count, pipelineStatistics: stats, .. Default::default() };
         let mut h = VK_NULL_HANDLE as _;
-        unsafe { vkCreateQueryPool(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
+        unsafe { Resolver::get().create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result().map(|_| QueryPool(h, device.clone()))
     }
     /// Copy results of queries in a query pool to a host memory region
@@ -303,7 +303,7 @@ impl QueryPool
     pub fn results64(&self, query_range: std::ops::Range<u32>, flags: QueryResultFlags) -> Result<Vec<u64>>
     {
         let mut v = Vec::with_capacity(query_range.len()); unsafe { v.set_len(query_range.len()) };
-        unsafe { vkGetQueryPoolResults(self.1.native_ptr(), self.0, query_range.start, query_range.len() as _,
+        unsafe { Resolver::get().get_query_pool_results(self.1.native_ptr(), self.0, query_range.start, query_range.len() as _,
             8 * query_range.len(), v.as_mut_ptr() as *mut _, 8, flags.0 | VK_QUERY_RESULT_64_BIT) }
             .into_result().map(|_| v)
     }
@@ -317,7 +317,7 @@ impl QueryPool
     pub fn results32(&self, query_range: std::ops::Range<u32>, flags: QueryResultFlags) -> Result<Vec<u32>>
     {
         let mut v = Vec::with_capacity(query_range.len()); unsafe { v.set_len(query_range.len()) };
-        unsafe { vkGetQueryPoolResults(self.1.native_ptr(), self.0, query_range.start, query_range.len() as _,
+        unsafe { Resolver::get().get_query_pool_results(self.1.native_ptr(), self.0, query_range.start, query_range.len() as _,
             4 * query_range.len(), v.as_mut_ptr() as *mut _, 4, flags.0) }.into_result().map(|_| v)
     }
 }
