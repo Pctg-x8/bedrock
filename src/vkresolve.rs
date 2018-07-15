@@ -7,8 +7,10 @@
 use vk::*;
 #[cfg(feature = "DynamicLoaded")]
 use std::sync::{Once, ONCE_INIT};
-#[cfg(feature = "DynamicLoaded")]
-use std::ops::Deref;
+#[cfg(feature = "DynamicLoaded")] #[cfg(unix)]
+use libloading::os::unix::Symbol as RawSymbol;
+#[cfg(feature = "DynamicLoaded")] #[cfg(windows)]
+use libloading::os::windows::Symbol as RawSymbol;
 
 use libc::*;
 
@@ -18,9 +20,9 @@ macro_rules! WrapAPI {
         pub unsafe fn $xt(&self, $($an: $at),*) { $n($($an),*); }
         #[cfg(feature = "DynamicLoaded")]
         pub unsafe fn $xt(&self, $($an: $at),*) {
-            static mut F: *const fn($($at),*) = 0 as *const fn($($at),*);
+            static mut F: Option<RawSymbol<fn($($at),*)>> = None;
             static ONCE: Once = ONCE_INIT;
-            ONCE.call_once(|| F = self.0.get::<fn($($at),*)>(concat!(stringify!($n), "\0").as_bytes()).unwrap().deref() as _);
+            ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*)>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
             (F.as_ref().unwrap())($($an),*);
         }
     };
@@ -29,9 +31,9 @@ macro_rules! WrapAPI {
         pub unsafe fn $xt(&self, $($an: $at),*) -> $rt { $n($($an),*) }
         #[cfg(feature = "DynamicLoaded")]
         pub unsafe fn $xt(&self, $($an: $at),*) -> $rt {
-            static mut F: *const fn($($at),*) -> $rt = 0 as *const fn($($at),*) -> $rt;
+            static mut F: Option<RawSymbol<fn($($at),*) -> $rt>> = None;
             static ONCE: Once = ONCE_INIT;
-            ONCE.call_once(|| F = self.0.get::<fn($($at),*) -> $rt>(concat!(stringify!($n), "\0").as_bytes()).unwrap().deref() as _);
+            ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*) -> $rt>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
             return (F.as_ref().unwrap())($($an),*);
         }
     };
