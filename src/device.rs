@@ -10,10 +10,11 @@ use VkHandle;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(feature = "Implements")] use VkResultHandler;
+#[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
-pub struct QueueFlags(pub VkQueueFlags);
+pub struct QueueFlags(VkQueueFlags);
 impl QueueFlags
 {
 	/// Empty bits
@@ -27,13 +28,15 @@ impl QueueFlags
 	/// Supports only sparse memory management operations
 	pub const SPARSE_BINDING: Self = QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT);
 	/// Supports graphics operations
-	pub fn graphics(self) -> Self { QueueFlags(self.0 | Self::GRAPHICS.0) }
+	pub fn graphics(self) -> Self { QueueFlags(self.bits() | Self::GRAPHICS.0) }
 	/// Supports compute operations
 	pub fn compute(self) -> Self { QueueFlags(self.0 | Self::COMPUTE.0) }
 	/// Supports transfer operations
 	pub fn transfer(self) -> Self { QueueFlags(self.0 | Self::TRANSFER.0) }
 	/// Supports sparse memory management operatinons
 	pub fn sparse_binding(self) -> Self { QueueFlags(self.0 | Self::SPARSE_BINDING.0) }
+
+	pub fn bits(&self) -> VkQueueFlags { self.0 }
 }
 /// List of queue families
 pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);
@@ -43,7 +46,7 @@ impl QueueFamilies
 	#[allow(non_snake_case)]
 	pub fn find_matching_index(&self, flags: QueueFlags) -> Option<u32>
 	{
-		self.0.iter().position(|&VkQueueFamilyProperties { queueFlags, .. }| (queueFlags & flags.0) != 0).map(|x| x as _)
+		self.0.iter().position(|q| (q.queueFlags & flags.0) != 0).map(|x| x as _)
 	}
 	/// Find a queue family index containing specified bitflags
 	#[allow(non_snake_case)]
@@ -74,7 +77,7 @@ pub struct Queue(VkQueue, Device);
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
 
 #[cfg(feature = "Implements")]
-impl Drop for DeviceCell { fn drop(&mut self) { unsafe { ::vk::vkDestroyDevice(self.0, ::std::ptr::null()) }; } }
+impl Drop for DeviceCell { fn drop(&mut self) { unsafe { Resolver::get().destroy_device(self.0, ::std::ptr::null()) }; } }
 
 impl VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
 impl VkHandle for Queue  { type Handle = VkQueue;  fn native_ptr(&self) -> VkQueue  { self.0 } }
@@ -143,7 +146,7 @@ impl<'p> DeviceBuilder<'p>
 			pEnabledFeatures: &self.features, .. Default::default()
 		};
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkCreateDevice(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| Device(RefCounter::new(DeviceCell(h, self.pdev_ref.parent().clone()))))
 	}
 }
@@ -175,7 +178,7 @@ impl Device
 		if name.is_empty() { None }
 		else
 		{
-			let p = unsafe { vkGetDeviceProcAddr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
+			let p = unsafe { Resolver::get().get_device_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
 			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
 		}
 	}
@@ -183,7 +186,7 @@ impl Device
 	pub fn queue(&self, family_index: u32, queue_index: u32) -> Queue
 	{
 		let mut h = unsafe { ::std::mem::zeroed() };
-		unsafe { vkGetDeviceQueue(self.native_ptr(), family_index, queue_index, &mut h) }
+		unsafe { Resolver::get().get_device_queue(self.native_ptr(), family_index, queue_index, &mut h) }
 		Queue(h, self.clone())
 	}
 	/// Flush `MappedMemoryRange`s
@@ -192,7 +195,7 @@ impl Device
 	pub fn flush_memory_range(&self, ranges: Vec<::MappedMemoryRange>) -> ::Result<()>
 	{
 		let v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
-		unsafe { vkFlushMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
+		unsafe { Resolver::get().flush_mapped_memory_ranges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
 	/// Invalidate `MappedMemoryRange`s
 	/// Invalidating the memory range allows that device writes to the memory ranges
@@ -201,7 +204,7 @@ impl Device
 	pub fn invalidate_memory_range(&self, ranges: Vec<::MappedMemoryRange>) -> ::Result<()>
 	{
 		let v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
-		unsafe { vkInvalidateMappedMemoryRanges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
+		unsafe { Resolver::get().invalidate_mapped_memory_ranges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
 	}
 	/// Update the contents of a descriptor set object
 	pub fn update_descriptor_sets(&self, write: &[::DescriptorSetWriteInfo], copy: &[::DescriptorSetCopyInfo])
@@ -230,7 +233,7 @@ impl Device
 			srcSet: x.src.0, srcBinding: x.src.1, srcArrayElement: x.src.2,
 			dstSet: x.dst.0, dstBinding: x.dst.1, dstArrayElement: x.dst.2, descriptorCount: x.count, .. Default::default()
 		}).collect::<Vec<_>>();
-		unsafe { vkUpdateDescriptorSets(self.native_ptr(), w.len() as _, w.as_ptr(), c.len() as _, c.as_ptr()) };
+		unsafe { Resolver::get().update_descriptor_sets(self.native_ptr(), w.len() as _, w.as_ptr(), c.len() as _, c.as_ptr()) };
 	}
 }
 
@@ -242,9 +245,9 @@ pub trait Waitable
 	fn wait(&self) -> ::Result<()>;
 }
 #[cfg(feature = "Implements")]
-impl Waitable for Device { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkDeviceWaitIdle(self.native_ptr()) }.into_result() } }
+impl Waitable for Device { fn wait(&self) -> ::Result<()> { unsafe { Resolver::get().device_wait_idle(self.native_ptr()) }.into_result() } }
 #[cfg(feature = "Implements")]
-impl Waitable for Queue { fn wait(&self) -> ::Result<()> { unsafe { ::vk::vkQueueWaitIdle(self.0) }.into_result() } }
+impl Waitable for Queue { fn wait(&self) -> ::Result<()> { unsafe { Resolver::get().queue_wait_idle(self.0) }.into_result() } }
 
 /// Sparse Binding operation batch
 pub struct SparseBindingOpBatch<'s>
@@ -297,7 +300,7 @@ impl Queue
 			signalSemaphoreCount: ss.len() as _, pSignalSemaphores: ss.as_ptr(),
 			.. Default::default()
 		}).collect::<Vec<_>>();
-		unsafe { vkQueueBindSparse(self.0, batches.len() as _, batches.as_ptr(), fence.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _)) }
+		unsafe { Resolver::get().queue_bind_sparse(self.0, batches.len() as _, batches.as_ptr(), fence.map(|x| x.0).unwrap_or(VK_NULL_HANDLE as _)) }
 			.into_result()
 	}
 }
@@ -345,7 +348,7 @@ impl Queue
 			signalSemaphoreCount: ss.len() as _, pSignalSemaphores: ss.as_ptr(),
 			.. Default::default()
 		}).collect();
-		unsafe { vkQueueSubmit(self.native_ptr(), batches.len() as _, batches.as_ptr(), fence.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _)) }
+		unsafe { Resolver::get().queue_submit(self.native_ptr(), batches.len() as _, batches.as_ptr(), fence.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _)) }
 			.into_result()
 	}
 }

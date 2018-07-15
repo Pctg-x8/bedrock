@@ -4,9 +4,9 @@ use vk::*;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use ShaderStage;
-#[cfg(feature = "Implements")]
-use std::ptr::null;
+#[cfg(feature = "Implements")] use std::ptr::null;
 #[cfg(feature = "Implements")] use std::mem::zeroed;
+#[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 /// Opaque handle to a descriptor set layout object
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, ::Device);
@@ -115,7 +115,7 @@ impl DescriptorSetLayout
         {
             bindingCount: n_bindings.len() as _, pBindings: n_bindings.as_ptr(), .. Default::default()
         };
-        unsafe { vkCreateDescriptorSetLayout(device.native_ptr(), &cinfo, null(), &mut h) }
+        unsafe { Resolver::get().create_descriptor_set_layout(device.native_ptr(), &cinfo, null(), &mut h) }
             .into_result().map(|_| DescriptorSetLayout(h, device.clone()))
     }
 }
@@ -178,7 +178,7 @@ impl DescriptorPool
             maxSets: max_sets, flags: if allow_free { VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT } else { 0 },
             poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr() as *const _, .. Default::default()
         };
-        unsafe { vkCreateDescriptorPool(device.native_ptr(), &cinfo, null(), &mut h) }
+        unsafe { Resolver::get().create_descriptor_pool(device.native_ptr(), &cinfo, null(), &mut h) }
             .into_result().map(|_| DescriptorPool(h, device.clone()))
     }
     /// Allocate one or more descriptor sets
@@ -196,7 +196,7 @@ impl DescriptorPool
             .. Default::default()
         };
         let mut hs = vec![VK_NULL_HANDLE as _; layout_ptrs.len()];
-        unsafe { vkAllocateDescriptorSets(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }
+        unsafe { Resolver::get().allocate_descriptor_sets(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }
             .into_result().map(|_| hs)
     }
     /// Resets a descriptor pool object
@@ -208,7 +208,7 @@ impl DescriptorPool
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     pub unsafe fn reset(&self) -> ::Result<()>
     {
-        vkResetDescriptorPool(self.1.native_ptr(), self.0, 0).into_result()
+        Resolver::get().reset_descriptor_pool(self.1.native_ptr(), self.0, 0).into_result()
     }
     /// Free one or more descriptor sets
     /// # Failures
@@ -217,7 +217,7 @@ impl DescriptorPool
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     pub fn free(&self, sets: &[VkDescriptorSet]) -> ::Result<()>
     {
-        unsafe { vkFreeDescriptorSets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }.into_result()
+        unsafe { Resolver::get().free_descriptor_sets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }.into_result()
     }
 }
 
@@ -332,7 +332,7 @@ impl DescriptorUpdateTemplate
     {
         unsafe
         {
-            vkUpdateDescriptorSetWithTemplate(self.device().native_ptr(), set, self.native_ptr(),
+            Resolver::get().update_descriptor_set_with_template(self.device().native_ptr(), set, self.native_ptr(),
                 data as *const T as *const _)
         }
     }

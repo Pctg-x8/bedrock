@@ -6,6 +6,7 @@ use {VkHandle, DeviceChild};
 use std::borrow::{Borrow, BorrowMut};
 use std::mem::transmute;
 use ImageLayout;
+#[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 /// Opaque handle to a render pass object
 pub struct RenderPass(VkRenderPass, ::Device);
@@ -250,7 +251,7 @@ impl RenderPassBuilder
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateRenderPass(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_render_pass(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| RenderPass(h, device.clone()))
 	}
 }
@@ -272,7 +273,7 @@ impl Framebuffer
 			width: size.as_ref().0, height: size.as_ref().1, layers, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateFramebuffer(mold.1.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_framebuffer(mold.1.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| Framebuffer(h, mold.1.clone(), attachment_objects.iter().map(|&x| x.clone()).collect(), size.as_ref().clone()))
 	}
 }
@@ -289,6 +290,6 @@ impl RenderPass
 	pub fn optimal_granularity(&self) -> ::Extent2D
 	{
 		let mut e = ::Extent2D(0, 0);
-		unsafe { vkGetRenderAreaGranularity(self.1.native_ptr(), self.0, ::std::mem::transmute(&mut e)) }; e
+		unsafe { Resolver::get().get_render_area_granularity(self.1.native_ptr(), self.0, ::std::mem::transmute(&mut e)) }; e
 	}
 }

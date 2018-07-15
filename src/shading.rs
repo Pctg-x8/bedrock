@@ -6,6 +6,7 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use std::ptr::null;
 use std::marker::PhantomData;
+#[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
@@ -182,7 +183,7 @@ impl ShaderModule
 			codeSize: buffer.as_ref().len() as _, pCode: buffer.as_ref().as_ptr() as *const _, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateShaderModule(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_shader_module(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| ShaderModule(h, device.clone()))
 	}
 	/// Creates a new shader module object from a file
@@ -217,7 +218,7 @@ impl PipelineCache
 			initialDataSize: initial.as_ref().len() as _, pInitialData: initial.as_ref().as_ptr() as *const _, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreatePipelineCache(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_pipeline_cache(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| PipelineCache(h, device.clone()))
 	}
 	/// Get the data store from a pipeline cache
@@ -229,9 +230,9 @@ impl PipelineCache
 	pub fn data(&self) -> ::Result<Vec<u8>>
 	{
 		let mut n = 0;
-		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		unsafe { Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
 		let mut b = Vec::<u8>::with_capacity(n as _); unsafe { b.set_len(n as _) };
-		unsafe { vkGetPipelineCacheData(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _) }.into_result().map(|_| b)
+		unsafe { Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _) }.into_result().map(|_| b)
 	}
 	/// Combine the data stores of pipeline caches into `self`
 	/// # Failures
@@ -242,7 +243,7 @@ impl PipelineCache
 	pub fn merge_into(&self, src: &[&PipelineCache]) -> ::Result<()>
 	{
 		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
-		unsafe { vkMergePipelineCaches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
+		unsafe { Resolver::get().merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -267,7 +268,7 @@ impl PipelineLayout
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreatePipelineLayout(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_pipeline_layout(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
 			.map(|_| PipelineLayout(h, device.clone()))
 	}
 }
@@ -1019,7 +1020,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 			basePipelineIndex: -1, flags, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateGraphicsPipelines(device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+		unsafe { Resolver::get().create_graphics_pipelines(device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
 			1, &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Pipeline(h, device.clone()))
 	}
 }
@@ -1090,7 +1091,7 @@ impl ::Device
 			}
 		}).collect::<Vec<_>>();
 		let mut hs = vec![VK_NULL_HANDLE as VkPipeline; builders.len()];
-		unsafe { vkCreateGraphicsPipelines(self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+		unsafe { Resolver::get().create_graphics_pipelines(self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
 			cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), hs.as_mut_ptr()) }.into_result()
 			.map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
 	}

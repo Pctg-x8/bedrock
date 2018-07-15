@@ -26,10 +26,16 @@ extern crate xcb;
 extern crate wayland_client;
 #[cfg(feature = "VK_KHR_android_surface")]
 extern crate android;
+#[cfg(feature = "DynamicLoaded")]
+extern crate libloading;
 
 #[macro_use]
 pub mod vk;
 use vk::*;
+#[cfg(feature = "Implements")]
+mod vkresolve;
+#[cfg(feature = "Implements")]
+pub use vkresolve::Resolver;
 
 #[cfg(feature = "Implements")] mod fnconv;
 
@@ -257,6 +263,10 @@ mod command; pub use command::*;
 #[cfg(feature = "Presentation")] pub use surface::*;
 #[cfg(feature = "VK_EXT_debug_report")] mod debug;
 #[cfg(feature = "VK_EXT_debug_report")] pub use debug::*;
+
+/// Unsafe Utils: Preserving a typed buffer
+#[cfg(feature = "Implements")]
+pub(self) unsafe fn preserve<T>(n: usize) -> Vec<T> { let mut v = Vec::with_capacity(n); v.set_len(n); return v; }
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);

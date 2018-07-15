@@ -5,6 +5,7 @@
 use vk::*;
 #[cfg(feature = "Implements")] use VkHandle;
 #[cfg(feature = "Implements")] use {VkResultHandler, VkResultBox};
+#[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 /// Opaque handle to a fence object
 pub struct Fence(pub VkFence, ::Device);
@@ -37,7 +38,7 @@ impl Fence
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		let flags = if signaled { ::vk::VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
-		unsafe { vkCreateFence(device.native_ptr(), &VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
+		unsafe { Resolver::get().create_fence(device.native_ptr(), &VkFenceCreateInfo { flags, .. Default::default() }, ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Fence(h, device.clone()))
 	}
 }
@@ -54,7 +55,7 @@ impl Semaphore
 	pub fn new(device: &::Device) -> ::Result<Self>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateSemaphore(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+		unsafe { Resolver::get().create_semaphore(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Semaphore(h, device.clone()))
 	}
 }
@@ -71,7 +72,7 @@ impl Event
 	pub fn new(device: &::Device) -> ::Result<Self>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateEvent(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
+		unsafe { Resolver::get().create_event(device.native_ptr(), &Default::default(), ::std::ptr::null(), &mut h) }
 			.into_result().map(|_| Event(h, device.clone()))
 	}
 }
@@ -90,7 +91,7 @@ impl Fence
 	pub fn wait_multiple(objects: &[&Self], wait_all: bool, timeout: Option<u64>) -> ::Result<bool>
 	{
 		let objects_ptr = objects.iter().map(|x| x.0).collect::<Vec<_>>();
-		let vr = unsafe { ::vk::vkWaitForFences(objects[0].1.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr(), wait_all as _, timeout.unwrap_or(::std::u64::MAX)) };
+		let vr = unsafe { Resolver::get().wait_for_fences(objects[0].1.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr(), wait_all as _, timeout.unwrap_or(::std::u64::MAX)) };
 		match vr { ::vk::VK_SUCCESS => Ok(false), ::vk::VK_TIMEOUT => Ok(true), _ => Err(VkResultBox(vr)) }
 	}
 	/// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
@@ -102,7 +103,7 @@ impl Fence
 	/// * `VK_ERROR_DEVICE_LOST`
 	pub fn wait_timeout(&self, timeout: u64) -> ::Result<bool>
 	{
-		let vr = unsafe { ::vk::vkWaitForFences(self.1.native_ptr(), 1, &self.0, false as _, timeout) };
+		let vr = unsafe { Resolver::get().wait_for_fences(self.1.native_ptr(), 1, &self.0, false as _, timeout) };
 		match vr { ::vk::VK_SUCCESS => Ok(false), ::vk::VK_TIMEOUT => Ok(true), _ => Err(VkResultBox(vr)) }
 	}
 	/// Resets one or more fence objects
@@ -114,7 +115,7 @@ impl Fence
 	pub fn reset_multiple(objects: &[&Self]) -> ::Result<()>
 	{
 		let objects_ptr = objects.iter().map(|x| x.0).collect::<Vec<_>>();
-		unsafe { ::vk::vkResetFences(objects[0].1.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr()) }.into_result()
+		unsafe { Resolver::get().reset_fences(objects[0].1.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr()) }.into_result()
 	}
 	/// Resets a fence object
 	/// # Failures
@@ -122,7 +123,7 @@ impl Fence
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetFences(self.1.native_ptr(), 1, &self.0) }.into_result() }
+	pub fn reset(&self) -> ::Result<()> { unsafe { Resolver::get().reset_fences(self.1.native_ptr(), 1, &self.0) }.into_result() }
 }
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
@@ -134,14 +135,14 @@ impl Event
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn set(&self) -> ::Result<()> { unsafe { ::vk::vkSetEvent(self.1.native_ptr(), self.0) }.into_result() }
+	pub fn set(&self) -> ::Result<()> { unsafe { Resolver::get().set_event(self.1.native_ptr(), self.0) }.into_result() }
 	/// Reset an event to non-signaled state
 	/// # Failures
 	/// On failure, this command returns
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn reset(&self) -> ::Result<()> { unsafe { ::vk::vkResetEvent(self.1.native_ptr(), self.0) }.into_result() }
+	pub fn reset(&self) -> ::Result<()> { unsafe { Resolver::get().reset_event(self.1.native_ptr(), self.0) }.into_result() }
 }
 
 #[cfg(feature = "Implements")]
@@ -161,7 +162,7 @@ impl Status for Fence
 {
 	fn status(&self) -> ::Result<bool>
 	{
-		let vr = unsafe { ::vk::vkGetFenceStatus(self.1.native_ptr(), self.0) };
+		let vr = unsafe { Resolver::get().get_fence_status(self.1.native_ptr(), self.0) };
 		match vr { ::vk::VK_SUCCESS => Ok(true), ::vk::VK_NOT_READY => Ok(false), _ => Err(VkResultBox(vr)) }
 	}
 }
@@ -170,7 +171,7 @@ impl Status for Event
 {
 	fn status(&self) -> ::Result<bool>
 	{
-		let vr = unsafe { ::vk::vkGetEventStatus(self.1.native_ptr(), self.0) };
+		let vr = unsafe { Resolver::get().get_event_status(self.1.native_ptr(), self.0) };
 		match vr { ::vk::VK_EVENT_SET => Ok(true), ::vk::VK_EVENT_RESET => Ok(false), _ => Err(VkResultBox(vr)) }
 	}
 }

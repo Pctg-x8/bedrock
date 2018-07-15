@@ -4,15 +4,13 @@ use vk::*;
 use VkHandle;
 #[cfg(feature = "Implements")] use VkResultHandler;
 use Instance;
+#[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 
 /// Opaque object to a debug report callback object
 pub struct DebugReportCallback(VkDebugReportCallbackEXT, ::Instance, PFN_vkDestroyDebugReportCallbackEXT);
 
 #[cfg(feature = "Implements")]
-impl Drop for DebugReportCallback
-{
-	fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), ::std::ptr::null()); }
-}
+impl Drop for DebugReportCallback { fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), null()); } }
 
 impl VkHandle for DebugReportCallback { type Handle = VkDebugReportCallbackEXT; fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 } }
 

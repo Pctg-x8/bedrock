@@ -5,6 +5,7 @@ use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::null;
+#[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 #[cfg(feature = "VK_KHR_android_surface")] use android::ANativeWindow;
 
@@ -18,12 +19,12 @@ struct SwapchainCell { obj: VkSwapchainKHR, dev: ::Device, #[allow(dead_code)] t
 #[cfg(feature = "Implements")]
 impl Drop for SurfaceCell
 {
-	fn drop(&mut self) { unsafe { vkDestroySurfaceKHR(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_surface_khr(self.1.native_ptr(), self.0, null()); } }
 }
 #[cfg(feature = "Implements")]
 impl Drop for SwapchainCell
 {
-	fn drop(&mut self) { unsafe { vkDestroySwapchainKHR(self.dev.native_ptr(), self.obj, null()); } }
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_swapchain_khr(self.dev.native_ptr(), self.obj, null()); } }
 }
 impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
 impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0.obj } }
@@ -44,7 +45,7 @@ impl Surface
 	{
 		let cinfo = VkXlibSurfaceCreateInfoKHR { dpy: display, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateXlibSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_xlib_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for a X11 window, using the XCB client-side library
@@ -58,7 +59,7 @@ impl Surface
 	{
 		let cinfo = VkXcbSurfaceCreateInfoKHR { connection, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateXcbSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_xcb_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for a Wayland window
@@ -72,7 +73,7 @@ impl Surface
 	{
 		let cinfo = VkWaylandSurfaceCreateInfoKHR { display, surface, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateWaylandSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_wayland_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an Android native window
@@ -86,7 +87,7 @@ impl Surface
 	{
 		let cinfo = VkAndroidSurfaceCreateInfoKHR { window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateAndroidSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_android_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an Win32 native window
@@ -100,7 +101,7 @@ impl Surface
 	{
 		let cinfo = VkWin32SurfaceCreateInfoKHR { hinstance, hwnd, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateWin32SurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_win32_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object for an macOS native window
@@ -114,7 +115,7 @@ impl Surface
 	{
 		let cinfo = VkMacOSSurfaceCreateInfoMVK { pView: view_ptr, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateMacOSSurfaceMVK(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_macos_surface_mvk(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 	/// Create a `Surface` object representing a display plane and mode
@@ -134,7 +135,7 @@ impl Surface
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateDisplayPlaneSurfaceKHR(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_display_plane_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
 			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
 	}
 }
@@ -184,7 +185,7 @@ impl<'d> SwapchainBuilder<'d>
 	pub fn create(&self, device: &::Device) -> ::Result<Swapchain>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateSwapchainKHR(device.native_ptr(), &self.0, null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_swapchain_khr(device.native_ptr(), &self.0, null(), &mut h) }.into_result()
 			.map(|_| Swapchain(RefCounter::new(SwapchainCell
 			{
 				obj: h, dev: device.clone(), target: self.1.clone(), fmt: self.0.imageFormat,
@@ -223,7 +224,7 @@ impl Swapchain
 			CompletionHandler::Device(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
 		};
 		let mut n = 0;
-		unsafe { vkAcquireNextImageKHR(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
+		unsafe { Resolver::get().acquire_next_image_khr(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
 			.into_result().map(|_| n)
 	}
 	/// Queue an image for presentation
@@ -245,7 +246,7 @@ impl Swapchain
 			swapchainCount: 1, pSwapchains: &self.native_ptr(), pImageIndices: &index, pResults: &mut res,
 			.. Default::default()
 		};
-		unsafe { vkQueuePresentKHR(queue.native_ptr(), &pinfo) }.into_result().and_then(|_| res.into_result())
+		unsafe { Resolver::get().queue_present_khr(queue.native_ptr(), &pinfo) }.into_result().and_then(|_| res.into_result())
 	}
 }
 #[cfg(feature = "Implements")]
@@ -271,7 +272,7 @@ impl ::Queue
 			swapchainCount: swapchains.len() as _, pSwapchains: swapchains.as_ptr(), pImageIndices: indices.as_ptr(),
 			pResults: res.as_mut_ptr(), .. Default::default()
 		};
-		unsafe { vkQueuePresentKHR(self.native_ptr(), &pinfo) }.into_result().map(|_| res)
+		unsafe { Resolver::get().queue_present_khr(self.native_ptr(), &pinfo) }.into_result().map(|_| res)
 	}
 }
 
