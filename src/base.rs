@@ -142,7 +142,7 @@ impl InstanceBuilder
 		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
 		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { vkCreateInstance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
+		unsafe { Resolver::get().create_instance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
 		{
 			n: h, vk_create_descriptor_update_template: LazyCell::new(), vk_destroy_descriptor_update_template: LazyCell::new()
 		})))
@@ -394,9 +394,9 @@ impl PhysicalDevice
 	pub fn surface_present_modes(&self, surface: &::Surface) -> ::Result<Vec<::PresentMode>>
 	{
 		let mut n = 0;
-		unsafe { vkGetPhysicalDeviceSurfacePresentModesKHR(self.0, surface.native_ptr(), &mut n, ::std::ptr::null_mut()) }.into_result()?;
+		unsafe { Resolver::get().get_physical_device_surface_present_modes_khr(self.0, surface.native_ptr(), &mut n, ::std::ptr::null_mut()) }.into_result()?;
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { vkGetPhysicalDeviceSurfacePresentModesKHR(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
+		unsafe { Resolver::get().get_physical_device_surface_present_modes_khr(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
 			.map(|_| unsafe { ::std::mem::transmute(v) })
 	}
 }
