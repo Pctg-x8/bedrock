@@ -429,31 +429,6 @@ impl PhysicalDevice {
 	}
 }
 
-#[cfg(feature = "Implements")] #[allow(dead_code)]
-#[inline(always)]
-fn collect_multivalue_failure1<F, T, A>(f: F, a: A) -> ::Result<Vec<T>>
-		where F: Fn(A, *mut u32, *mut T) -> VkResult, A: Copy {
-	unsafe {
-		let mut n = 0;
-		f(a, &mut n, null_mut()).into_result()?;
-		let mut v = ::preserve(n as _);
-		f(a, &mut n, v.as_mut_ptr()).into_result()?;
-		return Ok(v);
-	}
-}
-#[cfg(feature = "Implements")] #[allow(dead_code)]
-#[inline(always)]
-fn collect_multivalue_failure2<F, T, A, B>(f: F, a: A, b: B) -> ::Result<Vec<T>>
-		where F: Fn(A, B, *mut u32, *mut T) -> VkResult, A: Copy, B: Copy {
-	unsafe {
-		let mut n = 0;
-		f(a, b, &mut n, null_mut()).into_result()?;
-		let mut v = ::preserve(n as _);
-		f(a, b, &mut n, v.as_mut_ptr()).into_result()?;
-		return Ok(v);
-	}
-}
-
 /// feature = "VK_KHR_display" functions (required to enable the "Implements" feature)
 #[cfg(all(feature = "VK_KHR_display", feature = "Implements"))]
 impl PhysicalDevice {
@@ -464,7 +439,13 @@ impl PhysicalDevice {
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>> {
-		collect_multivalue_failure1(Resolver::get().get_physical_device_display_properties_khr, self.0)
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, null_mut()).into_result()?;
+			let mut v = ::preserve(n as _);
+			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr()).into_result()?;
+			return Ok(v);
+		}
 	}
 	/// Query the plane properties
 	/// # Failures
@@ -473,7 +454,13 @@ impl PhysicalDevice {
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_plane_properties(&self) -> ::Result<Vec<VkDisplayPlanePropertiesKHR>> {
-		collect_multivalue_failure1(Resolver::get().get_physical_device_display_plane_properties_khr, self.0)
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, null_mut()).into_result()?;
+			let mut v = ::preserve(n as _);
+			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr()).into_result()?;
+			return Ok(v);
+		}
 	}
 	/// Query the list of displays a plane supports
 	/// # Failures
@@ -482,7 +469,13 @@ impl PhysicalDevice {
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_plane_supported_displays(&self, index: u32) -> ::Result<Vec<VkDisplayKHR>> {
-		collect_multivalue_failure1(Resolver::get().get_display_plane_supported_displays_khr, self.0)
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, null_mut()).into_result()?;
+			let mut v = ::preserve(n as _);
+			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr()).into_result()?;
+			return Ok(v);
+		}
 	}
 	/// Query the set of mode properties supported by the display
 	/// # Failures
@@ -491,7 +484,13 @@ impl PhysicalDevice {
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> ::Result<Vec<VkDisplayModePropertiesKHR>> {
-		collect_multivalue_failure2(Resolver::get().get_display_mode_properties_khr, self.0, display)
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, null_mut()).into_result()?;
+			let mut v = ::preserve(n as _);
+			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr()).into_result()?;
+			return Ok(v);
+		}
 	}
 	/// Create a display mode
 	/// # Failures
