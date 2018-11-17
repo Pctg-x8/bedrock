@@ -330,6 +330,9 @@ impl Resolver {
     WrapAPI!(create_win32_surface_khr = vkCreateWin32SurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_win32_surface")]
     WrapAPI!(get_physical_device_win32_presentation_support_khr = vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32);
+
+    #[cfg(feature = "VK_MVK_macos_surface")]
+    WrapAPI!(create_macos_surface_mvk = vkCreateMacOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurfac:e *mut VkSurfaceKHR) -> VkResult);
 }
 
 #[cfg(feature = "VK_KHR_display")]
