@@ -11,7 +11,7 @@ use VkHandle;
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
-#[cfg(    feature = "Multithreaded"))] use std::sync::RwLock as InternallyMutable;
+#[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;
 #[cfg(not(feature = "Multithreaded"))] use std::cell::RefCell as InternallyMutable;
 
 struct LazyCell<T>(InternallyMutable<Option<T>>);
