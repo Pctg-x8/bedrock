@@ -11,9 +11,10 @@ use VkHandle;
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
+#[cfg(    feature = "Multithreaded"))] use std::sync::RwLock as InternallyMutable;
+#[cfg(not(feature = "Multithreaded"))] use std::cell::RefCell as InternallyMutable;
 
-#[cfg(not(feature = "Multithreaded"))] struct LazyCell<T>(::std::cell::RefCell<Option<T>>);
-#[cfg(feature = "Multithreaded")] struct LazyCell<T>(::std::sync::RwLock<Option<T>>);
+struct LazyCell<T>(InternallyMutable<Option<T>>);
 impl<T> LazyCell<T>
 {
 	pub fn new() -> Self { LazyCell(From::from(None)) }
@@ -138,8 +139,9 @@ impl InstanceBuilder
 		let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
 		let extensions: Vec<_> = self.extensions.iter().map(|x| x.as_ptr()).collect();
 		self.appinfo.pApplicationName = self.app_name.as_ptr(); self.appinfo.pEngineName = self.engine_name.as_ptr();
-		self.cinfo.enabledLayerCount = layers.len() as _; self.cinfo.ppEnabledLayerNames = layers.as_ptr();
-		self.cinfo.enabledExtensionCount = extensions.len() as _; self.cinfo.ppEnabledExtensionNames = extensions.as_ptr();
+		self.cinfo.enabledLayerCount = layers.len() as _; self.cinfo.enabledExtensionCount = extensions.len() as _;
+		self.cinfo.ppEnabledLayerNames = if layers.is_empty() { 0 as _ } else { layers.as_ptr() };
+		self.cinfo.ppEnabledExtensionNames = if extensions.is_empty() { 0 as _ } else { extensions.as_ptr() };
 		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { Resolver::get().create_instance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
