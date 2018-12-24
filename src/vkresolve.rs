@@ -312,6 +312,8 @@ impl Resolver {
     WrapAPI!(queue_present_khr = vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult);
 }
 
+#[cfg(feature = "VK_KHR_xlib_surface")] use x11::xlib::{Display, VisualID};
+
 impl Resolver {
     #[cfg(feature = "VK_KHR_xlib_surface")]
     WrapAPI!(create_xlib_surface_khr = vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
