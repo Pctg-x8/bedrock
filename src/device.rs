@@ -189,14 +189,6 @@ impl Device
 		unsafe { Resolver::get().get_device_queue(self.native_ptr(), family_index, queue_index, &mut h) }
 		Queue(h, self.clone())
 	}
-	/// Flush `MappedMemoryRange`s
-	/// Flushing the memory range allows that host writes to the memory ranges can
-	/// be made available to device access
-	pub fn flush_memory_range(&self, ranges: Vec<::MappedMemoryRange>) -> ::Result<()>
-	{
-		let v = ranges.into_iter().map(|r| r.manual_flush()).collect::<Vec<_>>();
-		unsafe { Resolver::get().flush_mapped_memory_ranges(self.native_ptr(), v.len() as _, v.as_ptr()) }.into_result()
-	}
 	/// Invalidate `MappedMemoryRange`s
 	/// Invalidating the memory range allows that device writes to the memory ranges
 	/// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
