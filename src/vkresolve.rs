@@ -313,6 +313,7 @@ impl Resolver {
 }
 
 #[cfg(feature = "VK_KHR_xlib_surface")] use x11::xlib::{Display, VisualID};
+#[cfg(feature = "VK_KHR_xcb_surface")] use xcb::ffi::{xcb_connection_t, xcb_visualid_t};
 
 impl Resolver {
     #[cfg(feature = "VK_KHR_xlib_surface")]
