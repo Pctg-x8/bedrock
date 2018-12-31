@@ -49,9 +49,6 @@ use std::cell::RefCell;
 thread_local!(static STATIC_RESOLVER_INITIALIZED: RefCell<bool> = RefCell::new(false));
 static STATIC_RESOLVER: AtomicPtr<Resolver> = AtomicPtr::new(0 as *mut _);
 
-#[cfg(target_os="macos")] const LIBNAME: &'static str = "libvulkan.dylib";
-#[cfg(not(target_os="macos"))] const LIBNAME: &'static str = "libvulkan.so";
-
 pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
 impl Resolver {
     pub fn get<'a>() -> &'a Self {
@@ -65,6 +62,8 @@ impl Resolver {
 
     #[cfg(feature = "DynamicLoaded")]
     fn new() -> Self {
+        #[cfg(target_os="macos")] const LIBNAME: &'static str = "./libvulkan.dylib";
+        #[cfg(not(target_os="macos"))] const LIBNAME: &'static str = "libvulkan.so";
         Library::new(LIBNAME).map(Resolver).expect("Unable to open libvulkan.so")
     }
     #[cfg(not(feature = "DynamicLoaded"))]
