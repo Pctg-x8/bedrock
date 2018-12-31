@@ -62,9 +62,12 @@ impl Resolver {
 
     #[cfg(feature = "DynamicLoaded")]
     fn new() -> Self {
-        #[cfg(target_os="macos")] const LIBNAME: &'static str = "./libvulkan.dylib";
-        #[cfg(not(target_os="macos"))] const LIBNAME: &'static str = "libvulkan.so";
-        Library::new(LIBNAME).map(Resolver).expect("Unable to open libvulkan.so")
+        #[cfg(target_os="macos")] const fn libname() -> String {
+            let mut exepath = std::env::current_exe(); exepath.pop();
+            exepath.push("libvulkan.dylib"); return exepath;
+        }
+        #[cfg(not(target_os="macos"))] const fn libname() -> &'static str { "libvulkan.so" }
+        Library::new(&libname()).map(Resolver).expect("Unable to open libvulkan.so")
     }
     #[cfg(not(feature = "DynamicLoaded"))]
     fn new() -> Self { Resolver() }
