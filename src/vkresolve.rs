@@ -62,8 +62,8 @@ impl Resolver {
 
     #[cfg(feature = "DynamicLoaded")]
     fn new() -> Self {
-        #[cfg(target_os="macos")] fn libname() -> String {
-            let mut exepath = std::env::current_exe(); exepath.pop();
+        #[cfg(target_os="macos")] fn libname() -> std::path::PathBuf {
+            let mut exepath = std::env::current_exe().unwrap(); exepath.pop();
             exepath.push("libvulkan.dylib"); return exepath;
         }
         #[cfg(not(target_os="macos"))] fn libname() -> &'static str { "libvulkan.so" }
