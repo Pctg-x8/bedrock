@@ -144,10 +144,10 @@ impl InstanceBuilder
 		self.cinfo.ppEnabledExtensionNames = if extensions.is_empty() { 0 as _ } else { extensions.as_ptr() };
 		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_instance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
+		Ok(unsafe { Resolver::get().create_instance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
 		{
 			n: h, vk_create_descriptor_update_template: LazyCell::new(), vk_destroy_descriptor_update_template: LazyCell::new()
-		})))
+		}))).unwrap())
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
