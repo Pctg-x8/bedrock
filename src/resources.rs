@@ -964,7 +964,7 @@ impl ImageSubresourceRange
 	}
 	/// Specify depth subresource
 	pub fn depth<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
-		Levels: ::AnalogNumRange<u32>, layers: ::AnalogNumRange<u32>
+		Levels: ::AnalogNumRange<u32>, Layers: ::AnalogNumRange<u32>
 	{
 		ImageSubresourceRange(VkImageSubresourceRange
 		{
@@ -975,7 +975,7 @@ impl ImageSubresourceRange
 	}
 	/// Specify depth and stencil subresource
 	pub fn depth_stencil<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
-		Levels: ::AnalogNumRange<u32>, layers: ::AnalogNumRange<u32>
+		Levels: ::AnalogNumRange<u32>, Layers: ::AnalogNumRange<u32>
 	{
 		ImageSubresourceRange(VkImageSubresourceRange
 		{
