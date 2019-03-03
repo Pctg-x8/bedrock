@@ -939,6 +939,10 @@ impl Borrow<VkImageSubresourceRange> for ImageSubresourceRange
 {
 	fn borrow(&self) -> &VkImageSubresourceRange { unsafe { transmute(self) } }
 }
+impl From<VkImageSubresourceRange> for ImageSubresourceRange
+{
+	fn from(v: VkImageSubresourceRange) -> Self { ImageSubresourceRange(v) } 
+}
 impl ImageSubresourceRange
 {
 	/// Specify color subresource
@@ -959,6 +963,28 @@ impl ImageSubresourceRange
 		ImageSubresourceRange(VkImageSubresourceRange
 		{
 			aspectMask: AspectMask::STENCIL.0,
+			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
+			levelCount: mip_levels.count(), layerCount: array_layers.count()
+		})
+	}
+	/// Specify depth subresource
+	pub fn depth<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
+		Levels: ::AnalogNumRange<u32>, layers: ::AnalogNumRange<u32>
+	{
+		ImageSubresourceRange(VkImageSubresourceRange
+		{
+			aspectMask: AspectMask::DEPTH.0,
+			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
+			levelCount: mip_levels.count(), layerCount: array_layers.count()
+		})
+	}
+	/// Specify depth and stencil subresource
+	pub fn depth_stencil<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self where
+		Levels: ::AnalogNumRange<u32>, layers: ::AnalogNumRange<u32>
+	{
+		ImageSubresourceRange(VkImageSubresourceRange
+		{
+			aspectMask: AspectMask::DEPTH.stencil().0,
 			baseMipLevel: mip_levels.begin(), baseArrayLayer: array_layers.begin(),
 			levelCount: mip_levels.count(), layerCount: array_layers.count()
 		})
