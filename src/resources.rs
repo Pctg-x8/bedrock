@@ -125,6 +125,7 @@ use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
 use std::borrow::Borrow; use std::mem::transmute;
+use std::marker::PhantomData;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 struct BufferCell(VkBuffer, ::Device);
@@ -610,7 +611,7 @@ impl DeviceMemory
 	{
 		let mut p = ::std::ptr::null_mut();
 		unsafe { Resolver::get().map_memory(self.device().native_ptr(), self.native_ptr(), range.start as _, (range.end - range.start) as _,
-			0, &mut p) }.into_result().map(|_| MappedMemoryRange(self, p as *mut _, range.start as _ .. range.end as _))
+			0, &mut p) }.into_result().map(|_| MappedMemoryRange(range, p as *mut _, PhantomData))
 	}
 	/// Unmap a previously mapped memory object
 	/// # Safety
@@ -742,7 +743,7 @@ impl ImageSize for ::Extent3D
 }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m>(&'m DeviceMemory, *mut u8, ::std::ops::Range<VkDeviceSize>);
+pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, PhantomData<&'m DeviceMemory>);
 impl<'m> MappedMemoryRange<'m>
 {
 	/// Get a reference in mapped memory with byte offsets
@@ -787,23 +788,17 @@ impl<'m> MappedMemoryRange<'m>
 	{
 		*self.get_mut(offset) = src.clone();
 	}
-	/// Flushes the memory range manually. Returns a structure for flush operation
-	pub fn manual_flush(self) -> VkMappedMemoryRange
-	{
-		let (m, r) = (self.0 .0 .0, self.2.clone()); ::std::mem::forget(self);
-		VkMappedMemoryRange
-		{
-			offset: r.start, size: r.end - r.start, memory: m, .. Default::default()
-		}
-	}
 }
 #[cfg(feature = "Implements")]
-impl<'m> Drop for MappedMemoryRange<'m>
-{
-	fn drop(&mut self)
-	{
-		unsafe { Resolver::get().flush_mapped_memory_ranges(self.0 .0 .1.native_ptr(), 1, &::std::mem::replace(self, resv()).manual_flush()) }
-			.into_result().unwrap();
+impl Device {
+	/// Flush `MappedMemoryRange`s
+	/// Flushing the memory range allows that host writes to the memory ranges can
+	/// be made available to device access
+	/// # Safety
+	/// Memory object in `ranges` must be currently host mapped
+	pub unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> ::Result<()> {
+		Resolver::get().flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
+			.into_result()
 	}
 }
 

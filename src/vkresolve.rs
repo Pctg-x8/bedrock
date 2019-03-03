@@ -62,7 +62,12 @@ impl Resolver {
 
     #[cfg(feature = "DynamicLoaded")]
     fn new() -> Self {
-        Library::new("libvulkan.so").map(Resolver).expect("Unable to open libvulkan.so")
+        #[cfg(target_os="macos")] fn libname() -> std::path::PathBuf {
+            let mut exepath = std::env::current_exe().unwrap(); exepath.pop();
+            exepath.push("libvulkan.dylib"); return exepath;
+        }
+        #[cfg(not(target_os="macos"))] fn libname() -> &'static str { "libvulkan.so" }
+        Library::new(&libname()).map(Resolver).expect("Unable to open libvulkan.so")
     }
     #[cfg(not(feature = "DynamicLoaded"))]
     fn new() -> Self { Resolver() }
@@ -311,6 +316,9 @@ impl Resolver {
     WrapAPI!(acquire_next_image_khr = vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult);
     WrapAPI!(queue_present_khr = vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult);
 }
+
+#[cfg(feature = "VK_KHR_xlib_surface")] use x11::xlib::{Display, VisualID};
+#[cfg(feature = "VK_KHR_xcb_surface")] use xcb::ffi::{xcb_connection_t, xcb_visualid_t};
 
 impl Resolver {
     #[cfg(feature = "VK_KHR_xlib_surface")]
