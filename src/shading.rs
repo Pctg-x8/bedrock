@@ -825,6 +825,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		}
 		self
 	}
+	/// Clears per-target attachment blending state
+	pub fn clear_attachment_blends(&mut self) -> &mut Self { self.color_blending = None; self }
 	/// Array of four values used as the R, G, B, and A components of the blend constant that are used in blending, depending on the blend factor.
 	/// Specifying `None` means that the `blendConstants` parameter is a dynamic state
 	pub fn blend_constants(&mut self, values: Option<[f32; 4]>) -> &mut Self
