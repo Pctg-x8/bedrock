@@ -235,7 +235,7 @@ impl Swapchain
 		let (semaphore, fence) = match completion
 		{
 			CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
-			CompletionHandler::Device(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
+			CompletionHandler::Queue(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
 		};
 		let mut n = 0;
 		unsafe { Resolver::get().acquire_next_image_khr(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
