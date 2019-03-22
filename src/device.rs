@@ -36,7 +36,7 @@ impl QueueFlags
 	/// Supports sparse memory management operatinons
 	pub fn sparse_binding(self) -> Self { QueueFlags(self.0 | Self::SPARSE_BINDING.0) }
 
-	pub fn bits(&self) -> VkQueueFlags { self.0 }
+	pub fn bits(self) -> VkQueueFlags { self.0 }
 }
 /// List of queue families
 pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);
@@ -95,28 +95,28 @@ impl<'p> DeviceBuilder<'p>
 	{
 		DeviceBuilder { pdev_ref: pdev, queue_infos: Vec::new(), layers: Vec::new(), extensions: Vec::new(), features: VkPhysicalDeviceFeatures::default() }
 	}
-	pub fn add_layer(&mut self, name: &str) -> &mut Self { self.layers.push(CString::new(name).unwrap()); return self; }
+	pub fn add_layer(&mut self, name: &str) -> &mut Self { self.layers.push(CString::new(name).unwrap()); self }
 	pub fn add_extension(&mut self, name: &str) -> &mut Self
 	{
-		self.extensions.push(CString::new(name).unwrap()); return self;
+		self.extensions.push(CString::new(name).unwrap()); self
 	}
 	pub fn add_extension_zerotermed(&mut self, name: &str) -> &mut Self
 	{
 		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(name.as_ptr() as *const _) }.to_owned());
-		return self;
+		self
 	}
 	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self
 	{
-		for l in layers { self.add_layer(l); } return self;
+		for l in layers { self.add_layer(l); } self
 	}
 	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(&mut self, extensions: Extensions) -> &mut Self
 	{
-		for e in extensions { self.add_extension(e); } return self;
+		for e in extensions { self.add_extension(e); } self
 	}
-	pub fn add_queue(&mut self, info: DeviceQueueCreateInfo) -> &mut Self { self.queue_infos.push(info); return self; }
+	pub fn add_queue(&mut self, info: DeviceQueueCreateInfo) -> &mut Self { self.queue_infos.push(info); self }
 	pub fn add_queues<Queues: IntoIterator<Item = DeviceQueueCreateInfo>>(&mut self, queues: Queues) -> &mut Self
 	{
-		for q in queues { self.add_queue(q); } return self;
+		for q in queues { self.add_queue(q); } self
 	}
 	/// [feature = "Implements"] Create a new device instance
 	/// # Failures
@@ -155,11 +155,11 @@ impl<'p> DeviceBuilder<'p>
 {
 	pub fn enable_fill_mode_nonsolid(&mut self) -> &mut Self
 	{
-		self.features.fillModeNonSolid = true as _; return self;
+		self.features.fillModeNonSolid = true as _; self
 	}
 	pub fn enable_sample_rate_shading(&mut self) -> &mut Self
 	{
-		self.features.sampleRateShading = true as _; return self;
+		self.features.sampleRateShading = true as _; self
 	}
 }
 impl Device

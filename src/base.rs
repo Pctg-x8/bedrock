@@ -555,26 +555,32 @@ impl MemoryProperties {
 }
 /// Iterating each elements of memory types
 pub struct MemoryTypeIter<'d>(&'d VkPhysicalDeviceMemoryProperties, usize);
-impl<'d> Iterator for MemoryTypeIter<'d> {
+impl<'d> Iterator for MemoryTypeIter<'d>
+{
 	type Item = &'d VkMemoryType;
-	fn next(&mut self) -> Option<Self::Item> {
-		if self.1 < self.0.memoryTypeCount as usize {
+	fn next(&mut self) -> Option<Self::Item>
+	{
+		if self.1 < self.0.memoryTypeCount as usize
+		{
 			let r = &self.0.memoryTypes[self.1]; self.1 += 1;
-			return Some(r);
+			Some(r)
 		}
-		else { return None; }
+		else { None }
 	}
 }
 /// Iterating each elements of memory heaps
 pub struct MemoryHeapIter<'d>(&'d VkPhysicalDeviceMemoryProperties, usize);
-impl<'d> Iterator for MemoryHeapIter<'d> {
+impl<'d> Iterator for MemoryHeapIter<'d>
+{
 	type Item = &'d VkMemoryHeap;
-	fn next(&mut self) -> Option<Self::Item> {
-		if self.1 < self.0.memoryHeapCount as usize {
+	fn next(&mut self) -> Option<Self::Item>
+	{
+		if self.1 < self.0.memoryHeapCount as usize
+		{
 			let r = &self.0.memoryHeaps[self.1]; self.1 += 1;
-			return Some(r);
+			Some(r)
 		}
-		else { return None; }
+		else { None }
 	}
 }
 
@@ -610,5 +616,5 @@ impl MemoryPropertyFlags {
 	/// The memory type only allows device access to the memory.
 	pub fn lazily_allocated(mut self) -> Self { self.0 |= Self::LAZILY_ALLOCATED.0; self }
 
-	pub fn bits(&self) -> VkMemoryPropertyFlags { self.0 }
+	pub fn bits(self) -> VkMemoryPropertyFlags { self.0 }
 }

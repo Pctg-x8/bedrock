@@ -4,7 +4,6 @@ use vk::*;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use std::borrow::{Borrow, BorrowMut};
-use std::mem::transmute;
 use ImageLayout;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
 
@@ -44,7 +43,7 @@ impl AttachmentDescription
 	pub fn fin_layout(mut self, layout: ImageLayout) -> Self { self.0.finalLayout = layout as _; self }
 	pub fn may_alias_attachment(mut self) -> Self { self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
 	pub fn no_alias_attachment(mut self) -> Self { self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
-	pub fn samples(mut self, count: u32) -> Self { self.0.samples = count; return self; }
+	pub fn samples(mut self, count: u32) -> Self { self.0.samples = count; self }
 
 	pub fn mod_format(&mut self, fmt: VkFormat) -> &mut Self { self.0.format = fmt; self }
 	pub fn mod_load_op(&mut self, op: LoadOp) -> &mut Self { self.0.loadOp = op as _; self }
@@ -55,15 +54,15 @@ impl AttachmentDescription
 	pub fn mod_fin_layout(&mut self, layout: ImageLayout) -> &mut Self { self.0.finalLayout = layout as _; self }
 	pub fn mod_may_alias_attachment(&mut self) -> &mut Self { self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
 	pub fn mod_no_alias_attachment(&mut self) -> &mut Self { self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
-	pub fn mod_samples(&mut self, count: u32) -> &mut Self { self.0.samples = count; return self; }
+	pub fn mod_samples(&mut self, count: u32) -> &mut Self { self.0.samples = count; self }
 }
 impl Borrow<AttachmentDescription> for VkAttachmentDescription
 {
-	fn borrow(&self) -> &AttachmentDescription { unsafe { transmute(self) } }
+	fn borrow(&self) -> &AttachmentDescription { unsafe { &*(self as *const Self as *const _) } }
 }
 impl BorrowMut<AttachmentDescription> for VkAttachmentDescription
 {
-	fn borrow_mut(&mut self) -> &mut AttachmentDescription { unsafe { transmute(self) } }
+	fn borrow_mut(&mut self) -> &mut AttachmentDescription { unsafe { &mut *(self as *mut Self as *mut _) } }
 }
 #[repr(C)] #[derive(Debug, Clone, Copy, PartialEq, Eq)] pub enum LoadOp
 {
@@ -132,6 +131,7 @@ pub struct RenderPassBuilder
 }
 impl RenderPassBuilder
 {
+	#[allow(clippy::new_without_default)]
 	pub fn new() -> Self { RenderPassBuilder { attachments: Vec::new(), subpasses: Vec::new(), dependencies: Vec::new() } }
 	pub fn add_attachment(&mut self, desc: AttachmentDescription) -> &mut Self { self.attachments.push(desc.0); self }
 	pub fn add_subpass(&mut self, desc: SubpassDescription) -> &mut Self { self.subpasses.push(desc); self }
@@ -155,6 +155,7 @@ impl RenderPassBuilder
 }
 impl SubpassDescription
 {
+	#[allow(clippy::new_without_default)]
 	pub fn new() -> Self
 	{
 		SubpassDescription

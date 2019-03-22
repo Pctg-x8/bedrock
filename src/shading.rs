@@ -36,21 +36,21 @@ impl ShaderStage
 	pub const TESSELLATION: Self = ShaderStage(Self::TESSELLATION_CONTROL.0 | Self::TESSELLATION_EVALUATION.0);
 
 	/// The vertex stage
-	pub fn vertex(&self) -> Self { ShaderStage(self.0 | Self::VERTEX.0) }
+	pub fn vertex(self) -> Self { ShaderStage(self.0 | Self::VERTEX.0) }
 	/// The tessellation control stage
-	pub fn tessellation_control(&self) -> Self { ShaderStage(self.0 | Self::TESSELLATION_CONTROL.0) }
+	pub fn tessellation_control(self) -> Self { ShaderStage(self.0 | Self::TESSELLATION_CONTROL.0) }
 	/// The tessellation evaluation stage
-	pub fn tessellation_evaluation(&self) -> Self { ShaderStage(self.0 | Self::TESSELLATION_EVALUATION.0) }
+	pub fn tessellation_evaluation(self) -> Self { ShaderStage(self.0 | Self::TESSELLATION_EVALUATION.0) }
 	/// The geometry stage
-	pub fn geometry(&self) -> Self { ShaderStage(self.0 | Self::GEOMETRY.0) }
+	pub fn geometry(self) -> Self { ShaderStage(self.0 | Self::GEOMETRY.0) }
 	/// The fragment stage
-	pub fn fragment(&self) -> Self { ShaderStage(self.0 | Self::FRAGMENT.0) }
+	pub fn fragment(self) -> Self { ShaderStage(self.0 | Self::FRAGMENT.0) }
 	/// The compute stage
-	pub fn compute(&self) -> Self { ShaderStage(self.0 | Self::COMPUTE.0) }
+	pub fn compute(self) -> Self { ShaderStage(self.0 | Self::COMPUTE.0) }
 	/// A combination of bits used as shorthand to specify all graphics stages defined above (excluding the compute stage)
-	pub fn all_graphics(&self) -> Self { ShaderStage(self.0 | Self::ALL_GRAPHICS.0) }
+	pub fn all_graphics(self) -> Self { ShaderStage(self.0 | Self::ALL_GRAPHICS.0) }
 	/// A combination of tessellation control stage and tessellation evaluation stage
-	pub fn tessellation(&self) -> Self { ShaderStage(self.0 | Self::TESSELLATION.0) }
+	pub fn tessellation(self) -> Self { ShaderStage(self.0 | Self::TESSELLATION.0) }
 }
 
 /// Stencil comparison function
@@ -277,8 +277,8 @@ impl PipelineLayout
 pub enum SwitchOrDynamicState<T> { Disabled, Dynamic, Static(T) }
 impl<T> SwitchOrDynamicState<T>
 {
-	fn is_dynamic(&self) -> bool { match self { &SwitchOrDynamicState::Dynamic => true, _ => false } }
-	fn is_enabled(&self) -> bool { match self { &SwitchOrDynamicState::Disabled => false, _ => true } }
+	fn is_dynamic(&self) -> bool { match self { SwitchOrDynamicState::Dynamic => true, _ => false } }
+	fn is_enabled(&self) -> bool { match self { SwitchOrDynamicState::Disabled => false, _ => true } }
 }
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
@@ -338,9 +338,18 @@ pub struct GraphicsPipelineBuilder<'d>
 }
 impl<'d, T> DynamicArrayState<'d, T>
 {
-	fn count(&self) -> usize { match self { &DynamicArrayState::Dynamic(s) => s, &DynamicArrayState::Static(ref v) => v.len() } }
-	fn as_ptr(&self) -> *const T { match self { &DynamicArrayState::Static(ref v) => v.as_ptr(), _ => ::std::ptr::null() } }
-	fn is_dynamic(&self) -> bool { match self { &DynamicArrayState::Dynamic(_) => true, _ => false } }
+	fn count(&self) -> usize
+	{
+		match self { DynamicArrayState::Dynamic(s) => *s, DynamicArrayState::Static(ref v) => v.len() }
+	}
+	fn as_ptr(&self) -> *const T
+	{
+		match self { DynamicArrayState::Static(ref v) => v.as_ptr(), _ => ::std::ptr::null() }
+	}
+	fn is_dynamic(&self) -> bool
+	{
+		match self { DynamicArrayState::Dynamic(_) => true, _ => false }
+	}
 }
 
 /// PipelineStateDesc: Shader Stages and Input descriptions
@@ -376,21 +385,21 @@ impl<'d> VertexProcessingStages<'d>
 	/// Update the vertex shader
 	pub fn vertex_shader(&mut self, vsh: PipelineShader<'d>) -> &mut Self
 	{
-		self.vertex = vsh; return self;
+		self.vertex = vsh; self
 	}
 	/// Get the vertex shader for modifying.
 	pub fn mod_vertex_shader(&mut self) -> &mut PipelineShader<'d> { &mut self.vertex }
 	/// Update the geometry shader, or disable geometry shader stage
 	pub fn geometry_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, gsh: S) -> &mut Self
 	{
-		self.geometry = gsh.into(); return self;
+		self.geometry = gsh.into(); self
 	}
 	/// Get the geometry shader for modifying.
 	pub fn mod_geometry_shader(&mut self) -> Option<&mut PipelineShader<'d>> { Option::as_mut(&mut self.geometry) }
 	/// Update the fragment shader, or disable fragment shader stage
 	pub fn fragment_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, fsh: S) -> &mut Self
 	{
-		self.fragment = fsh.into(); return self;
+		self.fragment = fsh.into(); self
 	}
 	/// Get the fragment shader for modifying.
 	pub fn mod_fragment_shader(&mut self) -> Option<&mut PipelineShader<'d>> { Option::as_mut(&mut self.fragment) }
@@ -398,13 +407,13 @@ impl<'d> VertexProcessingStages<'d>
 	pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self
 	{
 		self.vi.vertexBindingDescriptionCount = vbind.len() as _;
-		self.vi.pVertexBindingDescriptions = vbind.as_ptr(); return self;
+		self.vi.pVertexBindingDescriptions = vbind.as_ptr(); self
 	}
 	/// Update the vertex attribute description
 	pub fn vertex_attributes(&mut self, vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self
 	{
 		self.vi.vertexAttributeDescriptionCount = vattr.len() as _;
-		self.vi.pVertexAttributeDescriptions = vattr.as_ptr(); return self;
+		self.vi.pVertexAttributeDescriptions = vattr.as_ptr(); self
 	}
 	/// Update the vertex input description
 	pub fn vertex_input(&mut self, vbind: &'d [VkVertexInputBindingDescription],
@@ -427,18 +436,19 @@ impl<'d> VertexProcessingStages<'d>
 	/// Primitive restart is not allowed for "list" topologies.
 	pub fn enable_primitive_restart(&mut self, w: bool) -> &mut Self
 	{
-		self.ia.primitiveRestartEnable = w as _; return self;
+		self.ia.primitiveRestartEnable = w as _; self
 	}
 	/// Update the input primitive topology
 	pub fn primitive_topology(&mut self, topo: VkPrimitiveTopology) -> &mut Self
 	{
-		self.ia.topology = topo; return self;
+		self.ia.topology = topo; self
 	}
 }
 /// PipelineStateDesc: Multisample State
 #[derive(Clone)] pub struct MultisampleState(VkPipelineMultisampleStateCreateInfo);
 impl MultisampleState
 {
+	#[allow(clippy::new_without_default)]
 	pub fn new() -> Self
 	{
 		MultisampleState(VkPipelineMultisampleStateCreateInfo
@@ -449,19 +459,21 @@ impl MultisampleState
 	/// Specifies the number of samples per pixel used in rasterization. default=1
 	pub fn rasterization_samples(&mut self, samples: usize) -> &mut Self
 	{
-		self.0.rasterizationSamples = samples as _; return self;
+		self.0.rasterizationSamples = samples as _; self
 	}
 	/// A bitmask of static coverage information that is ANDed with the coverage information generated
 	/// during rasterization, as described in [Sample Mask](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-samplemask).
 	pub fn sample_mask(&mut self, mask: &[VkSampleMask]) -> &mut Self
 	{
-		if mask.is_empty() { self.0.pSampleMask = null(); }
-		else
+		if mask.is_empty()
 		{
+			self.0.pSampleMask = null();
+		}
+		else {
 			assert_eq!(mask.len(), (self.0.rasterizationSamples as usize + 31) / 32);
 			self.0.pSampleMask = mask.as_ptr();
 		}
-		return self;
+		self
 	}
 	/// Specifies a minimum fraction of sample shading(must be in the range [0, 1]).
 	/// Pass a `None` to disable [Sample Shading](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#primsrast-sampleshading).
@@ -474,17 +486,17 @@ impl MultisampleState
 				"Invalid usage: VkPipelineMultisampleStateCreateInfo::minSampleShading must be in the range [0, 1]");
 			self.0.minSampleShading = m as _;
 		}
-		return self;
+		self
 	}
 	/// Controls whether a temporary coverage value is generated based on the alpha component of the fragment's
 	/// first color output as specified in the [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg) section.
 	pub fn enable_alpha_to_coverage(&mut self, w: bool) -> &mut Self
 	{
-		self.0.alphaToCoverageEnable = w as _; return self;
+		self.0.alphaToCoverageEnable = w as _; self
 	}
 	/// Controls whether the alpha component of the fragment's first color output is replaced with one as described in
 	/// [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg).
-	pub fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self { self.0.alphaToOneEnable = w as _; return self; }
+	pub fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self { self.0.alphaToOneEnable = w as _; self }
 }
 
 impl<'d> GraphicsPipelineBuilder<'d>
@@ -507,7 +519,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Set the vertex processing stages in this pipeline
 	pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d>) -> &mut Self
 	{
-		self.vp = Some(vp); return self;
+		self.vp = Some(vp); self
 	}
 	/// Modify the vertex processing stages in this pipeline
 	pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d> { self.vp.as_mut().unwrap() }
@@ -606,7 +618,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 {
 	pub fn multisample_state(&mut self, state: Option<&'d MultisampleState>) -> &mut Self
 	{
-		self.ms_state = state; return self;
+		self.ms_state = state; self
 	}
 }
 
@@ -638,31 +650,21 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Controls whether stencil testing is enabled
 	pub fn stencil_test_enable(&mut self, enable: bool) -> &mut Self { self.dss_ref().stencilTestEnable = enable as _; self }
 	/// Control the parameter of the stencil test
-	pub fn stencil_control_front(&mut self, compare_op: CompareOp, reference: u32, compare_mask: u32,
-		fail_op: StencilOp, pass_op: StencilOp, depth_fail_op: StencilOp, write_mask: u32) -> &mut Self
+	pub fn stencil_control_front(&mut self, state: VkStencilOpState) -> &mut Self
 	{
 		self.dynamic_state_flags.stencil_compare_mask = false;
 		self.dynamic_state_flags.stencil_write_mask = false;
 		self.dynamic_state_flags.stencil_reference = false;
-		self.dss_ref().front = VkStencilOpState
-		{
-			failOp: fail_op as _, passOp: pass_op as _, depthFailOp: depth_fail_op as _, compareOp: compare_op as _,
-			compareMask: compare_mask, writeMask: write_mask, reference
-		};
+		self.dss_ref().front = state;
 		self
 	}
 	/// Control the parameter of the stencil test
-	pub fn stencil_control_back(&mut self, compare_op: CompareOp, reference: u32, compare_mask: u32,
-		fail_op: StencilOp, pass_op: StencilOp, depth_fail_op: StencilOp, write_mask: u32) -> &mut Self
+	pub fn stencil_control_back(&mut self, state: VkStencilOpState) -> &mut Self
 	{
 		self.dynamic_state_flags.stencil_compare_mask = false;
 		self.dynamic_state_flags.stencil_write_mask = false;
 		self.dynamic_state_flags.stencil_reference = false;
-		self.dss_ref().back = VkStencilOpState
-		{
-			failOp: fail_op as _, passOp: pass_op as _, depthFailOp: depth_fail_op as _, compareOp: compare_op as _,
-			compareMask: compare_mask, writeMask: write_mask, reference
-		};
+		self.dss_ref().back = state;
 		self
 	}
 	/// Controls the parameter of the compare mask of the stencil test. Tuple ordering: (front, back).
@@ -772,25 +774,25 @@ impl AttachmentColorBlendState
 		})
 	}
 
-	pub fn enable(&mut self, w: bool) -> &mut Self { self.0.blendEnable = w as _; return self; }
+	pub fn enable(&mut self, w: bool) -> &mut Self { self.0.blendEnable = w as _; self }
 	pub fn color_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self
 	{
-		self.0.srcColorBlendFactor = f as _; return self;
+		self.0.srcColorBlendFactor = f as _; self
 	}
 	pub fn color_blend_factor_dst(&mut self, f: BlendFactor) -> &mut Self
 	{
-		self.0.dstColorBlendFactor = f as _; return self;
+		self.0.dstColorBlendFactor = f as _; self
 	}
 	pub fn alpha_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self
 	{
-		self.0.srcAlphaBlendFactor = f as _; return self;
+		self.0.srcAlphaBlendFactor = f as _; self
 	}
 	pub fn alpha_blend_factor_dst(&mut self, f: BlendFactor) -> &mut Self
 	{
-		self.0.dstAlphaBlendFactor = f as _; return self;
+		self.0.dstAlphaBlendFactor = f as _; self
 	}
-	pub fn color_blend_op(&mut self, op: BlendOp) -> &mut Self { self.0.colorBlendOp = op as _; return self; }
-	pub fn alpha_blend_op(&mut self, op: BlendOp) -> &mut Self { self.0.alphaBlendOp = op as _; return self; }
+	pub fn color_blend_op(&mut self, op: BlendOp) -> &mut Self { self.0.colorBlendOp = op as _; self }
+	pub fn alpha_blend_op(&mut self, op: BlendOp) -> &mut Self { self.0.alphaBlendOp = op as _; self }
 	pub fn color_blend(&mut self, src: BlendFactor, op: BlendOp, dst: BlendFactor) -> &mut Self
 	{
 		self.color_blend_factor_src(src).color_blend_op(op).color_blend_factor_dst(dst)
@@ -1138,37 +1140,37 @@ impl PipelineStageFlags
 	pub const ALL_COMMANDS: Self = PipelineStageFlags(VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 
 	/// The stage of the pipeline where any commands are initially received by the queue
-	pub fn top_of_pipe(&self) -> Self { PipelineStageFlags(self.0 | Self::TOP_OF_PIPE.0) }
+	pub fn top_of_pipe(self) -> Self { PipelineStageFlags(self.0 | Self::TOP_OF_PIPE.0) }
 	/// The stage of the pipeline where Draw/DispatchIndirect data structures are consumed
-	pub fn draw_indirect(&self) -> Self { PipelineStageFlags(self.0 | Self::DRAW_INDIRECT.0) }
+	pub fn draw_indirect(self) -> Self { PipelineStageFlags(self.0 | Self::DRAW_INDIRECT.0) }
 	/// The stage of the pipeline where vertex and index buffers are consumed
-	pub fn vertex_input(&self) -> Self { PipelineStageFlags(self.0 | Self::VERTEX_INPUT.0) }
+	pub fn vertex_input(self) -> Self { PipelineStageFlags(self.0 | Self::VERTEX_INPUT.0) }
 	/// The vertex shader stage
-	pub fn vertex_shader(&self) -> Self { PipelineStageFlags(self.0 | Self::VERTEX_SHADER.0) }
+	pub fn vertex_shader(self) -> Self { PipelineStageFlags(self.0 | Self::VERTEX_SHADER.0) }
 	/// The tessellation control shader stage
-	pub fn tessellation_control_shader(&self) -> Self { PipelineStageFlags(self.0 | Self::TESSELLATION_CONTROL_SHADER.0) }
+	pub fn tessellation_control_shader(self) -> Self { PipelineStageFlags(self.0 | Self::TESSELLATION_CONTROL_SHADER.0) }
 	/// The tessellation evaluation shader stage
-	pub fn tessellation_evaluation_shader(&self) -> Self { PipelineStageFlags(self.0 | Self::TESSELLATION_EVALUATION_SHADER.0) }
+	pub fn tessellation_evaluation_shader(self) -> Self { PipelineStageFlags(self.0 | Self::TESSELLATION_EVALUATION_SHADER.0) }
 	/// The geometry shader stage
-	pub fn geometry_shader(&self) -> Self { PipelineStageFlags(self.0 | Self::GEOMETRY_SHADER.0) }
+	pub fn geometry_shader(self) -> Self { PipelineStageFlags(self.0 | Self::GEOMETRY_SHADER.0) }
 	/// The fragment shader stage
-	pub fn fragment_shader(&self) -> Self { PipelineStageFlags(self.0 | Self::FRAGMENT_SHADER.0) }
+	pub fn fragment_shader(self) -> Self { PipelineStageFlags(self.0 | Self::FRAGMENT_SHADER.0) }
 	/// The stage of the pipeline where early fragment tests (depth and stencil tests before fragment shading) are performed
-	pub fn early_fragment_tests(&self) -> Self { PipelineStageFlags(self.0 | Self::EARLY_FRAGMENT_TESTS.0) }
+	pub fn early_fragment_tests(self) -> Self { PipelineStageFlags(self.0 | Self::EARLY_FRAGMENT_TESTS.0) }
 	/// The stage of the pipeline where late fragment tests (depth and stencil tests after fragment shading) are performed
-	pub fn late_fragment_tests(&self) -> Self { PipelineStageFlags(self.0 | Self::LATE_FRAGMENT_TESTS.0) }
+	pub fn late_fragment_tests(self) -> Self { PipelineStageFlags(self.0 | Self::LATE_FRAGMENT_TESTS.0) }
 	/// The stage of the pipeline after blending where the final color values are output from the pipeline
-	pub fn color_attachment_output(&self) -> Self { PipelineStageFlags(self.0 | Self::COLOR_ATTACHMENT_OUTPUT.0) }
+	pub fn color_attachment_output(self) -> Self { PipelineStageFlags(self.0 | Self::COLOR_ATTACHMENT_OUTPUT.0) }
 	/// The execution of copy commands
-	pub fn transfer(&self) -> Self { PipelineStageFlags(self.0 | Self::TRANSFER.0) }
+	pub fn transfer(self) -> Self { PipelineStageFlags(self.0 | Self::TRANSFER.0) }
 	/// The execution of a compute shader
-	pub fn compute_shader(&self) -> Self { PipelineStageFlags(self.0 | Self::COMPUTE_SHADER.0) }
+	pub fn compute_shader(self) -> Self { PipelineStageFlags(self.0 | Self::COMPUTE_SHADER.0) }
 	/// The final stage in the pipeline where operations generated by all commands complete execution
-	pub fn bottom_of_pipe(&self) -> Self { PipelineStageFlags(self.0 | Self::BOTTOM_OF_PIPE.0) }
+	pub fn bottom_of_pipe(self) -> Self { PipelineStageFlags(self.0 | Self::BOTTOM_OF_PIPE.0) }
 	/// A pseudo-stage indicating execution on the host of reads/writes of device memory
-	pub fn host(&self) -> Self { PipelineStageFlags(self.0 | Self::HOST.0) }
+	pub fn host(self) -> Self { PipelineStageFlags(self.0 | Self::HOST.0) }
 	/// The execution of all graphics pipeline stages
-	pub fn all_graphics(&self) -> Self { PipelineStageFlags(self.0 | Self::ALL_GRAPHICS.0) }
+	pub fn all_graphics(self) -> Self { PipelineStageFlags(self.0 | Self::ALL_GRAPHICS.0) }
 	/// Equivalent to the logical OR of every other pipeline stage flag that is supported on the quue it is used with
-	pub fn all_commands(&self) -> Self { PipelineStageFlags(self.0 | Self::ALL_COMMANDS.0) }
+	pub fn all_commands(self) -> Self { PipelineStageFlags(self.0 | Self::ALL_COMMANDS.0) }
 }
