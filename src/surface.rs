@@ -202,7 +202,21 @@ impl Swapchain
 
 use {Fence, Semaphore};
 /// A semaphore or a fence
-pub enum CompletionHandler<'s> { Host(&'s Fence), Device(&'s Semaphore) }
+pub enum CompletionHandler<'s>
+{
+	/// A Host synchronizer(aka Fence)
+	Host(&'s Fence),
+	/// A Queue synchronizer(aka Semaphore)
+	Queue(&'s Semaphore)
+}
+impl<'s> From<&'s Fence> for CompletionHandler<'s>
+{
+	fn from(f: &'s Fence) -> Self { CompletionHandler::Host(f) }
+}
+impl<'s> From<&'s Semaphore> for CompletionHandler<'s>
+{
+	fn from(s: &'s Semaphore) -> Self { CompletionHandler::Queue(s) }
+}
 
 #[cfg(feature = "Implements")]
 impl Swapchain
