@@ -744,6 +744,7 @@ impl ImageSize for ::Extent3D
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
 pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, PhantomData<&'m DeviceMemory>);
+#[allow(clippy::mut_from_ref)]
 impl<'m> MappedMemoryRange<'m>
 {
 	/// Get a reference in mapped memory with byte offsets
@@ -753,7 +754,7 @@ impl<'m> MappedMemoryRange<'m>
 	/// Get a mutable reference in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
-	pub unsafe fn get_mut<T>(&mut self, offset: usize) -> &mut T { &mut *(self.1.add(offset) as *mut T) }
+	pub unsafe fn get_mut<T>(&self, offset: usize) -> &mut T { &mut *(self.1.add(offset) as *mut T) }
 	/// Get a slice in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
@@ -764,21 +765,21 @@ impl<'m> MappedMemoryRange<'m>
 	/// Get a mutable slice in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
-	pub unsafe fn slice_mut<T>(&mut self, offset: usize, count: usize) -> &mut [T]
+	pub unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T]
 	{
 		::std::slice::from_raw_parts_mut(self.1.add(offset) as *mut T, count)
 	}
 	/// Clone data from slice at the specified offset in mapped memory.
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
-	pub unsafe fn clone_from_slice_at<T: Clone>(&mut self, offset: usize, src: &[T])
+	pub unsafe fn clone_from_slice_at<T: Clone>(&self, offset: usize, src: &[T])
 	{
 		self.slice_mut(offset, src.len()).clone_from_slice(src);
 	}
 	/// Clone data from slice at the specified offset in mapped memory.
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
-	pub unsafe fn clone_at<T: Clone>(&mut self, offset: usize, src: &T)
+	pub unsafe fn clone_at<T: Clone>(&self, offset: usize, src: &T)
 	{
 		*self.get_mut(offset) = src.clone();
 	}

@@ -9,6 +9,7 @@
 //! - `Multithreaded`: Enables to use objects from some threads(experimental)
 //! - `Presentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
+#![warn(clippy::all)]
 
 extern crate libc;
 // Platform Extras
