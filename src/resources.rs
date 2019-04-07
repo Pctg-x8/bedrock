@@ -125,7 +125,6 @@ use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
 use std::borrow::Borrow;
-use std::marker::PhantomData;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 struct BufferCell(VkBuffer, ::Device);
@@ -611,7 +610,7 @@ impl DeviceMemory
 	{
 		let mut p = ::std::ptr::null_mut();
 		unsafe { Resolver::get().map_memory(self.device().native_ptr(), self.native_ptr(), range.start as _, (range.end - range.start) as _,
-			0, &mut p) }.into_result().map(|_| MappedMemoryRange(range, p as *mut _, PhantomData))
+			0, &mut p) }.into_result().map(|_| MappedMemoryRange(range, p as *mut _, self))
 	}
 	/// Unmap a previously mapped memory object
 	/// # Safety
@@ -743,7 +742,7 @@ impl ImageSize for ::Extent3D
 }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, PhantomData<&'m DeviceMemory>);
+pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, &'m DeviceMemory);
 #[allow(clippy::mut_from_ref)]
 impl<'m> MappedMemoryRange<'m>
 {
