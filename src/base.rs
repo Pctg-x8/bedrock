@@ -27,8 +27,8 @@ impl<T> LazyCell<T>
 	#[cfg(feature = "Multithreaded")]
 	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::sync::RwLockReadGuard<T>
 	{
-		if self.0.read().is_none() { *self.0.write() = Some(initializer()); }
-		::std::sync::RwLockReadGuard::map(self.0.read(), |o| o.as_ref().unwrap())
+		if self.0.read().expect("Poisoned").is_none() { *self.0.write().expect("Poisoned") = Some(initializer()); }
+		::std::sync::RwLockReadGuard::map(self.0.read().expect("Poisoned"), |o| o.as_ref().unwrap())
 	}
 }
 
