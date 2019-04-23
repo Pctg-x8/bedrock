@@ -124,8 +124,7 @@ use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
-use std::borrow::Borrow; use std::mem::transmute;
-use std::marker::PhantomData;
+use std::borrow::Borrow;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
 struct BufferCell(VkBuffer, ::Device);
@@ -260,31 +259,31 @@ impl BufferUsage
 	pub const INDIRECT_BUFFER: Self = BufferUsage(VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT);
 
 	/// Specifies that the buffer can be used as the source of a transfer command
-	pub fn transfer_src(&self) -> Self { BufferUsage(self.0 | Self::TRANSFER_SRC.0) }
+	pub fn transfer_src(self) -> Self { BufferUsage(self.0 | Self::TRANSFER_SRC.0) }
 	/// Specifies that the buffer can be used as the destination of a transfer command
-	pub fn transfer_dest(&self) -> Self { BufferUsage(self.0 | Self::TRANSFER_DEST.0) }
+	pub fn transfer_dest(self) -> Self { BufferUsage(self.0 | Self::TRANSFER_DEST.0) }
 	/// Specifies that the buffer can be used to create a `BufferView` suitable for
 	/// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`
-	pub fn uniform_texel_buffer(&self) -> Self { BufferUsage(self.0 | Self::UNIFORM_TEXEL_BUFFER.0) }
+	pub fn uniform_texel_buffer(self) -> Self { BufferUsage(self.0 | Self::UNIFORM_TEXEL_BUFFER.0) }
 	/// Specifies that the buffer can be used to create a `BufferView` suitable for
 	/// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`
-	pub fn storage_texel_buffer(&self) -> Self { BufferUsage(self.0 | Self::STORAGE_TEXEL_BUFFER.0) }
+	pub fn storage_texel_buffer(self) -> Self { BufferUsage(self.0 | Self::STORAGE_TEXEL_BUFFER.0) }
 	/// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for
 	/// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`
-	pub fn uniform_buffer(&self) -> Self { BufferUsage(self.0 | Self::UNIFORM_BUFFER.0) }
+	pub fn uniform_buffer(self) -> Self { BufferUsage(self.0 | Self::UNIFORM_BUFFER.0) }
 	/// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for
 	/// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`
-	pub fn storage_buffer(&self) -> Self { BufferUsage(self.0 | Self::STORAGE_BUFFER.0) }
+	pub fn storage_buffer(self) -> Self { BufferUsage(self.0 | Self::STORAGE_BUFFER.0) }
 	/// Specifies that the buffer is suitable for passing as the `buffer` parameter to `DrawCommandBuffer::bind_index_buffer`
-	pub fn index_buffer(&self) -> Self { BufferUsage(self.0 | Self::INDEX_BUFFER.0) }
+	pub fn index_buffer(self) -> Self { BufferUsage(self.0 | Self::INDEX_BUFFER.0) }
 	/// Specifies that the buffer is suitable for passing as an element of the `buffers` array to `DrawCommandBuffer::bind_vertex_buffers`
-	pub fn vertex_buffer(&self) -> Self { BufferUsage(self.0 | Self::VERTEX_BUFFER.0) }
+	pub fn vertex_buffer(self) -> Self { BufferUsage(self.0 | Self::VERTEX_BUFFER.0) }
 	/// Specifies that the buffer is suitable for passing as the `buffer` parameter to
 	/// `DrawCommandBuffer::draw_indirect`, `DrawCommandBuffer::draw_indexed_indirect`, or `ComputeCommandBuffer::dispatch_indirect`
-	pub fn indirect_buffer(&self) -> Self { BufferUsage(self.0 | Self::INDIRECT_BUFFER.0) }
+	pub fn indirect_buffer(self) -> Self { BufferUsage(self.0 | Self::INDIRECT_BUFFER.0) }
 
 	/// Generates a default access type mask
-	pub fn default_access_mask(&self) -> VkAccessFlags
+	pub fn default_access_mask(self) -> VkAccessFlags
 	{
 		let mut bits = 0;
 		if (self.0 & Self::TRANSFER_SRC.0) != 0 { bits |= VK_ACCESS_TRANSFER_READ_BIT; }
@@ -383,25 +382,25 @@ impl ImageUsage
 	pub const INPUT_ATTACHMENT: Self = ImageUsage(VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT);
 
 	/// The image can be used as the source of a transfer command
-	pub fn transfer_src(&self) -> Self { ImageUsage(self.0 | Self::TRANSFER_SRC.0) }
+	pub fn transfer_src(self) -> Self { ImageUsage(self.0 | Self::TRANSFER_SRC.0) }
 	/// The image can be used as the destination of a transfer command
-	pub fn transfer_dest(&self) -> Self { ImageUsage(self.0 | Self::TRANSFER_DEST.0) }
+	pub fn transfer_dest(self) -> Self { ImageUsage(self.0 | Self::TRANSFER_DEST.0) }
 	/// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot
 	/// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader
-	pub fn sampled(&self) -> Self { ImageUsage(self.0 | Self::SAMPLED.0) }
+	pub fn sampled(self) -> Self { ImageUsage(self.0 | Self::SAMPLED.0) }
 	/// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`
-	pub fn storage(&self) -> Self { ImageUsage(self.0 | Self::STORAGE.0) }
+	pub fn storage(self) -> Self { ImageUsage(self.0 | Self::STORAGE.0) }
 	/// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`
-	pub fn color_attachment(&self) -> Self { ImageUsage(self.0 | Self::COLOR_ATTACHMENT.0) }
+	pub fn color_attachment(self) -> Self { ImageUsage(self.0 | Self::COLOR_ATTACHMENT.0) }
 	/// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`
-	pub fn depth_stencil_attachment(&self) -> Self { ImageUsage(self.0 | Self::DEPTH_STENCIL_ATTACHMENT.0) }
+	pub fn depth_stencil_attachment(self) -> Self { ImageUsage(self.0 | Self::DEPTH_STENCIL_ATTACHMENT.0) }
 	/// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`
 	/// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,
 	/// or input attachment
-	pub fn transient_attachment(&self) -> Self { ImageUsage(self.0 | Self::TRANSIENT_ATTACHMENT.0) }
+	pub fn transient_attachment(self) -> Self { ImageUsage(self.0 | Self::TRANSIENT_ATTACHMENT.0) }
 	/// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;
 	/// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer
-	pub fn input_attachment(&self) -> Self { ImageUsage(self.0 | Self::INPUT_ATTACHMENT.0) }
+	pub fn input_attachment(self) -> Self { ImageUsage(self.0 | Self::INPUT_ATTACHMENT.0) }
 }
 /// Bitmask specifying additional parameters of an image
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -423,16 +422,16 @@ impl ImageFlags
 	pub const CUBE_COMPATIBLE: Self = ImageFlags(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 
 	/// The image will be backed using sparse memory binding
-	pub fn sparse_binding(&self) -> Self { ImageFlags(self.0 | Self::SPARSE_BINDING.0) }
+	pub fn sparse_binding(self) -> Self { ImageFlags(self.0 | Self::SPARSE_BINDING.0) }
 	/// The image can be partially backed using sparse memory binding. This bit is with `SPARSE_BINDING` implicitly
-	pub fn sparse_residency(&self) -> Self { ImageFlags(self.0 | Self::SPARSE_RESIDENCY.0) }
+	pub fn sparse_residency(self) -> Self { ImageFlags(self.0 | Self::SPARSE_RESIDENCY.0) }
 	/// The image will be backed using sparse memory binding with memory ranges
 	/// that might also simultaneously be backing another image. This bit is with `SPARSE_BINDING` implicitly
-	pub fn sparse_aliased(&self) -> Self { ImageFlags(self.0 | Self::SPARSE_ALIASED.0) }
+	pub fn sparse_aliased(self) -> Self { ImageFlags(self.0 | Self::SPARSE_ALIASED.0) }
 	/// The image can be used to create a `ImageView` with a different format from the image
-	pub fn mutable_format(&self) -> Self { ImageFlags(self.0 | Self::MUTABLE_FORMAT.0) }
+	pub fn mutable_format(self) -> Self { ImageFlags(self.0 | Self::MUTABLE_FORMAT.0) }
 	/// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`
-	pub fn cube_compatible(&self) -> Self { ImageFlags(self.0 | Self::CUBE_COMPATIBLE.0) }
+	pub fn cube_compatible(self) -> Self { ImageFlags(self.0 | Self::CUBE_COMPATIBLE.0) }
 }
 /// Builder structure specifying the parameters of a newly created image object
 #[derive(Debug, Clone, PartialEq, Eq)] pub struct ImageDesc(VkImageCreateInfo);
@@ -611,7 +610,7 @@ impl DeviceMemory
 	{
 		let mut p = ::std::ptr::null_mut();
 		unsafe { Resolver::get().map_memory(self.device().native_ptr(), self.native_ptr(), range.start as _, (range.end - range.start) as _,
-			0, &mut p) }.into_result().map(|_| MappedMemoryRange(range, p as *mut _, PhantomData))
+			0, &mut p) }.into_result().map(|_| MappedMemoryRange(range, p as *mut _, self))
 	}
 	/// Unmap a previously mapped memory object
 	/// # Safety
@@ -743,36 +742,31 @@ impl ImageSize for ::Extent3D
 }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, PhantomData<&'m DeviceMemory>);
+pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, &'m DeviceMemory);
+#[allow(clippy::mut_from_ref)]
 impl<'m> MappedMemoryRange<'m>
 {
 	/// Get a reference in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
-	pub unsafe fn get<T>(&self, offset: usize) -> &T
-	{
-		::std::mem::transmute(self.1.offset(offset as _))
-	}
+	pub unsafe fn get<T>(&self, offset: usize) -> &T { &*(self.1.add(offset) as *const T) }
 	/// Get a mutable reference in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
-	pub unsafe fn get_mut<T>(&self, offset: usize) -> &mut T
-	{
-		::std::mem::transmute(self.1.offset(offset as _))
-	}
+	pub unsafe fn get_mut<T>(&self, offset: usize) -> &mut T { &mut *(self.1.add(offset) as *mut T) }
 	/// Get a slice in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
 	pub unsafe fn slice<T>(&self, offset: usize, count: usize) -> &[T]
 	{
-		::std::slice::from_raw_parts(self.1.offset(offset as _) as *const T, count)
+		::std::slice::from_raw_parts(self.1.add(offset) as *const T, count)
 	}
 	/// Get a mutable slice in mapped memory with byte offsets
 	/// # Safety
 	/// Caller must guarantee that the pointer and its alignment are valid
 	pub unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T]
 	{
-		::std::slice::from_raw_parts_mut(self.1.offset(offset as _) as *mut T, count)
+		::std::slice::from_raw_parts_mut(self.1.add(offset) as *mut T, count)
 	}
 	/// Clone data from slice at the specified offset in mapped memory.
 	/// # Safety
@@ -854,9 +848,9 @@ pub enum ImageLayout
 impl ImageLayout
 {
 	/// Commonly used access types with the layout
-	pub fn default_access_mask(&self) -> VkAccessFlags
+	pub fn default_access_mask(self) -> VkAccessFlags
 	{
-		match *self
+		match self
 		{
 			ImageLayout::Undefined | ImageLayout::Preinitialized => 0,
 			ImageLayout::General => VK_ACCESS_MEMORY_READ_BIT,
@@ -918,13 +912,13 @@ impl AspectMask
 	pub const METADATA: Self = AspectMask(VK_IMAGE_ASPECT_METADATA_BIT);
 
 	/// The color aspect
-	pub fn color(&self) -> Self { AspectMask(self.0 | Self::COLOR.0) }
+	pub fn color(self) -> Self { AspectMask(self.0 | Self::COLOR.0) }
 	/// The depth aspect
-	pub fn depth(&self) -> Self { AspectMask(self.0 | Self::DEPTH.0) }
+	pub fn depth(self) -> Self { AspectMask(self.0 | Self::DEPTH.0) }
 	/// The stencil aspect
-	pub fn stencil(&self) -> Self { AspectMask(self.0 | Self::STENCIL.0) }
+	pub fn stencil(self) -> Self { AspectMask(self.0 | Self::STENCIL.0) }
 	/// The metadata aspect, used for sparse sparse resource oeprations
-	pub fn metadata(&self) -> Self { AspectMask(self.0 | Self::METADATA.0) }
+	pub fn metadata(self) -> Self { AspectMask(self.0 | Self::METADATA.0) }
 }
 
 /// Structure specifying a image subresource range
@@ -932,7 +926,7 @@ impl AspectMask
 pub struct ImageSubresourceRange(VkImageSubresourceRange);
 impl Borrow<VkImageSubresourceRange> for ImageSubresourceRange
 {
-	fn borrow(&self) -> &VkImageSubresourceRange { unsafe { transmute(self) } }
+	fn borrow(&self) -> &VkImageSubresourceRange { unsafe { &*(self as *const Self as *const _) } }
 }
 impl From<VkImageSubresourceRange> for ImageSubresourceRange
 {
@@ -1046,9 +1040,10 @@ pub enum BorderColor
 }
 /// Builder object for constructing the sampler object
 pub struct SamplerBuilder(VkSamplerCreateInfo);
-impl SamplerBuilder
+/// A default sampler builder: Linear Filtering, Repeat addressing, no anisotrophy and no lod biases
+impl Default for SamplerBuilder
 {
-    pub fn new() -> Self
+    fn default() -> Self
     {
         SamplerBuilder(VkSamplerCreateInfo
         {
@@ -1059,6 +1054,9 @@ impl SamplerBuilder
             .. Default::default()
         })
     }
+}
+impl SamplerBuilder
+{
     /// The magnification and the minification filters to apply to lookups.  
     /// Default: Magnification=`FilterMode::Linear`, Minification=`FilterMode::Linear`
     pub fn filter(&mut self, mag: FilterMode, min: FilterMode) -> &mut Self

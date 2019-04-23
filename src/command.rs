@@ -730,9 +730,18 @@ pub trait ClearColorValue
 {
 	fn represent(&self) -> &VkClearColorValue;
 }
-impl ClearColorValue for [f32; 4] { fn represent(&self) -> &VkClearColorValue { unsafe { ::std::mem::transmute(self) } } }
-impl ClearColorValue for [i32; 4] { fn represent(&self) -> &VkClearColorValue { unsafe { ::std::mem::transmute(self) } } }
-impl ClearColorValue for [u32; 4] { fn represent(&self) -> &VkClearColorValue { unsafe { ::std::mem::transmute(self) } } }
+impl ClearColorValue for [f32; 4]
+{
+	fn represent(&self) -> &VkClearColorValue { unsafe { &*(self as *const Self as *const _) } }
+}
+impl ClearColorValue for [i32; 4]
+{
+	fn represent(&self) -> &VkClearColorValue { unsafe { &*(self as *const Self as *const _) } }
+}
+impl ClearColorValue for [u32; 4]
+{
+	fn represent(&self) -> &VkClearColorValue { unsafe { &*(self as *const Self as *const _) } }
+}
 
 /// The enum representation of `VkClearValue`
 pub enum ClearValue
@@ -880,19 +889,19 @@ impl ImageMemoryBarrier
 	/// Update the source access mask
 	pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self
 	{
-		self.0.srcAccessMask = mask; return self;
+		self.0.srcAccessMask = mask; self
 	}
 	/// Update the destination access mask
 	pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self
 	{
-		self.0.dstAccessMask = mask; return self;
+		self.0.dstAccessMask = mask; self
 	}
 	/// Flip access masks and image layouts
 	pub fn flip(mut self) -> Self
 	{
 		self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
 		self.0.newLayout = replace(&mut self.0.oldLayout, self.0.newLayout);
-		return self;
+		self
 	}
 }
 /// Wrapper object of `VkBufferMemoryBarrier`, describes a memory barrier of a buffer.
@@ -911,19 +920,13 @@ impl BufferMemoryBarrier
 		})
 	}
 	/// Update the source access mask
-	pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self
-	{
-		self.0.srcAccessMask = mask; return self;
-	}
+	pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self { self.0.srcAccessMask = mask; self }
 	/// Update the destination access mask
-	pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self
-	{
-		self.0.dstAccessMask = mask; return self;
-	}
+	pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self { self.0.dstAccessMask = mask; self }
 	/// Flip access masks
 	pub fn flip(mut self) -> Self
 	{
 		self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
-		return self;
+		self
 	}
 }

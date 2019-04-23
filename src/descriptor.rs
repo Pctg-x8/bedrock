@@ -145,7 +145,7 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct DescriptorPoolSize(pub DescriptorType, pub u32);
 /// Specified the type of a descriptor in a descriptor set
-#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord)]
 pub enum DescriptorType
 {
     Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
