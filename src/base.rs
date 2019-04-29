@@ -14,6 +14,13 @@ use VkHandle;
 #[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;
 #[cfg(not(feature = "Multithreaded"))] use std::cell::RefCell as InternallyMutable;
 
+#[cfg(feature = "Multithreaded")] struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
+#[cfg(feature = "Multithreaded")] impl<'d, T> Deref for LazyCellReadRef<'d, T>
+{
+	type Target = &'d T;
+	fn deref(&self) -> &'d T { self.0.as_ref().unwrap() }
+}
+
 struct LazyCell<T>(InternallyMutable<Option<T>>);
 impl<T> LazyCell<T>
 {
@@ -25,10 +32,10 @@ impl<T> LazyCell<T>
 		::std::cell::Ref::map(self.0.borrow(), |o| o.as_ref().unwrap())
 	}
 	#[cfg(feature = "Multithreaded")]
-	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::sync::RwLockReadGuard<T>
+	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> LazyCellReadRef<T>
 	{
 		if self.0.read().expect("Poisoned").is_none() { *self.0.write().expect("Poisoned") = Some(initializer()); }
-		::std::sync::RwLockReadGuard::map(self.0.read().expect("Poisoned"), |o| o.as_ref().unwrap())
+		LazyCellReadRef(self.0.read().expect("Poisoned"))
 	}
 }
 
