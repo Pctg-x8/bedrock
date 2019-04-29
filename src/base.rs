@@ -15,7 +15,7 @@ use VkHandle;
 #[cfg(not(feature = "Multithreaded"))] use std::cell::RefCell as InternallyMutable;
 
 #[cfg(feature = "Multithreaded")] struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
-#[cfg(feature = "Multithreaded")] impl<'d, T> Deref for LazyCellReadRef<'d, T>
+#[cfg(feature = "Multithreaded")] impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T>
 {
 	type Target = &'d T;
 	fn deref(&self) -> &'d T { self.0.as_ref().unwrap() }
