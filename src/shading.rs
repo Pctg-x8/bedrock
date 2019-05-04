@@ -307,6 +307,7 @@ pub struct PipelineShader<'d>
 /// Whether the state(type of array) is dynamic or static
 pub enum DynamicArrayState<'d, T: 'd> { Dynamic(usize), Static(&'d [T]) }
 /// Build struct holding dynamic state flags
+#[derive(Clone)]
 struct DynamicStateFlags
 {
 	viewport: bool, scissor: bool, line_width: bool, depth_bias: bool, blend_constants: bool, depth_bounds: bool,
@@ -324,6 +325,7 @@ pub enum BasePipeline<'d>
 	Index(u32)
 }
 /// Builder struct to construct a `Pipeline` for graphics operations
+#[derive(Clone)]
 pub struct GraphicsPipelineBuilder<'d>
 {
 	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout, rp: &'d ::RenderPass, subpass: u32, _base: BasePipeline<'d>,
