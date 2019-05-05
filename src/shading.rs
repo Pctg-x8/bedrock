@@ -307,6 +307,7 @@ pub struct PipelineShader<'d>
 /// Whether the state(type of array) is dynamic or static
 pub enum DynamicArrayState<'d, T: 'd> { Dynamic(usize), Static(&'d [T]) }
 /// Build struct holding dynamic state flags
+#[derive(Clone)]
 struct DynamicStateFlags
 {
 	viewport: bool, scissor: bool, line_width: bool, depth_bias: bool, blend_constants: bool, depth_bounds: bool,
@@ -324,6 +325,7 @@ pub enum BasePipeline<'d>
 	Index(u32)
 }
 /// Builder struct to construct a `Pipeline` for graphics operations
+#[derive(Clone)]
 pub struct GraphicsPipelineBuilder<'d>
 {
 	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout, rp: &'d ::RenderPass, subpass: u32, _base: BasePipeline<'d>,
@@ -827,6 +829,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		}
 		self
 	}
+	/// Clears per-target attachment blending state
+	pub fn clear_attachment_blends(&mut self) -> &mut Self { self.color_blending = None; self }
 	/// Array of four values used as the R, G, B, and A components of the blend constant that are used in blending, depending on the blend factor.
 	/// Specifying `None` means that the `blendConstants` parameter is a dynamic state
 	pub fn blend_constants(&mut self, values: Option<[f32; 4]>) -> &mut Self

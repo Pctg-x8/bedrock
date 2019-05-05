@@ -118,7 +118,7 @@
 
 use vk::*;
 use std::rc::Rc as RefCounter;
-use std::ops::Deref;
+use std::ops::{Deref, BitOr, BitOrAssign};
 use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
@@ -297,6 +297,19 @@ impl BufferUsage
 		if (self.0 & Self::INDIRECT_BUFFER.0) != 0 { bits |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT; }
 		bits
 	}
+	/// Determines if flag contains usage of uniform-buffer
+	pub fn is_uniform(self) -> bool { (self.0 & (Self::UNIFORM_BUFFER.0 | Self::UNIFORM_TEXEL_BUFFER.0)) != 0 }
+	/// Determines if flag contains usage of storage-buffer
+	pub fn is_storage(self) -> bool { (self.0 & (Self::STORAGE_BUFFER.0 | Self::STORAGE_TEXEL_BUFFER.0)) != 0 }
+}
+impl BitOr for BufferUsage
+{
+	type Output = Self;
+	fn bitor(self, other: Self) -> Self { BufferUsage(self.0 | other.0) }
+}
+impl BitOrAssign for BufferUsage
+{
+	fn bitor_assign(&mut self, other: Self) { self.0 |= other.0; }
 }
 /// Bitset specifying additional parameters of a buffer
 #[derive(Debug, Clone, Copy, PartialEq, Eq)] #[repr(C)] pub enum BufferSparseBinding
