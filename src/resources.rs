@@ -299,6 +299,8 @@ impl BufferUsage
 	}
 	/// Determines if flag contains usage of uniform-buffer
 	pub fn is_uniform(self) -> bool { (self.0 & (Self::UNIFORM_BUFFER.0 | Self::UNIFORM_TEXEL_BUFFER.0)) != 0 }
+	/// Determines if flag contains usage of storage-buffer
+	pub fn is_storage(self) -> bool { (self.0 & (Self::STORAGE_BUFFER.0 | Self::STORAGE_TEXEL_BUFFER.0)) != 0 }
 }
 impl BitOr for BufferUsage
 {
