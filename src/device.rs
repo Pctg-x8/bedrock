@@ -118,6 +118,7 @@ impl<'p> DeviceBuilder<'p>
 	{
 		for q in queues { self.add_queue(q); } self
 	}
+	pub fn mod_features(&mut self) -> &mut VkPhysicalDeviceFeatures { &mut self.features }
 	/// [feature = "Implements"] Create a new device instance
 	/// # Failures
 	/// On failure, this command returns
