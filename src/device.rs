@@ -161,6 +161,18 @@ impl<'p> DeviceBuilder<'p>
 	{
 		self.features.sampleRateShading = true as _; self
 	}
+	pub fn enable_geometry_shader(&mut self) -> &mut Self
+	{
+		self.features.geometryShader = true as _; self
+	}
+	pub fn enable_tessellation_shader(&mut self) -> &mut Self
+	{
+		self.features.tessellationShader = true as _; self
+	}
+	pub fn enable_vertex_pipeline_stores_and_atomics(&mut self) -> &mut Self
+	{
+		self.features.vertexPipelineStoresAndAtomics = true as _; self
+	}
 }
 impl Device
 {
