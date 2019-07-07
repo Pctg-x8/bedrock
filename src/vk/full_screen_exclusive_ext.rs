@@ -15,7 +15,7 @@ pub const VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT: VkFullScreenExclu
 pub struct VkSurfaceFullScreenExclusiveInfoEXT
 {
     pub sType: VkStructureType, pub pNext: *mut c_void,
-    pub fullScreenExclusive: VkFullScreenExclusiveEXT;
+    pub fullScreenExclusive: VkFullScreenExclusiveEXT
 }
 impl Default for VkSurfaceFullScreenExclusiveInfoEXT
 {
