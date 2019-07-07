@@ -154,6 +154,7 @@ pub const VK_ERROR_VALIDATION_FAILED_EXT: VkResult = -100_0011_001;
 pub const VK_ERROR_INVALID_SHADER_NV: VkResult = -100_0012_000;
 pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = -100_0069_000;
 pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = -100_0072_003;
+pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = -100_0255_000;
 
 pub type VkStructureType = i32;
 pub const VK_STRUCTURE_TYPE_APPLICATION_INFO: VkStructureType = 0;
@@ -373,6 +374,9 @@ pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType 
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROEPRTIES_EXT: VkStructureType = 100_0178_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 100_0190_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 100_0190_001;
+pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = 100_0255_000;
+pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType = 100_0255_002;
+pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = 100_0255_001;
 
 pub type VkSystemAllocationScope = i32;
 pub const VK_SYSTEM_ALLOCATION_SCOPE_COMMAND: VkSystemAllocationScope = 0;
@@ -4383,3 +4387,4 @@ ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);
 ExportExtensions!("VK_AMD_buffer_marker": buffer_marker_amd);
 ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ext);
 ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
+ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
