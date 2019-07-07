@@ -306,6 +306,8 @@ impl Resolver {
     WrapAPI!(get_physical_device_surface_capabilities_khr = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult);
     WrapAPI!(get_physical_device_surface_formats_khr = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult);
     WrapAPI!(get_physical_device_surface_present_modes_khr = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_surface_capabilities2")]
+    WrapAPI!(get_physical_device_surface_capabilities2_khr = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice: VkPhysicalDevice, surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR, surface_capabilities: *mut VkSurfaceCapabilities2KHR) -> VkResult);
 }
 
 #[cfg(feature = "VK_KHR_swapchain")]

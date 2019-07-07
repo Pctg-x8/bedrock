@@ -408,6 +408,20 @@ impl PhysicalDevice
 		unsafe { Resolver::get().get_physical_device_surface_present_modes_khr(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()) }.into_result()
 			.map(|_| unsafe { ::std::mem::transmute(v) })
 	}
+	
+	/// #[feature = "VK_KHR_get_surface_capabilities2"]
+	#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+	pub fn surface_capabilities2(&self, info: &VkPhysicalDeviceSurfaceInfo2KHR) -> ::Result<VkSurfaceCapabilities2KHR>
+	{
+		let mut d = unsafe { std::mem::uninitialized() };
+		unsafe
+		{
+			Resolver::get().get_physical_device_surface_capabilities2_khr(self.0, info as *const _, &mut d as *mut _)
+				.into_result()?;
+		}
+		
+		return Ok(d);
+	}
 }
 
 /// [cfg(feature = "Implements")] Querying to the physical device for presentation with Platform servers.
