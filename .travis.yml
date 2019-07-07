@@ -1,10 +1,10 @@
 language: rust
 cache: cargo
-node_js:
-- 8
 env:
   global:
     - secure: "Hv/afV+WQKgX7ZI0OWqw88x2FJW/Ea3IE94Bv/+k1Ym9MVou/rXuW9nWJyWK4RtZpZ38X+WnQGFrRVdxa5fZZHm0rSHTEUsudLpn8AVvFotXpXVQ3wWT8TpLPL1yoHghJhLCy5LI+iOqxRnOcKQKwPSYaxj+0TZ/HYyM29E3kAyIkJ916Ekbz3jHtHegmECcePZvnWKOwBcNkdMB0C4oN+1N1gMoZr4XAMd5YPeOqFaY/XgmMrvpls3ZOIWII60XZhRq5+mOats9gefIKDSGxuslFmT6Ms4+IEEcGN5nujVZmCtNvCgwMB/JoWJfzg7B2xZJfjkiIAdubz+cSgS+XTOhGy+UM48TNgtLyi6nslghtci+AfNkGTx5JN+mBKmVbuFya/iboPANk4wsHFw/94Mhod3buIW7IoGYB6BKQbBqROFnfUNlcIlM+Fv7riy7rd50iPcQ59QpRZOFYtHIzW5ND2/SRuMb8XDR391F46xKw72nfMjmjMK+pH3xghY43DHgYN3nOqTG+gDEgetrJ9e2i4tIFbwbVa7pTW4jrYBwZ752gk9cT9feb8o+qdc28BCAHdI+YCtaLqKar268dUgrKfNEByAgEqufwxtTvJh4wRNVld9glPh1gZyDRxhpoB1l9K+Ll/RX+n48Yk9u0jVOmLE4fudIQGPR+B9UVdg="
+before_install:
+- nvm install 8
 install:
 - npm install -g firebase-tools
 script:
