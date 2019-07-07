@@ -12,5 +12,8 @@ script:
 after_success:
 - cargo doc --no-deps --features=Implements,Presentation,VK_EXT_debug_report
 - rsync --delete -auv target/doc/ docs/public
+- mkdir -p docs/public/ja || true
+- rsync --delete -auv target/doc/ docs/public/ja
+- node translate_ja.js
 - cd docs
 - firebase deploy --token $FIREBASE_TOKEN --project docs-541f3

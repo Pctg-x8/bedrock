@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 
-const docpath = path.join("docs", "ja");
+const docpath = path.join("docs", "public", "ja");
 let conversions = {};
 conversions[path.join("bedrock", "index.html")] = data => data
     .replace("Glue library between Vulkan and Rust", "Ferrite: Vulkan と Rust のグルーライブラリ (部分的に日本語版)")

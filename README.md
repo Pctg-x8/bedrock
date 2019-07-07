@@ -5,5 +5,5 @@ Bedrock
 
 A low-level(lower memory allocation, less cost abstraction and more safety) glue library between Vulkan&trade; and Rust
 
-[Documentation](http://pctg-x8.github.io/bedrock/bedrock)
-[Documentation(日本語(不完全))](http://pctg-x8.github.io/bedrock/ja/bedrock)
+[Documentation](https://docs-541f3.firebaseapp.com/bedrock/) |
+[Documentation(日本語(不完全))](https://docs-541f3.firebaseapp.com/ja/bedrock/)
