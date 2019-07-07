@@ -35,6 +35,7 @@ pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT
     pub sType: VkStructureType, pub pNext: *const c_void,
     pub hmonitor: winapi::shared::windef::HMONITOR
 }
+#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
 impl Default for VkSurfaceFullScreenExclusiveWin32InfoEXT
 {
     fn default() -> Self
