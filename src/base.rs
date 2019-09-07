@@ -550,19 +550,23 @@ impl PhysicalDevice {
 /// Device memory properties
 pub struct MemoryProperties(VkPhysicalDeviceMemoryProperties);
 impl MemoryProperties {
-	pub fn find_type_index(&self, mask: MemoryPropertyFlags, exclude: MemoryPropertyFlags) -> Option<u32> {
-		self.0.memoryTypes[..self.0.memoryTypeCount as usize].iter()
-			.position(|mt| (mt.propertyFlags & mask.0) != 0 && (mt.propertyFlags & exclude.0) == 0)
-			.map(|x| x as u32)
+	pub fn find_type_index(&self, mask: MemoryPropertyFlags, exclude: MemoryPropertyFlags,
+		index_mask: u32) -> Option<u32>
+	{
+		self.0.memoryTypes[..self.0.memoryTypeCount as usize].iter().enumerate()
+			.filter(|(i, _)| (index_mask & (1u32 << i)) != 0)
+			.filter(|(_, mt)| (mt.propertyFlags & mask.0) != 0 && (mt.propertyFlags & exclude.0) == 0)
+			.map(|(x, _)| x as u32).next()
 	}
-	pub fn find_device_local_index(&self) -> Option<u32> {
-		self.find_type_index(MemoryPropertyFlags::DEVICE_LOCAL, MemoryPropertyFlags::LAZILY_ALLOCATED)
+	pub fn find_device_local_index(&self, index_mask: u32) -> Option<u32> {
+		self.find_type_index(MemoryPropertyFlags::DEVICE_LOCAL, MemoryPropertyFlags::LAZILY_ALLOCATED, index_mask)
 	}
-	pub fn find_lazily_allocated_device_local_index(&self) -> Option<u32> {
-		self.find_type_index(MemoryPropertyFlags::DEVICE_LOCAL.lazily_allocated(), MemoryPropertyFlags::EMPTY)
+	pub fn find_lazily_allocated_device_local_index(&self, index_mask: u32) -> Option<u32> {
+		self.find_type_index(MemoryPropertyFlags::DEVICE_LOCAL.lazily_allocated(),
+			MemoryPropertyFlags::EMPTY, index_mask)
 	}
-	pub fn find_host_visible_index(&self) -> Option<u32> {
-		self.find_type_index(MemoryPropertyFlags::HOST_VISIBLE, MemoryPropertyFlags::EMPTY)
+	pub fn find_host_visible_index(&self, index_mask: u32) -> Option<u32> {
+		self.find_type_index(MemoryPropertyFlags::HOST_VISIBLE, MemoryPropertyFlags::EMPTY, index_mask)
 	}
 	pub fn is_coherent(&self, index: u32) -> bool {
 		(self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_COHERENT.0) != 0
