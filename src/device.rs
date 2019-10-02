@@ -28,15 +28,15 @@ impl QueueFlags
 	/// Supports only sparse memory management operations
 	pub const SPARSE_BINDING: Self = QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT);
 	/// Supports graphics operations
-	pub fn graphics(self) -> Self { QueueFlags(self.bits() | Self::GRAPHICS.0) }
+	pub const fn graphics(self) -> Self { QueueFlags(self.bits() | Self::GRAPHICS.0) }
 	/// Supports compute operations
-	pub fn compute(self) -> Self { QueueFlags(self.0 | Self::COMPUTE.0) }
+	pub const fn compute(self) -> Self { QueueFlags(self.0 | Self::COMPUTE.0) }
 	/// Supports transfer operations
-	pub fn transfer(self) -> Self { QueueFlags(self.0 | Self::TRANSFER.0) }
+	pub const fn transfer(self) -> Self { QueueFlags(self.0 | Self::TRANSFER.0) }
 	/// Supports sparse memory management operatinons
-	pub fn sparse_binding(self) -> Self { QueueFlags(self.0 | Self::SPARSE_BINDING.0) }
+	pub const fn sparse_binding(self) -> Self { QueueFlags(self.0 | Self::SPARSE_BINDING.0) }
 
-	pub fn bits(self) -> VkQueueFlags { self.0 }
+	pub const fn bits(self) -> VkQueueFlags { self.0 }
 }
 /// List of queue families
 pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);

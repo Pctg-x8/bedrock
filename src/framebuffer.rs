@@ -24,7 +24,7 @@ impl DeviceChild for Framebuffer { fn device(&self) -> &::Device { &self.1 } }
 pub struct AttachmentDescription(VkAttachmentDescription);
 impl AttachmentDescription
 {
-	pub fn new(format: VkFormat, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self
+	pub const fn new(format: VkFormat, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self
 	{
 		AttachmentDescription(VkAttachmentDescription
 		{
@@ -34,16 +34,16 @@ impl AttachmentDescription
 			initialLayout: init_layout as _, finalLayout: fin_layout as _, flags: 0
 		})
 	}
-	pub fn format(mut self, fmt: VkFormat) -> Self { self.0.format = fmt; self }
-	pub fn load_op(mut self, op: LoadOp) -> Self { self.0.loadOp = op as _; self }
-	pub fn store_op(mut self, op: StoreOp) -> Self { self.0.storeOp = op as _; self }
-	pub fn stencil_load_op(mut self, op: LoadOp) -> Self { self.0.stencilLoadOp = op as _; self }
-	pub fn stencil_store_op(mut self, op: StoreOp) -> Self { self.0.stencilStoreOp = op as _; self }
-	pub fn init_layout(mut self, layout: ImageLayout) -> Self { self.0.initialLayout = layout as _; self }
-	pub fn fin_layout(mut self, layout: ImageLayout) -> Self { self.0.finalLayout = layout as _; self }
-	pub fn may_alias_attachment(mut self) -> Self { self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
-	pub fn no_alias_attachment(mut self) -> Self { self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
-	pub fn samples(mut self, count: u32) -> Self { self.0.samples = count; self }
+	pub const fn format(mut self, fmt: VkFormat) -> Self { self.0.format = fmt; self }
+	pub const fn load_op(mut self, op: LoadOp) -> Self { self.0.loadOp = op as _; self }
+	pub const fn store_op(mut self, op: StoreOp) -> Self { self.0.storeOp = op as _; self }
+	pub const fn stencil_load_op(mut self, op: LoadOp) -> Self { self.0.stencilLoadOp = op as _; self }
+	pub const fn stencil_store_op(mut self, op: StoreOp) -> Self { self.0.stencilStoreOp = op as _; self }
+	pub const fn init_layout(mut self, layout: ImageLayout) -> Self { self.0.initialLayout = layout as _; self }
+	pub const fn fin_layout(mut self, layout: ImageLayout) -> Self { self.0.finalLayout = layout as _; self }
+	pub const fn may_alias_attachment(mut self) -> Self { self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
+	pub const fn no_alias_attachment(mut self) -> Self { self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT; self }
+	pub const fn samples(mut self, count: u32) -> Self { self.0.samples = count; self }
 
 	pub fn mod_format(&mut self, fmt: VkFormat) -> &mut Self { self.0.format = fmt; self }
 	pub fn mod_load_op(&mut self, op: LoadOp) -> &mut Self { self.0.loadOp = op as _; self }
@@ -280,7 +280,7 @@ impl Framebuffer
 }
 impl Framebuffer
 {
-	pub fn size(&self) -> &::Extent2D { &self.3 }
+	pub const fn size(&self) -> &::Extent2D { &self.3 }
 	pub fn resources(&self) -> &[::ImageView] { &self.2 }
 }
 
