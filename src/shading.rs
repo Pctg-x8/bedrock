@@ -326,6 +326,7 @@ pub enum BasePipeline<'d>
 	Index(u32)
 }
 
+/// VkPipelineDynamicStateCreateInfo builder
 #[derive(Clone)]
 pub struct PipelineDynamicStates(Vec<VkDynamicState>);
 impl From<Vec<VkDynamicState>> for PipelineDynamicStates
@@ -347,6 +348,7 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d Pipel
 impl PipelineDynamicStates
 {
 	/// Creates an empty PipelineDynamicStates
+	#[allow(clippy::new_without_default)]
 	pub fn new() -> Self { PipelineDynamicStates(Vec::new()) }
 
 	/// Enables using a dynamic state

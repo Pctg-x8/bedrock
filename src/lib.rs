@@ -163,10 +163,13 @@ impl<T> AnalogNumRange<T> for std::ops::Range<T> where T: Copy
 	fn begin(&self) -> T { self.start } fn end(&self) -> T { self.end }
 }
 
+/// FFI Structure with Lifetime bounded(e.g. internal pointer-ed data origins)
 pub struct LifetimeBound<'d, T>(T, std::marker::PhantomData<&'d ()>);
 impl<'d, T> LifetimeBound<'d, T>
 {
+    /// Converts a value bound with a lifetime
     pub fn new(v: T) -> Self { LifetimeBound(v, std::marker::PhantomData) }
+    /// Unwrap an inner value
     pub unsafe fn unbound(self) -> T { self.0 }
 }
 impl<'d, T> AsRef<T> for LifetimeBound<'d, T>
