@@ -30,6 +30,17 @@ impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> 
 impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0.obj } }
 impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.0.dev } }
 
+impl Surface
+{
+	/// Create an surface object by taking raw `VkSurfaceKHR` object.
+	/// # Safety
+	/// `ptr` must be created from `parent`, and destroyed by this object(not yourself!).
+	pub unsafe fn from_raw(ptr: VkSurfaceKHR, parent: &::Instance) -> Self
+	{
+		Surface(SurfaceCell(ptr, parent.clone()).into())
+	}
+}
+
 /// Creation Procedures
 #[cfg(feature = "Implements")]
 impl Surface

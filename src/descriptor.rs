@@ -50,7 +50,7 @@ pub struct DSLBindings
 impl DSLBindings
 {
     /// An empty binding
-    pub fn empty() -> Self
+    pub const fn empty() -> Self
     {
         DSLBindings
         {

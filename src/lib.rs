@@ -39,6 +39,8 @@ mod vkresolve;
 #[cfg(feature = "Implements")]
 pub use vkresolve::Resolver;
 
+use std::error::Error;
+
 #[cfg(feature = "Implements")] mod fnconv;
 
 pub type Result<T> = std::result::Result<T, VkResultBox>;
@@ -53,7 +55,7 @@ impl VkResultHandler for VkResult
 /// Boxed version of `VkResult`
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct VkResultBox(pub VkResult);
-impl std::error::Error for VkResultBox
+impl Error for VkResultBox
 {
     fn description(&self) -> &str
     {
@@ -102,7 +104,7 @@ impl std::fmt::Debug for VkResultBox
 {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result
     {
-        write!(fmt, "[{:?}] {}", self.0, (self as &dyn std::error::Error).description())
+        write!(fmt, "[{:?}] {}", self.0, self.description())
     }
 }
 impl std::fmt::Display for VkResultBox
