@@ -8,6 +8,7 @@ use std::ptr::null;
 use std::marker::PhantomData;
 use std::borrow::Cow;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use std::ptr::null_mut;
 use std::ops::*;
 
 /// Bitmask specifying a pipeline stage
@@ -229,7 +230,8 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath>(device: &Device, path: &FilePath) -> Result<Self, Box<std::error::Error>>
+	pub fn from_file<FilePath>(device: &Device, path: &FilePath)
+		-> std::result::Result<Self, Box<dyn std::error::Error>>
 		where FilePath: AsRef<std::path::Path> + ?Sized
 	{
 		let bin = std::fs::read(path)?;
@@ -303,7 +305,7 @@ impl PipelineLayout
 	pub fn new(device: &Device, layouts: &[&DescriptorSetLayout], push_constants: &[(ShaderStage, Range<u32>)])
 		-> ::Result<Self>
 	{
-		let layouts = layouts.into_iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+		let layouts = layouts.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 		let push_constants = push_constants.iter()
 			.map(|&(sh, ref r)| VkPushConstantRange { stageFlags: sh.0, offset: r.start, size: r.end - r.start })
 			.collect::<Vec<_>>();
@@ -1166,7 +1168,7 @@ impl<'d> VertexProcessingStages<'d>
 		if let Some(TessellationStages { ref control, ref evaluation }) = self.tessellation
 		{
 			stages.push(control.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
-			stages.push(control.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
+			stages.push(evaluation.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
 		}
 		if let Some(ref s) = self.geometry { stages.push(s.createinfo_native(ShaderStage::GEOMETRY)); }
 		if let Some(ref s) = self.fragment { stages.push(s.createinfo_native(ShaderStage::FRAGMENT)); }
@@ -1183,41 +1185,43 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
+	pub fn create(&self, device: &Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
 	{
 		// VERTEX PROCESSING //
-		let vp = self.vp.as_ref().expect("Required the Vertex Processing Stages for Graphics Pipeline");
-		let (stages, _specinfo) = vp.generate_stages();
+		let (stages, _specinfo) = self.vp.generate_stages();
 
 		// let tcs = self.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
 		// let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
 		// let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
 		// let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
-		let ds =
-			if self.dynamic_state_flags.0.is_empty() { Some(self.dynamic_state_flags.into()) } else { None };
+		let ds = if self.dynamic_state_flags.0.is_empty()
+		{
+			unsafe { Some(Into::<LifetimeBound<_>>::into(&self.dynamic_state_flags).unbound()) }
+		}
+		else { None };
 		let base = match self._base
 		{
 			BasePipeline::Handle(ref h) => Some(h.native_ptr()), BasePipeline::None => None,
 			_ => panic!("Deriving from other info in same creation is invalid for single creation of pipeline")
 		};
 		let flags = self.flags | if base.is_some() { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
-		let ms_ptr = if let Some(ref msr) = self.ms_state { msr as *const _ } else {
+		let ms = if let Some(ref msr) = self.ms_state { Some(&msr.data) } else {
 			assert!(self.rasterizer_state.rasterizerDiscardEnable == VK_TRUE,
 				"MultisampleState must be specified when rasterizerDiscardEnable is false");
-			null()
+			None
 		};
 		
 		let cinfo = VkGraphicsPipelineCreateInfo
 		{
 			stageCount: stages.len() as _,
-			pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
+			pStages: stages.as_ptr(), pVertexInputState: &self.vp.vi, pInputAssemblyState: &self.vp.ia,
 			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
 			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
 			pRasterizationState: &self.rasterizer_state as *const _,
-			pMultisampleState: ms_ptr,
+			pMultisampleState: ms.map_or(null(), |x| x as *const _),
 			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
 			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(null()),
-			pDynamicState: ds.as_ref().map(|x| x.as_ref() as *const _).unwrap_or(null()),
+			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(null()),
 			layout: self._layout.native_ptr(), renderPass: self.rp.native_ptr(), subpass: self.subpass,
 			basePipelineHandle: if let BasePipeline::Handle(ref h) = self._base { h.native_ptr() } else { VK_NULL_HANDLE as _ },
 			basePipelineIndex: -1, flags,
@@ -1251,7 +1255,7 @@ impl Device
 		{
 			Resolver::get().create_graphics_pipelines(self.native_ptr(),
 				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				cinfos.len() as _, cinfos.as_ptr(), null(), hs.as_mut_ptr())
+				infos.len() as _, infos.as_ptr(), null(), hs.as_mut_ptr())
 		};
 		
 		r.into_result().map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())

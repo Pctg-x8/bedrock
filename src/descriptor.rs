@@ -1,6 +1,6 @@
 //! Vulkan Descriptors
 
-use vk::*;
+use super::*;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use ShaderStage;
@@ -9,16 +9,16 @@ use ShaderStage;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
 
 /// Opaque handle to a descriptor set layout object
-pub struct DescriptorSetLayout(VkDescriptorSetLayout, ::Device);
+pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 /// Opaque handle to a descriptor pool object
-pub struct DescriptorPool(VkDescriptorPool, ::Device);
+pub struct DescriptorPool(VkDescriptorPool, Device);
 
 #[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[destroy_descriptor_set_layout], DescriptorPool[destroy_descriptor_pool] }
 
 impl VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
 impl VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }
-impl DeviceChild for DescriptorSetLayout { fn device(&self) -> &::Device { &self.1 } }
-impl DeviceChild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for DescriptorSetLayout { fn device(&self) -> &Device { &self.1 } }
+impl DeviceChild for DescriptorPool { fn device(&self) -> &Device { &self.1 } }
 
 /// Structure specifying a descriptor set layout binding  
 /// Tuple Element: (binding index, descriptor count, shader visibility, immutable samplers(if needed))
@@ -70,53 +70,18 @@ impl DescriptorSetLayout
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn new(device: &::Device, bindings: &DSLBindings) -> ::Result<Self>
+    pub fn new(device: &Device, bindings: &[VkDescriptorSetLayoutBinding]) -> ::Result<Self>
     {
         let mut h = VK_NULL_HANDLE as _;
-        let mut n_bindings = Vec::with_capacity(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as usize + 1);
-        fn mapper2(&(b, n, sv, ref imm): &(u32, u32, ShaderStage, Vec<VkSampler>), dty: VkDescriptorType)
-            -> VkDescriptorSetLayoutBinding
-        {
-            VkDescriptorSetLayoutBinding
-            {
-                binding: b, descriptorType: dty, descriptorCount: n, stageFlags: sv.0, pImmutableSamplers: imm.as_ptr()
-            }
-        }
-        fn mapper(&(b, n, sv): &(u32, u32, ShaderStage), dty: VkDescriptorType) -> VkDescriptorSetLayoutBinding
-        {
-            VkDescriptorSetLayoutBinding
-            {
-                binding: b, descriptorType: dty, descriptorCount: n, stageFlags: sv.0, pImmutableSamplers: null()
-            }
-        }
-        fn append_some<T>(v: Option<T>, a: &mut Vec<T>) { if let Some(v) = v { a.push(v); } }
-        append_some(bindings.sampler.as_ref().map(|b| mapper2(b, VK_DESCRIPTOR_TYPE_SAMPLER)), &mut n_bindings);
-        append_some(bindings.combined_image_sampler.as_ref()
-            .map(|b| mapper2(b, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)), &mut n_bindings);
-        append_some(bindings.sampled_image.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)), &mut n_bindings);
-        append_some(bindings.storage_image.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)), &mut n_bindings);
-        append_some(bindings.uniform_texel_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER)), &mut n_bindings);
-        append_some(bindings.storage_texel_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER)), &mut n_bindings);
-        append_some(bindings.uniform_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)), &mut n_bindings);
-        append_some(bindings.storage_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)), &mut n_bindings);
-        append_some(bindings.uniform_buffer_dynamic.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC)), &mut n_bindings);
-        append_some(bindings.storage_buffer_dynamic.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC)), &mut n_bindings);
-        append_some(bindings.input_attachment.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)), &mut n_bindings);
         let cinfo = VkDescriptorSetLayoutCreateInfo
         {
-            bindingCount: n_bindings.len() as _, pBindings: n_bindings.as_ptr(), .. Default::default()
+            bindingCount: bindings.len() as _, pBindings: bindings.as_ptr(),
+            .. Default::default()
         };
+
         unsafe { Resolver::get().create_descriptor_set_layout(device.native_ptr(), &cinfo, null(), &mut h) }
-            .into_result().map(|_| DescriptorSetLayout(h, device.clone()))
+            .into_result()
+            .map(|_| DescriptorSetLayout(h, device.clone()))
     }
 }
 
@@ -145,7 +110,8 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct DescriptorPoolSize(pub DescriptorType, pub u32);
 /// Specified the type of a descriptor in a descriptor set
-#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord)]
+#[repr(u32)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord)]
 pub enum DescriptorType
 {
     Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
@@ -176,10 +142,12 @@ impl DescriptorPool
         let cinfo = VkDescriptorPoolCreateInfo
         {
             maxSets: max_sets, flags: if allow_free { VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT } else { 0 },
-            poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr() as *const _, .. Default::default()
+            poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr() as *const _,
+            .. Default::default()
         };
         unsafe { Resolver::get().create_descriptor_pool(device.native_ptr(), &cinfo, null(), &mut h) }
-            .into_result().map(|_| DescriptorPool(h, device.clone()))
+            .into_result()
+            .map(|_| DescriptorPool(h, device.clone()))
     }
     /// Allocate one or more descriptor sets
     /// # Failures
@@ -201,7 +169,7 @@ impl DescriptorPool
     }
     /// Resets a descriptor pool object
     /// # Safety
-    /// Application cannot use descriptor sets after this call
+    /// Application must not use descriptor sets after this call
     /// # Failures
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
@@ -217,7 +185,8 @@ impl DescriptorPool
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     pub fn free(&self, sets: &[VkDescriptorSet]) -> ::Result<()>
     {
-        unsafe { Resolver::get().free_descriptor_sets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }.into_result()
+        unsafe { Resolver::get().free_descriptor_sets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }
+            .into_result()
     }
 }
 
@@ -227,7 +196,10 @@ impl DescriptorPool
 pub struct DescriptorSetWriteInfo(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo);
 /// Structure specifying a copy descriptor set operation
 #[derive(Clone)]
-pub struct DescriptorSetCopyInfo { pub src: (VkDescriptorSet, u32, u32), pub dst: (VkDescriptorSet, u32, u32), pub count: u32 }
+pub struct DescriptorSetCopyInfo
+{
+    pub src: (VkDescriptorSet, u32, u32), pub dst: (VkDescriptorSet, u32, u32), pub count: u32
+}
 /// Structure specifying the parameters of a descriptor set write/copy operations.
 /// 
 /// * For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
@@ -257,7 +229,7 @@ use std::ops::Range;
 impl DescriptorUpdateInfo
 {
 	#[cfg(feature = "Implements")]
-    pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<VkSampler>, VkImageView, ::ImageLayout)], &[(VkBuffer, Range<usize>)], &[VkBufferView])
+    pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<VkSampler>, VkImageView, ImageLayout)], &[(VkBuffer, Range<usize>)], &[VkBufferView])
     {
         match self
         {
@@ -297,8 +269,9 @@ macro_rules! DescriptorUpdateTemplateEntries
     } };
 }
 
-pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
-#[cfg(feature = "Implements")] impl Drop for DescriptorUpdateTemplate
+pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, Device);
+#[cfg(feature = "Implements")]
+impl Drop for DescriptorUpdateTemplate
 {
     fn drop(&mut self)
     {
@@ -312,7 +285,8 @@ pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, ::Device);
 impl DescriptorUpdateTemplate
 {
     /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
-    pub fn new(device: &::Device, entries: &[VkDescriptorUpdateTemplateEntry], dsl: Option<&DescriptorSetLayout>) -> ::Result<Self>
+    pub fn new(device: &Device, entries: &[VkDescriptorUpdateTemplateEntry], dsl: Option<&DescriptorSetLayout>)
+        -> ::Result<Self>
     {
         let cinfo = VkDescriptorUpdateTemplateCreateInfo
         {
@@ -325,8 +299,7 @@ impl DescriptorUpdateTemplate
         unsafe
         {
             device.instance().create_descriptor_update_template(device.native_ptr(), &cinfo, null(), &mut handle)
-                .into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
-        }
+        }.into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
     }
     pub fn update_set<T>(&self, set: VkDescriptorSet, data: &T)
     {
@@ -343,5 +316,5 @@ impl VkHandle for DescriptorUpdateTemplate
 }
 impl DeviceChild for DescriptorUpdateTemplate
 {
-    fn device(&self) -> &::Device { &self.1 }
+    fn device(&self) -> &Device { &self.1 }
 }

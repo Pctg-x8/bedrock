@@ -167,8 +167,7 @@ impl Instance
 	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
 	{
 		if name.is_empty() { None }
-		else
-		{
+		else {
 			let p = unsafe { Resolver::get().get_instance_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
 			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
 		}
