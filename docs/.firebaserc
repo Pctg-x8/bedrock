@@ -1,5 +1,14 @@
 {
   "projects": {
     "default": "docs-541f3"
+  },
+  "targets": {
+    "docs-541f3": {
+      "hosting": {
+        "peridot-branch": [
+          "bedrock-docs-peridot-branch"
+        ]
+      }
+    }
   }
 }
