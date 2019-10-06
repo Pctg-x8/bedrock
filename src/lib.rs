@@ -163,6 +163,22 @@ impl<T> AnalogNumRange<T> for std::ops::Range<T> where T: Copy
 	fn begin(&self) -> T { self.start } fn end(&self) -> T { self.end }
 }
 
+pub struct LifetimeBound<'d, T>(T, std::marker::PhantomData<&'d ()>);
+impl<'d, T> LifetimeBound<'d, T>
+{
+    pub fn new(v: T) -> Self { LifetimeBound(v, std::marker::PhantomData) }
+    pub unsafe fn unbound(self) -> T { self.0 }
+}
+impl<'d, T> AsRef<T> for LifetimeBound<'d, T>
+{
+    fn as_ref(&self) -> &T { &self.0 }
+}
+impl<'d, T> std::ops::Deref for LifetimeBound<'d, T>
+{
+    type Target = T;
+    fn deref(&self) -> &T { &self.0 }
+}
+
 /// All of traits
 pub mod traits
 {

@@ -1,5 +1,6 @@
 //! Vulkan Shading(Shader/Pipeline)
 
+use super::LifetimeBound;
 use vk::*;
 use std::ffi::CString;
 use {VkHandle, DeviceChild};
@@ -324,6 +325,55 @@ pub enum BasePipeline<'d>
 	/// Derive from a create info in the `pCreateInfos` parameter
 	Index(u32)
 }
+
+#[derive(Clone)]
+pub struct PipelineDynamicStates(Vec<VkDynamicState>);
+impl From<Vec<VkDynamicState>> for PipelineDynamicStates
+{
+	fn from(mut v: Vec<VkDynamicState>) -> Self { v.sort(); PipelineDynamicStates(v) }
+}
+impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d PipelineDynamicStates
+{
+	fn into(self) -> LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>
+	{
+		LifetimeBound::new(VkPipelineDynamicStateCreateInfo
+		{
+			dynamicStateCount: self.0.len() as _,
+			pDynamicStates: self.0.as_ptr(),
+			.. Default::default()
+		})
+	}
+}
+impl PipelineDynamicStates
+{
+	/// Creates an empty PipelineDynamicStates
+	pub fn new() -> Self { PipelineDynamicStates(Vec::new()) }
+
+	/// Enables using a dynamic state
+	pub fn enable(&mut self, v: VkDynamicState)
+	{
+		if let Err(n) = self.0.binary_search(&v) { self.0.insert(n, v); }
+	}
+	/// Disables using a dynamic state
+	pub fn disable(&mut self, v: VkDynamicState)
+	{
+		if let Ok(n) = self.0.binary_search(&v) { self.0.remove(n); }
+	}
+	/// Sets enable or disable state of a dynamic state
+	pub fn set(&mut self, v: VkDynamicState, enable: bool)
+	{
+		if enable { self.enable(v); } else { self.disable(v); }
+	}
+}
+impl<'d> GraphicsPipelineBuilder<'d>
+{
+	/// Gets a mutable reference to the dynamic state settings
+	pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates
+	{
+		&mut self.dynamic_state_flags
+	}
+}
+
 /// Builder struct to construct a `Pipeline` for graphics operations
 #[derive(Clone)]
 pub struct GraphicsPipelineBuilder<'d>
@@ -333,10 +383,10 @@ pub struct GraphicsPipelineBuilder<'d>
 	rasterizer_state: VkPipelineRasterizationStateCreateInfo,
 	tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
 	viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
-	ms_state: Option<&'d MultisampleState>,
+	ms_state: Option<&'d MultisampleState<'d>>,
 	ds_state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>,
 	color_blending: Option<(Box<VkPipelineColorBlendStateCreateInfo>, Vec<VkPipelineColorBlendAttachmentState>)>,
-	dynamic_state_flags: DynamicStateFlags
+	dynamic_state_flags: PipelineDynamicStates
 }
 impl<'d, T> DynamicArrayState<'d, T>
 {
@@ -447,33 +497,41 @@ impl<'d> VertexProcessingStages<'d>
 	}
 }
 /// PipelineStateDesc: Multisample State
-#[derive(Clone)] pub struct MultisampleState(VkPipelineMultisampleStateCreateInfo);
-impl MultisampleState
+#[derive(Clone)] pub struct MultisampleState<'d>
+{
+	data: VkPipelineMultisampleStateCreateInfo,
+	_samplemask_lifetime_binder: std::marker::PhantomData<&'d [VkSampleMask]>
+}
+impl<'d> MultisampleState<'d>
 {
 	#[allow(clippy::new_without_default)]
 	pub fn new() -> Self
 	{
-		MultisampleState(VkPipelineMultisampleStateCreateInfo
+		MultisampleState
 		{
-			rasterizationSamples: 1, .. Default::default()
-		})
+			data: VkPipelineMultisampleStateCreateInfo
+			{
+				rasterizationSamples: 1, .. Default::default()
+			},
+			_samplemask_lifetime_binder: std::marker::PhantomData
+		}
 	}
 	/// Specifies the number of samples per pixel used in rasterization. default=1
 	pub fn rasterization_samples(&mut self, samples: usize) -> &mut Self
 	{
-		self.0.rasterizationSamples = samples as _; self
+		self.data.rasterizationSamples = samples as _; self
 	}
 	/// A bitmask of static coverage information that is ANDed with the coverage information generated
 	/// during rasterization, as described in [Sample Mask](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-samplemask).
-	pub fn sample_mask(&mut self, mask: &[VkSampleMask]) -> &mut Self
+	pub fn sample_mask(&mut self, mask: &'d [VkSampleMask]) -> &mut Self
 	{
 		if mask.is_empty()
 		{
-			self.0.pSampleMask = null();
+			self.data.pSampleMask = null();
 		}
 		else {
-			assert_eq!(mask.len(), (self.0.rasterizationSamples as usize + 31) / 32);
-			self.0.pSampleMask = mask.as_ptr();
+			assert_eq!(mask.len(), (self.data.rasterizationSamples as usize + 31) / 32);
+			self.data.pSampleMask = mask.as_ptr();
 		}
 		self
 	}
@@ -481,12 +539,12 @@ impl MultisampleState
 	/// Pass a `None` to disable [Sample Shading](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#primsrast-sampleshading).
 	pub fn sample_shading(&mut self, min_sample_shading: Option<f32>) -> &mut Self
 	{
-		self.0.sampleShadingEnable = min_sample_shading.is_some() as _;
+		self.data.sampleShadingEnable = min_sample_shading.is_some() as _;
 		if let Some(m) = min_sample_shading
 		{
 			assert!(0.0 <= m && m <= 1.0,
 				"Invalid usage: VkPipelineMultisampleStateCreateInfo::minSampleShading must be in the range [0, 1]");
-			self.0.minSampleShading = m as _;
+			self.data.minSampleShading = m as _;
 		}
 		self
 	}
@@ -494,11 +552,18 @@ impl MultisampleState
 	/// first color output as specified in the [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg) section.
 	pub fn enable_alpha_to_coverage(&mut self, w: bool) -> &mut Self
 	{
-		self.0.alphaToCoverageEnable = w as _; self
+		self.data.alphaToCoverageEnable = w as _; self
 	}
 	/// Controls whether the alpha component of the fragment's first color output is replaced with one as described in
 	/// [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg).
-	pub fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self { self.0.alphaToOneEnable = w as _; self }
+	pub fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self { self.data.alphaToOneEnable = w as _; self }
+}
+impl<'d> Into<LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo>> for MultisampleState<'d>
+{
+	fn into(self) -> LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo>
+	{
+		LifetimeBound::new(self.data)
+	}
 }
 
 impl<'d> GraphicsPipelineBuilder<'d>
@@ -511,7 +576,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 			flags: 0, _layout: layout, rp: rpsp.0, subpass: rpsp.1, _base: BasePipeline::None,
 			vp: None, rasterizer_state: Default::default(),
 			tess_state: None, viewport_state: None, ms_state: None, ds_state: None, color_blending: None,
-			dynamic_state_flags: unsafe { ::std::mem::zeroed() }
+			dynamic_state_flags: PipelineDynamicStates::new()
 		}
 	}
 }
@@ -554,7 +619,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		if self.viewport_state.is_none() { self.viewport_state = Some(Default::default()); }
 		self.viewport_state.as_mut().unwrap().viewportCount = vps.count() as _;
 		self.viewport_state.as_mut().unwrap().pViewports = vps.as_ptr();
-		self.dynamic_state_flags.viewport = vps.is_dynamic();
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_VIEWPORT, vps.is_dynamic());
 		self
 	}
 	/// # Safety
@@ -564,11 +629,12 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		if self.viewport_state.is_none() { self.viewport_state = Some(Default::default()); }
 		self.viewport_state.as_mut().unwrap().scissorCount = scs.count() as _;
 		self.viewport_state.as_mut().unwrap().pScissors = scs.as_ptr();
-		self.dynamic_state_flags.scissor = scs.is_dynamic();
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_SCISSOR, scs.is_dynamic());
 		self
 	}
 	/// Safety way calling `viewports` and `scissors`
-	pub fn fixed_viewport_scissors(&mut self, vps: DynamicArrayState<VkViewport>, scissor: DynamicArrayState<VkRect2D>) -> &mut Self
+	pub fn fixed_viewport_scissors(&mut self, vps: DynamicArrayState<VkViewport>, scissor: DynamicArrayState<VkRect2D>)
+		-> &mut Self
 	{
 		assert_eq!(vps.count(), scissor.count());
 		unsafe { self.viewports(vps).scissors(scissor) }
@@ -598,7 +664,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	pub fn depth_bias(&mut self, opts: SwitchOrDynamicState<(f32, f32, f32)>) -> &mut Self
 	{
 		self.rasterizer_state.depthBiasEnable = opts.is_enabled() as _;
-		self.dynamic_state_flags.depth_bias = opts.is_dynamic();
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_DEPTH_BIAS, opts.is_dynamic());
 		if let SwitchOrDynamicState::Static((cf, c, sf)) = opts
 		{
 			self.rasterizer_state.depthBiasConstantFactor = cf;
@@ -610,7 +676,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// The width of rasterized line segments. Specifying `None` means that the `lineWidth` parameter is a dynamic state.
 	pub fn line_width(&mut self, width: Option<f32>) -> &mut Self
 	{
-		self.dynamic_state_flags.line_width = width.is_none() as _;
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_LINE_WIDTH, width.is_none());
 		self.rasterizer_state.lineWidth = width.unwrap_or(0.0); self
 	}
 }
@@ -654,18 +720,18 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Control the parameter of the stencil test
 	pub fn stencil_control_front(&mut self, state: VkStencilOpState) -> &mut Self
 	{
-		self.dynamic_state_flags.stencil_compare_mask = false;
-		self.dynamic_state_flags.stencil_write_mask = false;
-		self.dynamic_state_flags.stencil_reference = false;
+		self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK);
+		self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK);
+		self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_REFERENCE);
 		self.dss_ref().front = state;
 		self
 	}
 	/// Control the parameter of the stencil test
 	pub fn stencil_control_back(&mut self, state: VkStencilOpState) -> &mut Self
 	{
-		self.dynamic_state_flags.stencil_compare_mask = false;
-		self.dynamic_state_flags.stencil_write_mask = false;
-		self.dynamic_state_flags.stencil_reference = false;
+		self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK);
+		self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK);
+		self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_REFERENCE);
 		self.dss_ref().back = state;
 		self
 	}
@@ -673,35 +739,41 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Specifying `None` means that the parameter is a dynamic state
 	pub fn stencil_compare_mask(&mut self, mask: Option<(u32, u32)>) -> &mut Self
 	{
-		self.dynamic_state_flags.stencil_compare_mask = if let Some((f, b)) = mask
+		let is_dynamic = if let Some((f, b)) = mask
 		{
 			self.dss_ref().front.compareMask = f;
 			self.dss_ref().back.compareMask = b;
 			false
 		}
-		else { true }; self
+		else { true };
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK, is_dynamic);
+		self
 	}
 	/// Controls the parameter of the write mask of the stencil test. Tuple ordering: (front, back)
 	/// Specifying `None` means that the parameter is a dynamic state
 	pub fn stencil_write_mask(&mut self, mask: Option<(u32, u32)>) -> &mut Self
 	{
-		self.dynamic_state_flags.stencil_write_mask = if let Some((f, b)) = mask
+		let is_dynamic = if let Some((f, b)) = mask
 		{
 			self.dss_ref().front.writeMask = f; self.dss_ref().back.writeMask = b;
 			false
 		}
-		else { true }; self
+		else { true };
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK, is_dynamic);
+		self
 	}
 	/// Controls the parameter of the reference of the stencil test. Tuple ordering: (front, back)
 	/// Specifying `None` means that the parameter is a dynamic state
 	pub fn stencil_reference(&mut self, mask: Option<(u32, u32)>) -> &mut Self
 	{
-		self.dynamic_state_flags.stencil_reference = if let Some((f, b)) = mask
+		let is_dynamic = if let Some((f, b)) = mask
 		{
 			self.dss_ref().front.reference = f; self.dss_ref().back.reference = b;
 			false
 		}
-		else { true }; self
+		else { true };
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_STENCIL_REFERENCE, is_dynamic);
+		self
 	}
 	/// The range of values used in the depth bounds test
 	pub fn depth_bounds_range(&mut self, bounds: ::std::ops::Range<f32>) -> &mut Self
@@ -712,7 +784,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	pub fn depth_bounds(&mut self, bounds: SwitchOrDynamicState<::std::ops::Range<f32>>) -> &mut Self
 	{
 		self.depth_bounds_test_enable(bounds.is_enabled());
-		self.dynamic_state_flags.depth_bounds = bounds.is_dynamic();
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_DEPTH_BOUNDS, bounds.is_dynamic());
 		if let SwitchOrDynamicState::Static(r) = bounds { self.depth_bounds_range(r) } else { self }
 	}
 }
@@ -748,7 +820,7 @@ pub enum BlendOp
 {
 	Add = VK_BLEND_OP_ADD as _,
 	Sub = VK_BLEND_OP_SUBTRACT as _,
-	/// Reverse subtraction order(subtract source from destination)
+	/// Reverse subtraction order(destination - source)
 	RevSub = VK_BLEND_OP_REVERSE_SUBTRACT as _,
 	Min = VK_BLEND_OP_MIN as _,
 	Max = VK_BLEND_OP_MAX as _
@@ -835,8 +907,10 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Specifying `None` means that the `blendConstants` parameter is a dynamic state
 	pub fn blend_constants(&mut self, values: Option<[f32; 4]>) -> &mut Self
 	{
-		self.dynamic_state_flags.blend_constants = values.is_none();
-		self.cb_ref().0.blendConstants.copy_from_slice(&values.unwrap_or([0.0; 4])); self
+		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_BLEND_CONSTANTS, values.is_none());
+		self.cb_ref().0.blendConstants.copy_from_slice(&values.unwrap_or([0.0; 4]));
+		
+		self
 	}
 }
 
@@ -975,7 +1049,6 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	#[allow(unused_variables)]
 	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
 	{
 		// VERTEX PROCESSING //
@@ -986,48 +1059,42 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		// let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
 		// let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
 		// let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
-		let mut dynamic_states = Vec::new();
-		if self.dynamic_state_flags.viewport { dynamic_states.push(VK_DYNAMIC_STATE_VIEWPORT); }
-		if self.dynamic_state_flags.scissor  { dynamic_states.push(VK_DYNAMIC_STATE_SCISSOR); }
-		if self.dynamic_state_flags.line_width { dynamic_states.push(VK_DYNAMIC_STATE_LINE_WIDTH); }
-		if self.dynamic_state_flags.depth_bias { dynamic_states.push(VK_DYNAMIC_STATE_DEPTH_BIAS); }
-		if self.dynamic_state_flags.blend_constants { dynamic_states.push(VK_DYNAMIC_STATE_BLEND_CONSTANTS); }
-		if self.dynamic_state_flags.depth_bounds { dynamic_states.push(VK_DYNAMIC_STATE_DEPTH_BOUNDS); }
-		if self.dynamic_state_flags.stencil_compare_mask { dynamic_states.push(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK); }
-		if self.dynamic_state_flags.stencil_write_mask { dynamic_states.push(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK); }
-		if self.dynamic_state_flags.stencil_reference { dynamic_states.push(VK_DYNAMIC_STATE_STENCIL_REFERENCE); }
-		let ds = if !dynamic_states.is_empty()
-		{
-			Some(VkPipelineDynamicStateCreateInfo
-			{
-				dynamicStateCount: dynamic_states.len() as _, pDynamicStates: dynamic_states.as_ptr(), .. Default::default()
-			})
-		}
-		else { None };
+		let ds =
+			if self.dynamic_state_flags.0.is_empty() { Some(self.dynamic_state_flags.into()) } else { None };
 		let base = match self._base
 		{
 			BasePipeline::Handle(ref h) => Some(h.native_ptr()), BasePipeline::None => None,
 			_ => panic!("Deriving from other info in same creation is invalid for single creation of pipeline")
 		};
 		let flags = self.flags | if base.is_some() { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
-		let ms_empty = MultisampleState::new();
+		let ms_ptr = if let Some(ref msr) = self.ms_state { msr as *const _ } else {
+			assert!(self.rasterizer_state.rasterizerDiscardEnable == VK_TRUE,
+				"MultisampleState must be specified when rasterizerDiscardEnable is false");
+			null()
+		};
 		
 		let cinfo = VkGraphicsPipelineCreateInfo
 		{
-			stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
+			stageCount: stages.len() as _,
+			pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
 			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pRasterizationState: &self.rasterizer_state as *const _, pMultisampleState: self.ms_state_ptr(&ms_empty),
+			pRasterizationState: &self.rasterizer_state as *const _,
+			pMultisampleState: ms_ptr,
 			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
 			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
+			pDynamicState: ds.as_ref().map(|x| x.as_ref() as *const _).unwrap_or(::std::ptr::null()),
 			layout: self._layout.native_ptr(), renderPass: self.rp.native_ptr(), subpass: self.subpass,
 			basePipelineHandle: if let &BasePipeline::Handle(ref h) = &self._base { h.native_ptr() } else { VK_NULL_HANDLE as _ },
 			basePipelineIndex: -1, flags, .. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_graphics_pipelines(device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-			1, &cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Pipeline(h, device.clone()))
+		unsafe
+		{
+			Resolver::get().create_graphics_pipelines(device.native_ptr(),
+				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+				1, &cinfo, ::std::ptr::null(), &mut h)
+		}.into_result().map(|_| Pipeline(h, device.clone()))
 	}
 }
 
@@ -1041,65 +1108,18 @@ impl ::Device
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn create_graphics_pipelines(&self, builders: &[GraphicsPipelineBuilder], cache: Option<&PipelineCache>) -> ::Result<Vec<Pipeline>>
+	pub fn create_graphics_pipelines(&self, infos: &[VkGraphicsPipelineCreateInfo], cache: Option<&PipelineCache>)
+		-> ::Result<Vec<Pipeline>>
 	{
-		let aggregates = builders.iter().map(|x|
+		let mut hs = vec![VK_NULL_HANDLE as VkPipeline; infos.len()];
+		let r = unsafe
 		{
-			// VERTEX PROCESSING //
-			let vp = x.vp.as_ref().expect("Required the Vertex Processing Stages for Graphics Pipeline");
-			let (stages, _specinfo) = vp.generate_stages();
-			// let tcs = x.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
-			// let tes = x.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
-			// let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
-			// let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
-
-			let mut dynamic_states = Vec::new();
-			if x.dynamic_state_flags.viewport { dynamic_states.push(VK_DYNAMIC_STATE_VIEWPORT); }
-			if x.dynamic_state_flags.scissor  { dynamic_states.push(VK_DYNAMIC_STATE_SCISSOR); }
-			if x.dynamic_state_flags.line_width { dynamic_states.push(VK_DYNAMIC_STATE_LINE_WIDTH); }
-			if x.dynamic_state_flags.depth_bias { dynamic_states.push(VK_DYNAMIC_STATE_DEPTH_BIAS); }
-			if x.dynamic_state_flags.blend_constants { dynamic_states.push(VK_DYNAMIC_STATE_BLEND_CONSTANTS); }
-			if x.dynamic_state_flags.depth_bounds { dynamic_states.push(VK_DYNAMIC_STATE_DEPTH_BOUNDS); }
-			if x.dynamic_state_flags.stencil_compare_mask { dynamic_states.push(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK); }
-			if x.dynamic_state_flags.stencil_write_mask { dynamic_states.push(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK); }
-			if x.dynamic_state_flags.stencil_reference { dynamic_states.push(VK_DYNAMIC_STATE_STENCIL_REFERENCE); }
-			let ds = if !dynamic_states.is_empty()
-			{
-				Some(VkPipelineDynamicStateCreateInfo
-				{
-					dynamicStateCount: dynamic_states.len() as _, pDynamicStates: dynamic_states.as_ptr(), .. Default::default()
-				})
-			}
-			else { None };
-			(vp, stages, ds, _specinfo, dynamic_states)
-		}).collect::<Vec<_>>();
-		let ms_empty = MultisampleState::new();
-		let cinfos = builders.iter().zip(aggregates.iter()).map(|(b, &(ref vp, ref stages, ref ds, _, _))|
-		{
-			let (base_handle, base_index) = match b._base
-			{
-				BasePipeline::Handle(ref h) => (h.0, -1), BasePipeline::None => (VK_NULL_HANDLE as _, -1),
-				BasePipeline::Index(x) => (VK_NULL_HANDLE as _, x as i32)
-			};
-			let flags = b.flags | if base_handle != VK_NULL_HANDLE as _ || base_index >= 0 { VK_PIPELINE_CREATE_DERIVATIVE_BIT } else { 0 };
-
-			VkGraphicsPipelineCreateInfo
-			{
-				stageCount: stages.len() as _, pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
-				pTessellationState: b.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-				pViewportState: b.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-				pRasterizationState: &b.rasterizer_state as *const _, pMultisampleState: b.ms_state_ptr(&ms_empty),
-				pDepthStencilState: b.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-				pColorBlendState: b.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
-				pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(::std::ptr::null()),
-				layout: b._layout.native_ptr(), renderPass: b.rp.native_ptr(), subpass: b.subpass,
-				basePipelineHandle: base_handle, basePipelineIndex: base_index, flags, .. Default::default()
-			}
-		}).collect::<Vec<_>>();
-		let mut hs = vec![VK_NULL_HANDLE as VkPipeline; builders.len()];
-		unsafe { Resolver::get().create_graphics_pipelines(self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-			cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), hs.as_mut_ptr()) }.into_result()
-			.map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
+			Resolver::get().create_graphics_pipelines(self.native_ptr(),
+				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+				cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), hs.as_mut_ptr())
+		};
+		
+		r.into_result().map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
 	}
 }
 
