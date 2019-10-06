@@ -212,9 +212,11 @@ impl ShaderModule
 	pub fn from_memory<Buffer>(device: &Device, buffer: &Buffer) -> ::Result<Self>
 		where Buffer: AsRef<[u8]> + ?Sized
 	{
+		#[allow(clippy::cast_ptr_alignment)]
 		let cinfo = VkShaderModuleCreateInfo
 		{
-			codeSize: buffer.as_ref().len() as _, pCode: buffer.as_ref().as_ptr() as *const _,
+			codeSize: buffer.as_ref().len() as _,
+			pCode: buffer.as_ref().as_ptr() as *const _,
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;

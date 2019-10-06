@@ -16,10 +16,13 @@ use libc::*;
 
 macro_rules! WrapAPI {
     ($xt: ident = $n: ident ( $($an: ident : $at: ty),* )) => {
-        #[cfg(not(feature = "DynamicLoaded"))] #[inline(always)]
+        #[cfg(not(feature = "DynamicLoaded"))]
+        #[inline(always)]
+        #[allow(clippy::too_many_arguments)]
         pub unsafe fn $xt(&self, $($an: $at),*) { $n($($an),*); }
         #[cfg(feature = "DynamicLoaded")]
-        pub unsafe fn $xt(&self, $($an: $at),*) {
+        pub unsafe fn $xt(&self, $($an: $at),*)
+        {
             static mut F: Option<RawSymbol<fn($($at),*)>> = None;
             static ONCE: Once = ONCE_INIT;
             ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*)>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
@@ -27,14 +30,17 @@ macro_rules! WrapAPI {
         }
     };
     ($xt: ident = $n: ident ( $($an: ident : $at: ty),* ) -> $rt: ty) => {
-        #[cfg(not(feature = "DynamicLoaded"))] #[inline(always)]
+        #[cfg(not(feature = "DynamicLoaded"))]
+        #[inline(always)]
+        #[allow(clippy::too_many_arguments)]
         pub unsafe fn $xt(&self, $($an: $at),*) -> $rt { $n($($an),*) }
         #[cfg(feature = "DynamicLoaded")]
-        pub unsafe fn $xt(&self, $($an: $at),*) -> $rt {
+        pub unsafe fn $xt(&self, $($an: $at),*) -> $rt
+        {
             static mut F: Option<RawSymbol<fn($($at),*) -> $rt>> = None;
             static ONCE: Once = ONCE_INIT;
             ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*) -> $rt>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
-            return (F.as_ref().unwrap())($($an),*);
+            (F.as_ref().unwrap())($($an),*)
         }
     };
 }
@@ -51,23 +57,27 @@ static STATIC_RESOLVER: AtomicPtr<Resolver> = AtomicPtr::new(0 as *mut _);
 
 pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
 impl Resolver {
-    pub fn get<'a>() -> &'a Self {
-        STATIC_RESOLVER_INITIALIZED.with(|f| if !*f.borrow() {
-            let _ = STATIC_RESOLVER.compare_exchange(0 as *mut _, Box::into_raw(Box::new(Self::new())),
+    pub fn get<'a>() -> &'a Self
+    {
+        STATIC_RESOLVER_INITIALIZED.with(|f| if !*f.borrow()
+        {
+            let _ = STATIC_RESOLVER.compare_exchange(std::ptr::null_mut(), Box::into_raw(Box::new(Self::new())),
                 Ordering::SeqCst, Ordering::Relaxed);
             *f.borrow_mut() = true;
         });
-        return unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) };
+        unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) }
     }
 
     #[cfg(feature = "DynamicLoaded")]
-    fn new() -> Self {
-        #[cfg(target_os="macos")] fn libname() -> std::path::PathBuf {
+    fn new() -> Self
+    {
+        #[cfg(target_os="macos")] fn libname() -> std::path::PathBuf
+        {
             let mut exepath = std::env::current_exe().unwrap(); exepath.pop();
             exepath.push("libvulkan.dylib"); return exepath;
         }
         #[cfg(not(target_os="macos"))] fn libname() -> &'static str { "libvulkan.so" }
-        Library::new(&libname()).map(Resolver).expect("Unable to open libvulkan.so")
+        Library::new(&libname()).map(Resolver).expect("Unable to open libvulkan")
     }
     #[cfg(not(feature = "DynamicLoaded"))]
     fn new() -> Self { Resolver() }

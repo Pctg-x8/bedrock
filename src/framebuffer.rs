@@ -5,6 +5,7 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use ImageLayout;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 use std::ops::*;
 
 /// Opaque handle to a render pass object
@@ -321,12 +322,12 @@ impl RenderPass
 	/// Returns the granularity for optimal render area
 	pub fn optimal_granularity(&self) -> Extent2D
 	{
-		let mut e = Extent2D(0, 0);
+		let mut e = MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_render_area_granularity(self.1.native_ptr(), self.0, std::mem::transmute(&mut e));
+			Resolver::get().get_render_area_granularity(self.1.native_ptr(), self.0, e.as_mut_ptr());
+
+			e.assume_init().into()
 		}
-		
-		e
 	}
 }

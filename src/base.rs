@@ -2,13 +2,13 @@
 
 #![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
-use vk::*;
+use super::*;
 use std::ffi::CString;
 use VkHandle;
 #[cfg(feature = "Implements")] use ::vkresolve::Resolver;
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
-#[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
+#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;
@@ -168,7 +168,8 @@ impl Instance
 	{
 		if name.is_empty() { None }
 		else {
-			let p = unsafe { Resolver::get().get_instance_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
+			let fn_cstr = CString::new(name).unwrap();
+			let p = unsafe { Resolver::get().get_instance_proc_addr(self.native_ptr(), fn_cstr.as_ptr()) };
 			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
 		}
 	}
@@ -229,7 +230,8 @@ impl Instance
 			Resolver::get().enumerate_instance_extension_properties(cptr, &mut n, null_mut()).into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().enumerate_instance_extension_properties(cptr, &mut n, v.as_mut_ptr()).into_result()?;
-			return Ok(v);
+			
+			Ok(v)
 		}
 	}
 }
@@ -259,17 +261,23 @@ impl PhysicalDevice
 	/// Reports capabilities of a physical device.
 	pub fn features(&self) -> VkPhysicalDeviceFeatures
 	{
-		unsafe {
-			let mut p = resv(); Resolver::get().get_physical_device_features(self.0, &mut p);
-			return p;
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_physical_device_features(self.0, p.as_mut_ptr());
+
+			p.assume_init()
 		}
 	}
 	/// Lists physical device's format capabilities
 	pub fn format_properties(&self, format: VkFormat) -> VkFormatProperties
 	{
-		unsafe {
-			let mut p = resv(); Resolver::get().get_physical_device_format_properties(self.0, format, &mut p);
-			return p;
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_physical_device_format_properties(self.0, format, p.as_mut_ptr());
+
+			p.assume_init()
 		}
 	}
 	/// Lists physical device's image format capabilities
@@ -280,53 +288,66 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_FORMAT_NOT_SUPPORTED`
 	pub fn image_format_properties(&self, format: VkFormat, itype: VkImageType, tiling: VkImageTiling,
-		usage: ::ImageUsage, flags: ::ImageFlags) -> ::Result<VkImageFormatProperties>
+		usage: ImageUsage, flags: ImageFlags) -> ::Result<VkImageFormatProperties>
 	{
-		unsafe {
-			let mut p = resv();
-			Resolver::get().get_physical_device_image_format_properties(self.0, format, itype,
-				tiling, usage.0, flags.0, &mut p).into_result()?;
-			return Ok(p);
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_physical_device_image_format_properties(
+				self.0, format, itype, tiling, usage.0, flags.0, p.as_mut_ptr())
+				.into_result()
+				.map(|_| p.assume_init())
 		}
 	}
 	/// Returns properties of a physical device
-	pub fn properties(&self) -> VkPhysicalDeviceProperties {
-		unsafe {
-			let mut p = resv(); Resolver::get().get_physical_device_properties(self.0, &mut p);
-			return p;
+	pub fn properties(&self) -> VkPhysicalDeviceProperties
+	{
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_physical_device_properties(self.0, p.as_mut_ptr());
+
+			p.assume_init()
 		}
 	}
 	/// Reports properties of the queues of the specified physical device
-	pub fn queue_family_properties(&self) -> ::QueueFamilies
+	pub fn queue_family_properties(&self) -> QueueFamilies
 	{
-		unsafe {
+		unsafe
+		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_queue_family_properties(self.0, &mut n, null_mut());
-			let mut v = ::preserve(n as _);
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().get_physical_device_queue_family_properties(self.0, &mut n, v.as_mut_ptr());
-			return ::QueueFamilies(v);
+
+			QueueFamilies(v)
 		}
 	}
 	/// Reports memory information for the specified physical device
-	pub fn memory_properties(&self) -> MemoryProperties {
-		unsafe {
-			let mut p = resv();
-			Resolver::get().get_physical_device_memory_properties(self.0, &mut p);
-			return MemoryProperties(p);
+	pub fn memory_properties(&self) -> MemoryProperties
+	{
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_physical_device_memory_properties(self.0, p.as_mut_ptr());
+
+			MemoryProperties(p.assume_init())
 		}
 	}
 	/// Retrieve properties of an image format applied to sparse images
 	pub fn sparse_image_format_properties(&self, format: VkFormat, itype: VkImageType, samples: VkSampleCountFlags,
-		usage: ::ImageUsage, tiling: VkImageTiling) -> Vec<VkSparseImageFormatProperties>
+		usage: ImageUsage, tiling: VkImageTiling) -> Vec<VkSparseImageFormatProperties>
 	{
-		unsafe { 
+		unsafe
+		{ 
 			let mut n = 0;
 			Resolver::get().get_physical_device_sparse_image_format_properties(self.0, format, itype, samples,
 				usage.0, tiling, &mut n, null_mut());
-			let mut v = ::preserve(n as _);
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().get_physical_device_sparse_image_format_properties(self.0, format, itype, samples,
 				usage.0, tiling, &mut n, v.as_mut_ptr());
-			return v;
+			
+			v
 		}
 	}
 
@@ -334,10 +355,12 @@ impl PhysicalDevice
 	#[cfg(feature = "VK_EXT_sample_locations")]
 	pub fn multisample_properties(&self, samples: VkSampleCountFlags) -> VkMultisamplePropertiesEXT
 	{
-		unsafe {
-			let mut r = resv();
-			Resolver::get().get_physical_device_multisample_properties_ext(self.0, samples, &mut r);
-			return r;
+		let mut r = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_physical_device_multisample_properties_ext(self.0, samples, r.as_mut_ptr());
+			
+			r.assume_init()
 		}
 	}
 }

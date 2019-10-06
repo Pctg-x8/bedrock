@@ -656,7 +656,7 @@ impl Image
 		cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange)
 		-> ::Result<ImageView>
 	{
-		let (format, vtype) = (format.unwrap_or(self.format()), vtype.unwrap_or(self.dimension()));
+		let (format, vtype) = (format.unwrap_or_else(|| self.format()), vtype.unwrap_or_else(|| self.dimension()));
 		let cinfo = VkImageViewCreateInfo
 		{
 			image: self.native_ptr(), viewType: vtype, format, components: cmap.clone().into(),

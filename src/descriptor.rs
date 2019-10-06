@@ -157,7 +157,7 @@ impl DescriptorPool
     /// - VK_ERROR_FRAGMENTED_POOL
     pub fn alloc(&self, layouts: &[&DescriptorSetLayout]) -> ::Result<Vec<VkDescriptorSet>>
     {
-        let layout_ptrs = layouts.into_iter().map(|x| x.0).collect::<Vec<_>>();
+        let layout_ptrs = layouts.iter().map(|x| x.0).collect::<Vec<_>>();
         let ainfo = VkDescriptorSetAllocateInfo
         {
             descriptorPool: self.0, descriptorSetCount: layout_ptrs.len() as _, pSetLayouts: layout_ptrs.as_ptr(),
@@ -229,21 +229,22 @@ use std::ops::Range;
 impl DescriptorUpdateInfo
 {
 	#[cfg(feature = "Implements")]
+    #[allow(clippy::type_complexity)]
     pub(crate) fn decomposite(&self) -> (DescriptorType, u32, &[(Option<VkSampler>, VkImageView, ImageLayout)], &[(VkBuffer, Range<usize>)], &[VkBufferView])
     {
         match self
         {
-            &DescriptorUpdateInfo::Sampler(ref iv) => (DescriptorType::Sampler, iv.len() as _, iv, &[], &[]),
-            &DescriptorUpdateInfo::CombinedImageSampler(ref iv) => (DescriptorType::CombinedImageSampler, iv.len() as _, iv, &[], &[]),
-            &DescriptorUpdateInfo::SampledImage(ref iv) => (DescriptorType::SampledImage, iv.len() as _, iv, &[], &[]),
-            &DescriptorUpdateInfo::StorageImage(ref iv) => (DescriptorType::StorageImage, iv.len() as _, iv, &[], &[]),
-            &DescriptorUpdateInfo::InputAttachment(ref iv) => (DescriptorType::InputAttachment, iv.len() as _, iv, &[], &[]),
-            &DescriptorUpdateInfo::UniformBuffer(ref bv) => (DescriptorType::UniformBuffer, bv.len() as _, &[], bv, &[]),
-            &DescriptorUpdateInfo::StorageBuffer(ref bv) => (DescriptorType::StorageBuffer, bv.len() as _, &[], bv, &[]),
-            &DescriptorUpdateInfo::UniformBufferDynamic(ref bv) => (DescriptorType::UniformBufferDynamic, bv.len() as _, &[], bv, &[]),
-            &DescriptorUpdateInfo::StorageBufferDynamic(ref bv) => (DescriptorType::StorageBufferDynamic, bv.len() as _, &[], bv, &[]),
-            &DescriptorUpdateInfo::UniformTexelBuffer(ref bvv) => (DescriptorType::UniformTexelBuffer, bvv.len() as _, &[], &[], bvv),
-            &DescriptorUpdateInfo::StorageTexelBuffer(ref bvv) => (DescriptorType::StorageTexelBuffer, bvv.len() as _, &[], &[], bvv)
+            DescriptorUpdateInfo::Sampler(ref iv) => (DescriptorType::Sampler, iv.len() as _, iv, &[], &[]),
+            DescriptorUpdateInfo::CombinedImageSampler(ref iv) => (DescriptorType::CombinedImageSampler, iv.len() as _, iv, &[], &[]),
+            DescriptorUpdateInfo::SampledImage(ref iv) => (DescriptorType::SampledImage, iv.len() as _, iv, &[], &[]),
+            DescriptorUpdateInfo::StorageImage(ref iv) => (DescriptorType::StorageImage, iv.len() as _, iv, &[], &[]),
+            DescriptorUpdateInfo::InputAttachment(ref iv) => (DescriptorType::InputAttachment, iv.len() as _, iv, &[], &[]),
+            DescriptorUpdateInfo::UniformBuffer(ref bv) => (DescriptorType::UniformBuffer, bv.len() as _, &[], bv, &[]),
+            DescriptorUpdateInfo::StorageBuffer(ref bv) => (DescriptorType::StorageBuffer, bv.len() as _, &[], bv, &[]),
+            DescriptorUpdateInfo::UniformBufferDynamic(ref bv) => (DescriptorType::UniformBufferDynamic, bv.len() as _, &[], bv, &[]),
+            DescriptorUpdateInfo::StorageBufferDynamic(ref bv) => (DescriptorType::StorageBufferDynamic, bv.len() as _, &[], bv, &[]),
+            DescriptorUpdateInfo::UniformTexelBuffer(ref bvv) => (DescriptorType::UniformTexelBuffer, bvv.len() as _, &[], &[], bvv),
+            DescriptorUpdateInfo::StorageTexelBuffer(ref bvv) => (DescriptorType::StorageTexelBuffer, bvv.len() as _, &[], &[], bvv)
         }
     }
 }

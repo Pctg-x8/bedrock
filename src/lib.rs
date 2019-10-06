@@ -297,10 +297,6 @@ mod command; pub use command::*;
 #[cfg(feature = "VK_EXT_debug_report")] mod debug;
 #[cfg(feature = "VK_EXT_debug_report")] pub use debug::*;
 
-/// Unsafe Utils: Preserving a typed buffer
-#[cfg(feature = "Implements")]
-pub(self) unsafe fn preserve<T>(n: usize) -> Vec<T> { let mut v = Vec::with_capacity(n); v.set_len(n); return v; }
-
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
 impl VkHandle for QueryPool { type Handle = VkQueryPool; fn native_ptr(&self) -> VkQueryPool { self.0 } }

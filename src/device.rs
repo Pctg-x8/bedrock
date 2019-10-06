@@ -2,7 +2,7 @@
 
 #![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
-use vk::*;
+use super::*;
 use PhysicalDevice;
 use std::ffi::CString;
 use std::borrow::Cow;
@@ -189,9 +189,9 @@ impl Device
 	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
 	{
 		if name.is_empty() { None }
-		else
-		{
-			let p = unsafe { Resolver::get().get_device_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
+		else {
+			let fn_cstr = CString::new(name).unwrap();
+			let p = unsafe { Resolver::get().get_device_proc_addr(self.native_ptr(), fn_cstr.as_ptr()) };
 			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
 		}
 	}
@@ -316,7 +316,7 @@ impl Queue
 pub struct SubmissionBatch<'d>
 {
 	pub wait_semaphores: Cow<'d, [(&'d ::Semaphore, ::PipelineStageFlags)]>,
-	pub command_buffers: Cow<'d, [::CommandBuffer]>,
+	pub command_buffers: Vec<CommandBuffer>,
 	pub signal_semaphores: Cow<'d, [&'d ::Semaphore]>
 }
 impl<'d> Default for SubmissionBatch<'d>
@@ -325,7 +325,7 @@ impl<'d> Default for SubmissionBatch<'d>
 	{
 		SubmissionBatch
 		{
-			wait_semaphores: Cow::Borrowed(&[]), command_buffers: Cow::Borrowed(&[]),
+			wait_semaphores: Cow::Borrowed(&[]), command_buffers: Vec::new(),
 			signal_semaphores: Cow::Borrowed(&[])
 		}
 	}
