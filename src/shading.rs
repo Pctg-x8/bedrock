@@ -1,16 +1,18 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use super::LifetimeBound;
-use vk::*;
+use super::*;
 use std::ffi::CString;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use std::ptr::null;
 use std::marker::PhantomData;
+use std::borrow::Cow;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
+use std::ops::*;
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
+#[repr(transparent)]
 pub struct ShaderStage(pub VkShaderStageFlags);
 impl ShaderStage
 {
@@ -53,9 +55,19 @@ impl ShaderStage
 	/// A combination of tessellation control stage and tessellation evaluation stage
 	pub fn tessellation(self) -> Self { ShaderStage(self.0 | Self::TESSELLATION.0) }
 }
+impl BitOr for ShaderStage
+{
+	type Output = Self;
+	fn bitor(self, other: Self) -> Self { ShaderStage(self.0 | other.0) }
+}
+impl BitOrAssign for ShaderStage
+{
+	fn bitor_assign(&mut self, other: Self) { self.0 |= other.0; }
+}
 
 /// Stencil comparison function
-#[repr(C)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompareOp
 {
 	/// The test never passes
@@ -76,7 +88,8 @@ pub enum CompareOp
 	Always = VK_COMPARE_OP_ALWAYS as _
 }
 /// Stencil action function
-#[repr(C)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StencilOp
 {
 	/// Keeps the current value
@@ -97,7 +110,8 @@ pub enum StencilOp
 	DecrementWrap = VK_STENCIL_OP_DECREMENT_AND_WRAP as _
 }
 /// Framebuffer logical operations
-#[repr(C)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LogicOp
 {
 	/// 0
@@ -134,7 +148,8 @@ pub enum LogicOp
 	Set = VK_LOGIC_OP_SET as _
 }
 /// Bitmask specifying sets of stencil state for which to update the compare mask
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum StencilFaceMask
 {
 	/// Only the front set of stencil state
@@ -146,26 +161,42 @@ pub enum StencilFaceMask
 }
 
 /// Opaque handle to a shader module object
-pub struct ShaderModule(VkShaderModule, ::Device);
+pub struct ShaderModule(VkShaderModule, Device);
 /// Opaque handle to a pipeline cache object
-pub struct PipelineCache(VkPipelineCache, ::Device);
+pub struct PipelineCache(VkPipelineCache, Device);
 /// Opaque handle to a pipeline layout object
-pub struct PipelineLayout(VkPipelineLayout, ::Device);
+pub struct PipelineLayout(VkPipelineLayout, Device);
 /// Opaque handle to a pipeline object
-pub struct Pipeline(VkPipeline, ::Device);
+pub struct Pipeline(VkPipeline, Device);
 
-#[cfg(feature = "Implements")] DeviceChildCommonDrop! {
-	for ShaderModule[destroy_shader_module], PipelineCache[destroy_pipeline_cache], PipelineLayout[destroy_pipeline_layout],
-	Pipeline[destroy_pipeline]
+#[cfg(feature = "Implements")]
+impl Drop for ShaderModule
+{
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_shader_module(self.1.native_ptr(), self.0, null()); } }
+}
+#[cfg(feature = "Implements")]
+impl Drop for PipelineCache
+{
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_pipeline_cache(self.1.native_ptr(), self.0, null()); } }
+}
+#[cfg(feature = "Implements")]
+impl Drop for PipelineLayout
+{
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_pipeline_layout(self.1.native_ptr(), self.0, null()); } }
+}
+#[cfg(feature = "Implements")]
+impl Drop for Pipeline
+{
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_pipeline(self.1.native_ptr(), self.0, null()); } }
 }
 impl VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
 impl VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
 impl VkHandle for PipelineLayout { type Handle = VkPipelineLayout; fn native_ptr(&self) -> VkPipelineLayout { self.0 } }
 impl VkHandle for Pipeline { type Handle = VkPipeline; fn native_ptr(&self) -> VkPipeline { self.0 } }
-impl DeviceChild for ShaderModule { fn device(&self) -> &::Device { &self.1 } }
-impl DeviceChild for PipelineCache { fn device(&self) -> &::Device { &self.1 } }
-impl DeviceChild for PipelineLayout { fn device(&self) -> &::Device { &self.1 } }
-impl DeviceChild for Pipeline { fn device(&self) -> &::Device { &self.1 } }
+impl DeviceChild for ShaderModule { fn device(&self) -> &Device { &self.1 } }
+impl DeviceChild for PipelineCache { fn device(&self) -> &Device { &self.1 } }
+impl DeviceChild for PipelineLayout { fn device(&self) -> &Device { &self.1 } }
+impl DeviceChild for Pipeline { fn device(&self) -> &Device { &self.1 } }
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
@@ -177,14 +208,17 @@ impl ShaderModule
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn from_memory<Buffer: AsRef<[u8]> + ?Sized>(device: &::Device, buffer: &Buffer) -> ::Result<Self>
+	pub fn from_memory<Buffer>(device: &Device, buffer: &Buffer) -> ::Result<Self>
+		where Buffer: AsRef<[u8]> + ?Sized
 	{
 		let cinfo = VkShaderModuleCreateInfo
 		{
-			codeSize: buffer.as_ref().len() as _, pCode: buffer.as_ref().as_ptr() as *const _, .. Default::default()
+			codeSize: buffer.as_ref().len() as _, pCode: buffer.as_ref().as_ptr() as *const _,
+			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_shader_module(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_shader_module(device.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
 			.map(|_| ShaderModule(h, device.clone()))
 	}
 	/// Creates a new shader module object from a file
@@ -195,10 +229,10 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath: AsRef<::std::path::Path> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
+	pub fn from_file<FilePath>(device: &Device, path: &FilePath) -> Result<Self, Box<std::error::Error>>
+		where FilePath: AsRef<std::path::Path> + ?Sized
 	{
-		use ::std::io::prelude::Read;
-		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let mut v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;
+		let bin = std::fs::read(path)?;
 		Self::from_memory(device, &bin).map_err(From::from)
 	}
 }
@@ -212,14 +246,17 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new<Data: AsRef<[u8]> + ?Sized>(device: &::Device, initial: &Data) -> ::Result<Self>
+	pub fn new<Data>(device: &Device, initial: &Data) -> ::Result<Self>
+		where Data: AsRef<[u8]> + ?Sized
 	{
 		let cinfo = VkPipelineCacheCreateInfo
 		{
-			initialDataSize: initial.as_ref().len() as _, pInitialData: initial.as_ref().as_ptr() as *const _, .. Default::default()
+			initialDataSize: initial.as_ref().len() as _, pInitialData: initial.as_ref().as_ptr() as *const _,
+			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_pipeline_cache(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
+		unsafe { Resolver::get().create_pipeline_cache(device.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
 			.map(|_| PipelineCache(h, device.clone()))
 	}
 	/// Get the data store from a pipeline cache
@@ -231,9 +268,14 @@ impl PipelineCache
 	pub fn data(&self) -> ::Result<Vec<u8>>
 	{
 		let mut n = 0;
-		unsafe { Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, ::std::ptr::null_mut()) }.into_result()?;
-		let mut b = Vec::<u8>::with_capacity(n as _); unsafe { b.set_len(n as _) };
-		unsafe { Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _) }.into_result().map(|_| b)
+		unsafe { Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, null_mut()) }
+			.into_result()?;
+		let mut b: Vec<u8> = Vec::with_capacity(n as _);
+		unsafe { b.set_len(n as _) };
+		unsafe
+		{
+			Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _)
+		}.into_result().map(|_| b)
 	}
 	/// Combine the data stores of pipeline caches into `self`
 	/// # Failures
@@ -244,7 +286,8 @@ impl PipelineCache
 	pub fn merge_into(&self, src: &[&PipelineCache]) -> ::Result<()>
 	{
 		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
-		unsafe { Resolver::get().merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }.into_result()
+		unsafe { Resolver::get().merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }
+			.into_result()
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -257,10 +300,12 @@ impl PipelineLayout
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new(device: &::Device, layouts: &[&::DescriptorSetLayout], push_constants: &[(ShaderStage, ::std::ops::Range<u32>)]) -> ::Result<Self>
+	pub fn new(device: &Device, layouts: &[&DescriptorSetLayout], push_constants: &[(ShaderStage, Range<u32>)])
+		-> ::Result<Self>
 	{
 		let layouts = layouts.into_iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-		let push_constants = push_constants.iter().map(|&(sh, ref r)| VkPushConstantRange { stageFlags: sh.0, offset: r.start, size: r.end - r.start })
+		let push_constants = push_constants.iter()
+			.map(|&(sh, ref r)| VkPushConstantRange { stageFlags: sh.0, offset: r.start, size: r.end - r.start })
 			.collect::<Vec<_>>();
 		let cinfo = VkPipelineLayoutCreateInfo
 		{
@@ -269,8 +314,8 @@ impl PipelineLayout
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_pipeline_layout(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h) }.into_result()
-			.map(|_| PipelineLayout(h, device.clone()))
+		unsafe { Resolver::get().create_pipeline_layout(device.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result().map(|_| PipelineLayout(h, device.clone()))
 	}
 }
 
@@ -278,41 +323,57 @@ impl PipelineLayout
 pub enum SwitchOrDynamicState<T> { Disabled, Dynamic, Static(T) }
 impl<T> SwitchOrDynamicState<T>
 {
-	fn is_dynamic(&self) -> bool { match self { SwitchOrDynamicState::Dynamic => true, _ => false } }
-	fn is_enabled(&self) -> bool { match self { SwitchOrDynamicState::Disabled => false, _ => true } }
+	fn is_dynamic(&self) -> bool { match self { Self::Dynamic => true, _ => false } }
+	fn is_enabled(&self) -> bool { match self { Self::Disabled => false, _ => true } }
 }
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
-#[cfg_attr(not(feature = "Implements"), allow(dead_code))] #[derive(Clone)]
+#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+#[derive(Clone)]
 pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: PhantomData<&'d ()> }
 impl<'d, T> From<&'d T> for DynamicDataCell<'d>
 {
 	/// Construct borrowing a data
-	fn from(d: &'d T) -> Self { DynamicDataCell { size: ::std::mem::size_of::<T>(), data: d as *const T as *const _, ph: PhantomData } }
+	fn from(d: &'d T) -> Self
+	{
+		DynamicDataCell { size: std::mem::size_of::<T>(), data: d as *const T as *const _, ph: PhantomData }
+	}
 }
 impl<'d> DynamicDataCell<'d>
 {
 	/// Construct borrowing a slice
 	pub fn from_slice<T>(s: &'d [T]) -> Self
 	{
-		DynamicDataCell { size: ::std::mem::size_of::<T>() * s.len(), data: s.as_ptr() as *const _, ph: ::std::marker::PhantomData }
+		DynamicDataCell
+		{
+			size: std::mem::size_of::<T>() * s.len(), data: s.as_ptr() as *const _, ph: PhantomData
+		}
 	}
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
-#[cfg_attr(not(feature = "Implements"), allow(dead_code))] #[derive(Clone)]
+#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+#[derive(Clone)]
 pub struct PipelineShader<'d>
 {
 	pub module: &'d ShaderModule, pub entry_name: CString,
-	pub specinfo: Option<(Vec<VkSpecializationMapEntry>, DynamicDataCell<'d>)>
+	pub specinfo: Option<(Cow<'d, [VkSpecializationMapEntry]>, DynamicDataCell<'d>)>
 }
 /// Whether the state(type of array) is dynamic or static
-pub enum DynamicArrayState<'d, T: 'd> { Dynamic(usize), Static(&'d [T]) }
-/// Build struct holding dynamic state flags
-#[derive(Clone)]
-struct DynamicStateFlags
+pub enum DynamicArrayState<'d, T> { Dynamic(usize), Static(&'d [T]) }
+impl<'d, T> DynamicArrayState<'d, T>
 {
-	viewport: bool, scissor: bool, line_width: bool, depth_bias: bool, blend_constants: bool, depth_bounds: bool,
-	stencil_compare_mask: bool, stencil_write_mask: bool, stencil_reference: bool
+	fn count(&self) -> usize
+	{
+		match self { DynamicArrayState::Dynamic(s) => *s, DynamicArrayState::Static(ref v) => v.len() }
+	}
+	fn as_ptr(&self) -> *const T
+	{
+		match self { DynamicArrayState::Static(ref v) => v.as_ptr(), _ => null() }
+	}
+	fn is_dynamic(&self) -> bool
+	{
+		match self { DynamicArrayState::Dynamic(_) => true, _ => false }
+	}
 }
 /// Which is pipeline state to derive from
 #[derive(Clone, Copy)]
@@ -339,8 +400,7 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d Pipel
 	{
 		LifetimeBound::new(VkPipelineDynamicStateCreateInfo
 		{
-			dynamicStateCount: self.0.len() as _,
-			pDynamicStates: self.0.as_ptr(),
+			dynamicStateCount: self.0.len() as _, pDynamicStates: self.0.as_ptr(),
 			.. Default::default()
 		})
 	}
@@ -380,38 +440,29 @@ impl<'d> GraphicsPipelineBuilder<'d>
 #[derive(Clone)]
 pub struct GraphicsPipelineBuilder<'d>
 {
-	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout, rp: &'d ::RenderPass, subpass: u32, _base: BasePipeline<'d>,
-	vp: Option<VertexProcessingStages<'d>>,
+	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout,
+	rp: &'d RenderPass, subpass: u32, _base: BasePipeline<'d>,
+	vp: VertexProcessingStages<'d>,
 	rasterizer_state: VkPipelineRasterizationStateCreateInfo,
 	tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
 	viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
-	ms_state: Option<&'d MultisampleState<'d>>,
+	ms_state: Option<MultisampleState<'d>>,
 	ds_state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>,
 	color_blending: Option<(Box<VkPipelineColorBlendStateCreateInfo>, Vec<VkPipelineColorBlendAttachmentState>)>,
 	dynamic_state_flags: PipelineDynamicStates
 }
-impl<'d, T> DynamicArrayState<'d, T>
-{
-	fn count(&self) -> usize
-	{
-		match self { DynamicArrayState::Dynamic(s) => *s, DynamicArrayState::Static(ref v) => v.len() }
-	}
-	fn as_ptr(&self) -> *const T
-	{
-		match self { DynamicArrayState::Static(ref v) => v.as_ptr(), _ => ::std::ptr::null() }
-	}
-	fn is_dynamic(&self) -> bool
-	{
-		match self { DynamicArrayState::Dynamic(_) => true, _ => false }
-	}
-}
 
+/// Tessellation Stage Shaders
+#[derive(Clone)]
+pub struct TessellationStages<'d> { pub control: PipelineShader<'d>, pub evaluation: PipelineShader<'d> }
 /// PipelineStateDesc: Shader Stages and Input descriptions
-#[derive(Clone)] pub struct VertexProcessingStages<'d>
+#[derive(Clone)]
+pub struct VertexProcessingStages<'d>
 {
 	vertex: PipelineShader<'d>, vi: VkPipelineVertexInputStateCreateInfo,
 	ia: VkPipelineInputAssemblyStateCreateInfo,
 	geometry: Option<PipelineShader<'d>>, fragment: Option<PipelineShader<'d>>,
+	tessellation: Option<TessellationStages<'d>>,
 	_holder: PhantomData<(&'d [VkVertexInputBindingDescription], &'d [VkVertexInputAttributeDescription])>
 }
 impl<'d> VertexProcessingStages<'d>
@@ -433,9 +484,11 @@ impl<'d> VertexProcessingStages<'d>
 			{
 				topology: primitive_topo, .. Default::default()
 			},
-			geometry: None, fragment: None, _holder: PhantomData
+			geometry: None, fragment: None, tessellation: None,
+			_holder: PhantomData
 		}
 	}
+
 	/// Update the vertex shader
 	pub fn vertex_shader(&mut self, vsh: PipelineShader<'d>) -> &mut Self
 	{
@@ -448,15 +501,24 @@ impl<'d> VertexProcessingStages<'d>
 	{
 		self.geometry = gsh.into(); self
 	}
-	/// Get the geometry shader for modifying.
-	pub fn mod_geometry_shader(&mut self) -> Option<&mut PipelineShader<'d>> { Option::as_mut(&mut self.geometry) }
+	/// Get a mutable reference to the geometry shader.
+	pub fn geometry_shader_mut(&mut self) -> &mut Option<PipelineShader<'d>> { &mut self.geometry }
 	/// Update the fragment shader, or disable fragment shader stage
 	pub fn fragment_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, fsh: S) -> &mut Self
 	{
 		self.fragment = fsh.into(); self
 	}
-	/// Get the fragment shader for modifying.
-	pub fn mod_fragment_shader(&mut self) -> Option<&mut PipelineShader<'d>> { Option::as_mut(&mut self.fragment) }
+	/// Get a mutable reference to the fragment shader.
+	pub fn fragment_shader_mut(&mut self) -> &mut Option<PipelineShader<'d>> { &mut self.fragment }
+	/// Update the tessellation stage shaders, or disable tessellation stage
+	pub fn tessellation_stage<S: Into<Option<TessellationStages<'d>>>>(&mut self, stage: S) -> &mut Self
+	{
+		self.tessellation = stage.into();
+		self
+	}
+	/// Get a mutable reference to the tessellation shader stage configuration.
+	pub fn tessellation_stage_mut(&mut self) -> &mut Option<TessellationStages<'d>> { &mut self.tessellation }
+
 	/// Update the vertex binding description
 	pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self
 	{
@@ -481,6 +543,7 @@ impl<'d> VertexProcessingStages<'d>
 	{
 		self.vertex_shader(vsh).vertex_input(vbind, vattr)
 	}
+
 	/// Controls whether a special vertex index value is treated as restarting the assembly of primitives.
 	/// This enable only applies to indexed draws, and the special index value is either
 	/// 
@@ -498,11 +561,13 @@ impl<'d> VertexProcessingStages<'d>
 		self.ia.topology = topo; self
 	}
 }
+
 /// PipelineStateDesc: Multisample State
-#[derive(Clone)] pub struct MultisampleState<'d>
+#[derive(Clone)]
+pub struct MultisampleState<'d>
 {
 	data: VkPipelineMultisampleStateCreateInfo,
-	_samplemask_lifetime_binder: std::marker::PhantomData<&'d [VkSampleMask]>
+	_samplemask_lifetime_binder: PhantomData<&'d [VkSampleMask]>
 }
 impl<'d> MultisampleState<'d>
 {
@@ -515,9 +580,10 @@ impl<'d> MultisampleState<'d>
 			{
 				rasterizationSamples: 1, .. Default::default()
 			},
-			_samplemask_lifetime_binder: std::marker::PhantomData
+			_samplemask_lifetime_binder: PhantomData
 		}
 	}
+
 	/// Specifies the number of samples per pixel used in rasterization. default=1
 	pub fn rasterization_samples(&mut self, samples: usize) -> &mut Self
 	{
@@ -571,12 +637,12 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo>> for Multi
 impl<'d> GraphicsPipelineBuilder<'d>
 {
 	/// Initialize the builder object
-	pub fn new(layout: &'d PipelineLayout, rpsp: (&'d ::RenderPass, u32)) -> Self
+	pub fn new(layout: &'d PipelineLayout, rpsp: (&'d RenderPass, u32), vp: VertexProcessingStages<'d>) -> Self
 	{
 		GraphicsPipelineBuilder
 		{
 			flags: 0, _layout: layout, rp: rpsp.0, subpass: rpsp.1, _base: BasePipeline::None,
-			vp: None, rasterizer_state: Default::default(),
+			vp, rasterizer_state: Default::default(),
 			tess_state: None, viewport_state: None, ms_state: None, ds_state: None, color_blending: None,
 			dynamic_state_flags: PipelineDynamicStates::new()
 		}
@@ -588,16 +654,10 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// Set the vertex processing stages in this pipeline
 	pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d>) -> &mut Self
 	{
-		self.vp = Some(vp); self
+		self.vp = vp; self
 	}
-	/// Modify the vertex processing stages in this pipeline
-	pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d> { self.vp.as_mut().unwrap() }
-	/// **TODO: Implement Tessellation Control Description**
-	/// Set the tessellation control shader(hull shader) in this pipeline
-	pub fn tessellation_control_shader(&mut self, _shader: PipelineShader<'d>) -> &mut Self { /*self.tcs = Some(shader);*/ self }
-	/// **TODO: Implement Tessellation Control Description**
-	/// Set the tessellation evaluation shader(domain shader) in this pipeline
-	pub fn tessellation_evaluation_shader(&mut self, _shader: PipelineShader<'d>) -> &mut Self { /*self.tes = Some(shader);*/ self }
+	/// Get a mutable reference to the vertex processing stage configuration in this pipeline
+	pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d> { &mut self.vp }
 	/// Number of control points per patch
 	pub fn patch_control_point_count(&mut self, count: u32) -> &mut Self
 	{
@@ -605,9 +665,12 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self.tess_state.as_mut().unwrap().patchControlPoints = count; self
 	}
 	/// Set the tessellation processing state(hull/domain shaders and a number of control points)
-	pub fn tessellator_settings(&mut self, control: PipelineShader<'d>, evaluation: PipelineShader<'d>, num_control_points: u32) -> &mut Self
+	pub fn tessellator_settings(&mut self,
+		control: PipelineShader<'d>, evaluation: PipelineShader<'d>, num_control_points: u32)
+		-> &mut Self
 	{
-		self.tessellation_control_shader(control).tessellation_evaluation_shader(evaluation).patch_control_point_count(num_control_points)
+		self.vertex_processing_mut().tessellation_stage(TessellationStages { control, evaluation });
+		self.patch_control_point_count(num_control_points)
 	}
 }
 
@@ -635,7 +698,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self
 	}
 	/// Safety way calling `viewports` and `scissors`
-	pub fn fixed_viewport_scissors(&mut self, vps: DynamicArrayState<VkViewport>, scissor: DynamicArrayState<VkRect2D>)
+	pub fn viewport_scissors(&mut self, vps: DynamicArrayState<VkViewport>, scissor: DynamicArrayState<VkRect2D>)
 		-> &mut Self
 	{
 		assert_eq!(vps.count(), scissor.count());
@@ -648,15 +711,30 @@ impl<'d> GraphicsPipelineBuilder<'d>
 {
 	/// Controls whether to clamp the fragment's depth values instead of clipping primitives to the z planes of the frustum,
 	/// as described in `Primitive Clipping` in Vulkan Specification
-	pub fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self { self.rasterizer_state.depthClampEnable = enable as _; self }
+	pub fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self
+	{
+		self.rasterizer_state.depthClampEnable = enable as _; self
+	}
 	/// Controls whether primitives are discarded immediately before the rasterization stage
-	pub fn rasterizer_discard_enable(&mut self, enable: bool) -> &mut Self { self.rasterizer_state.rasterizerDiscardEnable = enable as _; self }
+	pub fn rasterizer_discard_enable(&mut self, enable: bool) -> &mut Self
+	{
+		self.rasterizer_state.rasterizerDiscardEnable = enable as _; self
+	}
 	/// The triangle rendering mode
-	pub fn polygon_mode(&mut self, mode: VkPolygonMode) -> &mut Self { self.rasterizer_state.polygonMode = mode; self }
+	pub fn polygon_mode(&mut self, mode: VkPolygonMode) -> &mut Self
+	{
+		self.rasterizer_state.polygonMode = mode; self
+	}
 	/// The triangle facing direction used for primitive culling
-	pub fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self { self.rasterizer_state.cullMode = mode; self }
+	pub fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self
+	{
+		self.rasterizer_state.cullMode = mode; self
+	}
 	/// The front-facing triangle orientation to be used for culling
-	pub fn front_face(&mut self, face: VkFrontFace) -> &mut Self { self.rasterizer_state.frontFace = face; self }
+	pub fn front_face(&mut self, face: VkFrontFace) -> &mut Self
+	{
+		self.rasterizer_state.frontFace = face; self
+	}
 	/// Specify `None` to disable to bias fragment depth values.  
 	/// Tuple Member: (`ConstantFactor`, `Clamp`, `SlopeFactor`)
 	/// 
@@ -686,7 +764,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 /// Multisample State
 impl<'d> GraphicsPipelineBuilder<'d>
 {
-	pub fn multisample_state(&mut self, state: Option<&'d MultisampleState>) -> &mut Self
+	pub fn multisample_state(&mut self, state: Option<MultisampleState<'d>>) -> &mut Self
 	{
 		self.ms_state = state; self
 	}
@@ -703,22 +781,41 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self.ds_state.as_mut().unwrap()
 	}
 	/// Controls whether depth testing is enabled
-	pub fn depth_test_enable(&mut self, enable: bool) -> &mut Self { self.dss_ref().depthTestEnable = enable as _; self }
+	pub fn depth_test_enable(&mut self, enable: bool) -> &mut Self
+	{
+		self.dss_ref().depthTestEnable = enable as _; self
+	}
 	/// Controls whether depth writes are enabled, or always disabled
-	pub fn depth_write_enable(&mut self, enable: bool) -> &mut Self { self.dss_ref().depthWriteEnable = enable as _; self }
+	pub fn depth_write_enable(&mut self, enable: bool) -> &mut Self
+	{
+		self.dss_ref().depthWriteEnable = enable as _; self
+	}
 	/// The comparison operator used in the depth test
-	pub fn depth_compare_op(&mut self, op: CompareOp) -> &mut Self { self.dss_ref().depthCompareOp = op as _; self }
+	pub fn depth_compare_op(&mut self, op: CompareOp) -> &mut Self
+	{
+		self.dss_ref().depthCompareOp = op as _; self
+	}
 	/// Controls whether depth testing is enabled, depth writes are enabled, and the comparison operator used in the depth test
 	/// Specifying `None` to `compare_to` disables depth testing
 	pub fn depth_test_settings(&mut self, compare_op: Option<CompareOp>, write_enable: bool) -> &mut Self
 	{
-		if let Some(op) = compare_op { self.depth_test_enable(true).depth_compare_op(op) } else { self.depth_test_enable(false) }
-			.depth_write_enable(write_enable)
+		if let Some(op) = compare_op
+		{
+			self.depth_test_enable(true).depth_compare_op(op);
+		}
+		else { self.depth_test_enable(false); }
+		self.depth_write_enable(write_enable)
 	}
 	/// Controls whether depth bounds testing is enabled
-	pub fn depth_bounds_test_enable(&mut self, enable: bool) -> &mut Self { self.dss_ref().depthBoundsTestEnable = enable as _; self }
+	pub fn depth_bounds_test_enable(&mut self, enable: bool) -> &mut Self
+	{
+		self.dss_ref().depthBoundsTestEnable = enable as _; self
+	}
 	/// Controls whether stencil testing is enabled
-	pub fn stencil_test_enable(&mut self, enable: bool) -> &mut Self { self.dss_ref().stencilTestEnable = enable as _; self }
+	pub fn stencil_test_enable(&mut self, enable: bool) -> &mut Self
+	{
+		self.dss_ref().stencilTestEnable = enable as _; self
+	}
 	/// Control the parameter of the stencil test
 	pub fn stencil_control_front(&mut self, state: VkStencilOpState) -> &mut Self
 	{
@@ -778,12 +875,12 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		self
 	}
 	/// The range of values used in the depth bounds test
-	pub fn depth_bounds_range(&mut self, bounds: ::std::ops::Range<f32>) -> &mut Self
+	pub fn depth_bounds_range(&mut self, bounds: Range<f32>) -> &mut Self
 	{
 		self.dss_ref().minDepthBounds = bounds.start; self.dss_ref().maxDepthBounds = bounds.end; self
 	}
 	/// Control the depth bounds test
-	pub fn depth_bounds(&mut self, bounds: SwitchOrDynamicState<::std::ops::Range<f32>>) -> &mut Self
+	pub fn depth_bounds(&mut self, bounds: SwitchOrDynamicState<Range<f32>>) -> &mut Self
 	{
 		self.depth_bounds_test_enable(bounds.is_enabled());
 		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_DEPTH_BOUNDS, bounds.is_dynamic());
@@ -792,7 +889,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 }
 
 /// Blending Factor
-#[repr(C)] #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(C)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum BlendFactor
 {
 	Zero = VK_BLEND_FACTOR_ZERO as _,
@@ -817,7 +915,8 @@ pub enum BlendFactor
 	OneMinusAltSourceAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA as _
 }
 /// Blending Op
-#[repr(C)] #[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[repr(C)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum BlendOp
 {
 	Add = VK_BLEND_OP_ADD as _,
@@ -829,7 +928,8 @@ pub enum BlendOp
 }
 
 /// Structure specifying a pipeline color blend attachment state
-#[derive(Clone)] pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
+#[derive(Clone)]
+pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
 impl AttachmentColorBlendState
 {
 	pub fn noblend() -> Self { AttachmentColorBlendState(Default::default()) }
@@ -838,7 +938,7 @@ impl AttachmentColorBlendState
 	{
 		AttachmentColorBlendState(VkPipelineColorBlendAttachmentState
 		{
-			blendEnable: true as _,
+			blendEnable: VK_TRUE,
 			srcColorBlendFactor: BlendFactor::One as _,
 			dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
 			colorBlendOp: BlendOp::Add as _,
@@ -846,11 +946,13 @@ impl AttachmentColorBlendState
 			// dstAlphaBlendFactor: BlendFactor::One as _,
 			srcAlphaBlendFactor: BlendFactor::One as _,
 			dstAlphaBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
-			alphaBlendOp: BlendOp::Add as _, .. Default::default()
+			alphaBlendOp: BlendOp::Add as _,
+			.. Default::default()
 		})
 	}
 
-	pub fn enable(&mut self, w: bool) -> &mut Self { self.0.blendEnable = w as _; self }
+	pub fn enable(&mut self) -> &mut Self { self.0.blendEnable = VK_TRUE; self }
+	pub fn disable(&mut self) -> &mut Self { self.0.blendEnable = VK_FALSE; self }
 	pub fn color_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self
 	{
 		self.0.srcColorBlendFactor = f as _; self
@@ -887,11 +989,13 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		if self.color_blending.is_none() { self.color_blending = Some((Default::default(), Vec::new())) }
 		self.color_blending.as_mut().unwrap()
 	}
+
 	/// Which logical operation to apply. Specifying `None` disables *Logical Operations*
 	pub fn logic_op(&mut self, op: Option<LogicOp>) -> &mut Self
 	{
-		self.cb_ref().0.logicOpEnable = op.is_some() as _;
-		self.cb_ref().0.logicOp = op.unwrap_or(LogicOp::NoOp) as _;
+		let (ref mut state, _) = self.cb_ref();
+		state.logicOpEnable = op.is_some() as _;
+		state.logicOp = op.unwrap_or(LogicOp::NoOp) as _;
 		self
 	}
 	/// Per target attachment states
@@ -903,15 +1007,29 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		}
 		self
 	}
+	/// Sets per-target attachment states
+	pub fn set_attachment_blends(&mut self, blends: Vec<VkPipelineColorBlendAttachmentState>) -> &mut Self
+	{
+		let (ref mut state, ref mut blend_infos) = self.cb_ref();
+		*blend_infos = blends;
+		state.attachmentCount = blend_infos.len() as _;
+		state.pAttachments = blend_infos.as_ptr();
+		self
+	}
 	/// Clears per-target attachment blending state
-	pub fn clear_attachment_blends(&mut self) -> &mut Self { self.color_blending = None; self }
+	pub fn clear_attachment_blends(&mut self) -> &mut Self
+	{
+		self.cb_ref().1.clear(); self
+	}
+	/// Clears blending state
+	pub fn clear_blending_state(&mut self) -> &mut Self { self.color_blending = None; self }
+
 	/// Array of four values used as the R, G, B, and A components of the blend constant that are used in blending, depending on the blend factor.
 	/// Specifying `None` means that the `blendConstants` parameter is a dynamic state
 	pub fn blend_constants(&mut self, values: Option<[f32; 4]>) -> &mut Self
 	{
 		self.dynamic_state_flags.set(VK_DYNAMIC_STATE_BLEND_CONSTANTS, values.is_none());
 		self.cb_ref().0.blendConstants.copy_from_slice(&values.unwrap_or([0.0; 4]));
-		
 		self
 	}
 }
@@ -924,23 +1042,34 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
 	pub fn layout(&mut self, l: &'d PipelineLayout) -> &mut Self { self._layout = l; self }
 	/// A handle to a render pass object and the index of the subpass where this pipeline will be used
-	pub fn render_pass(&mut self, rpo: &'d ::RenderPass, subpass: u32) -> &mut Self
+	pub fn render_pass(&mut self, rpo: &'d RenderPass, subpass: u32) -> &mut Self
 	{
 		self.rp = rpo; self.subpass = subpass; self
 	}
-	/// The created pipeline will or will not be optimized.  
+	/// The created pipeline will be optimized.  
 	/// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
-	pub fn enable_optimization(&mut self, opt: bool) -> &mut Self
+	pub fn enable_optimization(&mut self) -> &mut Self
 	{
-		if opt { self.flags &= !VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT }
-		else { self.flags |= VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT };
+		self.flags &= !VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
+		self
+	}
+	/// The created pipeline will not be optimized.  
+	/// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
+	pub fn disable_optimization(&mut self,) -> &mut Self
+	{
+		self.flags |= VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
 		self
 	}
 	/// The pipeline to be created is allowed to be the parent of a pipeline that will be created in a subsequent creation operation
-	pub fn allow_derivatives(&mut self, allow: bool) -> &mut Self
+	pub fn allow_derivatives(&mut self) -> &mut Self
 	{
-		if allow { self.flags |= VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT }
-		else { self.flags &= !VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT };
+		self.flags |= VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
+		self
+	}
+	/// The pipeline to be created is denied to be the parent of a pipeline that will be created in a subsequent creation operation
+	pub fn deny_derivatives(&mut self) -> &mut Self
+	{
+		self.flags &= !VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
 		self
 	}
 }
@@ -954,7 +1083,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
-	pub unsafe fn tessellation_state_create_info(&mut self, state: Option<Box<VkPipelineTessellationStateCreateInfo>>) -> &mut Self
+	pub unsafe fn tessellation_state_create_info(&mut self, state: Option<Box<VkPipelineTessellationStateCreateInfo>>)
+		-> &mut Self
 	{
 		self.tess_state = state; self
 	}
@@ -965,7 +1095,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
-	pub unsafe fn viewport_state_create_info(&mut self, state: Option<Box<VkPipelineViewportStateCreateInfo>>) -> &mut Self
+	pub unsafe fn viewport_state_create_info(&mut self, state: Option<Box<VkPipelineViewportStateCreateInfo>>)
+		-> &mut Self
 	{
 		self.viewport_state = state; self
 	}
@@ -976,7 +1107,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	/// 
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
-	pub unsafe fn rasterization_state_create_info(&mut self, state: VkPipelineRasterizationStateCreateInfo) -> &mut Self
+	pub unsafe fn rasterization_state_create_info(&mut self, state: VkPipelineRasterizationStateCreateInfo)
+		-> &mut Self
 	{
 		self.rasterizer_state = state; self
 	}
@@ -987,7 +1119,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	///
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
-	pub unsafe fn depth_stencil_state_create_info(&mut self, state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>) -> &mut Self
+	pub unsafe fn depth_stencil_state_create_info(&mut self, state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>)
+		-> &mut Self
 	{
 		self.ds_state = state; self
 	}
@@ -998,7 +1131,8 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	///
 	/// - The lifetime of the content in the structure is valid for this builder
 	/// - The content in the structure is valid
-	pub unsafe fn color_blend_state_info(&mut self, state: Option<Box<VkPipelineColorBlendStateCreateInfo>>) -> &mut Self
+	pub unsafe fn color_blend_state_info(&mut self, state: Option<Box<VkPipelineColorBlendStateCreateInfo>>)
+		-> &mut Self
 	{
 		self.color_blending = state.map(|x| (x, Vec::new())); self
 	}
@@ -1027,8 +1161,13 @@ impl<'d> VertexProcessingStages<'d>
 {
 	pub fn generate_stages(&self) -> (Vec<VkPipelineShaderStageCreateInfo>, Vec<Option<Box<VkSpecializationInfo>>>)
 	{
-		let mut stages = Vec::with_capacity(3);
+		let mut stages = Vec::with_capacity(5);
 		stages.push(self.vertex.createinfo_native(ShaderStage::VERTEX));
+		if let Some(TessellationStages { ref control, ref evaluation }) = self.tessellation
+		{
+			stages.push(control.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
+			stages.push(control.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
+		}
 		if let Some(ref s) = self.geometry { stages.push(s.createinfo_native(ShaderStage::GEOMETRY)); }
 		if let Some(ref s) = self.fragment { stages.push(s.createinfo_native(ShaderStage::FRAGMENT)); }
 		stages.into_iter().unzip()
@@ -1038,13 +1177,6 @@ impl<'d> VertexProcessingStages<'d>
 #[cfg(feature = "Implements")]
 impl<'d> GraphicsPipelineBuilder<'d>
 {
-	fn rasterized(&self) -> bool { self.rasterizer_state.rasterizerDiscardEnable == false as _ }
-	fn ms_state_ptr(&self, default: &MultisampleState) -> *const VkPipelineMultisampleStateCreateInfo
-	{
-		self.ms_state.as_ref().map(|&x| x as *const _)
-			.unwrap_or_else(||if self.rasterized() { default as _ } else { null() }) as _
-	}
-
 	/// Create a graphics pipeline
 	/// # Failures
 	/// On failure, this command returns
@@ -1079,30 +1211,31 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		{
 			stageCount: stages.len() as _,
 			pStages: stages.as_ptr(), pVertexInputState: &vp.vi, pInputAssemblyState: &vp.ia,
-			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
+			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
+			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
 			pRasterizationState: &self.rasterizer_state as *const _,
 			pMultisampleState: ms_ptr,
-			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(::std::ptr::null()),
-			pDynamicState: ds.as_ref().map(|x| x.as_ref() as *const _).unwrap_or(::std::ptr::null()),
+			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
+			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(null()),
+			pDynamicState: ds.as_ref().map(|x| x.as_ref() as *const _).unwrap_or(null()),
 			layout: self._layout.native_ptr(), renderPass: self.rp.native_ptr(), subpass: self.subpass,
-			basePipelineHandle: if let &BasePipeline::Handle(ref h) = &self._base { h.native_ptr() } else { VK_NULL_HANDLE as _ },
-			basePipelineIndex: -1, flags, .. Default::default()
+			basePipelineHandle: if let BasePipeline::Handle(ref h) = self._base { h.native_ptr() } else { VK_NULL_HANDLE as _ },
+			basePipelineIndex: -1, flags,
+			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe
 		{
 			Resolver::get().create_graphics_pipelines(device.native_ptr(),
 				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				1, &cinfo, ::std::ptr::null(), &mut h)
+				1, &cinfo, null(), &mut h)
 		}.into_result().map(|_| Pipeline(h, device.clone()))
 	}
 }
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl ::Device
+impl Device
 {
 	/// Create graphics pipelines
 	/// # Failures
@@ -1118,7 +1251,7 @@ impl ::Device
 		{
 			Resolver::get().create_graphics_pipelines(self.native_ptr(),
 				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), hs.as_mut_ptr())
+				cinfos.len() as _, cinfos.as_ptr(), null(), hs.as_mut_ptr())
 		};
 		
 		r.into_result().map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
@@ -1126,7 +1259,7 @@ impl ::Device
 }
 
 /// Bitmask specifying pipeline stages
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)] #[repr(transparent)]
 pub struct PipelineStageFlags(pub VkPipelineStageFlags);
 impl PipelineStageFlags
 {
@@ -1199,4 +1332,13 @@ impl PipelineStageFlags
 	pub fn all_graphics(self) -> Self { PipelineStageFlags(self.0 | Self::ALL_GRAPHICS.0) }
 	/// Equivalent to the logical OR of every other pipeline stage flag that is supported on the quue it is used with
 	pub fn all_commands(self) -> Self { PipelineStageFlags(self.0 | Self::ALL_COMMANDS.0) }
+}
+impl BitOr for PipelineStageFlags
+{
+	type Output = Self;
+	fn bitor(self, rhs: Self) -> Self { PipelineStageFlags(self.0 | rhs.0) }
+}
+impl BitOrAssign for PipelineStageFlags
+{
+	fn bitor_assign(&mut self, rhs: Self) { self.0 |= rhs.0; }
 }
