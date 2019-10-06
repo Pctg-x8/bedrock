@@ -102,7 +102,7 @@ impl std::fmt::Debug for VkResultBox
 {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result
     {
-        write!(fmt, "[{:?}] {}", self.0, (self as &std::error::Error).description())
+        write!(fmt, "[{:?}] {}", self.0, (self as &dyn std::error::Error).description())
     }
 }
 impl std::fmt::Display for VkResultBox
