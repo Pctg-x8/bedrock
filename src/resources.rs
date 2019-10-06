@@ -168,18 +168,17 @@ impl Drop for BufferCell
 #[cfg(feature = "Implements")]
 impl Drop for ImageCell
 {
+	#[cfg(feature = "VK_KHR_swapchain")]
 	fn drop(&mut self)
 	{
-		#[cfg(feature = "VK_KHR_swapchain")]
-		match *self
+		if let ImageCell::DeviceChild { obj, ref dev, .. } = self
 		{
-			ImageCell::DeviceChild { obj, ref dev, .. } => unsafe
-			{
-				Resolver::get().destroy_image(dev.native_ptr(), obj, null());
-			},
-			_ => (/* No destroying performed */)
+			unsafe { Resolver::get().destroy_image(dev.native_ptr(), *obj, null()); }
 		}
-		#[cfg(not(feature = "VK_KHR_swapchain"))]
+	}
+	#[cfg(not(feature = "VK_KHR_swapchain"))]
+	fn drop(&mut self)
+	{
 		unsafe { Resolver::get().destroy_image(self.dev.native_ptr(), self.obj, null()); }
 	}
 }

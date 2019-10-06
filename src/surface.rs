@@ -1,18 +1,19 @@
 //! Vulkan Surface/Swapchain Extensions
 
-use vk::*;
+use super::*;
 use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::null;
 #[cfg(feature = "Implements")] use vkresolve::Resolver;
 
-#[cfg(feature = "VK_KHR_android_surface")] use android::ANativeWindow;
-
-struct SurfaceCell(VkSurfaceKHR, ::Instance);
+struct SurfaceCell(VkSurfaceKHR, Instance);
 /// Opaque handle to a surface object
 #[derive(Clone)] pub struct Surface(RefCounter<SurfaceCell>);
-struct SwapchainCell { obj: VkSwapchainKHR, dev: ::Device, #[allow(dead_code)] target: Surface, fmt: VkFormat, size: ::Extent3D }
+struct SwapchainCell
+{
+	obj: VkSwapchainKHR, dev: Device, _target: Surface, fmt: VkFormat, size: Extent3D
+}
 /// Opaque handle to a swapchain object
 #[derive(Clone)] pub struct Swapchain(RefCounter<SwapchainCell>);
 
@@ -28,14 +29,14 @@ impl Drop for SwapchainCell
 }
 impl VkHandle for Surface { type Handle = VkSurfaceKHR; fn native_ptr(&self) -> VkSurfaceKHR { self.0 .0 } }
 impl VkHandle for Swapchain { type Handle = VkSwapchainKHR; fn native_ptr(&self) -> VkSwapchainKHR { self.0.obj } }
-impl DeviceChild for Swapchain { fn device(&self) -> &::Device { &self.0.dev } }
+impl DeviceChild for Swapchain { fn device(&self) -> &Device { &self.0.dev } }
 
 impl Surface
 {
 	/// Create an surface object by taking raw `VkSurfaceKHR` object.
 	/// # Safety
 	/// `ptr` must be created from `parent`, and destroyed by this object(not yourself!).
-	pub unsafe fn from_raw(ptr: VkSurfaceKHR, parent: &::Instance) -> Self
+	pub unsafe fn from_raw(ptr: VkSurfaceKHR, parent: &Instance) -> Self
 	{
 		Surface(SurfaceCell(ptr, parent.clone()).into())
 	}
@@ -52,12 +53,13 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_xlib_surface")]
-	pub fn new_xlib(instance: &::Instance, display: *mut ::x11::xlib::Display, window: ::x11::xlib::Window) -> ::Result<Self>
+	pub fn new_xlib(instance: &Instance, display: *mut x11::xlib::Display, window: x11::xlib::Window) -> ::Result<Self>
 	{
 		let cinfo = VkXlibSurfaceCreateInfoKHR { dpy: display, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_xlib_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_xlib_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 	/// Create a `Surface` object for a X11 window, using the XCB client-side library
 	/// # Failures
@@ -66,12 +68,14 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_xcb_surface")]
-	pub fn new_xcb(instance: &::Instance, connection: *mut ::xcb::ffi::xcb_connection_t, window: ::xcb::ffi::xcb_window_t) -> ::Result<Self>
+	pub fn new_xcb(instance: &Instance, connection: *mut xcb::ffi::xcb_connection_t, window: xcb::ffi::xcb_window_t)
+		-> ::Result<Self>
 	{
 		let cinfo = VkXcbSurfaceCreateInfoKHR { connection, window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_xcb_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_xcb_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 	/// Create a `Surface` object for a Wayland window
 	/// # Failures
@@ -80,12 +84,15 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_wayland_surface")]
-	pub fn new_wayland(instance: &::Instance, display: *mut ::wayland_client::sys::wl_display, surface: *mut ::wayland_client::sys::wl_proxy) -> ::Result<Self>
+	pub fn new_wayland(instance: &Instance,
+		display: *mut wayland_client::sys::wl_display, surface: *mut wayland_client::sys::wl_proxy)
+		-> ::Result<Self>
 	{
 		let cinfo = VkWaylandSurfaceCreateInfoKHR { display, surface, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_wayland_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_wayland_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 	/// Create a `Surface` object for an Android native window
 	/// # Failures
@@ -94,12 +101,13 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_android_surface")]
-	pub fn new_android(instance: &::Instance, window: *mut ANativeWindow) -> ::Result<Self>
+	pub fn new_android(instance: &Instance, window: *mut android::ANativeWindow) -> ::Result<Self>
 	{
 		let cinfo = VkAndroidSurfaceCreateInfoKHR { window, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_android_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_android_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 	/// Create a `Surface` object for an Win32 native window
 	/// # Failures
@@ -108,12 +116,15 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_win32_surface")]
-	pub fn new_win32(instance: &::Instance, hinstance: ::winapi::shared::minwindef::HINSTANCE, hwnd: ::winapi::shared::windef::HWND) -> ::Result<Self>
+	pub fn new_win32(instance: &::Instance,
+		hinstance: winapi::shared::minwindef::HINSTANCE, hwnd: winapi::shared::windef::HWND)
+		-> ::Result<Self>
 	{
 		let cinfo = VkWin32SurfaceCreateInfoKHR { hinstance, hwnd, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_win32_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_win32_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 	/// Create a `Surface` object for an macOS native window
 	/// # Failures
@@ -122,12 +133,13 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_MVK_macos_surface")]
-	pub fn new_macos(instance: &::Instance, view_ptr: *const ::libc::c_void) -> ::Result<Self>
+	pub fn new_macos(instance: &Instance, view_ptr: *const libc::c_void) -> ::Result<Self>
 	{
 		let cinfo = VkMacOSSurfaceCreateInfoMVK { pView: view_ptr, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_macos_surface_mvk(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_macos_surface_mvk(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 	/// Create a `Surface` object representing a display plane and mode
 	/// # Failures
@@ -136,18 +148,22 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_display")]
-	pub fn new_display_plane(instance: &::Instance, mode: VkDisplayModeKHR, plane_index: u32, plane_stack_index: u32,
-		transform: SurfaceTransform, global_alpha: f32, alpha_mode: DisplayPlaneAlpha, extent: ::Extent2D) -> ::Result<Self>
+	#[allow(clippy::too_many_arguments)]
+	pub fn new_display_plane(instance: &Instance, mode: VkDisplayModeKHR, plane_index: u32, plane_stack_index: u32,
+		transform: SurfaceTransform, global_alpha: f32, alpha_mode: DisplayPlaneAlpha, extent: Extent2D)
+		-> ::Result<Self>
 	{
 		let cinfo = VkDisplaySurfaceCreateInfoKHR
 		{
 			displayMode: mode, planeIndex: plane_index, planeStackIndex: plane_stack_index,
-			transform: transform as _, globalAlpha: global_alpha, alphaMode: alpha_mode as _, imageExtent: unsafe { ::std::mem::transmute(extent) },
+			transform: transform as _, globalAlpha: global_alpha, alphaMode: alpha_mode as _,
+			imageExtent: extent.into(),
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_display_plane_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }.into_result()
-			.map(|_| Surface(RefCounter::new(SurfaceCell(h, instance.clone()))))
+		unsafe { Resolver::get().create_display_plane_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h) }
+			.into_result()
+			.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 	}
 }
 
@@ -156,15 +172,16 @@ pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface);
 impl<'d> SwapchainBuilder<'d>
 {
 	pub fn new(surface: &'d Surface, min_image_count: u32, format: &VkSurfaceFormatKHR,
-		extent: &::Extent2D, usage: ::ImageUsage) -> Self
+		extent: &Extent2D, usage: ImageUsage) -> Self
 	{
 		SwapchainBuilder(VkSwapchainCreateInfoKHR
 		{
 			surface: surface.native_ptr(), minImageCount: min_image_count, imageFormat: format.format,
-			imageColorSpace: format.colorSpace, imageExtent: unsafe { ::std::mem::transmute_copy(extent) },
+			imageColorSpace: format.colorSpace, imageExtent: extent.clone().into(),
 			imageArrayLayers: 1, imageUsage: usage.0, imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
 			preTransform: SurfaceTransform::Inherit as _, compositeAlpha: CompositeAlpha::Inherit as _,
-			presentMode: PresentMode::FIFO as _, .. Default::default()
+			presentMode: PresentMode::FIFO as _,
+			.. Default::default()
 		}, surface)
 	}
 	pub fn array_layers(&mut self, layers: u32) -> &mut Self { self.0.imageArrayLayers = layers; self }
@@ -193,22 +210,23 @@ impl<'d> SwapchainBuilder<'d>
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	/// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
 	#[cfg(feature = "Implements")]
-	pub fn create(&self, device: &::Device) -> ::Result<Swapchain>
+	pub fn create(&self, device: &Device) -> ::Result<Swapchain>
 	{
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_swapchain_khr(device.native_ptr(), &self.0, null(), &mut h) }.into_result()
-			.map(|_| Swapchain(RefCounter::new(SwapchainCell
+		unsafe { Resolver::get().create_swapchain_khr(device.native_ptr(), &self.0, null(), &mut h) }
+			.into_result()
+			.map(|_| Swapchain(SwapchainCell
 			{
-				obj: h, dev: device.clone(), target: self.1.clone(), fmt: self.0.imageFormat,
-				size: ::Extent3D(self.0.imageExtent.width, self.0.imageExtent.height, 1)
-			})))
+				obj: h, dev: device.clone(), _target: self.1.clone(), fmt: self.0.imageFormat,
+				size: Extent3D(self.0.imageExtent.width, self.0.imageExtent.height, 1)
+			}.into()))
 	}
 }
 
 impl Swapchain
 {
 	pub fn format(&self) -> VkFormat { self.0.fmt }
-	pub fn size(&self) -> &::Extent3D { &self.0.size }
+	pub fn size(&self) -> &Extent3D { &self.0.size }
 }
 
 use {Fence, Semaphore};
@@ -249,8 +267,11 @@ impl Swapchain
 			CompletionHandler::Queue(s) => (s.native_ptr(), VK_NULL_HANDLE as _)
 		};
 		let mut n = 0;
-		unsafe { Resolver::get().acquire_next_image_khr(self.device().native_ptr(), self.native_ptr(), timeout.unwrap_or(::std::u64::MAX), semaphore, fence, &mut n) }
-			.into_result().map(|_| n)
+		unsafe
+		{
+			Resolver::get().acquire_next_image_khr(self.device().native_ptr(),
+				self.native_ptr(), timeout.unwrap_or(std::u64::MAX), semaphore, fence, &mut n)
+		}.into_result().map(|_| n)
 	}
 	/// Queue an image for presentation
 	/// # Failures
@@ -261,7 +282,7 @@ impl Swapchain
 	/// * `VK_ERROR_DEVICE_LOST`
 	/// * `VK_ERROR_OUT_OF_DATE_KHR`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn queue_present(&self, queue: &::Queue, index: u32, wait_semaphores: &[&::Semaphore]) -> ::Result<()>
+	pub fn queue_present(&self, queue: &Queue, index: u32, wait_semaphores: &[&Semaphore]) -> ::Result<()>
 	{
 		let mut res = 0;
 		let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
@@ -271,11 +292,13 @@ impl Swapchain
 			swapchainCount: 1, pSwapchains: &self.native_ptr(), pImageIndices: &index, pResults: &mut res,
 			.. Default::default()
 		};
-		unsafe { Resolver::get().queue_present_khr(queue.native_ptr(), &pinfo) }.into_result().and_then(|_| res.into_result())
+		unsafe { Resolver::get().queue_present_khr(queue.native_ptr(), &pinfo) }
+			.into_result()
+			.and_then(|_| res.into_result())
 	}
 }
 #[cfg(feature = "Implements")]
-impl ::Queue
+impl Queue
 {
 	/// Queue images for presentation
 	/// # Failures
@@ -286,7 +309,7 @@ impl ::Queue
 	/// * `VK_ERROR_DEVICE_LOST`
 	/// * `VK_ERROR_OUT_OF_DATE_KHR`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn present(&self, swapchains: &[(&Swapchain, u32)], wait_semaphores: &[&::Semaphore]) -> ::Result<Vec<VkResult>>
+	pub fn present(&self, swapchains: &[(&Swapchain, u32)], wait_semaphores: &[&Semaphore]) -> ::Result<Vec<VkResult>>
 	{
 		let mut res = vec![0; swapchains.len()];
 		let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
@@ -295,14 +318,16 @@ impl ::Queue
 		{
 			waitSemaphoreCount: wait_semaphores.len() as _, pWaitSemaphores: wait_semaphores.as_ptr(),
 			swapchainCount: swapchains.len() as _, pSwapchains: swapchains.as_ptr(), pImageIndices: indices.as_ptr(),
-			pResults: res.as_mut_ptr(), .. Default::default()
+			pResults: res.as_mut_ptr(),
+			.. Default::default()
 		};
 		unsafe { Resolver::get().queue_present_khr(self.native_ptr(), &pinfo) }.into_result().map(|_| res)
 	}
 }
 
 /// Presentation mode supported for a surface
-#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[repr(u32)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum PresentMode
 {
 	/// The presentatino engine does not wait for a vertical blanking period to update the current image, meaning
@@ -324,7 +349,8 @@ pub enum PresentMode
 	FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR as _
 }
 
-#[repr(u32)] #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[repr(u32)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum SurfaceTransform
 {
 	/// The image content is presented without being transformed
@@ -346,7 +372,8 @@ pub enum SurfaceTransform
 	/// The presentation transform is not specified, and is instead determined by platform-specific considerations and mechanisms outside Vulkan
 	Inherit = VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR as _
 }
-#[repr(u32)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompositeAlpha
 {
 	/// The alpha channel, if it exists, of the image is ignored in the compositing process
@@ -363,7 +390,8 @@ pub enum CompositeAlpha
 	Inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR as _
 }
 /// Alpha blending type
-#[repr(u32)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DisplayPlaneAlpha
 {
 	/// The source image will be treated as opaque

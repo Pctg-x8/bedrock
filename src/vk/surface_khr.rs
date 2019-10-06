@@ -7,7 +7,7 @@ mod nd_handle_base_ts { pub enum VkSurfaceKHR {} }
 pub type VkSurfaceKHR = VK_NON_DISPATCHABLE_HANDLE!(VkSurfaceKHR);
 
 pub const VK_KHR_SURFACE_SPEC_VERSION: usize = 25;
-pub static VK_KHR_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_surface";
+pub static VK_KHR_SURFACE_EXTENSION_NAME: &str = "VK_KHR_surface";
 pub const VK_COLORSPACE_SRGB_NONLINEAR_KHR: VkColorSpaceKHR = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 
 pub type VkColorSpaceKHR = i32;

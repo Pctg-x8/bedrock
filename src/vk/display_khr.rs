@@ -8,7 +8,7 @@ pub type VkDisplayKHR = VK_NON_DISPATCHABLE_HANDLE!(VkDisplayKHR);
 pub type VkDisplayModeKHR = VK_NON_DISPATCHABLE_HANDLE!(VkDisplayModeKHR);
 
 pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
-pub const VK_KHR_DISPLAY_EXTENSION_NAME: &'static str = "VK_KHR_display";
+pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
 
 pub type VkDisplayPlaneAlphaFlagsKHR = VkFlags;
 pub const VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR: VkDisplayPlaneAlphaFlagsKHR = 0x01;
