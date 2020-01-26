@@ -10,7 +10,7 @@ use {Image, Buffer, ImageLayout};
 #[cfg(feature = "Implements")] use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
 #[cfg(feature = "Implements")] use {StencilFaceMask, FilterMode, Event};
 #[cfg(feature = "Implements")] use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
-#[cfg(feature = "Implements")] use ::vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Opaque handle to a command pool object
 #[derive(Clone)] pub struct CommandPool(VkCommandPool, ::Device);

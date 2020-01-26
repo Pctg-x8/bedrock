@@ -10,7 +10,7 @@ use VkHandle;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(feature = "Implements")] use VkResultHandler;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]

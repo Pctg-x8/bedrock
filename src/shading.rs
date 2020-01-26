@@ -6,7 +6,7 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use std::ptr::null;
 use std::marker::PhantomData;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]

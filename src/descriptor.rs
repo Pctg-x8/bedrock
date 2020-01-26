@@ -6,7 +6,7 @@ use {VkHandle, DeviceChild};
 use ShaderStage;
 #[cfg(feature = "Implements")] use std::ptr::null;
 #[cfg(feature = "Implements")] use std::mem::zeroed;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Opaque handle to a descriptor set layout object
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, ::Device);

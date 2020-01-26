@@ -5,7 +5,7 @@
 use vk::*;
 #[cfg(feature = "Implements")] use VkHandle;
 #[cfg(feature = "Implements")] use {VkResultHandler, VkResultBox};
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Opaque handle to a fence object
 pub struct Fence(pub VkFence, ::Device);

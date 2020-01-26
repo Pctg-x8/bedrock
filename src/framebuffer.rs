@@ -5,7 +5,7 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use std::borrow::{Borrow, BorrowMut};
 use ImageLayout;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Opaque handle to a render pass object
 pub struct RenderPass(VkRenderPass, ::Device);

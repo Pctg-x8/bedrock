@@ -5,7 +5,7 @@
 use vk::*;
 use std::ffi::CString;
 use VkHandle;
-#[cfg(feature = "Implements")] use ::vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;

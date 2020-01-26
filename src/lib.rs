@@ -37,7 +37,7 @@ use vk::*;
 #[cfg(feature = "Implements")]
 mod vkresolve;
 #[cfg(feature = "Implements")]
-pub use vkresolve::Resolver;
+pub use vkresolve::{Resolver, ResolverInterface};
 
 use std::error::Error;
 

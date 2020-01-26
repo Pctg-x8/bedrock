@@ -123,7 +123,7 @@ use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 #[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 use std::borrow::Borrow;
 
 struct DeviceMemoryCell(VkDeviceMemory, ::Device);
