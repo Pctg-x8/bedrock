@@ -12,6 +12,9 @@ use libloading::os::unix::Symbol as RawSymbol;
 #[cfg(feature = "DynamicLoaded")] #[cfg(windows)]
 use libloading::os::windows::Symbol as RawSymbol;
 
+#[cfg(feature = "VK_KHR_xlib_surface")] use x11::xlib::{Display, VisualID};
+#[cfg(feature = "VK_KHR_xcb_surface")] use xcb::ffi::{xcb_connection_t, xcb_visualid_t};
+
 use libc::*;
 
 macro_rules! WrapAPI {
@@ -59,9 +62,6 @@ pub fn set_custom_resolver(resv: Box<ResolverInterface>)
         let _ = STATIC_RESOLVER.compare_exchange(0 as *mut _, Box::into_raw(resv), Ordering::SeqCst, Ordering::Relaxed);
     });
 }
-
-#[cfg(feature = "VK_KHR_xlib_surface")] use x11::xlib::{Display, VisualID};
-#[cfg(feature = "VK_KHR_xcb_surface")] use xcb::ffi::{xcb_connection_t, xcb_visualid_t};
 
 pub trait ResolverInterface
 {
@@ -364,7 +364,8 @@ impl Resolver
                 Ordering::SeqCst, Ordering::Relaxed);
             *f.borrow_mut() = true;
         });
-        return unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) };
+        
+        unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) }
     }
 
     #[cfg(feature = "DynamicLoaded")]
@@ -618,32 +619,32 @@ impl ResolverInterface for Resolver
         pExternalSemaphoreProperties: *mut VkExternalSemaphoreProperties));
     WrapAPI!(get_descriptor_set_layout_support = vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo,
         pSupport: *mut VkDescriptorSetLayoutSupport));
-}
-
-#[cfg(feature = "VK_KHR_surface")]
-impl Resolver {
+        
+    #[cfg(feature = "VK_KHR_surface")]
     WrapAPI!(destroy_surface_khr = vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks));
+    #[cfg(feature = "VK_KHR_surface")]
     WrapAPI!(get_physical_device_surface_support_khr = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult);
+    #[cfg(feature = "VK_KHR_surface")]
     WrapAPI!(get_physical_device_surface_capabilities_khr = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_surface")]
     WrapAPI!(get_physical_device_surface_formats_khr = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_surface")]
     WrapAPI!(get_physical_device_surface_present_modes_khr = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_surface")]
     #[cfg(feature = "VK_KHR_surface_capabilities2")]
     WrapAPI!(get_physical_device_surface_capabilities2_khr = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice: VkPhysicalDevice, surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR, surface_capabilities: *mut VkSurfaceCapabilities2KHR) -> VkResult);
-}
-
-#[cfg(feature = "VK_KHR_swapchain")]
-impl Resolver {
+    
+    #[cfg(feature = "VK_KHR_swapchain")]
     WrapAPI!(create_swapchain_khr = vkCreateSwapchainKHR(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_swapchain")]
     WrapAPI!(destroy_swapchain_khr = vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks));
+    #[cfg(feature = "VK_KHR_swapchain")]
     WrapAPI!(get_swapchain_images_khr = vkGetSwapchainImagesKHR(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult);
+    #[cfg(feature = "VK_KHR_swapchain")]
     WrapAPI!(acquire_next_image_khr = vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult);
+    #[cfg(feature = "VK_KHR_swapchain")]
     WrapAPI!(queue_present_khr = vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult);
-}
 
-#[cfg(feature = "VK_KHR_xlib_surface")] use x11::xlib::{Display, VisualID};
-#[cfg(feature = "VK_KHR_xcb_surface")] use xcb::ffi::{xcb_connection_t, xcb_visualid_t};
-
-impl Resolver {
     #[cfg(feature = "VK_KHR_xlib_surface")]
     WrapAPI!(create_xlib_surface_khr = vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_xlib_surface")]
@@ -664,15 +665,19 @@ impl Resolver {
 
     #[cfg(feature = "VK_MVK_macos_surface")]
     WrapAPI!(create_macos_surface_mvk = vkCreateMacOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
-}
 
-#[cfg(feature = "VK_KHR_display")]
-impl Resolver {
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(get_physical_device_display_properties_khr = vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(get_physical_device_display_plane_properties_khr = vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(get_display_plane_supported_displays_khr = vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(get_display_mode_properties_khr = vkGetDisplayModePropertiesKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(create_display_mode_khr = vkCreateDisplayModeKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(get_display_plane_capabilities_khr = vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult);
+    #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(create_display_plane_surface_khr = vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 }
