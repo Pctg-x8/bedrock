@@ -6,11 +6,12 @@ use vk::*;
 use PhysicalDevice;
 use std::ffi::CString;
 use std::borrow::Cow;
-use crate::{VkHandle, fnconv::FnTransmute};
+use crate::VkHandle;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
+#[cfg(feature = "Implements")] use crate::fnconv::FnTransmute;
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]

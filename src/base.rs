@@ -5,11 +5,11 @@
 use vk::*;
 use std::ffi::CString;
 use VkHandle;
-use crate::fnconv::FnTransmute;
 #[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 #[cfg(feature = "Implements")] use std::mem::MaybeUninit;
+#[cfg(feature = "Implements")] use crate::fnconv::FnTransmute;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;

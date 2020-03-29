@@ -266,7 +266,7 @@ impl Into<VkRect2D> for VkViewport
 
 /// Viewport Util Functions
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Viewport(VkViewport);
 impl From<VkViewport> for Viewport
 {
@@ -280,24 +280,24 @@ impl Viewport
     {
         VkViewport
         {
-            left: rect.offset.x as _, top: rect.offset.y as _,
+            x: rect.offset.x as _, y: rect.offset.y as _,
             width: rect.extent.width as _, height: rect.extent.height as _,
             minDepth: depth_range.start, maxDepth: depth_range.end
         }.into()
     }
     pub fn set_offset(&mut self, offset: &VkOffset2D) -> &mut Self
     {
-        self.0.left = offset.x as _;
-        self.0.top = offset.y as _;
+        self.0.x = offset.x as _;
+        self.0.y = offset.y as _;
         self
     }
     pub fn set_extent(&mut self, extent: &VkExtent2D) -> &mut Self
     {
-        self.0.width = extent.x as _;
-        self.0.height = extent.y as _;
+        self.0.width = extent.width as _;
+        self.0.height = extent.height as _;
         self
     }
-    pub fn set_depth_range(&mut self, range: std::ops::Range<f32>) -> Self
+    pub fn set_depth_range(&mut self, range: std::ops::Range<f32>) -> &mut Self
     {
         self.0.minDepth = range.start;
         self.0.maxDepth = range.end;
