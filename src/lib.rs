@@ -252,15 +252,22 @@ impl AsRef<Offset3D> for Offset3D { fn as_ref(&self) -> &Self { self } }
 impl AsRef<Offset2D> for Offset2D { fn as_ref(&self) -> &Self { self } }
 impl AsRef<Offset1D> for Offset1D { fn as_ref(&self) -> &Self { self } }
 
-impl Into<VkRect2D> for Extent2D
+impl From<Extent2D> for VkRect2D
 {
-    fn into(self) -> VkRect2D { VkRect2D { offset: VkOffset2D { x: 0, y: 0 }, extent: VkExtent2D { width: self.0, height: self.1 } } }
-}
-impl Into<VkRect2D> for VkViewport
-{
-    fn into(self) -> VkRect2D
+    fn from(e: Extent2D) -> Self
     {
-        VkRect2D { offset: VkOffset2D { x: self.x as _, y: self.y as _ }, extent: VkExtent2D { width: self.width as _, height: self.height as _ } }
+        VkRect2D { offset: VkOffset2D { x: 0, y: 0 }, extent: VkExtent2D { width: e.0, height: e.1 } }
+    }
+}
+impl From<VkViewport> for VkRect2D
+{
+    fn from(vp: VkViewport) -> Self
+    {
+        VkRect2D
+        {
+            offset: VkOffset2D { x: vp.x as _, y: vp.y as _ },
+            extent: VkExtent2D { width: vp.width as _, height: vp.height as _ }
+        }
     }
 }
 
