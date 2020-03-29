@@ -122,7 +122,7 @@ use std::ops::{Deref, BitOr, BitOrAssign};
 use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
-#[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
+#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 #[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 use std::borrow::Borrow;
 
@@ -602,9 +602,15 @@ impl Image
 	/// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
 	pub fn image_subresource_layout(&self, subres_aspect: AspectMask, subres_mip_level: u32, subres_array_layer: u32) -> VkSubresourceLayout
 	{
-		let mut s = unsafe { resv() };
+		let mut s = MaybeUninit::uninit();
 		let subres = VkImageSubresource { aspectMask: subres_aspect.0, mipLevel: subres_mip_level, arrayLayer: subres_array_layer };
-		unsafe { Resolver::get().get_image_subresource_layout(self.device().native_ptr(), self.native_ptr(), &subres, &mut s) }; s
+		unsafe
+		{
+			Resolver::get()
+				.get_image_subresource_layout(self.device().native_ptr(), self.native_ptr(), &subres, s.as_mut_ptr());
+			
+			s.assume_init()
+		}
 	}
 }
 
@@ -696,12 +702,23 @@ impl MemoryBound for Buffer
 {
 	fn requirements(&self) -> VkMemoryRequirements
 	{
-		let mut p = unsafe { resv() };
-		unsafe { Resolver::get().get_buffer_memory_requirements(self.device().native_ptr(), self.native_ptr(), &mut p) }; p
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get()
+				.get_buffer_memory_requirements(self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr());
+			
+			p.assume_init()
+		}
 	}
 	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
 	{
-		unsafe { Resolver::get().bind_buffer_memory(self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _) }.into_result()
+		unsafe
+		{
+			Resolver::get()
+				.bind_buffer_memory(self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _)
+				.into_result()
+		}
 	}
 }
 #[cfg(feature = "Implements")]
@@ -709,8 +726,14 @@ impl MemoryBound for Image
 {
 	fn requirements(&self) -> VkMemoryRequirements
 	{
-		let mut p = unsafe { resv() };
-		unsafe { Resolver::get().get_image_memory_requirements(self.device().native_ptr(), self.native_ptr(), &mut p) }; p
+		let mut p = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get()
+				.get_image_memory_requirements(self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr());
+
+			p.assume_init()
+		}
 	}
 	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
 	{

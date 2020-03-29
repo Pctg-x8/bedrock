@@ -5,10 +5,11 @@
 use vk::*;
 use std::ffi::CString;
 use VkHandle;
+use crate::fnconv::FnTransmute;
 #[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
-#[cfg(feature = "Implements")] use std::mem::uninitialized as resv;
+#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;
@@ -166,11 +167,12 @@ impl Instance
 	/// If function is not provided by instance or `name` is empty, returns `None`
 	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
 	{
-		if name.is_empty() { None }
-		else
+		if name.is_empty() { return None; }
+
+		unsafe
 		{
-			let p = unsafe { Resolver::get().get_instance_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
-			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
+			Resolver::get().get_instance_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr())
+				.map(|f| FnTransmute::from_fn(f))
 		}
 	}
 	/// Enumerates the physical devices accessible to a Vulkan instance
@@ -369,12 +371,15 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR> {
-		unsafe {
-			let mut s = resv();
-			Resolver::get().get_physical_device_surface_capabilities_khr(self.0, surface.native_ptr(), &mut s)
-				.into_result()?;
-			return Ok(s);
+	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR>
+	{
+		let mut s = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get()
+				.get_physical_device_surface_capabilities_khr(self.0, surface.native_ptr(), s.as_mut_ptr())
+				.into_result()
+				.map(move |_| s)
 		}
 	}
 	/// Query color formats supported by surface
@@ -384,13 +389,16 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn surface_formats(&self, surface: &::Surface) -> ::Result<Vec<VkSurfaceFormatKHR>> {
-		unsafe { 
+	pub fn surface_formats(&self, surface: &::Surface) -> ::Result<Vec<VkSurfaceFormatKHR>>
+	{
+		unsafe
+		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, null_mut()).into_result()?;
 			let mut v = ::preserve(n as _);
-			Resolver::get().get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr()).into_result()?;
-			return Ok(v);
+			Resolver::get().get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query supported presentation modes
@@ -454,20 +462,24 @@ impl PhysicalDevice {
 
 /// feature = "VK_KHR_display" functions (required to enable the "Implements" feature)
 #[cfg(all(feature = "VK_KHR_display", feature = "Implements"))]
-impl PhysicalDevice {
+impl PhysicalDevice
+{
 	/// Query information about the available displays
 	/// # Failures
 	/// On failure, this command returns
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>> {
-		unsafe {
+	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>>
+	{
+		unsafe 
+		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, null_mut()).into_result()?;
 			let mut v = ::preserve(n as _);
-			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr()).into_result()?;
-			return Ok(v);
+			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query the plane properties
@@ -476,13 +488,16 @@ impl PhysicalDevice {
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_plane_properties(&self) -> ::Result<Vec<VkDisplayPlanePropertiesKHR>> {
-		unsafe {
+	pub fn display_plane_properties(&self) -> ::Result<Vec<VkDisplayPlanePropertiesKHR>>
+	{
+		unsafe
+		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, null_mut()).into_result()?;
 			let mut v = ::preserve(n as _);
-			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr()).into_result()?;
-			return Ok(v);
+			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query the list of displays a plane supports
@@ -491,13 +506,16 @@ impl PhysicalDevice {
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_plane_supported_displays(&self, index: u32) -> ::Result<Vec<VkDisplayKHR>> {
-		unsafe {
+	pub fn display_plane_supported_displays(&self, index: u32) -> ::Result<Vec<VkDisplayKHR>>
+	{
+		unsafe
+		{
 			let mut n = 0;
 			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, null_mut()).into_result()?;
 			let mut v = ::preserve(n as _);
-			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr()).into_result()?;
-			return Ok(v);
+			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query the set of mode properties supported by the display
@@ -506,13 +524,16 @@ impl PhysicalDevice {
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> ::Result<Vec<VkDisplayModePropertiesKHR>> {
-		unsafe {
+	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> ::Result<Vec<VkDisplayModePropertiesKHR>>
+	{
+		unsafe
+		{
 			let mut n = 0;
 			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, null_mut()).into_result()?;
 			let mut v = ::preserve(n as _);
-			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr()).into_result()?;
-			return Ok(v);
+			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Create a display mode
@@ -522,15 +543,20 @@ impl PhysicalDevice {
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_INITIALIZATION_FAILED`
-	pub fn new_display_mode(&self, display: VkDisplayKHR, region: ::Extent2D, refresh_rate: u32) -> ::Result<VkDisplayModeKHR> {
+	pub fn new_display_mode(&self, display: VkDisplayKHR, region: ::Extent2D, refresh_rate: u32) -> ::Result<VkDisplayModeKHR>
+	{
 		let cinfo = VkDisplayModeCreateInfoKHR
 		{
 			parameters: VkDisplayModeParametersKHR { visibleRegion: unsafe { ::std::mem::transmute(region) }, refreshRate: refresh_rate },
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_display_mode_khr(self.0, display, &cinfo, ::std::ptr::null(), &mut h) }.into_result()?;
-		return Ok(h);
+		unsafe
+		{
+			Resolver::get().create_display_mode_khr(self.0, display, &cinfo, ::std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| h)
+		}
 	}
 	/// Query capabilities of a mode and plane combination
 	/// # Failures
@@ -538,18 +564,22 @@ impl PhysicalDevice {
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_plane_capabilities(&self, mode: VkDisplayModeKHR, plane_index: u32) -> ::Result<VkDisplayPlaneCapabilitiesKHR> {
-		unsafe {
-			let mut s = resv();
-			Resolver::get().get_display_plane_capabilities_khr(self.0, mode, plane_index, &mut s).into_result()?;
-			return Ok(s);
+	pub fn display_plane_capabilities(&self, mode: VkDisplayModeKHR, plane_index: u32) -> ::Result<VkDisplayPlaneCapabilitiesKHR>
+	{
+		let mut s = MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().get_display_plane_capabilities_khr(self.0, mode, plane_index, s.as_mut_ptr())
+				.into_result()
+				.map(move |_| s.assume_init())
 		}
 	}
 }
 
 /// Device memory properties
 pub struct MemoryProperties(VkPhysicalDeviceMemoryProperties);
-impl MemoryProperties {
+impl MemoryProperties
+{
 	pub fn find_type_index(&self, mask: MemoryPropertyFlags, exclude: MemoryPropertyFlags,
 		index_mask: u32) -> Option<u32>
 	{

@@ -280,7 +280,7 @@ mod command; pub use command::*;
 
 /// Unsafe Utils: Preserving a typed buffer
 #[cfg(feature = "Implements")]
-pub(self) unsafe fn preserve<T>(n: usize) -> Vec<T> { let mut v = Vec::with_capacity(n); v.set_len(n); return v; }
+pub(self) unsafe fn preserve<T>(n: usize) -> Vec<T> { let mut v = Vec::with_capacity(n); v.set_len(n); v }
 
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);

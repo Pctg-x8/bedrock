@@ -7,7 +7,7 @@ mod nd_handle_base_ts { pub enum VkSwapchainKHR {} }
 pub type VkSwapchainKHR = VK_NON_DISPATCHABLE_HANDLE!(VkSwapchainKHR);
 
 pub const VK_KHR_SWAPCHAIN_SPEC_VERSION: usize = 68;
-pub static VK_KHR_SWAPCHAIN_EXTENSION_NAME: &'static str = "VK_KHR_swapchain";
+pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
 
 pub type VkSwapchainCreateFlagsKHR = VkFlags;
 pub const VK_SWAPCHAIN_CREATE_BIND_SFR_BIT_KHX: VkSwapchainCreateFlagsKHR = 0x01;

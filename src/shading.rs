@@ -6,7 +6,8 @@ use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use std::ptr::null;
 use std::marker::PhantomData;
-#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
+use std::error::Error;
+#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
@@ -194,7 +195,7 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath: AsRef<::std::path::Path> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<::std::error::Error>>
+	pub fn from_file<FilePath: AsRef<::std::path::Path> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<dyn Error>>
 	{
 		use ::std::io::prelude::Read;
 		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let mut v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;

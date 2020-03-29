@@ -6,7 +6,7 @@ use vk::*;
 use PhysicalDevice;
 use std::ffi::CString;
 use std::borrow::Cow;
-use VkHandle;
+use crate::{VkHandle, fnconv::FnTransmute};
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(feature = "Implements")] use VkResultHandler;
@@ -188,11 +188,12 @@ impl Device
 	/// If function is not provided by instance or `name` is empty, returns `None`
 	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
 	{
-		if name.is_empty() { None }
-		else
+		if name.is_empty() { return None; }
+
+		unsafe
 		{
-			let p = unsafe { Resolver::get().get_device_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr()) };
-			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
+			Resolver::get().get_device_proc_addr(self.native_ptr(), CString::new(name).unwrap().as_ptr())
+				.map(|f| FnTransmute::from_fn(f))
 		}
 	}
 	/// Get a queue handle from a device
