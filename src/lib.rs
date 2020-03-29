@@ -264,6 +264,47 @@ impl Into<VkRect2D> for VkViewport
     }
 }
 
+/// Viewport Util Functions
+#[repr(transparent)]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Viewport(VkViewport);
+impl From<VkViewport> for Viewport
+{
+    fn from(v: VkViewport) -> Self { Viewport(v) }
+}
+impl Viewport
+{
+    pub fn into_inner(self) -> VkViewport { self.0 }
+
+    pub fn from_rect_with_depth_range(rect: &VkRect2D, depth_range: std::ops::Range<f32>) -> Self
+    {
+        VkViewport
+        {
+            left: rect.offset.x as _, top: rect.offset.y as _,
+            width: rect.extent.width as _, height: rect.extent.height as _,
+            minDepth: depth_range.start, maxDepth: depth_range.end
+        }.into()
+    }
+    pub fn set_offset(&mut self, offset: &VkOffset2D) -> &mut Self
+    {
+        self.0.left = offset.x as _;
+        self.0.top = offset.y as _;
+        self
+    }
+    pub fn set_extent(&mut self, extent: &VkExtent2D) -> &mut Self
+    {
+        self.0.width = extent.x as _;
+        self.0.height = extent.y as _;
+        self
+    }
+    pub fn set_depth_range(&mut self, range: std::ops::Range<f32>) -> Self
+    {
+        self.0.minDepth = range.start;
+        self.0.maxDepth = range.end;
+        self
+    }
+}
+
 mod base; pub use base::*;
 mod device; pub use device::*;
 mod sync; pub use sync::*;
