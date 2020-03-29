@@ -194,9 +194,9 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath: AsRef<::std::path::Path> + ?Sized>(device: &::Device, path: &FilePath) -> Result<Self, Box<dyn Error>>
+	pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(device: &crate::Device, path: &FilePath) -> Result<Self, Box<dyn std::error::Error>>
 	{
-		use ::std::io::prelude::Read;
+		use std::io::prelude::Read;
 		let bin = ::std::fs::File::open(path).and_then(|mut fp| { let mut v = Vec::new(); fp.read_to_end(&mut v).map(|_| v) })?;
 		Self::from_memory(device, &bin).map_err(From::from)
 	}
