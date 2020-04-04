@@ -6,10 +6,11 @@ use super::*;
 use std::ffi::CString;
 use VkHandle;
 use std::ops::*;
-#[cfg(feature = "Implements")] use crate::vkresolve::Resolver;
+#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 #[cfg(feature = "Implements")] use std::mem::MaybeUninit;
+#[cfg(feature = "Implements")] use crate::fnconv::FnTransmute;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
 #[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;
@@ -167,11 +168,13 @@ impl Instance
 	/// If function is not provided by instance or `name` is empty, returns `None`
 	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
 	{
-		if name.is_empty() { None }
-		else {
+		if name.is_empty() { return None; }
+
+		unsafe
+		{
 			let fn_cstr = CString::new(name).unwrap();
-			let p = unsafe { Resolver::get().get_instance_proc_addr(self.native_ptr(), fn_cstr.as_ptr()) };
-			p.map(|f| unsafe { ::fnconv::FnTransmute::from_fn(f) })
+			Resolver::get().get_instance_proc_addr(self.native_ptr(), fn_cstr.as_ptr())
+				.map(|f| FnTransmute::from_fn(f))
 		}
 	}
 	/// Enumerates the physical devices accessible to a Vulkan instance
@@ -398,8 +401,10 @@ impl PhysicalDevice
 		let mut s = MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_physical_device_surface_capabilities_khr(self.0, surface.native_ptr(), s.as_mut_ptr())
-				.into_result().map(|_| s.assume_init())
+			Resolver::get()
+				.get_physical_device_surface_capabilities_khr(self.0, surface.native_ptr(), s.as_mut_ptr())
+				.into_result()
+				.map(move |_| s.assume_init())
 		}
 	}
 	/// Query color formats supported by surface
@@ -414,11 +419,13 @@ impl PhysicalDevice
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().get_physical_device_surface_formats_khr(self.0,
-				surface.native_ptr(), &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_physical_device_surface_formats_khr(self.0,
-				surface.native_ptr(), &mut n, v.as_mut_ptr()).into_result()?;
+			Resolver::get()
+				.get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr())
+				.into_result()?;
 			
 			Ok(v)
 		}
@@ -518,14 +525,14 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>>
 	{
-		unsafe
+		unsafe 
 		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, null_mut()).into_result()?;
-			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr()).into_result()?;
-			
-			Ok(v)
+			let mut v = ::preserve(n as _);
+			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query the plane properties
@@ -540,11 +547,10 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, null_mut()).into_result()?;
-			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
+			let mut v = ::preserve(n as _);
 			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr())
-				.into_result()?;
-			
-			Ok(v)
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query the list of displays a plane supports
@@ -559,11 +565,10 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, null_mut()).into_result()?;
-			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
+			let mut v = ::preserve(n as _);
 			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr())
-				.into_result()?;
-			
-			Ok(v)
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Query the set of mode properties supported by the display
@@ -578,10 +583,10 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, null_mut()).into_result()?;
-			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr()).into_result()?;
-			
-			Ok(v)
+			let mut v = ::preserve(n as _);
+			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
 		}
 	}
 	/// Create a display mode
@@ -603,9 +608,12 @@ impl PhysicalDevice
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_display_mode_khr(self.0, display, &cinfo, ::std::ptr::null(), &mut h) }
-			.into_result()
-			.map(|_| h)
+		unsafe
+		{
+			Resolver::get().create_display_mode_khr(self.0, display, &cinfo, ::std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| h)
+		}
 	}
 	/// Query capabilities of a mode and plane combination
 	/// # Failures
@@ -621,7 +629,7 @@ impl PhysicalDevice
 		{
 			Resolver::get().get_display_plane_capabilities_khr(self.0, mode, plane_index, s.as_mut_ptr())
 				.into_result()
-				.map(|_| s.assume_init())
+				.map(move |_| s.assume_init())
 		}
 	}
 }

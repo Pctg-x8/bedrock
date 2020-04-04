@@ -37,7 +37,7 @@ use vk::*;
 #[cfg(feature = "Implements")]
 mod vkresolve;
 #[cfg(feature = "Implements")]
-pub use vkresolve::Resolver;
+pub use vkresolve::{Resolver, ResolverInterface};
 
 use std::error::Error;
 
@@ -271,15 +271,63 @@ impl AsRef<Offset3D> for Offset3D { fn as_ref(&self) -> &Self { self } }
 impl AsRef<Offset2D> for Offset2D { fn as_ref(&self) -> &Self { self } }
 impl AsRef<Offset1D> for Offset1D { fn as_ref(&self) -> &Self { self } }
 
-impl Into<VkRect2D> for Extent2D
+impl From<Extent2D> for VkRect2D
 {
-    fn into(self) -> VkRect2D { VkRect2D { offset: VkOffset2D { x: 0, y: 0 }, extent: VkExtent2D { width: self.0, height: self.1 } } }
-}
-impl Into<VkRect2D> for VkViewport
-{
-    fn into(self) -> VkRect2D
+    fn from(e: Extent2D) -> Self
     {
-        VkRect2D { offset: VkOffset2D { x: self.x as _, y: self.y as _ }, extent: VkExtent2D { width: self.width as _, height: self.height as _ } }
+        VkRect2D { offset: VkOffset2D { x: 0, y: 0 }, extent: VkExtent2D { width: e.0, height: e.1 } }
+    }
+}
+impl From<VkViewport> for VkRect2D
+{
+    fn from(vp: VkViewport) -> Self
+    {
+        VkRect2D
+        {
+            offset: VkOffset2D { x: vp.x as _, y: vp.y as _ },
+            extent: VkExtent2D { width: vp.width as _, height: vp.height as _ }
+        }
+    }
+}
+
+/// Viewport Util Functions
+#[repr(transparent)]
+#[derive(Clone, Debug, PartialEq)]
+pub struct Viewport(VkViewport);
+impl From<VkViewport> for Viewport
+{
+    fn from(v: VkViewport) -> Self { Viewport(v) }
+}
+impl Viewport
+{
+    pub fn into_inner(self) -> VkViewport { self.0 }
+
+    pub fn from_rect_with_depth_range(rect: &VkRect2D, depth_range: std::ops::Range<f32>) -> Self
+    {
+        VkViewport
+        {
+            x: rect.offset.x as _, y: rect.offset.y as _,
+            width: rect.extent.width as _, height: rect.extent.height as _,
+            minDepth: depth_range.start, maxDepth: depth_range.end
+        }.into()
+    }
+    pub fn set_offset(&mut self, offset: &VkOffset2D) -> &mut Self
+    {
+        self.0.x = offset.x as _;
+        self.0.y = offset.y as _;
+        self
+    }
+    pub fn set_extent(&mut self, extent: &VkExtent2D) -> &mut Self
+    {
+        self.0.width = extent.width as _;
+        self.0.height = extent.height as _;
+        self
+    }
+    pub fn set_depth_range(&mut self, range: std::ops::Range<f32>) -> &mut Self
+    {
+        self.0.minDepth = range.start;
+        self.0.maxDepth = range.end;
+        self
     }
 }
 

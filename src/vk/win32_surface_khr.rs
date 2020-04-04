@@ -6,7 +6,7 @@ use winapi::shared::minwindef::HINSTANCE;
 use libc::c_void;
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
-pub static VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
+pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
 
 pub type VkWin32SurfaceCreateFlagsKHR = VkFlags;
 

@@ -5,7 +5,7 @@ use std::rc::Rc as RefCounter;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::null;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 struct SurfaceCell(VkSurfaceKHR, Instance);
 /// Opaque handle to a surface object

@@ -4,7 +4,7 @@ use super::*;
 use {VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use VkResultHandler;
 use ImageLayout;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 use std::ops::*;
 

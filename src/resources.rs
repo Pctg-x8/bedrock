@@ -123,8 +123,10 @@ use {VkHandle, DeviceChild, Device};
 #[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
+#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use std::ops::Range;
+use std::borrow::Borrow;
 
 struct DeviceMemoryCell(VkDeviceMemory, Device);
 struct BufferCell(VkBuffer, Device);
@@ -681,7 +683,9 @@ impl Image
 		unsafe
 		{
 			Resolver::get().get_image_subresource_layout(
-				self.device().native_ptr(), self.native_ptr(), &subres, s.as_mut_ptr());
+				self.device().native_ptr(), self.native_ptr(),
+				&subres, s.as_mut_ptr()
+			);
 			
 			s.assume_init()
 		}
@@ -786,7 +790,8 @@ impl MemoryBound for Buffer
 		unsafe
 		{
 			Resolver::get().get_buffer_memory_requirements(
-				self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr());
+				self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr()
+			 );
 			
 			p.assume_init()
 		}
@@ -796,8 +801,10 @@ impl MemoryBound for Buffer
 		unsafe
 		{
 			Resolver::get().bind_buffer_memory(
-				self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _)
-		}.into_result()
+				self.device().native_ptr(),
+				self.native_ptr(), memory.native_ptr(), offset as _
+			).into_result()
+		}
 	}
 }
 #[cfg(feature = "Implements")]
@@ -809,7 +816,8 @@ impl MemoryBound for Image
 		unsafe
 		{
 			Resolver::get().get_image_memory_requirements(
-				self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr());
+				self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr()
+			);
 
 			p.assume_init()
 		}
@@ -819,8 +827,10 @@ impl MemoryBound for Image
 		unsafe
 		{
 			Resolver::get().bind_image_memory(
-				self.device().native_ptr(), self.native_ptr(), memory.native_ptr(), offset as _)
-		}.into_result()
+				self.device().native_ptr(),
+				self.native_ptr(), memory.native_ptr(), offset as _
+			).into_result()
+		}
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]

@@ -10,7 +10,7 @@ use std::mem::replace;
 #[cfg(feature = "Implements")] use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
 #[cfg(feature = "Implements")] use {StencilFaceMask, FilterMode, Event};
 #[cfg(feature = "Implements")] use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
-#[cfg(feature = "Implements")] use ::vkresolve::Resolver;
+#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Opaque handle to a command pool object
 #[derive(Clone)]
@@ -154,7 +154,8 @@ impl CommandBuffer
 		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, flags, .. Default::default() };
 		unsafe
 		{
-			Resolver::get().begin_command_buffer(self.0, &binfo).into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+			Resolver::get().begin_command_buffer(self.0, &binfo).into_result()
+				.map(|_| CmdRecord { ptr: self, layout: [None, None] })
 		}
 	}
 }
@@ -202,7 +203,8 @@ impl<'d> CmdRecord<'d>
 	/// End the current render pass
 	pub fn end_render_pass(&mut self) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_end_render_pass(self.ptr.native_ptr()); }
+		unsafe { Resolver::get().cmd_end_render_pass(self.ptr.native_ptr()) };
+		
 		self
 	}
 }
@@ -216,8 +218,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_bind_pipeline(self.ptr.native_ptr(),
-				VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.native_ptr());
+			Resolver::get().cmd_bind_pipeline(
+				self.ptr.native_ptr(),
+				VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.native_ptr()
+			);
 		}
 		self
 	}
@@ -226,8 +230,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_bind_pipeline(self.ptr.native_ptr(),
-				VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.native_ptr());
+			Resolver::get().cmd_bind_pipeline(
+				self.ptr.native_ptr(),
+				VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.native_ptr()
+			);
 		}
 		self
 	}
@@ -267,11 +273,14 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_bind_descriptor_sets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
+			Resolver::get().cmd_bind_descriptor_sets(
+				self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
 				self.current_pipeline_layout_g(),
 				first, descriptor_sets.len() as _, descriptor_sets.as_ptr(),
-				dynamic_offsets.len() as _, dynamic_offsets.as_ptr());
+				dynamic_offsets.len() as _, dynamic_offsets.as_ptr()
+			);
 		}
+		
 		self
 	}
 	/// Binds descriptor sets to a command buffer
@@ -280,10 +289,12 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{ 
-			Resolver::get().cmd_bind_descriptor_sets(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
+			Resolver::get().cmd_bind_descriptor_sets(
+				self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
 				self.current_pipeline_layout_c(),
 				first, descriptor_sets.len() as _, descriptor_sets.as_ptr(),
-				dynamic_offsets.len() as _, dynamic_offsets.as_ptr());
+				dynamic_offsets.len() as _, dynamic_offsets.as_ptr()
+			);
 		}
 		self
 	}
@@ -332,8 +343,10 @@ impl<'d> CmdRecord<'d>
 		}).collect::<Vec<_>>();
 		unsafe
 		{
-			Resolver::get().cmd_push_descriptor_set_khr(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
-				self.current_pipeline_layout_g(), set, w.len() as _, w.as_ptr());
+			Resolver::get().cmd_push_descriptor_set_khr(
+				self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
+				self.current_pipeline_layout_g(), set, w.len() as _, w.as_ptr()
+			);
 		}
 
 		self
@@ -362,8 +375,10 @@ impl<'d> CmdRecord<'d>
 		}).collect::<Vec<_>>();
 		unsafe
 		{
-			Resolver::get().cmd_push_descriptor_set_khr(self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
-				self.current_pipeline_layout_c(), set, w.len() as _, w.as_ptr());
+			Resolver::get().cmd_push_descriptor_set_khr(
+				self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_COMPUTE,
+				self.current_pipeline_layout_c(), set, w.len() as _, w.as_ptr()
+			);
 		}
 
 		self
@@ -395,43 +410,64 @@ impl<'d> CmdRecord<'d>
 	/// Set the dynamic line width state
 	pub fn set_line_width(&mut self, w: f32) -> &Self
 	{
-		unsafe { Resolver::get().cmd_set_line_width(self.ptr.native_ptr(), w); }
+		unsafe
+		{
+			Resolver::get().cmd_set_line_width(self.ptr.native_ptr(), w);
+		}
 		self
 	}
 	/// Set the depth bias dynamic state
 	pub fn set_depth_bias(&mut self, constant_factor: f32, clamp: f32, slope_factor: f32) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_depth_bias(self.ptr.native_ptr(), constant_factor, clamp, slope_factor); }
+		unsafe
+		{
+			Resolver::get().cmd_set_depth_bias(self.ptr.native_ptr(), constant_factor, clamp, slope_factor);
+		}
 		self
 	}
 	/// Set the values of blend constants
 	pub fn set_blend_constants(&mut self, blend_constants: [f32; 4]) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_blend_constants(self.ptr.native_ptr(), blend_constants); }
+		unsafe
+		{
+			Resolver::get().cmd_set_blend_constants(self.ptr.native_ptr(), blend_constants);
+		}
 		self
 	}
 	/// Set the depth bounds test values for a command buffer
 	pub fn set_depth_bounds(&mut self, bounds: Range<f32>) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_depth_bounds(self.ptr.native_ptr(), bounds.start, bounds.end); }
+		unsafe
+		{
+			Resolver::get().cmd_set_depth_bounds(self.ptr.native_ptr(), bounds.start, bounds.end);
+		}
 		self
 	}
 	/// Set the stencil compare mask dynamic state
 	pub fn set_stencil_compare_mask(&mut self, face_mask: StencilFaceMask, compare_mask: u32) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_stencil_compare_mask(self.ptr.native_ptr(), face_mask as _, compare_mask); }
+		unsafe
+		{
+			Resolver::get().cmd_set_stencil_compare_mask(self.ptr.native_ptr(), face_mask as _, compare_mask);
+		}
 		self
 	}
 	/// Set the stencil write mask dynamic state
 	pub fn set_stencil_write_mask(&mut self, face_mask: StencilFaceMask, write_mask: u32) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_stencil_write_mask(self.ptr.native_ptr(), face_mask as _, write_mask); }
+		unsafe
+		{
+			Resolver::get().cmd_set_stencil_write_mask(self.ptr.native_ptr(), face_mask as _, write_mask);
+		}
 		self
 	}
 	/// Set the stencil reference dynamic state
 	pub fn set_stencil_reference(&mut self, face_mask: StencilFaceMask, reference: u32) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_stencil_reference(self.ptr.native_ptr(), face_mask as _, reference); }
+		unsafe
+		{
+			Resolver::get().cmd_set_stencil_reference(self.ptr.native_ptr(), face_mask as _, reference);
+		}
 		self
 	}
 	/// [feature = "VK_EXT_sample_locations"]
@@ -439,7 +475,10 @@ impl<'d> CmdRecord<'d>
 	#[cfg(feature = "VK_EXT_sample_locations")]
 	pub fn set_sample_locations(&mut self, info: &VkSampleLocationsInfoEXT) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_sample_locations_ext(self.ptr.native_ptr(), info as _); }
+		unsafe
+		{
+			Resolver::get().cmd_set_sample_locations_ext(self.ptr.native_ptr(), info as _);
+		}
 		self
 	}
 }
@@ -453,8 +492,8 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_bind_index_buffer(self.ptr.native_ptr(),
-				buffer.native_ptr(), offset as _, index_type as _);
+			Resolver::get()
+				.cmd_bind_index_buffer(self.ptr.native_ptr(), buffer.native_ptr(), offset as _, index_type as _);
 		}
 		self
 	}
@@ -467,8 +506,8 @@ impl<'d> CmdRecord<'d>
 			.unzip();
 		unsafe
 		{
-			Resolver::get().cmd_bind_vertex_buffers(self.ptr.native_ptr(),
-				first, bufs.len() as _, bufs.as_ptr(), ofs.as_ptr());
+			Resolver::get()
+				.cmd_bind_vertex_buffers(self.ptr.native_ptr(), first, bufs.len() as _, bufs.as_ptr(), ofs.as_ptr());
 		}
 		self
 	}
@@ -483,8 +522,8 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_draw(self.ptr.native_ptr(),
-				vertex_count, instance_count, first_vertex, first_instance);
+			Resolver::get()
+				.cmd_draw(self.ptr.native_ptr(), vertex_count, instance_count, first_vertex, first_instance);
 		}
 		self
 	}
@@ -494,8 +533,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_draw_indexed(self.ptr.native_ptr(),
-				index_count, instance_count, first_index, vertex_offset, first_instance);
+			Resolver::get().cmd_draw_indexed(
+				self.ptr.native_ptr(), index_count, instance_count,
+				first_index, vertex_offset, first_instance
+			);
 		}
 		self
 	}
@@ -504,8 +545,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_draw_indirect(self.ptr.native_ptr(),
-				buffer.native_ptr(), offset as _, draw_count, stride);
+			Resolver::get().cmd_draw_indirect(
+				self.ptr.native_ptr(),
+				buffer.native_ptr(), offset as _, draw_count, stride
+			);
 		}
 		self
 	}
@@ -514,8 +557,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_draw_indexed_indirect(self.ptr.native_ptr(),
-				buffer.native_ptr(), offset as _, draw_count, stride);
+			Resolver::get().cmd_draw_indexed_indirect(
+				self.ptr.native_ptr(),
+				buffer.native_ptr(), offset as _, draw_count, stride
+			);
 		}
 		self
 	}
@@ -554,8 +599,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_copy_buffer(self.ptr.native_ptr(), src.native_ptr(),
-				dst.native_ptr(), regions.len() as _, regions.as_ptr());
+			Resolver::get().cmd_copy_buffer(
+				self.ptr.native_ptr(), src.native_ptr(),
+				dst.native_ptr(), regions.len() as _, regions.as_ptr()
+			);
 		}
 		self
 	}
@@ -565,8 +612,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_copy_image(self.ptr.native_ptr(), src.native_ptr(), src_layout as _,
-				dst.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr());
+			Resolver::get().cmd_copy_image(
+				self.ptr.native_ptr(), src.native_ptr(), src_layout as _,
+				dst.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr()
+			);
 		}
 		self
 	}
@@ -576,9 +625,11 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_blit_image(self.ptr.native_ptr(),
+			Resolver::get().cmd_blit_image(
+				self.ptr.native_ptr(),
 				src.native_ptr(), src_layout as _, dst.native_ptr(), dst_layout as _,
-				regions.len() as _, regions.as_ptr(), filter as _);
+				regions.len() as _, regions.as_ptr(), filter as _
+			);
 		}
 		self
 	}
@@ -588,8 +639,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_copy_buffer_to_image(self.ptr.native_ptr(), src_buffer.native_ptr(),
-				dst_image.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr());
+			Resolver::get().cmd_copy_buffer_to_image(
+				self.ptr.native_ptr(), src_buffer.native_ptr(),
+				dst_image.native_ptr(), dst_layout as _, regions.len() as _, regions.as_ptr()
+			);
 		}
 		self
 	}
@@ -599,8 +652,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_copy_image_to_buffer(self.ptr.native_ptr(), src_image.native_ptr(), src_layout as _,
-				dst_buffer.native_ptr(), regions.len() as _, regions.as_ptr());
+			Resolver::get().cmd_copy_image_to_buffer(
+				self.ptr.native_ptr(), src_image.native_ptr(), src_layout as _,
+				dst_buffer.native_ptr(), regions.len() as _, regions.as_ptr()
+			);
 		}
 		self
 	}
@@ -610,8 +665,11 @@ impl<'d> CmdRecord<'d>
 		assert!(size <= size_of::<T>(), "Updated size exceeds size of datatype");
 		unsafe
 		{
-			Resolver::get().cmd_update_buffer(self.ptr.native_ptr(), dst.native_ptr(), dst_offset as _, size as _,
-				data as *const T as *const _);
+			Resolver::get().cmd_update_buffer(
+				self.ptr.native_ptr(),
+				dst.native_ptr(), dst_offset as _,
+				size as _, data as *const T as *const _
+			);
 		}
 		self
 	}
@@ -637,8 +695,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_clear_color_image(self.ptr.native_ptr(), image.native_ptr(), layout as _,
-				color.represent(), ranges.len() as _, ranges.as_ptr());
+			Resolver::get().cmd_clear_color_image(
+				self.ptr.native_ptr(), image.native_ptr(), layout as _,
+				color.represent(), ranges.len() as _, ranges.as_ptr()
+			);
 		}
 		self
 	}
@@ -648,8 +708,11 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_clear_depth_stencil_image(self.ptr.native_ptr(), image.native_ptr(),
-				layout as _, &VkClearDepthStencilValue { depth, stencil }, ranges.len() as _, ranges.as_ptr());
+			Resolver::get().cmd_clear_depth_stencil_image(
+				self.ptr.native_ptr(), image.native_ptr(),
+				layout as _, &VkClearDepthStencilValue { depth, stencil },
+				ranges.len() as _, ranges.as_ptr()
+			);
 		}
 		self
 	}
@@ -658,8 +721,10 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_clear_attachments(self.ptr.native_ptr(), attachments.len() as _,
-				attachments.as_ptr(), rects.len() as _, rects.as_ptr());
+			Resolver::get().cmd_clear_attachments(
+				self.ptr.native_ptr(), attachments.len() as _,
+				attachments.as_ptr(), rects.len() as _, rects.as_ptr()
+			);
 		}
 		self
 	}
@@ -722,11 +787,13 @@ impl<'d> CmdRecord<'d>
 		let evs = events.iter().map(|x| x.0).collect::<Vec<_>>();
 		unsafe
 		{
-			Resolver::get().cmd_wait_events(self.ptr.native_ptr(),
+			Resolver::get().cmd_wait_events(
+				self.ptr.native_ptr(),
 				evs.len() as _, evs.as_ptr(), src_stage_mask.0, dst_stage_mask.0,
 				memory_barriers.len() as _, memory_barriers.as_ptr(),
 				buffer_memory_barriers.len() as _, buffer_memory_barriers.as_ptr(),
-				image_memory_barriers.len() as _, image_memory_barriers.as_ptr());
+				image_memory_barriers.len() as _, image_memory_barriers.as_ptr()
+			);
 		}
 		self
 	}
@@ -739,11 +806,13 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_pipeline_barrier(self.ptr.native_ptr(), src_stage_mask.0, dst_stage_mask.0,
+			Resolver::get().cmd_pipeline_barrier(
+				self.ptr.native_ptr(), src_stage_mask.0, dst_stage_mask.0,
 				if by_region { VK_DEPENDENCY_BY_REGION_BIT } else { 0 },
 				memory_barriers.len() as _, memory_barriers.as_ptr(),
 				buffer_memory_barriers.len() as _, buffer_memory_barriers.as_ptr() as _,
-				image_memory_barriers.len() as _, image_memory_barriers.as_ptr() as _);
+				image_memory_barriers.len() as _, image_memory_barriers.as_ptr() as _
+			);
 		}
 		self
 	}
@@ -756,10 +825,11 @@ impl<'d> CmdRecord<'d>
 	/// Begin a query
 	pub fn begin_query(&mut self, pool: &QueryPool, query: u32, precise_query: bool) -> &mut Self
 	{
+		let flags = if precise_query { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 };
 		unsafe
 		{
-			Resolver::get().cmd_begin_query(self.ptr.native_ptr(), pool.0, query,
-				if precise_query { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 });
+			Resolver::get()
+				.cmd_begin_query(self.ptr.native_ptr(), pool.0, query, flags);
 		}
 		self
 	}
@@ -774,14 +844,16 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_reset_query_pool(self.ptr.native_ptr(), pool.0, range.start, range.end - range.start);
+			Resolver::get()
+				.cmd_reset_query_pool(self.ptr.native_ptr(), pool.0, range.start, range.end - range.start);
 		}
 		self
 	}
 	/// Write a device timestamp into a query object
 	pub fn write_timestamp(&mut self, stage: PipelineStageFlags, pool: &QueryPool, query: u32) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_write_timestamp(self.ptr.native_ptr(), stage.0, pool.0, query); } self
+		unsafe { Resolver::get().cmd_write_timestamp(self.ptr.native_ptr(), stage.0, pool.0, query); }
+		self
 	}
 	/// Copy the results of queries in a query pool to a buffer object
 	#[allow(clippy::too_many_arguments)]
@@ -791,10 +863,12 @@ impl<'d> CmdRecord<'d>
 	{
 		unsafe
 		{
-			Resolver::get().cmd_copy_query_pool_results(self.ptr.native_ptr(),
+			Resolver::get().cmd_copy_query_pool_results(
+				self.ptr.native_ptr(),
 				pool.0, range.start, range.end - range.start,
 				dst.native_ptr(), dst_offset as _, stride as _,
-				flags.0 | if wide_result { VK_QUERY_RESULT_64_BIT } else { 0 });
+				flags.0 | if wide_result { VK_QUERY_RESULT_64_BIT } else { 0 }
+			);
 		}
 		self
 	}

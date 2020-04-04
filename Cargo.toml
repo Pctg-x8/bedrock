@@ -105,6 +105,7 @@ Implements = []
 Multithreaded = []
 Presentation = ["VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display"]
 DynamicLoaded = ["Implements", "libloading"]
+CustomResolver = []
 
 [dependencies]
 libc = "0.2"

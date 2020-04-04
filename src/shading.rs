@@ -7,7 +7,7 @@ use {VkHandle, DeviceChild};
 use std::ptr::null;
 use std::marker::PhantomData;
 use std::borrow::Cow;
-#[cfg(feature = "Implements")] use vkresolve::Resolver;
+#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use std::ptr::null_mut;
 use std::ops::*;
 
@@ -232,12 +232,10 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath>(device: &Device, path: &FilePath)
+	pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(device: &Device, path: &FilePath)
 		-> std::result::Result<Self, Box<dyn std::error::Error>>
-		where FilePath: AsRef<std::path::Path> + ?Sized
 	{
-		let bin = std::fs::read(path)?;
-		Self::from_memory(device, &bin).map_err(From::from)
+		std::fs::read(path).map_err(From::from).and_then(|b| Self::from_memory(device, &b).map_err(From::from))
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -1261,6 +1259,80 @@ impl Device
 		};
 		
 		r.into_result().map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
+	}
+}
+
+#[derive(Clone)]
+pub struct ComputePipelineBuilder<'d>
+{
+	shader: PipelineShader<'d>,
+	layout: &'d PipelineLayout
+}
+impl<'d> ComputePipelineBuilder<'d>
+{
+	pub fn new(layout: &'d PipelineLayout, shader: PipelineShader<'d>) -> Self
+	{
+		ComputePipelineBuilder
+		{
+			shader, layout
+		}
+	}
+}
+#[cfg(feature = "Implements")]
+impl<'d> ComputePipelineBuilder<'d>
+{
+	/// Create a compute pipeline
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
+	{
+		let (stage, _specinfo) = self.shader.createinfo_native(ShaderStage::COMPUTE);
+		let cinfo = VkComputePipelineCreateInfo
+		{
+			stage,
+			layout: self.layout.native_ptr(),
+			.. Default::default()
+		};
+
+		let mut pipeline = ::std::mem::MaybeUninit::uninit();
+		unsafe
+		{
+			Resolver::get().create_compute_pipelines(
+				device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+				1, &cinfo, ::std::ptr::null(), pipeline.as_mut_ptr()
+			).into_result().map(move |_| Pipeline(pipeline.assume_init(), device.clone()))
+		}
+	}
+}
+/// Following methods are enabled with [feature = "Implements"]
+#[cfg(feature = "Implements")]
+impl ::Device
+{
+	/// Create compute pipelines
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	pub fn create_compute_pipelines(&self, builders: &[ComputePipelineBuilder], cache: Option<&PipelineCache>) -> ::Result<Vec<Pipeline>>
+	{
+		let (stages, _specinfos): (Vec<_>, Vec<_>) = builders.iter().map(|b| b.shader.createinfo_native(ShaderStage::COMPUTE)).unzip();
+		let cinfos = builders.iter().zip(stages.into_iter()).map(|(b, stage)| VkComputePipelineCreateInfo
+		{
+			stage, layout: b.layout.native_ptr(), .. Default::default()
+		}).collect::<Vec<_>>();
+
+		let mut pipelines = vec![VK_NULL_HANDLE as _; builders.len()];
+		unsafe
+		{
+			Resolver::get().create_compute_pipelines(
+				self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+				cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), pipelines.as_mut_ptr()
+			).into_result().map(move |_| pipelines.into_iter().map(|h| Pipeline(h, self.clone())).collect())
+		}
 	}
 }
 
