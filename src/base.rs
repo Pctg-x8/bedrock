@@ -529,7 +529,7 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, null_mut()).into_result()?;
-			let mut v = ::preserve(n as _);
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
@@ -547,7 +547,7 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, null_mut()).into_result()?;
-			let mut v = ::preserve(n as _);
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
@@ -565,7 +565,7 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, null_mut()).into_result()?;
-			let mut v = ::preserve(n as _);
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
@@ -583,7 +583,7 @@ impl PhysicalDevice
 		{
 			let mut n = 0;
 			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, null_mut()).into_result()?;
-			let mut v = ::preserve(n as _);
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
