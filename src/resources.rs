@@ -551,6 +551,10 @@ impl ImageDesc
 	/// default: 1
 	pub fn mip_levels(&mut self, levels: u32) -> &mut Self { self.0.mipLevels = levels; self }
 }
+impl AsRef<VkImageCreateInfo> for ImageDesc
+{
+	fn as_ref(&self) -> &VkImageCreateInfo { &self.0 }
+}
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
