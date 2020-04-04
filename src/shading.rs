@@ -496,30 +496,33 @@ impl<'d> VertexProcessingStages<'d>
 	{
 		self.vertex = vsh; self
 	}
-	/// Get the vertex shader for modifying.
-	pub fn mod_vertex_shader(&mut self) -> &mut PipelineShader<'d> { &mut self.vertex }
+	/// Mutable reference to the Vertex Shader structure.
+	pub fn vertex_shader_mut(&mut self) -> &mut PipelineShader<'d> { &mut self.vertex }
+
 	/// Update the geometry shader, or disable geometry shader stage
 	pub fn geometry_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, gsh: S) -> &mut Self
 	{
 		self.geometry = gsh.into(); self
 	}
-	/// Get a mutable reference to the geometry shader.
-	pub fn geometry_shader_mut(&mut self) -> &mut Option<PipelineShader<'d>> { &mut self.geometry }
+	/// Mutable reference to the Geometry Shader structure.
+	pub fn geometry_shader_mut(&mut self) -> Option<&mut PipelineShader<'d>> { self.geometry.as_mut() }
+
 	/// Update the fragment shader, or disable fragment shader stage
 	pub fn fragment_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, fsh: S) -> &mut Self
 	{
 		self.fragment = fsh.into(); self
 	}
-	/// Get a mutable reference to the fragment shader.
-	pub fn fragment_shader_mut(&mut self) -> &mut Option<PipelineShader<'d>> { &mut self.fragment }
+	/// Mutable reference to the fragment shader.
+	pub fn fragment_shader_mut(&mut self) -> Option<&mut PipelineShader<'d>> { self.fragment.as_mut() }
+
 	/// Update the tessellation stage shaders, or disable tessellation stage
 	pub fn tessellation_stage<S: Into<Option<TessellationStages<'d>>>>(&mut self, stage: S) -> &mut Self
 	{
 		self.tessellation = stage.into();
 		self
 	}
-	/// Get a mutable reference to the tessellation shader stage configuration.
-	pub fn tessellation_stage_mut(&mut self) -> &mut Option<TessellationStages<'d>> { &mut self.tessellation }
+	/// Mutable reference to the Tessellation Shader stage configuration.
+	pub fn tessellation_stage_mut(&mut self) -> Option<&mut TessellationStages<'d>> { self.tessellation.as_mut() }
 
 	/// Update the vertex binding description
 	pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self
