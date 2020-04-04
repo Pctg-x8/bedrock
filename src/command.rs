@@ -13,10 +13,10 @@ use std::mem::replace;
 #[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
 
 /// Opaque handle to a command pool object
-#[derive(Clone)]
 pub struct CommandPool(VkCommandPool, Device);
 /// Opaque handle to a command buffer object
 #[repr(transparent)]
+#[derive(Clone, Copy)]
 pub struct CommandBuffer(VkCommandBuffer);
 
 #[cfg(feature = "Implements")]
