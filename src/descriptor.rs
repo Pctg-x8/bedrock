@@ -20,43 +20,76 @@ impl VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr
 impl DeviceChild for DescriptorSetLayout { fn device(&self) -> &::Device { &self.1 } }
 impl DeviceChild for DescriptorPool { fn device(&self) -> &::Device { &self.1 } }
 
-/// Structure specifying a descriptor set layout binding  
-/// Tuple Element: (binding index, descriptor count, shader visibility, immutable samplers(if needed))
-pub struct DSLBindings
+#[derive(Clone)]
+pub enum DescriptorSetLayoutBinding<'s>
 {
-    /// Specifies a [sampler descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-sampler)
-    pub sampler: Option<(u32, u32, ShaderStage, Vec<VkSampler>)>,
-    /// Specifies a [combined image sampler descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-combinedimagesampler)
-    pub combined_image_sampler: Option<(u32, u32, ShaderStage, Vec<VkSampler>)>,
-    /// Specifies a [storage image descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storageimage)
-    pub sampled_image: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [sampled image descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-sampledimage)
-    pub storage_image: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [uniform texel buffer descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformtexelbuffer)
-    pub uniform_texel_buffer: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [storage texel buffer descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagetexelbuffer)
-    pub storage_texel_buffer: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [uniform buffer descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformbuffer)
-    pub uniform_buffer: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [storage buffer descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagebuffer)
-    pub storage_buffer: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [dynamic uniform buffer descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformbufferdynamic)
-    pub uniform_buffer_dynamic: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [dynamic storage buffer descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagebufferdynamic)
-    pub storage_buffer_dynamic: Option<(u32, u32, ShaderStage)>,
-    /// Specifies a [input attachment descriptor](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-inputattachment)
-    pub input_attachment: Option<(u32, u32, ShaderStage)>
+    Sampler(u32, ShaderStage, &'s [VkSampler]),
+    CombinedImageSampler(u32, ShaderStage, &'s [VkSampler]),
+    SampledImage(u32, ShaderStage),
+    StorageImage(u32, ShaderStage),
+    UniformTexelBuffer(u32, ShaderStage),
+    StorageTexelBuffer(u32, ShaderStage),
+    UniformBuffer(u32, ShaderStage),
+    StorageBuffer(u32, ShaderStage),
+    UniformBufferDynamic(u32, ShaderStage),
+    StorageBufferDynamic(u32, ShaderStage),
+    InputAttachment(u32, ShaderStage)
 }
-impl DSLBindings
+impl<'s> DescriptorSetLayoutBinding<'s>
 {
-    /// An empty binding
-    pub const fn empty() -> Self
+    fn descriptor_type(&self) -> VkDescriptorType
     {
-        DSLBindings
+        match self
         {
-            sampler: None, combined_image_sampler: None, sampled_image: None, storage_image: None,
-            uniform_texel_buffer: None, storage_texel_buffer: None, uniform_buffer: None, storage_buffer: None,
-            uniform_buffer_dynamic: None, storage_buffer_dynamic: None, input_attachment: None
+            Self::Sampler(_, _, _) => VK_DESCRIPTOR_TYPE_SAMPLER,
+            Self::CombinedImageSampler(_, _, _) => VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+            Self::SampledImage(_, _) => VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+            Self::StorageImage(_, _) => VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+            Self::UniformTexelBuffer(_, _) => VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
+            Self::StorageTexelBuffer(_, _) => VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,
+            Self::UniformBuffer(_, _) => VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            Self::StorageBuffer(_, _) => VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+            Self::UniformBufferDynamic(_, _) => VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+            Self::StorageBufferDynamic(_, _) => VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+            Self::InputAttachment(_, _) => VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
+        }
+    }
+    fn immutable_samplers(&self) -> &'s [VkSampler]
+    {
+        match self
+        {
+            &Self::Sampler(_, _, s) => s,
+            &Self::CombinedImageSampler(_, _, s) => s,
+            _ => &[]
+        }
+    }
+    fn common_part(&self) -> (u32, ShaderStage)
+    {
+        match self
+        {
+            &Self::Sampler(c, s, _) | &Self::CombinedImageSampler(c, s, _) |
+            &Self::SampledImage(c, s) | &Self::StorageImage(c, s) |
+            &Self::UniformTexelBuffer(c, s) | &Self::StorageTexelBuffer(c, s) |
+            &Self::UniformBuffer(c, s) | &Self::StorageBuffer(c, s) |
+            &Self::UniformBufferDynamic(c, s) | &Self::StorageBufferDynamic(c, s) |
+            &Self::InputAttachment(c, s) => (c, s)
+        }
+    }
+}
+impl<'s> DescriptorSetLayoutBinding<'s>
+{
+    fn make_structure_with_binding_index(&self, binding_index: u32) -> VkDescriptorSetLayoutBinding
+    {
+        let (c, s) = self.common_part();
+        let iss = self.immutable_samplers();
+
+        VkDescriptorSetLayoutBinding
+        {
+            binding: binding_index,
+            descriptorType: self.descriptor_type(),
+            descriptorCount: c,
+            stageFlags: s.0,
+            pImmutableSamplers: if iss.is_empty() { std::ptr::null() } else { iss.as_ptr() }
         }
     }
 }
@@ -70,53 +103,24 @@ impl DescriptorSetLayout
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn new(device: &::Device, bindings: &DSLBindings) -> ::Result<Self>
+    pub fn new(device: &::Device, bindings: &[DescriptorSetLayoutBinding]) -> ::Result<Self>
     {
-        let mut h = VK_NULL_HANDLE as _;
-        let mut n_bindings = Vec::with_capacity(VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as usize + 1);
-        fn mapper2(&(b, n, sv, ref imm): &(u32, u32, ShaderStage, Vec<VkSampler>), dty: VkDescriptorType)
-            -> VkDescriptorSetLayoutBinding
-        {
-            VkDescriptorSetLayoutBinding
-            {
-                binding: b, descriptorType: dty, descriptorCount: n, stageFlags: sv.0, pImmutableSamplers: imm.as_ptr()
-            }
-        }
-        fn mapper(&(b, n, sv): &(u32, u32, ShaderStage), dty: VkDescriptorType) -> VkDescriptorSetLayoutBinding
-        {
-            VkDescriptorSetLayoutBinding
-            {
-                binding: b, descriptorType: dty, descriptorCount: n, stageFlags: sv.0, pImmutableSamplers: null()
-            }
-        }
-        fn append_some<T>(v: Option<T>, a: &mut Vec<T>) { if let Some(v) = v { a.push(v); } }
-        append_some(bindings.sampler.as_ref().map(|b| mapper2(b, VK_DESCRIPTOR_TYPE_SAMPLER)), &mut n_bindings);
-        append_some(bindings.combined_image_sampler.as_ref()
-            .map(|b| mapper2(b, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER)), &mut n_bindings);
-        append_some(bindings.sampled_image.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE)), &mut n_bindings);
-        append_some(bindings.storage_image.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE)), &mut n_bindings);
-        append_some(bindings.uniform_texel_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER)), &mut n_bindings);
-        append_some(bindings.storage_texel_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER)), &mut n_bindings);
-        append_some(bindings.uniform_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)), &mut n_bindings);
-        append_some(bindings.storage_buffer.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER)), &mut n_bindings);
-        append_some(bindings.uniform_buffer_dynamic.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC)), &mut n_bindings);
-        append_some(bindings.storage_buffer_dynamic.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC)), &mut n_bindings);
-        append_some(bindings.input_attachment.as_ref()
-            .map(|b| mapper(b, VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT)), &mut n_bindings);
+        let binding_structures = bindings.into_iter().enumerate().map(|(n, b)| b.make_structure_with_binding_index(n as _)).collect::<Vec<_>>();
         let cinfo = VkDescriptorSetLayoutCreateInfo
         {
-            bindingCount: n_bindings.len() as _, pBindings: n_bindings.as_ptr(), .. Default::default()
+            bindingCount: binding_structures.len() as _,
+            pBindings: binding_structures.as_ptr(),
+            .. Default::default()
         };
-        unsafe { Resolver::get().create_descriptor_set_layout(device.native_ptr(), &cinfo, null(), &mut h) }
-            .into_result().map(|_| DescriptorSetLayout(h, device.clone()))
+
+        let mut h = ::std::mem::MaybeUninit::uninit();
+        unsafe
+        {
+            Resolver::get().create_descriptor_set_layout(
+                device.native_ptr(), &cinfo, null(), h.as_mut_ptr()
+            )
+            .into_result().map(move |_| DescriptorSetLayout(h.assume_init(), device.clone()))
+        }
     }
 }
 
