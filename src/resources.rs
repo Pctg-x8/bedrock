@@ -1102,6 +1102,10 @@ impl Into<VkImageSubresourceRange> for ImageSubresourceRange
 {
 	fn into(self) -> VkImageSubresourceRange { self.0 }
 }
+impl AsRef<VkImageSubresourceRange> for ImageSubresourceRange
+{
+	fn as_ref(&self) -> &VkImageSubresourceRange { &self.0 }
+}
 impl ImageSubresourceRange
 {
 	/// Specify color subresource
