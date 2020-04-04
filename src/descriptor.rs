@@ -78,7 +78,7 @@ impl<'s> DescriptorSetLayoutBinding<'s>
 }
 impl<'s> DescriptorSetLayoutBinding<'s>
 {
-    fn make_structure_with_binding_index(&self, binding_index: u32) -> VkDescriptorSetLayoutBinding
+    pub fn make_structure_with_binding_index(&self, binding_index: u32) -> VkDescriptorSetLayoutBinding
     {
         let (c, s) = self.common_part();
         let iss = self.immutable_samplers();

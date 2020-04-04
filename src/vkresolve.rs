@@ -22,9 +22,9 @@ macro_rules! WrapAPI {
         #[cfg(not(feature = "DynamicLoaded"))]
         #[inline(always)]
         #[allow(clippy::too_many_arguments)]
-        pub unsafe fn $xt(&self, $($an: $at),*) { $n($($an),*); }
+        unsafe fn $xt(&self, $($an: $at),*) { $n($($an),*); }
         #[cfg(feature = "DynamicLoaded")]
-        pub unsafe fn $xt(&self, $($an: $at),*)
+        unsafe fn $xt(&self, $($an: $at),*)
         {
             static mut F: Option<RawSymbol<fn($($at),*)>> = None;
             static ONCE: Once = ONCE_INIT;
@@ -36,9 +36,9 @@ macro_rules! WrapAPI {
         #[cfg(not(feature = "DynamicLoaded"))]
         #[inline(always)]
         #[allow(clippy::too_many_arguments)]
-        pub unsafe fn $xt(&self, $($an: $at),*) -> $rt { $n($($an),*) }
+        unsafe fn $xt(&self, $($an: $at),*) -> $rt { $n($($an),*) }
         #[cfg(feature = "DynamicLoaded")]
-        pub unsafe fn $xt(&self, $($an: $at),*) -> $rt
+        unsafe fn $xt(&self, $($an: $at),*) -> $rt
         {
             static mut F: Option<RawSymbol<fn($($at),*) -> $rt>> = None;
             static ONCE: Once = ONCE_INIT;

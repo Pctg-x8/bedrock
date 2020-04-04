@@ -120,13 +120,11 @@ use super::*;
 use std::rc::Rc as RefCounter;
 use std::ops::{Deref, BitOr, BitOrAssign};
 use {VkHandle, DeviceChild, Device};
-#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 #[cfg(feature = "Implements")] use VkResultHandler;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 #[cfg(feature = "Implements")] use std::mem::MaybeUninit;
 #[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")] use std::ops::Range;
-use std::borrow::Borrow;
 
 struct DeviceMemoryCell(VkDeviceMemory, Device);
 struct BufferCell(VkBuffer, Device);
