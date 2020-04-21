@@ -262,6 +262,50 @@ impl Instance
 impl PhysicalDevice
 {
 	pub fn parent(&self) -> &Instance { &self.1 }
+
+	/// Returns properties of available physical device layers
+	/// # Failures
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	pub fn enumerate_layer_properties(&self) -> super::Result<Vec<VkLayerProperties>>
+	{
+		let mut count = 0;
+		unsafe { Resolver::get().enumerate_device_layer_properties(self.0, &mut count, null_mut()).into_result()? };
+		let mut v = Vec::with_capacity(count as _); unsafe { v.set_len(count as _); }
+		unsafe
+		{
+			Resolver::get()
+				.enumerate_device_layer_properties(self.0, &mut count, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
+		}
+	}
+
+	/// Returns properties of available physical device extensions
+	/// # Failures
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_LAYER_NOT_PRESENT`
+	pub fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> super::Result<Vec<VkExtensionProperties>>
+	{
+		let cn = layer_name.map(|s| CString::new(s).unwrap());
+		let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or(null());
+		unsafe
+		{
+			let mut n = 0;
+			Resolver::get().enumerate_device_extension_properties(self.0, cptr, &mut n, null_mut()).into_result()?;
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
+			Resolver::get()
+				.enumerate_device_extension_properties(self.0, cptr, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| v)
+		}
+	}
+
 	/// Reports capabilities of a physical device.
 	pub fn features(&self) -> VkPhysicalDeviceFeatures
 	{
