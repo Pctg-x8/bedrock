@@ -381,9 +381,9 @@ impl Resolver
             let mut exepath = std::env::current_exe().unwrap(); exepath.pop();
             exepath.push("libvulkan.dylib"); return exepath;
         }
-        #[cfg(windows)] fn libname() -> &'static str { "libvulkan-1.dll" }
+        #[cfg(windows)] fn libname() -> &'static str { "vulkan-1.dll" }
         #[cfg(not(any(target_os="macos", windows)))] fn libname() -> &'static str { "libvulkan.so" }
-        Library::new(&libname()).map(Resolver).expect("Unable to open libvulkan")
+        Library::new(&libname()).map(Resolver).expect(&format!("Unable to open libvulkan: {:?}", libname()))
     }
     #[cfg(not(feature = "DynamicLoaded"))]
     fn new() -> Self { Resolver() }
