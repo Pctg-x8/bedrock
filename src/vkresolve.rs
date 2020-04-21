@@ -307,7 +307,7 @@ pub trait ResolverInterface
     unsafe fn get_physical_device_surface_formats_khr(&self, physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
     #[cfg(feature = "VK_KHR_surface")]
     unsafe fn get_physical_device_surface_present_modes_khr(&self, physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
-    #[cfg(feature = "VK_KHR_surface_capabilities2")]
+    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(&self, physicalDevice: VkPhysicalDevice, surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR, surface_capabilities: *mut VkSurfaceCapabilities2KHR) -> VkResult;
 
     #[cfg(feature = "VK_KHR_swapchain")]
@@ -636,7 +636,7 @@ impl ResolverInterface for Resolver
     #[cfg(feature = "VK_KHR_surface")]
     WrapAPI!(get_physical_device_surface_present_modes_khr = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_surface")]
-    #[cfg(feature = "VK_KHR_surface_capabilities2")]
+    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     WrapAPI!(get_physical_device_surface_capabilities2_khr = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice: VkPhysicalDevice, surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR, surface_capabilities: *mut VkSurfaceCapabilities2KHR) -> VkResult);
     
     #[cfg(feature = "VK_KHR_swapchain")]

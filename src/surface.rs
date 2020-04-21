@@ -200,6 +200,12 @@ impl<'d> SwapchainBuilder<'d>
 	/// that affect regions of the surface which aren't visible
 	pub fn enable_clip(&mut self) -> &mut Self { self.0.clipped = true as _; self }
 
+	pub fn chain<T>(&mut self, next: &T) -> &mut Self
+	{
+		self.0.pNext = next as *const T as *const _;
+		self
+	}
+
 	/// Create a swapchain
 	/// # Failures
 	/// On failure, this command returns
@@ -415,4 +421,44 @@ impl CompositeAlpha
 {
 	/// Does the value contains this bits
 	pub fn contains(self, value: u32) -> bool { (value | self as u32) != 0 }
+}
+
+// VK_EXT_full_screen_exclusive //
+
+/// Wraps VkSurfaceFullScreenExclusiveInfoEXT structure: Specifying the preferred full-screen transition behavior
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[repr(transparent)]
+#[derive(Clone, Debug)]
+pub struct FullScreenExclusiveInfoEXT(VkSurfaceFullScreenExclusiveInfoEXT);
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+impl FullScreenExclusiveInfoEXT
+{
+	/// Constructs the structure, specifying the preferred full-screen transition behavior.
+	pub fn new(flags: FullScreenExclusiveEXT) -> Self
+	{
+		FullScreenExclusiveInfoEXT(VkSurfaceFullScreenExclusiveInfoEXT
+		{
+			fullScreenExclusive: flags as _, .. Default::default()
+		})
+	}
+}
+
+/// Hint values an application can specify affecting full-screen transition behavior
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[repr(C)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum FullScreenExclusiveEXT
+{
+	/// The implmentation should determine the appropriate full-screen method by whatever means it deems appropriate.
+	Default = VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT as _,
+	/// The implementation may use full-screen exclusive mechanisms when available.
+	/// Such mechanisms may result in better performance and/or the availability of different presentation capabilities,
+	/// but may require a more disruptive transition during swapchain initialization,
+	/// first presentation and/or destruction.
+	Allowed = VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT as _,
+	/// The implementation should avoid using full-screen mechanisms which rely on disruptive transitions.
+	Disallowed = VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT as _,
+	/// The application will manage full-screen exclusive mode by using the `vkAcquireFullScreenExclusiveModeEXT` and
+	/// `vkReleaseFullScreenExclusiveEXT` commands.
+	ApplicationControlled = VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT as _
 }
