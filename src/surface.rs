@@ -450,6 +450,39 @@ impl FullScreenExclusiveInfoEXT
 	}
 }
 
+#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
+impl Swapchain
+{
+	/// Acquire full-screen exclusive mode for a swapchain.
+	/// # Failures
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
+	/// * `VK_ERROR_SURFACE_LOST_KHR`
+	pub fn acquire_full_screen_exclusive_mode(&self) -> super::Result<()>
+	{
+		unsafe
+		{
+			Resolver::get()
+				.acquire_full_screen_exclusive_mode_ext(self.device().native_ptr(), self.native_ptr())
+				.into_result()
+		}
+	}
+
+	/// Release full-screen exclusive mode from a swapchain.
+	pub fn release_full_screen_exclusive_mode(&self) -> super::Result<()>
+	{
+		unsafe
+		{
+			Resolver::get()
+				.release_full_screen_exclusive_mode_ext(self.device().native_ptr(), self.native_ptr())
+				.into_result()
+		}
+	}
+}
+
 /// Hint values an application can specify affecting full-screen transition behavior
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[repr(C)]
