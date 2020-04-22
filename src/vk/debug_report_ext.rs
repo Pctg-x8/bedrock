@@ -68,7 +68,14 @@ impl Default for VkDebugReportCallbackCreateInfoEXT
 		VkDebugReportCallbackCreateInfoEXT
 		{
 			sType: VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-			.. unsafe { std::mem::zeroed() }
+			pNext: std::ptr::null(),
+			flags: 0,
+			pfnCallback: unsafe
+			{
+				#[allow(invalid_value)]
+				std::mem::MaybeUninit::zeroed().assume_init()
+			},
+			pUserData: std::ptr::null_mut()
 		}
 	}
 }

@@ -2,16 +2,22 @@
 
 use crate::vk::*;
 use crate::{VkHandle, Instance};
-#[cfg(feature = "Implements")] use VkResultHandler;
-#[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
+#[cfg(feature = "Implements")] use crate::VkResultHandler;
 
 /// Opaque object to a debug report callback object
-pub struct DebugReportCallback(VkDebugReportCallbackEXT, ::Instance, PFN_vkDestroyDebugReportCallbackEXT);
+pub struct DebugReportCallback(VkDebugReportCallbackEXT, Instance, PFN_vkDestroyDebugReportCallbackEXT);
 
 #[cfg(feature = "Implements")]
-impl Drop for DebugReportCallback { fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), null()); } }
+impl Drop for DebugReportCallback
+{
+	fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null()); }
+}
 
-impl VkHandle for DebugReportCallback { type Handle = VkDebugReportCallbackEXT; fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 } }
+impl VkHandle for DebugReportCallback
+{
+	type Handle = VkDebugReportCallbackEXT;
+	fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 }
+}
 
 pub struct DebugReportCallbackBuilder<'i>
 {
@@ -46,7 +52,7 @@ impl<'i> DebugReportCallbackBuilder<'i>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	#[cfg(feature = "Implements")]
-	pub fn create(&mut self) -> ::Result<DebugReportCallback> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
+	pub fn create(&mut self) -> crate::Result<DebugReportCallback> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
 }
 
 #[cfg(feature = "Implements")]
@@ -57,7 +63,7 @@ impl DebugReportCallback
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	fn new(instance: &::Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> ::Result<Self>
+	fn new(instance: &Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> crate::Result<Self>
 	{
 		let ctor: PFN_vkCreateDebugReportCallbackEXT = instance.extra_procedure("vkCreateDebugReportCallbackEXT")
 			.expect("Requiring vkCreateDebugReportCallbackEXT function");
@@ -65,19 +71,17 @@ impl DebugReportCallback
 			.expect("Requiring vkDestroyDebugReportCallbackEXT function");
 		let s = VkDebugReportCallbackCreateInfoEXT { flags, pfnCallback: callback, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		ctor(instance.native_ptr(), &s, ::std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), dtor))
+		ctor(instance.native_ptr(), &s, std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), dtor))
 	}
 }
 #[cfg(feature = "Implements")]
 impl Instance
 {
 	/// Inject its own messages into the debug stream
-	pub fn debug_message(&self, flags: VkDebugReportFlagsEXT, object_type: DebugReportObjectType, object: u64, location: ::libc::size_t,
+	pub fn debug_message(&self, flags: VkDebugReportFlagsEXT, object_type: DebugReportObjectType, object: u64, location: libc::size_t,
 		message_count: i32, layer_prefix: &str, message: &str)
 	{
-		use std::ffi::CString;
-
-		let (lp, msg) = (CString::new(layer_prefix).unwrap(), CString::new(message).unwrap());
+		let (lp, msg) = (std::ffi::CString::new(layer_prefix).unwrap(), std::ffi::CString::new(message).unwrap());
 		let msgf: PFN_vkDebugReportMessageEXT = self.extra_procedure("vkDebugReportMessageEXT")
 			.expect("Requiring vkDebugReportMessageEXT function");
 		msgf(self.native_ptr(), flags, object_type as _, object, location, message_count, lp.as_ptr(), msg.as_ptr());
