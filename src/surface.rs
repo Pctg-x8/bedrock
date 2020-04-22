@@ -463,23 +463,19 @@ impl Swapchain
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
 	pub fn acquire_full_screen_exclusive_mode(&self) -> super::Result<()>
 	{
-		unsafe
-		{
-			Resolver::get()
-				.acquire_full_screen_exclusive_mode_ext(self.device().native_ptr(), self.native_ptr())
-				.into_result()
-		}
+		let fp: PFN_vkAcquireFullScreenExclusiveModeEXT = self.device()
+			.extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
+			.expect("No full screen exclusive extension procedure found");
+		(fp)(self.device().native_ptr(), self.native_ptr()).into_result()
 	}
 
 	/// Release full-screen exclusive mode from a swapchain.
 	pub fn release_full_screen_exclusive_mode(&self) -> super::Result<()>
 	{
-		unsafe
-		{
-			Resolver::get()
-				.release_full_screen_exclusive_mode_ext(self.device().native_ptr(), self.native_ptr())
-				.into_result()
-		}
+		let fp: PFN_vkReleaseFullScreenExclusiveModeEXT = self.device()
+			.extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
+			.expect("No full screen exclusive extension procedure found");
+		(fp)(self.device().native_ptr(), self.native_ptr()).into_result()
 	}
 }
 

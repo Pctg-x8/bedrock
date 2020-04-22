@@ -63,3 +63,6 @@ FnTransmuteImpl!(for PFN_vkCreateDebugReportCallbackEXT, PFN_vkDebugReportMessag
 
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR, PFN_vkGetPhysicalDeviceSurfaceFormats2KHR);
+
+#[cfg(feature = "VK_KHR_swapchain")]
+FnTransmuteImpl!(for extern "system" fn(VkDevice, VkSwapchainKHR) -> VkResult);	// vkAcquireFullScreenExclusiveModeEXT, vkReleaseFullScreenExclusiveModeEXT
