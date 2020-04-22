@@ -116,14 +116,15 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //! 
 
-use super::*;
+use crate::vk::*;
 use std::rc::Rc as RefCounter;
 use std::ops::{Deref, BitOr, BitOrAssign};
-use {VkHandle, DeviceChild, Device};
-#[cfg(feature = "Implements")] use VkResultHandler;
-#[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
-#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
-#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
+use crate::{VkHandle, DeviceChild, Device, Extent1D, Extent2D, Extent3D, AnalogNumRange, CompareOp};
+#[cfg(feature = "VK_KHR_swapchain")] use crate::Swapchain;
+#[cfg(feature = "Implements")] use crate::{
+	VkResultHandler,
+	vkresolve::{Resolver, ResolverInterface}
+};
 #[cfg(feature = "Implements")] use std::ops::Range;
 
 struct DeviceMemoryCell(VkDeviceMemory, Device);
@@ -158,12 +159,12 @@ impl Deref for ImageView { type Target = Image; fn deref(&self) -> &Image { &sel
 #[cfg(feature = "Implements")]
 impl Drop for DeviceMemoryCell
 {
-	fn drop(&mut self) { unsafe { Resolver::get().free_memory(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self) { unsafe { Resolver::get().free_memory(self.1.native_ptr(), self.0, std::ptr::null()); } }
 }
 #[cfg(feature = "Implements")]
 impl Drop for BufferCell
 {
-	fn drop(&mut self) { unsafe { Resolver::get().destroy_buffer(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_buffer(self.1.native_ptr(), self.0, std::ptr::null()); } }
 }
 #[cfg(feature = "Implements")]
 impl Drop for ImageCell
@@ -173,13 +174,13 @@ impl Drop for ImageCell
 	{
 		if let ImageCell::DeviceChild { obj, ref dev, .. } = self
 		{
-			unsafe { Resolver::get().destroy_image(dev.native_ptr(), *obj, null()); }
+			unsafe { Resolver::get().destroy_image(dev.native_ptr(), *obj, std::ptr::null()); }
 		}
 	}
 	#[cfg(not(feature = "VK_KHR_swapchain"))]
 	fn drop(&mut self)
 	{
-		unsafe { Resolver::get().destroy_image(self.dev.native_ptr(), self.obj, null()); }
+		unsafe { Resolver::get().destroy_image(self.dev.native_ptr(), self.obj, std::ptr::null()); }
 	}
 }
 #[cfg(feature = "Implements")]
@@ -187,13 +188,13 @@ impl Drop for BufferView
 {
 	fn drop(&mut self)
 	{
-		unsafe { Resolver::get().destroy_buffer_view(self.device().native_ptr(), self.native_ptr(), null()); }
+		unsafe { Resolver::get().destroy_buffer_view(self.device().native_ptr(), self.native_ptr(), std::ptr::null()); }
 	}
 }
 #[cfg(feature = "Implements")]
 impl Drop for ImageViewCell
 {
-	fn drop(&mut self) { unsafe { Resolver::get().destroy_image_view(self.1.device().native_ptr(), self.0, null()); } }
+	fn drop(&mut self) { unsafe { Resolver::get().destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null()); } }
 }
 
 impl VkHandle for DeviceMemory { type Handle = VkDeviceMemory; fn native_ptr(&self) -> VkDeviceMemory { self.0 .0 } }
@@ -245,7 +246,7 @@ impl DeviceMemory
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_TOO_MANY_OBJECTS`
-	pub fn allocate(device: &Device, size: usize, type_index: u32) -> ::Result<Self>
+	pub fn allocate(device: &Device, size: usize, type_index: u32) -> crate::Result<Self>
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		let cinfo = VkMemoryAllocateInfo
@@ -394,7 +395,7 @@ impl BufferDesc
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "Implements")]
-	pub fn create(&self, device: &Device) -> ::Result<Buffer>
+	pub fn create(&self, device: &Device) -> crate::Result<Buffer>
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { Resolver::get().create_buffer(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
@@ -562,7 +563,7 @@ impl ImageDesc
 {
 	/// Create an image
 	#[cfg(not(feature = "VK_KHR_swapchain"))]
-	pub fn create(&self, device: &Device) -> ::Result<Image>
+	pub fn create(&self, device: &Device) -> crate::Result<Image>
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { Resolver::get().create_image(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
@@ -575,7 +576,7 @@ impl ImageDesc
 	}
 	/// Create an image
 	#[cfg(feature = "VK_KHR_swapchain")]
-	pub fn create(&self, device: &Device) -> ::Result<Image>
+	pub fn create(&self, device: &Device) -> crate::Result<Image>
 	{
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe { Resolver::get().create_image(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
@@ -637,7 +638,7 @@ impl Image
 impl Buffer
 {
 	/// Create a buffer view
-	pub fn create_view(&self, format: VkFormat, range: Range<u64>) -> ::Result<BufferView>
+	pub fn create_view(&self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferView>
 	{
 		let cinfo = VkBufferViewCreateInfo
 		{
@@ -645,7 +646,7 @@ impl Buffer
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, null(), &mut h) }
+		unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
 			.into_result()
 			.map(|_| BufferView(h, self.clone()))
 	}
@@ -657,7 +658,7 @@ impl Image
 	/// Create an image view
 	pub fn create_view(&self, format: Option<VkFormat>, vtype: Option<VkImageViewType>,
 		cmap: &ComponentMapping, subresource_range: &ImageSubresourceRange)
-		-> ::Result<ImageView>
+		-> crate::Result<ImageView>
 	{
 		let (format, vtype) = (format.unwrap_or_else(|| self.format()), vtype.unwrap_or_else(|| self.dimension()));
 		let cinfo = VkImageViewCreateInfo
@@ -667,7 +668,7 @@ impl Image
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_image_view(self.device().native_ptr(), &cinfo, null(), &mut h) }
+		unsafe { Resolver::get().create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
 			.into_result()
 			.map(|_| ImageView(ImageViewCell(h, self.clone()).into()))
 	}
@@ -681,7 +682,7 @@ impl Image
 		{
 			aspectMask: subres_aspect.0, mipLevel: subres_mip_level, arrayLayer: subres_array_layer
 		};
-		let mut s = MaybeUninit::uninit();
+		let mut s = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_image_subresource_layout(
@@ -705,14 +706,19 @@ impl DeviceMemory
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_MEMORY_MAP_FAILED`
-	pub fn map(&self, range: Range<usize>) -> ::Result<MappedMemoryRange>
+	pub fn map(&self, range: Range<usize>) -> crate::Result<MappedMemoryRange>
 	{
-		let mut p = null_mut();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{ 
-			Resolver::get().map_memory(self.device().native_ptr(),
-				self.native_ptr(), range.start as _, (range.end - range.start) as _, 0, &mut p)
-		}.into_result().map(|_| MappedMemoryRange(range, p as *mut _, self))
+			Resolver::get()
+				.map_memory(
+					self.device().native_ptr(),
+					self.native_ptr(), range.start as _, (range.end - range.start) as _, 0, p.as_mut_ptr()
+				)
+				.into_result()
+				.map(|_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
+		}
 	}
 	/// Unmap a previously mapped memory object
 	/// # Safety
@@ -726,7 +732,11 @@ impl DeviceMemory
 	pub fn commitment_bytes(&self) -> VkDeviceSize
 	{
 		let mut b = 0;
-		unsafe { Resolver::get().get_device_memory_commitment(self.device().native_ptr(), self.native_ptr(), &mut b); }
+		unsafe
+		{
+			Resolver::get()
+				.get_device_memory_commitment(self.device().native_ptr(), self.native_ptr(), &mut b);
+		}
 
 		b
 	}
@@ -736,7 +746,7 @@ impl DeviceMemory
 impl Device
 {
 	/// Multiple Binding for Buffers
-	pub fn bind_buffers(&self, bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)]) -> ::Result<()>
+	pub fn bind_buffers(&self, bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)]) -> crate::Result<()>
 	{
 		let infos: Vec<_> = bounds.iter().map(|&(b, m, offs)| VkBindBufferMemoryInfo
 		{
@@ -745,11 +755,13 @@ impl Device
 		}).collect();
 		unsafe
 		{
-			Resolver::get().bind_buffer_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
-		}.into_result()
+			Resolver::get()
+				.bind_buffer_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
+				.into_result()
+		}
 	}
 	/// Multiple Binding for Images
-	pub fn bind_images(&self, bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> ::Result<()>
+	pub fn bind_images(&self, bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> crate::Result<()>
 	{
 		let infos: Vec<_> = bounds.iter().map(|&(i, m, offs)| VkBindImageMemoryInfo
 		{
@@ -757,12 +769,14 @@ impl Device
 		}).collect();
 		unsafe
 		{
-			Resolver::get().bind_image_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
-		}.into_result()
+			Resolver::get()
+				.bind_image_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
+				.into_result()
+		}
 	}
 	/// Multiple Binding for both resources
 	pub fn bind_resources(&self, buf_bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)],
-		img_bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> ::Result<()>
+		img_bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> crate::Result<()>
 	{
 		// 必ず両方実行されるようにする
 		self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
@@ -781,31 +795,34 @@ pub trait MemoryBound
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>;
+	fn bind(&self, memory: &DeviceMemory, offset: usize) -> crate::Result<()>;
 }
 #[cfg(feature = "Implements")]
 impl MemoryBound for Buffer
 {
 	fn requirements(&self) -> VkMemoryRequirements
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_buffer_memory_requirements(
-				self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr()
-			 );
+			Resolver::get()
+				.get_buffer_memory_requirements(
+					self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr()
+				);
 			
 			p.assume_init()
 		}
 	}
-	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
+	fn bind(&self, memory: &DeviceMemory, offset: usize) -> crate::Result<()>
 	{
 		unsafe
 		{
-			Resolver::get().bind_buffer_memory(
-				self.device().native_ptr(),
-				self.native_ptr(), memory.native_ptr(), offset as _
-			).into_result()
+			Resolver::get()
+				.bind_buffer_memory(
+					self.device().native_ptr(),
+					self.native_ptr(), memory.native_ptr(), offset as _
+				)
+				.into_result()
 		}
 	}
 }
@@ -814,24 +831,27 @@ impl MemoryBound for Image
 {
 	fn requirements(&self) -> VkMemoryRequirements
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_image_memory_requirements(
-				self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr()
-			);
+			Resolver::get()
+				.get_image_memory_requirements(
+					self.device().native_ptr(), self.native_ptr(), p.as_mut_ptr()
+				);
 
 			p.assume_init()
 		}
 	}
-	fn bind(&self, memory: &DeviceMemory, offset: usize) -> ::Result<()>
+	fn bind(&self, memory: &DeviceMemory, offset: usize) -> crate::Result<()>
 	{
 		unsafe
 		{
-			Resolver::get().bind_image_memory(
-				self.device().native_ptr(),
-				self.native_ptr(), memory.native_ptr(), offset as _
-			).into_result()
+			Resolver::get()
+				.bind_image_memory(
+					self.device().native_ptr(),
+					self.native_ptr(), memory.native_ptr(), offset as _
+				)
+				.into_result()
 		}
 	}
 }
@@ -845,15 +865,19 @@ impl Image
 		let mut n = 0;
 		unsafe
 		{
-			Resolver::get().get_image_sparse_memory_requirements(
-				self.device().native_ptr(), self.native_ptr(), &mut n, null_mut());
+			Resolver::get()
+				.get_image_sparse_memory_requirements(
+					self.device().native_ptr(), self.native_ptr(), &mut n, std::ptr::null_mut()
+				);
 		};
 		let mut v = Vec::with_capacity(n as _);
 		unsafe
 		{
 			v.set_len(n as _);
-			Resolver::get().get_image_sparse_memory_requirements(
-				self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr())
+			Resolver::get()
+				.get_image_sparse_memory_requirements(
+					self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr()
+				)
 		};
 
 		v
@@ -932,7 +956,7 @@ impl Device
 	/// be made available to device access
 	/// # Safety
 	/// Memory object in `ranges` must be currently host mapped
-	pub unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> ::Result<()>
+	pub unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()>
 	{
 		Resolver::get().flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
 			.into_result()
@@ -949,23 +973,29 @@ impl Swapchain
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn get_images(&self) -> ::Result<Vec<Image>>
+	pub fn get_images(&self) -> crate::Result<Vec<Image>>
 	{
 		let mut n = 0;
 		unsafe
 		{
-			Resolver::get().get_swapchain_images_khr(
-				self.device().native_ptr(), self.native_ptr(), &mut n, std::ptr::null_mut())
-		}.into_result()?;
+			Resolver::get()
+				.get_swapchain_images_khr(
+					self.device().native_ptr(), self.native_ptr(), &mut n, std::ptr::null_mut()
+				)
+			.into_result()?;
+		}
 		let mut v = Vec::with_capacity(n as _);
 		unsafe
 		{
 			v.set_len(n as _);
-			Resolver::get().get_swapchain_images_khr(
-				self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr())
-		}.into_result().map(|_| v.into_iter()
-			.map(|r| Image(ImageCell::SwapchainChild { obj: r, owner: self.clone(), fmt: self.format() }.into()))
-			.collect())
+			Resolver::get()
+				.get_swapchain_images_khr(
+					self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr()
+				)
+				.into_result().map(|_| v.into_iter()
+				.map(|r| Image(ImageCell::SwapchainChild { obj: r, owner: self.clone(), fmt: self.format() }.into()))
+				.collect())
+		}
 	}
 }
 
@@ -1165,7 +1195,7 @@ impl Drop for Sampler
 {
 	fn drop(&mut self)
 	{
-		unsafe { Resolver::get().destroy_sampler(self.1.native_ptr(), self.0, null()); }
+		unsafe { Resolver::get().destroy_sampler(self.1.native_ptr(), self.0, std::ptr::null()); }
 	}
 }
 impl VkHandle for Sampler { type Handle = VkSampler; fn native_ptr(&self) -> VkSampler { self.0 } }
@@ -1241,7 +1271,7 @@ impl Default for SamplerBuilder
             addressModeU: AddressingMode::Repeat as _, addressModeV: AddressingMode::Repeat as _,
 			addressModeW: AddressingMode::Repeat as _,
             mipLodBias: 0.0, anisotropyEnable: false as _,
-			compareEnable: false as _, compareOp: ::CompareOp::Always as _,
+			compareEnable: false as _, compareOp: CompareOp::Always as _,
             minLod: 0.0, maxLod: 0.0, borderColor: BorderColor::TransparentBlackF as _,
 			unnormalizedCoordinates: false as _,
             .. Default::default()
@@ -1287,10 +1317,10 @@ impl SamplerBuilder
     /// as described in the `Depth Compare Operation` section in Vulkan Specification.
     /// Specifying `None` switches off the comparison against a reference value during lookups.  
     /// Default: `None`
-    pub fn comparison(&mut self, op: Option<::CompareOp>) -> &mut Self
+    pub fn comparison(&mut self, op: Option<CompareOp>) -> &mut Self
     {
         self.0.compareEnable = op.is_some() as _;
-        self.0.compareOp = op.unwrap_or(::CompareOp::Always) as _; self
+        self.0.compareOp = op.unwrap_or(CompareOp::Always) as _; self
     }
     /// The values used to clamp the computed level-of-detail value,
     /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  
@@ -1319,10 +1349,10 @@ impl SamplerBuilder
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     #[cfg(feature = "Implements")]
-    pub fn create(&self, device: &Device) -> ::Result<Sampler>
+    pub fn create(&self, device: &Device) -> crate::Result<Sampler>
     {
         let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_sampler(device.native_ptr(), &self.0, null(), &mut h) }
+        unsafe { Resolver::get().create_sampler(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
 			.map(|_| Sampler(h, device.clone()))
     }

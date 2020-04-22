@@ -4,7 +4,7 @@
 #![allow(non_snake_case)]
 
 #[cfg(feature = "DynamicLoaded")] use libloading::*;
-use vk::*;
+use crate::vk::*;
 #[cfg(feature = "DynamicLoaded")]
 use std::sync::{Once, ONCE_INIT};
 #[cfg(feature = "DynamicLoaded")] #[cfg(unix)]

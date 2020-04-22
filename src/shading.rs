@@ -1,15 +1,15 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use super::*;
+use crate::vk::*;
 use std::ffi::CString;
-use {VkHandle, DeviceChild};
-#[cfg(feature = "Implements")] use VkResultHandler;
-use std::ptr::null;
+use crate::{VkHandle, DeviceChild, Device, LifetimeBound, RenderPass};
 use std::marker::PhantomData;
 use std::borrow::Cow;
-#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
-#[cfg(feature = "Implements")] use std::ptr::null_mut;
 use std::ops::*;
+#[cfg(feature = "Implements")] use crate::{
+	VkResultHandler, DescriptorSetLayout,
+	vkresolve::{Resolver, ResolverInterface}
+};
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
@@ -173,22 +173,46 @@ pub struct Pipeline(VkPipeline, Device);
 #[cfg(feature = "Implements")]
 impl Drop for ShaderModule
 {
-	fn drop(&mut self) { unsafe { Resolver::get().destroy_shader_module(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self)
+	{
+		unsafe
+		{
+			Resolver::get().destroy_shader_module(self.1.native_ptr(), self.0, std::ptr::null());
+		}
+	}
 }
 #[cfg(feature = "Implements")]
 impl Drop for PipelineCache
 {
-	fn drop(&mut self) { unsafe { Resolver::get().destroy_pipeline_cache(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self)
+	{
+		unsafe
+		{
+			Resolver::get().destroy_pipeline_cache(self.1.native_ptr(), self.0, std::ptr::null());
+		}
+	}
 }
 #[cfg(feature = "Implements")]
 impl Drop for PipelineLayout
 {
-	fn drop(&mut self) { unsafe { Resolver::get().destroy_pipeline_layout(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self)
+	{
+		unsafe
+		{
+			Resolver::get().destroy_pipeline_layout(self.1.native_ptr(), self.0, std::ptr::null());
+		}
+	}
 }
 #[cfg(feature = "Implements")]
 impl Drop for Pipeline
 {
-	fn drop(&mut self) { unsafe { Resolver::get().destroy_pipeline(self.1.native_ptr(), self.0, null()); } }
+	fn drop(&mut self)
+	{
+		unsafe
+		{
+			Resolver::get().destroy_pipeline(self.1.native_ptr(), self.0, std::ptr::null());
+		}
+	}
 }
 impl VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
 impl VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
@@ -209,7 +233,7 @@ impl ShaderModule
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn from_memory<Buffer>(device: &Device, buffer: &Buffer) -> ::Result<Self>
+	pub fn from_memory<Buffer>(device: &Device, buffer: &Buffer) -> crate::Result<Self>
 		where Buffer: AsRef<[u8]> + ?Sized
 	{
 		#[allow(clippy::cast_ptr_alignment)]
@@ -220,9 +244,13 @@ impl ShaderModule
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_shader_module(device.native_ptr(), &cinfo, null(), &mut h) }
-			.into_result()
-			.map(|_| ShaderModule(h, device.clone()))
+		unsafe
+		{
+			Resolver::get()
+				.create_shader_module(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(|_| ShaderModule(h, device.clone()))
+		}
 	}
 	/// Creates a new shader module object from a file
 	/// # Failures
@@ -232,10 +260,10 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(device: &Device, path: &FilePath)
-		-> std::result::Result<Self, Box<dyn std::error::Error>>
+	pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(device: &Device, path: &FilePath) -> Result<Self, Box<dyn std::error::Error>>
 	{
-		std::fs::read(path).map_err(From::from).and_then(|b| Self::from_memory(device, &b).map_err(From::from))
+		std::fs::read(path).map_err(From::from)
+			.and_then(|b| Self::from_memory(device, &b).map_err(From::from))
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -248,7 +276,7 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new<Data>(device: &Device, initial: &Data) -> ::Result<Self>
+	pub fn new<Data>(device: &Device, initial: &Data) -> crate::Result<Self>
 		where Data: AsRef<[u8]> + ?Sized
 	{
 		let cinfo = VkPipelineCacheCreateInfo
@@ -257,9 +285,13 @@ impl PipelineCache
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_pipeline_cache(device.native_ptr(), &cinfo, null(), &mut h) }
-			.into_result()
-			.map(|_| PipelineCache(h, device.clone()))
+		unsafe
+		{
+			Resolver::get()
+				.create_pipeline_cache(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(|_| PipelineCache(h, device.clone()))
+		}
 	}
 	/// Get the data store from a pipeline cache
 	/// # Failures
@@ -267,17 +299,23 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn data(&self) -> ::Result<Vec<u8>>
+	pub fn data(&self) -> crate::Result<Vec<u8>>
 	{
 		let mut n = 0;
-		unsafe { Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, null_mut()) }
-			.into_result()?;
-		let mut b: Vec<u8> = Vec::with_capacity(n as _);
-		unsafe { b.set_len(n as _) };
 		unsafe
 		{
-			Resolver::get().get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _)
-		}.into_result().map(|_| b)
+			Resolver::get()
+				.get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
+				.into_result()?;
+		}
+		let mut b: Vec<u8> = Vec::with_capacity(n as _); unsafe { b.set_len(n as _) };
+		unsafe
+		{
+			Resolver::get()
+				.get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _)
+				.into_result()
+				.map(|_| b)
+		}
 	}
 	/// Combine the data stores of pipeline caches into `self`
 	/// # Failures
@@ -285,11 +323,15 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn merge_into(&self, src: &[&PipelineCache]) -> ::Result<()>
+	pub fn merge_into(&self, src: &[&PipelineCache]) -> crate::Result<()>
 	{
 		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
-		unsafe { Resolver::get().merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr()) }
-			.into_result()
+		unsafe
+		{
+			Resolver::get()
+				.merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr())
+				.into_result()
+		}
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -303,7 +345,7 @@ impl PipelineLayout
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn new(device: &Device, layouts: &[&DescriptorSetLayout], push_constants: &[(ShaderStage, Range<u32>)])
-		-> ::Result<Self>
+		-> crate::Result<Self>
 	{
 		let layouts = layouts.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 		let push_constants = push_constants.iter()
@@ -316,8 +358,13 @@ impl PipelineLayout
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe { Resolver::get().create_pipeline_layout(device.native_ptr(), &cinfo, null(), &mut h) }
-			.into_result().map(|_| PipelineLayout(h, device.clone()))
+		unsafe
+		{
+			Resolver::get()
+				.create_pipeline_layout(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(|_| PipelineLayout(h, device.clone()))
+		}
 	}
 }
 
@@ -370,7 +417,7 @@ impl<'d, T> DynamicArrayState<'d, T>
 	}
 	fn as_ptr(&self) -> *const T
 	{
-		match self { DynamicArrayState::Static(ref v) => v.as_ptr(), _ => null() }
+		match self { DynamicArrayState::Static(ref v) => v.as_ptr(), _ => std::ptr::null() }
 	}
 	fn is_dynamic(&self) -> bool
 	{
@@ -600,9 +647,10 @@ impl<'d> MultisampleState<'d>
 	{
 		if mask.is_empty()
 		{
-			self.data.pSampleMask = null();
+			self.data.pSampleMask = std::ptr::null();
 		}
-		else {
+		else
+		{
 			assert_eq!(mask.len(), (self.data.rasterizationSamples as usize + 31) / 32);
 			self.data.pSampleMask = mask.as_ptr();
 		}
@@ -1146,8 +1194,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 #[cfg(feature = "Implements")]
 impl<'d> PipelineShader<'d>
 {
-	fn createinfo_native(&self, stage: ShaderStage)
-		-> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>)
+	fn createinfo_native(&self, stage: ShaderStage) -> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>)
 	{
 		let specinfo = self.specinfo.as_ref().map(|&(ref m, ref d)| Box::new(VkSpecializationInfo
 		{
@@ -1156,7 +1203,7 @@ impl<'d> PipelineShader<'d>
 		(VkPipelineShaderStageCreateInfo
 		{
 			stage: stage.0, module: self.module.native_ptr(), pName: self.entry_name.as_ptr(),
-			pSpecializationInfo: specinfo.as_ref().map(|x| &**x as *const _).unwrap_or_else(null),
+			pSpecializationInfo: specinfo.as_ref().map(|x| &**x as *const _).unwrap_or_else(std::ptr::null),
 			.. Default::default()
 		}, specinfo)
 	}
@@ -1188,7 +1235,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn create(&self, device: &Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
+	pub fn create(&self, device: &Device, cache: Option<&PipelineCache>) -> crate::Result<Pipeline>
 	{
 		// VERTEX PROCESSING //
 		let (stages, _specinfo) = self.vp.generate_stages();
@@ -1218,13 +1265,13 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		{
 			stageCount: stages.len() as _,
 			pStages: stages.as_ptr(), pVertexInputState: &self.vp.vi, pInputAssemblyState: &self.vp.ia,
-			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
-			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
+			pTessellationState: self.tess_state.as_ref().map(|x| &**x as *const _).unwrap_or_else(std::ptr::null),
+			pViewportState: self.viewport_state.as_ref().map(|x| &**x as *const _).unwrap_or_else(std::ptr::null),
 			pRasterizationState: &self.rasterizer_state as *const _,
-			pMultisampleState: ms.map_or(null(), |x| x as *const _),
-			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or(null()),
-			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or(null()),
-			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or(null()),
+			pMultisampleState: ms.map_or_else(std::ptr::null, |x| x as *const _),
+			pDepthStencilState: self.ds_state.as_ref().map(|x| &**x as *const _).unwrap_or_else(std::ptr::null),
+			pColorBlendState: self.color_blending.as_ref().map(|&(ref x, _)| &**x as *const _).unwrap_or_else(std::ptr::null),
+			pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or_else(std::ptr::null),
 			layout: self._layout.native_ptr(), renderPass: self.rp.native_ptr(), subpass: self.subpass,
 			basePipelineHandle: if let BasePipeline::Handle(ref h) = self._base { h.native_ptr() } else { VK_NULL_HANDLE as _ },
 			basePipelineIndex: -1, flags,
@@ -1235,7 +1282,7 @@ impl<'d> GraphicsPipelineBuilder<'d>
 		{
 			Resolver::get().create_graphics_pipelines(device.native_ptr(),
 				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				1, &cinfo, null(), &mut h)
+				1, &cinfo, std::ptr::null(), &mut h)
 		}.into_result().map(|_| Pipeline(h, device.clone()))
 	}
 }
@@ -1251,14 +1298,14 @@ impl Device
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn create_graphics_pipelines(&self, infos: &[VkGraphicsPipelineCreateInfo], cache: Option<&PipelineCache>)
-		-> ::Result<Vec<Pipeline>>
+		-> crate::Result<Vec<Pipeline>>
 	{
 		let mut hs = vec![VK_NULL_HANDLE as VkPipeline; infos.len()];
 		let r = unsafe
 		{
 			Resolver::get().create_graphics_pipelines(self.native_ptr(),
 				cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				infos.len() as _, infos.as_ptr(), null(), hs.as_mut_ptr())
+				infos.len() as _, infos.as_ptr(), std::ptr::null(), hs.as_mut_ptr())
 		};
 		
 		r.into_result().map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
@@ -1290,7 +1337,7 @@ impl<'d> ComputePipelineBuilder<'d>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn create(&self, device: &::Device, cache: Option<&PipelineCache>) -> ::Result<Pipeline>
+	pub fn create(&self, device: &Device, cache: Option<&PipelineCache>) -> crate::Result<Pipeline>
 	{
 		let (stage, _specinfo) = self.shader.createinfo_native(ShaderStage::COMPUTE);
 		let cinfo = VkComputePipelineCreateInfo
@@ -1303,16 +1350,19 @@ impl<'d> ComputePipelineBuilder<'d>
 		let mut pipeline = ::std::mem::MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().create_compute_pipelines(
-				device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				1, &cinfo, ::std::ptr::null(), pipeline.as_mut_ptr()
-			).into_result().map(move |_| Pipeline(pipeline.assume_init(), device.clone()))
+			Resolver::get()
+				.create_compute_pipelines(
+					device.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+					1, &cinfo, std::ptr::null(), pipeline.as_mut_ptr()
+				)
+				.into_result()
+				.map(move |_| Pipeline(pipeline.assume_init(), device.clone()))
 		}
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl ::Device
+impl Device
 {
 	/// Create compute pipelines
 	/// # Failures
@@ -1320,7 +1370,8 @@ impl ::Device
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn create_compute_pipelines(&self, builders: &[ComputePipelineBuilder], cache: Option<&PipelineCache>) -> ::Result<Vec<Pipeline>>
+	pub fn create_compute_pipelines(&self, builders: &[ComputePipelineBuilder], cache: Option<&PipelineCache>)
+		-> crate::Result<Vec<Pipeline>>
 	{
 		let (stages, _specinfos): (Vec<_>, Vec<_>) = builders.iter().map(|b| b.shader.createinfo_native(ShaderStage::COMPUTE)).unzip();
 		let cinfos = builders.iter().zip(stages.into_iter()).map(|(b, stage)| VkComputePipelineCreateInfo
@@ -1331,10 +1382,13 @@ impl ::Device
 		let mut pipelines = vec![VK_NULL_HANDLE as _; builders.len()];
 		unsafe
 		{
-			Resolver::get().create_compute_pipelines(
-				self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-				cinfos.len() as _, cinfos.as_ptr(), ::std::ptr::null(), pipelines.as_mut_ptr()
-			).into_result().map(move |_| pipelines.into_iter().map(|h| Pipeline(h, self.clone())).collect())
+			Resolver::get()
+				.create_compute_pipelines(
+					self.native_ptr(), cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+					cinfos.len() as _, cinfos.as_ptr(), std::ptr::null(), pipelines.as_mut_ptr()
+				)
+				.into_result()
+				.map(move |_| pipelines.into_iter().map(|h| Pipeline(h, self.clone())).collect())
 		}
 	}
 }

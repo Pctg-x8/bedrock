@@ -1,7 +1,6 @@
 //! FFI Function Conversions
 
-use vk::*;
-use std;
+use crate::vk::*;
 
 pub trait FnTransmute : Sized
 {

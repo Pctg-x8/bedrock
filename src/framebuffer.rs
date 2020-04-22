@@ -1,12 +1,12 @@
 //! Vulkan RenderPass/Framebuffer
 
-use super::*;
-use {VkHandle, DeviceChild};
-#[cfg(feature = "Implements")] use VkResultHandler;
-use ImageLayout;
-#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
-#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
+use crate::vk::*;
+use crate::{VkHandle, DeviceChild, Device, ImageView, Extent2D, ImageLayout};
 use std::ops::*;
+#[cfg(feature = "Implements")] use crate::{
+	VkResultHandler,
+	vkresolve::{Resolver, ResolverInterface}
+};
 
 /// Opaque handle to a render pass object
 pub struct RenderPass(VkRenderPass, Device);
@@ -18,7 +18,10 @@ impl Drop for RenderPass
 {
 	fn drop(&mut self)
 	{
-		unsafe { Resolver::get().destroy_render_pass(self.1.native_ptr(), self.0, std::ptr::null()); }
+		unsafe
+		{
+			Resolver::get().destroy_render_pass(self.1.native_ptr(), self.0, std::ptr::null());
+		}
 	}
 }
 #[cfg(feature = "Implements")]
@@ -26,7 +29,10 @@ impl Drop for Framebuffer
 {
 	fn drop(&mut self)
 	{
-		unsafe { Resolver::get().destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null()); }
+		unsafe
+		{
+			Resolver::get().destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
+		}
 	}
 }
 impl VkHandle for RenderPass { type Handle = VkRenderPass; fn native_ptr(&self) -> VkRenderPass { self.0 } }
@@ -196,7 +202,7 @@ impl SubpassDescription
 	{
 		self.input_attachments.push(VkAttachmentReference { attachment: index, layout: layout as _ }); self
 	}
-	pub fn add_color_output(mut self, index: u32, layout: ImageLayout, resolve: Option<(u32, ::ImageLayout)>) -> Self
+	pub fn add_color_output(mut self, index: u32, layout: ImageLayout, resolve: Option<(u32, ImageLayout)>) -> Self
 	{
 		if let Some((i, l)) = resolve
 		{
@@ -261,7 +267,7 @@ impl RenderPassBuilder
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn create(&self, device: &Device) -> ::Result<RenderPass>
+	pub fn create(&self, device: &Device) -> crate::Result<RenderPass>
 	{
 		let subpasses = self.subpasses.iter().map(|x| VkSubpassDescription
 		{
@@ -294,8 +300,8 @@ impl Framebuffer
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new<Sz: AsRef<::Extent2D>>(mold: &RenderPass, attachment_objects: &[&ImageView], size: &Sz, layers: u32)
-		-> ::Result<Self>
+	pub fn new<Sz: AsRef<Extent2D>>(mold: &RenderPass, attachment_objects: &[&ImageView], size: &Sz, layers: u32)
+		-> crate::Result<Self>
 	{
 		let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 		let cinfo = VkFramebufferCreateInfo
@@ -322,7 +328,7 @@ impl RenderPass
 	/// Returns the granularity for optimal render area
 	pub fn optimal_granularity(&self) -> Extent2D
 	{
-		let mut e = MaybeUninit::uninit();
+		let mut e = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_render_area_granularity(self.1.native_ptr(), self.0, e.as_mut_ptr());

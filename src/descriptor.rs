@@ -1,12 +1,11 @@
 //! Vulkan Descriptors
 
-use super::*;
-use {VkHandle, DeviceChild};
-#[cfg(feature = "Implements")] use VkResultHandler;
-use ShaderStage;
-#[cfg(feature = "Implements")] use std::ptr::null;
-#[cfg(feature = "Implements")] use std::mem::zeroed;
-#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
+use crate::vk::*;
+use crate::{VkHandle, DeviceChild, ShaderStage, Device, ImageLayout};
+#[cfg(feature = "Implements")] use crate::{
+    VkResultHandler,
+    vkresolve::{Resolver, ResolverInterface}
+};
 
 /// Opaque handle to a descriptor set layout object
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
@@ -103,9 +102,10 @@ impl DescriptorSetLayout
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn new(device: &::Device, bindings: &[DescriptorSetLayoutBinding]) -> ::Result<Self>
+    pub fn new(device: &Device, bindings: &[DescriptorSetLayoutBinding]) -> crate::Result<Self>
     {
-        let binding_structures: Vec<_> = bindings.into_iter().enumerate().map(|(n, b)| b.make_structure_with_binding_index(n as _)).collect();
+        let binding_structures: Vec<_> = bindings.into_iter().enumerate()
+            .map(|(n, b)| b.make_structure_with_binding_index(n as _)).collect();
         let cinfo = VkDescriptorSetLayoutCreateInfo
         {
             bindingCount: binding_structures.len() as _,
@@ -113,13 +113,13 @@ impl DescriptorSetLayout
             .. Default::default()
         };
 
-        let mut h = ::std::mem::MaybeUninit::uninit();
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe
         {
-            Resolver::get().create_descriptor_set_layout(
-                device.native_ptr(), &cinfo, null(), h.as_mut_ptr()
-            )
-            .into_result().map(move |_| DescriptorSetLayout(h.assume_init(), device.clone()))
+            Resolver::get()
+                .create_descriptor_set_layout(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| DescriptorSetLayout(h.assume_init(), device.clone()))
         }
     }
 }
@@ -175,7 +175,7 @@ impl DescriptorPool
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn new(device: &::Device, max_sets: u32, pool_sizes: &[DescriptorPoolSize], allow_free: bool) -> ::Result<Self>
+    pub fn new(device: &Device, max_sets: u32, pool_sizes: &[DescriptorPoolSize], allow_free: bool) -> crate::Result<Self>
     {
         let mut h = VK_NULL_HANDLE as _;
         let cinfo = VkDescriptorPoolCreateInfo
@@ -184,9 +184,13 @@ impl DescriptorPool
             poolSizeCount: pool_sizes.len() as _, pPoolSizes: pool_sizes.as_ptr() as *const _,
             .. Default::default()
         };
-        unsafe { Resolver::get().create_descriptor_pool(device.native_ptr(), &cinfo, null(), &mut h) }
-            .into_result()
-            .map(|_| DescriptorPool(h, device.clone()))
+        unsafe
+        {
+            Resolver::get()
+                .create_descriptor_pool(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .into_result()
+                .map(|_| DescriptorPool(h, device.clone()))
+        }
     }
     /// Allocate one or more descriptor sets
     /// # Failures
@@ -194,7 +198,7 @@ impl DescriptorPool
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
-    pub fn alloc(&self, layouts: &[&DescriptorSetLayout]) -> ::Result<Vec<VkDescriptorSet>>
+    pub fn alloc(&self, layouts: &[&DescriptorSetLayout]) -> crate::Result<Vec<VkDescriptorSet>>
     {
         let layout_ptrs = layouts.iter().map(|x| x.0).collect::<Vec<_>>();
         let ainfo = VkDescriptorSetAllocateInfo
@@ -203,8 +207,13 @@ impl DescriptorPool
             .. Default::default()
         };
         let mut hs = vec![VK_NULL_HANDLE as _; layout_ptrs.len()];
-        unsafe { Resolver::get().allocate_descriptor_sets(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()) }
-            .into_result().map(|_| hs)
+        unsafe
+        {
+            Resolver::get()
+                .allocate_descriptor_sets(self.1.native_ptr(), &ainfo, hs.as_mut_ptr())
+                .into_result()
+                .map(|_| hs)
+        }
     }
     /// Resets a descriptor pool object
     /// # Safety
@@ -213,7 +222,7 @@ impl DescriptorPool
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub unsafe fn reset(&self) -> ::Result<()>
+    pub unsafe fn reset(&self) -> crate::Result<()>
     {
         Resolver::get().reset_descriptor_pool(self.1.native_ptr(), self.0, 0).into_result()
     }
@@ -222,10 +231,14 @@ impl DescriptorPool
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn free(&self, sets: &[VkDescriptorSet]) -> ::Result<()>
+    pub fn free(&self, sets: &[VkDescriptorSet]) -> crate::Result<()>
     {
-        unsafe { Resolver::get().free_descriptor_sets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr()) }
-            .into_result()
+        unsafe
+        {
+            Resolver::get()
+                .free_descriptor_sets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr())
+                .into_result()
+        }
     }
 }
 
@@ -251,15 +264,15 @@ pub struct DescriptorSetCopyInfo
 #[derive(Clone)]
 pub enum DescriptorUpdateInfo
 {
-    Sampler(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
-    CombinedImageSampler(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
-    SampledImage(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
-    StorageImage(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
-    InputAttachment(Vec<(Option<VkSampler>, VkImageView, ::ImageLayout)>),
-    UniformBuffer(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
-    StorageBuffer(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
-    UniformBufferDynamic(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
-    StorageBufferDynamic(Vec<(VkBuffer, ::std::ops::Range<usize>)>),
+    Sampler(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
+    CombinedImageSampler(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
+    SampledImage(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
+    StorageImage(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
+    InputAttachment(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
+    UniformBuffer(Vec<(VkBuffer, std::ops::Range<usize>)>),
+    StorageBuffer(Vec<(VkBuffer, std::ops::Range<usize>)>),
+    UniformBufferDynamic(Vec<(VkBuffer, std::ops::Range<usize>)>),
+    StorageBufferDynamic(Vec<(VkBuffer, std::ops::Range<usize>)>),
     UniformTexelBuffer(Vec<VkBufferView>),
     StorageTexelBuffer(Vec<VkBufferView>)
 }
@@ -317,7 +330,8 @@ impl Drop for DescriptorUpdateTemplate
     {
         unsafe
         {
-            self.1.instance().destroy_descriptor_update_template(self.1.native_ptr(), self.0, null());
+            self.1.instance()
+                .destroy_descriptor_update_template(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -326,7 +340,7 @@ impl DescriptorUpdateTemplate
 {
     /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
     pub fn new(device: &Device, entries: &[VkDescriptorUpdateTemplateEntry], dsl: Option<&DescriptorSetLayout>)
-        -> ::Result<Self>
+        -> crate::Result<Self>
     {
         let cinfo = VkDescriptorUpdateTemplateCreateInfo
         {
@@ -335,18 +349,24 @@ impl DescriptorUpdateTemplate
                 else { VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET },
             descriptorSetLayout: dsl.native_ptr(), .. Default::default()
         };
-        let mut handle = unsafe { zeroed() };
+        let mut handle = std::mem::MaybeUninit::uninit();
         unsafe
         {
-            device.instance().create_descriptor_update_template(device.native_ptr(), &cinfo, null(), &mut handle)
-        }.into_result().map(|_| DescriptorUpdateTemplate(handle, device.clone()))
+            device.instance()
+                .create_descriptor_update_template(device.native_ptr(), &cinfo, std::ptr::null(), handle.as_mut_ptr())
+                .into_result()
+                .map(|_| DescriptorUpdateTemplate(handle.assume_init(), device.clone()))
+        }
     }
     pub fn update_set<T>(&self, set: VkDescriptorSet, data: &T)
     {
         unsafe
         {
-            Resolver::get().update_descriptor_set_with_template(self.device().native_ptr(), set, self.native_ptr(),
-                data as *const T as *const _)
+            Resolver::get()
+                .update_descriptor_set_with_template(
+                    self.device().native_ptr(), set, self.native_ptr(),
+                    data as *const T as *const _
+                )
         }
     }
 }
@@ -354,7 +374,4 @@ impl VkHandle for DescriptorUpdateTemplate
 {
     type Handle = VkDescriptorUpdateTemplate; fn native_ptr(&self) -> VkDescriptorUpdateTemplate { self.0 }
 }
-impl DeviceChild for DescriptorUpdateTemplate
-{
-    fn device(&self) -> &Device { &self.1 }
-}
+impl DeviceChild for DescriptorUpdateTemplate { fn device(&self) -> &Device { &self.1 } }

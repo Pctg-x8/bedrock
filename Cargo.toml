@@ -4,6 +4,7 @@ version = "1.1.70"
 authors = ["S.Percentage <Syn.Tri.Naga@gmail.com>"]
 description = "Glue library between Vulkan and Rust"
 license = "MIT"
+edition = "2018"
 
 [features]
 VK_KHR_surface = []

@@ -1,16 +1,15 @@
 //! Vulkan Commands
 
-use super::*;
-use {VkHandle, Device, DeviceChild};
-#[cfg(feature = "Implements")] use VkResultHandler;
-#[cfg(feature = "Implements")] use std::mem::{size_of, transmute};
+use crate::vk::*;
+use crate::{VkHandle, Device, DeviceChild, Image, Buffer, ImageLayout, AnalogNumRange};
 use std::ops::Range;
-use {Image, Buffer, ImageLayout};
 use std::mem::replace;
-#[cfg(feature = "Implements")] use {Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage};
-#[cfg(feature = "Implements")] use {StencilFaceMask, FilterMode, Event};
-#[cfg(feature = "Implements")] use {QueryPipelineStatisticFlags, QueryPool, QueryResultFlags};
-#[cfg(feature = "Implements")] use ::vkresolve::{Resolver, ResolverInterface};
+#[cfg(feature = "Implements")] use crate::{
+	VkResultHandler, Framebuffer, RenderPass, Pipeline, PipelineLayout, PipelineStageFlags, ShaderStage,
+	StencilFaceMask, FilterMode, Event, QueryPipelineStatisticFlags, QueryPool, QueryResultFlags,
+	vkresolve::{Resolver, ResolverInterface}
+};
+#[cfg(feature = "Implements")] use std::mem::{size_of, transmute};
 
 /// Opaque handle to a command pool object
 pub struct CommandPool(VkCommandPool, Device);
@@ -24,7 +23,11 @@ impl Drop for CommandPool
 {
 	fn drop(&mut self)
 	{
-		unsafe { Resolver::get().destroy_command_pool(self.1.native_ptr(), self.0, std::ptr::null()); }
+		unsafe
+		{
+			Resolver::get()
+				.destroy_command_pool(self.1.native_ptr(), self.0, std::ptr::null());
+		}
 	}
 }
 impl VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
@@ -37,10 +40,15 @@ pub struct CmdRecord<'d> { ptr: &'d CommandBuffer, layout: [Option<VkPipelineLay
 
 /// Implicitly closing the recording state. This may cause a panic when there are errors in commands
 #[cfg(feature = "Implements")]
-impl<'d> Drop for CmdRecord<'d> {
-	fn drop(&mut self) {
-		unsafe {
-			Resolver::get().end_command_buffer(self.ptr.native_ptr()).into_result()
+impl<'d> Drop for CmdRecord<'d>
+{
+	fn drop(&mut self)
+	{
+		unsafe
+		{
+			Resolver::get()
+				.end_command_buffer(self.ptr.native_ptr())
+				.into_result()
 				.expect("Error closing command recording state");
 		}
 	}
@@ -48,23 +56,29 @@ impl<'d> Drop for CmdRecord<'d> {
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl CommandPool {
+impl CommandPool
+{
 	/// Create a new command pool object
 	/// # Failures
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new(device: &Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> ::Result<Self> {
-		let cinfo = VkCommandPoolCreateInfo {
+	pub fn new(device: &Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> crate::Result<Self>
+	{
+		let cinfo = VkCommandPoolCreateInfo
+		{
 			queueFamilyIndex: queue_family, flags: if transient { VK_COMMAND_POOL_CREATE_TRANSIENT_BIT } else { 0 }
 				| if indiv_resettable { VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT } else { 0 },
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe {
-			Resolver::get().create_command_pool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h)
-				.into_result().map(|_| CommandPool(h, device.clone()))
+		unsafe
+		{
+			Resolver::get()
+				.create_command_pool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h)
+				.into_result()
+				.map(|_| CommandPool(h, device.clone()))
 		}
 	}
 	/// Allocate command buffers from an existing command pool
@@ -73,14 +87,19 @@ impl CommandPool {
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn alloc(&self, count: u32, primary: bool) -> ::Result<Vec<CommandBuffer>> {
-		let ainfo = VkCommandBufferAllocateInfo {
+	pub fn alloc(&self, count: u32, primary: bool) -> crate::Result<Vec<CommandBuffer>>
+	{
+		let ainfo = VkCommandBufferAllocateInfo
+		{
 			commandBufferCount: count, level: if primary { VK_COMMAND_BUFFER_LEVEL_PRIMARY } else { VK_COMMAND_BUFFER_LEVEL_SECONDARY },
 			commandPool: self.0, .. Default::default()
 		};
 		let mut hs = vec![VK_NULL_HANDLE as _; count as _];
-		unsafe {
-			Resolver::get().allocate_command_buffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr()).into_result()
+		unsafe
+		{
+			Resolver::get()
+				.allocate_command_buffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr())
+				.into_result()
 				.map(|_| transmute(hs))
 		}
 	}
@@ -92,13 +111,23 @@ impl CommandPool {
 	///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn reset(&self, release_resources: bool) -> ::Result<()> {
+	pub fn reset(&self, release_resources: bool) -> crate::Result<()>
+	{
 		let flags = if release_resources { VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT } else { 0 };
-		unsafe { Resolver::get().reset_command_pool(self.1.native_ptr(), self.0, flags).into_result() }
+		unsafe
+		{
+			Resolver::get()
+				.reset_command_pool(self.1.native_ptr(), self.0, flags).into_result()
+		}
 	}
 	/// Free command buffers
-	pub fn free(&self, buffers: &[CommandBuffer]) {
-		unsafe { Resolver::get().free_command_buffers(self.1.native_ptr(), self.0, buffers.len() as _, buffers.as_ptr() as *const _) };
+	pub fn free(&self, buffers: &[CommandBuffer])
+	{
+		unsafe
+		{
+			Resolver::get()
+				.free_command_buffers(self.1.native_ptr(), self.0, buffers.len() as _, buffers.as_ptr() as *const _);
+		}
 	}
 }
 
@@ -112,9 +141,13 @@ impl CommandBuffer
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn begin(&self) -> ::Result<CmdRecord> {
-		unsafe {
-			Resolver::get().begin_command_buffer(self.0, &Default::default()).into_result()
+	pub fn begin(&self) -> crate::Result<CmdRecord>
+	{
+		unsafe
+		{
+			Resolver::get()
+				.begin_command_buffer(self.0, &Default::default())
+				.into_result()
 				.map(|_| CmdRecord { ptr: self, layout: [None, None] })
 		}
 	}
@@ -124,12 +157,15 @@ impl CommandBuffer
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn begin_once(&self) -> ::Result<CmdRecord>
+	pub fn begin_once(&self) -> crate::Result<CmdRecord>
 	{
 		let info = VkCommandBufferBeginInfo { flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, .. Default::default() };
 		unsafe
 		{
-			Resolver::get().begin_command_buffer(self.0, &info).into_result().map(|_| CmdRecord { ptr: self, layout: [None, None] })
+			Resolver::get()
+				.begin_command_buffer(self.0, &info)
+				.into_result()
+				.map(|_| CmdRecord { ptr: self, layout: [None, None] })
 		}
 	}
 	/// Start recording a secondary command buffer
@@ -138,8 +174,9 @@ impl CommandBuffer
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn begin_inherit(&self, renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
-		query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>) -> ::Result<CmdRecord>
+	pub fn begin_inherit(
+		&self, renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
+		query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>) -> crate::Result<CmdRecord>
 	{
 		let flags = if renderpass.is_some() { VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT } else { 0 };
 		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.native_ptr(), r.native_ptr(), s))
@@ -154,7 +191,9 @@ impl CommandBuffer
 		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, flags, .. Default::default() };
 		unsafe
 		{
-			Resolver::get().begin_command_buffer(self.0, &binfo).into_result()
+			Resolver::get()
+				.begin_command_buffer(self.0, &binfo)
+				.into_result()
 				.map(|_| CmdRecord { ptr: self, layout: [None, None] })
 		}
 	}
@@ -165,8 +204,9 @@ impl CommandBuffer
 impl<'d> CmdRecord<'d>
 {
 	/// Begin a new render pass
-	pub fn begin_render_pass(&mut self, pass: &RenderPass, framebuffer: &Framebuffer, render_area: VkRect2D,
-		clear_values: &[ClearValue], inline_commands: bool) -> &mut Self
+	pub fn begin_render_pass(
+		&mut self, pass: &RenderPass, framebuffer: &Framebuffer, render_area: VkRect2D, clear_values: &[ClearValue],
+		inline_commands: bool) -> &mut Self
 	{
 		let cvalues = clear_values.iter().map(|x| match x
 		{
@@ -769,13 +809,13 @@ impl<'d> CmdRecord<'d>
 	/// Set an event object to signaled state
 	pub fn set_event(&mut self, event: &Event, stage_mask: PipelineStageFlags) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_set_event(self.ptr.native_ptr(), event.0, stage_mask.0); }
+		unsafe { Resolver::get().cmd_set_event(self.ptr.native_ptr(), event.native_ptr(), stage_mask.0); }
 		self
 	}
 	/// Reset an event object to non-signaled state
 	pub fn reset_event(&mut self, event: &Event, stage_mask: PipelineStageFlags) -> &mut Self
 	{
-		unsafe { Resolver::get().cmd_reset_event(self.ptr.native_ptr(), event.0, stage_mask.0); }
+		unsafe { Resolver::get().cmd_reset_event(self.ptr.native_ptr(), event.native_ptr(), stage_mask.0); }
 		self
 	}
 	/// Wait for one or more events and insert a set of memory
@@ -784,7 +824,7 @@ impl<'d> CmdRecord<'d>
 		memory_barriers: &[VkMemoryBarrier], buffer_memory_barriers: &[VkBufferMemoryBarrier],
 		image_memory_barriers: &[VkImageMemoryBarrier]) -> &mut Self
 	{
-		let evs = events.iter().map(|x| x.0).collect::<Vec<_>>();
+		let evs = events.iter().map(|&e| e.native_ptr()).collect::<Vec<_>>();
 		unsafe
 		{
 			Resolver::get().cmd_wait_events(

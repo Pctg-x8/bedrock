@@ -39,8 +39,6 @@ mod vkresolve;
 #[cfg(feature = "Implements")]
 pub use vkresolve::{Resolver, ResolverInterface};
 
-use std::error::Error;
-
 #[cfg(feature = "Implements")] mod fnconv;
 
 pub type Result<T> = std::result::Result<T, VkResultBox>;
@@ -55,11 +53,11 @@ impl VkResultHandler for VkResult
 /// Boxed version of `VkResult`
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct VkResultBox(pub VkResult);
-impl Error for VkResultBox
+impl std::fmt::Debug for VkResultBox
 {
-    fn description(&self) -> &str
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result
     {
-        match self.0
+        write!(fmt, "[{:?}] {}", self.0, match self.0
         {
             // Success Codes //
             VK_SUCCESS => "Command successfully completed", VK_NOT_READY => "A fence or query has not yet completed",
@@ -97,20 +95,14 @@ impl Error for VkResultBox
             #[cfg(feature = "VK_KHR_external_memory_capabilities")]
             VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR => "An external handle is not a valid handle of ths specified type",
             _ => "Unknown or extension-specific error"
-        }
-    }
-}
-impl std::fmt::Debug for VkResultBox
-{
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result
-    {
-        write!(fmt, "[{:?}] {}", self.0, self.description())
+        })
     }
 }
 impl std::fmt::Display for VkResultBox
 {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result { std::fmt::Debug::fmt(self, fmt) }
 }
+impl std::error::Error for VkResultBox {}
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle

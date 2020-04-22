@@ -1,20 +1,15 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
-#![cfg_attr(not(feature = "Implements"), allow(dead_code))]
-
-use super::*;
-use std::ffi::CString;
-use VkHandle;
+use crate::vk::*;
+use crate::VkHandle;
 use std::ops::*;
-#[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
-#[cfg(feature = "Implements")] use VkResultHandler;
-#[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
-#[cfg(feature = "Implements")] use std::mem::MaybeUninit;
-#[cfg(feature = "Implements")] use crate::fnconv::FnTransmute;
+#[cfg(feature = "Implements")] use crate::{
+	VkResultHandler, fnconv::FnTransmute, Extent2D, ImageUsage, ImageFlags,
+	vkresolve::{Resolver, ResolverInterface}
+};
+#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))] use crate::{PresentMode, Surface};
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
-#[cfg(    feature = "Multithreaded") ] use std::sync::RwLock as InternallyMutable;
-#[cfg(not(feature = "Multithreaded"))] use std::cell::RefCell as InternallyMutable;
 
 #[cfg(feature = "Multithreaded")] struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
 #[cfg(feature = "Multithreaded")] impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T>
@@ -23,29 +18,7 @@ use std::ops::*;
 	fn deref(&self) -> &T { self.0.as_ref().unwrap() }
 }
 
-struct LazyCell<T>(InternallyMutable<Option<T>>);
-impl<T> LazyCell<T>
-{
-	pub fn new() -> Self { LazyCell(From::from(None)) }
-	#[cfg(not(feature = "Multithreaded"))]
-	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> ::std::cell::Ref<T>
-	{
-		if self.0.borrow().is_none() { *self.0.borrow_mut() = Some(initializer()); }
-		::std::cell::Ref::map(self.0.borrow(), |o| o.as_ref().unwrap())
-	}
-	#[cfg(feature = "Multithreaded")]
-	pub fn get<F: FnOnce() -> T>(&self, initializer: F) -> LazyCellReadRef<T>
-	{
-		if self.0.read().expect("Poisoned").is_none() { *self.0.write().expect("Poisoned") = Some(initializer()); }
-		LazyCellReadRef(self.0.read().expect("Poisoned"))
-	}
-}
-
-struct InstanceCell
-{
-	n: VkInstance, vk_create_descriptor_update_template: LazyCell<PFN_vkCreateDescriptorUpdateTemplate>,
-	vk_destroy_descriptor_update_template: LazyCell<PFN_vkDestroyDescriptorUpdateTemplate>
-}
+struct InstanceCell(VkInstance);
 /// Opaque handle to a instance object
 #[derive(Clone)] pub struct Instance(RefCounter<InstanceCell>);
 #[cfg(feature = "Multithreaded")] unsafe impl Sync for Instance {}
@@ -86,15 +59,15 @@ impl<'i> DoubleEndedIterator for IterPhysicalDevices<'i>
 }
 
 #[cfg(feature = "Implements")]
-impl Drop for InstanceCell { fn drop(&mut self) { unsafe { Resolver::get().destroy_instance(self.n, ::std::ptr::null()); } } }
+impl Drop for InstanceCell { fn drop(&mut self) { unsafe { Resolver::get().destroy_instance(self.0, std::ptr::null()); } } }
 
-impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0.n } }
+impl VkHandle for Instance { type Handle = VkInstance; fn native_ptr(&self) -> VkInstance { self.0 .0 } }
 impl VkHandle for PhysicalDevice { type Handle = VkPhysicalDevice; fn native_ptr(&self) -> VkPhysicalDevice { self.0 } }
 
 /// Builder object for constructing a `Instance`
 pub struct InstanceBuilder
 {
-	app_name: CString, engine_name: CString, extensions: Vec<CString>, layers: Vec<CString>,
+	_app_name: std::ffi::CString, _engine_name: std::ffi::CString, extensions: Vec<std::ffi::CString>, layers: Vec<std::ffi::CString>,
 	appinfo: VkApplicationInfo, cinfo: VkInstanceCreateInfo
 }
 impl InstanceBuilder
@@ -103,7 +76,8 @@ impl InstanceBuilder
 	{
 		InstanceBuilder
 		{
-			app_name: CString::new(app_name).unwrap(), engine_name: CString::new(engine_name).unwrap(),
+			_app_name: std::ffi::CString::new(app_name).unwrap(),
+			_engine_name: std::ffi::CString::new(engine_name).unwrap(),
 			extensions: Vec::new(), layers: Vec::new(), appinfo: VkApplicationInfo
 			{
 				applicationVersion: VK_MAKE_VERSION!(app_version.0, app_version.1, app_version.2),
@@ -119,11 +93,7 @@ impl InstanceBuilder
 	}
 	pub fn add_extension(&mut self, extension: &str) -> &mut Self
 	{
-		self.extensions.push(CString::new(extension).unwrap()); self
-	}
-	pub fn add_extension_zerotermed(&mut self, extension: &str) -> &mut Self
-	{
-		self.extensions.push(unsafe { ::std::ffi::CStr::from_ptr(extension.as_ptr() as *const _) }.to_owned()); self
+		self.extensions.push(std::ffi::CString::new(extension).unwrap()); self
 	}
 	pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(&mut self, extensions: Extensions) -> &mut Self
 	{
@@ -131,12 +101,16 @@ impl InstanceBuilder
 	}
 	pub fn add_layer(&mut self, layer: &str) -> &mut Self
 	{
-		self.layers.push(CString::new(layer).unwrap()); self
+		self.layers.push(std::ffi::CString::new(layer).unwrap()); self
 	}
 	pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self
 	{
 		for l in layers { self.add_layer(l); } self
 	}
+
+	pub fn create_info(&self) -> &VkInstanceCreateInfo { &self.cinfo }
+	pub fn application_info(&self) -> &VkApplicationInfo { &self.appinfo }
+
 	/// [feature = "Implements"] Create a new Vulkan instance
 	/// # Failures
 	/// On failure, this command returns
@@ -148,20 +122,24 @@ impl InstanceBuilder
 	/// * `VK_ERROR_EXTENSION_NOT_PRESENT`
 	/// * `VK_ERROR_INCOMPATIBLE_DRIVER`
 	#[cfg(feature = "Implements")]
-	pub fn create(&mut self) -> ::Result<Instance>
+	pub fn create(&mut self) -> crate::Result<Instance>
 	{
 		let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
 		let extensions: Vec<_> = self.extensions.iter().map(|x| x.as_ptr()).collect();
-		self.appinfo.pApplicationName = self.app_name.as_ptr(); self.appinfo.pEngineName = self.engine_name.as_ptr();
+		self.appinfo.pApplicationName = self._app_name.as_ptr();
+		self.appinfo.pEngineName = self._engine_name.as_ptr();
 		self.cinfo.enabledLayerCount = layers.len() as _; self.cinfo.enabledExtensionCount = extensions.len() as _;
 		self.cinfo.ppEnabledLayerNames = if layers.is_empty() { 0 as _ } else { layers.as_ptr() };
 		self.cinfo.ppEnabledExtensionNames = if extensions.is_empty() { 0 as _ } else { extensions.as_ptr() };
 		self.cinfo.pApplicationInfo = &self.appinfo;
 		let mut h = VK_NULL_HANDLE as _;
-		Ok(unsafe { Resolver::get().create_instance(&self.cinfo, ::std::ptr::null(), &mut h) }.into_result().map(|_| Instance(RefCounter::new(InstanceCell
+		unsafe
 		{
-			n: h, vk_create_descriptor_update_template: LazyCell::new(), vk_destroy_descriptor_update_template: LazyCell::new()
-		}))).unwrap())
+			Resolver::get()
+				.create_instance(&self.cinfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(|_| Instance(RefCounter::new(InstanceCell(h))))
+		}
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -171,13 +149,13 @@ impl Instance
 	/// Return a function pointer for a command
 	/// # Failures
 	/// If function is not provided by instance or `name` is empty, returns `None`
-	pub fn extra_procedure<F: ::fnconv::FnTransmute>(&self, name: &str) -> Option<F>
+	pub fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F>
 	{
 		if name.is_empty() { return None; }
 
 		unsafe
 		{
-			let fn_cstr = CString::new(name).unwrap();
+			let fn_cstr = std::ffi::CString::new(name).unwrap();
 			Resolver::get().get_instance_proc_addr(self.native_ptr(), fn_cstr.as_ptr())
 				.map(|f| FnTransmute::from_fn(f))
 		}
@@ -189,7 +167,7 @@ impl Instance
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_INITIALIZATION_FAILED`
-	pub fn enumerate_physical_devices(&self) -> ::Result<Vec<PhysicalDevice>>
+	pub fn enumerate_physical_devices(&self) -> crate::Result<Vec<PhysicalDevice>>
 	{
 		self.iter_physical_devices().map(|iter| iter.collect())
 	}
@@ -202,13 +180,20 @@ impl Instance
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_INITIALIZATION_FAILED`
-	pub fn iter_physical_devices(&self) -> ::Result<IterPhysicalDevices>
+	pub fn iter_physical_devices(&self) -> crate::Result<IterPhysicalDevices>
 	{
-		let mut n = 0;
-		unsafe { Resolver::get().enumerate_physical_devices(self.native_ptr(), &mut n, null_mut()).into_result()?; }
-		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _); }
-		unsafe { Resolver::get().enumerate_physical_devices(self.native_ptr(), &mut n, v.as_mut_ptr()).into_result()?; }
-		Ok(IterPhysicalDevices(v, 0, self))
+		unsafe
+		{
+			let mut n = 0;
+			Resolver::get()
+				.enumerate_physical_devices(self.native_ptr(), &mut n, std::ptr::null_mut())
+				.into_result()?;
+			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
+			Resolver::get()
+				.enumerate_physical_devices(self.native_ptr(), &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(move |_| IterPhysicalDevices(v, 0, self))
+		}
 	}
 	/// Returns up to all of global layer properties
 	/// # Failures
@@ -216,12 +201,23 @@ impl Instance
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn enumerate_layer_properties() -> ::Result<Vec<VkLayerProperties>>
+	pub fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>>
 	{
 		let mut n = 0;
-		unsafe { Resolver::get().enumerate_instance_layer_properties(&mut n, null_mut()) }.into_result()?;
+		unsafe
+		{
+			Resolver::get()
+				.enumerate_instance_layer_properties(&mut n, std::ptr::null_mut())
+				.into_result()?;
+		}
 		let mut v = Vec::with_capacity(n as _); unsafe { v.set_len(n as _) };
-		unsafe { Resolver::get().enumerate_instance_layer_properties(&mut n, v.as_mut_ptr()) }.into_result().map(|_| v)
+		unsafe
+		{
+			Resolver::get()
+				.enumerate_instance_layer_properties(&mut n, v.as_mut_ptr()) 
+				.into_result()
+				.map(|_| v)
+		}
 	}
 	/// Returns up to all of global extension properties
 	/// # Failures
@@ -230,17 +226,21 @@ impl Instance
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_LAYER_NOT_PRESENT`
-	pub fn enumerate_extension_properties(layer_name: Option<&str>) -> ::Result<Vec<VkExtensionProperties>>
+	pub fn enumerate_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>>
 	{
-		let cn = layer_name.map(|s| CString::new(s).unwrap());
-		let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or(null());
-		unsafe {
+		let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
+		let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or_else(std::ptr::null);
+		unsafe
+		{
 			let mut n = 0;
-			Resolver::get().enumerate_instance_extension_properties(cptr, &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.enumerate_instance_extension_properties(cptr, &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().enumerate_instance_extension_properties(cptr, &mut n, v.as_mut_ptr()).into_result()?;
-			
-			Ok(v)
+			Resolver::get()
+				.enumerate_instance_extension_properties(cptr, &mut n, v.as_mut_ptr())
+				.into_result()
+				.map(|_| v)
 		}
 	}
 }
@@ -248,18 +248,18 @@ impl Instance
 impl Instance
 {
 	pub(crate) unsafe fn create_descriptor_update_template(&self, device: VkDevice, info: &VkDescriptorUpdateTemplateCreateInfo,
-		alloc: *const VkAllocationCallbacks, handle: &mut VkDescriptorUpdateTemplate) -> VkResult
+		alloc: *const VkAllocationCallbacks, handle: *mut VkDescriptorUpdateTemplate) -> VkResult
 	{
-		let f = self.0.vk_create_descriptor_update_template
-			.get(|| self.extra_procedure("vkCreateDescriptorUpdateTemplate").unwrap());
-		f(device, info, alloc, handle)
+		let f: PFN_vkCreateDescriptorUpdateTemplate = self.extra_procedure("vkCreateDescriptorUpdateTemplate")
+			.expect("No vkCreateDescriptorUpdateTemplate found");
+		(f)(device, info, alloc, handle)
 	}
 	pub(crate) unsafe fn destroy_descriptor_update_template(&self, device: VkDevice, handle: VkDescriptorUpdateTemplate,
 		alloc: *const VkAllocationCallbacks)
 	{
-		let f = self.0.vk_destroy_descriptor_update_template
-			.get(|| self.extra_procedure("vkDestroyDescriptorUpdateTemplate").unwrap());
-		f(device, handle, alloc)
+		let f: PFN_vkDestroyDescriptorUpdateTemplate = self.extra_procedure("vkDestroyDescriptorUpdateTemplate")
+			.expect("No vkDestroyDescriptorUpdateTemplate");
+		(f)(device, handle, alloc)
 	}
 }
 /// Following methods are enabled with [feature = "Implements"]
@@ -274,10 +274,15 @@ impl PhysicalDevice
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn enumerate_layer_properties(&self) -> super::Result<Vec<VkLayerProperties>>
+	pub fn enumerate_layer_properties(&self) -> crate::Result<Vec<VkLayerProperties>>
 	{
 		let mut count = 0;
-		unsafe { Resolver::get().enumerate_device_layer_properties(self.0, &mut count, null_mut()).into_result()? };
+		unsafe
+		{
+			Resolver::get()
+				.enumerate_device_layer_properties(self.0, &mut count, std::ptr::null_mut())
+				.into_result()?;
+		}
 		let mut v = Vec::with_capacity(count as _); unsafe { v.set_len(count as _); }
 		unsafe
 		{
@@ -295,14 +300,16 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_LAYER_NOT_PRESENT`
-	pub fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> super::Result<Vec<VkExtensionProperties>>
+	pub fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>>
 	{
-		let cn = layer_name.map(|s| CString::new(s).unwrap());
-		let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or(null());
+		let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
+		let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or_else(std::ptr::null);
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().enumerate_device_extension_properties(self.0, cptr, &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.enumerate_device_extension_properties(self.0, cptr, &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get()
 				.enumerate_device_extension_properties(self.0, cptr, &mut n, v.as_mut_ptr())
@@ -314,7 +321,7 @@ impl PhysicalDevice
 	/// Reports capabilities of a physical device.
 	pub fn features(&self) -> VkPhysicalDeviceFeatures
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_physical_device_features(self.0, p.as_mut_ptr());
@@ -325,7 +332,7 @@ impl PhysicalDevice
 	/// Lists physical device's format capabilities
 	pub fn format_properties(&self, format: VkFormat) -> VkFormatProperties
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_physical_device_format_properties(self.0, format, p.as_mut_ptr());
@@ -340,14 +347,17 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_FORMAT_NOT_SUPPORTED`
-	pub fn image_format_properties(&self, format: VkFormat, itype: VkImageType, tiling: VkImageTiling,
-		usage: ImageUsage, flags: ImageFlags) -> ::Result<VkImageFormatProperties>
+	pub fn image_format_properties(
+		&self, format: VkFormat, itype: VkImageType, tiling: VkImageTiling,
+		usage: ImageUsage, flags: ImageFlags) -> crate::Result<VkImageFormatProperties>
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_physical_device_image_format_properties(
-				self.0, format, itype, tiling, usage.0, flags.0, p.as_mut_ptr())
+			Resolver::get()
+				.get_physical_device_image_format_properties(
+					self.0, format, itype, tiling, usage.0, flags.0, p.as_mut_ptr()
+				)
 				.into_result()
 				.map(|_| p.assume_init())
 		}
@@ -355,7 +365,7 @@ impl PhysicalDevice
 	/// Returns properties of a physical device
 	pub fn properties(&self) -> VkPhysicalDeviceProperties
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_physical_device_properties(self.0, p.as_mut_ptr());
@@ -369,9 +379,11 @@ impl PhysicalDevice
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().get_physical_device_queue_family_properties(self.0, &mut n, null_mut());
+			Resolver::get()
+				.get_physical_device_queue_family_properties(self.0, &mut n, std::ptr::null_mut());
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_physical_device_queue_family_properties(self.0, &mut n, v.as_mut_ptr());
+			Resolver::get()
+				.get_physical_device_queue_family_properties(self.0, &mut n, v.as_mut_ptr());
 
 			QueueFamilies(v)
 		}
@@ -379,7 +391,7 @@ impl PhysicalDevice
 	/// Reports memory information for the specified physical device
 	pub fn memory_properties(&self) -> MemoryProperties
 	{
-		let mut p = MaybeUninit::uninit();
+		let mut p = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_physical_device_memory_properties(self.0, p.as_mut_ptr());
@@ -388,17 +400,24 @@ impl PhysicalDevice
 		}
 	}
 	/// Retrieve properties of an image format applied to sparse images
-	pub fn sparse_image_format_properties(&self, format: VkFormat, itype: VkImageType, samples: VkSampleCountFlags,
+	pub fn sparse_image_format_properties(
+		&self, format: VkFormat, itype: VkImageType, samples: VkSampleCountFlags,
 		usage: ImageUsage, tiling: VkImageTiling) -> Vec<VkSparseImageFormatProperties>
 	{
 		unsafe
 		{ 
 			let mut n = 0;
-			Resolver::get().get_physical_device_sparse_image_format_properties(self.0, format, itype, samples,
-				usage.0, tiling, &mut n, null_mut());
+			Resolver::get()
+				.get_physical_device_sparse_image_format_properties(
+					self.0, format, itype, samples,
+					usage.0, tiling, &mut n, std::ptr::null_mut()
+				);
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_physical_device_sparse_image_format_properties(self.0, format, itype, samples,
-				usage.0, tiling, &mut n, v.as_mut_ptr());
+			Resolver::get()
+				.get_physical_device_sparse_image_format_properties(
+					self.0, format, itype, samples,
+					usage.0, tiling, &mut n, v.as_mut_ptr()
+				);
 			
 			v
 		}
@@ -429,12 +448,13 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn surface_support(&self, queue_family: u32, surface: &::Surface) -> ::Result<bool>
+	pub fn surface_support(&self, queue_family: u32, surface: &Surface) -> crate::Result<bool>
 	{
 		let mut f = false as _;
 		unsafe
 		{
-			Resolver::get().get_physical_device_surface_support_khr(self.0, queue_family, surface.native_ptr(), &mut f)
+			Resolver::get()
+				.get_physical_device_surface_support_khr(self.0, queue_family, surface.native_ptr(), &mut f)
 				.into_result().map(|_| f != 0)
 		}
 	}
@@ -445,9 +465,9 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn surface_capabilities(&self, surface: &::Surface) -> ::Result<VkSurfaceCapabilitiesKHR>
+	pub fn surface_capabilities(&self, surface: &Surface) -> crate::Result<VkSurfaceCapabilitiesKHR>
 	{
-		let mut s = MaybeUninit::uninit();
+		let mut s = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get()
@@ -463,13 +483,13 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn surface_formats(&self, surface: &::Surface) -> ::Result<Vec<VkSurfaceFormatKHR>>
+	pub fn surface_formats(&self, surface: &Surface) -> crate::Result<Vec<VkSurfaceFormatKHR>>
 	{
 		unsafe
 		{
 			let mut n = 0;
 			Resolver::get()
-				.get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, null_mut())
+				.get_physical_device_surface_formats_khr(self.0, surface.native_ptr(), &mut n, std::ptr::null_mut())
 				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get()
@@ -486,13 +506,14 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn surface_present_modes(&self, surface: &Surface) -> ::Result<Vec<PresentMode>>
+	pub fn surface_present_modes(&self, surface: &Surface) -> crate::Result<Vec<PresentMode>>
 	{
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().get_physical_device_surface_present_modes_khr(self.0,
-				surface.native_ptr(), &mut n, ::std::ptr::null_mut()).into_result()?;
+			Resolver::get()
+				.get_physical_device_surface_present_modes_khr(self.0, surface.native_ptr(), &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
 			Resolver::get()
 				.get_physical_device_surface_present_modes_khr(self.0, surface.native_ptr(), &mut n, v.as_mut_ptr())
@@ -503,13 +524,13 @@ impl PhysicalDevice
 	
 	/// #[feature = "VK_KHR_get_surface_capabilities2"]
 	#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-	pub fn surface_capabilities2(&self, info: &VkPhysicalDeviceSurfaceInfo2KHR) -> ::Result<VkSurfaceCapabilities2KHR>
+	pub fn surface_capabilities2(&self, info: &VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<VkSurfaceCapabilities2KHR>
 	{
-		let mut d = MaybeUninit::uninit();
+		let mut d = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_physical_device_surface_capabilities2_khr(self.0,
-				info as *const _, d.as_mut_ptr())
+			Resolver::get()
+				.get_physical_device_surface_capabilities2_khr(self.0, info as *const _, d.as_mut_ptr())
 				.into_result()
 				.map(|_| d.assume_init())
 		}
@@ -522,8 +543,8 @@ impl PhysicalDevice
 {
 	/// [feature = "VK_KHR_xlib_surface"] Query physical device for presentation to X11 server using Xlib
 	#[cfg(feature = "VK_KHR_xlib_surface")]
-	pub fn xlib_presentation_support(&self, queue_family: u32,
-		display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool
+	pub fn xlib_presentation_support(
+		&self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool
 	{
 		unsafe
 		{
@@ -533,8 +554,8 @@ impl PhysicalDevice
 	}
 	/// [feature = "VK_KHR_xcb_surface"] Query physical device for presentation to X11 server using XCB
 	#[cfg(feature = "VK_KHR_xcb_surface")]
-	pub fn xcb_presentation_support(&self, queue_family: u32,
-		connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool
+	pub fn xcb_presentation_support(
+		&self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool
 	{
 		unsafe
 		{
@@ -572,14 +593,17 @@ impl PhysicalDevice
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_properties(&self) -> ::Result<Vec<VkDisplayPropertiesKHR>>
+	pub fn display_properties(&self) -> crate::Result<Vec<VkDisplayPropertiesKHR>>
 	{
 		unsafe 
 		{
 			let mut n = 0;
-			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.get_physical_device_display_properties_khr(self.0, &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr())
+			Resolver::get()
+				.get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
 		}
@@ -590,14 +614,17 @@ impl PhysicalDevice
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_plane_properties(&self) -> ::Result<Vec<VkDisplayPlanePropertiesKHR>>
+	pub fn display_plane_properties(&self) -> crate::Result<Vec<VkDisplayPlanePropertiesKHR>>
 	{
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.get_physical_device_display_plane_properties_khr(self.0, &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr())
+			Resolver::get()
+				.get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
 		}
@@ -608,14 +635,17 @@ impl PhysicalDevice
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_plane_supported_displays(&self, index: u32) -> ::Result<Vec<VkDisplayKHR>>
+	pub fn display_plane_supported_displays(&self, index: u32) -> crate::Result<Vec<VkDisplayKHR>>
 	{
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.get_display_plane_supported_displays_khr(self.0, index, &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr())
+			Resolver::get()
+				.get_display_plane_supported_displays_khr(self.0, index, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
 		}
@@ -626,14 +656,17 @@ impl PhysicalDevice
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> ::Result<Vec<VkDisplayModePropertiesKHR>>
+	pub fn display_mode_properties(&self, display: VkDisplayKHR) -> crate::Result<Vec<VkDisplayModePropertiesKHR>>
 	{
 		unsafe
 		{
 			let mut n = 0;
-			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, null_mut()).into_result()?;
+			Resolver::get()
+				.get_display_mode_properties_khr(self.0, display, &mut n, std::ptr::null_mut())
+				.into_result()?;
 			let mut v = Vec::with_capacity(n as _); v.set_len(n as _);
-			Resolver::get().get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr())
+			Resolver::get()
+				.get_display_mode_properties_khr(self.0, display, &mut n, v.as_mut_ptr())
 				.into_result()
 				.map(move |_| v)
 		}
@@ -646,7 +679,7 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_INITIALIZATION_FAILED`
 	pub fn new_display_mode(&self, display: VkDisplayKHR, region: Extent2D, refresh_rate: u32)
-		-> ::Result<VkDisplayModeKHR>
+		-> crate::Result<VkDisplayModeKHR>
 	{
 		let cinfo = VkDisplayModeCreateInfoKHR
 		{
@@ -659,7 +692,8 @@ impl PhysicalDevice
 		let mut h = VK_NULL_HANDLE as _;
 		unsafe
 		{
-			Resolver::get().create_display_mode_khr(self.0, display, &cinfo, ::std::ptr::null(), &mut h)
+			Resolver::get()
+				.create_display_mode_khr(self.0, display, &cinfo, std::ptr::null(), &mut h)
 				.into_result()
 				.map(move |_| h)
 		}
@@ -671,12 +705,13 @@ impl PhysicalDevice
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn display_plane_capabilities(&self, mode: VkDisplayModeKHR, plane_index: u32)
-		-> ::Result<VkDisplayPlaneCapabilitiesKHR>
+		-> crate::Result<VkDisplayPlaneCapabilitiesKHR>
 	{
-		let mut s = MaybeUninit::uninit();
+		let mut s = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
-			Resolver::get().get_display_plane_capabilities_khr(self.0, mode, plane_index, s.as_mut_ptr())
+			Resolver::get()
+				.get_display_plane_capabilities_khr(self.0, mode, plane_index, s.as_mut_ptr())
 				.into_result()
 				.map(move |_| s.assume_init())
 		}
@@ -795,4 +830,62 @@ impl BitOr for MemoryPropertyFlags
 impl BitOrAssign for MemoryPropertyFlags
 {
 	fn bitor_assign(&mut self, other: Self) { self.0 |= other.0; }
+}
+
+/// List of queue families
+pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);
+impl QueueFamilies
+{
+	/// Find a queue family index containing specified bitflags
+	#[allow(non_snake_case)]
+	pub fn find_matching_index(&self, flags: QueueFlags) -> Option<u32>
+	{
+		self.0.iter().position(|q| (q.queueFlags & flags.0) != 0).map(|x| x as _)
+	}
+	/// Find a queue family index containing specified bitflags
+	#[allow(non_snake_case)]
+	pub fn find_another_matching_index(&self, flags: QueueFlags, exclude: u32) -> Option<u32>
+	{
+		self.0.iter().enumerate()
+			.find(|&(n, &VkQueueFamilyProperties { queueFlags, .. })| (queueFlags & flags.0) != 0 && exclude != n as u32)
+			.map(|(n, _)| n as _)
+	}
+	/// Number of queue families
+	pub fn count(&self) -> u32 { self.0.len() as _ }
+	/// Number of queues in selected queue family
+	pub fn queue_count(&self, family_index: u32) -> u32 { self.0[family_index as usize].queueCount }
+	/// Unsigned integer count of meaningful bits in the timestamps written via `vkCmdWriteTimestamp`
+	pub fn timestamp_valid_bits(&self, family_index: u32) -> u32 { self.0[family_index as usize].timestampValidBits }
+	/// Minimum granularity supported for image transfer operations on the queues in selected queue family
+	pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &VkExtent3D
+	{
+		&self.0[family_index as usize].minImageTransferGranularity
+	}
+}
+
+/// Set of bit of queue flags
+#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+pub struct QueueFlags(VkQueueFlags);
+impl QueueFlags
+{
+	/// Empty bits
+	pub const EMPTY: Self = QueueFlags(0);
+	/// Supports only graphics operations
+	pub const GRAPHICS: Self = QueueFlags(VK_QUEUE_GRAPHICS_BIT);
+	/// Supports only compute operations
+	pub const COMPUTE: Self = QueueFlags(VK_QUEUE_COMPUTE_BIT);
+	/// Supports only transfer operations
+	pub const TRANSFER: Self = QueueFlags(VK_QUEUE_TRANSFER_BIT);
+	/// Supports only sparse memory management operations
+	pub const SPARSE_BINDING: Self = QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT);
+	/// Supports graphics operations
+	pub const fn graphics(self) -> Self { QueueFlags(self.bits() | Self::GRAPHICS.0) }
+	/// Supports compute operations
+	pub const fn compute(self) -> Self { QueueFlags(self.0 | Self::COMPUTE.0) }
+	/// Supports transfer operations
+	pub const fn transfer(self) -> Self { QueueFlags(self.0 | Self::TRANSFER.0) }
+	/// Supports sparse memory management operatinons
+	pub const fn sparse_binding(self) -> Self { QueueFlags(self.0 | Self::SPARSE_BINDING.0) }
+
+	pub const fn bits(self) -> VkQueueFlags { self.0 }
 }

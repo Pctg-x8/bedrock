@@ -1,9 +1,8 @@
 //! Vulkan Debug Layer Extensions
 
-use vk::*;
-use VkHandle;
+use crate::vk::*;
+use crate::{VkHandle, Instance};
 #[cfg(feature = "Implements")] use VkResultHandler;
-use Instance;
 #[cfg(feature = "Implements")] use std::ptr::{null, null_mut};
 
 /// Opaque object to a debug report callback object
