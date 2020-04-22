@@ -356,6 +356,11 @@ pub trait ResolverInterface
     unsafe fn get_display_plane_capabilities_khr(&self, physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn create_display_plane_surface_khr(&self, instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    unsafe fn acquire_full_screen_exclusive_mode_ext(&self, device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    unsafe fn release_full_screen_exclusive_mode_ext(&self, device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 }
 
 pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
@@ -686,4 +691,9 @@ impl ResolverInterface for Resolver
     WrapAPI!(get_display_plane_capabilities_khr = vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(create_display_plane_surface_khr = vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    WrapAPI!(acquire_full_screen_exclusive_mode_ext = vkAcquireFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult);
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    WrapAPI!(release_full_screen_exclusive_mode_ext = vkReleaseFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult);
 }

@@ -4369,7 +4369,7 @@ ExportExtensions!("VK_EXT_hdr_metadata": hdr_metadata_ext);
 ExportExtensions!("VK_MVK_ios_surface": ios_surface_mvk);
 ExportExtensions!("VK_MVK_macos_surface": macos_surface_mvk);
 ExportExtensions!("VK_EXT_external_memory_dma_buf": external_memory_dma_buf_ext);
-ExportExtensions!("VK_EXT_queue_family_foreign": queue_family_foreign);
+// ExportExtensions!("VK_EXT_queue_family_foreign": queue_family_foreign);
 ExportExtensions!("VK_EXT_sampler_filter_minmax": sampler_filter_minmax_ext);
 ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);
 ExportExtensions!("VK_AMD_mixed_attachment_samples": mixed_attachment_samples_amd);
