@@ -441,6 +441,13 @@ impl FullScreenExclusiveInfoEXT
 			fullScreenExclusive: flags as _, .. Default::default()
 		})
 	}
+
+	/// Chain an extension-specific structure.
+	pub fn chain<T>(&mut self, next: &T) -> &mut Self
+	{
+		self.0.pNext = next as *const T as _;
+		self
+	}
 }
 
 /// Hint values an application can specify affecting full-screen transition behavior
@@ -461,4 +468,29 @@ pub enum FullScreenExclusiveEXT
 	/// The application will manage full-screen exclusive mode by using the `vkAcquireFullScreenExclusiveModeEXT` and
 	/// `vkReleaseFullScreenExclusiveEXT` commands.
 	ApplicationControlled = VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT as _
+}
+
+/// Wraps VkSurfaceFullScreenExclusiveWin32InfoEXT structure: Specifying additional creation parameters specific to Win32 fullscreen exclusive mode.
+#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[repr(transparent)]
+#[derive(Clone, Debug)]
+pub struct FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT);
+#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+impl FullScreenExclusiveWin32InfoEXT
+{
+	/// Constructs the structure, with a handle identifying the display to create the surface with.
+	pub fn new(handle: winapi::shared::windef::HMONITOR) -> Self
+	{
+		FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT
+		{
+			hmonitor: handle, .. Default::default()
+		})
+	}
+
+	/// Chain an extension-specific structure.
+	pub fn chain<T>(&mut self, next: &T) -> &mut Self
+	{
+		self.0.pNext = next as *const T as _;
+		self
+	}
 }
