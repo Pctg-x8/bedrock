@@ -112,6 +112,11 @@ impl InstanceBuilder
 			}, cinfo: VkInstanceCreateInfo { .. Default::default() }
 		}
 	}
+	pub fn set_api_version(&mut self, major: u32, minor: u32, patch: u32) -> &mut Self
+	{
+		self.appinfo.apiVersion = VK_MAKE_VERSION!(major, minor, patch);
+		self
+	}
 	pub fn add_extension(&mut self, extension: &str) -> &mut Self
 	{
 		self.extensions.push(CString::new(extension).unwrap()); self
