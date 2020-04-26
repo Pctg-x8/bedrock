@@ -144,7 +144,7 @@ impl Surface
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	#[cfg(feature = "VK_KHR_win32_surface")]
-	pub fn new_win32(instance: &::Instance,
+	pub fn new_win32(instance: &Instance,
 		hinstance: winapi::shared::minwindef::HINSTANCE, hwnd: winapi::shared::windef::HWND)
 		-> crate::Result<Self>
 	{
