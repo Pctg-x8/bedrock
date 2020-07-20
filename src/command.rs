@@ -1110,12 +1110,12 @@ pub struct BufferMemoryBarrier(VkBufferMemoryBarrier);
 impl BufferMemoryBarrier
 {
 	/// Construct a new buffer descriptor
-	pub fn new(buf: &Buffer, range: Range<usize>, src_access_mask: VkAccessFlags, dst_access_mask: VkAccessFlags)
+	pub fn new(buf: &Buffer, range: Range<VkDeviceSize>, src_access_mask: VkAccessFlags, dst_access_mask: VkAccessFlags)
 		-> Self
 	{
 		BufferMemoryBarrier(VkBufferMemoryBarrier
 		{
-			buffer: buf.native_ptr(), offset: range.start as _, size: (range.end - range.start) as _,
+			buffer: buf.native_ptr(), offset: range.start, size: range.end - range.start,
 			srcAccessMask: src_access_mask, dstAccessMask: dst_access_mask,
 			.. Default::default()
 		})
