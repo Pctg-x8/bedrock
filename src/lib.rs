@@ -337,6 +337,8 @@ mod command; pub use command::*;
 #[cfg(feature = "VK_EXT_debug_report")] mod debug;
 #[cfg(feature = "VK_EXT_debug_report")] pub use debug::*;
 
+mod fmt; pub use self::fmt::AsFormat;
+
 /// Opaque handle to a query pool object
 pub struct QueryPool(VkQueryPool, Device);
 impl VkHandle for QueryPool { type Handle = VkQueryPool; fn native_ptr(&self) -> VkQueryPool { self.0 } }
