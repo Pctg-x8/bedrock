@@ -501,6 +501,33 @@ pub struct GraphicsPipelineBuilder<'d>
 	dynamic_state_flags: PipelineDynamicStates
 }
 
+/// Helper structure for VkVertexInputBindingDescription
+#[repr(transparent)]
+pub struct VertexInputBindingDescription(VkVertexInputBindingDescription);
+impl VertexInputBindingDescription {
+	/// Consumed per vertex with stride
+	pub fn per_vertex(binding: u32, stride: u32) -> Self {
+		VertexInputBindingDescription(VkVertexInputBindingDescription {
+			binding, stride, inputRate: VK_VERTEX_INPUT_RATE_VERTEX
+		})
+	}
+	/// Consumed per instance with stride
+	pub fn per_instance(binding: u32, stride: u32) -> Self {
+		VertexInputBindingDescription(VkVertexInputBindingDescription {
+			binding, stride, inputRate: VK_VERTEX_INPUT_RATE_INSTANCE
+		})
+	}
+
+	/// Consumed per vertex the structured data
+	pub fn per_vertex_typed<T>(binding: u32) -> Self {
+		Self::per_vertex(binding, std::mem::size_of::<T>() as _)
+	}
+	/// Consumed per instance the structured data
+	pub fn per_instance_typed<T>(binding: u32) -> Self {
+		Self::per_instance(binding, std::mem::size_of::<T>() as _)
+	}
+}
+
 /// Tessellation Stage Shaders
 #[derive(Clone)]
 pub struct TessellationStages<'d> { pub control: PipelineShader<'d>, pub evaluation: PipelineShader<'d> }
@@ -512,12 +539,12 @@ pub struct VertexProcessingStages<'d>
 	ia: VkPipelineInputAssemblyStateCreateInfo,
 	geometry: Option<PipelineShader<'d>>, fragment: Option<PipelineShader<'d>>,
 	tessellation: Option<TessellationStages<'d>>,
-	_holder: PhantomData<(&'d [VkVertexInputBindingDescription], &'d [VkVertexInputAttributeDescription])>
+	_holder: PhantomData<(&'d [VertexInputBindingDescription], &'d [VkVertexInputAttributeDescription])>
 }
 impl<'d> VertexProcessingStages<'d>
 {
 	pub fn new(vsh: PipelineShader<'d>,
-		vbind: &'d [VkVertexInputBindingDescription], vattr: &'d [VkVertexInputAttributeDescription],
+		vbind: &'d [VertexInputBindingDescription], vattr: &'d [VkVertexInputAttributeDescription],
 		primitive_topo: VkPrimitiveTopology) -> Self
 	{
 		VertexProcessingStages
@@ -525,7 +552,7 @@ impl<'d> VertexProcessingStages<'d>
 			vertex: vsh, vi: VkPipelineVertexInputStateCreateInfo
 			{
 				vertexBindingDescriptionCount: vbind.len() as _,
-				pVertexBindingDescriptions: vbind.as_ptr(),
+				pVertexBindingDescriptions: vbind.as_ptr() as _,
 				vertexAttributeDescriptionCount: vattr.len() as _,
 				pVertexAttributeDescriptions: vattr.as_ptr(), .. Default::default()
 			},
