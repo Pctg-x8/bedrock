@@ -286,10 +286,8 @@ impl From<VkViewport> for VkRect2D
 #[repr(transparent)]
 #[derive(Clone, Debug, PartialEq)]
 pub struct Viewport(VkViewport);
-impl From<VkViewport> for Viewport
-{
-    fn from(v: VkViewport) -> Self { Viewport(v) }
-}
+impl From<VkViewport> for Viewport { fn from(v: VkViewport) -> Self { Viewport(v) } }
+impl From<Viewport> for VkViewport { fn from(v: Viewport) -> Self { v.0 } }
 impl Viewport
 {
     pub fn into_inner(self) -> VkViewport { self.0 }
