@@ -503,7 +503,14 @@ pub struct GraphicsPipelineBuilder<'d>
 
 /// Helper structure for VkVertexInputBindingDescription
 #[repr(transparent)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct VertexInputBindingDescription(VkVertexInputBindingDescription);
+impl From<VkVertexInputBindingDescription> for VertexInputBindingDescription {
+	fn from(v: VkVertexInputBindingDescription) -> Self { VertexInputBindingDescription(v) }
+}
+impl From<VertexInputBindingDescription> for VkVertexInputBindingDescription {
+	fn from(v: VertexInputBindingDescription) -> Self { v.0 }
+}
 impl VertexInputBindingDescription {
 	/// Consumed per vertex with stride
 	pub fn per_vertex(binding: u32, stride: u32) -> Self {
