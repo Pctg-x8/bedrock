@@ -10,12 +10,12 @@ use crate::{VkHandle, DeviceChild, ShaderStage, Device, ImageLayout};
 
 /// Opaque handle to a descriptor set layout object
 #[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_descriptor_set_layout"]
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 /// Opaque handle to a descriptor pool object
 #[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_descriptor_pool"]
 pub struct DescriptorPool(VkDescriptorPool, Device);
-
-#[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[destroy_descriptor_set_layout], DescriptorPool[destroy_descriptor_pool] }
 
 #[derive(Clone, Hash)]
 pub enum DescriptorSetLayoutBinding<'s> {
