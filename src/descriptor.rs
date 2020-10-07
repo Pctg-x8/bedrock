@@ -138,8 +138,7 @@ pub struct DescriptorPoolSize(pub DescriptorType, pub u32);
 /// Specified the type of a descriptor in a descriptor set
 #[repr(u32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord)]
-pub enum DescriptorType
-{
+pub enum DescriptorType {
     Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
     CombinedImageSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER as _,
     SampledImage = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE as _,
@@ -155,8 +154,7 @@ pub enum DescriptorType
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl DescriptorPool
-{
+impl DescriptorPool {
     /// Creates a descriptor pool object
     /// # Failures
     /// On failure, this command returns
