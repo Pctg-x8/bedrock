@@ -116,3 +116,5 @@ wayland-client = { version = "~0.9", optional = true }
 android = { git = "https://github.com/Pctg-x8/android-defs-rs", optional = true }
 winapi = { version = "~0.3", optional = true, features = ["windef"] }
 libloading = { version = "0.5", optional = true }
+
+derives = { path = "./derives" }

@@ -1,6 +1,7 @@
 //! Vulkan Descriptors
 
 use crate::vk::*;
+use derives::*;
 use crate::{VkHandle, DeviceChild, ShaderStage, Device, ImageLayout};
 #[cfg(feature = "Implements")] use crate::{
     VkResultHandler,
@@ -8,20 +9,16 @@ use crate::{VkHandle, DeviceChild, ShaderStage, Device, ImageLayout};
 };
 
 /// Opaque handle to a descriptor set layout object
+#[derive(VkHandle, DeviceChild)]
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 /// Opaque handle to a descriptor pool object
+#[derive(VkHandle, DeviceChild)]
 pub struct DescriptorPool(VkDescriptorPool, Device);
 
 #[cfg(feature = "Implements")] DeviceChildCommonDrop!{ for DescriptorSetLayout[destroy_descriptor_set_layout], DescriptorPool[destroy_descriptor_pool] }
 
-impl VkHandle for DescriptorSetLayout { type Handle = VkDescriptorSetLayout; fn native_ptr(&self) -> VkDescriptorSetLayout { self.0 } }
-impl VkHandle for DescriptorPool { type Handle = VkDescriptorPool; fn native_ptr(&self) -> VkDescriptorPool { self.0 } }
-impl DeviceChild for DescriptorSetLayout { fn device(&self) -> &Device { &self.1 } }
-impl DeviceChild for DescriptorPool { fn device(&self) -> &Device { &self.1 } }
-
-#[derive(Clone)]
-pub enum DescriptorSetLayoutBinding<'s>
-{
+#[derive(Clone, Hash)]
+pub enum DescriptorSetLayoutBinding<'s> {
     Sampler(u32, ShaderStage, &'s [VkSampler]),
     CombinedImageSampler(u32, ShaderStage, &'s [VkSampler]),
     SampledImage(u32, ShaderStage),
@@ -34,12 +31,9 @@ pub enum DescriptorSetLayoutBinding<'s>
     StorageBufferDynamic(u32, ShaderStage),
     InputAttachment(u32, ShaderStage)
 }
-impl<'s> DescriptorSetLayoutBinding<'s>
-{
-    fn descriptor_type(&self) -> VkDescriptorType
-    {
-        match self
-        {
+impl<'s> DescriptorSetLayoutBinding<'s> {
+    fn descriptor_type(&self) -> VkDescriptorType {
+        match self {
             Self::Sampler(_, _, _) => VK_DESCRIPTOR_TYPE_SAMPLER,
             Self::CombinedImageSampler(_, _, _) => VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
             Self::SampledImage(_, _) => VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
@@ -53,19 +47,15 @@ impl<'s> DescriptorSetLayoutBinding<'s>
             Self::InputAttachment(_, _) => VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT
         }
     }
-    fn immutable_samplers(&self) -> &'s [VkSampler]
-    {
-        match self
-        {
+    fn immutable_samplers(&self) -> &'s [VkSampler] {
+        match self {
             &Self::Sampler(_, _, s) => s,
             &Self::CombinedImageSampler(_, _, s) => s,
             _ => &[]
         }
     }
-    fn common_part(&self) -> (u32, ShaderStage)
-    {
-        match self
-        {
+    fn common_part(&self) -> (u32, ShaderStage) {
+        match self {
             &Self::Sampler(c, s, _) | &Self::CombinedImageSampler(c, s, _) |
             &Self::SampledImage(c, s) | &Self::StorageImage(c, s) |
             &Self::UniformTexelBuffer(c, s) | &Self::StorageTexelBuffer(c, s) |
@@ -75,15 +65,12 @@ impl<'s> DescriptorSetLayoutBinding<'s>
         }
     }
 }
-impl<'s> DescriptorSetLayoutBinding<'s>
-{
-    pub fn make_structure_with_binding_index(&self, binding_index: u32) -> VkDescriptorSetLayoutBinding
-    {
+impl<'s> DescriptorSetLayoutBinding<'s> {
+    pub fn make_structure_with_binding_index(&self, binding_index: u32) -> VkDescriptorSetLayoutBinding {
         let (c, s) = self.common_part();
         let iss = self.immutable_samplers();
 
-        VkDescriptorSetLayoutBinding
-        {
+        VkDescriptorSetLayoutBinding {
             binding: binding_index,
             descriptorType: self.descriptor_type(),
             descriptorCount: c,

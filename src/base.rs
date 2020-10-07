@@ -245,8 +245,7 @@ impl Instance
 	}
 }
 #[cfg(feature = "Implements")]
-impl Instance
-{
+impl Instance {
 	pub(crate) unsafe fn create_descriptor_update_template(&self, device: VkDevice, info: &VkDescriptorUpdateTemplateCreateInfo,
 		alloc: *const VkAllocationCallbacks, handle: *mut VkDescriptorUpdateTemplate) -> VkResult
 	{
@@ -264,8 +263,7 @@ impl Instance
 }
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl PhysicalDevice
-{
+impl PhysicalDevice {
 	pub fn parent(&self) -> &Instance { &self.1 }
 
 	/// Returns properties of available physical device layers
@@ -889,3 +887,117 @@ impl QueueFlags
 
 	pub const fn bits(self) -> VkQueueFlags { self.0 }
 }
+
+// Direct Display Renderings //
+
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+pub struct Display(VkDisplayKHR);
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+pub struct DisplayMode(VkDisplayMode);
+
+#[cfg(all(feature = "VK_KHR_display", feature = "Implements"))]
+impl PhysicalDevice {
+	/// [Implements][VK_KHR_display] Query information about the available displays.
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * VK_ERROR_OUT_OF_HOST_MEMORY
+	/// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_properties(&self) -> crate::Result<Vec<DisplayProperties>> {
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, null_mut()).into_result()?;
+			let mut v = Vec::with_capacity(n as usize); v.set_len(n as usize);
+			Resolver::get().get_physical_device_display_properties_khr(self.0, &mut n, v.as_mut_ptr() as *mut _)
+				.into_result()
+				.map(move |_| v)
+		}
+	}
+
+	/// [Implements][VK_KHR_display] Query the plane properties.
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * VK_ERROR_OUT_OF_HOST_MEMORY
+	/// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_plane_properties(&self) -> crate::Result<Vec<DisplayPlaneProperties>> {
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, null_mut()).into_result()?;
+			let mut v = Vec::with_capacity(n as usize); v.set_len(n as usize);
+			Resolver::get().get_physical_device_display_plane_properties_khr(self.0, &mut n, v.as_mut_ptr() as *mut _)
+				.into_result()
+				.map(move |_| v)
+		}
+	}
+
+	/// [Implements][VK_KHR_display] Query the list of displays a plane supports.
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * VK_ERROR_OUT_OF_HOST_MEMORY
+	/// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+	pub fn display_plane_supported_displays(&self, plane_index: u32) -> crate::Result<Vec<Display>> {
+		unsafe {
+			let mut n = 0;
+			Resolver::get().get_display_plane_supported_displays_khr(
+				self.0, plane_index, &mut n, null_mut()
+			).into_result()?;
+			let mut v = Vec::with_capacity(n as usize); n.set_len(n as usize);
+			Resolver::get().get_display_plane_supported_displays_khr(
+				self.0, plane_index, &mut n, v.as_mut_ptr() as *mut _
+			).into_result().map(move |_| v)
+		}
+	}
+}
+
+#[cfg(feature = "VK_KHR_display")]
+mod display {
+	use crate::vk::*;
+	use std::ops::Deref;
+
+	#[repr(transparent)]
+	pub struct DisplayProperties(VkDisplayProperties);
+	impl From<VkDisplayProperties> for DisplayProperties { fn from(v: VkDisplayProperties) -> Self { Self(v) } }
+	impl From<DisplayProperties> for VkDisplayProperties { fn from(v: DisplayProperties) -> Self { v.0 } }
+	impl Deref for DisplayProperties {
+		type Target = VkDisplayProperties;
+		fn deref(&self) -> &VkDisplayProperties { &self.0 }
+	}
+	impl AsRef<VkDisplayProperties> for DisplayProperties {
+		fn as_ref(&self) -> &VkDisplayProperties { &self.0 }
+	}
+	impl DisplayProperties {
+		/// The name of the display.
+		pub fn display_name(&self) -> &std::ffi::CStr {
+			std::ffi::CStr::from(self.displayName)
+		}
+		/// Whether the planes on this display can have their z order changed.
+		pub fn can_reorder_plane(&self) -> bool { self.planeReorderPossible == VK_TRUE }
+		/// Whether the display supports self-refresh/internal buffering.
+		pub fn has_persistent_content(&self) -> bool { self.persistentContent == VK_TRUE }
+	}
+
+	#[repr(transparent)]
+	pub struct DisplayPlaneProperties(VkDisplayPlanePropertiesKHR);
+	impl From<VkDisplayPlaneProperties> for DisplayPlaneProperties {
+		fn from(v: VkDisplayPlaneProperties) -> Self { Self(v) }
+	}
+	impl From<DisplayPlaneProperties> for VkDisplayPlaneProperties {
+		fn from(v: DisplayPlaneProperties) -> Self { v.0 }
+	}
+	impl Deref for DisplayPlaneProperties {
+		type Target = VkDisplayPlaneProperties;
+		fn deref(&self) -> &VkDisplayPlaneProperties { &self.0 }
+	}
+	impl AsRef<VkDisplayPlaneProperties> for DisplayPlaneProperties {
+		fn as_ref(&self) -> &VkDisplayPlaneProperties { &self.0 }
+	}
+	impl DisplayPlaneProperties {
+
+	}
+}
+#[cfg(feature = "VK_KHR_display")]
+pub use self::display::*;
