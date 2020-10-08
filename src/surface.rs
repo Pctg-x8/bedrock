@@ -7,9 +7,12 @@ use crate::{VkHandle, DeviceChild};
 #[cfg(feature = "Implements")] use std::ptr::null;
 #[cfg(feature = "Implements")] use crate::vkresolve::{Resolver, ResolverInterface};
 
-struct SurfaceCell(VkSurfaceKHR, Instance);
+pub(crate) struct SurfaceCell(pub(crate) VkSurfaceKHR, pub(crate) Instance);
 /// Opaque handle to a surface object
 #[derive(Clone)] pub struct Surface(RefCounter<SurfaceCell>);
+impl Surface {
+	pub(crate) fn new(cell: SurfaceCell) -> Self { Surface(RefCounter::new(cell)) }
+}
 struct SwapchainCell
 {
 	obj: VkSwapchainKHR, dev: Device, _target: Surface, fmt: VkFormat, size: Extent3D
@@ -173,35 +176,6 @@ impl Surface
 		{
 			Resolver::get()
 				.create_macos_surface_mvk(instance.native_ptr(), &cinfo, null(), &mut h)
-				.into_result()
-				.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-		}
-	}
-	/// Create a `Surface` object representing a display plane and mode
-	/// # Failures
-	/// On failure, this command returns
-	///
-	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	#[cfg(feature = "VK_KHR_display")]
-	#[allow(clippy::too_many_arguments)]
-	pub fn new_display_plane(
-		instance: &Instance,
-		mode: VkDisplayModeKHR, plane_index: u32, plane_stack_index: u32,
-		transform: SurfaceTransform, global_alpha: f32, alpha_mode: DisplayPlaneAlpha, extent: Extent2D) -> crate::Result<Self>
-	{
-		let cinfo = VkDisplaySurfaceCreateInfoKHR
-		{
-			displayMode: mode, planeIndex: plane_index, planeStackIndex: plane_stack_index,
-			transform: transform as _, globalAlpha: global_alpha, alphaMode: alpha_mode as _,
-			imageExtent: extent.into(),
-			.. Default::default()
-		};
-		let mut h = VK_NULL_HANDLE as _;
-		unsafe
-		{
-			Resolver::get()
-				.create_display_plane_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h)
 				.into_result()
 				.map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
 		}
@@ -449,22 +423,6 @@ pub enum CompositeAlpha
 	/// The way in which the presentation engine treats the alpha channel in the images is unknown to the Vulkan API.
 	/// Instead, the application is responsible for setting the composite alpha blending mode using native window system commands
 	Inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR as _
-}
-/// Alpha blending type
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DisplayPlaneAlpha
-{
-	/// The source image will be treated as opaque
-	Opaque = VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR as _,
-	/// A global alpha value must be specified that will be applied to all pixels in the source image
-	Global = VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR as _,
-	/// The alpha value will be determined by the alpha channel of the source image's pixels.
-	/// If the source format contains no alpha values, no blending will be applied.
-	/// The source alpha values are not premultiplied into the source image's other color channels
-	PerPixel = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR as _,
-	/// This is equivalent to `PerPixel` except the source alpha values are assumed to be premultiplied into the source image's other color channels
-	PrePixelPremultiplied = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR as _
 }
 
 impl SurfaceTransform
