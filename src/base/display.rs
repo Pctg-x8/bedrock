@@ -111,7 +111,7 @@ impl crate::Surface {
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		
+
 		unsafe
 		{
 			Resolver::get()
@@ -130,7 +130,7 @@ impl Display {
 	/// * VK_ERROR_OUT_OF_HOST_MEMORY
 	/// * VK_ERROR_OUT_OF_DEVICE_MEMORY
 	#[cfg(feature = "Implements")]
-	pub fn properties(&self, physical_device: &crate::PhysicalDevice) -> crate::Result<Vec<DisplayModeProperties>> {
+	pub fn mode_properties(&self, physical_device: &crate::PhysicalDevice) -> crate::Result<Vec<DisplayModeProperties>> {
 		unsafe {
 			let mut n = 0;
 			Resolver::get().get_display_mode_properties_khr(
