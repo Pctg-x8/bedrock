@@ -17,6 +17,12 @@ pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 #[drop_function_name = "destroy_descriptor_pool"]
 pub struct DescriptorPool(VkDescriptorPool, Device);
 
+impl std::cmp::PartialEq for DescriptorSetLayout { fn eq(&self, other: &Self) -> bool { self.0 == other.0 } }
+impl std::cmp::Eq for DescriptorSetLayout {}
+impl std::hash::Hash for DescriptorSetLayout {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) { self.0.hash(state) }
+}
+
 #[derive(Clone, Hash, PartialEq, Eq)]
 pub enum DescriptorSetLayoutBinding<'s> {
     Sampler(u32, ShaderStage, &'s [VkSampler]),
