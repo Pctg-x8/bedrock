@@ -1,22 +1,23 @@
 //! Vulkan Shading(Shader/Pipeline)
 
 use crate::vk::*;
+use derives::*;
 use std::ffi::CString;
-use crate::{VkHandle, DeviceChild, Device, LifetimeBound, RenderPass};
+use crate::{Device, LifetimeBound, RenderPass};
 use std::marker::PhantomData;
 use std::borrow::Cow;
 use std::ops::*;
 #[cfg(feature = "Implements")] use crate::{
 	VkResultHandler, DescriptorSetLayout,
-	vkresolve::{Resolver, ResolverInterface}
+	vkresolve::{Resolver, ResolverInterface},
+	VkHandle
 };
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct ShaderStage(pub VkShaderStageFlags);
-impl ShaderStage
-{
+impl ShaderStage {
 	/// Empty bits
 	pub const EMPTY: Self = ShaderStage(0);
 	/// The vertex stage
@@ -56,21 +57,18 @@ impl ShaderStage
 	/// A combination of tessellation control stage and tessellation evaluation stage
 	pub fn tessellation(self) -> Self { ShaderStage(self.0 | Self::TESSELLATION.0) }
 }
-impl BitOr for ShaderStage
-{
+impl BitOr for ShaderStage {
 	type Output = Self;
 	fn bitor(self, other: Self) -> Self { ShaderStage(self.0 | other.0) }
 }
-impl BitOrAssign for ShaderStage
-{
+impl BitOrAssign for ShaderStage {
 	fn bitor_assign(&mut self, other: Self) { self.0 |= other.0; }
 }
 
 /// Stencil comparison function
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CompareOp
-{
+pub enum CompareOp {
 	/// The test never passes
 	Never = VK_COMPARE_OP_NEVER as _,
 	/// The test passes when `Ref < Stencil`
@@ -91,8 +89,7 @@ pub enum CompareOp
 /// Stencil action function
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum StencilOp
-{
+pub enum StencilOp {
 	/// Keeps the current value
 	Keep = VK_STENCIL_OP_KEEP as _,
 	/// Sets the value to 0
@@ -113,8 +110,7 @@ pub enum StencilOp
 /// Framebuffer logical operations
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LogicOp
-{
+pub enum LogicOp {
 	/// 0
 	Clear = VK_LOGIC_OP_CLEAR as _,
 	/// source & dest
@@ -151,8 +147,7 @@ pub enum LogicOp
 /// Bitmask specifying sets of stencil state for which to update the compare mask
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
-pub enum StencilFaceMask
-{
+pub enum StencilFaceMask {
 	/// Only the front set of stencil state
 	Front = VK_STENCIL_FACE_FRONT_BIT as _,
 	/// Only the back set of stencil state
@@ -161,91 +156,43 @@ pub enum StencilFaceMask
 	Both = VK_STENCIL_FRONT_AND_BACK as _
 }
 
+#[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_shader_module"]
 /// Opaque handle to a shader module object
 pub struct ShaderModule(VkShaderModule, Device);
+#[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_pipeline_cache"]
 /// Opaque handle to a pipeline cache object
 pub struct PipelineCache(VkPipelineCache, Device);
+#[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_pipeline_layout"]
 /// Opaque handle to a pipeline layout object
 pub struct PipelineLayout(VkPipelineLayout, Device);
+#[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_pipeline"]
 /// Opaque handle to a pipeline object
 pub struct Pipeline(VkPipeline, Device);
 
-#[cfg(feature = "Implements")]
-impl Drop for ShaderModule
-{
-	fn drop(&mut self)
-	{
-		unsafe
-		{
-			Resolver::get().destroy_shader_module(self.1.native_ptr(), self.0, std::ptr::null());
-		}
-	}
-}
-#[cfg(feature = "Implements")]
-impl Drop for PipelineCache
-{
-	fn drop(&mut self)
-	{
-		unsafe
-		{
-			Resolver::get().destroy_pipeline_cache(self.1.native_ptr(), self.0, std::ptr::null());
-		}
-	}
-}
-#[cfg(feature = "Implements")]
-impl Drop for PipelineLayout
-{
-	fn drop(&mut self)
-	{
-		unsafe
-		{
-			Resolver::get().destroy_pipeline_layout(self.1.native_ptr(), self.0, std::ptr::null());
-		}
-	}
-}
-#[cfg(feature = "Implements")]
-impl Drop for Pipeline
-{
-	fn drop(&mut self)
-	{
-		unsafe
-		{
-			Resolver::get().destroy_pipeline(self.1.native_ptr(), self.0, std::ptr::null());
-		}
-	}
-}
-impl VkHandle for ShaderModule { type Handle = VkShaderModule; fn native_ptr(&self) -> VkShaderModule { self.0 } }
-impl VkHandle for PipelineCache { type Handle = VkPipelineCache; fn native_ptr(&self) -> VkPipelineCache { self.0 } }
-impl VkHandle for PipelineLayout { type Handle = VkPipelineLayout; fn native_ptr(&self) -> VkPipelineLayout { self.0 } }
-impl VkHandle for Pipeline { type Handle = VkPipeline; fn native_ptr(&self) -> VkPipeline { self.0 } }
-impl DeviceChild for ShaderModule { fn device(&self) -> &Device { &self.1 } }
-impl DeviceChild for PipelineCache { fn device(&self) -> &Device { &self.1 } }
-impl DeviceChild for PipelineLayout { fn device(&self) -> &Device { &self.1 } }
-impl DeviceChild for Pipeline { fn device(&self) -> &Device { &self.1 } }
-
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl ShaderModule
-{
+impl ShaderModule {
 	/// Creates a new shader module object from bytes on the memory
 	/// # Failures
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn from_memory<Buffer>(device: &Device, buffer: &Buffer) -> crate::Result<Self>
-		where Buffer: AsRef<[u8]> + ?Sized
-	{
+	pub fn from_memory<Buffer>(
+		device: &Device, buffer: &Buffer
+	) -> crate::Result<Self> where Buffer: AsRef<[u8]> + ?Sized {
 		#[allow(clippy::cast_ptr_alignment)]
-		let cinfo = VkShaderModuleCreateInfo
-		{
+		let cinfo = VkShaderModuleCreateInfo {
 			codeSize: buffer.as_ref().len() as _,
 			pCode: buffer.as_ref().as_ptr() as *const _,
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.create_shader_module(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
 				.into_result()
@@ -260,8 +207,9 @@ impl ShaderModule
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	///
 	/// IO Errors may be occured when reading file
-	pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(device: &Device, path: &FilePath) -> Result<Self, Box<dyn std::error::Error>>
-	{
+	pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(
+		device: &Device, path: &FilePath
+	) -> Result<Self, Box<dyn std::error::Error>> {
 		std::fs::read(path).map_err(From::from)
 			.and_then(|b| Self::from_memory(device, &b).map_err(From::from))
 	}
@@ -276,17 +224,15 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new<Data>(device: &Device, initial: &Data) -> crate::Result<Self>
-		where Data: AsRef<[u8]> + ?Sized
-	{
-		let cinfo = VkPipelineCacheCreateInfo
-		{
+	pub fn new<Data>(
+		device: &Device, initial: &Data
+	) -> crate::Result<Self> where Data: AsRef<[u8]> + ?Sized {
+		let cinfo = VkPipelineCacheCreateInfo {
 			initialDataSize: initial.as_ref().len() as _, pInitialData: initial.as_ref().as_ptr() as *const _,
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.create_pipeline_cache(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
 				.into_result()
@@ -299,18 +245,15 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn data(&self) -> crate::Result<Vec<u8>>
-	{
+	pub fn data(&self) -> crate::Result<Vec<u8>> {
 		let mut n = 0;
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
 				.into_result()?;
 		}
 		let mut b: Vec<u8> = Vec::with_capacity(n as _); unsafe { b.set_len(n as _) };
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _)
 				.into_result()
@@ -323,11 +266,9 @@ impl PipelineCache
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn merge_into(&self, src: &[&PipelineCache]) -> crate::Result<()>
-	{
+	pub fn merge_into(&self, src: &[&PipelineCache]) -> crate::Result<()> {
 		let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr())
 				.into_result()
@@ -336,30 +277,27 @@ impl PipelineCache
 }
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl PipelineLayout
-{
+impl PipelineLayout {
 	/// Creates a new pipeline layout object
 	/// # Failures
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new(device: &Device, layouts: &[&DescriptorSetLayout], push_constants: &[(ShaderStage, Range<u32>)])
-		-> crate::Result<Self>
-	{
+	pub fn new(
+		device: &Device, layouts: &[&DescriptorSetLayout], push_constants: &[(ShaderStage, Range<u32>)]
+	) -> crate::Result<Self> {
 		let layouts = layouts.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 		let push_constants = push_constants.iter()
 			.map(|&(sh, ref r)| VkPushConstantRange { stageFlags: sh.0, offset: r.start, size: r.end - r.start })
 			.collect::<Vec<_>>();
-		let cinfo = VkPipelineLayoutCreateInfo
-		{
+		let cinfo = VkPipelineLayoutCreateInfo {
 			setLayoutCount: layouts.len() as _, pSetLayouts: layouts.as_ptr(),
 			pushConstantRangeCount: push_constants.len() as _, pPushConstantRanges: push_constants.as_ptr(),
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.create_pipeline_layout(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
 				.into_result()
@@ -370,8 +308,7 @@ impl PipelineLayout
 
 /// Disabled, Specified in the command buffer or Specified in the pipeline state
 pub enum SwitchOrDynamicState<T> { Disabled, Dynamic, Static(T) }
-impl<T> SwitchOrDynamicState<T>
-{
+impl<T> SwitchOrDynamicState<T> {
 	fn is_dynamic(&self) -> bool { match self { Self::Dynamic => true, _ => false } }
 	fn is_enabled(&self) -> bool { match self { Self::Disabled => false, _ => true } }
 }
@@ -380,54 +317,41 @@ pub use SwitchOrDynamicState::*;
 #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 #[derive(Clone)]
 pub struct DynamicDataCell<'d> { size: usize, data: *const (), ph: PhantomData<&'d ()> }
-impl<'d, T> From<&'d T> for DynamicDataCell<'d>
-{
-	/// Construct borrowing a data
-	fn from(d: &'d T) -> Self
-	{
+impl<'d, T> From<&'d T> for DynamicDataCell<'d> {
+	fn from(d: &'d T) -> Self {
 		DynamicDataCell { size: std::mem::size_of::<T>(), data: d as *const T as *const _, ph: PhantomData }
 	}
 }
-impl<'d> DynamicDataCell<'d>
-{
+impl<'d> DynamicDataCell<'d> {
 	/// Construct borrowing a slice
-	pub fn from_slice<T>(s: &'d [T]) -> Self
-	{
-		DynamicDataCell
-		{
+	pub fn from_slice<T>(s: &'d [T]) -> Self {
+		DynamicDataCell {
 			size: std::mem::size_of::<T>() * s.len(), data: s.as_ptr() as *const _, ph: PhantomData
 		}
 	}
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
-#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 #[derive(Clone)]
-pub struct PipelineShader<'d>
-{
+pub struct PipelineShader<'d> {
 	pub module: &'d ShaderModule, pub entry_name: CString,
 	pub specinfo: Option<(Cow<'d, [VkSpecializationMapEntry]>, DynamicDataCell<'d>)>
 }
 /// Whether the state(type of array) is dynamic or static
 pub enum DynamicArrayState<'d, T> { Dynamic(usize), Static(&'d [T]) }
-impl<'d, T> DynamicArrayState<'d, T>
-{
-	fn count(&self) -> usize
-	{
-		match self { DynamicArrayState::Dynamic(s) => *s, DynamicArrayState::Static(ref v) => v.len() }
+impl<'d, T> DynamicArrayState<'d, T> {
+	fn count(&self) -> usize {
+		match self { &DynamicArrayState::Dynamic(s) => s, DynamicArrayState::Static(ref v) => v.len() }
 	}
-	fn as_ptr(&self) -> *const T
-	{
-		match self { DynamicArrayState::Static(ref v) => v.as_ptr(), _ => std::ptr::null() }
+	fn as_ptr(&self) -> *const T {
+		match self { DynamicArrayState::Static(v) => v.as_ptr(), _ => std::ptr::null() }
 	}
-	fn is_dynamic(&self) -> bool
-	{
+	fn is_dynamic(&self) -> bool {
 		match self { DynamicArrayState::Dynamic(_) => true, _ => false }
 	}
 }
 /// Which is pipeline state to derive from
 #[derive(Clone, Copy)]
-pub enum BasePipeline<'d>
-{
+pub enum BasePipeline<'d> {
 	/// Does not derive
 	None,
 	/// Derive from a handle to the pipeline state object
@@ -439,56 +363,45 @@ pub enum BasePipeline<'d>
 /// VkPipelineDynamicStateCreateInfo builder
 #[derive(Clone)]
 pub struct PipelineDynamicStates(Vec<VkDynamicState>);
-impl From<Vec<VkDynamicState>> for PipelineDynamicStates
-{
+impl From<Vec<VkDynamicState>> for PipelineDynamicStates {
 	fn from(mut v: Vec<VkDynamicState>) -> Self { v.sort(); PipelineDynamicStates(v) }
 }
-impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d PipelineDynamicStates
-{
-	fn into(self) -> LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>
-	{
-		LifetimeBound::new(VkPipelineDynamicStateCreateInfo
-		{
+impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d PipelineDynamicStates {
+	fn into(self) -> LifetimeBound<'d, VkPipelineDynamicStateCreateInfo> {
+		LifetimeBound::new(VkPipelineDynamicStateCreateInfo {
 			dynamicStateCount: self.0.len() as _, pDynamicStates: self.0.as_ptr(),
 			.. Default::default()
 		})
 	}
 }
-impl PipelineDynamicStates
-{
+impl PipelineDynamicStates {
 	/// Creates an empty PipelineDynamicStates
 	#[allow(clippy::new_without_default)]
 	pub fn new() -> Self { PipelineDynamicStates(Vec::new()) }
 
 	/// Enables using a dynamic state
-	pub fn enable(&mut self, v: VkDynamicState)
-	{
+	pub fn enable(&mut self, v: VkDynamicState) {
 		if let Err(n) = self.0.binary_search(&v) { self.0.insert(n, v); }
 	}
 	/// Disables using a dynamic state
-	pub fn disable(&mut self, v: VkDynamicState)
-	{
+	pub fn disable(&mut self, v: VkDynamicState) {
 		if let Ok(n) = self.0.binary_search(&v) { self.0.remove(n); }
 	}
 	/// Sets enable or disable state of a dynamic state
-	pub fn set(&mut self, v: VkDynamicState, enable: bool)
-	{
+	pub fn set(&mut self, v: VkDynamicState, enable: bool) {
 		if enable { self.enable(v); } else { self.disable(v); }
 	}
 }
-impl<'d> GraphicsPipelineBuilder<'d>
-{
+impl<'d> GraphicsPipelineBuilder<'d> {
 	/// Gets a mutable reference to the dynamic state settings
-	pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates
-	{
+	pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates {
 		&mut self.dynamic_state_flags
 	}
 }
 
 /// Builder struct to construct a `Pipeline` for graphics operations
 #[derive(Clone)]
-pub struct GraphicsPipelineBuilder<'d>
-{
+pub struct GraphicsPipelineBuilder<'d> {
 	flags: VkPipelineCreateFlags, _layout: &'d PipelineLayout,
 	rp: &'d RenderPass, subpass: u32, _base: BasePipeline<'d>,
 	vp: VertexProcessingStages<'d>,

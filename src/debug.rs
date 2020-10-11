@@ -1,37 +1,28 @@
 //! Vulkan Debug Layer Extensions
 
 use crate::vk::*;
+use derives::*;
 use crate::{VkHandle, Instance};
 #[cfg(feature = "Implements")] use crate::VkResultHandler;
 
 /// Opaque object to a debug report callback object
+#[derive(VkHandle)]
 pub struct DebugReportCallback(VkDebugReportCallbackEXT, Instance, PFN_vkDestroyDebugReportCallbackEXT);
-
 #[cfg(feature = "Implements")]
-impl Drop for DebugReportCallback
-{
+impl Drop for DebugReportCallback {
 	fn drop(&mut self) { (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null()); }
 }
 
-impl VkHandle for DebugReportCallback
-{
-	type Handle = VkDebugReportCallbackEXT;
-	fn native_ptr(&self) -> VkDebugReportCallbackEXT { self.0 }
-}
-
-pub struct DebugReportCallbackBuilder<'i>
-{
+pub struct DebugReportCallbackBuilder<'i> {
 	#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 	instance: &'i Instance,
 	flags: VkDebugReportFlagsEXT,
 	#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
 	callback: PFN_vkDebugReportCallbackEXT
 }
-impl<'i> DebugReportCallbackBuilder<'i>
-{
+impl<'i> DebugReportCallbackBuilder<'i> {
 	/// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
-	pub fn new(instance: &'i Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self
-	{
+	pub fn new(instance: &'i Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
 		DebugReportCallbackBuilder { instance, flags: 0, callback }
 	}
 	/// Reports an error that may cause undefined results, including an application crash
@@ -52,35 +43,39 @@ impl<'i> DebugReportCallbackBuilder<'i>
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	#[cfg(feature = "Implements")]
-	pub fn create(&mut self) -> crate::Result<DebugReportCallback> { DebugReportCallback::new(self.instance, self.flags, self.callback) }
+	pub fn create(&mut self) -> crate::Result<DebugReportCallback> {
+		DebugReportCallback::new(self.instance, self.flags, self.callback)
+	}
 }
 
 #[cfg(feature = "Implements")]
-impl DebugReportCallback
-{
+impl DebugReportCallback {
 	/// Register a debug report callback
 	/// # Failures
 	/// On failure, this command returns
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-	fn new(instance: &Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> crate::Result<Self>
-	{
+	fn new(
+		instance: &Instance, flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT
+	) -> crate::Result<Self> {
 		let ctor: PFN_vkCreateDebugReportCallbackEXT = instance.extra_procedure("vkCreateDebugReportCallbackEXT")
 			.expect("Requiring vkCreateDebugReportCallbackEXT function");
 		let dtor: PFN_vkDestroyDebugReportCallbackEXT = instance.extra_procedure("vkDestroyDebugReportCallbackEXT")
 			.expect("Requiring vkDestroyDebugReportCallbackEXT function");
 		let s = VkDebugReportCallbackCreateInfoEXT { flags, pfnCallback: callback, .. Default::default() };
 		let mut h = VK_NULL_HANDLE as _;
-		ctor(instance.native_ptr(), &s, std::ptr::null(), &mut h).into_result().map(|_| DebugReportCallback(h, instance.clone(), dtor))
+		ctor(instance.native_ptr(), &s, std::ptr::null(), &mut h)
+			.into_result()
+			.map(|_| DebugReportCallback(h, instance.clone(), dtor))
 	}
 }
 #[cfg(feature = "Implements")]
-impl Instance
-{
+impl Instance {
 	/// Inject its own messages into the debug stream
-	pub fn debug_message(&self, flags: VkDebugReportFlagsEXT, object_type: DebugReportObjectType, object: u64, location: libc::size_t,
-		message_count: i32, layer_prefix: &str, message: &str)
-	{
+	pub fn debug_message(
+		&self, flags: VkDebugReportFlagsEXT, object_type: DebugReportObjectType, object: u64, location: libc::size_t,
+		message_count: i32, layer_prefix: &str, message: &str
+	) {
 		let (lp, msg) = (std::ffi::CString::new(layer_prefix).unwrap(), std::ffi::CString::new(message).unwrap());
 		let msgf: PFN_vkDebugReportMessageEXT = self.extra_procedure("vkDebugReportMessageEXT")
 			.expect("Requiring vkDebugReportMessageEXT function");
@@ -90,8 +85,7 @@ impl Instance
 
 /// The type of an object passed to the `VkDebugMarkerObjectNameInfoEXT` and `VkDebugMarkerObjectTagInfoEXT` commands
 #[repr(C)] #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum DebugReportObjectType
-{
+pub enum DebugReportObjectType {
 	/// An unknown object
 	Unknown = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT as _,
 	/// A `VkInstance`
