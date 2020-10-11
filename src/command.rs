@@ -1,7 +1,8 @@
 //! Vulkan Commands
 
 use crate::vk::*;
-use crate::{VkHandle, Device, DeviceChild, Image, Buffer, ImageLayout, AnalogNumRange};
+use derives::*;
+use crate::{VkHandle, Device, Image, Buffer, ImageLayout, AnalogNumRange};
 use std::ops::Range;
 use std::mem::replace;
 #[cfg(feature = "Implements")] use crate::{
@@ -11,6 +12,8 @@ use std::mem::replace;
 };
 #[cfg(feature = "Implements")] use std::mem::{size_of, transmute};
 
+#[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_command_pool"]
 /// Opaque handle to a command pool object
 pub struct CommandPool(VkCommandPool, Device);
 /// Opaque handle to a command buffer object
@@ -18,21 +21,7 @@ pub struct CommandPool(VkCommandPool, Device);
 #[derive(Clone, Copy)]
 pub struct CommandBuffer(VkCommandBuffer);
 
-#[cfg(feature = "Implements")]
-impl Drop for CommandPool
-{
-	fn drop(&mut self)
-	{
-		unsafe
-		{
-			Resolver::get()
-				.destroy_command_pool(self.1.native_ptr(), self.0, std::ptr::null());
-		}
-	}
-}
-impl VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
 impl VkHandle for CommandBuffer { type Handle = VkCommandBuffer; fn native_ptr(&self) -> VkCommandBuffer { self.0 } }
-impl DeviceChild for CommandPool { fn device(&self) -> &Device { &self.1 } }
 
 /// The recording state of commandbuffers
 #[cfg(feature = "Implements")]
@@ -466,11 +455,11 @@ impl<'d> CmdRecord<'d>
 		self
 	}
 	/// Set the values of blend constants
-	pub fn set_blend_constants(&mut self, blend_constants: [f32; 4]) -> &mut Self
+	pub fn set_blend_constants(&mut self, blend_constants: &[f32; 4]) -> &mut Self
 	{
 		unsafe
 		{
-			Resolver::get().cmd_set_blend_constants(self.ptr.native_ptr(), blend_constants);
+			Resolver::get().cmd_set_blend_constants(self.ptr.native_ptr(), blend_constants.as_ptr());
 		}
 		self
 	}
