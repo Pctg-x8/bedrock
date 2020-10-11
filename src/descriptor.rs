@@ -17,7 +17,7 @@ pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 #[drop_function_name = "destroy_descriptor_pool"]
 pub struct DescriptorPool(VkDescriptorPool, Device);
 
-#[derive(Clone, Hash)]
+#[derive(Clone, Hash, PartialEq, Eq)]
 pub enum DescriptorSetLayoutBinding<'s> {
     Sampler(u32, ShaderStage, &'s [VkSampler]),
     CombinedImageSampler(u32, ShaderStage, &'s [VkSampler]),
