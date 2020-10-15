@@ -4,7 +4,7 @@ use crate::vk::*;
 use crate::VkHandle;
 use std::ops::*;
 #[cfg(feature = "Implements")] use crate::{
-	VkResultHandler, fnconv::FnTransmute, ImageUsage, ImageFlags,
+	VkResultHandler, fnconv::FnTransmute, Extent2D, ImageUsage, ImageFlags,
 	vkresolve::{Resolver, ResolverInterface}
 };
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))] use crate::{PresentMode, Surface};
