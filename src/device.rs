@@ -3,7 +3,8 @@
 #![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
 use crate::vk::*;
-use crate::{VkHandle, DeviceChild, Instance, PhysicalDevice, Semaphore, PipelineStageFlags, CommandBuffer};
+use derives::*;
+use crate::{VkHandle, Instance, PhysicalDevice, Semaphore, PipelineStageFlags, CommandBuffer};
 use std::borrow::Cow;
 #[cfg(    feature = "Multithreaded") ] use std::sync::Arc as RefCounter;
 #[cfg(not(feature = "Multithreaded"))] use std::rc::Rc as RefCounter;
@@ -18,24 +19,19 @@ struct DeviceCell(VkDevice, Instance);
 #[derive(Clone)]
 pub struct Device(RefCounter<DeviceCell>);
 /// Opaque handle to a queue object
-#[derive(Clone)]
+#[derive(Clone, VkHandle, DeviceChild)]
 pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
 
 #[cfg(feature = "Implements")]
-impl Drop for DeviceCell
-{
+impl Drop for DeviceCell {
 	fn drop(&mut self) { unsafe { Resolver::get().destroy_device(self.0, std::ptr::null()) }; }
 }
-
 impl VkHandle for Device { type Handle = VkDevice; fn native_ptr(&self) -> VkDevice { self.0 .0 } }
-impl VkHandle for Queue  { type Handle = VkQueue;  fn native_ptr(&self) -> VkQueue  { self.0 } }
-impl DeviceChild for Queue { fn device(&self) -> &Device { &self.1 } }
 
 /// Builder object for constructing a `Device`
-pub struct DeviceBuilder<'p>
-{
+pub struct DeviceBuilder<'p> {
 	pdev_ref: &'p PhysicalDevice, queue_infos: Vec<DeviceQueueCreateInfo>,
 	layers: Vec<std::ffi::CString>, extensions: Vec<std::ffi::CString>, features: VkPhysicalDeviceFeatures
 }

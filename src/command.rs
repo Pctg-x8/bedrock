@@ -1,7 +1,8 @@
 //! Vulkan Commands
 
 use crate::vk::*;
-use crate::{VkHandle, Device, DeviceChild, Image, Buffer, ImageLayout, AnalogNumRange};
+use derives::*;
+use crate::{VkHandle, Device, Image, Buffer, ImageLayout, AnalogNumRange};
 use std::ops::Range;
 use std::mem::replace;
 #[cfg(feature = "Implements")] use crate::{
@@ -11,6 +12,8 @@ use std::mem::replace;
 };
 #[cfg(feature = "Implements")] use std::mem::{size_of, transmute};
 
+#[derive(VkHandle, DeviceChild)]
+#[drop_function_name = "destroy_command_pool"]
 /// Opaque handle to a command pool object
 pub struct CommandPool(VkCommandPool, Device);
 /// Opaque handle to a command buffer object
@@ -18,21 +21,7 @@ pub struct CommandPool(VkCommandPool, Device);
 #[derive(Clone, Copy)]
 pub struct CommandBuffer(VkCommandBuffer);
 
-#[cfg(feature = "Implements")]
-impl Drop for CommandPool
-{
-	fn drop(&mut self)
-	{
-		unsafe
-		{
-			Resolver::get()
-				.destroy_command_pool(self.1.native_ptr(), self.0, std::ptr::null());
-		}
-	}
-}
-impl VkHandle for CommandPool   { type Handle = VkCommandPool;   fn native_ptr(&self) -> VkCommandPool   { self.0 } }
 impl VkHandle for CommandBuffer { type Handle = VkCommandBuffer; fn native_ptr(&self) -> VkCommandBuffer { self.0 } }
-impl DeviceChild for CommandPool { fn device(&self) -> &Device { &self.1 } }
 
 /// The recording state of commandbuffers
 #[cfg(feature = "Implements")]
@@ -64,17 +53,14 @@ impl CommandPool
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new(device: &Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> crate::Result<Self>
-	{
-		let cinfo = VkCommandPoolCreateInfo
-		{
+	pub fn new(device: &Device, queue_family: u32, transient: bool, indiv_resettable: bool) -> crate::Result<Self> {
+		let cinfo = VkCommandPoolCreateInfo {
 			queueFamilyIndex: queue_family, flags: if transient { VK_COMMAND_POOL_CREATE_TRANSIENT_BIT } else { 0 }
 				| if indiv_resettable { VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT } else { 0 },
 			.. Default::default()
 		};
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.create_command_pool(device.native_ptr(), &cinfo, ::std::ptr::null(), &mut h)
 				.into_result()
@@ -87,16 +73,13 @@ impl CommandPool
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn alloc(&self, count: u32, primary: bool) -> crate::Result<Vec<CommandBuffer>>
-	{
-		let ainfo = VkCommandBufferAllocateInfo
-		{
+	pub fn alloc(&self, count: u32, primary: bool) -> crate::Result<Vec<CommandBuffer>> {
+		let ainfo = VkCommandBufferAllocateInfo {
 			commandBufferCount: count, level: if primary { VK_COMMAND_BUFFER_LEVEL_PRIMARY } else { VK_COMMAND_BUFFER_LEVEL_SECONDARY },
 			commandPool: self.0, .. Default::default()
 		};
 		let mut hs = vec![VK_NULL_HANDLE as _; count as _];
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.allocate_command_buffers(self.1.native_ptr(), &ainfo, hs.as_mut_ptr())
 				.into_result()
@@ -111,20 +94,16 @@ impl CommandPool
 	///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn reset(&self, release_resources: bool) -> crate::Result<()>
-	{
+	pub fn reset(&self, release_resources: bool) -> crate::Result<()> {
 		let flags = if release_resources { VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT } else { 0 };
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.reset_command_pool(self.1.native_ptr(), self.0, flags).into_result()
 		}
 	}
 	/// Free command buffers
-	pub fn free(&self, buffers: &[CommandBuffer])
-	{
-		unsafe
-		{
+	pub fn free(&self, buffers: &[CommandBuffer]) {
+		unsafe {
 			Resolver::get()
 				.free_command_buffers(self.1.native_ptr(), self.0, buffers.len() as _, buffers.as_ptr() as *const _);
 		}
@@ -141,10 +120,8 @@ impl CommandBuffer
 	///
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn begin(&self) -> crate::Result<CmdRecord>
-	{
-		unsafe
-		{
+	pub fn begin(&self) -> crate::Result<CmdRecord> {
+		unsafe {
 			Resolver::get()
 				.begin_command_buffer(self.0, &Default::default())
 				.into_result()
@@ -157,11 +134,9 @@ impl CommandBuffer
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn begin_once(&self) -> crate::Result<CmdRecord>
-	{
+	pub fn begin_once(&self) -> crate::Result<CmdRecord> {
 		let info = VkCommandBufferBeginInfo { flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, .. Default::default() };
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.begin_command_buffer(self.0, &info)
 				.into_result()
@@ -176,21 +151,19 @@ impl CommandBuffer
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	pub fn begin_inherit(
 		&self, renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
-		query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>) -> crate::Result<CmdRecord>
-	{
+		query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>
+	) -> crate::Result<CmdRecord> {
 		let flags = if renderpass.is_some() { VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT } else { 0 };
 		let (fb, rp, s) = renderpass.map(|(f, r, s)| (f.native_ptr(), r.native_ptr(), s))
 			.unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
 		let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
-		let inherit = VkCommandBufferInheritanceInfo
-		{
+		let inherit = VkCommandBufferInheritanceInfo {
 			framebuffer: fb, renderPass: rp, subpass: s, occlusionQueryEnable: (oq != OcclusionQuery::Disable) as _,
 			queryFlags: if oq == OcclusionQuery::Precise { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 },
 			pipelineStatistics: psq, .. Default::default()
 		};
 		let binfo = VkCommandBufferBeginInfo { pInheritanceInfo: &inherit, flags, .. Default::default() };
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.begin_command_buffer(self.0, &binfo)
 				.into_result()
@@ -206,43 +179,33 @@ impl<'d> CmdRecord<'d>
 	/// Begin a new render pass
 	pub fn begin_render_pass(
 		&mut self, pass: &RenderPass, framebuffer: &Framebuffer, render_area: VkRect2D, clear_values: &[ClearValue],
-		inline_commands: bool) -> &mut Self
-	{
-		let cvalues = clear_values.iter().map(|x| match x
-		{
+		inline_commands: bool
+	) -> &mut Self {
+		let cvalues = clear_values.iter().map(|x| match x {
 			ClearValue::Color(color) => VkClearValue { color: VkClearColorValue { float32: *color } },
 			ClearValue::DepthStencil(depth, stencil) =>
 				VkClearValue { depthStencil: VkClearDepthStencilValue { depth: *depth, stencil: *stencil } }
 		}).collect::<Vec<_>>();
-		let binfo = VkRenderPassBeginInfo
-		{
+		let binfo = VkRenderPassBeginInfo {
 			renderPass: pass.native_ptr(), framebuffer: framebuffer.native_ptr(), renderArea: render_area,
 			clearValueCount: cvalues.len() as _, pClearValues: cvalues.as_ptr(), .. Default::default()
 		};
-		let contents = if inline_commands
-		{
-			VK_SUBPASS_CONTENTS_INLINE
-		}
-		else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS };
+		let contents = if inline_commands { VK_SUBPASS_CONTENTS_INLINE }
+			else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS };
 		unsafe { Resolver::get().cmd_begin_render_pass(self.ptr.native_ptr(), &binfo, contents); }
 
 		self
 	}
 	/// Transition to the next subpass of a render pass
-	pub fn next_subpass(&mut self, inline_commands: bool) -> &mut Self
-	{
-		let contents = if inline_commands
-		{
-			VK_SUBPASS_CONTENTS_INLINE
-		}
-		else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS };
+	pub fn next_subpass(&mut self, inline_commands: bool) -> &mut Self {
+		let contents = if inline_commands { VK_SUBPASS_CONTENTS_INLINE }
+			else { VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS };
 		unsafe { Resolver::get().cmd_next_subpass(self.ptr.native_ptr(), contents); }
 
 		self
 	}
 	/// End the current render pass
-	pub fn end_render_pass(&mut self) -> &mut Self
-	{
+	pub fn end_render_pass(&mut self) -> &mut Self {
 		unsafe { Resolver::get().cmd_end_render_pass(self.ptr.native_ptr()) };
 		
 		self
@@ -251,13 +214,10 @@ impl<'d> CmdRecord<'d>
 
 /// [feature = "Implements"] Graphics/Compute Commands: Pipeline Setup
 #[cfg(feature = "Implements")]
-impl<'d> CmdRecord<'d>
-{
+impl<'d> CmdRecord<'d> {
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_graphics_pipeline(&mut self, pipeline: &Pipeline) -> &mut Self
-	{
-		unsafe
-		{
+	pub fn bind_graphics_pipeline(&mut self, pipeline: &Pipeline) -> &mut Self {
+		unsafe {
 			Resolver::get().cmd_bind_pipeline(
 				self.ptr.native_ptr(),
 				VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline.native_ptr()
@@ -266,10 +226,8 @@ impl<'d> CmdRecord<'d>
 		self
 	}
 	/// Bind a pipeline object to a command buffer
-	pub fn bind_compute_pipeline(&mut self, pipeline: &Pipeline) -> &mut Self
-	{
-		unsafe
-		{
+	pub fn bind_compute_pipeline(&mut self, pipeline: &Pipeline) -> &mut Self {
+		unsafe {
 			Resolver::get().cmd_bind_pipeline(
 				self.ptr.native_ptr(),
 				VK_PIPELINE_BIND_POINT_COMPUTE, pipeline.native_ptr()
@@ -278,41 +236,34 @@ impl<'d> CmdRecord<'d>
 		self
 	}
 	/// Bind a pipeline layout object to a command buffer
-	pub fn bind_graphics_pipeline_layout(&mut self, layout: &PipelineLayout) -> &mut Self
-	{
+	pub fn bind_graphics_pipeline_layout(&mut self, layout: &PipelineLayout) -> &mut Self {
 		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout.native_ptr());
 		self
 	}
 	/// Bind a pipeline layout object to a command buffer
-	pub fn bind_compute_pipeline_layout(&mut self, layout: &PipelineLayout) -> &mut Self
-	{
+	pub fn bind_compute_pipeline_layout(&mut self, layout: &PipelineLayout) -> &mut Self {
 		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout.native_ptr());
 		self
 	}
 	/// Bind a pipeline object and a pipeline layout object to a command buffer
-	pub fn bind_graphics_pipeline_pair(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
-	{
+	pub fn bind_graphics_pipeline_pair(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self {
 		self.bind_graphics_pipeline_layout(layout).bind_graphics_pipeline(pipeline)
 	}
 	/// Bind a pipeline object and a pipeline layout object to a command buffer
-	pub fn bind_compute_pipeline_pair(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self
-	{
+	pub fn bind_compute_pipeline_pair(&mut self, pipeline: &Pipeline, layout: &PipelineLayout) -> &mut Self {
 		self.bind_compute_pipeline_layout(layout).bind_compute_pipeline(pipeline)
 	}
-	fn current_pipeline_layout_g(&self) -> VkPipelineLayout
-	{
+	fn current_pipeline_layout_g(&self) -> VkPipelineLayout {
 		self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for Graphics")
 	}
-	fn current_pipeline_layout_c(&self) -> VkPipelineLayout
-	{
+	fn current_pipeline_layout_c(&self) -> VkPipelineLayout {
 		self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize].expect("Pipeline is not bound for Compute")
 	}
 	/// Binds descriptor sets to a command buffer
 	pub fn bind_graphics_descriptor_sets(&mut self, first: u32,
-		descriptor_sets: &[VkDescriptorSet], dynamic_offsets: &[u32]) -> &mut Self
-	{
-		unsafe
-		{
+		descriptor_sets: &[VkDescriptorSet], dynamic_offsets: &[u32]
+	) -> &mut Self {
+		unsafe {
 			Resolver::get().cmd_bind_descriptor_sets(
 				self.ptr.native_ptr(), VK_PIPELINE_BIND_POINT_GRAPHICS,
 				self.current_pipeline_layout_g(),
@@ -466,11 +417,11 @@ impl<'d> CmdRecord<'d>
 		self
 	}
 	/// Set the values of blend constants
-	pub fn set_blend_constants(&mut self, blend_constants: [f32; 4]) -> &mut Self
+	pub fn set_blend_constants(&mut self, blend_constants: &[f32; 4]) -> &mut Self
 	{
 		unsafe
 		{
-			Resolver::get().cmd_set_blend_constants(self.ptr.native_ptr(), blend_constants);
+			Resolver::get().cmd_set_blend_constants(self.ptr.native_ptr(), blend_constants.as_ptr());
 		}
 		self
 	}

@@ -170,7 +170,7 @@ pub trait ResolverInterface
     unsafe fn cmd_set_scissor(&self, commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);
     unsafe fn cmd_set_line_width(&self, commandBuffer: VkCommandBuffer, lineWidth: c_float);
     unsafe fn cmd_set_depth_bias(&self, commandBuffer: VkCommandBuffer, depthBiasConstantFactor: c_float, depthBiasClamp: c_float, depthBiasSlopeFactor: c_float);
-    unsafe fn cmd_set_blend_constants(&self, commandBuffer: VkCommandBuffer, blendConstants: [c_float; 4]);
+    unsafe fn cmd_set_blend_constants(&self, commandBuffer: VkCommandBuffer, blendConstants: *const c_float);
     unsafe fn cmd_set_depth_bounds(&self, commandBuffer: VkCommandBuffer, minDepthBounds: c_float, maxDepthBounds: c_float);
     unsafe fn cmd_set_stencil_compare_mask(&self, commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32);
     unsafe fn cmd_set_stencil_write_mask(&self, commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32);
@@ -499,7 +499,7 @@ impl ResolverInterface for Resolver
     WrapAPI!(cmd_set_scissor = vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D));
     WrapAPI!(cmd_set_line_width = vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: c_float));
     WrapAPI!(cmd_set_depth_bias = vkCmdSetDepthBias(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: c_float, depthBiasClamp: c_float, depthBiasSlopeFactor: c_float));
-    WrapAPI!(cmd_set_blend_constants = vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: [c_float; 4]));
+    WrapAPI!(cmd_set_blend_constants = vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: *const c_float));
     WrapAPI!(cmd_set_depth_bounds = vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: c_float, maxDepthBounds: c_float));
     WrapAPI!(cmd_set_stencil_compare_mask = vkCmdSetStencilCompareMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32));
     WrapAPI!(cmd_set_stencil_write_mask = vkCmdSetStencilWriteMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32));

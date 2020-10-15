@@ -2842,7 +2842,7 @@ extern "system"
     pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);
     pub fn vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: c_float);
     pub fn vkCmdSetDepthBias(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: c_float, depthBiasClamp: c_float, depthBiasSlopeFactor: c_float);
-    pub fn vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: [c_float; 4]);
+    pub fn vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: *const c_float);
     pub fn vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: c_float, maxDepthBounds: c_float);
     pub fn vkCmdSetStencilCompareMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32);
     pub fn vkCmdSetStencilWriteMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32);
