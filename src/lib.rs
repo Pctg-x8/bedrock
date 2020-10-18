@@ -278,6 +278,8 @@ mod command; pub use command::*;
 #[cfg(feature = "Presentation")] pub use surface::*;
 #[cfg(feature = "VK_EXT_debug_report")] mod debug;
 #[cfg(feature = "VK_EXT_debug_report")] pub use debug::*;
+mod ext; pub use ext::*;
+mod external; pub use external::*;
 
 mod fmt; pub use self::fmt::AsFormat;
 

@@ -306,17 +306,16 @@ pub struct SubmissionBatch<'d>
 {
 	pub wait_semaphores: Cow<'d, [(&'d Semaphore, PipelineStageFlags)]>,
 	pub command_buffers: Cow<'d, [CommandBuffer]>,
-	pub signal_semaphores: Cow<'d, [&'d Semaphore]>
+	pub signal_semaphores: Cow<'d, [&'d Semaphore]>,
+	pub chained: Option<&'d dyn std::any::Any>
 }
-impl<'d> Default for SubmissionBatch<'d>
-{
-	fn default() -> Self
-	{
-		SubmissionBatch
-		{
+impl<'d> Default for SubmissionBatch<'d> {
+	fn default() -> Self {
+		SubmissionBatch {
 			wait_semaphores: Cow::Borrowed(&[]),
 			command_buffers: Cow::Borrowed(&[]),
-			signal_semaphores: Cow::Borrowed(&[])
+			signal_semaphores: Cow::Borrowed(&[]),
+			chained: None
 		}
 	}
 }

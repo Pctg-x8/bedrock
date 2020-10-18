@@ -58,14 +58,37 @@ impl Semaphore
 	/// 
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-	pub fn new(device: &Device) -> crate::Result<Self>
-	{
+	pub fn new(device: &Device) -> crate::Result<Self> {
 		let mut h = VK_NULL_HANDLE as _;
-		unsafe
-		{
+		unsafe {
 			Resolver::get()
 				.create_semaphore(device.native_ptr(), &Default::default(), std::ptr::null(), &mut h)
 				.into_result().map(|_| Semaphore(h, device.clone()))
+		}
+	}
+	#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+	/// [Implements][VK_KHR_external_semaphore_win32] Create a new queue semaphore object, with exporting as Windows HANDLE
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	pub fn with_export_win32(device: &Device, handle_types: crate::ExternalSemaphoreHandleTypes, export_info: &crate::ExportSemaphoreWin32HandleInfo) -> crate::Result<Self> {
+		let exp_info = VkExportSemaphoreCreateInfo {
+			handleTypes: handle_types.into(),
+			pNext: export_info.as_ref() as *const _ as _,
+			.. Default::default()
+		};
+		let info = VkSemaphoreCreateInfo {
+			pNext: &exp_info as *const _ as _,
+			.. Default::default()
+		};
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe {
+			Resolver::get()
+				.create_semaphore(device.native_ptr(), &info, std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| Semaphore(h, device.clone()))
 		}
 	}
 }
