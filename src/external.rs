@@ -16,19 +16,13 @@ pub struct ExternalSemaphoreHandleTypes(pub VkExternalSemaphoreHandleTypeFlags);
 impl From<ExternalSemaphoreHandleTypes> for VkExternalSemaphoreHandleTypeFlags { fn from(v: ExternalSemaphoreHandleTypes) -> Self { v.0 } }
 impl ExternalSemaphoreHandleTypes {
     pub const EMPTY: Self = Self(0);
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     pub const OPAQUE_WIN32: Self = Self(VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT);
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     pub const OPAQUE_WIN32_KMT: Self = Self(VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT);
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     pub const D3D_FENCE: Self = Self(VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT);
 
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    pub fn opaque_win32(self) -> Self { Self(self.0 | VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT) }
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    pub fn opaque_win32_kmt(self) -> Self { Self(self.0 | VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT) }
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    pub fn d3d_fence(self) -> Self { Self(self.0 | VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT) }
+    pub fn opaque_win32(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32.0) }
+    pub fn opaque_win32_kmt(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32_KMT.0) }
+    pub fn d3d_fence(self) -> Self { Self(self.0 | Self::D3D_FENCE.0) }
 }
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
