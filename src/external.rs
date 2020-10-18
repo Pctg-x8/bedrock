@@ -11,7 +11,7 @@ pub enum ExternalSemaphoreHandleTypeWin32 {
     D3DFence = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT as _
 }
 #[repr(transparent)]
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ExternalSemaphoreHandleTypes(pub VkExternalSemaphoreHandleTypeFlags);
 impl From<ExternalSemaphoreHandleTypes> for VkExternalSemaphoreHandleTypeFlags { fn from(v: ExternalSemaphoreHandleTypes) -> Self { v.0 } }
 impl ExternalSemaphoreHandleTypes {
@@ -158,4 +158,88 @@ impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
     /// # Safety
     /// `pAttributes` and `name` must live in lifetime `'d`
     pub unsafe fn from_raw_structure(v: VkExportSemaphoreWin32HandleInfoKHR) -> Self { Self(v, std::marker::PhantomData) }
+}
+
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[repr(C)]
+pub enum ExternalMemoryHandleTypeWin32 {
+    OpaqueWin32 = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT as _,
+    OpaqueWin32KMT = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT as _,
+    D3D11Texture = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT as _,
+    D3D11TextureKMT = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT as _,
+    D3D12Heap = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT as _,
+    D3D12Resource = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT as _
+}
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ExternalMemoryHandleTypes(pub VkExternalMemoryHandleTypeFlags);
+impl From<ExternalMemoryHandleTypes> for VkExternalMemoryHandleTypeFlags { fn from(v: ExternalMemoryHandleTypes) -> Self { v.0 } }
+impl ExternalMemoryHandleTypes {
+    pub const EMPTY: Self = Self(0);
+    pub const OPAQUE_WIN32: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT);
+    pub const OPAQUE_WIN32_KMT: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT);
+    pub const D3D11_TEXTURE: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT);
+    pub const D3D11_TEXTURE_KMT: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT);
+    pub const D3D12_HEAP: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT);
+    pub const D3D12_RESOURCE: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT);
+
+    pub fn opaque_win32(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32.0) }
+    pub fn opaque_win32_kmt(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32_KMT.0) }
+    pub fn d3d11_texture(self) -> Self { Self(self.0 | Self::D3D11_TEXTURE.0) }
+    pub fn d3d11_texture_kmt(self) -> Self { Self(self.0 | Self::D3D11_TEXTURE_KMT.0) }
+    pub fn d3d12_heap(self) -> Self { Self(self.0 | Self::D3D12_HEAP.0) }
+    pub fn d3d12_resource(self) -> Self { Self(self.0 | Self::D3D12_RESOURCE.0) }
+} 
+
+impl crate::Device {
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+    /// [Implements][VK_KHR_external_memory_win32] Get a Windows HANDLE for a memory object
+    /// 
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    pub fn get_memory_win32_handle(&self, memory: &crate::DeviceMemory, handle_type: ExternalMemoryHandleTypeWin32) -> crate::Result<winapi::shared::ntdef::HANDLE> {
+        let info = VkMemoryGetWin32HandleInfoKHR {
+            memory: memory.native_ptr(),
+            handleType: handle_type as _,
+            .. Default::default()
+        };
+        let mut h = std::ptr::null_mut();
+        unsafe {
+            Resolver::get().get_memory_win32_handle_khr(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
+        }
+    }
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+    /// [Implements][VK_KHR_external_memory_win32] Get Properties of External Memory Win32 Handles
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    pub fn get_memory_win32_handle_properties(&self, handle_type: ExternalMemoryHandleTypeWin32, handle: winapi::shared::ntdef::HANDLE) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
+        let mut info = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .get_memory_win32_handle_properties_khr(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr())
+                .into_result()
+                .map(move |_| info.assume_init())
+        }
+    }
+}
+
+#[repr(transparent)]
+pub struct ExternalMemoryImageCreateInfo(VkExternalMemoryImageCreateInfo);
+impl ExternalMemoryImageCreateInfo {
+    pub fn new(handle_types: ExternalMemoryHandleTypes) -> Self {
+        Self(VkExternalMemoryImageCreateInfo {
+            handleTypes: handle_types.into(),
+            .. Default::default()
+        })
+    }
+}
+impl<'d> crate::Chainable<'d, ExternalMemoryImageCreateInfo> for crate::ImageDesc<'d> {
+    fn chain(&mut self, next: &'d ExternalMemoryImageCreateInfo) { self.0.pNext = next as *const _ as _; }
 }

@@ -361,6 +361,11 @@ pub trait ResolverInterface
     unsafe fn import_semaphore_win32_handle_khr(&self, device: VkDevice, pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR) -> VkResult;
     #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     unsafe fn get_semaphore_win32_handle_khr(&self, device: VkDevice, pGetWin32HadleInfo: *const VkSemaphoreGetWin32HandleInfoKHR, pHandle: *mut winapi::shared::ntdef::HANDLE) -> VkResult;
+
+    #[cfg(feature = "VK_KHR_external_memory_win32")]
+    unsafe fn get_memory_win32_handle_khr(&self, device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut winapi::shared::ntdef::HANDLE) -> VkResult;
+    #[cfg(feature = "VK_KHR_external_memory_win32")]
+    unsafe fn get_memory_win32_handle_properties_khr(&self, device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags, handle: winapi::shared::ntdef::HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult;
 }
 
 pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
@@ -696,4 +701,9 @@ impl ResolverInterface for Resolver
     WrapAPI!(import_semaphore_win32_handle_khr = vkImportSemaphoreWin32HandleKHR(device: VkDevice, pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     WrapAPI!(get_semaphore_win32_handle_khr = vkGetSemaphoreWin32HandleKHR(device: VkDevice, pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR, pHandle: *mut winapi::shared::ntdef::HANDLE) -> VkResult);
+
+    #[cfg(feature = "VK_KHR_external_memory_win32")]
+    WrapAPI!(get_memory_win32_handle_khr = vkGetMemoryWin32HandleKHR(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut winapi::shared::ntdef::HANDLE) -> VkResult);
+    #[cfg(feature = "VK_KHR_external_memory_win32")]
+    WrapAPI!(get_memory_win32_handle_properties_khr = vkGetMemoryWin32HandlePropertiesKHR(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags, handle: winapi::shared::ntdef::HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult);
 }

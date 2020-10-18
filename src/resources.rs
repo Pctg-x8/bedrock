@@ -246,16 +246,86 @@ impl DeviceMemory
 	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_TOO_MANY_OBJECTS`
-	pub fn allocate(device: &Device, size: usize, type_index: u32) -> crate::Result<Self>
-	{
+	pub fn allocate(device: &Device, size: usize, type_index: u32) -> crate::Result<Self> {
 		let mut h = VK_NULL_HANDLE as _;
-		let cinfo = VkMemoryAllocateInfo
-		{
+		let cinfo = VkMemoryAllocateInfo {
 			allocationSize: size as _, memoryTypeIndex: type_index, .. Default::default()
 		};
 		unsafe { Resolver::get().allocate_memory(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
 			.into_result()
 			.map(|_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
+	}
+	#[cfg(feature = "VK_KHR_external_memory_win32")]
+	/// [Implements][VK_KHR_external_memory_win32] Import GPU memory from external apis
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_TOO_MANY_OBJECTS`
+	pub fn import_win32(
+		device: &Device,
+		size: usize,
+		type_index: u32,
+		handle_type: crate::ExternalMemoryHandleTypeWin32,
+		handle: winapi::shared::ntdef::HANDLE,
+		name: &widestring::WideCString
+	) -> crate::Result<Self> {
+		let import_info = VkImportMemoryWin32HandleInfoKHR {
+			handleType: handle_type as _,
+			handle,
+			name: name.as_ptr(),
+			.. Default::default()
+		};
+		let ainfo = VkMemoryAllocateInfo {
+			pNext: &import_info as *const _ as _,
+			allocationSize: size as _, memoryTypeIndex: type_index,
+			.. Default::default()
+		};
+
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe {
+			Resolver::get()
+				.allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
+		}
+	}
+	#[cfg(feature = "VK_KHR_external_memory_win32")]
+	/// [Implements][VK_KHR_external_memory_win32] Allocate GPU memory and visible to external apis
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_TOO_MANY_OBJECTS`
+	pub fn alloc_and_export_win32(
+		device: &Device,
+		size: usize,
+		type_index: u32,
+		security_attributes: Option<&winapi::um::minwinbase::SECURITY_ATTRIBUTES>,
+		access: winapi::shared::minwindef::DWORD,
+		name: &widestring::WideCString
+	) -> crate::Result<Self> {
+		let export_info = VkExportMemoryWin32HandleInfoKHR {
+			pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
+			dwAccess: access,
+			name: name.as_ptr(),
+			.. Default::default()
+		};
+		let ainfo = VkMemoryAllocateInfo {
+			pNext: &export_info as *const _ as _,
+			allocationSize: size as _, memoryTypeIndex: type_index,
+			.. Default::default()
+		};
+
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe {
+			Resolver::get()
+				.allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
+		}
 	}
 }
 
@@ -506,8 +576,8 @@ impl BitOrAssign for ImageFlags
 /// Builder structure specifying the parameters of a newly created image object
 #[derive(Debug, Clone, PartialEq, Eq)]
 #[repr(transparent)]
-pub struct ImageDesc(VkImageCreateInfo);
-impl ImageDesc
+pub struct ImageDesc<'d>(pub(crate) VkImageCreateInfo, std::marker::PhantomData<Option<&'d dyn std::any::Any>>);
+impl<'d> ImageDesc<'d>
 {
 	pub fn new<Size: ImageSize>(size: &Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self
 	{
@@ -516,7 +586,7 @@ impl ImageDesc
 			imageType: Size::DIMENSION, extent: size.conv(), format, usage: usage.0,
 			mipLevels: 1, arrayLayers:1, samples: 1, initialLayout: initial_layout as _,
 			.. Default::default()
-		})
+		}, std::marker::PhantomData)
 	}
 	/// A list of queue families that will access this image,
 	/// or an empty list if no queue families can access this image simultaneously
@@ -552,14 +622,13 @@ impl ImageDesc
 	/// default: 1
 	pub fn mip_levels(&mut self, levels: u32) -> &mut Self { self.0.mipLevels = levels; self }
 }
-impl AsRef<VkImageCreateInfo> for ImageDesc
-{
+impl AsRef<VkImageCreateInfo> for ImageDesc<'_> {
 	fn as_ref(&self) -> &VkImageCreateInfo { &self.0 }
 }
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl ImageDesc
+impl ImageDesc<'_>
 {
 	/// Create an image
 	#[cfg(not(feature = "VK_KHR_swapchain"))]
