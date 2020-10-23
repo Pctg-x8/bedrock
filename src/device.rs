@@ -344,6 +344,18 @@ impl Queue
 			signalSemaphoreCount: ss.len() as _, pSignalSemaphores: ss.as_ptr(),
 			.. Default::default()
 		}).collect();
+		
+		self.submit_raw(&batches, fence)
+	}
+	/// Submits a sequence of semaphores or command buffers to a queue
+	/// # Failure
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_DEVICE_LOST`
+	pub fn submit_raw(&self, batches: &[VkSubmitInfo], fence: Option<&Fence>) -> crate::Result<()>
+	{
 		unsafe
 		{
 			Resolver::get()
