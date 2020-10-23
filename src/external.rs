@@ -217,15 +217,13 @@ impl crate::Device {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     pub fn get_memory_win32_handle_properties(&self, handle_type: ExternalMemoryHandleTypeWin32, handle: winapi::shared::ntdef::HANDLE) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        let mut info = std::mem::MaybeUninit::uninit();
-        unsafe {
-            let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
-                .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
+        let mut info = Default::default();
 
-            (f)(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr())
-                .into_result()
-                .map(move |_| info.assume_init())
-        }
+        let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
+            .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
+        (f)(self.native_ptr(), handle_type as _, handle, &mut info)
+            .into_result()
+            .map(move |_| info)
     }
 }
 
