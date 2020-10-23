@@ -65,3 +65,9 @@ FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR, PFN_vkGetPh
 
 #[cfg(feature = "VK_KHR_swapchain")]
 FnTransmuteImpl!(for extern "system" fn(VkDevice, VkSwapchainKHR) -> VkResult);	// vkAcquireFullScreenExclusiveModeEXT, vkReleaseFullScreenExclusiveModeEXT
+
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+FnTransmuteImpl!(for PFN_vkGetMemoryWin32HandlePropertiesKHR, PFN_vkGetMemoryWin32HandleKHR);
+
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+FnTransmuteImpl!(for PFN_vkImportSemaphoreWin32HandleKHR, PFN_vkGetSemaphoreWin32HandleKHR);

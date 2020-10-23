@@ -1,7 +1,7 @@
 //! External Memory Import/Export Operations
 
 use crate::vk::*;
-#[cfg(feature = "Implements")] use crate::{VkHandle, VkResultHandler, Resolver, ResolverInterface};
+#[cfg(feature = "Implements")] use crate::{VkHandle, VkResultHandler};
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]
@@ -64,9 +64,10 @@ impl crate::Device {
             name: name.as_ptr(),
             .. Default::default()
         };
-        unsafe {
-            Resolver::get().import_semaphore_win32_handle_khr(self.native_ptr(), &info).into_result()
-        }
+
+        let f = self.extra_procedure::<PFN_vkImportSemaphoreWin32HandleKHR>("vkImportSemaphoreWin32HandleKHR")
+            .expect("No vkImportSemaphoreWin32HandleKHR exported");
+        (f)(self.native_ptr(), &info).into_result()
     }
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
     /// [Implements][VK_KHR_external_semaphore_win32] Get a Windows HANDLE for a semaphore
@@ -84,9 +85,10 @@ impl crate::Device {
             .. Default::default()
         };
         let mut h = std::ptr::null_mut();
-        unsafe {
-            Resolver::get().get_semaphore_win32_handle_khr(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
-        }
+
+        let f = self.extra_procedure::<PFN_vkGetSemaphoreWin32HandleKHR>("vkGetSemaphoreWin32HandleKHR")
+            .expect("No vkGetSemaphoreWin32HandleKHR exported");
+        (f)(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
     }
 }
 
@@ -202,9 +204,10 @@ impl crate::Device {
             .. Default::default()
         };
         let mut h = std::ptr::null_mut();
-        unsafe {
-            Resolver::get().get_memory_win32_handle_khr(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
-        }
+
+        let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandleKHR>("vkGetMemoryWin32HandleKHR")
+            .expect("No vkGetMemoryWin32HandleKHR exported");
+        (f)(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
     }
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
     /// [Implements][VK_KHR_external_memory_win32] Get Properties of External Memory Win32 Handles
@@ -216,8 +219,10 @@ impl crate::Device {
     pub fn get_memory_win32_handle_properties(&self, handle_type: ExternalMemoryHandleTypeWin32, handle: winapi::shared::ntdef::HANDLE) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
         let mut info = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .get_memory_win32_handle_properties_khr(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr())
+            let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
+                .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
+
+            (f)(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr())
                 .into_result()
                 .map(move |_| info.assume_init())
         }
