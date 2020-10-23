@@ -121,7 +121,7 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
 }
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 impl<'d> crate::Chainable<'d, D3D12FenceSubmitInfo<'d>> for crate::SubmissionBatch<'d> {
-    fn chain(&mut self, next: &'d D3D12FenceSubmitInfo<'d>) { self.chained = Some(&next.0 as _); }
+    fn chain(&mut self, next: &'d D3D12FenceSubmitInfo<'d>) -> &mut Self { self.chained = Some(&next.0 as _); self }
 }
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
@@ -235,5 +235,8 @@ impl ExternalMemoryImageCreateInfo {
     }
 }
 impl<'d> crate::Chainable<'d, ExternalMemoryImageCreateInfo> for crate::ImageDesc<'d> {
-    fn chain(&mut self, next: &'d ExternalMemoryImageCreateInfo) { self.0.pNext = next as *const _ as _; }
+    fn chain(&mut self, next: &'d ExternalMemoryImageCreateInfo) -> &mut Self {
+        self.0.pNext = next as *const _ as _;
+        self
+    }
 }
