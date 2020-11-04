@@ -251,6 +251,24 @@ pub enum ExternalFenceFdType {
     Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT as _,
     Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT as _
 }
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct ExternalFenceHandleTypes(pub VkExternalFenceHandleTypeFlags);
+impl From<ExternalFenceHandleTypes> for VkExternalFenceHandleTypeFlags {
+    fn from(v: ExternalFenceHandleTypes) -> Self { v.0 }
+}
+impl ExternalFenceHandleTypes {
+    pub const EMPTY: Self = Self(0);
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
+    pub const OPAQUE_FD: Self = Self(VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT as _);
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
+    pub const SYNC_FD: Self = Self(VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT as _);
+
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
+    pub const fn opaque_fd(self) -> Self { Self(self.0 | Self::OPAQUE_FD.0) }
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
+    pub const fn sync_fd(self) -> Self { Self(self.0 | Self::SYNC_FD.0) }
+}
 
 impl crate::Fence {
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]

@@ -47,6 +47,31 @@ impl Fence
 				.into_result().map(|_| Fence(h, device.clone()))
 		}
 	}
+
+	#[cfg(feature = "VK_KHR_external_fence_fd")]
+	/// [Implements][VK_KHR_exteranl_fence_fd] Create a new fence object, with exporting as file descriptors
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	pub fn with_export_fd(device: &Device, signaled: bool, compatible_handle_types: crate::ExternalFenceHandleTypes) -> crate::Result<Self> {
+		let mut h = VK_NULL_HANDLE as _;
+		let exp_info = VkExportFenceCreateInfo {
+			handleTypes: compatible_handle_types.0,
+			.. Default::default()
+		};
+		let cinfo = VkFenceCreateInfo {
+			flags: if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 },
+			pNext: &exp_info as *const _ as _,
+			.. Default::default()
+		};
+		unsafe {
+			Resolver::get()
+				.create_fence(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+				.into_result().map(move |_| Fence(h, device.clone()))
+		}
+	}
 }
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
