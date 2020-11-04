@@ -1,7 +1,7 @@
 //! External Memory Import/Export Operations
 
 use crate::vk::*;
-#[cfg(feature = "Implements")] use crate::{VkHandle, VkResultHandler};
+#[cfg(feature = "Implements")] use crate::{VkHandle, DeviceChild, VkResultHandler};
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]
@@ -241,5 +241,54 @@ impl<'d> crate::Chainable<'d, ExternalMemoryImageCreateInfo> for crate::ImageDes
     fn chain(&mut self, next: &'d ExternalMemoryImageCreateInfo) -> &mut Self {
         self.0.pNext = next as *const _ as _;
         self
+    }
+}
+
+#[repr(C)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+pub enum ExternalFenceFdType {
+    Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT as _,
+    Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT as _
+}
+
+impl crate::Fence {
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+    /// [Implements][VK_KHR_external_fence_fd] Get a POSIX file descriptor handle for a type
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    pub fn get_fd(&self, ty: ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
+        let info = VkFenceGetFdInfoKHR {
+            fence: self.native_ptr(),
+            handleType: ty as _,
+            .. Default::default()
+        };
+        let mut fd = 0;
+        let f = self.device().extra_procedure::<PFN_vkGetFenceFdKHR>("vkGetFenceFdKHR")
+            .expect("No vkGetFenceFdKHR exported");
+        (f)(self.device().native_ptr(), &info, &mut fd).into_result().map(move |_| fd)
+    }
+
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+    /// [Implements][VK_KHR_external_fence_fd] Import a fence from a POSIX file descriptor
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    pub fn import(&self, ty: ExternalFenceFdType, fd: std::os::unix::io::RawFd, temporary: bool) -> crate::Result<()> {
+        let info = VkImportFenceFdInfoKHR {
+            fence: self.native_ptr(),
+            flags: if temporary { VK_FENCE_IMPORT_TEMPORARY_BIT } else { 0 },
+            handleType: ty as _,
+            fd,
+            .. Default::default()
+        };
+        let f = self.device().extra_procedure::<PFN_vkImportFenceFdKHR>("vkImportFenceFdKHR")
+            .expect("No vkImportFenceFdKHR exported");
+        (f)(self.device().native_ptr(), &info).into_result()
     }
 }

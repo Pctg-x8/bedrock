@@ -10,15 +10,15 @@ use super::*;
 pub struct VkImportFenceFdInfoKHR
 {
 	pub sType: VkStructureType, pub pNext: *const c_void,
-	pub fence: VkFence, pub flags: VkFenceImportFlagsKHR,
-	pub handleType: VkExternalFenceHandleTypeFlagsKHR,
+	pub fence: VkFence, pub flags: VkFenceImportFlags,
+	pub handleType: VkExternalFenceHandleTypeFlags,
 	pub fd: c_int
 }
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkFenceGetFdInfoKHR
 {
 	pub sType: VkStructureType, pub pNext: *const c_void,
-	pub fence: VkFence, pub handleType: VkExternalFenceHandleTypeFlagsKHR
+	pub fence: VkFence, pub handleType: VkExternalFenceHandleTypeFlags
 }
 impl Default for VkImportFenceFdInfoKHR
 {
@@ -44,7 +44,7 @@ impl Default for VkFenceGetFdInfoKHR
 }
 
 pub type PFN_vkImportFenceFdKHR = extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult;
-pub type PFN_vGetFenceFdKHR = extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
+pub type PFN_vkGetFenceFdKHR = extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
 
 #[cfg(feature = "Implements")]
 extern "system"

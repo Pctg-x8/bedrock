@@ -71,3 +71,6 @@ FnTransmuteImpl!(for PFN_vkGetMemoryWin32HandlePropertiesKHR, PFN_vkGetMemoryWin
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 FnTransmuteImpl!(for PFN_vkImportSemaphoreWin32HandleKHR, PFN_vkGetSemaphoreWin32HandleKHR);
+
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+FnTransmuteImpl!(for PFN_vkGetFenceFdKHR, PFN_vkImportFenceFdKHR);
