@@ -423,15 +423,70 @@ impl PhysicalDevice {
 
 	/// [feature = "VK_EXT_sample_locations"]
 	#[cfg(feature = "VK_EXT_sample_locations")]
-	pub fn multisample_properties(&self, samples: VkSampleCountFlags) -> VkMultisamplePropertiesEXT
-	{
-		let mut r = MaybeUninit::uninit();
+	pub fn multisample_properties(&self, samples: VkSampleCountFlags) -> VkMultisamplePropertiesEXT {
+		let mut r = std::mem::MaybeUninit::uninit();
 		unsafe
 		{
 			Resolver::get().get_physical_device_multisample_properties_ext(self.0, samples, r.as_mut_ptr());
 			
 			r.assume_init()
 		}
+	}
+
+	#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+	/// [Implements][VK_KHR_external_fence_capabilities] Function for querying external fence handle capabilities
+	pub fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> VkExternalFenceProperties {
+		let mut r = std::mem::MaybeUninit::uninit();
+		let f: PFN_vkGetPhysicalDeviceExternalFenceProperties = self.1
+			.extra_procedure("vkGetPhysicalDeviceExternalFenceProperties")
+			.expect("no vkGetPhysicalDeviceExternalFenceProperties exported?");
+		(f)(
+			self.0,
+			&VkPhysicalDeviceExternalFenceInfo { handleType: handle_type as _, .. Default::default() },
+			r.as_mut_ptr()
+		);
+		unsafe { r.assume_init() }
+	}
+}
+
+#[repr(transparent)]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+/// Structure describing supported external fence handle features
+pub struct ExternalFenceProperties(VkExternalFenceProperties);
+impl From<VkExternalFenceProperties> for ExternalFenceProperties { fn from(v: VkExternalFenceProperties) -> Self { Self(v) } }
+impl From<ExternalFenceProperties> for VkExternalFenceProperties { fn from(v: ExternalFenceProperties) -> Self { v.0 } }
+impl AsRef<VkExternalFenceProperties> for ExternalFenceProperties { fn as_ref(&self) -> &VkExternalFenceProperties { &self.0 } }
+impl Deref for ExternalFenceProperties {
+	type Target = VkExternalFenceProperties;
+	fn deref(&self) -> &VkExternalFenceProperties { &self.0 }
+}
+impl ExternalFenceProperties {
+	pub fn export_from_imported_handle_types(&self) -> crate::ExternalFenceHandleTypes {
+		crate::ExternalFenceHandleTypes(self.0.exportFromImportedHandleTypes)
+	}
+	pub fn compatible_handle_types(&self) -> crate::ExternalFenceHandleTypes {
+		crate::ExternalFenceHandleTypes(self.0.compatibleHandleTypes)
+	}
+	pub fn features(&self) -> VkExternalFenceFeatureFlags {
+		self.0.externalFenceFeatures
+	}
+}
+#[repr(transparent)]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+/// Bitfield describing features of an external fence handle type
+pub struct ExternalFenceFeatureFlags(pub VkExternalFenceFeatureFlags);
+impl ExternalFenceFeatureFlags {
+	pub const fn contains_exportable(self) -> bool { (self.0 & VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT) != 0 }
+	pub const fn contains_importable(self) -> bool { (self.0 & VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT) != 0 }
+}
+impl std::fmt::Debug for ExternalFenceFeatureFlags {
+	fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+		let mut bit_strings = Vec::with_capacity(2);
+		if self.contains_exportable() { bit_strings.push("EXPORTABLE"); }
+		if self.contains_importable() { bit_strings.push("IMPORTABLE"); }
+
+		write!(fmt, "ExternalFenceFeatureFlags(0x{:02x}: {})", self.0, bit_strings.join("/"))
 	}
 }
 

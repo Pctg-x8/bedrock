@@ -74,3 +74,6 @@ FnTransmuteImpl!(for PFN_vkImportSemaphoreWin32HandleKHR, PFN_vkGetSemaphoreWin3
 
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 FnTransmuteImpl!(for PFN_vkGetFenceFdKHR, PFN_vkImportFenceFdKHR);
+
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceExternalFenceProperties);

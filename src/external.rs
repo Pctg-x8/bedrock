@@ -252,7 +252,7 @@ pub enum ExternalFenceFdType {
     Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT as _
 }
 #[repr(transparent)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct ExternalFenceHandleTypes(pub VkExternalFenceHandleTypeFlags);
 impl From<ExternalFenceHandleTypes> for VkExternalFenceHandleTypeFlags {
     fn from(v: ExternalFenceHandleTypes) -> Self { v.0 }
@@ -268,6 +268,22 @@ impl ExternalFenceHandleTypes {
     pub const fn opaque_fd(self) -> Self { Self(self.0 | Self::OPAQUE_FD.0) }
     #[cfg(feature = "VK_KHR_external_fence_fd")]
     pub const fn sync_fd(self) -> Self { Self(self.0 | Self::SYNC_FD.0) }
+
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
+    pub const fn contains_opaque_fd(self) -> bool { (self.0 & Self::OPAQUE_FD.0) != 0 }
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
+    pub const fn contains_sync_fd(self) -> bool { (self.0 & Self::SYNC_FD.0) != 0 }
+}
+impl std::fmt::Debug for ExternalFenceHandleTypes {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let mut bit_strings = Vec::new();
+        #[cfg(feature = "VK_KHR_external_fence_fd")]
+        if self.contains_opaque_fd() { bit_strings.push("OPAQUE_FD"); }
+        #[cfg(feature = "VK_KHR_external_fence_fd")]
+        if self.contains_sync_fd() { bit_strings.push("SYNC_FD"); }
+
+        write!(fmt, "ExternalFenceHandleTypes(0x{:08x}: {})", self.0, bit_strings.join("/"))
+    }
 }
 
 impl crate::Fence {
