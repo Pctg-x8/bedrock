@@ -435,7 +435,7 @@ impl PhysicalDevice {
 
 	#[cfg(feature = "VK_KHR_external_fence_capabilities")]
 	/// [Implements][VK_KHR_external_fence_capabilities] Function for querying external fence handle capabilities
-	pub fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> VkExternalFenceProperties {
+	pub fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> ExternalFenceProperties {
 		let mut r = std::mem::MaybeUninit::uninit();
 		unsafe { *r.as_mut_ptr() = Default::default(); }
 		let f: PFN_vkGetPhysicalDeviceExternalFenceProperties = self.1
@@ -446,7 +446,7 @@ impl PhysicalDevice {
 			&VkPhysicalDeviceExternalFenceInfo { handleType: handle_type as _, .. Default::default() },
 			r.as_mut_ptr()
 		);
-		unsafe { r.assume_init() }
+		unsafe { From::from(r.assume_init()) }
 	}
 }
 
