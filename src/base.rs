@@ -477,8 +477,8 @@ mod external_fence_capabilities_khr {
 		pub fn compatible_handle_types(&self) -> crate::ExternalFenceHandleTypes {
 			crate::ExternalFenceHandleTypes(self.0.compatibleHandleTypes)
 		}
-		pub fn features(&self) -> VkExternalFenceFeatureFlags {
-			self.0.externalFenceFeatures
+		pub fn features(&self) -> ExternalFenceFeatureFlags {
+			ExternalFenceFeatureFlags(self.0.externalFenceFeatures)
 		}
 	}
 	impl std::fmt::Debug for ExternalFenceProperties {
