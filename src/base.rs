@@ -471,6 +471,16 @@ impl ExternalFenceProperties {
 		self.0.externalFenceFeatures
 	}
 }
+impl std::fmt::Debug for ExternalFenceProperties {
+	fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+		fmt.debug_struct("ExternalFenceProperties")
+			.field("pNext", &self.pNext)
+			.field("export_from_imported_handle_types", &self.export_from_imported_handle_types())
+			.field("compatible_handle_types", &self.compatible_handle_types())
+			.field("features", &self.features())
+			.finish()
+	}
+}
 #[repr(transparent)]
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
