@@ -276,7 +276,7 @@ impl ExternalFenceHandleTypes {
 }
 impl std::fmt::Debug for ExternalFenceHandleTypes {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let mut bit_strings = Vec::new();
+        let mut bit_strings = Vec::<&'static str>::new();
         #[cfg(feature = "VK_KHR_external_fence_fd")]
         if self.contains_opaque_fd() { bit_strings.push("OPAQUE_FD"); }
         #[cfg(feature = "VK_KHR_external_fence_fd")]
