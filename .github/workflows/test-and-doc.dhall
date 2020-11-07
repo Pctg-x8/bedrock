@@ -135,7 +135,7 @@ in GithubActions.Workflow::{
         , preconditions = preconditions
         , check-workflow-sync = depends ["preconditions"] checkWorkflowSync
         , test = depends ["check-workflow-sync", "preconditions"] testStep
-        , document-deploy = depends ["check-workflow-sync", "preconditions"] documentDeploymentStep
+        , document-deploy = depends ["check-workflow-sync", "preconditions", "test"] documentDeploymentStep
         , report-success = depends ["preconditions", "check-workflow-sync", "test", "document-deploy"] reportSuccessJob
         }
     }
