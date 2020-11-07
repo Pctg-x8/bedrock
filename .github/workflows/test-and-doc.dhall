@@ -95,12 +95,12 @@ let checkWorkflowSync = GithubActions.Job::{
         ]
     }
 let testStep = GithubActions.Job::{
-    , name = Some "Test build"
+    , name = Some "Run Tests"
     , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
     , steps = [
         , checkoutStep
-        , GithubActions.Step::{ name = "cargo test", run = Some "cargho test --features Presentation,VK_EXT_debug_report" }
-        , runStepOnFailure (slackNotifyIfFailureStep "test" // { name = "Notify as Failure" })
+        , GithubActions.Step::{ name = "cargo test", run = Some "cargo test --features Presentation,VK_EXT_debug_report" }
+        , runStepOnFailure (slackNotifyIfFailureStep "Run Tests" // { name = "Notify as Failure" })
         ]
     }
 let documentDeploymentStep = GithubActions.Job::{
@@ -115,7 +115,7 @@ let documentDeploymentStep = GithubActions.Job::{
         , DocumentDeployment.step
             { FirebaseToken = eSecretFirebaseToken
             }
-        , runStepOnFailure (slackNotifyIfFailureStep "document-deploy" // { name = "Notify as Failure" })
+        , runStepOnFailure (slackNotifyIfFailureStep "Deploy Latest Document" // { name = "Notify as Failure" })
         ]
     }
 
