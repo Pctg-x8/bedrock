@@ -2736,13 +2736,12 @@ pub type PFN_vkCmdNextSubpass            = extern "system" fn(commandBuffer: VkC
 pub type PFN_vkCmdEndRenderPass          = extern "system" fn(commandBuffer: VkCommandBuffer);
 pub type PFN_vkCmdExecuteCommands        = extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
 
-#[cfg(feature = "Implements")]
-#[cfg_attr(all(not(windows), not(target_os="macos")), link(name = "vulkan"))]
-#[cfg_attr(windows, link(name = "vulkan-1"))]
-#[cfg_attr(target_os="macos", link(name = "MoltenVK", kind = "framework"))]
-#[cfg_attr(target_os="macos", link(name = "Metal", kind = "framework"))]
-extern "system"
-{
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
+#[cfg_attr(all(not(windows), not(target_os="macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
+#[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
+#[cfg_attr(all(target_os="macos", not(feature = "DynamicLoaded")), link(name = "MoltenVK", kind = "framework"))]
+#[cfg_attr(all(target_os="macos", not(feature = "DynamicLoaded")), link(name = "Metal", kind = "framework"))]
+extern "system" {
     pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
     pub fn vkDestroyInstance(instance: VkInstance, pAllocator: *const VkAllocationCallbacks);
     pub fn vkEnumeratePhysicalDevices(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult;
@@ -4217,11 +4216,11 @@ pub type PFN_vkGetPhysicalDeviceExternalSemaphoreProperties = extern "system" fn
 pub type PFN_vkGetDescriptorSetLayoutSupport = extern "system" fn(device: VkDevice,
     pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
 
-#[cfg(feature = "Implements")]
-#[cfg_attr(all(not(windows), not(target_os="macos")), link(name = "vulkan"))]
-#[cfg_attr(windows, link(name = "vulkan-1"))]
-#[cfg_attr(target_os="macos", link(name = "MoltenVK", kind = "framework"))]
-#[cfg_attr(target_os="macos", link(name = "Metal", kind = "framework"))]
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
+#[cfg_attr(all(not(windows), not(target_os="macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
+#[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
+#[cfg_attr(all(target_os="macos", not(feature = "DynamicLoaded")), link(name = "MoltenVK", kind = "framework"))]
+#[cfg_attr(all(target_os="macos", not(feature = "DynamicLoaded")), link(name = "Metal", kind = "framework"))]
 extern "system"
 {
     pub fn vkEnumerateInstanceVersion(pApiVersion: *mut u32) -> VkResult;
