@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 
-const docpath = path.join("docs", "public", "ja");
+const docpath = path.join("public", "ja");
 let conversions = {};
 conversions[path.join("bedrock", "index.html")] = data => data
     .replace("Glue library between Vulkan and Rust", "Ferrite: Vulkan と Rust のグルーライブラリ (部分的に日本語版)")
@@ -55,8 +55,7 @@ conversions[path.join("bedrock", "struct.SubpassDescription.html")] = data => da
     .replace("Fragment shaders <em>can</em> use subpass input variables to access the contents of an input attachment at the fragment&#39;s\n(x, y, layer) framebuffer coordinates.",
         "フラグメントシェーダは、サブパス入力変数(subpass input variables)を通して入力アタッチメントの内容にアクセスできる。ただし、シェーダが現在処理しているフレームバッファ上の座標点(x, y, layer)の内容のみ。");
 
-for(conv_path in conversions)
-{
+for(conv_path in conversions) {
     let fp = path.join(docpath, conv_path);
     console.log(`Translating ${fp}...`);
     let data = fs.readFileSync(fp, 'utf8');
