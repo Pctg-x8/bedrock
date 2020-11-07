@@ -51,6 +51,7 @@ jobs:
     needs:
     - "check-workflow-sync"
     - preconditions
+    - test
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
@@ -70,7 +71,7 @@ jobs:
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
       with:
         begintime: "${{ needs.preconditions.outputs.begintime }}"
-        failure_step: "document-deploy"
+        failure_step: Deploy Latest Document
         mode: branch
         report_name: Integrity Check
         status: failure
@@ -108,7 +109,7 @@ jobs:
         report_name: Integrity Check
         status: success
   test:
-    name: Test build
+    name: Run Tests
     needs:
     - "check-workflow-sync"
     - preconditions
@@ -117,7 +118,7 @@ jobs:
     - name: Checking out
       uses: "actions/checkout@v2"
     - name: cargo test
-      run: "cargho test --features Presentation,VK_EXT_debug_report"
+      run: "cargo test --features Presentation,VK_EXT_debug_report"
     - env:
         AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
         AWS_DEFAULT_REGION: "ap-northeast-1"
@@ -127,7 +128,7 @@ jobs:
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
       with:
         begintime: "${{ needs.preconditions.outputs.begintime }}"
-        failure_step: test
+        failure_step: Run Tests
         mode: branch
         report_name: Integrity Check
         status: failure
