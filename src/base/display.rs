@@ -86,6 +86,18 @@ impl crate::PhysicalDevice {
 				.into_result().map(move |_| DisplayMode(h))
 		}
 	}
+
+	/// [Implements][VK_EXT_acquire_xlib_display] Query the VkDisplayKHR corresponding to an X11 RandR Output
+	/// # Failures
+	/// On failure, this command returns
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+	pub fn get_randr_output_display(&self, dpy: *mut x11::xlib::Display, rr_output: x11::xrandr::RROutput) -> crate::Result<Display> {
+		let fp: PFN_vkGetRandROutputDisplayEXT = self.parent().extra_procedure("vkGetRandROutputDisplayEXT")
+			.expect("no vkGetRandROutputDisplayEXT exported?");
+		let mut d = std::mem::MaybeUninit::uninit();
+		fp(self.native_ptr(), dpy, rr_output, d.as_mut_ptr()).into_result().map(move |_| unsafe { Display(d.assume_init()) })
+	}
 }
 
 #[cfg(feature = "VK_KHR_surface")]
@@ -141,6 +153,29 @@ impl Display {
 				physical_device.native_ptr(), self.0, &mut n, v.as_mut_ptr() as *mut _
 			).into_result().map(move |_| v)
 		}
+	}
+
+	/// [Implements][VK_EXT_direct_mode_display] Release access to an acquired VkDisplayKHR
+	#[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
+	pub fn release(&self, physical_device: &crate::PhysicalDevice) {
+		let fp: PFN_vkReleaseDisplayEXT = physical_device.parent()
+			.extra_procedure("vkReleaseDisplayEXT")
+			.expect("no vkReleaseDisplayEXT exported?");
+		fp(physical_device.native_ptr(), self.native_ptr());
+	}
+
+	/// [Implements][VK_EXT_acquire_xlib_display] Acquire access to a VkDisplayKHR using Xlib
+	/// # Failures
+	/// On failure, this command returns
+	/// 
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_INITIALIZATION_FAILED`
+	#[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
+	pub fn acquire_xlib_display(&self, physical_device: &crate::PhysicalDevice, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
+		let fp: PFN_vkAcquireXlibDisplayEXT = physical_device.parent()
+			.extra_procedure("vkAcquireXlibDisplayEXT")
+			.expect("no vkAcquireXlibDisplayEXT exported?");
+		fp(physical_device.native_ptr(), dpy, self.native_ptr()).into_result()
 	}
 }
 

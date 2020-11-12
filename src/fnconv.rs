@@ -77,3 +77,9 @@ FnTransmuteImpl!(for PFN_vkGetFenceFdKHR, PFN_vkImportFenceFdKHR);
 
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceExternalFenceProperties);
+
+#[cfg(feature = "VK_EXT_direct_mode_display")]
+FnTransmuteImpl!(for PFN_vkReleaseDisplayEXT);
+
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
+FnTransmuteImpl!(for PFN_vkAcquireXlibDisplayEXT, PFN_vkGetRandROutputDisplayEXT);
