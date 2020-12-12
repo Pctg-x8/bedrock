@@ -10,7 +10,7 @@ use std::mem::zeroed;
 pub struct VkImportMemoryHostPointerInfoEXT
 {
     pub sType: VkStructureType, pub pNext: *const c_void,
-    pub handleType: VkExternalMemoryHandleTypeFlagsKHR, pub pHostPointer: *mut c_void
+    pub handleType: VkExternalMemoryHandleTypeFlags, pub pHostPointer: *mut c_void
 }
 impl Default for VkImportMemoryHostPointerInfoEXT
 {
@@ -61,11 +61,11 @@ impl Default for VkPhysicalDeviceExternalMemoryHostPropertiesEXT
 }
 
 pub type PFN_vkGetMemoryHostPointerPropertiesEXT = extern "system" fn(device: VkDevice,
-    handleType: VkExternalMemoryHandleTypeFlagsKHR, pHostPointer: *const c_void,
+    handleType: VkExternalMemoryHandleTypeFlags, pHostPointer: *const c_void,
     pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT) -> VkResult;
 
 extern "system"
 {
-    pub fn vkGetMemoryHostPointerPropertiesEXT(device: VkDevice, handleType: VkExternalMemoryHandleTYpeFlagsKHR,
+    pub fn vkGetMemoryHostPointerPropertiesEXT(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags,
         pHostPointer: *const c_void, pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT) -> VkResult;
 }

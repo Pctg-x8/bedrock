@@ -170,7 +170,11 @@ pub enum ExternalMemoryHandleTypeWin32 {
 #[repr(C)]
 pub enum ExternalMemoryHandleTypeFd {
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
-    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _
+    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _,
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    HostAllocation = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT as _,
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    HostMappedForeignMemory = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT as _
 }
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -186,6 +190,10 @@ impl ExternalMemoryHandleTypes {
     pub const D3D12_RESOURCE: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT);
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
     pub const DMA_BUF: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT);
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    pub const HOST_ALLOCATION: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT);
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    pub const HOST_MAPPED_FOREIGN_MEMORY: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT);
 
     pub fn opaque_win32(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32.0) }
     pub fn opaque_win32_kmt(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32_KMT.0) }
@@ -195,6 +203,10 @@ impl ExternalMemoryHandleTypes {
     pub fn d3d12_resource(self) -> Self { Self(self.0 | Self::D3D12_RESOURCE.0) }
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
     pub fn dma_buf(self) -> Self { Self(self.0 | Self::DMA_BUF.0) }
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    pub fn host_allocation(self) -> Self { Self(self.0 | Self::HOST_ALLOCATION.0) }
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    pub fn host_mapped_foreign_memory(self) -> Self { Self(self.0 | Self::HOST_MAPPED_FOREIGN_MEMORY.0) }
 } 
 
 impl crate::Device {
