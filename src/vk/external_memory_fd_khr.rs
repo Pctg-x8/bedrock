@@ -10,7 +10,7 @@ use super::*;
 pub struct VkImportMemoryFdInfoKHR
 {
     pub sType: VkStructureType, pub pNext: *const c_void,
-    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+    pub handleType: VkExternalMemoryHandleTypeFlags,
     pub fd: c_int
 }
 impl Default for VkImportMemoryFdInfoKHR
@@ -42,7 +42,7 @@ impl Default for VkMemoryFdPropertiesKHR
 pub struct VkMemoryGetFdInfoKHR
 {
     pub sType: VkStructureType, pub pNext: *const c_void,
-    pub memory: VkDeviceMemory, pub handleType: VkExternalMemoryHandleTypeFlagsKHR
+    pub memory: VkDeviceMemory, pub handleType: VkExternalMemoryHandleTypeFlags
 }
 impl Default for VkMemoryGetFdInfoKHR
 {
@@ -57,11 +57,11 @@ impl Default for VkMemoryGetFdInfoKHR
 }
 
 pub type PFN_vkGetMemoryFdKHR = extern "system" fn(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
-pub type PFN_vkGetMemoryFdPropetiesKHR = extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, fd: c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult;
+pub type PFN_vkGetMemoryFdPropetiesKHR = extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags, fd: c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult;
 
 #[cfg(feature = "Implements")]
 extern "system"
 {
     pub fn vkGetMemoryFdKHR(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
-    pub fn vkGetMemoryFdPropertiesKHR(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, fd: c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult;
+    pub fn vkGetMemoryFdPropertiesKHR(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags, fd: c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult;
 }
