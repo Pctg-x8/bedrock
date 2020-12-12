@@ -327,6 +327,39 @@ impl DeviceMemory
 				.map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
 		}
 	}
+
+	#[cfg(feature = "VK_KHR_external_memory_fd")]
+	/// [Implements][VK_KHR_external_memory_fd] Import GPU memory from external apis
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_TOO_MANY_OBJECTS`
+	pub fn import_fd(
+		device: &Device,
+		size: usize,
+		type_index: u32,
+		handle_type: crate::ExternalMemoryHandleTypeFd,
+		fd: libc::c_int
+	) -> crate::Result<Self> {
+		let import_info = VkImportMemoryFdInfoKHR {
+			handleType: handle_type as _, fd, .. Default::default()
+		};
+		let ainfo = VkMemoryAllocateInfo {
+			pNext: &import_info as *const _ as _,
+			allocationSize: size as _, memoryTypeIndex: type_index,
+			.. Default::default()
+		};
+
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe {
+			Resolver::get()
+				.allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
+		}
+	}
 }
 
 /// Bitmask specifying allowed usage of a buffer
