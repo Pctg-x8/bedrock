@@ -361,8 +361,8 @@ impl DeviceMemory
 		}
 	}
 
-	#[cfg(feature = "VK_KHR_external_memory_host")]
-	/// [Implements][VK_KHR_external_memory_host] Import GPU memory from external apis
+	#[cfg(feature = "VK_EXT_external_memory_host")]
+	/// [Implements][VK_EXT_external_memory_host] Import GPU memory from external apis
 	/// # Failures
 	/// On failure, this command returns
 	///
@@ -373,11 +373,11 @@ impl DeviceMemory
 		device: &Device,
 		size: usize,
 		type_index: u32,
-		handle_type: crate::ExternalMemoryHandleTypeFd,
+		handle_type: crate::ExternalMemoryHandleType,
 		host_pointer: *mut ()
 	) -> crate::Result<Self> {
 		let import_info = VkImportMemoryHostPointerInfoEXT {
-			handleType: handle_type as _, pHostPointer: host_pointer, .. Default::default()
+			handleType: handle_type as _, pHostPointer: host_pointer as _, .. Default::default()
 		};
 		let ainfo = VkMemoryAllocateInfo {
 			pNext: &import_info as *const _ as _,

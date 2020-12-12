@@ -285,19 +285,19 @@ impl crate::Device {
             .into_result()
             .map(move |_| info)
     }
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_host"))]
-    /// [Implements][VK_KHR_external_memory_host] Get Properties of external memory host pointer
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
+    /// [Implements][VK_EXT_external_memory_host] Get Properties of external memory host pointer
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    pub fn get_memory_host_pointer_properties(&self, handle_type: ExternalMemoryHandleTypeFd, host_pointer: *const ()) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
+    pub fn get_memory_host_pointer_properties(&self, handle_type: ExternalMemoryHandleType, host_pointer: *const ()) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
         let mut info = Default::default();
 
         let f = self.extra_procedure::<PFN_vkGetMemoryHostPointerPropertiesEXT>("vkGetMemoryHostPointerPropertiesEXT")
             .expect("No vkGetMemoryHostPointerPropertiesEXT exported");
-        (f)(self.native_ptr(), handle_type as _, host_pointer, &mut info)
+        (f)(self.native_ptr(), handle_type as _, host_pointer as _, &mut info)
             .into_result()
             .map(move |_| info)
     }

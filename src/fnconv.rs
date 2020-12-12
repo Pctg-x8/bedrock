@@ -86,3 +86,6 @@ FnTransmuteImpl!(for PFN_vkAcquireXlibDisplayEXT, PFN_vkGetRandROutputDisplayEXT
 
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 FnTransmuteImpl!(for PFN_vkGetMemoryFdKHR, PFN_vkGetMemoryFdPropertiesKHR);
+
+#[cfg(feature = "VK_EXT_external_memory_host")]
+FnTransmuteImpl!(for PFN_vkGetMemoryHostPointerPropertiesEXT);
