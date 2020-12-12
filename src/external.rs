@@ -172,11 +172,10 @@ pub enum ExternalMemoryHandleTypeFd {
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
     DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _
 }
+#[cfg(feature = "VK_EXT_external_memory_host")]
 #[repr(C)]
 pub enum ExternalMemoryHandleType {
-    #[cfg(feature = "VK_EXT_external_memory_host")]
     HostAllocation = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT as _,
-    #[cfg(feature = "VK_EXT_external_memory_host")]
     HostMappedForeignMemory = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT as _
 }
 #[repr(transparent)]
