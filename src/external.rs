@@ -166,6 +166,12 @@ pub enum ExternalMemoryHandleTypeWin32 {
     D3D12Heap = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT as _,
     D3D12Resource = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT as _
 }
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[repr(C)]
+pub enum ExternalMemoryHandleTypeFd {
+    #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
+    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _
+}
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ExternalMemoryHandleTypes(pub VkExternalMemoryHandleTypeFlags);
@@ -178,6 +184,8 @@ impl ExternalMemoryHandleTypes {
     pub const D3D11_TEXTURE_KMT: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT);
     pub const D3D12_HEAP: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT);
     pub const D3D12_RESOURCE: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT);
+    #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
+    pub const DMA_BUF: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT);
 
     pub fn opaque_win32(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32.0) }
     pub fn opaque_win32_kmt(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32_KMT.0) }
@@ -185,6 +193,8 @@ impl ExternalMemoryHandleTypes {
     pub fn d3d11_texture_kmt(self) -> Self { Self(self.0 | Self::D3D11_TEXTURE_KMT.0) }
     pub fn d3d12_heap(self) -> Self { Self(self.0 | Self::D3D12_HEAP.0) }
     pub fn d3d12_resource(self) -> Self { Self(self.0 | Self::D3D12_RESOURCE.0) }
+    #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
+    pub fn dma_buf(self) -> Self { Self(self.0 | Self::DMA_BUF.0) }
 } 
 
 impl crate::Device {
@@ -222,6 +232,41 @@ impl crate::Device {
         let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
             .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
         (f)(self.native_ptr(), handle_type as _, handle, &mut info)
+            .into_result()
+            .map(move |_| info)
+    }
+
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+    /// [Implements][VK_KHR_external_memory_fd] Get a POSIX file descriptor for a memory object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    pub fn get_memory_fd(&self, memory: &crate::DeviceMemory, handle_type: ExternalMemoryHandleTypeFd) -> crate::Result<libc::c_int> {
+        let info = VkMemoryGetFdInfoKHR {
+            memory: memory.native_ptr(),
+            handleType: handle_type as _,
+            .. Default::default()
+        };
+        let mut fd = 0;
+
+        let f = self.extra_procedure::<PFN_vkGetMemoryFdKHR>("vkGetMemoryFdKHR").expect("No vkGetMemoryFdKHR exported");
+        (f)(self.native_ptr(), &info, &mut fd).into_result().map(move |_| fd)
+    }
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+    /// [Implements][VK_KHR_external_memory_fd] Get Properties of External Memory File Descriptors
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    pub fn get_memory_fd_properties(&self, handle_type: ExternalMemoryHandleTypeFd, fd: libc::c_int) -> crate::Result<VkMemoryFdPropertiesKHR> {
+        let mut info = Default::default();
+
+        let f = self.extra_procedure::<PFN_vkGetMemoryFdPropertiesKHR>("vkGetMemoryFdPropertiesKHR")
+            .expect("No vkGetMemoryFdPropertiesKHR exported");
+        (f)(self.native_ptr(), handle_type as _, fd, &mut info)
             .into_result()
             .map(move |_| info)
     }
