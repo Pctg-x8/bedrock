@@ -170,7 +170,10 @@ pub enum ExternalMemoryHandleTypeWin32 {
 #[repr(C)]
 pub enum ExternalMemoryHandleTypeFd {
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
-    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _,
+    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _
+}
+#[repr(C)]
+pub enum ExternalMemoryHandleType {
     #[cfg(feature = "VK_EXT_external_memory_host")]
     HostAllocation = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT as _,
     #[cfg(feature = "VK_EXT_external_memory_host")]
@@ -231,23 +234,6 @@ impl crate::Device {
             .expect("No vkGetMemoryWin32HandleKHR exported");
         (f)(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
     }
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-    /// [Implements][VK_KHR_external_memory_win32] Get Properties of External Memory Win32 Handles
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    pub fn get_memory_win32_handle_properties(&self, handle_type: ExternalMemoryHandleTypeWin32, handle: winapi::shared::ntdef::HANDLE) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        let mut info = Default::default();
-
-        let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
-            .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
-        (f)(self.native_ptr(), handle_type as _, handle, &mut info)
-            .into_result()
-            .map(move |_| info)
-    }
-
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
     /// [Implements][VK_KHR_external_memory_fd] Get a POSIX file descriptor for a memory object
     /// # Failures
@@ -266,6 +252,23 @@ impl crate::Device {
         let f = self.extra_procedure::<PFN_vkGetMemoryFdKHR>("vkGetMemoryFdKHR").expect("No vkGetMemoryFdKHR exported");
         (f)(self.native_ptr(), &info, &mut fd).into_result().map(move |_| fd)
     }
+
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+    /// [Implements][VK_KHR_external_memory_win32] Get Properties of External Memory Win32 Handles
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    pub fn get_memory_win32_handle_properties(&self, handle_type: ExternalMemoryHandleTypeWin32, handle: winapi::shared::ntdef::HANDLE) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
+        let mut info = Default::default();
+
+        let f = self.extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
+            .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
+        (f)(self.native_ptr(), handle_type as _, handle, &mut info)
+            .into_result()
+            .map(move |_| info)
+    }
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
     /// [Implements][VK_KHR_external_memory_fd] Get Properties of External Memory File Descriptors
     /// # Failures
@@ -279,6 +282,22 @@ impl crate::Device {
         let f = self.extra_procedure::<PFN_vkGetMemoryFdPropertiesKHR>("vkGetMemoryFdPropertiesKHR")
             .expect("No vkGetMemoryFdPropertiesKHR exported");
         (f)(self.native_ptr(), handle_type as _, fd, &mut info)
+            .into_result()
+            .map(move |_| info)
+    }
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_host"))]
+    /// [Implements][VK_KHR_external_memory_host] Get Properties of external memory host pointer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    pub fn get_memory_host_pointer_properties(&self, handle_type: ExternalMemoryHandleTypeFd, host_pointer: *const ()) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
+        let mut info = Default::default();
+
+        let f = self.extra_procedure::<PFN_vkGetMemoryHostPointerPropertiesEXT>("vkGetMemoryHostPointerPropertiesEXT")
+            .expect("No vkGetMemoryHostPointerPropertiesEXT exported");
+        (f)(self.native_ptr(), handle_type as _, host_pointer, &mut info)
             .into_result()
             .map(move |_| info)
     }

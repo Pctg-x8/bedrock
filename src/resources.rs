@@ -360,6 +360,39 @@ impl DeviceMemory
 				.map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
 		}
 	}
+
+	#[cfg(feature = "VK_KHR_external_memory_host")]
+	/// [Implements][VK_KHR_external_memory_host] Import GPU memory from external apis
+	/// # Failures
+	/// On failure, this command returns
+	///
+	/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+	/// * `VK_ERROR_TOO_MANY_OBJECTS`
+	pub fn import_host_pointer(
+		device: &Device,
+		size: usize,
+		type_index: u32,
+		handle_type: crate::ExternalMemoryHandleTypeFd,
+		host_pointer: *mut ()
+	) -> crate::Result<Self> {
+		let import_info = VkImportMemoryHostPointerInfoEXT {
+			handleType: handle_type as _, pHostPointer: host_pointer, .. Default::default()
+		};
+		let ainfo = VkMemoryAllocateInfo {
+			pNext: &import_info as *const _ as _,
+			allocationSize: size as _, memoryTypeIndex: type_index,
+			.. Default::default()
+		};
+
+		let mut h = VK_NULL_HANDLE as _;
+		unsafe {
+			Resolver::get()
+				.allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+				.into_result()
+				.map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
+		}
+	}
 }
 
 /// Bitmask specifying allowed usage of a buffer
