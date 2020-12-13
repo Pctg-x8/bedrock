@@ -169,6 +169,7 @@ pub enum ExternalMemoryHandleTypeWin32 {
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(C)]
 pub enum ExternalMemoryHandleTypeFd {
+    Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT as _,
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
     DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _
 }
@@ -184,6 +185,8 @@ pub struct ExternalMemoryHandleTypes(pub VkExternalMemoryHandleTypeFlags);
 impl From<ExternalMemoryHandleTypes> for VkExternalMemoryHandleTypeFlags { fn from(v: ExternalMemoryHandleTypes) -> Self { v.0 } }
 impl ExternalMemoryHandleTypes {
     pub const EMPTY: Self = Self(0);
+    #[cfg(feature = "VK_KHR_external_memory_fd")]
+    pub const OPAQUE_FD: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT);
     pub const OPAQUE_WIN32: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT);
     pub const OPAQUE_WIN32_KMT: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT);
     pub const D3D11_TEXTURE: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT);
@@ -197,6 +200,8 @@ impl ExternalMemoryHandleTypes {
     #[cfg(feature = "VK_EXT_external_memory_host")]
     pub const HOST_MAPPED_FOREIGN_MEMORY: Self = Self(VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT);
 
+    #[cfg(feature = "VK_KHR_external_memory_fd")]
+    pub fn opaque_fd(self) -> Self { Self(self.0 | Self::OPAQUE_FD.0) }
     pub fn opaque_win32(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32.0) }
     pub fn opaque_win32_kmt(self) -> Self { Self(self.0 | Self::OPAQUE_WIN32_KMT.0) }
     pub fn d3d11_texture(self) -> Self { Self(self.0 | Self::D3D11_TEXTURE.0) }
