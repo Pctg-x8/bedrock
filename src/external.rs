@@ -1,7 +1,7 @@
 //! External Memory Import/Export Operations
 
 use crate::vk::*;
-#[cfg(feature = "Implements")] use crate::{VkHandle, DeviceChild, VkResultHandler};
+#[cfg(feature = "Implements")] #[allow(unused_imports)] use crate::{VkHandle, DeviceChild, VkResultHandler};
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]
@@ -356,6 +356,7 @@ impl ExternalFenceHandleTypes {
 }
 impl std::fmt::Debug for ExternalFenceHandleTypes {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+        #[allow(unused_mut)]
         let mut bit_strings = Vec::<&'static str>::new();
         #[cfg(feature = "VK_KHR_external_fence_fd")]
         if self.contains_opaque_fd() { bit_strings.push("OPAQUE_FD"); }
