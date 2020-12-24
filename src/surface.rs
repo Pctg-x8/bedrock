@@ -216,12 +216,6 @@ impl<'d> SwapchainBuilder<'d>
 	/// that affect regions of the surface which aren't visible
 	pub fn enable_clip(&mut self) -> &mut Self { self.0.clipped = true as _; self }
 
-	pub fn chain<T>(&mut self, next: &T) -> &mut Self
-	{
-		self.0.pNext = next as *const T as *const _;
-		self
-	}
-
 	/// Create a swapchain
 	/// # Failures
 	/// On failure, this command returns
@@ -247,6 +241,10 @@ impl<'d> SwapchainBuilder<'d>
 				}.into()))
 		}
 	}
+}
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+impl<'d, 's> crate::ext::Chainable<'d, FullScreenExclusiveEXT> for SwapchainBuilder<'s> {
+	fn chain(&mut self, next: &'d FullScreenExclusiveEXT) -> &mut Self { self.0.pNext = next as *const _ as _; self }
 }
 
 impl Swapchain
@@ -444,28 +442,17 @@ impl CompositeAlpha
 #[derive(Clone, Debug)]
 pub struct FullScreenExclusiveInfoEXT(VkSurfaceFullScreenExclusiveInfoEXT);
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-impl FullScreenExclusiveInfoEXT
-{
+impl FullScreenExclusiveInfoEXT {
 	/// Constructs the structure, specifying the preferred full-screen transition behavior.
-	pub fn new(flags: FullScreenExclusiveEXT) -> Self
-	{
-		FullScreenExclusiveInfoEXT(VkSurfaceFullScreenExclusiveInfoEXT
-		{
+	pub fn new(flags: FullScreenExclusiveEXT) -> Self {
+		FullScreenExclusiveInfoEXT(VkSurfaceFullScreenExclusiveInfoEXT {
 			fullScreenExclusive: flags as _, .. Default::default()
 		})
-	}
-
-	/// Chain an extension-specific structure.
-	pub fn chain<T>(&mut self, next: &T) -> &mut Self
-	{
-		self.0.pNext = next as *const T as _;
-		self
 	}
 }
 
 #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
-impl Swapchain
-{
+impl Swapchain {
 	/// Acquire full-screen exclusive mode for a swapchain.
 	/// # Failures
 	/// On failure, this command returns
@@ -474,8 +461,7 @@ impl Swapchain
 	/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 	/// * `VK_ERROR_INITIALIZATION_FAILED`
 	/// * `VK_ERROR_SURFACE_LOST_KHR`
-	pub fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()>
-	{
+	pub fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
 		let fp: PFN_vkAcquireFullScreenExclusiveModeEXT = self.device()
 			.extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
 			.expect("No full screen exclusive extension procedure found");
@@ -483,8 +469,7 @@ impl Swapchain
 	}
 
 	/// Release full-screen exclusive mode from a swapchain.
-	pub fn release_full_screen_exclusive_mode(&self) -> crate::Result<()>
-	{
+	pub fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
 		let fp: PFN_vkReleaseFullScreenExclusiveModeEXT = self.device()
 			.extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
 			.expect("No full screen exclusive extension procedure found");
@@ -496,8 +481,7 @@ impl Swapchain
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum FullScreenExclusiveEXT
-{
+pub enum FullScreenExclusiveEXT {
 	/// The implmentation should determine the appropriate full-screen method by whatever means it deems appropriate.
 	Default = VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT as _,
 	/// The implementation may use full-screen exclusive mechanisms when available.
@@ -518,21 +502,19 @@ pub enum FullScreenExclusiveEXT
 #[derive(Clone, Debug)]
 pub struct FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT);
 #[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
-impl FullScreenExclusiveWin32InfoEXT
-{
+impl FullScreenExclusiveWin32InfoEXT {
 	/// Constructs the structure, with a handle identifying the display to create the surface with.
-	pub fn new(handle: winapi::shared::windef::HMONITOR) -> Self
-	{
-		FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT
-		{
+	pub fn new(handle: winapi::shared::windef::HMONITOR) -> Self {
+		FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT {
 			hmonitor: handle, .. Default::default()
 		})
 	}
+}
 
-	/// Chain an extension-specific structure.
-	pub fn chain<T>(&mut self, next: &T) -> &mut Self
-	{
-		self.0.pNext = next as *const T as _;
+#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+impl<'d> crate::ext::Chainable<'d, FullScreenExclusiveWin32InfoEXT> for FullScreenExclusiveInfoEXT {
+	fn chain(&mut self, next: &'d FullScreenExclusiveWin32InfoEXT) -> &mut Self {
+		self.0.pNext = next as *const _ as _;
 		self
 	}
 }
