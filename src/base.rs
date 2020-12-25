@@ -597,20 +597,6 @@ impl PhysicalDevice
 				.map(|_| std::mem::transmute(v))
 		}
 	}
-	
-	/// #[feature = "VK_KHR_get_surface_capabilities2"]
-	#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-	pub fn surface_capabilities2(&self, info: &VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<VkSurfaceCapabilities2KHR>
-	{
-		let mut d = std::mem::MaybeUninit::uninit();
-		unsafe
-		{
-			Resolver::get()
-				.get_physical_device_surface_capabilities2_khr(self.0, info as *const _, d.as_mut_ptr())
-				.into_result()
-				.map(|_| d.assume_init())
-		}
-	}
 }
 
 /// [cfg(feature = "Implements")] Querying to the physical device for presentation with Platform servers.
@@ -906,3 +892,6 @@ impl QueueFlags
 mod display;
 #[cfg(feature = "VK_KHR_display")]
 pub use self::display::*;
+
+mod ext_query;
+pub use self::ext_query::*;

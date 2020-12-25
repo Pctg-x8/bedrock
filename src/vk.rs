@@ -3369,6 +3369,9 @@ impl Default for VkPhysicalDeviceFeatures2
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceFeatures2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+}
 
 #[repr(C)] #[derive(Clone)]
 pub struct VkPhysicalDeviceProperties2
@@ -3385,6 +3388,9 @@ impl Default for VkPhysicalDeviceProperties2
             sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceProperties2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3403,6 +3409,9 @@ impl Default for VkFormatProperties2
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkFormatProperties2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkImageFormatProperties2
@@ -3419,6 +3428,9 @@ impl Default for VkImageFormatProperties2
             sType: VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkImageFormatProperties2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3438,6 +3450,9 @@ impl Default for VkPhysicalDeviceImageFormatInfo2
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceImageFormatInfo2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkQueueFamilyProperties2
@@ -3454,6 +3469,9 @@ impl Default for VkQueueFamilyProperties2
             sType: VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkQueueFamilyProperties2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3472,6 +3490,9 @@ impl Default for VkPhysicalDeviceMemoryProperties2
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMemoryProperties2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkSparseImageFormatProperties2
@@ -3488,6 +3509,9 @@ impl Default for VkSparseImageFormatProperties2
             sType: VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkSparseImageFormatProperties2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3507,6 +3531,9 @@ impl Default for VkPhysicalDeviceSparseImageFormatInfo2
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceSparseImageFormatInfo2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkPhysicalDevicePointClippingProperties
@@ -3523,6 +3550,9 @@ impl Default for VkPhysicalDevicePointClippingProperties
             sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDevicePointClippingProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
 }
 
 #[repr(C)] #[derive(Clone, Debug, PartialEq, Eq)]
@@ -3547,6 +3577,9 @@ impl Default for VkRenderPassInputAttachmentAspectCreateInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkRenderPassInputAttachmentAspectCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkImageViewUsageCreateInfo
@@ -3562,6 +3595,9 @@ impl Default for VkImageViewUsageCreateInfo
             sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkImageViewUsageCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
 }
 
 #[repr(C)] #[derive(Clone, Debug)]
@@ -3579,6 +3615,9 @@ impl Default for VkPipelineTessellationDomainOriginStateCreateInfo
             sType: VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkPipelineTessellationDomainOriginStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3599,6 +3638,9 @@ impl Default for VkRenderPassMultiviewCreateInfo
 		}
 	}
 }
+unsafe impl crate::ext::VulkanStructure for VkRenderPassMultiviewCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
+}
 
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkPhysicalDeviceMultiviewFeatures
@@ -3617,6 +3659,9 @@ impl Default for VkPhysicalDeviceMultiviewFeatures
 		}
 	}
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMultiviewFeatures {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkPhysicalDeviceMultiviewProperties
@@ -3633,6 +3678,9 @@ impl Default for VkPhysicalDeviceMultiviewProperties
 			sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES, .. unsafe { zeroed() }
 		}
 	}
+}
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMultiviewProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3652,6 +3700,9 @@ impl Default for VkPhysicalDeviceVariablePointerFeatures
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceVariablePointerFeatures {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkPhysicalDeviceProtectedMemoryFeatures
@@ -3668,6 +3719,9 @@ impl Default for VkPhysicalDeviceProtectedMemoryFeatures
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceProtectedMemoryFeatures {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkPhysicalDeviceProtectedMemoryProperties
@@ -3683,6 +3737,9 @@ impl Default for VkPhysicalDeviceProtectedMemoryProperties
             sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceProtectedMemoryProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3701,6 +3758,9 @@ impl Default for VkDeviceQueueInfo2
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkDeviceQueueInfo2 {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkProtectedSubmitInfo
@@ -3716,6 +3776,9 @@ impl Default for VkProtectedSubmitInfo
             sType: VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkProtectedSubmitInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
 }
 
 #[repr(C)] #[derive(Clone, Debug)]
@@ -3737,6 +3800,9 @@ impl Default for VkSamplerYcbcrConversionCreateInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkSamplerYcbcrConversionCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkSamplerYcbcrConversionInfo
@@ -3753,6 +3819,9 @@ impl Default for VkSamplerYcbcrConversionInfo
             sType: VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkSamplerYcbcrConversionInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
 }
 
 #[repr(C)] #[derive(Clone, Debug)]
@@ -3771,6 +3840,9 @@ impl Default for VkBindImagePlaneMemoryInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkBindImagePlaneMemoryInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkImagePlaneMemoryRequirementsInfo
@@ -3787,6 +3859,9 @@ impl Default for VkImagePlaneMemoryRequirementsInfo
             sType: VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkImagePlaneMemoryRequirementsInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
 }
 
 #[repr(C)] #[derive(Clone, Debug)]
@@ -3805,6 +3880,9 @@ impl Default for VkPhysicalDeviceSamplerYcbcrConversionFeatures
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeatures {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkSamplerYcbcrConversionImageFormatProperties
@@ -3821,6 +3899,9 @@ impl VkSamplerYcbcrConversionImageFormatProperties
             sType: VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkSamplerYcbcrConversionImageFormatProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
 }
 
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
@@ -3855,6 +3936,9 @@ impl Default for VkDescriptorUpdateTemplateCreateInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkDescriptorUpdateTemplateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
+}
 
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkExternalMemoryProperties
@@ -3879,6 +3963,9 @@ impl Default for VkPhysicalDeviceExternalImageFormatInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalImageFormatInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkExternalImageFormatProperties
@@ -3895,6 +3982,9 @@ impl Default for VkExternalImageFormatProperties
             sType: VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkExternalImageFormatProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3913,6 +4003,9 @@ impl Default for VkPhysicalDeviceExternalBufferInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalBufferInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkExternalBufferProperties
@@ -3929,6 +4022,9 @@ impl Default for VkExternalBufferProperties
             sType: VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkExternalBufferProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3948,6 +4044,9 @@ impl Default for VkPhysicalDeviceIDProperties
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceIDProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkExternalMemoryImageCreateInfo
@@ -3964,6 +4063,9 @@ impl Default for VkExternalMemoryImageCreateInfo
             sType: VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkExternalMemoryImageCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -3982,6 +4084,9 @@ impl Default for VkExternalMemoryBufferCreateInfo
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkExternalMemoryBufferCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkExportMemoryAllocateInfo
@@ -3998,6 +4103,9 @@ impl Default for VkExportMemoryAllocateInfo
             sType: VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkExportMemoryAllocateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -4034,6 +4142,12 @@ impl Default for VkExternalFenceProperties
 		}
 	}
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalFenceInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
+}
+unsafe impl crate::ext::VulkanStructure for VkExternalFenceProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkExportFenceCreateInfo
@@ -4051,6 +4165,9 @@ impl Default for VkExportFenceCreateInfo
 		}
 	}
 }
+unsafe impl crate::ext::VulkanStructure for VkExportFenceCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkExportSemaphoreCreateInfo
@@ -4067,6 +4184,9 @@ impl Default for VkExportSemaphoreCreateInfo
             sType: VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkExportSemaphoreCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
 }
 
 #[repr(C)] #[derive(Debug, Clone)]
@@ -4103,6 +4223,12 @@ impl Default for VkExternalSemaphoreProperties
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalSemaphoreInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
+}
+unsafe impl crate::ext::VulkanStructure for VkExternalSemaphoreProperties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
+}
 
 #[repr(C)] #[derive(Debug, Clone)]
 pub struct VkPhysicalDeviceMaintenance3Properties
@@ -4120,6 +4246,9 @@ impl Default for VkPhysicalDeviceMaintenance3Properties
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMaintenance3Properties {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkDescriptorSetLayoutSupport
@@ -4136,6 +4265,9 @@ impl Default for VkDescriptorSetLayoutSupport
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkDescriptorSetLayoutSupport {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkPhysicalDeviceShaderDrawParameterFeatures
@@ -4151,6 +4283,9 @@ impl Default for VkPhysicalDeviceShaderDrawParameterFeatures
             sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES, .. unsafe { zeroed() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceShaderDrawParameterFeatures {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES;
 }
 
 pub type PFN_vkEnumerateInstanceVersion = extern "system" fn(pApiVersion: *mut u32) -> VkResult;

@@ -28,14 +28,14 @@ impl Default for VkSurfaceFullScreenExclusiveInfoEXT
         }
     }
 }
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "VK_KHR_win32_surface"))]
 #[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT
 {
     pub sType: VkStructureType, pub pNext: *const c_void,
     pub hmonitor: winapi::shared::windef::HMONITOR
 }
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "VK_KHR_win32_surface"))]
 impl Default for VkSurfaceFullScreenExclusiveWin32InfoEXT
 {
     fn default() -> Self
