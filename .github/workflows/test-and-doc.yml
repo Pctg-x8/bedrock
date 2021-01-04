@@ -1,4 +1,28 @@
 jobs:
+  "check-format":
+    name: Check Format
+    needs:
+    - "check-workflow-sync"
+    - preconditions
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v2"
+    - name: rustfmt check
+      run: "cargo fmt -- --check"
+    - env:
+        AWS_ACCESS_KEY_ID: "${{ secrets.AWS_ACCESS_KEY_ID }}"
+        AWS_DEFAULT_REGION: "ap-northeast-1"
+        AWS_SECRET_ACCESS_KEY: "${{ secrets.AWS_ACCESS_SECRET }}"
+      if: "failure()"
+      name: Notify as Failure
+      uses: "Pctg-x8/ci-notifications-post-invoker@master"
+      with:
+        begintime: "${{ needs.preconditions.outputs.begintime }}"
+        failure_step: Check Format
+        mode: branch
+        report_name: Integrity Check
+        status: failure
   "check-workflow-sync":
     name: Check Workflow Files are Synchronized
     needs:
@@ -52,6 +76,7 @@ jobs:
     - "check-workflow-sync"
     - preconditions
     - test
+    - "check-format"
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
@@ -92,6 +117,7 @@ jobs:
     - preconditions
     - "check-workflow-sync"
     - test
+    - "check-format"
     - "document-deploy"
     "runs-on": "ubuntu-latest"
     steps:

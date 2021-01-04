@@ -94,6 +94,15 @@ let checkWorkflowSync = GithubActions.Job::{
         , runStepOnFailure (slackNotifyIfFailureStep  "check-sync-workflow" // { name = "Notify as Failure" })
         ]
     }
+let checkFormatStep = GithubActions.Job::{
+    , name = Some "Check Format"
+    , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
+    , steps = [
+        , checkoutStep
+        , GithubActions.Step::{ name = "rustfmt check", run = Some "cargo fmt -- --check" }
+        , runStepOnFailure (slackNotifyIfFailureStep "Check Format" // { name = "Notify as Failure" })
+        ]
+    }
 let testStep = GithubActions.Job::{
     , name = Some "Run Tests"
     , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
@@ -134,8 +143,9 @@ in GithubActions.Workflow::{
     , jobs = toMap {
         , preconditions = preconditions
         , check-workflow-sync = depends ["preconditions"] checkWorkflowSync
+        , check-format = depends ["check-workflow-sync", "preconditions"] checkFormatStep
         , test = depends ["check-workflow-sync", "preconditions"] testStep
-        , document-deploy = depends ["check-workflow-sync", "preconditions", "test"] documentDeploymentStep
-        , report-success = depends ["preconditions", "check-workflow-sync", "test", "document-deploy"] reportSuccessJob
+        , document-deploy = depends ["check-workflow-sync", "preconditions", "test", "check-format"] documentDeploymentStep
+        , report-success = depends ["preconditions", "check-workflow-sync", "test", "check-format", "document-deploy"] reportSuccessJob
         }
     }
