@@ -493,7 +493,7 @@ pub struct GraphicsPipelineBuilder<'d> {
     subpass: u32,
     _base: BasePipeline<'d>,
     vp: VertexProcessingStages<'d>,
-    rasterizer_state: VkPipelineRasterizationStateCreateInfo,
+    rasterizer_state: RasterizationState,
     tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
     viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
     ms_state: Option<MultisampleState<'d>>,
@@ -682,6 +682,122 @@ impl<'d> VertexProcessingStages<'d> {
     }
 }
 
+#[cfg(feature = "VK_EXT_conservative_rasterization")]
+#[repr(C)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ConservativeRasterizationMode {
+    Overestimate = VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT as _,
+    Underestimate = VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT as _,
+}
+
+/// PipelineStateDesc: Rasterization State
+#[derive(Clone)]
+pub struct RasterizationState {
+    base: VkPipelineRasterizationStateCreateInfo,
+    is_dynamic_depth_bias: bool,
+    is_dynamic_line_width: bool,
+    #[cfg(feature = "VK_EXT_conservative_rasterization")]
+    conservative: Option<VkPipelineRasterizationConservativeStateCreateInfoEXT>,
+}
+impl Default for RasterizationState {
+    fn default() -> Self {
+        RasterizationState {
+            base: VkPipelineRasterizationStateCreateInfo::default(),
+            is_dynamic_depth_bias: false,
+            is_dynamic_line_width: false,
+            #[cfg(feature = "VK_EXT_conservative_rasterization")]
+            conservative: None,
+        }
+    }
+}
+impl RasterizationState {
+    fn apply_dynamic_states(&self, st: &mut PipelineDynamicStates) {
+        st.set(VK_DYNAMIC_STATE_DEPTH_BIAS, self.is_dynamic_depth_bias);
+        st.set(VK_DYNAMIC_STATE_LINE_WIDTH, self.is_dynamic_line_width);
+    }
+    fn make_chained(&mut self) -> &VkPipelineRasterizationStateCreateInfo {
+        #[cfg(feature = "VK_EXT_conservative_rasterization")]
+        if let Some(ref c) = self.conservative {
+            self.base.pNext = c as *const _ as _;
+        }
+
+        &self.base
+    }
+
+    /// Controls whether to clamp the fragment's depth values instead of clipping primitives to the z planes of the frustum,
+    /// as described in `Primitive Clipping` in Vulkan Specification
+    pub fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self {
+        self.base.depthClampEnable = enable as _;
+        self
+    }
+    /// Controls whether primitives are discarded immediately before the rasterization stage
+    pub fn rasterizer_discard_enable(&mut self, enable: bool) -> &mut Self {
+        self.base.rasterizerDiscardEnable = enable as _;
+        self
+    }
+    /// The triangle rendering mode
+    pub fn polygon_mode(&mut self, mode: VkPolygonMode) -> &mut Self {
+        self.base.polygonMode = mode;
+        self
+    }
+    /// The triangle facing direction used for primitive culling
+    pub fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self {
+        self.base.cullMode = mode;
+        self
+    }
+    /// The front-facing triangle orientation to be used for culling
+    pub fn front_face(&mut self, face: VkFrontFace) -> &mut Self {
+        self.base.frontFace = face;
+        self
+    }
+    /// Specify `None` to disable to bias fragment depth values.  
+    /// Tuple Member: (`ConstantFactor`, `Clamp`, `SlopeFactor`)
+    ///
+    /// - `ConstantFactor`: A scalar factor controlling the constant depth value added to each fragment
+    /// - `Clamp`: The maximum (or minimum) depth bias of a fragment
+    /// - `SlopeFactor`: A scalar factor applied to a fragment's slope in depth bias calculations
+    pub fn depth_bias(&mut self, opts: SwitchOrDynamicState<(f32, f32, f32)>) -> &mut Self {
+        self.base.depthBiasEnable = opts.is_enabled() as _;
+        self.is_dynamic_depth_bias = opts.is_dynamic();
+        if let SwitchOrDynamicState::Static((cf, c, sf)) = opts {
+            self.base.depthBiasConstantFactor = cf;
+            self.base.depthBiasClamp = c;
+            self.base.depthBiasSlopeFactor = sf;
+        }
+        self
+    }
+    /// The width of rasterized line segments. Specifying `None` means that the `lineWidth` parameter is a dynamic state.
+    pub fn line_width(&mut self, width: Option<f32>) -> &mut Self {
+        self.is_dynamic_line_width = width.is_none();
+        self.base.lineWidth = width.unwrap_or(0.0);
+        self
+    }
+
+    #[cfg(feature = "VK_EXT_conservative_rasterization")]
+    /// [VK_EXT_conservative_rasterization] Sets conservative rasterization mode to use.
+    pub fn conservative_rasterization_mode(
+        &mut self,
+        mode: ConservativeRasterizationMode,
+        extra: Option<f32>,
+    ) -> &mut Self {
+        if self.conservative.is_none() {
+            self.conservative = Some(Default::default());
+        }
+        let mut r = self.conservative.as_mut().unwrap();
+        r.conservativeRasterizationMode = mode as _;
+        if let Some(x) = extra {
+            r.extraPrimitiveOverestimationSize = x;
+        }
+        self
+    }
+    #[cfg(feature = "VK_EXT_conservative_rasterization")]
+    /// [VK_EXT_conservative_rasterization] Disables conservative rasterization.
+    pub fn disable_conservative_rasterization(&mut self) -> &mut Self {
+        self.conservative = None;
+        self
+    }
+}
+
 /// PipelineStateDesc: Multisample State
 #[derive(Clone)]
 pub struct MultisampleState<'d> {
@@ -836,62 +952,13 @@ impl<'d> GraphicsPipelineBuilder<'d> {
     }
 }
 
-/// Rasterization State
 impl<'d> GraphicsPipelineBuilder<'d> {
-    /// Controls whether to clamp the fragment's depth values instead of clipping primitives to the z planes of the frustum,
-    /// as described in `Primitive Clipping` in Vulkan Specification
-    pub fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self {
-        self.rasterizer_state.depthClampEnable = enable as _;
+    /// Rasterization State
+    pub fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
+        self.rasterizer_state = state;
         self
     }
-    /// Controls whether primitives are discarded immediately before the rasterization stage
-    pub fn rasterizer_discard_enable(&mut self, enable: bool) -> &mut Self {
-        self.rasterizer_state.rasterizerDiscardEnable = enable as _;
-        self
-    }
-    /// The triangle rendering mode
-    pub fn polygon_mode(&mut self, mode: VkPolygonMode) -> &mut Self {
-        self.rasterizer_state.polygonMode = mode;
-        self
-    }
-    /// The triangle facing direction used for primitive culling
-    pub fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self {
-        self.rasterizer_state.cullMode = mode;
-        self
-    }
-    /// The front-facing triangle orientation to be used for culling
-    pub fn front_face(&mut self, face: VkFrontFace) -> &mut Self {
-        self.rasterizer_state.frontFace = face;
-        self
-    }
-    /// Specify `None` to disable to bias fragment depth values.  
-    /// Tuple Member: (`ConstantFactor`, `Clamp`, `SlopeFactor`)
-    ///
-    /// - `ConstantFactor`: A scalar factor controlling the constant depth value added to each fragment
-    /// - `Clamp`: The maximum (or minimum) depth bias of a fragment
-    /// - `SlopeFactor`: A scalar factor applied to a fragment's slope in depth bias calculations
-    pub fn depth_bias(&mut self, opts: SwitchOrDynamicState<(f32, f32, f32)>) -> &mut Self {
-        self.rasterizer_state.depthBiasEnable = opts.is_enabled() as _;
-        self.dynamic_state_flags
-            .set(VK_DYNAMIC_STATE_DEPTH_BIAS, opts.is_dynamic());
-        if let SwitchOrDynamicState::Static((cf, c, sf)) = opts {
-            self.rasterizer_state.depthBiasConstantFactor = cf;
-            self.rasterizer_state.depthBiasClamp = c;
-            self.rasterizer_state.depthBiasSlopeFactor = sf;
-        }
-        self
-    }
-    /// The width of rasterized line segments. Specifying `None` means that the `lineWidth` parameter is a dynamic state.
-    pub fn line_width(&mut self, width: Option<f32>) -> &mut Self {
-        self.dynamic_state_flags
-            .set(VK_DYNAMIC_STATE_LINE_WIDTH, width.is_none());
-        self.rasterizer_state.lineWidth = width.unwrap_or(0.0);
-        self
-    }
-}
-
-/// Multisample State
-impl<'d> GraphicsPipelineBuilder<'d> {
+    /// Multisample State
     pub fn multisample_state(&mut self, state: Option<MultisampleState<'d>>) -> &mut Self {
         self.ms_state = state;
         self
@@ -1261,20 +1328,6 @@ impl<'d> GraphicsPipelineBuilder<'d> {
         self.viewport_state = state;
         self
     }
-    /// Set the `VkPipelineRasterizationStateCreateInfo` structure directly.
-    /// This does not clear any dynamic states
-    /// # Safety
-    /// Application must guarantee these constraints:
-    ///
-    /// - The lifetime of the content in the structure is valid for this builder
-    /// - The content in the structure is valid
-    pub unsafe fn rasterization_state_create_info(
-        &mut self,
-        state: VkPipelineRasterizationStateCreateInfo,
-    ) -> &mut Self {
-        self.rasterizer_state = state;
-        self
-    }
     /// Set the `VkPipelineDepthStencilStateCreateInfo` structure directly.
     /// This does not clear any dynamic states
     /// # Safety
@@ -1370,7 +1423,7 @@ impl<'d> GraphicsPipelineBuilder<'d> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create(&self, device: &Device, cache: Option<&PipelineCache>) -> crate::Result<Pipeline> {
+    pub fn create(&mut self, device: &Device, cache: Option<&PipelineCache>) -> crate::Result<Pipeline> {
         // VERTEX PROCESSING //
         let (stages, _specinfo) = self.vp.generate_stages();
 
@@ -1378,6 +1431,8 @@ impl<'d> GraphicsPipelineBuilder<'d> {
         // let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
         // let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
         // let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
+        self.rasterizer_state
+            .apply_dynamic_states(&mut self.dynamic_state_flags);
         let ds = if self.dynamic_state_flags.0.is_empty() {
             unsafe { Some(Into::<LifetimeBound<_>>::into(&self.dynamic_state_flags).unbound()) }
         } else {
@@ -1394,11 +1449,12 @@ impl<'d> GraphicsPipelineBuilder<'d> {
             } else {
                 0
             };
+        let rst = self.rasterizer_state.make_chained();
         let ms = if let Some(ref msr) = self.ms_state {
             Some(&msr.data)
         } else {
             assert!(
-                self.rasterizer_state.rasterizerDiscardEnable == VK_TRUE,
+                rst.rasterizerDiscardEnable == VK_TRUE,
                 "MultisampleState must be specified when rasterizerDiscardEnable is false"
             );
             None
@@ -1419,7 +1475,7 @@ impl<'d> GraphicsPipelineBuilder<'d> {
                 .as_ref()
                 .map(|x| &**x as *const _)
                 .unwrap_or_else(std::ptr::null),
-            pRasterizationState: &self.rasterizer_state as *const _,
+            pRasterizationState: rst,
             pMultisampleState: ms.map_or_else(std::ptr::null, |x| x as *const _),
             pDepthStencilState: self
                 .ds_state
