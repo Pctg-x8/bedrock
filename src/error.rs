@@ -1,4 +1,3 @@
-
 use crate::vk::*;
 
 /// Boxed version of `VkResult`
@@ -47,8 +46,9 @@ impl std::fmt::Debug for VkResultBox {
         })
     }
 }
-impl std::fmt::Display for VkResultBox
-{
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result { std::fmt::Debug::fmt(self, fmt) }
+impl std::fmt::Display for VkResultBox {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+        std::fmt::Debug::fmt(self, fmt)
+    }
 }
 impl std::error::Error for VkResultBox {}

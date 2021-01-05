@@ -2,12 +2,11 @@
 
 use crate::vk::*;
 
-pub trait FnTransmute : Sized
-{
-	/// Transmute unknown function pointer into another function pointer
-	/// # Safety
-	/// If source pointer is not pointed valid function entry point, calling returned pointer has undefined behavior
-	unsafe fn from_fn(p: PFN_vkVoidFunction) -> Self;
+pub trait FnTransmute: Sized {
+    /// Transmute unknown function pointer into another function pointer
+    /// # Safety
+    /// If source pointer is not pointed valid function entry point, calling returned pointer has undefined behavior
+    unsafe fn from_fn(p: PFN_vkVoidFunction) -> Self;
 }
 macro_rules! FnTransmuteImpl
 {
@@ -31,7 +30,7 @@ FnTransmuteImpl!(for PFN_vkGetDeviceMemoryCommitment,
 FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSparseImageFormatProperties, PFN_vkQueueBindSparse);
 FnTransmuteImpl!(for PFN_vkCreateFence, PFN_vkDestroyFence, PFN_vkResetFences, PFN_vkGetFenceStatus, PFN_vkWaitForFences);
 FnTransmuteImpl!(for PFN_vkCreateSemaphore, PFN_vkDestroySemaphore, PFN_vkCreateEvent, PFN_vkDestroyEvent);
-FnTransmuteImpl!(for extern "system" fn(VkDevice, VkEvent) -> VkResult);	// SetEvent, ResetEvent, GetEventStatus
+FnTransmuteImpl!(for extern "system" fn(VkDevice, VkEvent) -> VkResult); // SetEvent, ResetEvent, GetEventStatus
 FnTransmuteImpl!(for PFN_vkCreateQueryPool, PFN_vkDestroyQueryPool, PFN_vkGetQueryPoolResults);
 FnTransmuteImpl!(for PFN_vkCreateBuffer, PFN_vkDestroyBuffer, PFN_vkCreateBufferView, PFN_vkDestroyBufferView,
 	PFN_vkCreateImage, PFN_vkDestroyImage, PFN_vkCreateImageView, PFN_vkGetImageSubresourceLayout, PFN_vkDestroyImageView);
@@ -48,9 +47,9 @@ FnTransmuteImpl!(for PFN_vkCmdBindPipeline, PFN_vkCmdSetViewport, PFN_vkCmdSetSc
 	PFN_vkCmdFillBuffer, PFN_vkCmdClearColorImage, PFN_vkCmdClearDepthStencilImage, PFN_vkCmdClearAttachments,
 	PFN_vkCmdResolveImage, PFN_vkCmdWaitEvents, PFN_vkCmdPipelineBarrier, PFN_vkCmdEndQuery, PFN_vkCmdWriteTimestamp, PFN_vkCmdCopyQueryPoolResults,
 	PFN_vkCmdPushConstants, PFN_vkCmdBeginRenderPass, PFN_vkCmdNextSubpass, PFN_vkCmdEndRenderPass, PFN_vkCmdExecuteCommands);
-FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkBuffer, VkDeviceSize, u32, u32));	// CmdDrawIndirect, CmdDrawIndexedIndirect
-FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkEvent, VkPipelineStageFlags));		// CmdSetEvent, CmdResetEvent
-FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkQueryPool, u32, u32));				// CmdBeginQuery, CmdResetQueryPool
+FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkBuffer, VkDeviceSize, u32, u32)); // CmdDrawIndirect, CmdDrawIndexedIndirect
+FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkEvent, VkPipelineStageFlags)); // CmdSetEvent, CmdResetEvent
+FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkQueryPool, u32, u32)); // CmdBeginQuery, CmdResetQueryPool
 FnTransmuteImpl!(for PFN_vkCreateDescriptorUpdateTemplate, PFN_vkDestroyDescriptorUpdateTemplate);
 
 #[cfg(feature = "VK_KHR_surface")]
@@ -64,7 +63,7 @@ FnTransmuteImpl!(for PFN_vkCreateDebugReportCallbackEXT, PFN_vkDebugReportMessag
 FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR, PFN_vkGetPhysicalDeviceSurfaceFormats2KHR);
 
 #[cfg(feature = "VK_KHR_swapchain")]
-FnTransmuteImpl!(for extern "system" fn(VkDevice, VkSwapchainKHR) -> VkResult);	// vkAcquireFullScreenExclusiveModeEXT, vkReleaseFullScreenExclusiveModeEXT
+FnTransmuteImpl!(for extern "system" fn(VkDevice, VkSwapchainKHR) -> VkResult); // vkAcquireFullScreenExclusiveModeEXT, vkReleaseFullScreenExclusiveModeEXT
 
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 FnTransmuteImpl!(for PFN_vkGetMemoryWin32HandlePropertiesKHR, PFN_vkGetMemoryWin32HandleKHR);
