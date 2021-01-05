@@ -34,6 +34,9 @@ impl Default for VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
         }
     }
 }
+unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
+}
 
 #[repr(C)] #[derive(Clone, Debug)]
 pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
@@ -49,4 +52,7 @@ impl Default for VkPipelineRasterizationConservativeStateCreateInfoEXT {
             .. unsafe { MaybeUninit::zeroed().assume_init() }
         }
     }
+}
+unsafe impl crate::ext::VulkanStructure for VkPipelineRasterizationConservativeStateCreateInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT;
 }
