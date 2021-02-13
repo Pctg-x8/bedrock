@@ -43,6 +43,11 @@ mod vkresolve;
 #[cfg(feature = "Implements")]
 pub use vkresolve::{Resolver, ResolverInterface};
 
+#[cfg(feature = "Multithreaded")]
+pub(crate) type RefCounter<T> = std::sync::Arc<T>;
+#[cfg(not(feature = "Multithreaded"))]
+pub(crate) type RefCounter<T> = std::rc::Rc<T>;
+
 #[cfg(feature = "Implements")]
 mod fnconv;
 

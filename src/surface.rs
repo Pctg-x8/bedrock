@@ -1,25 +1,21 @@
 //! Vulkan Surface/Swapchain Extensions
 
 use super::*;
-#[cfg(feature = "Implements")]
-use crate::vkresolve::{Resolver, ResolverInterface};
-use crate::{DeviceChild, VkHandle};
-#[cfg(feature = "Implements")]
-use std::ptr::null;
-use std::rc::Rc as RefCounter;
-#[cfg(feature = "Implements")]
-use VkResultHandler;
 
+#[cfg(feature = "VK_KHR_surface")]
 pub(crate) struct SurfaceCell(pub(crate) VkSurfaceKHR, pub(crate) Instance);
 /// Opaque handle to a surface object
+#[cfg(feature = "VK_KHR_surface")]
 #[derive(Clone)]
 pub struct Surface(RefCounter<SurfaceCell>);
+#[cfg(feature = "VK_KHR_surface")]
 impl Surface {
     #[allow(dead_code)]
     pub(crate) fn new(cell: SurfaceCell) -> Self {
         Surface(RefCounter::new(cell))
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
 struct SwapchainCell {
     obj: VkSwapchainKHR,
     dev: Device,
@@ -28,43 +24,48 @@ struct SwapchainCell {
     size: Extent3D,
 }
 /// Opaque handle to a swapchain object
+#[cfg(feature = "VK_KHR_swapchain")]
 #[derive(Clone)]
 pub struct Swapchain(RefCounter<SwapchainCell>);
 
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 impl Drop for SurfaceCell {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_surface_khr(self.1.native_ptr(), self.0, null());
+            Resolver::get().destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
 impl Drop for SwapchainCell {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_swapchain_khr(self.dev.native_ptr(), self.obj, null());
+            Resolver::get().destroy_swapchain_khr(self.dev.native_ptr(), self.obj, std::ptr::null());
         }
     }
 }
+#[cfg(feature = "VK_KHR_surface")]
 impl VkHandle for Surface {
     type Handle = VkSurfaceKHR;
     fn native_ptr(&self) -> VkSurfaceKHR {
         self.0 .0
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
 impl VkHandle for Swapchain {
     type Handle = VkSwapchainKHR;
     fn native_ptr(&self) -> VkSwapchainKHR {
         self.0.obj
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
 impl DeviceChild for Swapchain {
     fn device(&self) -> &Device {
         &self.0.dev
     }
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 impl Surface {
     /// Create an surface object by taking raw `VkSurfaceKHR` object with its ownership.
     /// # Safety
@@ -75,7 +76,7 @@ impl Surface {
 }
 
 /// Creation Procedures
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 impl Surface {
     /// Create a `Surface` object for an X11 window, using the Xlib client-side library
     /// # Failures
@@ -220,7 +221,9 @@ impl Surface {
 }
 
 /// Builder object to construct a `Swapchain`
+#[cfg(feature = "VK_KHR_swapchain")]
 pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface);
+#[cfg(feature = "VK_KHR_swapchain")]
 impl<'d> SwapchainBuilder<'d> {
     pub fn new(
         surface: &'d Surface,
@@ -294,7 +297,7 @@ impl<'d> SwapchainBuilder<'d> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_swapchain_khr(device.native_ptr(), &self.0, null(), &mut h)
+                .create_swapchain_khr(device.native_ptr(), &self.0, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| {
                     Swapchain(
@@ -319,6 +322,7 @@ impl<'d, 's> crate::ext::Chainable<'d, FullScreenExclusiveEXT> for SwapchainBuil
     }
 }
 
+#[cfg(feature = "VK_KHR_swapchain")]
 impl Swapchain {
     pub fn format(&self) -> VkFormat {
         self.0.fmt
@@ -347,7 +351,7 @@ impl<'s> From<&'s Semaphore> for CompletionHandler<'s> {
     }
 }
 
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
 impl Swapchain {
     /// Retrieve the index of the next available presentation image
     /// # Failures
@@ -409,7 +413,7 @@ impl Swapchain {
 }
 #[cfg(feature = "Implements")]
 impl Queue {
-    /// Queue images for presentation
+    /// [Implements][VK_KHR_swapchain] Queue images for presentation
     /// # Failures
     /// On failure, this command returns
     ///
@@ -418,6 +422,7 @@ impl Queue {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
+    #[cfg(feature = "VK_KHR_swapchain")]
     pub fn present(
         &self,
         swapchains: &[(&Swapchain, u32)],
@@ -444,6 +449,7 @@ impl Queue {
     }
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 /// Presentation mode supported for a surface
 #[repr(u32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -467,6 +473,7 @@ pub enum PresentMode {
     FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR as _,
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[repr(u32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum SurfaceTransform {
@@ -489,6 +496,7 @@ pub enum SurfaceTransform {
     /// The presentation transform is not specified, and is instead determined by platform-specific considerations and mechanisms outside Vulkan
     Inherit = VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR as _,
 }
+#[cfg(feature = "VK_KHR_surface")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CompositeAlpha {
@@ -506,12 +514,14 @@ pub enum CompositeAlpha {
     Inherit = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR as _,
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 impl SurfaceTransform {
     /// Does the value contains this bits
     pub fn contains(self, value: u32) -> bool {
         (value | self as u32) != 0
     }
 }
+#[cfg(feature = "VK_KHR_surface")]
 impl CompositeAlpha {
     /// Does the value contains this bits
     pub fn contains(self, value: u32) -> bool {
