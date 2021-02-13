@@ -15,6 +15,7 @@ pub(crate) struct SurfaceCell(pub(crate) VkSurfaceKHR, pub(crate) Instance);
 #[derive(Clone)]
 pub struct Surface(RefCounter<SurfaceCell>);
 impl Surface {
+    #[allow(dead_code)]
     pub(crate) fn new(cell: SurfaceCell) -> Self {
         Surface(RefCounter::new(cell))
     }

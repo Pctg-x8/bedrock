@@ -486,9 +486,7 @@ mod shading;
 pub use shading::*;
 mod command;
 pub use command::*;
-#[cfg(feature = "Presentation")]
 mod surface;
-#[cfg(feature = "Presentation")]
 pub use surface::*;
 #[cfg(feature = "VK_EXT_debug_report")]
 mod debug;
