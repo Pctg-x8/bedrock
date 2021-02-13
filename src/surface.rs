@@ -98,7 +98,7 @@ impl Surface {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_xlib_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h)
+                .create_xlib_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
         }
@@ -123,7 +123,7 @@ impl Surface {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_xcb_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h)
+                .create_xcb_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
         }
@@ -148,7 +148,7 @@ impl Surface {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_wayland_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h)
+                .create_wayland_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
         }
@@ -168,7 +168,7 @@ impl Surface {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_android_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h)
+                .create_android_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
         }
@@ -193,7 +193,7 @@ impl Surface {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_win32_surface_khr(instance.native_ptr(), &cinfo, null(), &mut h)
+                .create_win32_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
         }
@@ -213,7 +213,7 @@ impl Surface {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_macos_surface_mvk(instance.native_ptr(), &cinfo, null(), &mut h)
+                .create_macos_surface_mvk(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
         }
