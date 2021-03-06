@@ -228,6 +228,19 @@ impl CommandBuffer {
                 })
         }
     }
+    /// Reset a command buffer to the initial state
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn reset(&self, release_resources: bool) -> crate::Result<()> {
+        let flags = if release_resources {
+            VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT
+        } else {
+            0
+        };
+        unsafe { Resolver::get().reset_command_buffer(self.0, flags).into_result() }
+    }
 }
 
 /// [feature = "Implements"] Graphics Commands: Manipulating with Render Passes
