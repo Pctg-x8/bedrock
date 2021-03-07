@@ -255,26 +255,12 @@ impl<'d> CmdRecord<'d> {
         clear_values: &[ClearValue],
         inline_commands: bool,
     ) -> &mut Self {
-        let cvalues = clear_values
-            .iter()
-            .map(|x| match x {
-                ClearValue::Color(color) => VkClearValue {
-                    color: VkClearColorValue { float32: *color },
-                },
-                ClearValue::DepthStencil(depth, stencil) => VkClearValue {
-                    depthStencil: VkClearDepthStencilValue {
-                        depth: *depth,
-                        stencil: *stencil,
-                    },
-                },
-            })
-            .collect::<Vec<_>>();
         let binfo = VkRenderPassBeginInfo {
             renderPass: pass.native_ptr(),
             framebuffer: framebuffer.native_ptr(),
             renderArea: render_area,
-            clearValueCount: cvalues.len() as _,
-            pClearValues: cvalues.as_ptr(),
+            clearValueCount: clear_values.len() as _,
+            pClearValues: clear_values.as_ptr(),
             ..Default::default()
         };
         let contents = if inline_commands {
@@ -883,19 +869,21 @@ impl<'d> CmdRecord<'d> {
         self
     }
     /// Clear regions of a color image
-    pub fn clear_color_image<T: ClearColorValue>(
+    pub fn clear_color_image(
         &mut self,
         image: &Image,
         layout: ImageLayout,
-        color: &T,
+        colors: &[ClearColorValue],
         ranges: &[VkImageSubresourceRange],
     ) -> &mut Self {
+        assert_eq!(colors.len(), ranges.len());
+
         unsafe {
             Resolver::get().cmd_clear_color_image(
                 self.ptr.native_ptr(),
                 image.native_ptr(),
                 layout as _,
-                color.represent(),
+                colors.as_ptr(),
                 ranges.len() as _,
                 ranges.as_ptr(),
             );
@@ -1111,32 +1099,40 @@ impl<'d> CmdRecord<'d> {
     }
 }
 
-/// The trait representation of `VkClearColorValue`
-pub trait ClearColorValue {
-    fn represent(&self) -> &VkClearColorValue;
-}
-impl ClearColorValue for [f32; 4] {
-    fn represent(&self) -> &VkClearColorValue {
-        unsafe { &*(self as *const Self as *const _) }
+/// A color value representation for clearing operations.
+/// Constructable from RGBA values using `From::from`.
+pub type ClearColorValue = VkClearColorValue;
+impl From<[f32; 4]> for ClearColorValue {
+    fn from(c: [f32; 4]) -> Self {
+        VkClearColorValue { float32: c }
     }
 }
-impl ClearColorValue for [i32; 4] {
-    fn represent(&self) -> &VkClearColorValue {
-        unsafe { &*(self as *const Self as *const _) }
+impl From<[i32; 4]> for ClearColorValue {
+    fn from(c: [i32; 4]) -> Self {
+        VkClearColorValue { int32: c }
     }
 }
-impl ClearColorValue for [u32; 4] {
-    fn represent(&self) -> &VkClearColorValue {
-        unsafe { &*(self as *const Self as *const _) }
+impl From<[u32; 4]> for ClearColorValue {
+    fn from(c: [u32; 4]) -> Self {
+        VkClearColorValue { uint32: c }
     }
 }
 
-/// The enum representation of `VkClearValue`
-pub enum ClearValue {
-    /// Color Value: r, g, b, a
-    Color([f32; 4]),
-    /// Depth and Stencil Value: depth, stencil
-    DepthStencil(f32, u32),
+pub type ClearValue = VkClearValue;
+impl ClearValue {
+    /// Constructs a `ClearValue` which represents clearing color value
+    pub fn color(c: impl Into<VkClearColorValue>) -> Self {
+        VkClearValue { color: c.into() }
+    }
+    /// Constructs a `ClearValue` which represents clearing both depth and stencil values
+    pub fn depth_stencil(depth: f32, stencil: u32) -> Self {
+        VkClearValue {
+            depthStencil: VkClearDepthStencilValue {
+                depth: depth,
+                stencil: stencil,
+            },
+        }
+    }
 }
 
 /// Type of index buffer indices
