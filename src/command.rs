@@ -1121,11 +1121,30 @@ impl From<[u32; 4]> for ClearColorValue {
 pub type ClearValue = VkClearValue;
 impl ClearValue {
     /// Constructs a `ClearValue` which represents clearing color value
-    pub fn color(c: impl Into<VkClearColorValue>) -> Self {
+    pub fn color(c: impl Into<ClearColorValue>) -> Self {
         VkClearValue { color: c.into() }
     }
+
+    /// Constructs a `ClearValue` which represents clearing color value
+    pub const fn color_f32(c: [f32; 4]) -> Self {
+        VkClearValue {
+            color: VkClearColorValue { float32: c },
+        }
+    }
+    /// Constructs a `ClearValue` which represents clearing color value
+    pub const fn color_u32(c: [u32; 4]) -> Self {
+        VkClearValue {
+            color: VkClearColorValue { uint32: c },
+        }
+    }
+    /// Constructs a `ClearValue` which represents clearing color value
+    pub const fn color_i32(c: [i32; 4]) -> Self {
+        VkClearValue {
+            color: VkClearColorValue { int32: c },
+        }
+    }
     /// Constructs a `ClearValue` which represents clearing both depth and stencil values
-    pub fn depth_stencil(depth: f32, stencil: u32) -> Self {
+    pub const fn depth_stencil(depth: f32, stencil: u32) -> Self {
         VkClearValue {
             depthStencil: VkClearDepthStencilValue {
                 depth: depth,
