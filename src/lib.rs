@@ -493,9 +493,7 @@ mod command;
 pub use command::*;
 mod surface;
 pub use surface::*;
-#[cfg(feature = "VK_EXT_debug_report")]
 mod debug;
-#[cfg(feature = "VK_EXT_debug_report")]
 pub use debug::*;
 mod ext;
 pub use ext::*;

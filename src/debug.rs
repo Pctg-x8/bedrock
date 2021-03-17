@@ -8,14 +8,16 @@ use derives::*;
 
 /// Opaque object to a debug report callback object
 #[derive(VkHandle)]
+#[cfg(feature = "VK_EXT_debug_report")]
 pub struct DebugReportCallback(VkDebugReportCallbackEXT, Instance, PFN_vkDestroyDebugReportCallbackEXT);
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
 impl Drop for DebugReportCallback {
     fn drop(&mut self) {
         (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
     }
 }
 
+#[cfg(feature = "VK_EXT_debug_report")]
 pub struct DebugReportCallbackBuilder<'i> {
     #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
     instance: &'i Instance,
@@ -23,6 +25,7 @@ pub struct DebugReportCallbackBuilder<'i> {
     #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
     callback: PFN_vkDebugReportCallbackEXT,
 }
+#[cfg(feature = "VK_EXT_debug_report")]
 impl<'i> DebugReportCallbackBuilder<'i> {
     /// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
     pub fn new(instance: &'i Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
@@ -70,7 +73,7 @@ impl<'i> DebugReportCallbackBuilder<'i> {
     }
 }
 
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
 impl DebugReportCallback {
     /// Register a debug report callback
     /// # Failures
@@ -99,7 +102,7 @@ impl DebugReportCallback {
             .map(|_| DebugReportCallback(h, instance.clone(), dtor))
     }
 }
-#[cfg(feature = "Implements")]
+#[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
 impl Instance {
     /// Inject its own messages into the debug stream
     pub fn debug_message(
@@ -135,6 +138,7 @@ impl Instance {
 /// The type of an object passed to the `VkDebugMarkerObjectNameInfoEXT` and `VkDebugMarkerObjectTagInfoEXT` commands
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg(any(feature = "VK_EXT_debug_report", feature = "VK_EXT_debug_marker"))]
 pub enum DebugReportObjectType {
     /// An unknown object
     Unknown = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT as _,

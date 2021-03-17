@@ -6206,6 +6206,7 @@ ExportExtensions!("VK_KHR_get_surface_capabilities2": get_surface_capabilities2_
 ExportExtensions!("VK_KHR_storage_buffer_storage_class": storage_buffer_storage_class_khr);
 ExportExtensions!("VK_KHR_relaxed_block_layout": relaxed_block_layout_khr);
 ExportExtensions!("VK_EXT_debug_report": debug_report_ext);
+ExportExtensions!("VK_EXT_debug_utils": debug_utils_ext);
 ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
 ExportExtensions!("VK_EXT_depth_range_unrestricted": depth_range_unrestricted_ext);
 ExportExtensions!("VK_IMG_filter_cubic": filter_cubic_img);
