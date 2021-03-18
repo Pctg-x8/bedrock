@@ -103,6 +103,7 @@ pub struct InstanceBuilder {
     _engine_name: std::ffi::CString,
     extensions: Vec<std::ffi::CString>,
     layers: Vec<std::ffi::CString>,
+    ext_structures: Vec<Box<dyn std::any::Any>>,
     appinfo: VkApplicationInfo,
     cinfo: VkInstanceCreateInfo,
 }
@@ -118,6 +119,7 @@ impl InstanceBuilder {
             _engine_name: std::ffi::CString::new(engine_name).unwrap(),
             extensions: Vec::new(),
             layers: Vec::new(),
+            ext_structures: Vec::new(),
             appinfo: VkApplicationInfo {
                 applicationVersion: VK_MAKE_VERSION!(app_version.0, app_version.1, app_version.2),
                 engineVersion: VK_MAKE_VERSION!(engine_version.0, engine_version.1, engine_version.2),
@@ -154,6 +156,11 @@ impl InstanceBuilder {
         self
     }
 
+    pub fn add_ext_structure<S: crate::ext::VulkanStructure + 'static>(&mut self, ext: S) -> &mut Self {
+        self.ext_structures.push(Box::new(ext) as _);
+        self
+    }
+
     pub fn create_info(&self) -> &VkInstanceCreateInfo {
         &self.cinfo
     }
@@ -173,6 +180,19 @@ impl InstanceBuilder {
     /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
     #[cfg(feature = "Implements")]
     pub fn create(&mut self) -> crate::Result<Instance> {
+        // construct ext chains
+        for n in 0..self.ext_structures.len() - 1 {
+            let next_ptr = self.ext_structures[n].as_ref() as *const _ as _;
+            let prev: &mut crate::ext::GenericVulkanStructure =
+                unsafe { std::mem::transmute(&mut self.ext_structures[n - 1]) };
+
+            prev.pNext = next_ptr;
+        }
+        self.cinfo.pNext = self
+            .ext_structures
+            .first()
+            .map_or_else(std::ptr::null, |s| s as *const _ as _);
+
         let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
         let extensions: Vec<_> = self.extensions.iter().map(|x| x.as_ptr()).collect();
         self.appinfo.pApplicationName = self._app_name.as_ptr();

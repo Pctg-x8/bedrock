@@ -24,6 +24,11 @@ pub unsafe trait VulkanStructure: Sized {
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { std::mem::transmute(self) }
     }
+    /// Cast structure mutable ref to generic. This is same as transmute but must be safe.
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        unsafe { std::mem::transmute(self) }
+    }
+
     /// Cast structure ref only if sType matches
     fn try_from_generic(g: &GenericVulkanStructure) -> Option<&Self> {
         if g.sType == Self::TYPE {
