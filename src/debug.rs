@@ -201,13 +201,13 @@ pub enum DebugReportObjectType {
 }
 
 #[cfg(feature = "VK_EXT_debug_utils")]
-pub type MessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
+pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[derive(VkHandle)]
-pub struct Messenger(VkDebugUtilsMessengerEXT, Instance, PFN_vkDestroyDebugUtilsMessengerEXT);
+pub struct DebugUtilsMessenger(VkDebugUtilsMessengerEXT, Instance, PFN_vkDestroyDebugUtilsMessengerEXT);
 #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-impl Drop for Messenger {
+impl Drop for DebugUtilsMessenger {
     fn drop(&mut self) {
         (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
     }
@@ -216,9 +216,9 @@ impl Drop for Messenger {
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct MessageSeverityFlags(VkDebugUtilsMessageSeverityFlagsEXT);
+pub struct DebugUtilsMessageSeverityFlags(VkDebugUtilsMessageSeverityFlagsEXT);
 #[cfg(feature = "VK_EXT_debug_utils")]
-impl MessageSeverityFlags {
+impl DebugUtilsMessageSeverityFlags {
     /// Empty flag set
     pub const EMPTY: Self = Self(0);
     /// The most verbose output indicating all diagnostic messages
@@ -269,7 +269,7 @@ impl MessageSeverityFlags {
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(u32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MessageSeverityFlag {
+pub enum DebugUtilsMessageSeverityFlag {
     /// The most verbose output indicating all diagnostic messages
     /// from the Vulkan loader, layers, and drivers should be captured.
     Verbose = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
@@ -289,9 +289,9 @@ pub enum MessageSeverityFlag {
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct MessageTypeFlags(VkDebugUtilsMessageTypeFlagsEXT);
+pub struct DebugUtilsMessageTypeFlags(VkDebugUtilsMessageTypeFlagsEXT);
 #[cfg(feature = "VK_EXT_debug_utils")]
-impl MessageTypeFlags {
+impl DebugUtilsMessageTypeFlags {
     /// Empty flag set
     pub const EMPTY: Self = Self(0);
     /// Some general event has occured.
@@ -329,23 +329,23 @@ impl MessageTypeFlags {
 }
 
 #[cfg(feature = "VK_EXT_debug_utils")]
-impl MessengerCreateInfo {
+impl DebugUtilsMessengerCreateInfo {
     pub fn new(callback: PFN_vkDebugUtilsMessengerCallbackEXT) -> Self {
         Self {
             sType: VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
             pNext: std::ptr::null(),
             flags: 0,
-            messageSeverity: MessageSeverityFlags::ALL.0,
-            messageType: MessageTypeFlags::ALL.0,
+            messageSeverity: DebugUtilsMessageSeverityFlags::ALL.0,
+            messageType: DebugUtilsMessageTypeFlags::ALL.0,
             pfnUserCallback: callback,
             pUserData: std::ptr::null_mut(),
         }
     }
-    pub fn filter_severity(mut self, severity: MessageSeverityFlags) -> Self {
+    pub fn filter_severity(mut self, severity: DebugUtilsMessageSeverityFlags) -> Self {
         self.messageSeverity = severity.0;
         self
     }
-    pub fn filter_type(mut self, ty: MessageTypeFlags) -> Self {
+    pub fn filter_type(mut self, ty: DebugUtilsMessageTypeFlags) -> Self {
         self.messageType = ty.0;
         self
     }
@@ -360,7 +360,7 @@ impl MessengerCreateInfo {
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    pub fn create(&self, instance: &Instance) -> super::Result<Messenger> {
+    pub fn create(&self, instance: &Instance) -> super::Result<DebugUtilsMessenger> {
         let create_fn: PFN_vkCreateDebugUtilsMessengerEXT = instance
             .extra_procedure("vkCreateDebugUtilsMessengerEXT")
             .expect("Requiring vkCreateDebugUtilsMessengerEXT function");
@@ -371,6 +371,6 @@ impl MessengerCreateInfo {
         let mut h = VK_NULL_HANDLE as _;
         create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h)
             .into_result()
-            .map(|_| Messenger(h, instance.clone(), destroy_fn))
+            .map(|_| DebugUtilsMessenger(h, instance.clone(), destroy_fn))
     }
 }
