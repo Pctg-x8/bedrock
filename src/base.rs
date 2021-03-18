@@ -196,7 +196,7 @@ impl InstanceBuilder {
         self.cinfo.pNext = self
             .ext_structures
             .first()
-            .map_or_else(std::ptr::null, |s| s as *const _ as _);
+            .map_or_else(std::ptr::null, |s| s.as_ref() as *const _ as _);
 
         let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
         let extensions: Vec<_> = self.extensions.iter().map(|x| x.as_ptr()).collect();
