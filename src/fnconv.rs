@@ -88,3 +88,6 @@ FnTransmuteImpl!(for PFN_vkGetMemoryFdKHR, PFN_vkGetMemoryFdPropertiesKHR);
 
 #[cfg(feature = "VK_EXT_external_memory_host")]
 FnTransmuteImpl!(for PFN_vkGetMemoryHostPointerPropertiesEXT);
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+FnTransmuteImpl!(for PFN_vkCreateDebugUtilsMessengerEXT, PFN_vkDestroyDebugUtilsMessengerEXT);

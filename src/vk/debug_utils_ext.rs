@@ -37,6 +37,9 @@ pub struct VkDebugUtilsLabelEXT {
     pub pLabelName: *const c_char,
     pub color: [c_float; 4],
 }
+unsafe impl crate::ext::VulkanStructure for VkDebugUtilsLabelEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+}
 
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -46,6 +49,9 @@ pub struct VkDebugUtilsObjectNameInfoEXT {
     pub objectType: VkObjectType,
     pub objectHandle: u64,
     pub pObjectName: *const c_char,
+}
+unsafe impl crate::ext::VulkanStructure for VkDebugUtilsObjectNameInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
 }
 
 #[repr(C)]
@@ -63,6 +69,9 @@ pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub pCmdBufLabels: *const VkDebugUtilsLabelEXT,
     pub objectCount: u32,
     pub pObjects: *const VkDebugUtilsObjectNameInfoEXT,
+}
+unsafe impl crate::ext::VulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
 }
 
 pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(
@@ -83,6 +92,9 @@ pub struct VkDebugUtilsMessengerCreateInfoEXT {
     pub pfnUserCallback: PFN_vkDebugUtilsMessengerCallbackEXT,
     pub pUserData: *mut c_void,
 }
+unsafe impl crate::ext::VulkanStructure for VkDebugUtilsMessengerCreateInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+}
 
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -94,6 +106,9 @@ pub struct VkDebugUtilsObjectTagInfoEXT {
     pub tagName: u64,
     pub tagSize: size_t,
     pub pTag: *const c_void,
+}
+unsafe impl crate::ext::VulkanStructure for VkDebugUtilsObjectTagInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
 }
 
 pub type PFN_vkSetDebugUtilsObjectNameEXT =
