@@ -189,7 +189,9 @@ impl InstanceBuilder {
             current.pNext = next_ptr;
         }
         if let Some(l) = self.ext_structures.last_mut() {
-            unsafe { std::mem::transmute::<_, &mut crate::ext::GenericVulkanStructure>(l).pNext = std::ptr::null(); }
+            unsafe {
+                std::mem::transmute::<_, &mut crate::ext::GenericVulkanStructure>(l).pNext = std::ptr::null();
+            }
         }
         self.cinfo.pNext = self
             .ext_structures
