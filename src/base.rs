@@ -182,11 +182,14 @@ impl InstanceBuilder {
     pub fn create(&mut self) -> crate::Result<Instance> {
         // construct ext chains
         for n in 0..self.ext_structures.len() - 1 {
-            let next_ptr = self.ext_structures[n].as_ref() as *const _ as _;
-            let prev: &mut crate::ext::GenericVulkanStructure =
-                unsafe { std::mem::transmute(&mut self.ext_structures[n - 1]) };
+            let next_ptr = self.ext_structures[n + 1].as_ref() as *const _ as _;
+            let current: &mut crate::ext::GenericVulkanStructure =
+                unsafe { std::mem::transmute(&mut self.ext_structures[n]) };
 
-            prev.pNext = next_ptr;
+            current.pNext = next_ptr;
+        }
+        if let Some(l) = self.ext_structures.last_mut() {
+            unsafe { std::mem::transmute::<_, &mut crate::ext::GenericVulkanStructure>(l).pNext = std::ptr::null(); }
         }
         self.cinfo.pNext = self
             .ext_structures
