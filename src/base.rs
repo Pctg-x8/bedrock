@@ -191,8 +191,10 @@ impl InstanceBuilder {
             }
             unsafe {
                 std::mem::transmute::<_, &mut crate::ext::GenericVulkanStructure>(
-                    self.ext_structures.last_mut().unwrap().as_mut()
-                ).pNext = std::ptr::null();
+                    &mut *(self.ext_structures.last_mut().unwrap().as_mut() as *mut _
+                        as *mut crate::ext::GenericVulkanStructure),
+                )
+                .pNext = std::ptr::null();
             }
         }
         self.cinfo.pNext = self
