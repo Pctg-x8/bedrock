@@ -47,6 +47,8 @@ impl Drop for SwapchainCell {
 #[cfg(feature = "VK_KHR_surface")]
 impl VkHandle for Surface {
     type Handle = VkSurfaceKHR;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
+
     fn native_ptr(&self) -> VkSurfaceKHR {
         self.0 .0
     }
@@ -54,6 +56,8 @@ impl VkHandle for Surface {
 #[cfg(feature = "VK_KHR_swapchain")]
 impl VkHandle for Swapchain {
     type Handle = VkSwapchainKHR;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
+
     fn native_ptr(&self) -> VkSwapchainKHR {
         self.0.obj
     }

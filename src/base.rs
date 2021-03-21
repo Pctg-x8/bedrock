@@ -86,12 +86,16 @@ impl Drop for InstanceCell {
 
 impl VkHandle for Instance {
     type Handle = VkInstance;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_INSTANCE;
+
     fn native_ptr(&self) -> VkInstance {
         self.0 .0
     }
 }
 impl VkHandle for PhysicalDevice {
     type Handle = VkPhysicalDevice;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_PHYSICAL_DEVICE;
+
     fn native_ptr(&self) -> VkPhysicalDevice {
         self.0
     }

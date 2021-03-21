@@ -6,52 +6,20 @@ use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkResultHandler,
 };
-use crate::{Device, DeviceChild, Extent2D, ImageLayout, ImageView, VkHandle};
+use crate::{Device, Extent2D, ImageLayout, ImageView, VkHandle};
+use derives::*;
 use std::ops::*;
 
 /// Opaque handle to a render pass object
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_RENDER_PASS"]
+#[drop_function_name = "destroy_render_pass"]
 pub struct RenderPass(VkRenderPass, Device);
 /// Opaque handle to a framebuffer object
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
+#[drop_function_name = "destroy_framebuffer"]
 pub struct Framebuffer(VkFramebuffer, Device, Vec<ImageView>, Extent2D);
-
-#[cfg(feature = "Implements")]
-impl Drop for RenderPass {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_render_pass(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-#[cfg(feature = "Implements")]
-impl Drop for Framebuffer {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl VkHandle for RenderPass {
-    type Handle = VkRenderPass;
-    fn native_ptr(&self) -> VkRenderPass {
-        self.0
-    }
-}
-impl VkHandle for Framebuffer {
-    type Handle = VkFramebuffer;
-    fn native_ptr(&self) -> VkFramebuffer {
-        self.0
-    }
-}
-impl DeviceChild for RenderPass {
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-impl DeviceChild for Framebuffer {
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
 
 /// Builder structure to construct the `VkAttachmentDescription`
 #[repr(transparent)]

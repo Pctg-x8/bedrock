@@ -3,8 +3,11 @@
 use super::*;
 
 #[cfg(target_pointer_width = "64")]
-mod nd_handle_base_ts { pub enum VkSurfaceKHR {} }
+mod nd_handle_base_ts {
+    pub enum VkSurfaceKHR {}
+}
 pub type VkSurfaceKHR = VK_NON_DISPATCHABLE_HANDLE!(VkSurfaceKHR);
+pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 1000000000;
 
 pub const VK_KHR_SURFACE_SPEC_VERSION: usize = 25;
 pub const VK_KHR_SURFACE_EXTENSION_NAME: &str = "VK_KHR_surface";
@@ -51,37 +54,85 @@ pub const VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR: VkCompositeAlphaFlagsKHR = 
 pub const VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR: VkCompositeAlphaFlagsKHR = 0x04;
 pub const VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR: VkCompositeAlphaFlagsKHR = 0x08;
 
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VkSurfaceCapabilitiesKHR
-{
-    pub minImageCount: u32, pub maxImageCount: u32,
-    pub currentExtent: VkExtent2D, pub minImageExtent: VkExtent2D, pub maxImageExtent: VkExtent2D,
-    pub maxImageArrayLayers: u32, pub supportedTransforms: VkSurfaceTransformFlagsKHR,
-    pub currentTransform: VkSurfaceTransformFlagsKHR, pub supportedCompositeAlpha: VkCompositeAlphaFlagsKHR,
-    pub supportedUsageFlags: VkImageUsageFlags
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VkSurfaceCapabilitiesKHR {
+    pub minImageCount: u32,
+    pub maxImageCount: u32,
+    pub currentExtent: VkExtent2D,
+    pub minImageExtent: VkExtent2D,
+    pub maxImageExtent: VkExtent2D,
+    pub maxImageArrayLayers: u32,
+    pub supportedTransforms: VkSurfaceTransformFlagsKHR,
+    pub currentTransform: VkSurfaceTransformFlagsKHR,
+    pub supportedCompositeAlpha: VkCompositeAlphaFlagsKHR,
+    pub supportedUsageFlags: VkImageUsageFlags,
 }
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VkSurfaceFormatKHR { pub format: VkFormat, pub colorSpace: VkColorSpaceKHR }
-impl Default for VkSurfaceFormatKHR
-{
-    fn default() -> Self
-    {
-        VkSurfaceFormatKHR { format: VK_FORMAT_UNDEFINED, colorSpace: VK_COLOR_SPACE_SRGB_NONLINEAR_KHR }
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VkSurfaceFormatKHR {
+    pub format: VkFormat,
+    pub colorSpace: VkColorSpaceKHR,
+}
+impl Default for VkSurfaceFormatKHR {
+    fn default() -> Self {
+        VkSurfaceFormatKHR {
+            format: VK_FORMAT_UNDEFINED,
+            colorSpace: VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
+        }
     }
 }
 
-pub type PFN_vkDestroySurfaceKHR = extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetPhysicalDeviceSurfaceSupportKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
+pub type PFN_vkDestroySurfaceKHR =
+    extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
+pub type PFN_vkGetPhysicalDeviceSurfaceSupportKHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    queueFamilyIndex: u32,
+    surface: VkSurfaceKHR,
+    pSupported: *mut VkBool32,
+) -> VkResult;
+pub type PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+    pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
+) -> VkResult;
+pub type PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+    pSurfaceFormatCount: *mut u32,
+    pSurfaceFormats: *mut VkSurfaceFormatKHR,
+) -> VkResult;
+pub type PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+    pPresentModeCount: *mut u32,
+    pPresentModes: *mut VkPresentModeKHR,
+) -> VkResult;
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
+extern "system" {
     pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
+    pub fn vkGetPhysicalDeviceSurfaceSupportKHR(
+        physicalDevice: VkPhysicalDevice,
+        queueFamilyIndex: u32,
+        surface: VkSurfaceKHR,
+        pSupported: *mut VkBool32,
+    ) -> VkResult;
+    pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
+    ) -> VkResult;
+    pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pSurfaceFormatCount: *mut u32,
+        pSurfaceFormats: *mut VkSurfaceFormatKHR,
+    ) -> VkResult;
+    pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pPresentModeCount: *mut u32,
+        pPresentModes: *mut VkPresentModeKHR,
+    ) -> VkResult;
 }

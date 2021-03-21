@@ -4,14 +4,15 @@
 use crate::vk::*;
 #[cfg(feature = "Implements")]
 use crate::{Resolver, ResolverInterface, VkHandle, VkResultHandler};
-use derives::*;
 use std::ops::Deref;
 
 #[repr(transparent)]
 #[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_DISPLAY_KHR"]
 pub struct Display(VkDisplayKHR);
 #[repr(transparent)]
 #[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_DISPLAY_MODE_KHR"]
 pub struct DisplayMode(VkDisplayModeKHR);
 
 #[cfg(feature = "Implements")]

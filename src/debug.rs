@@ -5,6 +5,7 @@ use crate::VkResultHandler;
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
 use crate::{Instance, VkHandle};
+#[allow(unused_imports)]
 use derives::*;
 
 /// Opaque object to a debug report callback object
@@ -206,6 +207,7 @@ pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT"]
 pub struct DebugUtilsMessenger(VkDebugUtilsMessengerEXT, Instance, PFN_vkDestroyDebugUtilsMessengerEXT);
 #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
 impl Drop for DebugUtilsMessenger {

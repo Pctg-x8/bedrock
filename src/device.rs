@@ -23,6 +23,7 @@ struct DeviceCell(VkDevice, Instance);
 pub struct Device(RefCounter<DeviceCell>);
 /// Opaque handle to a queue object
 #[derive(Clone, VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_QUEUE"]
 pub struct Queue(VkQueue, Device);
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
@@ -35,6 +36,8 @@ impl Drop for DeviceCell {
 }
 impl VkHandle for Device {
     type Handle = VkDevice;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE;
+
     fn native_ptr(&self) -> VkDevice {
         self.0 .0
     }

@@ -3,11 +3,14 @@
 pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 8;
 pub static VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &'static str = "VK_EXT_debug_report";
 
-use libc::*;
 use super::*;
+use libc::*;
 
-mod nd_handle_base_ts { pub enum VkDebugReportCallbackEXT {} }
+mod nd_handle_base_ts {
+    pub enum VkDebugReportCallbackEXT {}
+}
 pub type VkDebugReportCallbackEXT = VK_NON_DISPATCHABLE_HANDLE!(VkDebugReportCallbackEXT);
+pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
 
 pub type VkDebugReportObjectTypeEXT = i32;
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT: VkDebugReportObjectTypeEXT = 0;
@@ -55,40 +58,81 @@ pub const VK_DEBUG_REPORT_ERROR_BIT_EXT: VkDebugReportFlagsEXT = 0x08;
 pub const VK_DEBUG_REPORT_DEBUG_BIT_EXT: VkDebugReportFlagsEXT = 0x10;
 
 #[repr(C)]
-pub struct VkDebugReportCallbackCreateInfoEXT
-{
-	pub sType: VkStructureType, pub pNext: *const c_void,
-	pub flags: VkDebugReportFlagsEXT, pub pfnCallback: PFN_vkDebugReportCallbackEXT,
-	pub pUserData: *mut c_void
+pub struct VkDebugReportCallbackCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
+    pub flags: VkDebugReportFlagsEXT,
+    pub pfnCallback: PFN_vkDebugReportCallbackEXT,
+    pub pUserData: *mut c_void,
 }
-impl Default for VkDebugReportCallbackCreateInfoEXT
-{
-	fn default() -> Self
-	{
-		VkDebugReportCallbackCreateInfoEXT
-		{
-			sType: VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-			pNext: std::ptr::null(),
-			flags: 0,
-			pfnCallback: unsafe
-			{
-				#[allow(invalid_value)]
-				std::mem::MaybeUninit::zeroed().assume_init()
-			},
-			pUserData: std::ptr::null_mut()
-		}
-	}
+impl Default for VkDebugReportCallbackCreateInfoEXT {
+    fn default() -> Self {
+        VkDebugReportCallbackCreateInfoEXT {
+            sType: VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
+            pNext: std::ptr::null(),
+            flags: 0,
+            pfnCallback: unsafe {
+                #[allow(invalid_value)]
+                std::mem::MaybeUninit::zeroed().assume_init()
+            },
+            pUserData: std::ptr::null_mut(),
+        }
+    }
 }
 
-pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: size_t, messageCode: i32, pLayerPrefix: *const c_char, pMessage: *const c_char, pUserData: *mut c_void) -> VkBool32;
-pub type PFN_vkCreateDebugReportCallbackEXT = extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pCallback: *mut VkDebugReportCallbackEXT) -> VkResult;
-pub type PFN_vkDestroyDebugReportCallbackEXT = extern "system" fn(instance: VkInstance, callback: VkDebugReportCallbackEXT, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkDebugReportMessageEXT = extern "system" fn(instance: VkInstance, flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: size_t, messageCode: i32, pLayerPrefix: *const c_char, pMessage: *const c_char);
+pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(
+    flags: VkDebugReportFlagsEXT,
+    objectType: VkDebugReportObjectTypeEXT,
+    object: u64,
+    location: size_t,
+    messageCode: i32,
+    pLayerPrefix: *const c_char,
+    pMessage: *const c_char,
+    pUserData: *mut c_void,
+) -> VkBool32;
+pub type PFN_vkCreateDebugReportCallbackEXT = extern "system" fn(
+    instance: VkInstance,
+    pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
+    pAllocator: *const VkAllocationCallbacks,
+    pCallback: *mut VkDebugReportCallbackEXT,
+) -> VkResult;
+pub type PFN_vkDestroyDebugReportCallbackEXT = extern "system" fn(
+    instance: VkInstance,
+    callback: VkDebugReportCallbackEXT,
+    pAllocator: *const VkAllocationCallbacks,
+);
+pub type PFN_vkDebugReportMessageEXT = extern "system" fn(
+    instance: VkInstance,
+    flags: VkDebugReportFlagsEXT,
+    objectType: VkDebugReportObjectTypeEXT,
+    object: u64,
+    location: size_t,
+    messageCode: i32,
+    pLayerPrefix: *const c_char,
+    pMessage: *const c_char,
+);
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
-    pub fn vkCreateDebugReportCallbackEXT(instance: VkInstance, pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pCallback: *mut VkDebugReportCallbackEXT) -> VkResult;
-    pub fn vkDestroyDebugReportCallbackEXT(instance: VkInstance, callback: VkDebugReportCallbackEXT, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkDebugReportMessageEXT(instance: VkInstance, flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: size_t, messageCode: i32, pLayerPrefix: *const c_char, pMessage: *const c_char);
+extern "system" {
+    pub fn vkCreateDebugReportCallbackEXT(
+        instance: VkInstance,
+        pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
+        pAllocator: *const VkAllocationCallbacks,
+        pCallback: *mut VkDebugReportCallbackEXT,
+    ) -> VkResult;
+    pub fn vkDestroyDebugReportCallbackEXT(
+        instance: VkInstance,
+        callback: VkDebugReportCallbackEXT,
+        pAllocator: *const VkAllocationCallbacks,
+    );
+    pub fn vkDebugReportMessageEXT(
+        instance: VkInstance,
+        flags: VkDebugReportFlagsEXT,
+        objectType: VkDebugReportObjectTypeEXT,
+        object: u64,
+        location: size_t,
+        messageCode: i32,
+        pLayerPrefix: *const c_char,
+        pMessage: *const c_char,
+    );
 }

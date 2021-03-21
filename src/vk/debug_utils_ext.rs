@@ -9,6 +9,7 @@ mod nd_handle_base_ts {
     pub enum VkDebugUtilsMessengerEXT {}
 }
 pub type VkDebugUtilsMessengerEXT = VK_NON_DISPATCHABLE_HANDLE!(VkDebugUtilsMessengerEXT);
+pub const VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT: VkObjectType = 1000128000;
 
 pub type VkDebugUtilsMessengerCallbackDataFlagsEXT = VkFlags;
 

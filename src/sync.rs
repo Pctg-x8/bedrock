@@ -11,49 +11,20 @@ use crate::{
 use crate::{Device, DeviceChild, VkHandle};
 
 /// Opaque handle to a fence object
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_FENCE"]
+#[drop_function_name = "destroy_fence"]
 pub struct Fence(VkFence, Device);
 /// Opaque handle to a semaphore object
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_SEMAPHORE"]
+#[drop_function_name = "destroy_semaphore"]
 pub struct Semaphore(VkSemaphore, Device);
 /// Opaque handle to a event object
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_EVENT"]
+#[drop_function_name = "destroy_event"]
 pub struct Event(VkEvent, Device);
-
-#[cfg(feature = "Implements")]
-DeviceChildCommonDrop! {
-    for Fence[destroy_fence], Semaphore[destroy_semaphore], Event[destroy_event]
-}
-impl VkHandle for Fence {
-    type Handle = VkFence;
-    fn native_ptr(&self) -> VkFence {
-        self.0
-    }
-}
-impl VkHandle for Semaphore {
-    type Handle = VkSemaphore;
-    fn native_ptr(&self) -> VkSemaphore {
-        self.0
-    }
-}
-impl VkHandle for Event {
-    type Handle = VkEvent;
-    fn native_ptr(&self) -> VkEvent {
-        self.0
-    }
-}
-impl DeviceChild for Fence {
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-impl DeviceChild for Semaphore {
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-impl DeviceChild for Event {
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]

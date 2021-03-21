@@ -177,18 +177,22 @@ pub enum StencilFaceMask {
 }
 
 #[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_SHADER_MODULE"]
 #[drop_function_name = "destroy_shader_module"]
 /// Opaque handle to a shader module object
 pub struct ShaderModule(VkShaderModule, Device);
 #[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_PIPELINE_CACHE"]
 #[drop_function_name = "destroy_pipeline_cache"]
 /// Opaque handle to a pipeline cache object
 pub struct PipelineCache(VkPipelineCache, Device);
 #[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_PIPELINE_LAYOUT"]
 #[drop_function_name = "destroy_pipeline_layout"]
 /// Opaque handle to a pipeline layout object
 pub struct PipelineLayout(VkPipelineLayout, Device);
 #[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_PIPELINE"]
 #[drop_function_name = "destroy_pipeline"]
 /// Opaque handle to a pipeline object
 pub struct Pipeline(VkPipeline, Device);

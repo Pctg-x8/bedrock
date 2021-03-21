@@ -33,6 +33,8 @@ extern crate x11;
 #[cfg(feature = "VK_KHR_xcb_surface")]
 extern crate xcb;
 
+use derives::*;
+
 #[macro_use]
 pub mod vk;
 use vk::*;
@@ -68,6 +70,8 @@ impl VkResultHandler for VkResult {
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {
     type Handle;
+    const TYPE: VkObjectType;
+
     /// Retrieve an underlying handle
     fn native_ptr(&self) -> Self::Handle;
 }
@@ -81,6 +85,8 @@ pub trait DeviceChild {
 /// Returns "Empty Handle" when the value is `None`.
 impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
     type Handle = <H as VkHandle>::Handle;
+    const TYPE: VkObjectType = <H as VkHandle>::TYPE;
+
     fn native_ptr(&self) -> Self::Handle {
         self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr())
     }
@@ -504,13 +510,9 @@ mod fmt;
 pub use self::fmt::AsFormat;
 
 /// Opaque handle to a query pool object
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_QUERY_POOL"]
 pub struct QueryPool(VkQueryPool, Device);
-impl VkHandle for QueryPool {
-    type Handle = VkQueryPool;
-    fn native_ptr(&self) -> VkQueryPool {
-        self.0
-    }
-}
 #[cfg(feature = "Implements")]
 impl QueryPool {
     /// Create a new query pool object

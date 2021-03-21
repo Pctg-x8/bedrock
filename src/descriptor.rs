@@ -7,15 +7,16 @@ use crate::{
     VkResultHandler,
 };
 use crate::{Device, DeviceChild, ImageLayout, ShaderStage, VkHandle};
-use derives::*;
 
 /// Opaque handle to a descriptor set layout object
 #[derive(VkHandle, DeviceChild)]
 #[drop_function_name = "destroy_descriptor_set_layout"]
+#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT"]
 pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 /// Opaque handle to a descriptor pool object
 #[derive(VkHandle, DeviceChild)]
 #[drop_function_name = "destroy_descriptor_pool"]
+#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_POOL"]
 pub struct DescriptorPool(VkDescriptorPool, Device);
 
 impl std::cmp::PartialEq for DescriptorSetLayout {
@@ -347,6 +348,8 @@ macro_rules! DescriptorUpdateTemplateEntries
     } };
 }
 
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE"]
 pub struct DescriptorUpdateTemplate(VkDescriptorUpdateTemplate, Device);
 #[cfg(feature = "Implements")]
 impl Drop for DescriptorUpdateTemplate {
@@ -395,16 +398,5 @@ impl DescriptorUpdateTemplate {
                 data as *const T as *const _,
             )
         }
-    }
-}
-impl VkHandle for DescriptorUpdateTemplate {
-    type Handle = VkDescriptorUpdateTemplate;
-    fn native_ptr(&self) -> VkDescriptorUpdateTemplate {
-        self.0
-    }
-}
-impl DeviceChild for DescriptorUpdateTemplate {
-    fn device(&self) -> &Device {
-        &self.1
     }
 }

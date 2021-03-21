@@ -1,9 +1,26 @@
 use proc_macro::TokenStream;
 use quote::*;
 
-#[proc_macro_derive(VkHandle)]
+#[proc_macro_derive(VkHandle, attributes(object_type))]
 pub fn derive_handle(tok: TokenStream) -> TokenStream {
     let input: syn::DeriveInput = syn::parse(tok).expect("Parsing Failed");
+
+    let object_type = input
+        .attrs
+        .iter()
+        .find(|a| a.path.get_ident().map_or(false, |id| id == "object_type"))
+        .expect("object_type attribute is required to auto-derive VkHandle");
+    let object_type = match object_type.parse_meta() {
+        Ok(syn::Meta::NameValue(nv)) => {
+            if let syn::Lit::Str(ls) = nv.lit {
+                syn::Ident::new(&ls.value(), proc_macro2::Span::call_site())
+            } else {
+                panic!("object_type needs String value")
+            }
+        }
+        Ok(_) => unimplemented!("object_type = ???"),
+        Err(e) => panic!("Attribute ParseError! {:?}", e),
+    };
 
     let name = &input.ident;
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
@@ -18,6 +35,8 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
             quote! {
                 impl crate::VkHandle for #name {
                     type Handle = #target_ty;
+                    const TYPE: VkObjectType = #object_type;
+
                     fn native_ptr(&self) -> Self::Handle { self.0 }
                 }
             }

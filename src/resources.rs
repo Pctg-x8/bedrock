@@ -164,6 +164,8 @@ pub struct Buffer(RefCounter<BufferCell>);
 /// Opaque handle to a image object(constructed via `ImageDesc`)
 #[derive(Clone)]
 pub struct Image(RefCounter<ImageCell>);
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
 /// Opaque handle to a buffer view object
 pub struct BufferView(VkBufferView, Buffer);
 struct ImageViewCell(VkImageView, Image);
@@ -236,24 +238,24 @@ impl Drop for ImageViewCell {
 
 impl VkHandle for DeviceMemory {
     type Handle = VkDeviceMemory;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+
     fn native_ptr(&self) -> VkDeviceMemory {
         self.0 .0
     }
 }
 impl VkHandle for Buffer {
     type Handle = VkBuffer;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER;
+
     fn native_ptr(&self) -> VkBuffer {
         self.0 .0
     }
 }
-impl VkHandle for BufferView {
-    type Handle = VkBufferView;
-    fn native_ptr(&self) -> VkBufferView {
-        self.0
-    }
-}
 impl VkHandle for ImageView {
     type Handle = VkImageView;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE_VIEW;
+
     fn native_ptr(&self) -> VkImageView {
         self.0 .0
     }
@@ -281,6 +283,8 @@ impl DeviceChild for ImageView {
 
 impl VkHandle for Image {
     type Handle = VkImage;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
+
     #[cfg(feature = "VK_KHR_swapchain")]
     fn native_ptr(&self) -> VkImage {
         match *self.0 {
@@ -1630,26 +1634,10 @@ impl ImageSubresourceRange {
 }
 
 /// Opaque handle to a sampler object
+#[derive(VkHandle, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_SAMPLER"]
+#[drop_function_name = "destroy_sampler"]
 pub struct Sampler(VkSampler, Device);
-#[cfg(feature = "Implements")]
-impl Drop for Sampler {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_sampler(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl VkHandle for Sampler {
-    type Handle = VkSampler;
-    fn native_ptr(&self) -> VkSampler {
-        self.0
-    }
-}
-impl DeviceChild for Sampler {
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
 
 /// Specify behavior of sampling with texture coordinates outside an image
 #[repr(C)]

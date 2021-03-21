@@ -16,6 +16,7 @@ use std::ops::Range;
 
 #[derive(VkHandle, DeviceChild)]
 #[drop_function_name = "destroy_command_pool"]
+#[object_type = "VK_OBJECT_TYPE_COMMAND_POOL"]
 /// Opaque handle to a command pool object
 pub struct CommandPool(VkCommandPool, Device);
 /// Opaque handle to a command buffer object
@@ -25,6 +26,8 @@ pub struct CommandBuffer(VkCommandBuffer);
 
 impl VkHandle for CommandBuffer {
     type Handle = VkCommandBuffer;
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
+
     fn native_ptr(&self) -> VkCommandBuffer {
         self.0
     }
