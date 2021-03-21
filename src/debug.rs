@@ -1,8 +1,9 @@
 //! Vulkan Debug Layer Extensions
 
-use crate::vk::*;
 #[cfg(feature = "Implements")]
 use crate::VkResultHandler;
+#[allow(unused_imports)]
+use crate::{vk::*, VulkanStructure};
 use crate::{Instance, VkHandle};
 use derives::*;
 
@@ -372,5 +373,42 @@ impl DebugUtilsMessengerCreateInfo {
         create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h)
             .into_result()
             .map(|_| DebugUtilsMessenger(h, instance.clone(), destroy_fn))
+    }
+}
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+pub struct DebugUtilsObjectNameInfo<'d>(
+    VkDebugUtilsObjectNameInfoEXT,
+    std::marker::PhantomData<Option<&'d std::ffi::CStr>>,
+);
+#[cfg(feature = "VK_EXT_debug_utils")]
+impl<'d> DebugUtilsObjectNameInfo<'d> {
+    pub fn new(ty: VkObjectType, handle: u64, name: Option<&'d std::ffi::CStr>) -> Self {
+        DebugUtilsObjectNameInfo(
+            VkDebugUtilsObjectNameInfoEXT {
+                sType: VkDebugUtilsObjectNameInfoEXT::TYPE,
+                pNext: std::ptr::null(),
+                objectType: ty,
+                objectHandle: handle,
+                pObjectName: name.map_or_else(std::ptr::null, |s| s.as_ptr()),
+            },
+            std::marker::PhantomData,
+        )
+    }
+
+    #[cfg(feature = "Implements")]
+    /// Give a user-friendly name to an object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn apply(&self, device: &crate::Device) -> crate::Result<()> {
+        let name_setter: PFN_vkSetDebugUtilsObjectNameEXT = device
+            .instance()
+            .extra_procedure("vkSetDebugUtilsObjectNameEXT")
+            .expect("no vkSetDebugUtilsObjectNameEXT found");
+        name_setter(device.native_ptr(), &self.0).into_result()
     }
 }

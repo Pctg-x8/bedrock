@@ -473,6 +473,71 @@ impl DeviceMemory {
                 .map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
         }
     }
+
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    /// [VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()> {
+        crate::DebugUtilsObjectNameInfo::new(VK_OBJECT_TYPE_DEVICE_MEMORY, self.native_ptr() as usize as _, name)
+            .apply(self.device())
+    }
+}
+
+#[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+impl Buffer {
+    /// [Implements][VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()> {
+        crate::DebugUtilsObjectNameInfo::new(VK_OBJECT_TYPE_BUFFER, self.native_ptr() as usize as _, name)
+            .apply(self.device())
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+impl Image {
+    /// [Implements][VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()> {
+        crate::DebugUtilsObjectNameInfo::new(VK_OBJECT_TYPE_IMAGE, self.native_ptr() as usize as _, name)
+            .apply(self.device())
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+impl BufferView {
+    /// [Implements][VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()> {
+        crate::DebugUtilsObjectNameInfo::new(VK_OBJECT_TYPE_BUFFER_VIEW, self.native_ptr() as usize as _, name)
+            .apply(self.device())
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+impl ImageView {
+    /// [Implements][VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()> {
+        crate::DebugUtilsObjectNameInfo::new(VK_OBJECT_TYPE_IMAGE_VIEW, self.native_ptr() as usize as _, name)
+            .apply(self.device())
+    }
 }
 
 /// Bitmask specifying allowed usage of a buffer
