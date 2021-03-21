@@ -184,17 +184,16 @@ impl InstanceBuilder {
         if !self.ext_structures.is_empty() {
             for n in 0..self.ext_structures.len() - 1 {
                 let next_ptr = self.ext_structures[n + 1].as_ref() as *const _ as _;
-                let current: &mut crate::ext::GenericVulkanStructure =
-                    unsafe { std::mem::transmute(&mut self.ext_structures[n]) };
+                let current = unsafe {
+                    &mut *(self.ext_structures[n].as_mut() as *mut _ as *mut crate::ext::GenericVulkanStructure)
+                };
 
                 current.pNext = next_ptr;
             }
             unsafe {
-                std::mem::transmute::<_, &mut crate::ext::GenericVulkanStructure>(
-                    &mut *(self.ext_structures.last_mut().unwrap().as_mut() as *mut _
-                        as *mut crate::ext::GenericVulkanStructure),
-                )
-                .pNext = std::ptr::null();
+                let mut last_ptr = &mut *(self.ext_structures.last_mut().unwrap().as_mut() as *mut _
+                    as *mut crate::ext::GenericVulkanStructure);
+                last_ptr.pNext = std::ptr::null();
             }
         }
         self.cinfo.pNext = self
