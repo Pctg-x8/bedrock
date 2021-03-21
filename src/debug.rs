@@ -10,6 +10,7 @@ use derives::*;
 
 /// Opaque object to a debug report callback object
 #[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT"]
 #[cfg(feature = "VK_EXT_debug_report")]
 pub struct DebugReportCallback(VkDebugReportCallbackEXT, Instance, PFN_vkDestroyDebugReportCallbackEXT);
 #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]

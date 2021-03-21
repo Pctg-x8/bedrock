@@ -4,6 +4,8 @@
 use crate::vk::*;
 #[cfg(feature = "Implements")]
 use crate::{Resolver, ResolverInterface, VkHandle, VkResultHandler};
+#[allow(unused_imports)]
+use derives::*;
 use std::ops::Deref;
 
 #[repr(transparent)]
