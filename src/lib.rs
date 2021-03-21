@@ -74,6 +74,21 @@ pub trait VkHandle {
 
     /// Retrieve an underlying handle
     fn native_ptr(&self) -> Self::Handle;
+
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_debug_utils"))]
+    /// [Implements][VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()>
+    where
+        Self: DeviceChild,
+        Self::Handle: PointerHandleConversion,
+    {
+        DebugUtilsObjectNameInfo::new(self, name).apply(self.device())
+    }
 }
 /// Child of a device object
 pub trait DeviceChild {

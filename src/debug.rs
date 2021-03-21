@@ -379,6 +379,24 @@ impl DebugUtilsMessengerCreateInfo {
 }
 
 #[cfg(feature = "VK_EXT_debug_utils")]
+/// thin pointer to generic handle(u64) conversion helper
+pub unsafe trait PointerHandleConversion {
+    fn conv(self) -> u64;
+}
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl<T> PointerHandleConversion for *const T {
+    fn conv(self) -> u64 {
+        self as usize as _
+    }
+}
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl<T> PointerHandleConversion for *mut T {
+    fn conv(self) -> u64 {
+        self as usize as _
+    }
+}
+
+#[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
 pub struct DebugUtilsObjectNameInfo<'d>(
     VkDebugUtilsObjectNameInfoEXT,
@@ -386,7 +404,13 @@ pub struct DebugUtilsObjectNameInfo<'d>(
 );
 #[cfg(feature = "VK_EXT_debug_utils")]
 impl<'d> DebugUtilsObjectNameInfo<'d> {
-    pub fn new(ty: VkObjectType, handle: u64, name: Option<&'d std::ffi::CStr>) -> Self {
+    pub fn new<H: VkHandle + ?Sized>(handle: &H, name: Option<&'d std::ffi::CStr>) -> Self
+    where
+        H::Handle: PointerHandleConversion,
+    {
+        Self::new_raw(H::TYPE, handle.native_ptr().conv(), name)
+    }
+    pub fn new_raw(ty: VkObjectType, handle: u64, name: Option<&'d std::ffi::CStr>) -> Self {
         DebugUtilsObjectNameInfo(
             VkDebugUtilsObjectNameInfoEXT {
                 sType: VkDebugUtilsObjectNameInfoEXT::TYPE,
