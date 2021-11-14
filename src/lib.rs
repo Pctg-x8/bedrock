@@ -497,7 +497,9 @@ impl Viewport {
 impl std::ops::Deref for Viewport {
     type Target = VkViewport;
 
-    fn deref(&self) -> &VkViewport { &self.0 }
+    fn deref(&self) -> &VkViewport {
+        &self.0
+    }
 }
 
 mod base;
