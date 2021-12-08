@@ -883,7 +883,7 @@ impl ImageDesc<'_> {
                         dev: device.clone(),
                         dim: self.0.imageType,
                         fmt: self.0.format,
-                        size: Extent3D(self.0.extent.width, self.0.extent.height, self.0.extent.depth),
+                        size: self.0.extent.clone(),
                     }
                     .into(),
                 )
