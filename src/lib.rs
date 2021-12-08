@@ -185,7 +185,7 @@ pub mod traits {
 
 // into conversion to larger dimension //
 impl VkExtent2D {
-    pub fn with_depth(self, depth: u32) -> VkExtent3D {
+    pub const fn with_depth(self, depth: u32) -> VkExtent3D {
         VkExtent3D {
             width: self.width,
             height: self.height,
@@ -194,7 +194,7 @@ impl VkExtent2D {
     }
 }
 impl VkOffset2D {
-    pub fn with_z(self, z: i32) -> VkOffset3D {
+    pub const fn with_z(self, z: i32) -> VkOffset3D {
         VkOffset3D {
             x: self.x,
             y: self.y,
@@ -224,8 +224,9 @@ impl AsRef<VkOffset2D> for VkOffset2D {
     }
 }
 
+/// Viewport and Rect Util Functions
 impl VkExtent2D {
-    pub fn into_rect(self, offset: VkOffset2D) -> VkRect2D {
+    pub const fn into_rect(self, offset: VkOffset2D) -> VkRect2D {
         VkRect2D { offset, extent: self }
     }
 }
@@ -243,58 +244,37 @@ impl From<VkViewport> for VkRect2D {
         }
     }
 }
-
-/// Viewport Util Functions
-#[repr(transparent)]
-#[derive(Clone, Debug, PartialEq)]
-pub struct Viewport(VkViewport);
-impl From<VkViewport> for Viewport {
-    fn from(v: VkViewport) -> Self {
-        Viewport(v)
-    }
-}
-impl From<Viewport> for VkViewport {
-    fn from(v: Viewport) -> Self {
-        v.0
-    }
-}
-impl Viewport {
-    pub fn into_inner(self) -> VkViewport {
-        self.0
-    }
-
-    pub fn from_rect_with_depth_range(rect: &VkRect2D, depth_range: std::ops::Range<f32>) -> Self {
+impl VkRect2D {
+    pub const fn make_viewport(&self, depth_range: std::ops::Range<f32>) -> VkViewport {
         VkViewport {
-            x: rect.offset.x as _,
-            y: rect.offset.y as _,
-            width: rect.extent.width as _,
-            height: rect.extent.height as _,
+            x: self.offset.x as _,
+            y: self.offset.y as _,
+            width: self.extent.width as _,
+            height: self.extent.height as _,
             minDepth: depth_range.start,
             maxDepth: depth_range.end,
         }
-        .into()
     }
+}
+impl VkViewport {
+    pub const fn from_rect_with_depth_range(rect: &VkRect2D, depth_range: std::ops::Range<f32>) -> Self {
+        rect.make_viewport(depth_range)
+    }
+
     pub fn set_offset(&mut self, offset: &VkOffset2D) -> &mut Self {
-        self.0.x = offset.x as _;
-        self.0.y = offset.y as _;
+        self.x = offset.x as _;
+        self.y = offset.y as _;
         self
     }
     pub fn set_extent(&mut self, extent: &VkExtent2D) -> &mut Self {
-        self.0.width = extent.width as _;
-        self.0.height = extent.height as _;
+        self.width = extent.width as _;
+        self.height = extent.height as _;
         self
     }
     pub fn set_depth_range(&mut self, range: std::ops::Range<f32>) -> &mut Self {
-        self.0.minDepth = range.start;
-        self.0.maxDepth = range.end;
+        self.minDepth = range.start;
+        self.maxDepth = range.end;
         self
-    }
-}
-impl std::ops::Deref for Viewport {
-    type Target = VkViewport;
-
-    fn deref(&self) -> &VkViewport {
-        &self.0
     }
 }
 
