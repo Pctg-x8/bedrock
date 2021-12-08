@@ -183,254 +183,50 @@ pub mod traits {
     pub use super::{MemoryBound, Status, Waitable};
 }
 
-// size elements //
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
-pub struct Extent1D(pub u32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Extent2D(pub u32, pub u32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Extent3D(pub u32, pub u32, pub u32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Extent4D(pub u32, pub u32, pub u32, pub u32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy, Hash, PartialOrd, Ord)]
-pub struct Offset1D(pub i32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Offset2D(pub i32, pub i32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Offset3D(pub i32, pub i32, pub i32);
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Offset4D(pub i32, pub i32, pub i32, pub i32);
-// Native conversion //
-impl From<Extent2D> for VkExtent2D {
-    fn from(v: Extent2D) -> Self {
-        VkExtent2D {
-            width: v.0,
-            height: v.1,
-        }
-    }
-}
-impl From<Extent3D> for VkExtent3D {
-    fn from(v: Extent3D) -> Self {
-        VkExtent3D {
-            width: v.0,
-            height: v.1,
-            depth: v.2,
-        }
-    }
-}
-impl From<Offset2D> for VkOffset2D {
-    fn from(v: Offset2D) -> Self {
-        VkOffset2D { x: v.0, y: v.1 }
-    }
-}
-impl From<Offset3D> for VkOffset3D {
-    fn from(v: Offset3D) -> Self {
-        VkOffset3D { x: v.0, y: v.1, z: v.2 }
-    }
-}
-impl From<VkExtent2D> for Extent2D {
-    fn from(v: VkExtent2D) -> Self {
-        Extent2D(v.width, v.height)
-    }
-}
-impl From<VkExtent3D> for Extent3D {
-    fn from(v: VkExtent3D) -> Self {
-        Extent3D(v.width, v.height, v.depth)
-    }
-}
-impl From<VkOffset2D> for Offset2D {
-    fn from(v: VkOffset2D) -> Self {
-        Offset2D(v.x, v.y)
-    }
-}
-impl From<VkOffset3D> for Offset3D {
-    fn from(v: VkOffset3D) -> Self {
-        Offset3D(v.x, v.y, v.z)
-    }
-}
 // into conversion to larger dimension //
-impl From<Extent1D> for Extent2D {
-    fn from(v: Extent1D) -> Self {
-        Extent2D(v.0, 1)
-    }
-}
-impl From<Extent1D> for Extent3D {
-    fn from(v: Extent1D) -> Self {
-        Extent3D(v.0, 1, 1)
-    }
-}
-impl From<Extent2D> for Extent3D {
-    fn from(v: Extent2D) -> Self {
-        Extent3D(v.0, v.1, 1)
-    }
-}
-impl From<Offset1D> for Offset2D {
-    fn from(v: Offset1D) -> Self {
-        Offset2D(v.0, 0)
-    }
-}
-impl From<Offset1D> for Offset3D {
-    fn from(v: Offset1D) -> Self {
-        Offset3D(v.0, 0, 0)
-    }
-}
-impl From<Offset2D> for Offset3D {
-    fn from(v: Offset2D) -> Self {
-        Offset3D(v.0, v.1, 0)
-    }
-}
-// cheap conversion by transmuting //
-impl AsRef<u32> for Extent1D {
-    fn as_ref(&self) -> &u32 {
-        &self.0
-    }
-}
-impl AsRef<i32> for Offset1D {
-    fn as_ref(&self) -> &i32 {
-        &self.0
-    }
-}
-macro_rules! CoordinateAsRefUnsafe {
-    ($a: ty, $b: ty) => {
-        impl AsRef<$b> for $a {
-            fn as_ref(&self) -> &$b {
-                unsafe { &*(self as *const $a as *const $b) }
-            }
+impl VkExtent2D {
+    pub fn with_depth(self, depth: u32) -> VkExtent3D {
+        VkExtent3D {
+            width: self.width,
+            height: self.height,
+            depth,
         }
-    };
-}
-CoordinateAsRefUnsafe!(Extent2D, VkExtent2D);
-CoordinateAsRefUnsafe!(Extent3D, VkExtent3D);
-CoordinateAsRefUnsafe!(Offset2D, VkOffset2D);
-CoordinateAsRefUnsafe!(Offset3D, VkOffset3D);
-CoordinateAsRefUnsafe!(Extent1D, [u32; 1]);
-CoordinateAsRefUnsafe!(Extent2D, [u32; 2]);
-CoordinateAsRefUnsafe!(Extent3D, [u32; 3]);
-CoordinateAsRefUnsafe!(Extent4D, [u32; 4]);
-CoordinateAsRefUnsafe!(Offset1D, [i32; 1]);
-CoordinateAsRefUnsafe!(Offset2D, [i32; 2]);
-CoordinateAsRefUnsafe!(Offset3D, [i32; 3]);
-CoordinateAsRefUnsafe!(Offset4D, [i32; 4]);
-// shrinking by cheap conversion //
-impl AsRef<Extent3D> for Extent4D {
-    fn as_ref(&self) -> &Extent3D {
-        unsafe { &*(self.as_ref() as *const [u32; 4] as *const Extent3D) }
     }
 }
-impl AsRef<Extent2D> for Extent4D {
-    fn as_ref(&self) -> &Extent2D {
-        unsafe { &*(self.as_ref() as *const [u32; 4] as *const Extent2D) }
-    }
-}
-impl AsRef<Extent1D> for Extent4D {
-    fn as_ref(&self) -> &Extent1D {
-        unsafe { &*(self.as_ref() as *const [u32; 4] as *const Extent1D) }
-    }
-}
-impl AsRef<Extent2D> for Extent3D {
-    fn as_ref(&self) -> &Extent2D {
-        unsafe { &*(self.as_ref() as *const [u32; 3] as *const Extent2D) }
-    }
-}
-impl AsRef<Extent1D> for Extent3D {
-    fn as_ref(&self) -> &Extent1D {
-        unsafe { &*(self.as_ref() as *const [u32; 3] as *const Extent1D) }
-    }
-}
-impl AsRef<Extent1D> for Extent2D {
-    fn as_ref(&self) -> &Extent1D {
-        unsafe { &*(self.as_ref() as *const [u32; 2] as *const Extent1D) }
-    }
-}
-impl AsRef<Offset3D> for Offset4D {
-    fn as_ref(&self) -> &Offset3D {
-        unsafe { &*(self.as_ref() as *const [i32; 4] as *const Offset3D) }
-    }
-}
-impl AsRef<Offset2D> for Offset4D {
-    fn as_ref(&self) -> &Offset2D {
-        unsafe { &*(self.as_ref() as *const [i32; 4] as *const Offset2D) }
-    }
-}
-impl AsRef<Offset1D> for Offset4D {
-    fn as_ref(&self) -> &Offset1D {
-        unsafe { &*(self.as_ref() as *const [i32; 4] as *const Offset1D) }
-    }
-}
-impl AsRef<Offset2D> for Offset3D {
-    fn as_ref(&self) -> &Offset2D {
-        unsafe { &*(self.as_ref() as *const [i32; 3] as *const Offset2D) }
-    }
-}
-impl AsRef<Offset1D> for Offset3D {
-    fn as_ref(&self) -> &Offset1D {
-        unsafe { &*(self.as_ref() as *const [i32; 3] as *const Offset1D) }
-    }
-}
-impl AsRef<Offset1D> for Offset2D {
-    fn as_ref(&self) -> &Offset1D {
-        unsafe { &*(self.as_ref() as *const [i32; 2] as *const Offset1D) }
+impl VkOffset2D {
+    pub fn with_z(self, z: i32) -> VkOffset3D {
+        VkOffset3D {
+            x: self.x,
+            y: self.y,
+            z,
+        }
     }
 }
 // AsRef for self //
-impl AsRef<Extent4D> for Extent4D {
+impl AsRef<VkExtent3D> for VkExtent3D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
-impl AsRef<Extent3D> for Extent3D {
+impl AsRef<VkExtent2D> for VkExtent2D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
-impl AsRef<Extent2D> for Extent2D {
+impl AsRef<VkOffset3D> for VkOffset3D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
-impl AsRef<Extent1D> for Extent1D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Offset4D> for Offset4D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Offset3D> for Offset3D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Offset2D> for Offset2D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Offset1D> for Offset1D {
+impl AsRef<VkOffset2D> for VkOffset2D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
 
-impl From<Extent2D> for VkRect2D {
-    fn from(e: Extent2D) -> Self {
-        VkRect2D {
-            offset: VkOffset2D { x: 0, y: 0 },
-            extent: VkExtent2D {
-                width: e.0,
-                height: e.1,
-            },
-        }
+impl VkExtent2D {
+    pub fn into_rect(self, offset: VkOffset2D) -> VkRect2D {
+        VkRect2D { offset, extent: self }
     }
 }
 impl From<VkViewport> for VkRect2D {

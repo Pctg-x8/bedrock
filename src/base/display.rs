@@ -145,7 +145,7 @@ impl crate::Surface {
         transform: crate::SurfaceTransform,
         global_alpha: f32,
         alpha_mode: DisplayPlaneAlpha,
-        extent: crate::Extent2D,
+        extent: VkExtent2D,
     ) -> crate::Result<Self> {
         let cinfo = VkDisplaySurfaceCreateInfoKHR {
             displayMode: mode.0,
@@ -154,7 +154,7 @@ impl crate::Surface {
             transform: transform as _,
             globalAlpha: global_alpha,
             alphaMode: alpha_mode as _,
-            imageExtent: extent.into(),
+            imageExtent: extent,
             ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;

@@ -812,12 +812,12 @@ impl PhysicalDevice {
     pub fn new_display_mode(
         &self,
         display: VkDisplayKHR,
-        region: crate::Extent2D,
+        region: VkExtent2D,
         refresh_rate: u32,
     ) -> crate::Result<VkDisplayModeKHR> {
         let cinfo = VkDisplayModeCreateInfoKHR {
             parameters: VkDisplayModeParametersKHR {
-                visibleRegion: region.into(),
+                visibleRegion: region,
                 refreshRate: refresh_rate,
             },
             ..Default::default()

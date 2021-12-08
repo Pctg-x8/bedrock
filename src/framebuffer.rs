@@ -6,7 +6,7 @@ use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkResultHandler,
 };
-use crate::{Device, Extent2D, ImageLayout, ImageView, VkHandle};
+use crate::{Device, ImageLayout, ImageView, VkHandle};
 use derives::*;
 use std::ops::*;
 
@@ -19,7 +19,7 @@ pub struct RenderPass(VkRenderPass, Device);
 #[derive(VkHandle, DeviceChild)]
 #[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
 #[drop_function_name = "destroy_framebuffer"]
-pub struct Framebuffer(VkFramebuffer, Device, Vec<ImageView>, Extent2D);
+pub struct Framebuffer(VkFramebuffer, Device, Vec<ImageView>, VkExtent2D);
 
 /// Builder structure to construct the `VkAttachmentDescription`
 #[repr(transparent)]
@@ -419,10 +419,10 @@ impl Framebuffer {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new<Sz: AsRef<Extent2D>>(
+    pub fn new(
         mold: &RenderPass,
         attachment_objects: &[&ImageView],
-        size: &Sz,
+        size: &VkExtent2D,
         layers: u32,
     ) -> crate::Result<Self> {
         let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
@@ -430,8 +430,8 @@ impl Framebuffer {
             renderPass: mold.0,
             attachmentCount: views.len() as _,
             pAttachments: views.as_ptr(),
-            width: size.as_ref().0,
-            height: size.as_ref().1,
+            width: size.width,
+            height: size.height,
             layers,
             ..Default::default()
         };
@@ -449,7 +449,7 @@ impl Framebuffer {
     }
 }
 impl Framebuffer {
-    pub const fn size(&self) -> &Extent2D {
+    pub const fn size(&self) -> &VkExtent2D {
         &self.3
     }
     pub fn resources(&self) -> &[ImageView] {
@@ -460,12 +460,12 @@ impl Framebuffer {
 #[cfg(feature = "Implements")]
 impl RenderPass {
     /// Returns the granularity for optimal render area
-    pub fn optimal_granularity(&self) -> Extent2D {
+    pub fn optimal_granularity(&self) -> VkExtent2D {
         let mut e = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get().get_render_area_granularity(self.1.native_ptr(), self.0, e.as_mut_ptr());
 
-            e.assume_init().into()
+            e.assume_init()
         }
     }
 }

@@ -21,7 +21,7 @@ struct SwapchainCell {
     dev: Device,
     _target: Surface,
     fmt: VkFormat,
-    size: Extent3D,
+    size: VkExtent3D,
 }
 /// Opaque handle to a swapchain object
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -233,7 +233,7 @@ impl<'d> SwapchainBuilder<'d> {
         surface: &'d Surface,
         min_image_count: u32,
         format: &VkSurfaceFormatKHR,
-        extent: &Extent2D,
+        extent: &VkExtent2D,
         usage: ImageUsage,
     ) -> Self {
         SwapchainBuilder(
@@ -310,7 +310,7 @@ impl<'d> SwapchainBuilder<'d> {
                             dev: device.clone(),
                             _target: self.1.clone(),
                             fmt: self.0.imageFormat,
-                            size: Extent3D(self.0.imageExtent.width, self.0.imageExtent.height, 1),
+                            size: self.0.imageExtent.clone().with_depth(1),
                         }
                         .into(),
                     )
@@ -331,7 +331,7 @@ impl Swapchain {
     pub fn format(&self) -> VkFormat {
         self.0.fmt
     }
-    pub fn size(&self) -> &Extent3D {
+    pub fn size(&self) -> &VkExtent3D {
         &self.0.size
     }
 }

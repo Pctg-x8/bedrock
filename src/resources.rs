@@ -124,7 +124,7 @@ use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkResultHandler,
 };
-use crate::{AnalogNumRange, CompareOp, Device, DeviceChild, Extent1D, Extent2D, Extent3D, VkHandle};
+use crate::{AnalogNumRange, CompareOp, Device, DeviceChild, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
@@ -139,7 +139,7 @@ pub enum ImageCell {
         dev: Device,
         dim: VkImageType,
         fmt: VkFormat,
-        size: Extent3D,
+        size: VkExtent3D,
     },
     SwapchainChild {
         obj: VkImage,
@@ -902,7 +902,7 @@ impl ImageDesc<'_> {
                         dev: device.clone(),
                         dim: self.0.imageType,
                         fmt: self.0.format,
-                        size: Extent3D(self.0.extent.width, self.0.extent.height, self.0.extent.depth),
+                        size: self.0.extent.clone(),
                     }
                     .into(),
                 )
@@ -921,7 +921,7 @@ impl Image {
         self.0.fmt
     }
     /// The size of an image
-    pub fn size(&self) -> &Extent3D {
+    pub fn size(&self) -> &VkExtent3D {
         #[cfg(feature = "VK_KHR_swapchain")]
         match *self.0 {
             ImageCell::DeviceChild { ref size, .. } => size,
@@ -1215,30 +1215,26 @@ pub trait ImageSize {
     const DIMENSION: VkImageType;
     fn conv(&self) -> VkExtent3D;
 }
-impl ImageSize for Extent1D {
+impl ImageSize for u32 {
     const DIMENSION: VkImageType = VK_IMAGE_TYPE_1D;
     fn conv(&self) -> VkExtent3D {
         VkExtent3D {
-            width: self.0,
+            width: *self,
             height: 1,
             depth: 1,
         }
     }
 }
-impl ImageSize for Extent2D {
+impl ImageSize for VkExtent2D {
     const DIMENSION: VkImageType = VK_IMAGE_TYPE_2D;
     fn conv(&self) -> VkExtent3D {
-        VkExtent3D {
-            width: self.0,
-            height: self.1,
-            depth: 1,
-        }
+        self.clone().with_depth(1)
     }
 }
-impl ImageSize for Extent3D {
+impl ImageSize for VkExtent3D {
     const DIMENSION: VkImageType = VK_IMAGE_TYPE_3D;
     fn conv(&self) -> VkExtent3D {
-        AsRef::<VkExtent3D>::as_ref(self).clone()
+        self.clone()
     }
 }
 
