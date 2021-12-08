@@ -336,7 +336,6 @@ impl Swapchain {
     }
 }
 
-use {Fence, Semaphore};
 /// A semaphore or a fence
 pub enum CompletionHandler<'s> {
     /// A Host synchronizer(aka Fence)
@@ -521,14 +520,14 @@ pub enum CompositeAlpha {
 #[cfg(feature = "VK_KHR_surface")]
 impl SurfaceTransform {
     /// Does the value contains this bits
-    pub fn contains(self, value: u32) -> bool {
+    pub const fn contains(self, value: u32) -> bool {
         (value | self as u32) != 0
     }
 }
 #[cfg(feature = "VK_KHR_surface")]
 impl CompositeAlpha {
     /// Does the value contains this bits
-    pub fn contains(self, value: u32) -> bool {
+    pub const fn contains(self, value: u32) -> bool {
         (value | self as u32) != 0
     }
 }

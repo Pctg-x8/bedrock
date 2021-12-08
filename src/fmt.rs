@@ -524,12 +524,12 @@ impl FormatQuery {
             FormatQuery(VK_FORMAT_UNDEFINED)
         }
     }
-    pub fn passed(self) -> bool {
+    pub const fn passed(self) -> bool {
         self.0 != VK_FORMAT_UNDEFINED
     }
 
     /// convert UNORM to SRGB if exists
-    pub fn srgb(self) -> Option<VkFormat> {
+    pub const fn srgb(self) -> Option<VkFormat> {
         match self.0 {
             VK_FORMAT_R8_UNORM => Some(VK_FORMAT_R8_SRGB),
             VK_FORMAT_R8G8_UNORM => Some(VK_FORMAT_R8G8_SRGB),
@@ -542,7 +542,7 @@ impl FormatQuery {
         }
     }
     /// convert to UNORM if exists
-    pub fn unorm(self) -> Option<VkFormat> {
+    pub const fn unorm(self) -> Option<VkFormat> {
         match self.0 {
             VK_FORMAT_R8_SRGB | VK_FORMAT_R8_UNORM => Some(VK_FORMAT_R8_UNORM),
             VK_FORMAT_R8G8_SRGB | VK_FORMAT_R8G8_UNORM => Some(VK_FORMAT_R8G8_UNORM),
