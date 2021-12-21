@@ -216,6 +216,17 @@ impl AsRef<VkOffset2D> for VkOffset2D {
         self
     }
 }
+// AsRef for smaller dimension (safe: same memory footprint for heading elements) //
+impl AsRef<VkExtent2D> for VkExtent3D {
+    fn as_ref(&self) -> &VkExtent2D {
+        unsafe { std::mem::transmute(self) }
+    }
+}
+impl AsRef<VkOffset2D> for VkOffset3D {
+    fn as_ref(&self) -> &VkOffset2D {
+        unsafe { std::mem::transmute(self) }
+    }
+}
 
 /// Viewport and Rect Util Functions
 impl VkExtent2D {
