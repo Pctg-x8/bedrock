@@ -154,7 +154,7 @@ struct ImageCell {
     dev: Device,
     dim: VkImageType,
     fmt: VkFormat,
-    size: Extent3D,
+    size: VkExtent3D,
 }
 /// Opaque handle to a device memory object
 pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
