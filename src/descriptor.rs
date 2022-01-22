@@ -19,6 +19,28 @@ pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 #[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_POOL"]
 pub struct DescriptorPool(VkDescriptorPool, Device);
 
+#[repr(transparent)]
+pub struct DescriptorSet(pub VkDescriptorSet);
+impl From<DescriptorSet> for VkDescriptorSet {
+    fn from(v: DescriptorSet) -> Self {
+        v.0
+    }
+}
+impl AsRef<VkDescriptorSet> for DescriptorSet {
+    fn as_ref(&self) -> &VkDescriptorSet {
+        &self.0
+    }
+}
+impl std::ops::Deref for DescriptorSet {
+    type Target = VkDescriptorSet;
+
+    fn deref(&self) -> &VkDescriptorSet {
+        &self.0
+    }
+}
+unsafe impl Sync for DescriptorSet {}
+unsafe impl Send for DescriptorSet {}
+
 impl std::cmp::PartialEq for DescriptorSetLayout {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
@@ -30,6 +52,12 @@ impl std::hash::Hash for DescriptorSetLayout {
         self.0.hash(state)
     }
 }
+
+unsafe impl Sync for DescriptorPool {}
+unsafe impl Send for DescriptorPool {}
+
+unsafe impl Sync for DescriptorSetLayout {}
+unsafe impl Send for DescriptorSetLayout {}
 
 #[derive(Clone, Hash, PartialEq, Eq)]
 pub enum DescriptorSetLayoutBinding<'s> {
@@ -209,7 +237,7 @@ impl DescriptorPool {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
-    pub fn alloc(&self, layouts: &[&DescriptorSetLayout]) -> crate::Result<Vec<VkDescriptorSet>> {
+    pub fn alloc(&mut self, layouts: &[&DescriptorSetLayout]) -> crate::Result<Vec<DescriptorSet>> {
         let layout_ptrs = layouts.iter().map(|x| x.0).collect::<Vec<_>>();
         let ainfo = VkDescriptorSetAllocateInfo {
             descriptorPool: self.0,
@@ -222,7 +250,7 @@ impl DescriptorPool {
             Resolver::get()
                 .allocate_descriptor_sets(self.1.native_ptr(), &ainfo, hs.as_mut_ptr())
                 .into_result()
-                .map(|_| hs)
+                .map(|_| std::mem::transmute(hs))
         }
     }
     /// Resets a descriptor pool object
@@ -232,7 +260,7 @@ impl DescriptorPool {
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub unsafe fn reset(&self) -> crate::Result<()> {
+    pub unsafe fn reset(&mut self) -> crate::Result<()> {
         Resolver::get()
             .reset_descriptor_pool(self.1.native_ptr(), self.0, 0)
             .into_result()
@@ -242,7 +270,7 @@ impl DescriptorPool {
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    pub fn free(&self, sets: &[VkDescriptorSet]) -> crate::Result<()> {
+    pub fn free(&mut self, sets: &[VkDescriptorSet]) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .free_descriptor_sets(self.1.native_ptr(), self.0, sets.len() as _, sets.as_ptr())
