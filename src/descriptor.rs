@@ -20,6 +20,7 @@ pub struct DescriptorSetLayout(VkDescriptorSetLayout, Device);
 pub struct DescriptorPool(VkDescriptorPool, Device);
 
 #[repr(transparent)]
+#[derive(Clone, Copy)]
 pub struct DescriptorSet(pub VkDescriptorSet);
 impl From<DescriptorSet> for VkDescriptorSet {
     fn from(v: DescriptorSet) -> Self {
