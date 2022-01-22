@@ -33,6 +33,16 @@ impl VkHandle for CommandBuffer {
     }
 }
 
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for CommandPool {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for CommandPool {}
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for CommandBuffer {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for CommandBuffer {}
+
 /// The recording state of commandbuffers
 #[cfg(feature = "Implements")]
 pub struct CmdRecord<'d> {
@@ -84,13 +94,14 @@ impl CommandPool {
                 .map(|_| CommandPool(h, device.clone()))
         }
     }
+
     /// Allocate command buffers from an existing command pool
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn alloc(&self, count: u32, primary: bool) -> crate::Result<Vec<CommandBuffer>> {
+    pub fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBuffer>> {
         let ainfo = VkCommandBufferAllocateInfo {
             commandBufferCount: count,
             level: if primary {
@@ -109,6 +120,7 @@ impl CommandPool {
                 .map(|_| transmute(hs))
         }
     }
+
     /// Resets a command pool
     /// # Safety
     /// Application cannot use command buffers after this call
@@ -117,7 +129,7 @@ impl CommandPool {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn reset(&self, release_resources: bool) -> crate::Result<()> {
+    pub fn reset(&mut self, release_resources: bool) -> crate::Result<()> {
         let flags = if release_resources {
             VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT
         } else {
@@ -129,16 +141,17 @@ impl CommandPool {
                 .into_result()
         }
     }
+
     /// Free command buffers
-    pub fn free(&self, buffers: &[CommandBuffer]) {
-        unsafe {
-            Resolver::get().free_command_buffers(
-                self.1.native_ptr(),
-                self.0,
-                buffers.len() as _,
-                buffers.as_ptr() as *const _,
-            );
-        }
+    /// # Safety
+    /// Each member of `buffers` must be externally synchronized
+    pub unsafe fn free(&mut self, buffers: &[CommandBuffer]) {
+        Resolver::get().free_command_buffers(
+            self.1.native_ptr(),
+            self.0,
+            buffers.len() as _,
+            buffers.as_ptr() as *const _,
+        );
     }
 }
 
@@ -151,46 +164,51 @@ impl CommandBuffer {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn begin(&self) -> crate::Result<CmdRecord> {
-        unsafe {
-            Resolver::get()
-                .begin_command_buffer(self.0, &Default::default())
-                .into_result()
-                .map(|_| CmdRecord {
-                    ptr: self,
-                    layout: [None, None],
-                })
-        }
+    /// # Safety
+    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
+    pub unsafe fn begin(&mut self) -> crate::Result<CmdRecord> {
+        Resolver::get()
+            .begin_command_buffer(self.0, &Default::default())
+            .into_result()
+            .map(move |_| CmdRecord {
+                ptr: self,
+                layout: [None, None],
+            })
     }
+
     /// Start recording a primary command buffer that will be submitted once
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn begin_once(&self) -> crate::Result<CmdRecord> {
+    /// # Safety
+    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
+    pub unsafe fn begin_once(&mut self) -> crate::Result<CmdRecord> {
         let info = VkCommandBufferBeginInfo {
             flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
             ..Default::default()
         };
-        unsafe {
-            Resolver::get()
-                .begin_command_buffer(self.0, &info)
-                .into_result()
-                .map(|_| CmdRecord {
-                    ptr: self,
-                    layout: [None, None],
-                })
-        }
+
+        Resolver::get()
+            .begin_command_buffer(self.0, &info)
+            .into_result()
+            .map(move |_| CmdRecord {
+                ptr: self,
+                layout: [None, None],
+            })
     }
+
     /// Start recording a secondary command buffer
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn begin_inherit(
-        &self,
+    /// # Safety
+    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
+    pub unsafe fn begin_inherit(
+        &mut self,
         renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
         query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>,
     ) -> crate::Result<CmdRecord> {
@@ -221,28 +239,91 @@ impl CommandBuffer {
             flags,
             ..Default::default()
         };
-        unsafe {
-            Resolver::get()
-                .begin_command_buffer(self.0, &binfo)
-                .into_result()
-                .map(|_| CmdRecord {
-                    ptr: self,
-                    layout: [None, None],
-                })
-        }
+
+        Resolver::get()
+            .begin_command_buffer(self.0, &binfo)
+            .into_result()
+            .map(move |_| CmdRecord {
+                ptr: self,
+                layout: [None, None],
+            })
     }
+
     /// Reset a command buffer to the initial state
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn reset(&self, release_resources: bool) -> crate::Result<()> {
+    /// # Safety
+    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
+    pub unsafe fn reset(&mut self, release_resources: bool) -> crate::Result<()> {
         let flags = if release_resources {
             VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT
         } else {
             0
         };
-        unsafe { Resolver::get().reset_command_buffer(self.0, flags).into_result() }
+
+        Resolver::get().reset_command_buffer(self.0, flags).into_result()
+    }
+}
+
+pub struct SynchronizedCommandBuffer<'p, 'b: 'p> {
+    _pool: &'p mut CommandPool,
+    buffer: &'b mut CommandBuffer,
+}
+impl<'p, 'b: 'p> CommandBuffer {
+    /// Locking CommandBuffer with CommandPool to satisfy externally synchronization restriction.
+    /// # Safety
+    /// This command buffer must be allocated from `pool`.
+    pub unsafe fn synchronize_with(&'b mut self, pool: &'p mut CommandPool) -> SynchronizedCommandBuffer<'p, 'b> {
+        SynchronizedCommandBuffer {
+            _pool: pool,
+            buffer: self,
+        }
+    }
+}
+impl SynchronizedCommandBuffer<'_, '_> {
+    /// Start recording a primary command buffer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn begin(&mut self) -> crate::Result<CmdRecord> {
+        unsafe { self.buffer.begin() }
+    }
+
+    /// Start recording a primary command buffer that will be submitted once
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn begin_once(&mut self) -> crate::Result<CmdRecord> {
+        unsafe { self.buffer.begin_once() }
+    }
+
+    /// Start recording a secondary command buffer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn begin_inherit(
+        &mut self,
+        renderpass: Option<(&Framebuffer, &RenderPass, u32)>,
+        query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>,
+    ) -> crate::Result<CmdRecord> {
+        unsafe { self.buffer.begin_inherit(renderpass, query) }
+    }
+
+    /// Reset a command buffer to the initial state
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn reset(&mut self, release_resources: bool) -> crate::Result<()> {
+        unsafe { self.buffer.reset(release_resources) }
     }
 }
 

@@ -315,7 +315,7 @@ pub use self::fmt::*;
 pub mod traits {
     pub use super::{AnalogNumRange, ClearColorValue, DeviceChild, ImageSize, PixelFormat, VkHandle, VkResultBox};
     #[cfg(feature = "Implements")]
-    pub use super::{MemoryBound, Status, Waitable};
+    pub use super::{MemoryBound, Status};
 }
 
 /// Opaque handle to a query pool object

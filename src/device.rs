@@ -48,6 +48,11 @@ unsafe impl Sync for DeviceCell {}
 #[cfg(feature = "Multithreaded")]
 unsafe impl Send for DeviceCell {}
 
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for Queue {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for Queue {}
+
 /// Builder object for constructing a `Device`
 pub struct DeviceBuilder<'p> {
     pdev_ref: &'p PhysicalDevice,
@@ -288,21 +293,20 @@ impl Device {
     }
 }
 
-/// [feature = "Implements"] Supports blocking wait operation
 #[cfg(feature = "Implements")]
-pub trait Waitable {
+impl Device {
     /// Wait for a object to become idle
-    fn wait(&self) -> crate::Result<()>;
-}
-#[cfg(feature = "Implements")]
-impl Waitable for Device {
-    fn wait(&self) -> crate::Result<()> {
-        unsafe { Resolver::get().device_wait_idle(self.native_ptr()).into_result() }
+    /// # Safety
+    /// All VkQueue objects created from this device must be externally synchronized.
+    pub unsafe fn wait(&self) -> crate::Result<()> {
+        Resolver::get().device_wait_idle(self.native_ptr()).into_result()
     }
 }
+
 #[cfg(feature = "Implements")]
-impl Waitable for Queue {
-    fn wait(&self) -> crate::Result<()> {
+impl Queue {
+    /// Wait for a object to become idle
+    pub fn wait(&mut self) -> crate::Result<()> {
         unsafe { Resolver::get().queue_wait_idle(self.0).into_result() }
     }
 }
@@ -311,7 +315,7 @@ impl Waitable for Queue {
 pub struct SparseBindingOpBatch<'s> {
     /// An array of semaphores upon which to wait on before the sparse binding operations
     /// for this batch begin execution
-    pub wait_semaphores: Cow<'s, [&'s Semaphore]>,
+    pub wait_semaphores: &'s [&'s mut Semaphore],
     /// An array of `VkSparseBufferMemoryBindInfo` structures
     pub buffer_binds: Cow<'s, [VkSparseBufferMemoryBindInfo]>,
     /// An array of `VkSparseImageOpaqueMemoryBindInfo` structures
@@ -320,16 +324,16 @@ pub struct SparseBindingOpBatch<'s> {
     pub image_binds: Cow<'s, [VkSparseImageMemoryBindInfo]>,
     /// An array of semaphores which will be signaled when the sparse binding
     /// operations for this batch have completed execution
-    pub signal_semaphores: Cow<'s, [&'s Semaphore]>,
+    pub signal_semaphores: &'s [&'s mut Semaphore],
 }
 impl<'s> Default for SparseBindingOpBatch<'s> {
     fn default() -> Self {
         SparseBindingOpBatch {
-            wait_semaphores: Cow::Borrowed(&[]),
+            wait_semaphores: &[],
             buffer_binds: Cow::Borrowed(&[]),
             image_opaque_binds: Cow::Borrowed(&[]),
             image_binds: Cow::Borrowed(&[]),
-            signal_semaphores: Cow::Borrowed(&[]),
+            signal_semaphores: &[],
         }
     }
 }
@@ -343,11 +347,11 @@ impl Queue {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    pub fn bind_sparse(&self, batches: &[SparseBindingOpBatch], fence: Option<&Fence>) -> crate::Result<()> {
+    pub fn bind_sparse(&mut self, batches: &[SparseBindingOpBatch], fence: Option<&mut Fence>) -> crate::Result<()> {
         let sem_ptrs = batches.iter().map(|x| {
             (
-                x.wait_semaphores.iter().map(|&x| x.native_ptr()).collect(),
-                x.signal_semaphores.iter().map(|&x| x.native_ptr()).collect(),
+                x.wait_semaphores.iter().map(|x| x.native_ptr()).collect(),
+                x.signal_semaphores.iter().map(|x| x.native_ptr()).collect(),
             )
         });
         let batches: Vec<_> = batches
@@ -375,7 +379,7 @@ impl Queue {
                     self.0,
                     batches.len() as _,
                     batches.as_ptr(),
-                    fence.map(VkHandle::native_ptr).unwrap_or_else(std::ptr::null_mut),
+                    fence.map(|h| h.native_ptr()).unwrap_or_else(std::ptr::null_mut),
                 )
                 .into_result()
         }
@@ -384,17 +388,17 @@ impl Queue {
 
 /// Semaphore/Command submission operation batch
 pub struct SubmissionBatch<'d> {
-    pub wait_semaphores: Cow<'d, [(&'d Semaphore, PipelineStageFlags)]>,
+    pub wait_semaphores: &'d [(&'d mut Semaphore, PipelineStageFlags)],
     pub command_buffers: Cow<'d, [CommandBuffer]>,
-    pub signal_semaphores: Cow<'d, [&'d Semaphore]>,
+    pub signal_semaphores: &'d [&'d mut Semaphore],
     pub chained: Option<&'d dyn std::any::Any>,
 }
 impl<'d> Default for SubmissionBatch<'d> {
     fn default() -> Self {
         SubmissionBatch {
-            wait_semaphores: Cow::Borrowed(&[]),
+            wait_semaphores: &[],
             command_buffers: Cow::Borrowed(&[]),
-            signal_semaphores: Cow::Borrowed(&[]),
+            signal_semaphores: &[],
             chained: None,
         }
     }
@@ -409,7 +413,7 @@ impl Queue {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    pub fn submit(&self, batches: &[SubmissionBatch], fence: Option<&Fence>) -> crate::Result<()> {
+    pub fn submit(&mut self, batches: &[SubmissionBatch], fence: Option<&mut Fence>) -> crate::Result<()> {
         let sem_ptrs: Vec<((Vec<_>, Vec<_>), Vec<_>, Vec<_>)> = batches
             .iter()
             .map(|x| {
@@ -446,14 +450,14 @@ impl Queue {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    pub fn submit_raw(&self, batches: &[VkSubmitInfo], fence: Option<&Fence>) -> crate::Result<()> {
+    pub fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<&mut Fence>) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .queue_submit(
                     self.native_ptr(),
                     batches.len() as _,
                     batches.as_ptr(),
-                    fence.map(VkHandle::native_ptr).unwrap_or_else(std::ptr::null_mut),
+                    fence.map_or_else(std::ptr::null_mut, |h| h.native_ptr()),
                 )
                 .into_result()
         }

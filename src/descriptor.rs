@@ -54,10 +54,14 @@ impl std::hash::Hash for DescriptorSetLayout {
     }
 }
 
+#[cfg(feature = "Multithreaded")]
 unsafe impl Sync for DescriptorPool {}
+#[cfg(feature = "Multithreaded")]
 unsafe impl Send for DescriptorPool {}
 
+#[cfg(feature = "Multithreaded")]
 unsafe impl Sync for DescriptorSetLayout {}
+#[cfg(feature = "Multithreaded")]
 unsafe impl Send for DescriptorSetLayout {}
 
 #[derive(Clone, Hash, PartialEq, Eq)]

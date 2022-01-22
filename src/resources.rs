@@ -1306,7 +1306,7 @@ impl<'m> MappedMemoryRange<'m> {
     }
 
     /// Unmap region
-    pub fn end(self) -> () {
+    pub fn end(self) {
         unsafe {
             self.2.unmap();
         }

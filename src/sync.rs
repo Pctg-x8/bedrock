@@ -6,7 +6,7 @@ use crate::vk::*;
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VkResultBox, VkResultHandler, Waitable,
+    VkResultBox, VkResultHandler,
 };
 use crate::{Device, DeviceChild, VkHandle};
 
@@ -194,13 +194,24 @@ impl Fence {
             _ => Err(VkResultBox(vr)),
         }
     }
+    /// [feature = "Implements"] Wait for a fence to become signaled
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
+    pub fn wait(&mut self) -> crate::Result<()> {
+        self.wait_timeout(std::u64::MAX).map(drop)
+    }
+
     /// Resets one or more fence objects
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn reset_multiple(objects: &[&Self]) -> crate::Result<()> {
+    pub fn reset_multiple(objects: &[&mut Self]) -> crate::Result<()> {
         let objects_ptr = objects.iter().map(|x| x.0).collect::<Vec<_>>();
         unsafe {
             Resolver::get()
@@ -214,7 +225,7 @@ impl Fence {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn reset(&self) -> crate::Result<()> {
+    pub fn reset(&mut self) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .reset_fences(self.1.native_ptr(), 1, &self.0)
@@ -231,7 +242,7 @@ impl Event {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn set(&self) -> crate::Result<()> {
+    pub fn set(&mut self) -> crate::Result<()> {
         unsafe { Resolver::get().set_event(self.1.native_ptr(), self.0).into_result() }
     }
     /// Reset an event to non-signaled state
@@ -240,7 +251,7 @@ impl Event {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn reset(&self) -> crate::Result<()> {
+    pub fn reset(&mut self) -> crate::Result<()> {
         unsafe { Resolver::get().reset_event(self.1.native_ptr(), self.0).into_result() }
     }
 }
@@ -278,19 +289,18 @@ impl Status for Event {
         }
     }
 }
-#[cfg(feature = "Implements")]
-impl Waitable for Fence {
-    /// [feature = "Implements"] Wait for a fence to become signaled
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    fn wait(&self) -> crate::Result<()> {
-        self.wait_timeout(std::u64::MAX).map(drop)
-    }
-}
 
+#[cfg(feature = "Multithreaded")]
 unsafe impl Send for Fence {}
+#[cfg(feature = "Multithreaded")]
 unsafe impl Sync for Fence {}
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for Event {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for Event {}
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for Semaphore {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for Semaphore {}

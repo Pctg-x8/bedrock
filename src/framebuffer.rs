@@ -21,11 +21,13 @@ pub struct RenderPass(VkRenderPass, Device);
 #[drop_function_name = "destroy_framebuffer"]
 pub struct Framebuffer(VkFramebuffer, Device, Vec<ImageView>, VkExtent2D);
 
-// All ops to RenderPass (except creating and destroying) don't require externally host synchronization.
+#[cfg(feature = "Multithreaded")]
 unsafe impl Sync for RenderPass {}
+#[cfg(feature = "Multithreaded")]
 unsafe impl Send for RenderPass {}
-// All ops to Framebuffer (except creating and destroying) don't require externally host synchronization.
+#[cfg(feature = "Multithreaded")]
 unsafe impl Sync for Framebuffer {}
+#[cfg(feature = "Multithreaded")]
 unsafe impl Send for Framebuffer {}
 
 /// Builder structure to construct the `VkAttachmentDescription`

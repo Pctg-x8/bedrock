@@ -197,6 +197,26 @@ pub struct PipelineLayout(VkPipelineLayout, Device);
 /// Opaque handle to a pipeline object
 pub struct Pipeline(VkPipeline, Device);
 
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for ShaderModule {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for ShaderModule {}
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for PipelineCache {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for PipelineCache {}
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for PipelineLayout {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for PipelineLayout {}
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for Pipeline {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for Pipeline {}
+
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
 impl ShaderModule {
@@ -267,6 +287,7 @@ impl PipelineCache {
                 .map(|_| PipelineCache(h, device.clone()))
         }
     }
+
     /// Get the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
@@ -289,13 +310,14 @@ impl PipelineCache {
                 .map(|_| b)
         }
     }
+
     /// Combine the data stores of pipeline caches into `self`
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn merge_into(&self, src: &[&PipelineCache]) -> crate::Result<()> {
+    pub fn merge_into(&mut self, src: &[&PipelineCache]) -> crate::Result<()> {
         let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
         unsafe {
             Resolver::get()

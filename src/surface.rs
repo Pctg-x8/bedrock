@@ -427,9 +427,9 @@ impl Queue {
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[cfg(feature = "VK_KHR_swapchain")]
     pub fn present(
-        &self,
-        swapchains: &[(&Swapchain, u32)],
-        wait_semaphores: &[&Semaphore],
+        &mut self,
+        swapchains: &[(&mut Swapchain, u32)],
+        wait_semaphores: &[&mut Semaphore],
     ) -> crate::Result<Vec<VkResult>> {
         let mut res = vec![0; swapchains.len()];
         let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
