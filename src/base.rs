@@ -30,8 +30,8 @@ struct InstanceCell(VkInstance);
 /// Opaque handle to a instance object
 #[derive(Clone)]
 pub struct Instance(RefCounter<InstanceCell>);
-#[cfg(feature = "Multithreaded")]
 unsafe impl Sync for Instance {}
+unsafe impl Send for Instance {}
 /// Opaque handle to a physical device object
 ///
 /// ## Platform Dependent Methods: Presentation Support checking functions
@@ -100,9 +100,6 @@ impl VkHandle for PhysicalDevice {
         self.0
     }
 }
-
-unsafe impl Sync for Instance {}
-unsafe impl Send for Instance {}
 
 /// Builder object for constructing a `Instance`
 pub struct InstanceBuilder {
