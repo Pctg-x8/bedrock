@@ -1304,6 +1304,13 @@ impl<'m> MappedMemoryRange<'m> {
     pub unsafe fn clone_at<T: Clone>(&self, offset: usize, src: &T) {
         *self.get_mut(offset) = src.clone();
     }
+
+    /// Unmap region
+    pub fn end(self) -> () {
+        unsafe {
+            self.2.unmap();
+        }
+    }
 }
 #[cfg(feature = "Implements")]
 impl Device {
