@@ -101,6 +101,9 @@ impl VkHandle for PhysicalDevice {
     }
 }
 
+unsafe impl Sync for Instance {}
+unsafe impl Send for Instance {}
+
 /// Builder object for constructing a `Instance`
 pub struct InstanceBuilder {
     _app_name: std::ffi::CString,

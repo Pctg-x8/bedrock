@@ -128,7 +128,10 @@ use crate::{AnalogNumRange, CompareOp, Device, DeviceChild, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
+#[cfg(not(feature = "Multithreaded"))]
 use std::rc::Rc as RefCounter;
+#[cfg(feature = "Multithreaded")]
+use std::sync::Arc as RefCounter;
 
 struct DeviceMemoryCell(VkDeviceMemory, Device);
 struct BufferCell(VkBuffer, Device);
@@ -235,6 +238,27 @@ impl Drop for ImageViewCell {
         }
     }
 }
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for DeviceMemoryCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for DeviceMemoryCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for BufferCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for BufferCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for ImageCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for ImageCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for BufferView {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for BufferView {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for ImageViewCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for ImageViewCell {}
 
 impl VkHandle for DeviceMemory {
     type Handle = VkDeviceMemory;
@@ -1033,7 +1057,7 @@ impl DeviceMemory {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
-    pub fn map(&self, range: Range<usize>) -> crate::Result<MappedMemoryRange> {
+    pub fn map(&mut self, range: Range<usize>) -> crate::Result<MappedMemoryRange> {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
@@ -1046,14 +1070,14 @@ impl DeviceMemory {
                     p.as_mut_ptr(),
                 )
                 .into_result()
-                .map(|_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
+                .map(move |_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
         }
     }
     /// Unmap a previously mapped memory object
     /// # Safety
     /// Caller must guarantee that there is no `MappedMemoryRange` alives.  
     /// Accessing the mapped memory after this call has undefined behavior
-    pub unsafe fn unmap(&self) {
+    pub unsafe fn unmap(&mut self) {
         Resolver::get().unmap_memory(self.0 .1.native_ptr(), self.native_ptr());
     }
     /// Query the current commitment for a `DeviceMemory`
@@ -1125,7 +1149,7 @@ pub trait MemoryBound {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    fn bind(&self, memory: &DeviceMemory, offset: usize) -> crate::Result<()>;
+    fn bind(&mut self, memory: &DeviceMemory, offset: usize) -> crate::Result<()>;
 }
 #[cfg(feature = "Implements")]
 impl MemoryBound for Buffer {
@@ -1141,7 +1165,8 @@ impl MemoryBound for Buffer {
             p.assume_init()
         }
     }
-    fn bind(&self, memory: &DeviceMemory, offset: usize) -> crate::Result<()> {
+
+    fn bind(&mut self, memory: &DeviceMemory, offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_buffer_memory(
@@ -1168,7 +1193,8 @@ impl MemoryBound for Image {
             p.assume_init()
         }
     }
-    fn bind(&self, memory: &DeviceMemory, offset: usize) -> crate::Result<()> {
+
+    fn bind(&mut self, memory: &DeviceMemory, offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_image_memory(
@@ -1239,7 +1265,7 @@ impl ImageSize for VkExtent3D {
 }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, &'m DeviceMemory);
+pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, &'m mut DeviceMemory);
 #[allow(clippy::mut_from_ref)]
 impl<'m> MappedMemoryRange<'m> {
     /// Get a reference in mapped memory with byte offsets

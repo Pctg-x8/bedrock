@@ -43,6 +43,11 @@ impl VkHandle for Device {
     }
 }
 
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for DeviceCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for DeviceCell {}
+
 /// Builder object for constructing a `Device`
 pub struct DeviceBuilder<'p> {
     pdev_ref: &'p PhysicalDevice,
