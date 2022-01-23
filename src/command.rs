@@ -282,6 +282,7 @@ impl<'p, 'b: 'p> CommandBuffer {
         }
     }
 }
+#[cfg(feature = "Implements")]
 impl SynchronizedCommandBuffer<'_, '_> {
     /// Start recording a primary command buffer
     /// # Failures
