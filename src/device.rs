@@ -315,7 +315,7 @@ impl Queue {
 pub struct SparseBindingOpBatch<'s> {
     /// An array of semaphores upon which to wait on before the sparse binding operations
     /// for this batch begin execution
-    pub wait_semaphores: &'s [&'s mut Semaphore],
+    pub wait_semaphores: Cow<'s, [&'s Semaphore]>,
     /// An array of `VkSparseBufferMemoryBindInfo` structures
     pub buffer_binds: Cow<'s, [VkSparseBufferMemoryBindInfo]>,
     /// An array of `VkSparseImageOpaqueMemoryBindInfo` structures
@@ -324,16 +324,16 @@ pub struct SparseBindingOpBatch<'s> {
     pub image_binds: Cow<'s, [VkSparseImageMemoryBindInfo]>,
     /// An array of semaphores which will be signaled when the sparse binding
     /// operations for this batch have completed execution
-    pub signal_semaphores: &'s [&'s mut Semaphore],
+    pub signal_semaphores: Cow<'s, [&'s Semaphore]>,
 }
 impl<'s> Default for SparseBindingOpBatch<'s> {
     fn default() -> Self {
         SparseBindingOpBatch {
-            wait_semaphores: &[],
+            wait_semaphores: Cow::Borrowed(&[]),
             buffer_binds: Cow::Borrowed(&[]),
             image_opaque_binds: Cow::Borrowed(&[]),
             image_binds: Cow::Borrowed(&[]),
-            signal_semaphores: &[],
+            signal_semaphores: Cow::Borrowed(&[]),
         }
     }
 }
@@ -388,17 +388,17 @@ impl Queue {
 
 /// Semaphore/Command submission operation batch
 pub struct SubmissionBatch<'d> {
-    pub wait_semaphores: &'d [(&'d mut Semaphore, PipelineStageFlags)],
+    pub wait_semaphores: Cow<'d, [(&'d Semaphore, PipelineStageFlags)]>,
     pub command_buffers: Cow<'d, [CommandBuffer]>,
-    pub signal_semaphores: &'d [&'d mut Semaphore],
+    pub signal_semaphores: Cow<'d, [&'d Semaphore]>,
     pub chained: Option<&'d dyn std::any::Any>,
 }
 impl<'d> Default for SubmissionBatch<'d> {
     fn default() -> Self {
         SubmissionBatch {
-            wait_semaphores: &[],
+            wait_semaphores: Cow::Borrowed(&[]),
             command_buffers: Cow::Borrowed(&[]),
-            signal_semaphores: &[],
+            signal_semaphores: Cow::Borrowed(&[]),
             chained: None,
         }
     }
