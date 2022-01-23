@@ -1305,7 +1305,8 @@ impl<'m> MappedMemoryRange<'m> {
         *self.get_mut(offset) = src.clone();
     }
 
-    /// Unmap region
+    #[cfg(feature = "Implements")]
+    /// [feature = "Implements"] Unmap region
     pub fn end(self) {
         unsafe {
             self.2.unmap();
