@@ -30,8 +30,8 @@ struct InstanceCell(VkInstance);
 /// Opaque handle to a instance object
 #[derive(Clone)]
 pub struct Instance(RefCounter<InstanceCell>);
-unsafe impl Sync for Instance {}
-unsafe impl Send for Instance {}
+unsafe impl Sync for InstanceCell {}
+unsafe impl Send for InstanceCell {}
 /// Opaque handle to a physical device object
 ///
 /// ## Platform Dependent Methods: Presentation Support checking functions
@@ -42,6 +42,11 @@ unsafe impl Send for Instance {}
 /// * `win32_presentation_support(&self, queue_family: u32) -> bool`: VK_KHR_win32_surface
 /// * Methods for Android and Mir surfaces are not implemented
 pub struct PhysicalDevice(VkPhysicalDevice, Instance);
+
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for PhysicalDevice {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for PhysicalDevice {}
 
 pub struct IterPhysicalDevices<'i>(Vec<VkPhysicalDevice>, usize, &'i Instance);
 impl<'i> Iterator for IterPhysicalDevices<'i> {
