@@ -387,13 +387,13 @@ impl Queue {
 }
 
 /// Semaphore/Command submission operation batch
-pub struct SubmissionBatch<'ws, 'wse, 'cb, 'ss, 'sse, 'c> {
-    pub wait_semaphores: Cow<'ws, [(&'wse Semaphore, PipelineStageFlags)]>,
-    pub command_buffers: Cow<'cb, [CommandBuffer]>,
-    pub signal_semaphores: Cow<'ss, [&'sse Semaphore]>,
-    pub chained: Option<&'c dyn std::any::Any>,
+pub struct SubmissionBatch<'d> {
+    pub wait_semaphores: Cow<'d, [(&'d Semaphore, PipelineStageFlags)]>,
+    pub command_buffers: Cow<'d, [CommandBuffer]>,
+    pub signal_semaphores: Cow<'d, [&'d Semaphore]>,
+    pub chained: Option<&'d dyn std::any::Any>,
 }
-impl Default for SubmissionBatch<'_, '_, '_, '_, '_, '_> {
+impl Default for SubmissionBatch<'_> {
     fn default() -> Self {
         SubmissionBatch {
             wait_semaphores: Cow::Borrowed(&[]),
