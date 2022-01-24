@@ -69,6 +69,15 @@ impl DeviceChild for Swapchain {
     }
 }
 
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for SurfaceCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for SurfaceCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Sync for SwapchainCell {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl Send for SwapchainCell {}
+
 #[cfg(feature = "VK_KHR_surface")]
 impl Surface {
     /// Create an surface object by taking raw `VkSurfaceKHR` object with its ownership.
@@ -339,17 +348,17 @@ impl Swapchain {
 /// A semaphore or a fence
 pub enum CompletionHandler<'s> {
     /// A Host synchronizer(aka Fence)
-    Host(&'s Fence),
+    Host(&'s mut Fence),
     /// A Queue synchronizer(aka Semaphore)
-    Queue(&'s Semaphore),
+    Queue(&'s mut Semaphore),
 }
-impl<'s> From<&'s Fence> for CompletionHandler<'s> {
-    fn from(f: &'s Fence) -> Self {
+impl<'s> From<&'s mut Fence> for CompletionHandler<'s> {
+    fn from(f: &'s mut Fence) -> Self {
         Self::Host(f)
     }
 }
-impl<'s> From<&'s Semaphore> for CompletionHandler<'s> {
-    fn from(s: &'s Semaphore) -> Self {
+impl<'s> From<&'s mut Semaphore> for CompletionHandler<'s> {
+    fn from(s: &'s mut Semaphore) -> Self {
         Self::Queue(s)
     }
 }
@@ -365,7 +374,7 @@ impl Swapchain {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    pub fn acquire_next(&self, timeout: Option<u64>, completion: CompletionHandler) -> crate::Result<u32> {
+    pub fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandler) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
             CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
             CompletionHandler::Queue(s) => (s.native_ptr(), VK_NULL_HANDLE as _),
@@ -394,7 +403,12 @@ impl Swapchain {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    pub fn queue_present(&self, queue: &Queue, index: u32, wait_semaphores: &[&Semaphore]) -> crate::Result<()> {
+    pub fn queue_present(
+        &mut self,
+        queue: &mut Queue,
+        index: u32,
+        wait_semaphores: &[&mut Semaphore],
+    ) -> crate::Result<()> {
         let mut res = 0;
         let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         let pinfo = VkPresentInfoKHR {
