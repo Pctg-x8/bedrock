@@ -1459,7 +1459,7 @@ impl<'d> GraphicsPipelineBuilder<'d> {
         // let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
         self.rasterizer_state
             .apply_dynamic_states(&mut self.dynamic_state_flags);
-        let ds = if self.dynamic_state_flags.0.is_empty() {
+        let ds = if !self.dynamic_state_flags.0.is_empty() {
             unsafe { Some(Into::<LifetimeBound<_>>::into(&self.dynamic_state_flags).unbound()) }
         } else {
             None
