@@ -13,6 +13,9 @@ let RunCargo =
 let GoogleAuth =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/google-github-actions/auth.dhall
 
+let SetupAWSCredentials =
+      https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/aws-actions/configure-aws-credentials.dhall
+
 let List/map = https://prelude.dhall-lang.org/List/map
 
 let List/concat = https://prelude.dhall-lang.org/List/concat
@@ -35,27 +38,12 @@ let withConditionStep =
 let runStepOnFailure = withConditionStep "failure()"
 
 let configureSlackNotification =
-      GithubActions.Step::{
-      , name = "Configure for Slack Notification"
-      , id = Some "cfgNotification"
-      , run = Some
-          ''
-          # re-export configs for further step
-          echo AWS_ROLE_ARN=$AWS_ROLE_ARN >> $GITHUB_ENV
-          echo AWS_WEB_IDENTITY_TOKEN_FILE=$AWS_WEB_IDENTITY_TOKEN_FILE >> $GITHUB_ENV
-          echo AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION >> $GITHUB_ENV
-
-          curl -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://github.com/Pctg-x8/bedrock" | jq -r ".value" > $AWS_WEB_IDENTITY_TOKEN_FILE
-          ''
-      , env = Some
-          ( toMap
-              { AWS_ROLE_ARN =
-                  "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
-              , AWS_WEB_IDENTITY_TOKEN_FILE = "/tmp/awstoken"
-              , AWS_DEFAULT_REGION = "ap-northeast-1"
-              }
-          )
-      }
+      SetupAWSCredentials.step
+        SetupAWSCredentials.Params::{
+        , awsRegion = "ap-northeast-1"
+        , roleToAssume = Some
+            "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+        }
 
 let slackNotifyIfFailureStep =
       \(stepName : Text) ->
@@ -181,6 +169,7 @@ let reportSuccessJob =
 in  GithubActions.Workflow::{
     , name = Some "Integrity Check"
     , on = GithubActions.On.Single GithubActions.UnparameterizedTrigger.push
+    , permissions = Some (toMap { id-token = "write", contents = "read" })
     , jobs = toMap
         { preconditions
         , check-format = depends [ "preconditions" ] checkFormatStep
