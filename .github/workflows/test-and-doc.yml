@@ -56,6 +56,7 @@ jobs:
     - name: Authenticate to Google Cloud
       uses: "google-github-actions/auth@v0"
       with:
+        access_token_scopes: "email,openid,https://www.googleapis.com/auth/cloudplatformprojects.readonly,https://www.googleapis.com/auth/firebase,https://www.googleapis.com/auth/cloud-platform"
         audience: "https://github.com/Pctg-x8"
         service_account: "github-actions-autodeployer@docs-541f3.iam.gserviceaccount.com"
         workload_identity_provider: "projects/146152181631/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"

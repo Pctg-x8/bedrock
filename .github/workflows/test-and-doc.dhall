@@ -145,6 +145,8 @@ let documentDeploymentStep =
             , serviceAccount = Some
                 "github-actions-autodeployer@docs-541f3.iam.gserviceaccount.com"
             , audience = Some "https://github.com/Pctg-x8"
+            , accessTokenScopes = Some
+                "email,openid,https://www.googleapis.com/auth/cloudplatformprojects.readonly,https://www.googleapis.com/auth/firebase,https://www.googleapis.com/auth/cloud-platform"
             }
         , DocumentDeployment.step
         , runStepOnFailure configureSlackNotification
