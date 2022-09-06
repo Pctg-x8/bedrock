@@ -19,8 +19,6 @@ let DocumentDeployment = ../actions/deployment-doc-peridot/schema.dhall
 let SlackNotifierAction =
       https://raw.githubusercontent.com/Pctg-x8/ci-notifications-post-invoker/master/schema.dhall
 
-let eSecretGithubToken = GithubActions.mkExpression "secrets.GITHUB_TOKEN"
-
 let eSecretFirebaseToken =
       GithubActions.mkExpression "secrets.DOC_HOST_FIREBASE_TOKEN"
 
@@ -58,8 +56,6 @@ let configureSlackNotification =
           )
       }
 
-let checkoutStep = Checkout.step Checkout.Params::{=}
-
 let slackNotifyIfFailureStep =
       \(stepName : Text) ->
         SlackNotifierAction.step
@@ -86,88 +82,19 @@ let preconditionRecordBeginTimeStep =
       , run = Some "echo \"::set-output name=begintime::\$(date +%s)\""
       }
 
-let preconditionBeginTimestampOutputDef =
-      toMap
-        { begintime =
-            GithubActions.mkExpression "steps.begintime.outputs.begintime"
-        }
-
 let preconditions =
       GithubActions.Job::{
       , name = Some "Preconditions"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , outputs = Some
-          (   preconditionBeginTimestampOutputDef
-            # toMap
-                { has_code_changes =
-                    GithubActions.mkExpression
-                      "steps.fileck.outputs.has_code_changes"
-                , has_workflow_changes =
-                    GithubActions.mkExpression
-                      "steps.fileck.outputs.has_workflow_changes"
-                }
+          ( toMap
+              { begintime =
+                  GithubActions.mkRefStepOutputExpression
+                    "begintime"
+                    "begintime"
+              }
           )
       , steps = [ preconditionRecordBeginTimeStep ]
-      }
-
-let installDhallScript =
-      let releaseAssetSelector =
-            "nodes { name, downloadUrl }, pageInfo { hasNextPage, endCursor }"
-
-      let releaseSelector =
-            "nodes { releaseAssets(first: 10, after: \$cursor) { ${releaseAssetSelector} } }"
-
-      let repositorySelector =
-            "releases(first: 1, orderBy: { direction: DESC, field: CREATED_AT }) { ${releaseSelector} }"
-
-      let query =
-            "query(\$cursor: String) { repository(owner: \\\"dhall-lang\\\", name: \\\"dhall-haskell\\\") { ${repositorySelector} } }"
-
-      in  ''
-          QUERY_STRING='${query}'
-          QUERY_CURSOR='null'
-          TARGET_FILE=""
-          while :; do
-            POSTDATA="{ \"query\": \"$QUERY_STRING\", \"variables\": { \"cursor\": $QUERY_CURSOR } }"
-            API_RESPONSE=$(curl -s -H "Authorization: Bearer ${eSecretGithubToken}" -X POST -d "$POSTDATA" https://api.github.com/graphql)
-            TARGET_FILE=$(echo $API_RESPONSE | jq -r '.data.repository.releases.nodes[0].releaseAssets.nodes[] | select(.name | startswith("dhall-yaml") and contains("-Linux")).downloadUrl')
-            if [[ $TARGET_FILE != "" ]]; then break; fi
-            HAS_NEXT_PAGE=$(echo $API_RESPONSE | jq ".data.repository.releases.nodes[0].releaseAssets.pageInfo.hasNextPage")
-            if [[ "$HAS_NEXT_PAGE" == "true" ]]; then
-              QUERY_CURSOR=$(echo $API_RESPONSE | jq ".data.repository.releases.nodes[0].releaseAssets.pageInfo.endCursor")
-            else
-              echo "Latest dhall release does not contains dhall-yaml for linux platform!"
-              exit 1
-            fi
-          done < <(cat)
-          echo "$TARGET_FILE"
-          mkdir $HOME/dhall
-          curl -L $TARGET_FILE | tar x --bzip2 -C $HOME/dhall
-          echo "$HOME/dhall/bin" >> $GITHUB_PATH
-          sudo apt-get update
-          sudo apt-get install -y colordiff
-          ''
-
-let checkWorkflowSync =
-      GithubActions.Job::{
-      , name = Some "Check Workflow Files are Synchronized"
-      , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
-      , steps =
-        [ checkoutStep
-        , GithubActions.Step::{
-          , name = "Setup Dhall"
-          , run = Some installDhallScript
-          }
-        , GithubActions.Step::{
-          , name = "test-sync"
-          , run = Some "make -C ./.github/workflows test-sync"
-          }
-        , runStepOnFailure configureSlackNotification
-        , runStepOnFailure
-            (     slackNotifyIfFailureStep "check-sync-workflow"
-              //  { name = "Notify as Failure" }
-            )
-        ]
       }
 
 let checkFormatStep =
@@ -175,7 +102,7 @@ let checkFormatStep =
       , name = Some "Check Format"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ checkoutStep
+        [ Checkout.step Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{ command = "fmt", args = Some "-- --check" }
@@ -192,7 +119,7 @@ let testStep =
       , name = Some "Run Tests"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ checkoutStep
+        [ Checkout.step Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -212,7 +139,7 @@ let documentDeploymentStep =
       , name = Some "Deploy Latest Document"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ checkoutStep
+        [ Checkout.step Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "nightly" }
         , RunCargo.step
             RunCargo.Params::{
@@ -235,7 +162,10 @@ let reportSuccessJob =
       , name = Some "Report as Success"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ checkoutStep, configureSlackNotification, slackNotifySuccessStep ]
+        [ Checkout.step Checkout.Params::{=}
+        , configureSlackNotification
+        , slackNotifySuccessStep
+        ]
       }
 
 in  GithubActions.Workflow::{
@@ -243,22 +173,15 @@ in  GithubActions.Workflow::{
     , on = GithubActions.On.Single GithubActions.UnparameterizedTrigger.push
     , jobs = toMap
         { preconditions
-        , check-workflow-sync = depends [ "preconditions" ] checkWorkflowSync
-        , check-format =
-            depends [ "check-workflow-sync", "preconditions" ] checkFormatStep
-        , test = depends [ "check-workflow-sync", "preconditions" ] testStep
+        , check-format = depends [ "preconditions" ] checkFormatStep
+        , test = depends [ "preconditions" ] testStep
         , document-deploy =
             depends
-              [ "check-workflow-sync", "preconditions", "test", "check-format" ]
+              [ "preconditions", "test", "check-format" ]
               documentDeploymentStep
         , report-success =
             depends
-              [ "preconditions"
-              , "check-workflow-sync"
-              , "test"
-              , "check-format"
-              , "document-deploy"
-              ]
+              [ "preconditions", "test", "check-format", "document-deploy" ]
               reportSuccessJob
         }
     }
