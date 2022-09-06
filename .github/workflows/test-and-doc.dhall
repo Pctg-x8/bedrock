@@ -129,7 +129,7 @@ let documentDeploymentStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , permissions = Some (toMap { id-token = "write" })
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "nightly" }
         , RunCargo.step
             RunCargo.Params::{
