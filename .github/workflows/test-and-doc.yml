@@ -11,7 +11,7 @@ jobs:
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
-        profile: stable
+        toolchain: stable
     - name: Run Cargo
       uses: "actions-rs/cargo@v1"
       with:
@@ -111,7 +111,7 @@ jobs:
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
-        profile: nightly
+        toolchain: nightly
     - name: Run Cargo
       uses: "actions-rs/cargo@v1"
       with:
@@ -200,7 +200,7 @@ jobs:
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
-        profile: stable
+        toolchain: stable
     - name: Run Cargo
       uses: "actions-rs/cargo@v1"
       with:

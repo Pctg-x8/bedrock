@@ -176,7 +176,7 @@ let checkFormatStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ checkoutStep
-        , InstallRust.step InstallRust.Params::{ profile = Some "stable" }
+        , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{ command = "fmt", args = Some "-- --check" }
         , runStepOnFailure configureSlackNotification
@@ -193,7 +193,7 @@ let testStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ checkoutStep
-        , InstallRust.step InstallRust.Params::{ profile = Some "stable" }
+        , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
             , command = "test"
@@ -213,7 +213,7 @@ let documentDeploymentStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ checkoutStep
-        , InstallRust.step InstallRust.Params::{ profile = Some "nightly" }
+        , InstallRust.step InstallRust.Params::{ toolchain = Some "nightly" }
         , RunCargo.step
             RunCargo.Params::{
             , command = "rustdoc"
