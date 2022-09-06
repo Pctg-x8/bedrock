@@ -49,7 +49,8 @@ let configureSlackNotification =
           ''
       , env = Some
           ( toMap
-              { AWS_ROLE_ARN = "arn:aws:iam::208140986057:role/GHALambdaInvoker"
+              { AWS_ROLE_ARN =
+                  "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
               , AWS_WEB_IDENTITY_TOKEN_FILE = "/tmp/awstoken"
               , AWS_DEFAULT_REGION = "ap-northeast-1"
               }
