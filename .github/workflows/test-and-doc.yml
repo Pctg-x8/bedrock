@@ -102,7 +102,7 @@ jobs:
     - name: Checking out
       uses: "actions/checkout@v2"
     - name: build document
-      run: "cargo rustdoc --no-deps --features=Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+      run: "cargo +nightly rustdoc --no-deps --features=Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
     - env:
         FIREBASE_TOKEN: "${{ secrets.DOC_HOST_FIREBASE_TOKEN }}"
       name: "Deployment to Firebase Hosting (for Peridot branch)"

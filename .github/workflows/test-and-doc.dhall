@@ -209,7 +209,7 @@ let documentDeploymentStep =
         , GithubActions.Step::{
           , name = "build document"
           , run = Some
-              "cargo rustdoc --no-deps --features=Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+              "cargo +nightly rustdoc --no-deps --features=Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
           }
         , DocumentDeployment.step { FirebaseToken = eSecretFirebaseToken }
         , runStepOnFailure configureSlackNotification
