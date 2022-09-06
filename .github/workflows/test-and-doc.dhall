@@ -10,6 +10,9 @@ let InstallRust =
 let RunCargo =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/actions-rs/cargo.dhall
 
+let GoogleAuth =
+      https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/google-github-actions/auth.dhall
+
 let List/map = https://prelude.dhall-lang.org/List/map
 
 let List/concat = https://prelude.dhall-lang.org/List/concat
@@ -18,9 +21,6 @@ let DocumentDeployment = ../actions/deployment-doc-peridot/schema.dhall
 
 let SlackNotifierAction =
       https://raw.githubusercontent.com/Pctg-x8/ci-notifications-post-invoker/master/schema.dhall
-
-let eSecretFirebaseToken =
-      GithubActions.mkExpression "secrets.DOC_HOST_FIREBASE_TOKEN"
 
 let depends =
       \(deps : List Text) ->
@@ -148,7 +148,15 @@ let documentDeploymentStep =
                 "--features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
             , toolchain = Some "nightly"
             }
-        , DocumentDeployment.step { FirebaseToken = eSecretFirebaseToken }
+        , GoogleAuth.step
+            GoogleAuth.Params::{
+            , workloadIdentityProvider = Some
+                "projects/459189735048/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
+            , serviceAccount = Some
+                "bedrock-docs-autodeployer@nobilling-329804.iam.gserviceaccount.com"
+            , audience = Some "https://github.com/Pctg-x8"
+            }
+        , DocumentDeployment.step
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
             (     slackNotifyIfFailureStep "Deploy Latest Document"

@@ -59,9 +59,13 @@ jobs:
         args: "--features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
         command: rustdoc
         toolchain: nightly
-    - env:
-        FIREBASE_TOKEN: "${{ secrets.DOC_HOST_FIREBASE_TOKEN }}"
-      name: "Deployment to Firebase Hosting (for Peridot branch)"
+    - name: Authenticate to Google Cloud
+      uses: "google-github-actions/auth@v0"
+      with:
+        audience: "https://github.com/Pctg-x8"
+        service_account: "bedrock-docs-autodeployer@nobilling-329804.iam.gserviceaccount.com"
+        workload_identity_provider: "projects/459189735048/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
+    - name: "Deployment to Firebase Hosting (for Peridot branch)"
       uses: "./.github/actions/deployment-doc-peridot"
     - env:
         AWS_DEFAULT_REGION: "ap-northeast-1"
