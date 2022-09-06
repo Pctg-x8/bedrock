@@ -7,9 +7,9 @@ use crate::vk::*;
 use crate::{
     fnconv::FnTransmute,
     vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, Fence, VkResultHandler,
+    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler,
 };
-use crate::{CommandBuffer, Instance, PhysicalDevice, PipelineStageFlags, Semaphore, VkHandle};
+use crate::{CommandBuffer, Instance, PhysicalDevice, PipelineStageFlags, VkHandle};
 use derives::*;
 use std::borrow::Cow;
 #[cfg(not(feature = "Multithreaded"))]
@@ -312,10 +312,10 @@ impl Queue {
 }
 
 /// Sparse Binding operation batch
-pub struct SparseBindingOpBatch<'s> {
+pub struct SparseBindingOpBatch<'s, Semaphore: VkHandle<Handle = VkSemaphore> + Clone> {
     /// An array of semaphores upon which to wait on before the sparse binding operations
     /// for this batch begin execution
-    pub wait_semaphores: Cow<'s, [&'s Semaphore]>,
+    pub wait_semaphores: Cow<'s, [Semaphore]>,
     /// An array of `VkSparseBufferMemoryBindInfo` structures
     pub buffer_binds: Cow<'s, [VkSparseBufferMemoryBindInfo]>,
     /// An array of `VkSparseImageOpaqueMemoryBindInfo` structures
@@ -324,9 +324,9 @@ pub struct SparseBindingOpBatch<'s> {
     pub image_binds: Cow<'s, [VkSparseImageMemoryBindInfo]>,
     /// An array of semaphores which will be signaled when the sparse binding
     /// operations for this batch have completed execution
-    pub signal_semaphores: Cow<'s, [&'s Semaphore]>,
+    pub signal_semaphores: Cow<'s, [Semaphore]>,
 }
-impl<'s> Default for SparseBindingOpBatch<'s> {
+impl<'s, Semaphore: VkHandle<Handle = VkSemaphore> + Clone> Default for SparseBindingOpBatch<'s, Semaphore> {
     fn default() -> Self {
         SparseBindingOpBatch {
             wait_semaphores: Cow::Borrowed(&[]),
@@ -347,31 +347,33 @@ impl Queue {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    pub fn bind_sparse(&mut self, batches: &[SparseBindingOpBatch], fence: Option<&mut Fence>) -> crate::Result<()> {
+    pub fn bind_sparse(
+        &mut self,
+        batches: &[SparseBindingOpBatch<'_, impl VkHandle<Handle = VkSemaphore> + Clone>],
+        fence: Option<&mut impl VkHandle<Handle = VkFence>>,
+    ) -> crate::Result<()> {
         let sem_ptrs = batches.iter().map(|x| {
             (
-                x.wait_semaphores.iter().map(|x| x.native_ptr()).collect(),
-                x.signal_semaphores.iter().map(|x| x.native_ptr()).collect(),
+                x.wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>(),
+                x.signal_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>(),
             )
         });
         let batches: Vec<_> = batches
             .iter()
             .zip(sem_ptrs)
-            .map(
-                |(x, (ws, ss)): (&SparseBindingOpBatch, (Vec<_>, Vec<_>))| VkBindSparseInfo {
-                    waitSemaphoreCount: ws.len() as _,
-                    pWaitSemaphores: ws.as_ptr(),
-                    bufferBindCount: x.buffer_binds.len() as _,
-                    pBufferBinds: x.buffer_binds.as_ptr(),
-                    imageOpaqueBindCount: x.image_opaque_binds.len() as _,
-                    pImageOpaqueBinds: x.image_opaque_binds.as_ptr(),
-                    imageBindCount: x.image_binds.len() as _,
-                    pImageBinds: x.image_binds.as_ptr(),
-                    signalSemaphoreCount: ss.len() as _,
-                    pSignalSemaphores: ss.as_ptr(),
-                    ..Default::default()
-                },
-            )
+            .map(|(x, (ws, ss))| VkBindSparseInfo {
+                waitSemaphoreCount: ws.len() as _,
+                pWaitSemaphores: ws.as_ptr(),
+                bufferBindCount: x.buffer_binds.len() as _,
+                pBufferBinds: x.buffer_binds.as_ptr(),
+                imageOpaqueBindCount: x.image_opaque_binds.len() as _,
+                pImageOpaqueBinds: x.image_opaque_binds.as_ptr(),
+                imageBindCount: x.image_binds.len() as _,
+                pImageBinds: x.image_binds.as_ptr(),
+                signalSemaphoreCount: ss.len() as _,
+                pSignalSemaphores: ss.as_ptr(),
+                ..Default::default()
+            })
             .collect();
         unsafe {
             Resolver::get()
@@ -387,13 +389,13 @@ impl Queue {
 }
 
 /// Semaphore/Command submission operation batch
-pub struct SubmissionBatch<'d> {
-    pub wait_semaphores: Cow<'d, [(&'d Semaphore, PipelineStageFlags)]>,
+pub struct SubmissionBatch<'d, Semaphore: VkHandle<Handle = VkSemaphore> + Clone> {
+    pub wait_semaphores: Cow<'d, [(Semaphore, PipelineStageFlags)]>,
     pub command_buffers: Cow<'d, [CommandBuffer]>,
-    pub signal_semaphores: Cow<'d, [&'d Semaphore]>,
+    pub signal_semaphores: Cow<'d, [Semaphore]>,
     pub chained: Option<&'d dyn std::any::Any>,
 }
-impl Default for SubmissionBatch<'_> {
+impl<Semaphore: VkHandle<Handle = VkSemaphore> + Clone> Default for SubmissionBatch<'_, Semaphore> {
     fn default() -> Self {
         SubmissionBatch {
             wait_semaphores: Cow::Borrowed(&[]),
@@ -413,7 +415,11 @@ impl Queue {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    pub fn submit(&mut self, batches: &[SubmissionBatch], fence: Option<&mut Fence>) -> crate::Result<()> {
+    pub fn submit(
+        &mut self,
+        batches: &[SubmissionBatch<impl VkHandle<Handle = VkSemaphore> + Clone>],
+        fence: Option<&mut impl VkHandle<Handle = VkFence>>,
+    ) -> crate::Result<()> {
         let sem_ptrs: Vec<((Vec<_>, Vec<_>), Vec<_>, Vec<_>)> = batches
             .iter()
             .map(|x| {
@@ -450,7 +456,11 @@ impl Queue {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    pub fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<&mut Fence>) -> crate::Result<()> {
+    pub fn submit_raw(
+        &mut self,
+        batches: &[VkSubmitInfo],
+        fence: Option<&mut impl VkHandle<Handle = VkFence>>,
+    ) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .queue_submit(

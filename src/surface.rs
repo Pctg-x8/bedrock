@@ -346,21 +346,11 @@ impl Swapchain {
 }
 
 /// A semaphore or a fence
-pub enum CompletionHandler<'s> {
+pub enum CompletionHandler<Fence: VkHandle<Handle = VkFence>, Semaphore: VkHandle<Handle = VkSemaphore>> {
     /// A Host synchronizer(aka Fence)
-    Host(&'s mut Fence),
+    Host(Fence),
     /// A Queue synchronizer(aka Semaphore)
-    Queue(&'s mut Semaphore),
-}
-impl<'s> From<&'s mut Fence> for CompletionHandler<'s> {
-    fn from(f: &'s mut Fence) -> Self {
-        Self::Host(f)
-    }
-}
-impl<'s> From<&'s mut Semaphore> for CompletionHandler<'s> {
-    fn from(s: &'s mut Semaphore) -> Self {
-        Self::Queue(s)
-    }
+    Queue(Semaphore),
 }
 
 #[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
@@ -374,7 +364,11 @@ impl Swapchain {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    pub fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandler) -> crate::Result<u32> {
+    pub fn acquire_next(
+        &mut self,
+        timeout: Option<u64>,
+        completion: CompletionHandler<impl VkHandle<Handle = VkFence>, impl VkHandle<Handle = VkSemaphore>>,
+    ) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
             CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
             CompletionHandler::Queue(s) => (s.native_ptr(), VK_NULL_HANDLE as _),
@@ -407,7 +401,7 @@ impl Swapchain {
         &mut self,
         queue: &mut Queue,
         index: u32,
-        wait_semaphores: &[&mut Semaphore],
+        wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
     ) -> crate::Result<()> {
         let mut res = 0;
         let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
@@ -443,7 +437,7 @@ impl Queue {
     pub fn present(
         &mut self,
         swapchains: &[(&mut Swapchain, u32)],
-        wait_semaphores: &[&mut Semaphore],
+        wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
     ) -> crate::Result<Vec<VkResult>> {
         let mut res = vec![0; swapchains.len()];
         let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();

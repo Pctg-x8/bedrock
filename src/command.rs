@@ -4,8 +4,8 @@ use crate::vk::*;
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    Event, FilterMode, Framebuffer, Pipeline, PipelineLayout, PipelineStageFlags, QueryPipelineStatisticFlags,
-    QueryPool, QueryResultFlags, RenderPass, ShaderStage, StencilFaceMask, VkResultHandler,
+    FilterMode, Framebuffer, Pipeline, PipelineLayout, PipelineStageFlags, QueryPipelineStatisticFlags, QueryPool,
+    QueryResultFlags, RenderPass, ShaderStage, StencilFaceMask, VkResultHandler,
 };
 use crate::{AnalogNumRange, Buffer, Device, Image, ImageLayout, VkHandle};
 use derives::*;
@@ -1055,14 +1055,14 @@ impl<'d> CmdRecord<'d> {
 #[cfg(feature = "Implements")]
 impl<'d> CmdRecord<'d> {
     /// Set an event object to signaled state
-    pub fn set_event(&mut self, event: &Event, stage_mask: PipelineStageFlags) -> &mut Self {
+    pub fn set_event(&mut self, event: impl VkHandle<Handle = VkEvent>, stage_mask: PipelineStageFlags) -> &mut Self {
         unsafe {
             Resolver::get().cmd_set_event(self.ptr.native_ptr(), event.native_ptr(), stage_mask.0);
         }
         self
     }
     /// Reset an event object to non-signaled state
-    pub fn reset_event(&mut self, event: &Event, stage_mask: PipelineStageFlags) -> &mut Self {
+    pub fn reset_event(&mut self, event: impl VkHandle<Handle = VkEvent>, stage_mask: PipelineStageFlags) -> &mut Self {
         unsafe {
             Resolver::get().cmd_reset_event(self.ptr.native_ptr(), event.native_ptr(), stage_mask.0);
         }
@@ -1071,14 +1071,14 @@ impl<'d> CmdRecord<'d> {
     /// Wait for one or more events and insert a set of memory
     pub fn wait_events(
         &mut self,
-        events: &[&Event],
+        events: &[impl VkHandle<Handle = VkEvent>],
         src_stage_mask: PipelineStageFlags,
         dst_stage_mask: PipelineStageFlags,
         memory_barriers: &[VkMemoryBarrier],
         buffer_memory_barriers: &[VkBufferMemoryBarrier],
         image_memory_barriers: &[VkImageMemoryBarrier],
     ) -> &mut Self {
-        let evs = events.iter().map(|&e| e.native_ptr()).collect::<Vec<_>>();
+        let evs = events.iter().map(|e| e.native_ptr()).collect::<Vec<_>>();
         unsafe {
             Resolver::get().cmd_wait_events(
                 self.ptr.native_ptr(),

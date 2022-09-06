@@ -498,7 +498,7 @@ impl std::fmt::Debug for ExternalFenceHandleTypes {
     }
 }
 
-impl crate::Fence {
+impl<Device: VkHandle<Handle = VkDevice>> crate::Fence<Device> {
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     /// [Implements][VK_KHR_external_fence_fd] Get a POSIX file descriptor handle for a type
     /// # Failures

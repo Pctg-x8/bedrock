@@ -11,6 +11,7 @@
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 //!   - Pseudo Extension: `VK_EXT_full_screen_exclusive_win32` for using `VK_EXT_full_screen_exclusive` on Win32 platform
 #![warn(clippy::all)]
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 extern crate libc;
 // Platform Extras
@@ -90,6 +91,73 @@ pub trait VkHandle {
         DebugUtilsObjectNameInfo::new(self, name).apply(self.device())
     }
 }
+impl<T> VkHandle for &'_ T
+where
+    T: VkHandle,
+{
+    type Handle = T::Handle;
+    const TYPE: VkObjectType = T::TYPE;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(*self)
+    }
+}
+impl<T> VkHandle for &'_ mut T
+where
+    T: VkHandle,
+{
+    type Handle = T::Handle;
+    const TYPE: VkObjectType = T::TYPE;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(*self)
+    }
+}
+impl<T> VkHandle for std::rc::Rc<T>
+where
+    T: VkHandle,
+{
+    type Handle = T::Handle;
+    const TYPE: VkObjectType = T::TYPE;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&**self)
+    }
+}
+impl<T> VkHandle for std::sync::Arc<T>
+where
+    T: VkHandle,
+{
+    type Handle = T::Handle;
+    const TYPE: VkObjectType = T::TYPE;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&**self)
+    }
+}
+impl<T> VkHandle for std::cell::RefCell<T>
+where
+    T: VkHandle,
+{
+    type Handle = T::Handle;
+    const TYPE: VkObjectType = T::TYPE;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&self.borrow())
+    }
+}
+impl<T> VkHandle for std::sync::MutexGuard<'_, T>
+where
+    T: VkHandle,
+{
+    type Handle = T::Handle;
+    const TYPE: VkObjectType = T::TYPE;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&**self)
+    }
+}
+
 /// Child of a device object
 pub trait DeviceChild {
     /// Retrieve a reference to a device object that creates this object

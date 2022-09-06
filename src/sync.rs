@@ -3,39 +3,65 @@
 #![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
 use crate::vk::*;
+use crate::VkHandle;
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkResultBox, VkResultHandler,
 };
-use crate::{Device, DeviceChild, VkHandle};
 
 /// Opaque handle to a fence object
-#[derive(VkHandle, DeviceChild)]
+#[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_FENCE"]
-#[drop_function_name = "destroy_fence"]
-pub struct Fence(VkFence, Device);
+pub struct Fence<Device>(VkFence, Device)
+where
+    Device: VkHandle<Handle = VkDevice>;
+impl<Device: VkHandle<Handle = VkDevice>> Drop for Fence<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_fence(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+
 /// Opaque handle to a semaphore object
-#[derive(VkHandle, DeviceChild)]
+#[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_SEMAPHORE"]
-#[drop_function_name = "destroy_semaphore"]
-pub struct Semaphore(VkSemaphore, Device);
+pub struct Semaphore<Device>(VkSemaphore, Device)
+where
+    Device: VkHandle<Handle = VkDevice>;
+impl<Device: VkHandle<Handle = VkDevice>> Drop for Semaphore<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_semaphore(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+
 /// Opaque handle to a event object
-#[derive(VkHandle, DeviceChild)]
+#[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_EVENT"]
-#[drop_function_name = "destroy_event"]
-pub struct Event(VkEvent, Device);
+pub struct Event<Device>(VkEvent, Device)
+where
+    Device: VkHandle<Handle = VkDevice>;
+impl<Device: VkHandle<Handle = VkDevice>> Drop for Event<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_event(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
 
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl Fence {
+impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
     /// Create a new fence object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new(device: &Device, signaled: bool) -> crate::Result<Self> {
+    pub fn new(device: Device, signaled: bool) -> crate::Result<Self> {
         let mut h = VK_NULL_HANDLE as _;
         let flags = if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
         unsafe {
@@ -50,7 +76,7 @@ impl Fence {
                     &mut h,
                 )
                 .into_result()
-                .map(|_| Fence(h, device.clone()))
+                .map(|_| Self(h, device))
         }
     }
 
@@ -62,7 +88,7 @@ impl Fence {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     pub fn with_export_fd(
-        device: &Device,
+        device: Device,
         signaled: bool,
         compatible_handle_types: crate::ExternalFenceHandleTypes,
     ) -> crate::Result<Self> {
@@ -80,26 +106,27 @@ impl Fence {
             Resolver::get()
                 .create_fence(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
-                .map(move |_| Fence(h, device.clone()))
+                .map(move |_| Self(h, device))
         }
     }
 }
+
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl Semaphore {
+impl<Device: VkHandle<Handle = VkDevice>> Semaphore<Device> {
     /// Create a new queue semaphore object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new(device: &Device) -> crate::Result<Self> {
+    pub fn new(device: Device) -> crate::Result<Self> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
                 .create_semaphore(device.native_ptr(), &Default::default(), std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| Semaphore(h, device.clone()))
+                .map(|_| Semaphore(h, device))
         }
     }
     #[cfg(feature = "VK_KHR_external_semaphore_win32")]
@@ -110,7 +137,7 @@ impl Semaphore {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     pub fn with_export_win32(
-        device: &Device,
+        device: Device,
         handle_types: crate::ExternalSemaphoreHandleTypes,
         export_info: &crate::ExportSemaphoreWin32HandleInfo,
     ) -> crate::Result<Self> {
@@ -128,33 +155,32 @@ impl Semaphore {
             Resolver::get()
                 .create_semaphore(device.native_ptr(), &info, std::ptr::null(), &mut h)
                 .into_result()
-                .map(move |_| Semaphore(h, device.clone()))
+                .map(move |_| Semaphore(h, device))
         }
     }
 }
-/// Following methods are enabled with [feature = "Implements"]
+
 #[cfg(feature = "Implements")]
-impl Event {
+impl<Device: VkHandle<Handle = VkDevice>> Event<Device> {
     /// Create a new event object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new(device: &Device) -> crate::Result<Self> {
+    pub fn new(device: Device) -> crate::Result<Self> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
                 .create_event(device.native_ptr(), &Default::default(), std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| Event(h, device.clone()))
+                .map(|_| Event(h, device))
         }
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl Fence {
+impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
     /// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
     /// On failure, this command returns
@@ -233,9 +259,10 @@ impl Fence {
         }
     }
 }
+
 /// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl Event {
+impl<Device: VkHandle<Handle = VkDevice>> Event<Device> {
     /// Set an event to signaled state
     /// # Failures
     /// On failure, this command returns
@@ -268,7 +295,7 @@ pub trait Status {
     fn status(&self) -> crate::Result<bool>;
 }
 #[cfg(feature = "Implements")]
-impl Status for Fence {
+impl<Device: VkHandle<Handle = VkDevice>> Status for Fence<Device> {
     fn status(&self) -> crate::Result<bool> {
         let vr = unsafe { Resolver::get().get_fence_status(self.1.native_ptr(), self.0) };
         match vr {
@@ -279,7 +306,7 @@ impl Status for Fence {
     }
 }
 #[cfg(feature = "Implements")]
-impl Status for Event {
+impl<Device: VkHandle<Handle = VkDevice>> Status for Event<Device> {
     fn status(&self) -> crate::Result<bool> {
         let vr = unsafe { Resolver::get().get_event_status(self.1.native_ptr(), self.0) };
         match vr {
@@ -291,16 +318,16 @@ impl Status for Event {
 }
 
 #[cfg(feature = "Multithreaded")]
-unsafe impl Send for Fence {}
+unsafe impl<Device: VkHandle<Handle = VkDevice>> Send for Fence<Device> {}
 #[cfg(feature = "Multithreaded")]
-unsafe impl Sync for Fence {}
+unsafe impl<Device: VkHandle<Handle = VkDevice>> Sync for Fence<Device> {}
 
 #[cfg(feature = "Multithreaded")]
-unsafe impl Send for Event {}
+unsafe impl<Device: VkHandle<Handle = VkDevice>> Send for Event<Device> {}
 #[cfg(feature = "Multithreaded")]
-unsafe impl Sync for Event {}
+unsafe impl<Device: VkHandle<Handle = VkDevice>> Sync for Event<Device> {}
 
 #[cfg(feature = "Multithreaded")]
-unsafe impl Send for Semaphore {}
+unsafe impl<Device: VkHandle<Handle = VkDevice>> Send for Semaphore<Device> {}
 #[cfg(feature = "Multithreaded")]
-unsafe impl Sync for Semaphore {}
+unsafe impl<Device: VkHandle<Handle = VkDevice>> Sync for Semaphore<Device> {}

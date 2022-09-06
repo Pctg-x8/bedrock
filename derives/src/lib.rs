@@ -23,6 +23,7 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
     };
 
     let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
         fields
     } else {
@@ -33,7 +34,7 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
             let target_ty = &unnamed.first().expect("Empty Struct?").ty;
 
             quote! {
-                impl crate::VkHandle for #name {
+                impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
                     type Handle = #target_ty;
                     const TYPE: VkObjectType = #object_type;
 
@@ -51,6 +52,7 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
 pub fn derive_device_child(tok: TokenStream) -> TokenStream {
     let input: syn::DeriveInput = syn::parse(tok).expect("Parsing Failed");
     let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let drop_function_name_attr = input
         .attrs
         .iter()
@@ -71,7 +73,7 @@ pub fn derive_device_child(tok: TokenStream) -> TokenStream {
 
         quote! {
             #[cfg(feature = "Implements")]
-            impl Drop for #name {
+            impl #impl_generics Drop for #name #ty_generics #where_clause {
                 fn drop(&mut self) {
                     unsafe {
                         crate::Resolver::get().#fname(self.1.native_ptr(), self.0, std::ptr::null());
@@ -82,7 +84,7 @@ pub fn derive_device_child(tok: TokenStream) -> TokenStream {
     });
 
     TokenStream::from(quote! {
-        impl crate::DeviceChild for #name {
+        impl #impl_generics crate::DeviceChild for #name #ty_generics #where_clause {
             fn device(&self) -> &crate::Device { &self.1 }
         }
         #drop_impl
