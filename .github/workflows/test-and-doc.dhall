@@ -141,9 +141,9 @@ let documentDeploymentStep =
         , GoogleAuth.step
             GoogleAuth.Params::{
             , workloadIdentityProvider = Some
-                "projects/459189735048/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
+                "projects/146152181631/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
             , serviceAccount = Some
-                "bedrock-docs-autodeployer@nobilling-329804.iam.gserviceaccount.com"
+                "github-actions-autodeployer@docs-541f3.iam.gserviceaccount.com"
             , audience = Some "https://github.com/Pctg-x8"
             }
         , DocumentDeployment.step

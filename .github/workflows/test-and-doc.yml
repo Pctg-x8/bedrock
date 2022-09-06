@@ -57,8 +57,8 @@ jobs:
       uses: "google-github-actions/auth@v0"
       with:
         audience: "https://github.com/Pctg-x8"
-        service_account: "bedrock-docs-autodeployer@nobilling-329804.iam.gserviceaccount.com"
-        workload_identity_provider: "projects/459189735048/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
+        service_account: "github-actions-autodeployer@docs-541f3.iam.gserviceaccount.com"
+        workload_identity_provider: "projects/146152181631/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
     - name: "Deployment to Firebase Hosting (for Peridot branch)"
       uses: "./.github/actions/deployment-doc-peridot"
     - if: "failure()"
