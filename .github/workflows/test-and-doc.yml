@@ -1,0 +1,147 @@
+jobs:
+  "check-format":
+    name: Check Format
+    needs:
+    - preconditions
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v2"
+    - name: Install Rust Toolchain
+      uses: "actions-rs/toolchain@v1"
+      with:
+        toolchain: stable
+    - name: Run Cargo
+      uses: "actions-rs/cargo@v1"
+      with:
+        args: "-- --check"
+        command: fmt
+    - if: "failure()"
+      name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "ap-northeast-1"
+        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+    - if: "failure()"
+      name: Notify as Failure
+      uses: "Pctg-x8/ci-notifications-post-invoker@master"
+      with:
+        begintime: "${{ needs.preconditions.outputs.begintime }}"
+        failure_step: Check Format
+        mode: branch
+        report_name: Integrity Check
+        status: failure
+  "document-deploy":
+    name: Deploy Latest Document
+    needs:
+    - preconditions
+    - test
+    - "check-format"
+    permissions:
+      "id-token": write
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v2"
+    - name: Install Rust Toolchain
+      uses: "actions-rs/toolchain@v1"
+      with:
+        toolchain: nightly
+    - name: Run Cargo
+      uses: "actions-rs/cargo@v1"
+      with:
+        args: "--features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+        command: rustdoc
+        toolchain: nightly
+    - name: Authenticate to Google Cloud
+      uses: "google-github-actions/auth@v0"
+      with:
+        audience: "https://github.com/Pctg-x8"
+        service_account: "bedrock-docs-autodeployer@nobilling-329804.iam.gserviceaccount.com"
+        workload_identity_provider: "projects/459189735048/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions"
+    - name: "Deployment to Firebase Hosting (for Peridot branch)"
+      uses: "./.github/actions/deployment-doc-peridot"
+    - if: "failure()"
+      name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "ap-northeast-1"
+        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+    - if: "failure()"
+      name: Notify as Failure
+      uses: "Pctg-x8/ci-notifications-post-invoker@master"
+      with:
+        begintime: "${{ needs.preconditions.outputs.begintime }}"
+        failure_step: Deploy Latest Document
+        mode: branch
+        report_name: Integrity Check
+        status: failure
+  preconditions:
+    name: Preconditions
+    outputs:
+      begintime: "${{ steps.begintime.outputs.begintime }}"
+    "runs-on": "ubuntu-latest"
+    steps:
+    - id: begintime
+      name: Getting begintime
+      run: "echo \"::set-output name=begintime::$(date +%s)\""
+  "report-success":
+    name: Report as Success
+    needs:
+    - preconditions
+    - test
+    - "check-format"
+    - "document-deploy"
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v2"
+    - name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "ap-northeast-1"
+        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+    - name: Notify
+      uses: "Pctg-x8/ci-notifications-post-invoker@master"
+      with:
+        begintime: "${{ needs.preconditions.outputs.begintime }}"
+        mode: branch
+        report_name: Integrity Check
+        status: success
+  test:
+    name: Run Tests
+    needs:
+    - preconditions
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v2"
+    - name: Install Rust Toolchain
+      uses: "actions-rs/toolchain@v1"
+      with:
+        toolchain: stable
+    - name: Run Cargo
+      uses: "actions-rs/cargo@v1"
+      with:
+        args: "--features Presentation,VK_EXT_debug_report"
+        command: test
+    - if: "failure()"
+      name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "ap-northeast-1"
+        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+    - if: "failure()"
+      name: Notify as Failure
+      uses: "Pctg-x8/ci-notifications-post-invoker@master"
+      with:
+        begintime: "${{ needs.preconditions.outputs.begintime }}"
+        failure_step: Run Tests
+        mode: branch
+        report_name: Integrity Check
+        status: failure
+name: Integrity Check
+'on': push
+permissions:
+  contents: read
+  "id-token": write
