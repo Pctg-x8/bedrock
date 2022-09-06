@@ -218,7 +218,7 @@ let documentDeploymentStep =
             RunCargo.Params::{
             , command = "rustdoc"
             , args = Some
-                "--no-deps --features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+                "--features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
             , toolchain = Some "nightly"
             }
         , DocumentDeployment.step { FirebaseToken = eSecretFirebaseToken }
