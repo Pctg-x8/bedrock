@@ -42,7 +42,7 @@ let configureSlackNotification =
         SetupAWSCredentials.Params::{
         , awsRegion = "ap-northeast-1"
         , roleToAssume = Some
-            "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+            "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
         }
 
 let slackNotifyIfFailureStep =

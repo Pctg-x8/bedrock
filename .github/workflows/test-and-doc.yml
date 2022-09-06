@@ -21,7 +21,7 @@ jobs:
       uses: "aws-actions/configure-aws-credentials@v1"
       with:
         "aws-region": "ap-northeast-1"
-        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+        "role-to-assume": "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
     - if: "failure()"
       name: Notify as Failure
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
@@ -66,7 +66,7 @@ jobs:
       uses: "aws-actions/configure-aws-credentials@v1"
       with:
         "aws-region": "ap-northeast-1"
-        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+        "role-to-assume": "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
     - if: "failure()"
       name: Notify as Failure
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
@@ -100,7 +100,7 @@ jobs:
       uses: "aws-actions/configure-aws-credentials@v1"
       with:
         "aws-region": "ap-northeast-1"
-        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+        "role-to-assume": "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
     - name: Notify
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
       with:
@@ -130,7 +130,7 @@ jobs:
       uses: "aws-actions/configure-aws-credentials@v1"
       with:
         "aws-region": "ap-northeast-1"
-        "role-to-assume": "arn:aws:iam:208140986057:role/GHALambdaInvoker-Bedrock"
+        "role-to-assume": "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
     - if: "failure()"
       name: Notify as Failure
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
