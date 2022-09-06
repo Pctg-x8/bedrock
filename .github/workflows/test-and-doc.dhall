@@ -4,6 +4,12 @@ let GithubActions =
 let Checkout =
       https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/actions/checkout.dhall
 
+let InstallRust =
+      https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/actions-rs/toolchain.dhall
+
+let RunCargo =
+      https://raw.githubusercontent.com/Pctg-x8/gha-schemas/master/ProvidedSteps/actions-rs/cargo.dhall
+
 let List/map = https://prelude.dhall-lang.org/List/map
 
 let List/concat = https://prelude.dhall-lang.org/List/concat
@@ -170,10 +176,9 @@ let checkFormatStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ checkoutStep
-        , GithubActions.Step::{
-          , name = "rustfmt check"
-          , run = Some "cargo fmt -- --check"
-          }
+        , InstallRust.step InstallRust.Params::{ profile = Some "stable" }
+        , RunCargo.step
+            RunCargo.Params::{ command = "fmt", args = Some "-- --check" }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
             (     slackNotifyIfFailureStep "Check Format"
@@ -188,10 +193,12 @@ let testStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ checkoutStep
-        , GithubActions.Step::{
-          , name = "cargo test"
-          , run = Some "cargo test --features Presentation,VK_EXT_debug_report"
-          }
+        , InstallRust.step InstallRust.Params::{ profile = Some "stable" }
+        , RunCargo.step
+            RunCargo.Params::{
+            , command = "test"
+            , args = Some "--features Presentation,VK_EXT_debug_report"
+            }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
             (     slackNotifyIfFailureStep "Run Tests"
@@ -206,11 +213,14 @@ let documentDeploymentStep =
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ checkoutStep
-        , GithubActions.Step::{
-          , name = "build document"
-          , run = Some
-              "cargo +nightly rustdoc --no-deps --features=Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
-          }
+        , InstallRust.step InstallRust.Params::{ profile = Some "nightly" }
+        , RunCargo.step
+            RunCargo.Params::{
+            , command = "rustdoc"
+            , args = Some
+                "--no-deps --features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+            , toolchain = Some "nightly"
+            }
         , DocumentDeployment.step { FirebaseToken = eSecretFirebaseToken }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure

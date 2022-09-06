@@ -8,8 +8,15 @@ jobs:
     steps:
     - name: Checking out
       uses: "actions/checkout@v2"
-    - name: rustfmt check
-      run: "cargo fmt -- --check"
+    - name: Install Rust Toolchain
+      uses: "actions-rs/toolchain@v1"
+      with:
+        profile: stable
+    - name: Run Cargo
+      uses: "actions-rs/cargo@v1"
+      with:
+        args: "-- --check"
+        command: fmt
     - env:
         AWS_DEFAULT_REGION: "ap-northeast-1"
         AWS_ROLE_ARN: "arn:aws:iam::208140986057:role/GHALambdaInvoker"
@@ -101,8 +108,16 @@ jobs:
     steps:
     - name: Checking out
       uses: "actions/checkout@v2"
-    - name: build document
-      run: "cargo +nightly rustdoc --no-deps --features=Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+    - name: Install Rust Toolchain
+      uses: "actions-rs/toolchain@v1"
+      with:
+        profile: nightly
+    - name: Run Cargo
+      uses: "actions-rs/cargo@v1"
+      with:
+        args: "--no-deps --features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+        command: rustdoc
+        toolchain: nightly
     - env:
         FIREBASE_TOKEN: "${{ secrets.DOC_HOST_FIREBASE_TOKEN }}"
       name: "Deployment to Firebase Hosting (for Peridot branch)"
@@ -182,8 +197,15 @@ jobs:
     steps:
     - name: Checking out
       uses: "actions/checkout@v2"
-    - name: cargo test
-      run: "cargo test --features Presentation,VK_EXT_debug_report"
+    - name: Install Rust Toolchain
+      uses: "actions-rs/toolchain@v1"
+      with:
+        profile: stable
+    - name: Run Cargo
+      uses: "actions-rs/cargo@v1"
+      with:
+        args: "--features Presentation,VK_EXT_debug_report"
+        command: test
     - env:
         AWS_DEFAULT_REGION: "ap-northeast-1"
         AWS_ROLE_ARN: "arn:aws:iam::208140986057:role/GHALambdaInvoker"
