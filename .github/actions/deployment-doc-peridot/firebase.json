@@ -15,6 +15,13 @@
         "firebase.json",
         "**/.*",
         "**/node_modules/**"
+      ],
+      "redirects": [
+        {
+          "source": "/",
+          "destination": "/bedrock/",
+          "type": 301
+        }
       ]
     }
   ]
