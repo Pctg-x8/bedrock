@@ -16,6 +16,7 @@ use crate::{
 pub struct Fence<Device>(VkFence, Device)
 where
     Device: VkHandle<Handle = VkDevice>;
+#[cfg(feature = "Implements")]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for Fence<Device> {
     fn drop(&mut self) {
         unsafe {
@@ -30,6 +31,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for Fence<Device> {
 pub struct Semaphore<Device>(VkSemaphore, Device)
 where
     Device: VkHandle<Handle = VkDevice>;
+#[cfg(feature = "Implements")]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for Semaphore<Device> {
     fn drop(&mut self) {
         unsafe {
@@ -44,6 +46,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for Semaphore<Device> {
 pub struct Event<Device>(VkEvent, Device)
 where
     Device: VkHandle<Handle = VkDevice>;
+#[cfg(feature = "Implements")]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for Event<Device> {
     fn drop(&mut self) {
         unsafe {
@@ -52,7 +55,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for Event<Device> {
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
 impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
     /// Create a new fence object
@@ -81,7 +83,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
     }
 
     #[cfg(feature = "VK_KHR_external_fence_fd")]
-    /// [Implements][VK_KHR_exteranl_fence_fd] Create a new fence object, with exporting as file descriptors
+    /// Create a new fence object, with exporting as file descriptors
     /// # Failures
     /// On failure, this command returns
     ///
@@ -111,7 +113,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
 impl<Device: VkHandle<Handle = VkDevice>> Semaphore<Device> {
     /// Create a new queue semaphore object
@@ -129,8 +130,9 @@ impl<Device: VkHandle<Handle = VkDevice>> Semaphore<Device> {
                 .map(|_| Semaphore(h, device))
         }
     }
+
     #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    /// [Implements][VK_KHR_external_semaphore_win32] Create a new queue semaphore object, with exporting as Windows HANDLE
+    /// Create a new queue semaphore object, with exporting as Windows HANDLE
     /// # Failures
     /// On failure, this command returns
     ///
@@ -205,6 +207,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
             _ => Err(VkResultBox(vr)),
         }
     }
+
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
     /// On failure, this command returns
@@ -220,7 +223,8 @@ impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
             _ => Err(VkResultBox(vr)),
         }
     }
-    /// [feature = "Implements"] Wait for a fence to become signaled
+
+    /// Wait for a fence to become signaled
     /// # Failures
     /// On failure, this command returns
     ///
@@ -245,6 +249,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
                 .into_result()
         }
     }
+
     /// Resets a fence object
     /// # Failures
     /// On failure, this command returns
@@ -260,7 +265,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Fence<Device> {
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
 impl<Device: VkHandle<Handle = VkDevice>> Event<Device> {
     /// Set an event to signaled state
@@ -272,6 +276,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Event<Device> {
     pub fn set(&mut self) -> crate::Result<()> {
         unsafe { Resolver::get().set_event(self.1.native_ptr(), self.0).into_result() }
     }
+
     /// Reset an event to non-signaled state
     /// # Failures
     /// On failure, this command returns
@@ -285,7 +290,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Event<Device> {
 
 #[cfg(feature = "Implements")]
 pub trait Status {
-    /// [feature = "Implements"] Retrieve the status(whether is signaled or not) of a synchronize object
+    /// Retrieve the status(whether is signaled or not) of a synchronize object
     /// # Failures
     /// On failure, this command returns
     ///
