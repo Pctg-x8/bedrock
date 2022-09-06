@@ -115,7 +115,7 @@ jobs:
     - name: Run Cargo
       uses: "actions-rs/cargo@v1"
       with:
-        args: "--no-deps --features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+        args: "--features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
         command: rustdoc
         toolchain: nightly
     - env:
