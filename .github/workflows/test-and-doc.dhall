@@ -138,6 +138,7 @@ let documentDeploymentStep =
       GithubActions.Job::{
       , name = Some "Deploy Latest Document"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
+      , permissions = Some (toMap { id-token = "write" })
       , steps =
         [ Checkout.step Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "nightly" }
