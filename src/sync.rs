@@ -143,7 +143,12 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-    fn import(&self, ty: crate::ExternalFenceFdType, fd: std::os::unix::io::RawFd, temporary: bool) -> crate::Result<()> {
+    fn import(
+        &self,
+        ty: crate::ExternalFenceFdType,
+        fd: std::os::unix::io::RawFd,
+        temporary: bool,
+    ) -> crate::Result<()> {
         let info = VkImportFenceFdInfoKHR {
             fence: self.native_ptr(),
             flags: if temporary { VK_FENCE_IMPORT_TEMPORARY_BIT } else { 0 },
