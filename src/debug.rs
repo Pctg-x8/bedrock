@@ -209,9 +209,9 @@ pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT"]
-pub struct DebugUtilsMessenger(VkDebugUtilsMessengerEXT, Instance, PFN_vkDestroyDebugUtilsMessengerEXT);
+pub struct DebugUtilsMessenger<Owner: Instance>(VkDebugUtilsMessengerEXT, Owner, PFN_vkDestroyDebugUtilsMessengerEXT);
 #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-impl Drop for DebugUtilsMessenger {
+impl<Owner: Instance> Drop for DebugUtilsMessenger<Owner> {
     fn drop(&mut self) {
         (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
     }
@@ -359,12 +359,15 @@ impl DebugUtilsMessengerCreateInfo {
     }
 
     #[cfg(feature = "Implements")]
-    /// [Implements] Create a debug messenger object.
+    /// Create a debug messenger object.
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    pub fn create(&self, instance: &Instance) -> super::Result<DebugUtilsMessenger> {
+    pub fn create<Instance: crate::Instance>(
+        &self,
+        instance: Instance,
+    ) -> super::Result<DebugUtilsMessenger<Instance>> {
         let create_fn: PFN_vkCreateDebugUtilsMessengerEXT = instance
             .extra_procedure("vkCreateDebugUtilsMessengerEXT")
             .expect("Requiring vkCreateDebugUtilsMessengerEXT function");
@@ -375,7 +378,7 @@ impl DebugUtilsMessengerCreateInfo {
         let mut h = VK_NULL_HANDLE as _;
         create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h)
             .into_result()
-            .map(|_| DebugUtilsMessenger(h, instance.clone(), destroy_fn))
+            .map(|_| DebugUtilsMessenger(h, instance, destroy_fn))
     }
 }
 
@@ -431,7 +434,7 @@ impl<'d> DebugUtilsObjectNameInfo<'d> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn apply(&self, device: &crate::Device) -> crate::Result<()> {
+    pub fn apply(&self, device: &(impl crate::Device + crate::InstanceChild)) -> crate::Result<()> {
         let name_setter: PFN_vkSetDebugUtilsObjectNameEXT = device
             .instance()
             .extra_procedure("vkSetDebugUtilsObjectNameEXT")

@@ -6,29 +6,56 @@ use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkResultHandler,
 };
-use crate::{Device, ImageLayout, ImageView, VkHandle};
-use derives::*;
+use crate::{ImageLayout, VkHandle};
 use std::ops::*;
 
 /// Opaque handle to a render pass object
-#[derive(VkHandle, DeviceChild)]
+#[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_RENDER_PASS"]
-#[drop_function_name = "destroy_render_pass"]
-pub struct RenderPass(VkRenderPass, Device);
+pub struct RenderPass<Device>(VkRenderPass, Device)
+where
+    Device: VkHandle<Handle = VkDevice>;
+#[cfg(feature = "Implements")]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for RenderPass<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_render_pass(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+
 /// Opaque handle to a framebuffer object
-#[derive(VkHandle, DeviceChild)]
+#[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
-#[drop_function_name = "destroy_framebuffer"]
-pub struct Framebuffer(VkFramebuffer, Device, Vec<ImageView>, VkExtent2D);
+pub struct Framebuffer<Device, ImageView>(VkFramebuffer, Device, Vec<ImageView>, VkExtent2D)
+where
+    Device: VkHandle<Handle = VkDevice>,
+    ImageView: VkHandle<Handle = VkImageView>;
+#[cfg(feature = "Implements")]
+impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageView>> Drop
+    for Framebuffer<Device, ImageView>
+{
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
 
 #[cfg(feature = "Multithreaded")]
-unsafe impl Sync for RenderPass {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for RenderPass<Device> {}
 #[cfg(feature = "Multithreaded")]
-unsafe impl Send for RenderPass {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for RenderPass<Device> {}
 #[cfg(feature = "Multithreaded")]
-unsafe impl Sync for Framebuffer {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync, ImageView: VkHandle<Handle = VkImageView> + Sync> Sync
+    for Framebuffer<Device, ImageView>
+{
+}
 #[cfg(feature = "Multithreaded")]
-unsafe impl Send for Framebuffer {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send, ImageView: VkHandle<Handle = VkImageView> + Send> Send
+    for Framebuffer<Device, ImageView>
+{
+}
 
 /// Builder structure to construct the `VkAttachmentDescription`
 #[repr(transparent)]
@@ -141,6 +168,12 @@ impl Deref for AttachmentDescription {
         &self.0
     }
 }
+impl From<AttachmentDescription> for VkAttachmentDescription {
+    fn from(x: AttachmentDescription) -> Self {
+        x.0
+    }
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LoadOp {
@@ -165,6 +198,7 @@ pub enum LoadOp {
     /// This operation uses the "Write" access
     DontCare = VK_ATTACHMENT_LOAD_OP_DONT_CARE as _,
 }
+
 /// Possible argument values of `AttachmentDescription::store_op` and `stencil_store_op`,
 /// specifying how the contents of the attachment are treated.
 ///
@@ -180,6 +214,7 @@ pub enum StoreOp {
     /// the contents of the attachment will be undefined inside the render area.
     DontCare = VK_ATTACHMENT_STORE_OP_DONT_CARE as _,
 }
+
 /// Builder structure to construct the `VkSubpassDescription`
 ///
 /// ## The `layout` parameter of each attachment
@@ -203,6 +238,7 @@ pub struct SubpassDescription {
     depth_stencil_attachment: Option<VkAttachmentReference>,
     preserve_attachments: Vec<u32>,
 }
+
 /// Builder structure to construct the `RenderPass`
 pub struct RenderPassBuilder {
     attachments: Vec<VkAttachmentDescription>,
@@ -211,15 +247,16 @@ pub struct RenderPassBuilder {
 }
 impl RenderPassBuilder {
     #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
-        RenderPassBuilder {
+    pub const fn new() -> Self {
+        Self {
             attachments: Vec::new(),
             subpasses: Vec::new(),
             dependencies: Vec::new(),
         }
     }
-    pub fn add_attachment(&mut self, desc: AttachmentDescription) -> &mut Self {
-        self.attachments.push(desc.0);
+
+    pub fn add_attachment(&mut self, desc: impl Into<VkAttachmentDescription>) -> &mut Self {
+        self.attachments.push(desc.into());
         self
     }
     pub fn add_subpass(&mut self, desc: SubpassDescription) -> &mut Self {
@@ -230,31 +267,20 @@ impl RenderPassBuilder {
         self.dependencies.push(desc);
         self
     }
-    pub fn add_attachments<Collection: IntoIterator<Item = AttachmentDescription>>(
+
+    pub fn add_attachments<A: Into<VkAttachmentDescription>>(
         &mut self,
-        collection: Collection,
+        collection: impl IntoIterator<Item = A>,
     ) -> &mut Self {
-        for d in collection {
-            self.add_attachment(d);
-        }
+        self.attachments.extend(collection.into_iter().map(Into::into));
         self
     }
-    pub fn add_subpasses<Collection: IntoIterator<Item = SubpassDescription>>(
-        &mut self,
-        collection: Collection,
-    ) -> &mut Self {
-        for d in collection {
-            self.add_subpass(d);
-        }
+    pub fn add_subpasses(&mut self, collection: impl IntoIterator<Item = SubpassDescription>) -> &mut Self {
+        self.subpasses.extend(collection);
         self
     }
-    pub fn add_dependencies<Collection: IntoIterator<Item = VkSubpassDependency>>(
-        &mut self,
-        collection: Collection,
-    ) -> &mut Self {
-        for d in collection {
-            self.add_dependency(d);
-        }
+    pub fn add_dependencies(&mut self, collection: impl IntoIterator<Item = VkSubpassDependency>) -> &mut Self {
+        self.dependencies.extend(collection);
         self
     }
 
@@ -268,10 +294,11 @@ impl RenderPassBuilder {
         &mut self.dependencies[index]
     }
 }
+
 impl SubpassDescription {
     #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
-        SubpassDescription {
+    pub const fn new() -> Self {
+        Self {
             input_attachments: Vec::new(),
             color_attachments: Vec::new(),
             resolve_attachments: Vec::new(),
@@ -317,10 +344,8 @@ impl SubpassDescription {
         self.preserve_attachments.push(index);
         self
     }
-    pub fn add_preserves<Collection: IntoIterator<Item = u32>>(mut self, collection: Collection) -> Self {
-        for i in collection {
-            self.add_preserve_borrow(i);
-        }
+    pub fn add_preserves(mut self, indices: impl IntoIterator<Item = u32>) -> Self {
+        self.preserve_attachments.extend(indices);
         self
     }
 
@@ -366,10 +391,8 @@ impl SubpassDescription {
         self.preserve_attachments.push(index);
         self
     }
-    pub fn add_preserves_borrow<Collection: IntoIterator<Item = u32>>(&mut self, collection: Collection) -> &mut Self {
-        for i in collection {
-            self.add_preserve_borrow(i);
-        }
+    pub fn add_preserves_borrow(&mut self, indices: impl IntoIterator<Item = u32>) -> &mut Self {
+        self.preserve_attachments.extend(indices);
         self
     }
 }
@@ -381,7 +404,7 @@ impl RenderPassBuilder {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create(&self, device: &Device) -> crate::Result<RenderPass> {
+    pub fn create<Device: VkHandle<Handle = VkDevice>>(&self, device: Device) -> crate::Result<RenderPass<Device>> {
         let subpasses = self
             .subpasses
             .iter()
@@ -417,11 +440,11 @@ impl RenderPassBuilder {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| RenderPass(h, device.clone()))
+            .map(|_| RenderPass(h, device))
     }
 }
 #[cfg(feature = "Implements")]
-impl Framebuffer {
+impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageView>> Framebuffer<Device, ImageView> {
     /// Create a new framebuffer object
     /// # Failures
     /// On failure, this command returns
@@ -429,8 +452,40 @@ impl Framebuffer {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     pub fn new(
-        mold: &RenderPass,
-        attachment_objects: &[&ImageView],
+        mold: &RenderPass<Device>,
+        attachment_objects: Vec<ImageView>,
+        size: &VkExtent2D,
+        layers: u32,
+    ) -> crate::Result<Self>
+    where
+        Device: Clone,
+    {
+        let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+        let cinfo = VkFramebufferCreateInfo {
+            renderPass: mold.0,
+            attachmentCount: views.len() as _,
+            pAttachments: views.as_ptr(),
+            width: size.width,
+            height: size.height,
+            layers,
+            ..Default::default()
+        };
+        let mut h = VK_NULL_HANDLE as _;
+        unsafe { Resolver::get().create_framebuffer(mold.1.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
+            .into_result()
+            .map(|_| Framebuffer(h, mold.1.clone(), attachment_objects, size.as_ref().clone()))
+    }
+
+    /// Create a new framebuffer object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn new_ext_device(
+        device: Device,
+        mold: &RenderPass<Device>,
+        attachment_objects: Vec<ImageView>,
         size: &VkExtent2D,
         layers: u32,
     ) -> crate::Result<Self> {
@@ -445,29 +500,23 @@ impl Framebuffer {
             ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_framebuffer(mold.1.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
+        unsafe { Resolver::get().create_framebuffer(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| {
-                Framebuffer(
-                    h,
-                    mold.1.clone(),
-                    attachment_objects.iter().map(|&x| x.clone()).collect(),
-                    size.as_ref().clone(),
-                )
-            })
+            .map(|_| Framebuffer(h, device, attachment_objects, size.as_ref().clone()))
     }
 }
-impl Framebuffer {
+impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageView>> Framebuffer<Device, ImageView> {
     pub const fn size(&self) -> &VkExtent2D {
         &self.3
     }
+
     pub fn resources(&self) -> &[ImageView] {
         &self.2
     }
 }
 
 #[cfg(feature = "Implements")]
-impl RenderPass {
+impl<Device: VkHandle<Handle = VkDevice>> RenderPass<Device> {
     /// Returns the granularity for optimal render area
     pub fn optimal_granularity(&self) -> VkExtent2D {
         let mut e = std::mem::MaybeUninit::uninit();

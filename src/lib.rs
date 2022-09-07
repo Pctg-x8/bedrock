@@ -46,11 +46,6 @@ mod vkresolve;
 #[cfg(feature = "Implements")]
 pub use vkresolve::{Resolver, ResolverInterface};
 
-#[cfg(feature = "Multithreaded")]
-pub(crate) type RefCounter<T> = std::sync::Arc<T>;
-#[cfg(not(feature = "Multithreaded"))]
-pub(crate) type RefCounter<T> = std::rc::Rc<T>;
-
 #[cfg(feature = "Implements")]
 mod fnconv;
 
@@ -86,6 +81,7 @@ pub trait VkHandle {
     fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()>
     where
         Self: DeviceChild,
+        Self::ConcreteDevice: InstanceChild,
         Self::Handle: PointerHandleConversion,
     {
         DebugUtilsObjectNameInfo::new(self, name).apply(self.device())
@@ -158,12 +154,6 @@ where
     }
 }
 
-/// Child of a device object
-pub trait DeviceChild {
-    /// Retrieve a reference to a device object that creates this object
-    fn device(&self) -> &Device;
-}
-
 /// Unwrapping Option-ed Reference to VkHandles.  
 /// Returns "Empty Handle" when the value is `None`.
 impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
@@ -173,17 +163,6 @@ impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
     fn native_ptr(&self) -> Self::Handle {
         self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr())
     }
-}
-
-#[cfg(feature = "Implements")]
-macro_rules! DeviceChildCommonDrop
-{
-	{ for $($t: ty [$d: ident]),* } =>
-	{
-		$(
-			impl Drop for $t { fn drop(&mut self) { unsafe { Resolver::get().$d(self.1.native_ptr(), self.0, ::std::ptr::null()) }; } }
-		)*
-	}
 }
 
 // A single Number or a Range
@@ -389,16 +368,25 @@ pub mod traits {
 /// Opaque handle to a query pool object
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_QUERY_POOL"]
-pub struct QueryPool(VkQueryPool, Device);
+pub struct QueryPool<Device: crate::Device>(VkQueryPool, Device);
+unsafe impl<Device: crate::Device + Sync> Sync for QueryPool<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for QueryPool<Device> {}
+impl<Device: crate::Device> DeviceChild for QueryPool<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
 #[cfg(feature = "Implements")]
-impl QueryPool {
+impl<Device: crate::Device> QueryPool<Device> {
     /// Create a new query pool object
     /// # Failure
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new(device: &Device, qtype: QueryType, count: u32) -> Result<Self> {
+    pub fn new(device: Device, qtype: QueryType, count: u32) -> Result<Self> {
         let (qtype, stats) = match qtype {
             QueryType::Occlusion => (VK_QUERY_TYPE_OCCLUSION, 0),
             QueryType::PipelineStatistics(f) => (VK_QUERY_TYPE_PIPELINE_STATISTICS, f.0),
@@ -413,8 +401,9 @@ impl QueryPool {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| QueryPool(h, device.clone()))
+            .map(|_| Self(h, device))
     }
+
     /// Copy results of queries in a query pool to a host memory region
     /// # Failure
     /// On failure, this command returns
@@ -440,6 +429,7 @@ impl QueryPool {
         .into_result()
         .map(|_| v)
     }
+
     /// Copy results of queries in a query pool to a host memory region
     /// # Failure
     /// On failure, this command returns
@@ -467,7 +457,14 @@ impl QueryPool {
     }
 }
 #[cfg(feature = "Implements")]
-DeviceChildCommonDrop! { for QueryPool[destroy_query_pool] }
+impl<Device: crate::Device> Drop for QueryPool<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_query_pool(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+
 /// Specify the type of queries managed by a query pool
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum QueryType {

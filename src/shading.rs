@@ -1,13 +1,12 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use crate::vk::*;
+use crate::LifetimeBound;
+use crate::{vk::*, DeviceChild};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetLayout, VkHandle, VkResultHandler,
+    VkHandle, VkResultHandler,
 };
-use crate::{Device, LifetimeBound, RenderPass};
-use derives::*;
 use std::borrow::Cow;
 use std::ffi::CString;
 use std::marker::PhantomData;
@@ -176,136 +175,130 @@ pub enum StencilFaceMask {
     Both = VK_STENCIL_FRONT_AND_BACK as _,
 }
 
-#[derive(VkHandle, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_SHADER_MODULE"]
-#[drop_function_name = "destroy_shader_module"]
 /// Opaque handle to a shader module object
-pub struct ShaderModule(VkShaderModule, Device);
-#[derive(VkHandle, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_PIPELINE_CACHE"]
-#[drop_function_name = "destroy_pipeline_cache"]
-/// Opaque handle to a pipeline cache object
-pub struct PipelineCache(VkPipelineCache, Device);
-#[derive(VkHandle, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_PIPELINE_LAYOUT"]
-#[drop_function_name = "destroy_pipeline_layout"]
-/// Opaque handle to a pipeline layout object
-pub struct PipelineLayout(VkPipelineLayout, Device);
-#[derive(VkHandle, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_PIPELINE"]
-#[drop_function_name = "destroy_pipeline"]
-/// Opaque handle to a pipeline object
-pub struct Pipeline(VkPipeline, Device);
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_SHADER_MODULE"]
+pub struct ShaderModuleObject<Device: crate::Device>(pub(crate) VkShaderModule, pub(crate) Device);
+unsafe impl<Device: crate::Device + Sync> Sync for ShaderModuleObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for ShaderModuleObject<Device> {}
+impl<Device: crate::Device> DeviceChild for ShaderModuleObject<Device> {
+    type ConcreteDevice = Device;
 
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for ShaderModule {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for ShaderModule {}
-
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for PipelineCache {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for PipelineCache {}
-
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for PipelineLayout {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for PipelineLayout {}
-
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for Pipeline {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for Pipeline {}
-
-/// Following methods are enabled with [feature = "Implements"]
-#[cfg(feature = "Implements")]
-impl ShaderModule {
-    /// Creates a new shader module object from bytes on the memory
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn from_memory<Buffer>(device: &Device, buffer: &Buffer) -> crate::Result<Self>
-    where
-        Buffer: AsRef<[u8]> + ?Sized,
-    {
-        #[allow(clippy::cast_ptr_alignment)]
-        let cinfo = VkShaderModuleCreateInfo {
-            codeSize: buffer.as_ref().len() as _,
-            pCode: buffer.as_ref().as_ptr() as *const _,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_shader_module(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| ShaderModule(h, device.clone()))
-        }
-    }
-    /// Creates a new shader module object from a file
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// IO Errors may be occured when reading file
-    pub fn from_file<FilePath: AsRef<std::path::Path> + ?Sized>(
-        device: &Device,
-        path: &FilePath,
-    ) -> Result<Self, Box<dyn std::error::Error>> {
-        std::fs::read(path)
-            .map_err(From::from)
-            .and_then(|b| Self::from_memory(device, &b).map_err(From::from))
+    fn device(&self) -> &Device {
+        &self.1
     }
 }
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl PipelineCache {
-    /// Creates a new pipeline cache
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new<Data>(device: &Device, initial: &Data) -> crate::Result<Self>
-    where
-        Data: AsRef<[u8]> + ?Sized,
-    {
-        let cinfo = VkPipelineCacheCreateInfo {
-            initialDataSize: initial.as_ref().len() as _,
-            pInitialData: initial.as_ref().as_ptr() as *const _,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
+impl<Device: crate::Device> Drop for ShaderModuleObject<Device> {
+    fn drop(&mut self) {
         unsafe {
-            Resolver::get()
-                .create_pipeline_cache(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| PipelineCache(h, device.clone()))
+            Resolver::get().destroy_shader_module(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
+}
+impl<Device: crate::Device> ShaderModule for ShaderModuleObject<Device> {}
 
+/// Opaque handle to a pipeline cache object
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_PIPELINE_CACHE"]
+pub struct PipelineCacheObject<Device: crate::Device>(pub(crate) VkPipelineCache, pub(crate) Device);
+unsafe impl<Device: crate::Device + Sync> Sync for PipelineCacheObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for PipelineCacheObject<Device> {}
+impl<Device: crate::Device> DeviceChild for PipelineCacheObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
+#[cfg(feature = "Implements")]
+impl<Device: crate::Device> Drop for PipelineCacheObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_pipeline_cache(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> PipelineCache for PipelineCacheObject<Device> {}
+
+/// Opaque handle to a pipeline layout object
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_PIPELINE_LAYOUT"]
+pub struct PipelineLayoutObject<Device: crate::Device>(pub(crate) VkPipelineLayout, pub(crate) Device);
+unsafe impl<Device: crate::Device + Sync> Sync for PipelineLayoutObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for PipelineLayoutObject<Device> {}
+impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
+#[cfg(feature = "Implements")]
+impl<Device: crate::Device> Drop for PipelineLayoutObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_pipeline_layout(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> PipelineLayout for PipelineLayoutObject<Device> {}
+
+/// Opaque handle to a pipeline object
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_PIPELINE"]
+pub struct PipelineObject<Device: crate::Device>(pub(crate) VkPipeline, pub(crate) Device);
+unsafe impl<Device: crate::Device + Sync> Sync for PipelineObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for PipelineObject<Device> {}
+impl<Device: crate::Device> DeviceChild for PipelineObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
+#[cfg(feature = "Implements")]
+impl<Device: crate::Device> Drop for PipelineObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_pipeline(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> Pipeline for PipelineObject<Device> {}
+
+pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}
+
+pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     /// Get the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn data(&self) -> crate::Result<Vec<u8>> {
+    #[cfg(feature = "Implements")]
+    fn data(&self) -> crate::Result<Vec<u8>> {
         let mut n = 0;
         unsafe {
             Resolver::get()
-                .get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
+                .get_pipeline_cache_data(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    &mut n,
+                    std::ptr::null_mut(),
+                )
                 .into_result()?;
         }
         let mut b: Vec<u8> = Vec::with_capacity(n as _);
         unsafe { b.set_len(n as _) };
         unsafe {
             Resolver::get()
-                .get_pipeline_cache_data(self.1.native_ptr(), self.0, &mut n, b.as_mut_ptr() as *mut _)
+                .get_pipeline_cache_data(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    &mut n,
+                    b.as_mut_ptr() as *mut _,
+                )
                 .into_result()
                 .map(|_| b)
         }
@@ -317,54 +310,25 @@ impl PipelineCache {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn merge_into(&mut self, src: &[&PipelineCache]) -> crate::Result<()> {
-        let srcs = src.iter().map(|x| x.0).collect::<Vec<_>>();
+    #[cfg(feature = "Implements")]
+    fn merge_into(&mut self, src: &[impl PipelineCache]) -> crate::Result<()> {
+        let srcs = src.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         unsafe {
             Resolver::get()
-                .merge_pipeline_caches(self.1.native_ptr(), self.0, srcs.len() as _, srcs.as_ptr())
+                .merge_pipeline_caches(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    srcs.len() as _,
+                    srcs.as_ptr(),
+                )
                 .into_result()
         }
     }
 }
-/// Following methods are enabled with [feature = "Implements"]
-#[cfg(feature = "Implements")]
-impl PipelineLayout {
-    /// Creates a new pipeline layout object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new(
-        device: &Device,
-        layouts: &[&DescriptorSetLayout],
-        push_constants: &[(ShaderStage, Range<u32>)],
-    ) -> crate::Result<Self> {
-        let layouts = layouts.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-        let push_constants = push_constants
-            .iter()
-            .map(|&(sh, ref r)| VkPushConstantRange {
-                stageFlags: sh.0,
-                offset: r.start,
-                size: r.end - r.start,
-            })
-            .collect::<Vec<_>>();
-        let cinfo = VkPipelineLayoutCreateInfo {
-            setLayoutCount: layouts.len() as _,
-            pSetLayouts: layouts.as_ptr(),
-            pushConstantRangeCount: push_constants.len() as _,
-            pPushConstantRanges: push_constants.as_ptr(),
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_pipeline_layout(device.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| PipelineLayout(h, device.clone()))
-        }
-    }
-}
+
+pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
+
+pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
 
 /// Disabled, Specified in the command buffer or Specified in the pipeline state
 pub enum SwitchOrDynamicState<T> {
@@ -416,8 +380,8 @@ impl<'d> DynamicDataCell<'d> {
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
 #[derive(Clone)]
-pub struct PipelineShader<'d> {
-    pub module: &'d ShaderModule,
+pub struct PipelineShader<'d, Module: ShaderModule> {
+    pub module: Module,
     pub entry_name: CString,
     pub specinfo: Option<(Cow<'d, [VkSpecializationMapEntry]>, DynamicDataCell<'d>)>,
 }
@@ -448,11 +412,11 @@ impl<'d, T> DynamicArrayState<'d, T> {
 }
 /// Which is pipeline state to derive from
 #[derive(Clone, Copy)]
-pub enum BasePipeline<'d> {
+pub enum BasePipeline<Pipeline: crate::Pipeline> {
     /// Does not derive
     None,
     /// Derive from a handle to the pipeline state object
-    Handle(&'d Pipeline),
+    Handle(Pipeline),
     /// Derive from a create info in the `pCreateInfos` parameter
     Index(u32),
 }
@@ -503,7 +467,18 @@ impl PipelineDynamicStates {
         }
     }
 }
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+    GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+where
+    Layout: PipelineLayout,
+    BP: Pipeline,
+    RenderPass: VkHandle<Handle = VkRenderPass>,
+    VSM: ShaderModule,
+    GSM: ShaderModule,
+    FSM: ShaderModule,
+    TCSM: ShaderModule,
+    TESM: ShaderModule,
+{
     /// Gets a mutable reference to the dynamic state settings
     pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates {
         &mut self.dynamic_state_flags
@@ -512,13 +487,30 @@ impl<'d> GraphicsPipelineBuilder<'d> {
 
 /// Builder struct to construct a `Pipeline` for graphics operations
 #[derive(Clone)]
-pub struct GraphicsPipelineBuilder<'d> {
+pub struct GraphicsPipelineBuilder<
+    'd,
+    Layout: PipelineLayout,
+    BP: Pipeline,
+    RenderPass: VkHandle<Handle = VkRenderPass>,
+    VertexShaderModule: ShaderModule,
+    GeometryShaderModule: ShaderModule,
+    FragmentShaderModule: ShaderModule,
+    TessControlShaderModule: ShaderModule,
+    TessEvalShaderModule: ShaderModule,
+> {
     flags: VkPipelineCreateFlags,
-    _layout: &'d PipelineLayout,
+    _layout: Layout,
     rp: &'d RenderPass,
     subpass: u32,
-    _base: BasePipeline<'d>,
-    vp: VertexProcessingStages<'d>,
+    _base: BasePipeline<BP>,
+    vp: VertexProcessingStages<
+        'd,
+        VertexShaderModule,
+        GeometryShaderModule,
+        FragmentShaderModule,
+        TessControlShaderModule,
+        TessEvalShaderModule,
+    >,
     rasterizer_state: RasterizationState,
     tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
     viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
@@ -575,27 +567,36 @@ impl VertexInputBindingDescription {
 
 /// Tessellation Stage Shaders
 #[derive(Clone)]
-pub struct TessellationStages<'d> {
-    pub control: PipelineShader<'d>,
-    pub evaluation: PipelineShader<'d>,
+pub struct TessellationStages<'d, ControlShaderModule: ShaderModule, EvaluationShaderModule: ShaderModule> {
+    pub control: PipelineShader<'d, ControlShaderModule>,
+    pub evaluation: PipelineShader<'d, EvaluationShaderModule>,
 }
 /// PipelineStateDesc: Shader Stages and Input descriptions
 #[derive(Clone)]
-pub struct VertexProcessingStages<'d> {
-    vertex: PipelineShader<'d>,
+pub struct VertexProcessingStages<
+    'd,
+    VertexShaderModule: ShaderModule,
+    GeometryShaderModule: ShaderModule,
+    FragmentShaderModule: ShaderModule,
+    TessControlShaderModule: ShaderModule,
+    TessEvalShaderModule: ShaderModule,
+> {
+    vertex: PipelineShader<'d, VertexShaderModule>,
     vi: VkPipelineVertexInputStateCreateInfo,
     ia: VkPipelineInputAssemblyStateCreateInfo,
-    geometry: Option<PipelineShader<'d>>,
-    fragment: Option<PipelineShader<'d>>,
-    tessellation: Option<TessellationStages<'d>>,
+    geometry: Option<PipelineShader<'d, GeometryShaderModule>>,
+    fragment: Option<PipelineShader<'d, FragmentShaderModule>>,
+    tessellation: Option<TessellationStages<'d, TessControlShaderModule, TessEvalShaderModule>>,
     _holder: PhantomData<(
         &'d [VertexInputBindingDescription],
         &'d [VkVertexInputAttributeDescription],
     )>,
 }
-impl<'d> VertexProcessingStages<'d> {
+impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderModule, TESM: ShaderModule>
+    VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>
+{
     pub fn new(
-        vsh: PipelineShader<'d>,
+        vsh: PipelineShader<'d, VSM>,
         vbind: &'d [VertexInputBindingDescription],
         vattr: &'d [VkVertexInputAttributeDescription],
         primitive_topo: VkPrimitiveTopology,
@@ -621,42 +622,42 @@ impl<'d> VertexProcessingStages<'d> {
     }
 
     /// Update the vertex shader
-    pub fn vertex_shader(&mut self, vsh: PipelineShader<'d>) -> &mut Self {
+    pub fn vertex_shader(&mut self, vsh: PipelineShader<'d, VSM>) -> &mut Self {
         self.vertex = vsh;
         self
     }
     /// Mutable reference to the Vertex Shader structure.
-    pub fn vertex_shader_mut(&mut self) -> &mut PipelineShader<'d> {
+    pub fn vertex_shader_mut(&mut self) -> &mut PipelineShader<'d, VSM> {
         &mut self.vertex
     }
 
     /// Update the geometry shader, or disable geometry shader stage
-    pub fn geometry_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, gsh: S) -> &mut Self {
+    pub fn geometry_shader(&mut self, gsh: impl Into<Option<PipelineShader<'d, GSM>>>) -> &mut Self {
         self.geometry = gsh.into();
         self
     }
     /// Mutable reference to the Geometry Shader structure.
-    pub fn geometry_shader_mut(&mut self) -> Option<&mut PipelineShader<'d>> {
+    pub fn geometry_shader_mut(&mut self) -> Option<&mut PipelineShader<'d, GSM>> {
         self.geometry.as_mut()
     }
 
     /// Update the fragment shader, or disable fragment shader stage
-    pub fn fragment_shader<S: Into<Option<PipelineShader<'d>>>>(&mut self, fsh: S) -> &mut Self {
+    pub fn fragment_shader(&mut self, fsh: impl Into<Option<PipelineShader<'d, FSM>>>) -> &mut Self {
         self.fragment = fsh.into();
         self
     }
     /// Mutable reference to the fragment shader.
-    pub fn fragment_shader_mut(&mut self) -> Option<&mut PipelineShader<'d>> {
+    pub fn fragment_shader_mut(&mut self) -> Option<&mut PipelineShader<'d, FSM>> {
         self.fragment.as_mut()
     }
 
     /// Update the tessellation stage shaders, or disable tessellation stage
-    pub fn tessellation_stage<S: Into<Option<TessellationStages<'d>>>>(&mut self, stage: S) -> &mut Self {
+    pub fn tessellation_stage(&mut self, stage: impl Into<Option<TessellationStages<'d, TCSM, TESM>>>) -> &mut Self {
         self.tessellation = stage.into();
         self
     }
     /// Mutable reference to the Tessellation Shader stage configuration.
-    pub fn tessellation_stage_mut(&mut self) -> Option<&mut TessellationStages<'d>> {
+    pub fn tessellation_stage_mut(&mut self) -> Option<&mut TessellationStages<'d, TCSM, TESM>> {
         self.tessellation.as_mut()
     }
 
@@ -683,7 +684,7 @@ impl<'d> VertexProcessingStages<'d> {
     /// Update the vertex shader and the vertex input description
     pub fn vertex_processing(
         &mut self,
-        vsh: PipelineShader<'d>,
+        vsh: PipelineShader<'d, VSM>,
         vbind: &'d [VkVertexInputBindingDescription],
         vattr: &'d [VkVertexInputAttributeDescription],
     ) -> &mut Self {
@@ -890,10 +891,25 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo>> for Multi
     }
 }
 
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// Initialize the builder object
-    pub fn new(layout: &'d PipelineLayout, rpsp: (&'d RenderPass, u32), vp: VertexProcessingStages<'d>) -> Self {
-        GraphicsPipelineBuilder {
+    pub fn new(
+        layout: Layout,
+        rpsp: (&'d RenderPass, u32),
+        vp: VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>,
+    ) -> Self {
+        Self {
             flags: 0,
             _layout: layout,
             rp: rpsp.0,
@@ -911,16 +927,28 @@ impl<'d> GraphicsPipelineBuilder<'d> {
     }
 }
 /// Shading State and Input Configuration
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// Set the vertex processing stages in this pipeline
-    pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d>) -> &mut Self {
+    pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>) -> &mut Self {
         self.vp = vp;
         self
     }
     /// Get a mutable reference to the vertex processing stage configuration in this pipeline
-    pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d> {
+    pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM> {
         &mut self.vp
     }
+
     /// Number of control points per patch
     pub fn patch_control_point_count(&mut self, count: u32) -> &mut Self {
         if self.tess_state.is_none() {
@@ -932,8 +960,8 @@ impl<'d> GraphicsPipelineBuilder<'d> {
     /// Set the tessellation processing state(hull/domain shaders and a number of control points)
     pub fn tessellator_settings(
         &mut self,
-        control: PipelineShader<'d>,
-        evaluation: PipelineShader<'d>,
+        control: PipelineShader<'d, TCSM>,
+        evaluation: PipelineShader<'d, TESM>,
         num_control_points: u32,
     ) -> &mut Self {
         self.vertex_processing_mut()
@@ -943,7 +971,18 @@ impl<'d> GraphicsPipelineBuilder<'d> {
 }
 
 /// Viewport / Scissor State
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// # Safety
     /// Application must guarantee that the number of viewports and scissors are identical
     pub unsafe fn viewports(&mut self, vps: DynamicArrayState<VkViewport>) -> &mut Self {
@@ -978,7 +1017,18 @@ impl<'d> GraphicsPipelineBuilder<'d> {
     }
 }
 
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// Rasterization State
     pub fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
         self.rasterizer_state = state;
@@ -992,7 +1042,18 @@ impl<'d> GraphicsPipelineBuilder<'d> {
 }
 
 /// Depth/Stencil State
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// Clear depth/stencil state
     pub fn clear_depth_stencil_state(&mut self) -> &mut Self {
         self.ds_state = None;
@@ -1221,7 +1282,18 @@ impl AttachmentColorBlendState {
 }
 
 /// Color Blending
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     fn cb_ref(
         &mut self,
     ) -> &mut (
@@ -1284,14 +1356,25 @@ impl<'d> GraphicsPipelineBuilder<'d> {
 }
 
 /// Misc Configurations
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// The base pipeline handle/index to derive from
-    pub fn base(&mut self, b: BasePipeline<'d>) -> &mut Self {
+    pub fn base(&mut self, b: BasePipeline<BP>) -> &mut Self {
         self._base = b;
         self
     }
     /// The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
-    pub fn layout(&mut self, l: &'d PipelineLayout) -> &mut Self {
+    pub fn layout(&mut self, l: Layout) -> &mut Self {
         self._layout = l;
         self
     }
@@ -1326,7 +1409,18 @@ impl<'d> GraphicsPipelineBuilder<'d> {
 }
 
 /// Unsafe Utilities
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// Set the `VkPipelineTessellationStateCreateInfo` structure directly
     /// # Safety
     /// Application must guarantee these constraints:
@@ -1385,8 +1479,8 @@ impl<'d> GraphicsPipelineBuilder<'d> {
 }
 
 #[cfg(feature = "Implements")]
-impl<'d> PipelineShader<'d> {
-    fn createinfo_native(
+impl<'d, Module: ShaderModule> PipelineShader<'d, Module> {
+    pub(crate) fn createinfo_native(
         &self,
         stage: ShaderStage,
     ) -> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>) {
@@ -1414,7 +1508,9 @@ impl<'d> PipelineShader<'d> {
     }
 }
 #[cfg(feature = "Implements")]
-impl<'d> VertexProcessingStages<'d> {
+impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderModule, TESM: ShaderModule>
+    VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>
+{
     pub fn generate_stages(
         &self,
     ) -> (
@@ -1440,16 +1536,30 @@ impl<'d> VertexProcessingStages<'d> {
         stages.into_iter().unzip()
     }
 }
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl<'d> GraphicsPipelineBuilder<'d> {
+impl<
+        'd,
+        Layout: PipelineLayout,
+        BP: Pipeline,
+        RenderPass: VkHandle<Handle = VkRenderPass>,
+        VSM: ShaderModule,
+        GSM: ShaderModule,
+        FSM: ShaderModule,
+        TCSM: ShaderModule,
+        TESM: ShaderModule,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+{
     /// Create a graphics pipeline
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create(&mut self, device: &Device, cache: Option<&PipelineCache>) -> crate::Result<Pipeline> {
+    pub fn create<Device: crate::Device>(
+        &mut self,
+        device: Device,
+        cache: Option<&impl PipelineCache>,
+    ) -> crate::Result<PipelineObject<Device>> {
         // VERTEX PROCESSING //
         let (stages, _specinfo) = self.vp.generate_stages();
 
@@ -1538,60 +1648,33 @@ impl<'d> GraphicsPipelineBuilder<'d> {
             )
         }
         .into_result()
-        .map(|_| Pipeline(h, device.clone()))
-    }
-}
-
-/// Following methods are enabled with [feature = "Implements"]
-#[cfg(feature = "Implements")]
-impl Device {
-    /// Create graphics pipelines
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create_graphics_pipelines(
-        &self,
-        infos: &[VkGraphicsPipelineCreateInfo],
-        cache: Option<&PipelineCache>,
-    ) -> crate::Result<Vec<Pipeline>> {
-        let mut hs = vec![VK_NULL_HANDLE as VkPipeline; infos.len()];
-        let r = unsafe {
-            Resolver::get().create_graphics_pipelines(
-                self.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-                infos.len() as _,
-                infos.as_ptr(),
-                std::ptr::null(),
-                hs.as_mut_ptr(),
-            )
-        };
-
-        r.into_result()
-            .map(|_| hs.into_iter().map(|h| Pipeline(h, self.clone())).collect())
+        .map(|_| PipelineObject(h, device))
     }
 }
 
 #[derive(Clone)]
-pub struct ComputePipelineBuilder<'d> {
-    shader: PipelineShader<'d>,
-    layout: &'d PipelineLayout,
+pub struct ComputePipelineBuilder<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> {
+    pub(crate) shader: PipelineShader<'d, ShaderModule>,
+    pub(crate) layout: Layout,
 }
-impl<'d> ComputePipelineBuilder<'d> {
-    pub fn new(layout: &'d PipelineLayout, shader: PipelineShader<'d>) -> Self {
+impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipelineBuilder<'d, Layout, ShaderModule> {
+    pub const fn new(layout: Layout, shader: PipelineShader<'d, ShaderModule>) -> Self {
         ComputePipelineBuilder { shader, layout }
     }
 }
 #[cfg(feature = "Implements")]
-impl<'d> ComputePipelineBuilder<'d> {
+impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipelineBuilder<'d, Layout, ShaderModule> {
     /// Create a compute pipeline
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create(&self, device: &Device, cache: Option<&PipelineCache>) -> crate::Result<Pipeline> {
+    pub fn create<Device: crate::Device>(
+        &self,
+        device: Device,
+        cache: Option<&impl PipelineCache>,
+    ) -> crate::Result<PipelineObject<Device>> {
         let (stage, _specinfo) = self.shader.createinfo_native(ShaderStage::COMPUTE);
         let cinfo = VkComputePipelineCreateInfo {
             stage,
@@ -1611,51 +1694,7 @@ impl<'d> ComputePipelineBuilder<'d> {
                     pipeline.as_mut_ptr(),
                 )
                 .into_result()
-                .map(move |_| Pipeline(pipeline.assume_init(), device.clone()))
-        }
-    }
-}
-/// Following methods are enabled with [feature = "Implements"]
-#[cfg(feature = "Implements")]
-impl Device {
-    /// Create compute pipelines
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create_compute_pipelines(
-        &self,
-        builders: &[ComputePipelineBuilder],
-        cache: Option<&PipelineCache>,
-    ) -> crate::Result<Vec<Pipeline>> {
-        let (stages, _specinfos): (Vec<_>, Vec<_>) = builders
-            .iter()
-            .map(|b| b.shader.createinfo_native(ShaderStage::COMPUTE))
-            .unzip();
-        let cinfos = builders
-            .iter()
-            .zip(stages.into_iter())
-            .map(|(b, stage)| VkComputePipelineCreateInfo {
-                stage,
-                layout: b.layout.native_ptr(),
-                ..Default::default()
-            })
-            .collect::<Vec<_>>();
-
-        let mut pipelines = vec![VK_NULL_HANDLE as _; builders.len()];
-        unsafe {
-            Resolver::get()
-                .create_compute_pipelines(
-                    self.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-                    cinfos.len() as _,
-                    cinfos.as_ptr(),
-                    std::ptr::null(),
-                    pipelines.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| pipelines.into_iter().map(|h| Pipeline(h, self.clone())).collect())
+                .map(move |_| PipelineObject(pipeline.assume_init(), device))
         }
     }
 }

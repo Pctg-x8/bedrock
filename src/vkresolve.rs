@@ -1327,6 +1327,20 @@ pub trait ResolverInterface {
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult;
+
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    unsafe fn get_physical_device_multisample_properties_ext(
+        &self,
+        physicalDevice: VkPhysicalDevice,
+        samples: VkSampleCountFlags,
+        pMultisampleProperties: *mut VkMultisamplePropertiesEXT,
+    );
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    unsafe fn cmd_set_sample_locations_ext(
+        &self,
+        commandBuffer: VkCommandBuffer,
+        pSampleLocationsInfo: *const VkSampleLocationsInfoEXT,
+    );
 }
 
 pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
@@ -2386,4 +2400,20 @@ impl ResolverInterface for Resolver {
     WrapAPI!(get_display_plane_capabilities_khr = vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_display")]
     WrapAPI!(create_display_plane_surface_khr = vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    WrapAPI!(
+        get_physical_device_multisample_properties_ext = vkGetPhysicalDeviceMultisamplePropertiesEXT(
+            physicalDevice: VkPhysicalDevice,
+            samples: VkSampleCountFlags,
+            pMultisampleProperties: *mut VkMultisamplePropertiesEXT
+        )
+    );
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    WrapAPI!(
+        cmd_set_sample_locations_ext = vkCmdSetSampleLocationsEXT(
+            commandBuffer: VkCommandBuffer,
+            pSampleLocationsInfo: *const VkSampleLocationsInfoEXT
+        )
+    );
 }

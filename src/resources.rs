@@ -116,122 +116,133 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-use crate::vk::*;
-#[cfg(feature = "VK_KHR_swapchain")]
-use crate::Swapchain;
+use crate::{vk::*, DeviceChild};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkResultHandler,
 };
-use crate::{AnalogNumRange, CompareOp, Device, DeviceChild, VkHandle};
+use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
-#[cfg(not(feature = "Multithreaded"))]
-use std::rc::Rc as RefCounter;
-#[cfg(feature = "Multithreaded")]
-use std::sync::Arc as RefCounter;
 
-struct DeviceMemoryCell(VkDeviceMemory, Device);
-struct BufferCell(VkBuffer, Device);
-#[cfg(feature = "VK_KHR_swapchain")]
-pub enum ImageCell {
-    DeviceChild {
-        obj: VkImage,
-        dev: Device,
-        dim: VkImageType,
-        fmt: VkFormat,
-        size: VkExtent3D,
-    },
-    SwapchainChild {
-        obj: VkImage,
-        owner: Swapchain,
-        fmt: VkFormat,
-    },
-}
-#[cfg(not(feature = "VK_KHR_swapchain"))]
-#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-struct ImageCell {
-    obj: VkImage,
-    dev: Device,
-    dim: VkImageType,
-    fmt: VkFormat,
-    size: VkExtent3D,
-}
 /// Opaque handle to a device memory object
-pub struct DeviceMemory(RefCounter<DeviceMemoryCell>);
-/// Opaque handle to a buffer object(constructed via `BufferDesc`)
-#[derive(Clone)]
-pub struct Buffer(RefCounter<BufferCell>);
-/// Opaque handle to a image object(constructed via `ImageDesc`)
-#[derive(Clone)]
-pub struct Image(RefCounter<ImageCell>);
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
-/// Opaque handle to a buffer view object
-pub struct BufferView(VkBufferView, Buffer);
-struct ImageViewCell(VkImageView, Image);
-/// Opaque handle to a image view object
-#[derive(Clone)]
-pub struct ImageView(RefCounter<ImageViewCell>);
+#[object_type = "VK_OBJECT_TYPE_DEVICE_MEMORY"]
+pub struct DeviceMemoryObject<Device: crate::Device>(pub(crate) VkDeviceMemory, pub(crate) Device);
+unsafe impl<Device: crate::Device + Sync> Sync for DeviceMemoryObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for DeviceMemoryObject<Device> {}
+impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
+    type ConcreteDevice = Device;
 
-impl Deref for BufferView {
-    type Target = Buffer;
-    fn deref(&self) -> &Buffer {
+    fn device(&self) -> &Self::ConcreteDevice {
         &self.1
     }
 }
-impl Deref for ImageView {
-    type Target = Image;
-    fn deref(&self) -> &Image {
-        &self.0 .1
-    }
-}
-
 #[cfg(feature = "Implements")]
-impl Drop for DeviceMemoryCell {
+impl<Device: crate::Device> Drop for DeviceMemoryObject<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().free_memory(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
+impl<Device: crate::Device> DeviceMemory for DeviceMemoryObject<Device> {}
+
+/// Opaque handle to a buffer object(constructed via `BufferDesc`)
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_BUFFER"]
+pub struct Buffer<Device: crate::Device>(VkBuffer, Device);
+impl<Device: crate::Device> DeviceChild for Buffer<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
 #[cfg(feature = "Implements")]
-impl Drop for BufferCell {
+impl<Device: crate::Device> Drop for Buffer<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_buffer(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
-#[cfg(feature = "Implements")]
-impl Drop for ImageCell {
-    #[cfg(feature = "VK_KHR_swapchain")]
-    fn drop(&mut self) {
-        if let ImageCell::DeviceChild { obj, ref dev, .. } = self {
-            unsafe {
-                Resolver::get().destroy_image(dev.native_ptr(), *obj, std::ptr::null());
-            }
-        }
-    }
-    #[cfg(not(feature = "VK_KHR_swapchain"))]
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_image(self.dev.native_ptr(), self.obj, std::ptr::null());
-        }
+
+/// Opaque handle to a image object(constructed via `ImageDesc`)
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_IMAGE"]
+pub struct Image<Device: crate::Device>(VkImage, Device, VkImageType, VkFormat, VkExtent3D);
+impl<Device: crate::Device> DeviceChild for Image<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
     }
 }
 #[cfg(feature = "Implements")]
-impl Drop for BufferView {
+impl<Device: crate::Device> Drop for Image<Device> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_buffer_view(self.device().native_ptr(), self.native_ptr(), std::ptr::null());
+            Resolver::get().destroy_image(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
+
+/// Opaque handle to a image object, backed by Swapchain.
+#[cfg(feature = "VK_KHR_swapchain")]
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_IMAGE"]
+pub struct SwapchainImage<Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkFormat)
+where
+    Swapchain: VkHandle<Handle = VkSwapchainKHR>;
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild> DeviceChild for SwapchainImage<Swapchain> {
+    type ConcreteDevice = Swapchain::ConcreteDevice;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        self.1.device()
+    }
+}
+
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
+/// Opaque handle to a buffer view object
+pub struct BufferView<Buffer>(VkBufferView, Buffer)
+where
+    Buffer: VkHandle<Handle = VkBuffer> + DeviceChild;
+impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> DeviceChild for BufferView<Buffer> {
+    type ConcreteDevice = Buffer::ConcreteDevice;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        self.1.device()
+    }
+}
 #[cfg(feature = "Implements")]
-impl Drop for ImageViewCell {
+impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> Drop for BufferView<Buffer> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_buffer_view(self.1.device().native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+
+/// Opaque handle to a image view object
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_IMAGE_VIEW"]
+pub struct ImageView<Image>(VkImageView, Image)
+where
+    Image: VkHandle<Handle = VkImage> + DeviceChild;
+impl<Image: VkHandle<Handle = VkImage> + DeviceChild> DeviceChild for ImageView<Image> {
+    type ConcreteDevice = Image::ConcreteDevice;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        self.1.device()
+    }
+}
+#[cfg(feature = "Implements")]
+impl<Image: VkHandle<Handle = VkImage> + DeviceChild> Drop for ImageView<Image> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null());
@@ -239,269 +250,37 @@ impl Drop for ImageViewCell {
     }
 }
 
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for DeviceMemoryCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for DeviceMemoryCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for BufferCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for BufferCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for ImageCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for ImageCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for BufferView {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for BufferView {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for ImageViewCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for ImageViewCell {}
+impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> Deref for BufferView<Buffer> {
+    type Target = Buffer;
 
-impl VkHandle for DeviceMemory {
-    type Handle = VkDeviceMemory;
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    fn deref(&self) -> &Buffer {
+        &self.1
+    }
+}
+impl<Image: VkHandle<Handle = VkImage> + DeviceChild> Deref for ImageView<Image> {
+    type Target = Image;
 
-    fn native_ptr(&self) -> VkDeviceMemory {
-        self.0 .0
-    }
-}
-impl VkHandle for Buffer {
-    type Handle = VkBuffer;
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER;
-
-    fn native_ptr(&self) -> VkBuffer {
-        self.0 .0
-    }
-}
-impl VkHandle for ImageView {
-    type Handle = VkImageView;
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE_VIEW;
-
-    fn native_ptr(&self) -> VkImageView {
-        self.0 .0
-    }
-}
-impl DeviceChild for DeviceMemory {
-    fn device(&self) -> &Device {
-        &self.0 .1
-    }
-}
-impl DeviceChild for Buffer {
-    fn device(&self) -> &Device {
-        &self.0 .1
-    }
-}
-impl DeviceChild for BufferView {
-    fn device(&self) -> &Device {
-        self.deref().device()
-    }
-}
-impl DeviceChild for ImageView {
-    fn device(&self) -> &Device {
-        self.deref().device()
+    fn deref(&self) -> &Image {
+        &self.1
     }
 }
 
-impl VkHandle for Image {
-    type Handle = VkImage;
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
-
-    #[cfg(feature = "VK_KHR_swapchain")]
-    fn native_ptr(&self) -> VkImage {
-        match *self.0 {
-            ImageCell::DeviceChild { obj, .. } | ImageCell::SwapchainChild { obj, .. } => obj,
-        }
-    }
-    #[cfg(not(feature = "VK_KHR_swapchain"))]
-    fn native_ptr(&self) -> VkImage {
-        self.0.obj
-    }
-}
-impl DeviceChild for Image {
-    #[cfg(feature = "VK_KHR_swapchain")]
-    fn device(&self) -> &Device {
-        match *self.0 {
-            ImageCell::DeviceChild { ref dev, .. } => dev,
-            ImageCell::SwapchainChild { ref owner, .. } => owner.device(),
-        }
-    }
-    #[cfg(not(feature = "VK_KHR_swapchain"))]
-    fn device(&self) -> &Device {
-        &self.0.dev
-    }
-}
-
-/// Following methods are enabled with [feature = "Implements"]
-#[cfg(feature = "Implements")]
-impl DeviceMemory {
-    /// Allocate GPU memory
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    pub fn allocate(device: &Device, size: usize, type_index: u32) -> crate::Result<Self> {
-        let mut h = VK_NULL_HANDLE as _;
-        let cinfo = VkMemoryAllocateInfo {
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-            ..Default::default()
-        };
-        unsafe { Resolver::get().allocate_memory(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
-    }
-    #[cfg(feature = "VK_KHR_external_memory_win32")]
-    /// [Implements][VK_KHR_external_memory_win32] Import GPU memory from external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    pub fn import_win32(
-        device: &Device,
-        size: usize,
-        type_index: u32,
-        handle_type: crate::ExternalMemoryHandleTypeWin32,
-        handle: winapi::shared::ntdef::HANDLE,
-        name: &widestring::WideCString,
-    ) -> crate::Result<Self> {
-        let import_info = VkImportMemoryWin32HandleInfoKHR {
-            handleType: handle_type as _,
-            handle,
-            name: name.as_ptr(),
-            ..Default::default()
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            pNext: &import_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-            ..Default::default()
-        };
-
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
-        }
-    }
-    #[cfg(feature = "VK_KHR_external_memory_win32")]
-    /// [Implements][VK_KHR_external_memory_win32] Allocate GPU memory and visible to external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    pub fn alloc_and_export_win32(
-        device: &Device,
-        size: usize,
-        type_index: u32,
-        security_attributes: Option<&winapi::um::minwinbase::SECURITY_ATTRIBUTES>,
-        access: winapi::shared::minwindef::DWORD,
-        name: &widestring::WideCString,
-    ) -> crate::Result<Self> {
-        let export_info = VkExportMemoryWin32HandleInfoKHR {
-            pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
-            dwAccess: access,
-            name: name.as_ptr(),
-            ..Default::default()
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            pNext: &export_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-            ..Default::default()
-        };
-
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
-        }
-    }
-
-    #[cfg(feature = "VK_KHR_external_memory_fd")]
-    /// [Implements][VK_KHR_external_memory_fd] Import GPU memory from external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    pub fn import_fd(
-        device: &Device,
-        size: usize,
-        type_index: u32,
-        handle_type: crate::ExternalMemoryHandleTypeFd,
-        fd: libc::c_int,
-    ) -> crate::Result<Self> {
-        let import_info = VkImportMemoryFdInfoKHR {
-            handleType: handle_type as _,
-            fd,
-            ..Default::default()
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            pNext: &import_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-            ..Default::default()
-        };
-
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
-        }
-    }
-
-    #[cfg(feature = "VK_EXT_external_memory_host")]
-    /// [Implements][VK_EXT_external_memory_host] Import GPU memory from external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    pub fn import_host_pointer(
-        device: &Device,
-        size: usize,
-        type_index: u32,
-        handle_type: crate::ExternalMemoryHandleType,
-        host_pointer: *mut (),
-    ) -> crate::Result<Self> {
-        let import_info = VkImportMemoryHostPointerInfoEXT {
-            handleType: handle_type as _,
-            pHostPointer: host_pointer as _,
-            ..Default::default()
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            pNext: &import_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-            ..Default::default()
-        };
-
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .allocate_memory(device.native_ptr(), &ainfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(move |_| DeviceMemory(DeviceMemoryCell(h, device.clone()).into()))
-        }
-    }
-}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Device: crate::Device + Sync> Sync for Buffer<Device> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Device: crate::Device + Send> Send for Buffer<Device> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Device: crate::Device + Sync> Sync for Image<Device> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Device: crate::Device + Send> Send for Image<Device> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild + Sync> Sync for BufferView<Buffer> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild + Send> Send for BufferView<Buffer> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Image: VkHandle<Handle = VkImage> + DeviceChild + Sync> Sync for ImageView<Image> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Image: VkHandle<Handle = VkImage> + DeviceChild + Send> Send for ImageView<Image> {}
 
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -626,6 +405,7 @@ impl BitOrAssign for BufferUsage {
         self.0 |= other.0;
     }
 }
+
 /// Bitset specifying additional parameters of a buffer
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(C)]
@@ -645,47 +425,48 @@ pub enum BufferSparseBinding {
         | VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _,
 }
 /// Builder structure specifying the parameters of a newly created buffer object
-pub struct BufferDesc {
-    cinfo: VkBufferCreateInfo,
-}
+#[repr(transparent)]
+#[derive(Clone)]
+pub struct BufferDesc(VkBufferCreateInfo);
 impl BufferDesc {
     pub fn new(byte_size: usize, usage: BufferUsage) -> Self {
-        BufferDesc {
-            cinfo: VkBufferCreateInfo {
-                size: byte_size as _,
-                usage: usage.0,
-                ..Default::default()
-            },
-        }
+        Self(VkBufferCreateInfo {
+            size: byte_size as _,
+            usage: usage.0,
+            ..Default::default()
+        })
     }
+
     /// A list of queue families that will access this buffer
     pub fn sharing_queue_families(&mut self, indices: &[u32]) -> &mut Self {
-        self.cinfo.sharingMode = if indices.is_empty() {
+        self.0.sharingMode = if indices.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
         } else {
             VK_SHARING_MODE_CONCURRENT
         };
-        self.cinfo.queueFamilyIndexCount = indices.len() as _;
-        self.cinfo.pQueueFamilyIndices = indices.as_ptr();
+        self.0.queueFamilyIndexCount = indices.len() as _;
+        self.0.pQueueFamilyIndices = indices.as_ptr();
         self
     }
+
     /// A bitmask of `BufferSparseBinding` specifying additional parameters of the buffer
     pub fn sparse_binding_opt(&mut self, opt: BufferSparseBinding) -> &mut Self {
-        self.cinfo.flags = opt as _;
+        self.0.flags = opt as _;
         self
     }
-    /// [feature = "Implements"] Create a new buffer object
+
+    /// Create a new buffer object
     /// # Failure
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    pub fn create(&self, device: &Device) -> crate::Result<Buffer> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<Buffer<Device>> {
         let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_buffer(device.native_ptr(), &self.cinfo, ::std::ptr::null(), &mut h) }
+        unsafe { Resolver::get().create_buffer(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| Buffer(BufferCell(h, device.clone()).into()))
+            .map(|_| Buffer(h, device))
     }
 }
 
@@ -763,6 +544,7 @@ impl BitOrAssign for ImageUsage {
         self.0 |= other.0;
     }
 }
+
 /// Bitmask specifying additional parameters of an image
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
@@ -842,6 +624,7 @@ impl<'d> ImageDesc<'d> {
             std::marker::PhantomData,
         )
     }
+
     /// A list of queue families that will access this image,
     /// or an empty list if no queue families can access this image simultaneously
     pub fn sharing_queue_families(&mut self, indices: &[u32]) -> &mut Self {
@@ -854,30 +637,35 @@ impl<'d> ImageDesc<'d> {
         self.0.pQueueFamilyIndices = indices.as_ptr();
         self
     }
+
     /// The number of sub-data element samples in the image  
     /// bitmask of 1(default), 2, 4, 8, 16, 32, 64
     pub fn sample_counts(&mut self, count_bits: u32) -> &mut Self {
         self.0.samples = count_bits;
         self
     }
+
     /// Sets the tiling arrangement of the data elements in memory as "linear tiling"  
     /// default: optimal tiling
     pub fn use_linear_tiling(&mut self) -> &mut Self {
         self.0.tiling = VK_IMAGE_TILING_LINEAR;
         self
     }
+
     /// A bitmask of `ImageFlags`describing additional parameters of the image  
     /// default: none
     pub fn flags(&mut self, opt: ImageFlags) -> &mut Self {
         self.0.flags = opt.0;
         self
     }
+
     /// The number of layers in the image  
     /// default: 1
     pub fn array_layers(&mut self, layers: u32) -> &mut Self {
         self.0.arrayLayers = layers;
         self
     }
+
     /// The number of levels of detail available for minified sampling of the image  
     /// default: 1
     pub fn mip_levels(&mut self, levels: u32) -> &mut Self {
@@ -891,80 +679,30 @@ impl AsRef<VkImageCreateInfo> for ImageDesc<'_> {
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
 impl ImageDesc<'_> {
     /// Create an image
-    #[cfg(not(feature = "VK_KHR_swapchain"))]
-    pub fn create(&self, device: &Device) -> crate::Result<Image> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<Image<Device>> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_image(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| {
-                Image(
-                    ImageCell {
-                        obj: h,
-                        dev: device.clone(),
-                        dim: self.0.imageType,
-                        fmt: self.0.format,
-                        size: self.0.extent.clone(),
-                    }
-                    .into(),
-                )
-            })
-    }
-    /// Create an image
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn create(&self, device: &Device) -> crate::Result<Image> {
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_image(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| {
-                Image(
-                    ImageCell::DeviceChild {
-                        obj: h,
-                        dev: device.clone(),
-                        dim: self.0.imageType,
-                        fmt: self.0.format,
-                        size: self.0.extent.clone(),
-                    }
-                    .into(),
-                )
-            })
+            .map(|_| Image(h, device, self.0.imageType, self.0.format, self.0.extent.clone()))
     }
 }
 
-impl Image {
+impl<Device: crate::Device> Image<Device> {
     /// The pixel format of an image
-    pub fn format(&self) -> VkFormat {
-        #[cfg(feature = "VK_KHR_swapchain")]
-        match *self.0 {
-            ImageCell::DeviceChild { fmt, .. } | ImageCell::SwapchainChild { fmt, .. } => fmt,
-        }
-        #[cfg(not(feature = "VK_KHR_swapchain"))]
-        self.0.fmt
+    pub const fn format(&self) -> VkFormat {
+        self.3
     }
-    /// The size of an image
-    pub fn size(&self) -> &VkExtent3D {
-        #[cfg(feature = "VK_KHR_swapchain")]
-        match *self.0 {
-            ImageCell::DeviceChild { ref size, .. } => size,
-            ImageCell::SwapchainChild { ref owner, .. } => owner.size(),
-        }
-        #[cfg(not(feature = "VK_KHR_swapchain"))]
-        &self.0.size
-    }
-    #[cfg(feature = "Implements")]
-    fn dimension(&self) -> VkImageViewType {
-        #[cfg(feature = "VK_KHR_swapchain")]
-        let dim = match *self.0 {
-            ImageCell::DeviceChild { dim, .. } => dim,
-            ImageCell::SwapchainChild { .. } => VK_IMAGE_TYPE_2D,
-        };
-        #[cfg(not(feature = "VK_KHR_swapchain"))]
-        let dim = self.0.dim;
 
-        match dim {
+    /// The size of an image
+    pub const fn size(&self) -> &VkExtent3D {
+        &self.4
+    }
+
+    const fn dimension(&self) -> VkImageViewType {
+        match self.2 {
             VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
             VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
             VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D,
@@ -973,11 +711,10 @@ impl Image {
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl Buffer {
+impl<Device: crate::Device> Buffer<Device> {
     /// Create a buffer view
-    pub fn create_view(&self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferView> {
+    pub fn create_view(&self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferView<&Self>> {
         let cinfo = VkBufferViewCreateInfo {
             buffer: self.native_ptr(),
             format,
@@ -988,12 +725,11 @@ impl Buffer {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| BufferView(h, self.clone()))
+            .map(|_| BufferView(h, self))
     }
 }
-/// Following methods are enabled with [feature = "Implements"]
 #[cfg(feature = "Implements")]
-impl Image {
+impl<Device: crate::Device> Image<Device> {
     /// Create an image view
     pub fn create_view(
         &self,
@@ -1001,7 +737,7 @@ impl Image {
         vtype: Option<VkImageViewType>,
         cmap: &ComponentMapping,
         subresource_range: &ImageSubresourceRange,
-    ) -> crate::Result<ImageView> {
+    ) -> crate::Result<ImageView<&Self>> {
         let (format, vtype) = (
             format.unwrap_or_else(|| self.format()),
             vtype.unwrap_or_else(|| self.dimension()),
@@ -1017,7 +753,7 @@ impl Image {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| ImageView(ImageViewCell(h, self.clone()).into()))
+            .map(|_| ImageView(h, self))
     }
 
     /// Retrieve information about an image subresource  
@@ -1047,9 +783,7 @@ impl Image {
     }
 }
 
-/// Following methods are enabled with [feature = "Implements"]
-#[cfg(feature = "Implements")]
-impl DeviceMemory {
+pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     /// Map a memory object into application address space
     /// # Failure
     /// On failure, this command returns
@@ -1057,7 +791,8 @@ impl DeviceMemory {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
-    pub fn map(&mut self, range: Range<usize>) -> crate::Result<MappedMemoryRange> {
+    #[cfg(feature = "Implements")]
+    fn map(&mut self, range: Range<usize>) -> crate::Result<MappedMemoryRange<Self>> {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
@@ -1073,15 +808,19 @@ impl DeviceMemory {
                 .map(move |_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
         }
     }
+
     /// Unmap a previously mapped memory object
     /// # Safety
     /// Caller must guarantee that there is no `MappedMemoryRange` alives.  
     /// Accessing the mapped memory after this call has undefined behavior
-    pub unsafe fn unmap(&mut self) {
-        Resolver::get().unmap_memory(self.0 .1.native_ptr(), self.native_ptr());
+    #[cfg(feature = "Implements")]
+    unsafe fn unmap(&mut self) {
+        Resolver::get().unmap_memory(self.device().native_ptr(), self.native_ptr());
     }
+
     /// Query the current commitment for a `DeviceMemory`
-    pub fn commitment_bytes(&self) -> VkDeviceSize {
+    #[cfg(feature = "Implements")]
+    fn commitment_bytes(&self) -> VkDeviceSize {
         let mut b = 0;
         unsafe {
             Resolver::get().get_device_memory_commitment(self.device().native_ptr(), self.native_ptr(), &mut b);
@@ -1091,68 +830,22 @@ impl DeviceMemory {
     }
 }
 
-#[cfg(feature = "Implements")]
-impl Device {
-    /// Multiple Binding for Buffers
-    pub fn bind_buffers(&self, bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)]) -> crate::Result<()> {
-        let infos: Vec<_> = bounds
-            .iter()
-            .map(|&(b, m, offs)| VkBindBufferMemoryInfo {
-                buffer: b.native_ptr(),
-                memory: m.native_ptr(),
-                memoryOffset: offs,
-                ..Default::default()
-            })
-            .collect();
-        unsafe {
-            Resolver::get()
-                .bind_buffer_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
-                .into_result()
-        }
-    }
-    /// Multiple Binding for Images
-    pub fn bind_images(&self, bounds: &[(&Image, &DeviceMemory, VkDeviceSize)]) -> crate::Result<()> {
-        let infos: Vec<_> = bounds
-            .iter()
-            .map(|&(i, m, offs)| VkBindImageMemoryInfo {
-                image: i.native_ptr(),
-                memory: m.native_ptr(),
-                memoryOffset: offs,
-                ..Default::default()
-            })
-            .collect();
-        unsafe {
-            Resolver::get()
-                .bind_image_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
-                .into_result()
-        }
-    }
-    /// Multiple Binding for both resources
-    pub fn bind_resources(
-        &self,
-        buf_bounds: &[(&Buffer, &DeviceMemory, VkDeviceSize)],
-        img_bounds: &[(&Image, &DeviceMemory, VkDeviceSize)],
-    ) -> crate::Result<()> {
-        // 必ず両方実行されるようにする
-        self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
-    }
-}
-
-/// [feature = "Implements"] Common operations for memory bound objects
+/// Common operations for memory bound objects
 #[cfg(feature = "Implements")]
 pub trait MemoryBound {
     /// Returns the memory requirements for specified Vulkan object
     fn requirements(&self) -> VkMemoryRequirements;
+
     /// Bind device memory to the object
     /// # Failure
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    fn bind(&mut self, memory: &DeviceMemory, offset: usize) -> crate::Result<()>;
+    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()>;
 }
 #[cfg(feature = "Implements")]
-impl MemoryBound for Buffer {
+impl<Device: crate::Device> MemoryBound for Buffer<Device> {
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -1166,7 +859,7 @@ impl MemoryBound for Buffer {
         }
     }
 
-    fn bind(&mut self, memory: &DeviceMemory, offset: usize) -> crate::Result<()> {
+    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_buffer_memory(
@@ -1180,7 +873,7 @@ impl MemoryBound for Buffer {
     }
 }
 #[cfg(feature = "Implements")]
-impl MemoryBound for Image {
+impl<Device: crate::Device> MemoryBound for Image<Device> {
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -1194,7 +887,7 @@ impl MemoryBound for Image {
         }
     }
 
-    fn bind(&mut self, memory: &DeviceMemory, offset: usize) -> crate::Result<()> {
+    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_image_memory(
@@ -1207,9 +900,9 @@ impl MemoryBound for Image {
         }
     }
 }
-/// Following methods are enabled with [feature = "Implements"]
+
 #[cfg(feature = "Implements")]
-impl Image {
+impl<Device: crate::Device> Image<Device> {
     /// Query the memory requirements for a sparse image
     pub fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
         let mut n = 0;
@@ -1239,10 +932,12 @@ impl Image {
 /// Image Dimension by corresponding extent type
 pub trait ImageSize {
     const DIMENSION: VkImageType;
+
     fn conv(&self) -> VkExtent3D;
 }
 impl ImageSize for u32 {
     const DIMENSION: VkImageType = VK_IMAGE_TYPE_1D;
+
     fn conv(&self) -> VkExtent3D {
         VkExtent3D {
             width: *self,
@@ -1253,21 +948,27 @@ impl ImageSize for u32 {
 }
 impl ImageSize for VkExtent2D {
     const DIMENSION: VkImageType = VK_IMAGE_TYPE_2D;
+
     fn conv(&self) -> VkExtent3D {
         self.clone().with_depth(1)
     }
 }
 impl ImageSize for VkExtent3D {
     const DIMENSION: VkImageType = VK_IMAGE_TYPE_3D;
+
     fn conv(&self) -> VkExtent3D {
         self.clone()
     }
 }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m>(std::ops::Range<usize>, *mut u8, &'m mut DeviceMemory);
+pub struct MappedMemoryRange<'m, DeviceMemory: crate::DeviceMemory + DeviceChild + ?Sized + 'm>(
+    std::ops::Range<usize>,
+    *mut u8,
+    &'m mut DeviceMemory,
+);
 #[allow(clippy::mut_from_ref)]
-impl<'m> MappedMemoryRange<'m> {
+impl<'m, DeviceMemory: crate::DeviceMemory + DeviceChild + ?Sized + 'm> MappedMemoryRange<'m, DeviceMemory> {
     /// Get a reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
@@ -1310,64 +1011,6 @@ impl<'m> MappedMemoryRange<'m> {
     pub fn end(self) {
         unsafe {
             self.2.unmap();
-        }
-    }
-}
-#[cfg(feature = "Implements")]
-impl Device {
-    /// Flush `MappedMemoryRange`s
-    /// Flushing the memory range allows that host writes to the memory ranges can
-    /// be made available to device access
-    /// # Safety
-    /// Memory object in `ranges` must be currently host mapped
-    pub unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        Resolver::get()
-            .flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
-            .into_result()
-    }
-}
-
-/// Following methods are enabled with [feature = "Implements" and feature = "VK_KHR_swapchain"]
-#[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
-impl Swapchain {
-    /// Obtain the array of presentable images associated with a swapchain
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn get_images(&self) -> crate::Result<Vec<Image>> {
-        let mut n = 0;
-        unsafe {
-            Resolver::get()
-                .get_swapchain_images_khr(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    &mut n,
-                    std::ptr::null_mut(),
-                )
-                .into_result()?;
-        }
-        let mut v = Vec::with_capacity(n as _);
-        unsafe {
-            v.set_len(n as _);
-            Resolver::get()
-                .get_swapchain_images_khr(self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr())
-                .into_result()
-                .map(|_| {
-                    v.into_iter()
-                        .map(|r| {
-                            Image(
-                                ImageCell::SwapchainChild {
-                                    obj: r,
-                                    owner: self.clone(),
-                                    fmt: self.format(),
-                                }
-                                .into(),
-                            )
-                        })
-                        .collect()
-                })
         }
     }
 }
@@ -1439,6 +1082,7 @@ pub enum ComponentSwizzle {
     /// the component is set to the value of the A component of the image
     A = VK_COMPONENT_SWIZZLE_A as _,
 }
+
 /// Structure specifying a color component mapping
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1465,14 +1109,15 @@ impl Default for ComponentMapping {
 }
 impl ComponentMapping {
     /// Set same value to all component
-    pub fn all(s: ComponentSwizzle) -> Self {
+    pub const fn all(s: ComponentSwizzle) -> Self {
         ComponentMapping(s, s, s, s)
     }
     /// Set 2 values with repeating
-    pub fn set2(a: ComponentSwizzle, b: ComponentSwizzle) -> Self {
+    pub const fn set2(a: ComponentSwizzle, b: ComponentSwizzle) -> Self {
         ComponentMapping(a, b, a, b)
     }
 }
+
 /// Bitmask specifying which aspects of an image are included in a view
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 #[repr(transparent)]
@@ -1537,11 +1182,7 @@ impl AsRef<VkImageSubresourceRange> for ImageSubresourceRange {
 }
 impl ImageSubresourceRange {
     /// Specify color subresource
-    pub fn color<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self
-    where
-        Levels: AnalogNumRange<u32>,
-        Layers: AnalogNumRange<u32>,
-    {
+    pub fn color(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
         VkImageSubresourceRange {
             aspectMask: AspectMask::COLOR.0,
             baseMipLevel: mip_levels.begin(),
@@ -1551,12 +1192,9 @@ impl ImageSubresourceRange {
         }
         .into()
     }
+
     /// Specify stencil subresource
-    pub fn stencil<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self
-    where
-        Levels: AnalogNumRange<u32>,
-        Layers: AnalogNumRange<u32>,
-    {
+    pub fn stencil(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
         VkImageSubresourceRange {
             aspectMask: AspectMask::STENCIL.0,
             baseMipLevel: mip_levels.begin(),
@@ -1566,12 +1204,9 @@ impl ImageSubresourceRange {
         }
         .into()
     }
+
     /// Specify depth subresource
-    pub fn depth<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self
-    where
-        Levels: AnalogNumRange<u32>,
-        Layers: AnalogNumRange<u32>,
-    {
+    pub fn depth(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
         VkImageSubresourceRange {
             aspectMask: AspectMask::DEPTH.0,
             baseMipLevel: mip_levels.begin(),
@@ -1581,12 +1216,9 @@ impl ImageSubresourceRange {
         }
         .into()
     }
+
     /// Specify depth and stencil subresource
-    pub fn depth_stencil<Levels, Layers>(mip_levels: Levels, array_layers: Layers) -> Self
-    where
-        Levels: AnalogNumRange<u32>,
-        Layers: AnalogNumRange<u32>,
-    {
+    pub fn depth_stencil(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
         VkImageSubresourceRange {
             aspectMask: AspectMask::DEPTH.stencil().0,
             baseMipLevel: mip_levels.begin(),
@@ -1599,10 +1231,24 @@ impl ImageSubresourceRange {
 }
 
 /// Opaque handle to a sampler object
-#[derive(VkHandle, DeviceChild)]
+#[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_SAMPLER"]
-#[drop_function_name = "destroy_sampler"]
-pub struct Sampler(VkSampler, Device);
+pub struct Sampler<Device: crate::Device>(VkSampler, Device);
+impl<Device: crate::Device> DeviceChild for Sampler<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+#[cfg(feature = "Implements")]
+impl<Device: crate::Device> Drop for Sampler<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            Resolver::get().destroy_sampler(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
 
 /// Specify behavior of sampling with texture coordinates outside an image
 #[repr(C)]
@@ -1620,6 +1266,7 @@ pub enum AddressingMode {
     #[cfg(feature = "VK_KHR_mirror_clamp_to_edge")]
     MirrorClampToEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as _,
 }
+
 /// Specify filter used for texture lookups
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -1629,6 +1276,7 @@ pub enum FilterMode {
     /// Linear filtering
     Linear = VK_FILTER_LINEAR as _,
 }
+
 /// Specify mipmap mode used for texture lookups
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -1638,6 +1286,7 @@ pub enum MipmapFilterMode {
     /// Linear filtering
     Linear = VK_SAMPLER_MIPMAP_MODE_LINEAR as _,
 }
+
 /// Specify border color used for texture lookups
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -1655,6 +1304,7 @@ pub enum BorderColor {
     /// An opaque, integer format, white color
     OpaqueWhiteI = VK_BORDER_COLOR_INT_OPAQUE_WHITE as _,
 }
+
 /// Builder object for constructing the sampler object
 #[repr(transparent)]
 pub struct SamplerBuilder(VkSamplerCreateInfo);
@@ -1693,12 +1343,14 @@ impl SamplerBuilder {
         self.0.minFilter = min as _;
         self
     }
+
     /// The mipmap filter to apply to lookups.  
     /// Default: `MipmapFilterMode::Linear`
     pub fn mip_filter(&mut self, f: MipmapFilterMode) -> &mut Self {
         self.0.mipmapMode = f as _;
         self
     }
+
     /// The addressing mode for outside [0..1] range for U, V and W coordinates.  
     /// Default: U=`AddressingMode::Repeat`, V=`AddressinMode::Repeat`, W=`AddressingMode::Repeat`
     pub fn addressing(&mut self, u: AddressingMode, v: AddressingMode, w: AddressingMode) -> &mut Self {
@@ -1707,6 +1359,7 @@ impl SamplerBuilder {
         self.0.addressModeW = w as _;
         self
     }
+
     /// The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V,
     /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  
     /// Default: 0.0
@@ -1714,6 +1367,7 @@ impl SamplerBuilder {
         self.0.mipLodBias = bias;
         self
     }
+
     /// The anisotropy value clamp. Specifying `None` switches off the anisotropic filtering  
     /// Default: `None`
     pub fn max_anisotropy(&mut self, level: Option<f32>) -> &mut Self {
@@ -1721,6 +1375,7 @@ impl SamplerBuilder {
         self.0.maxAnisotropy = level.unwrap_or_default();
         self
     }
+
     /// The comparison function to apply to fetched data before filtering
     /// as described in the `Depth Compare Operation` section in Vulkan Specification.
     /// Specifying `None` switches off the comparison against a reference value during lookups.  
@@ -1730,6 +1385,7 @@ impl SamplerBuilder {
         self.0.compareOp = op.unwrap_or(CompareOp::Always) as _;
         self
     }
+
     /// The values used to clamp the computed level-of-detail value,
     /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  
     /// Default: min_lod=0.0, max_lod=0.0
@@ -1741,6 +1397,7 @@ impl SamplerBuilder {
         self.0.maxLod = max_lod;
         self
     }
+
     /// Whether to use unnormalized or normalized texel coordinates to address texels of the image.  
     /// Default: `false`
     /// # Safety
@@ -1750,7 +1407,7 @@ impl SamplerBuilder {
         self
     }
 
-    /// [feature = "Implements"] Create a new sampler object
+    /// Create a new sampler object
     /// # Failures
     /// On failure, this command returns
     ///
@@ -1758,10 +1415,10 @@ impl SamplerBuilder {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     #[cfg(feature = "Implements")]
-    pub fn create(&self, device: &Device) -> crate::Result<Sampler> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<Sampler<Device>> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_sampler(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| Sampler(h, device.clone()))
+            .map(|_| Sampler(h, device))
     }
 }

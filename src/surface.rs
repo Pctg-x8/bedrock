@@ -2,244 +2,110 @@
 
 use super::*;
 
-#[cfg(feature = "VK_KHR_surface")]
-pub(crate) struct SurfaceCell(pub(crate) VkSurfaceKHR, pub(crate) Instance);
 /// Opaque handle to a surface object
 #[cfg(feature = "VK_KHR_surface")]
-#[derive(Clone)]
-pub struct Surface(RefCounter<SurfaceCell>);
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_SURFACE_KHR"]
+pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) VkSurfaceKHR, pub(crate) Instance);
 #[cfg(feature = "VK_KHR_surface")]
-impl Surface {
-    #[allow(dead_code)]
-    pub(crate) fn new(cell: SurfaceCell) -> Self {
-        Surface(RefCounter::new(cell))
+unsafe impl<Instance: crate::Instance + Sync> Sync for SurfaceObject<Instance> {}
+#[cfg(feature = "VK_KHR_surface")]
+unsafe impl<Instance: crate::Instance + Send> Send for SurfaceObject<Instance> {}
+#[cfg(feature = "VK_KHR_surface")]
+impl<Instance: crate::Instance> InstanceChild for SurfaceObject<Instance> {
+    type ConcreteInstance = Instance;
+
+    fn instance(&self) -> &Instance {
+        &self.1
     }
 }
-#[cfg(feature = "VK_KHR_swapchain")]
-struct SwapchainCell {
-    obj: VkSwapchainKHR,
-    dev: Device,
-    _target: Surface,
-    fmt: VkFormat,
-    size: VkExtent3D,
-}
-/// Opaque handle to a swapchain object
-#[cfg(feature = "VK_KHR_swapchain")]
-#[derive(Clone)]
-pub struct Swapchain(RefCounter<SwapchainCell>);
-
-#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
-impl Drop for SurfaceCell {
+#[cfg(feature = "VK_KHR_surface")]
+#[cfg(feature = "Implements")]
+impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
-#[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
-impl Drop for SwapchainCell {
+impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
+
+/// Opaque handle to as swapchain object
+#[cfg(feature = "VK_KHR_swapchain")]
+#[derive(VkHandle)]
+#[object_type = "VK_OBJECT_TYPE_SWAPCHAIN_KHR"]
+pub struct SwapchainObject<Device: crate::Device, Surface: VkHandle<Handle = VkSurfaceKHR>>(
+    VkSwapchainKHR,
+    Device,
+    Surface,
+    VkFormat,
+    VkExtent3D,
+);
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl<Device, Surface> Sync for SwapchainObject<Device, Surface>
+where
+    Device: crate::Device + Sync,
+    Surface: VkHandle<Handle = VkSurfaceKHR> + Sync,
+{
+}
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl<Device, Surface> Send for SwapchainObject<Device, Surface>
+where
+    Device: crate::Device + Send,
+    Surface: VkHandle<Handle = VkSurfaceKHR> + Send,
+{
+}
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Device, Surface> DeviceChild for SwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: VkHandle<Handle = VkSurfaceKHR>,
+{
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "Implements")]
+impl<Device, Surface> Drop for SwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: VkHandle<Handle = VkSurfaceKHR>,
+{
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_swapchain_khr(self.dev.native_ptr(), self.obj, std::ptr::null());
+            Resolver::get().destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
-#[cfg(feature = "VK_KHR_surface")]
-impl VkHandle for Surface {
-    type Handle = VkSurfaceKHR;
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
-
-    fn native_ptr(&self) -> VkSurfaceKHR {
-        self.0 .0
+impl<Device, Surface> Swapchain for SwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: VkHandle<Handle = VkSurfaceKHR>,
+{
+    fn format(&self) -> VkFormat {
+        self.3
     }
-}
-#[cfg(feature = "VK_KHR_swapchain")]
-impl VkHandle for Swapchain {
-    type Handle = VkSwapchainKHR;
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
 
-    fn native_ptr(&self) -> VkSwapchainKHR {
-        self.0.obj
-    }
-}
-#[cfg(feature = "VK_KHR_swapchain")]
-impl DeviceChild for Swapchain {
-    fn device(&self) -> &Device {
-        &self.0.dev
-    }
-}
-
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for SurfaceCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for SurfaceCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Sync for SwapchainCell {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl Send for SwapchainCell {}
-
-#[cfg(feature = "VK_KHR_surface")]
-impl Surface {
-    /// Create an surface object by taking raw `VkSurfaceKHR` object with its ownership.
-    /// # Safety
-    /// `ptr` must be created from `parent`.
-    pub unsafe fn from_raw(ptr: VkSurfaceKHR, parent: &Instance) -> Self {
-        Surface(SurfaceCell(ptr, parent.clone()).into())
+    fn size(&self) -> &VkExtent3D {
+        &self.4
     }
 }
 
-/// Creation Procedures
-#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
-impl Surface {
-    /// Create a `Surface` object for an X11 window, using the Xlib client-side library
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_xlib_surface")]
-    pub fn new_xlib(
-        instance: &Instance,
-        display: *mut x11::xlib::Display,
-        window: x11::xlib::Window,
-    ) -> crate::Result<Self> {
-        let cinfo = VkXlibSurfaceCreateInfoKHR {
-            dpy: display,
-            window,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_xlib_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-        }
-    }
-    /// Create a `Surface` object for a X11 window, using the XCB client-side library
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_xcb_surface")]
-    pub fn new_xcb(
-        instance: &Instance,
-        connection: *mut xcb::ffi::xcb_connection_t,
-        window: xcb::ffi::xcb_window_t,
-    ) -> crate::Result<Self> {
-        let cinfo = VkXcbSurfaceCreateInfoKHR {
-            connection,
-            window,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_xcb_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-        }
-    }
-    /// Create a `Surface` object for a Wayland window
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    pub fn new_wayland(
-        instance: &Instance,
-        display: *mut wayland_client::sys::wl_display,
-        surface: *mut wayland_client::sys::wl_proxy,
-    ) -> crate::Result<Self> {
-        let cinfo = VkWaylandSurfaceCreateInfoKHR {
-            display,
-            surface,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_wayland_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-        }
-    }
-    /// Create a `Surface` object for an Android native window
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_android_surface")]
-    pub fn new_android(instance: &Instance, window: *mut android::ANativeWindow) -> crate::Result<Self> {
-        let cinfo = VkAndroidSurfaceCreateInfoKHR {
-            window,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_android_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-        }
-    }
-    /// Create a `Surface` object for an Win32 native window
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_win32_surface")]
-    pub fn new_win32(
-        instance: &Instance,
-        hinstance: winapi::shared::minwindef::HINSTANCE,
-        hwnd: winapi::shared::windef::HWND,
-    ) -> crate::Result<Self> {
-        let cinfo = VkWin32SurfaceCreateInfoKHR {
-            hinstance,
-            hwnd,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_win32_surface_khr(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-        }
-    }
-    /// Create a `Surface` object for an macOS native window
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_MVK_macos_surface")]
-    pub fn new_macos(instance: &Instance, view_ptr: *const libc::c_void) -> crate::Result<Self> {
-        let cinfo = VkMacOSSurfaceCreateInfoMVK {
-            pView: view_ptr,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_macos_surface_mvk(instance.native_ptr(), &cinfo, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| Surface(SurfaceCell(h, instance.clone()).into()))
-        }
-    }
-}
+#[cfg(feature = "VK_KHR_surface")]
+pub trait Surface: VkHandle<Handle = VkSurfaceKHR> {}
 
 /// Builder object to construct a `Swapchain`
 #[cfg(feature = "VK_KHR_swapchain")]
-pub struct SwapchainBuilder<'d>(VkSwapchainCreateInfoKHR, &'d Surface);
+#[cfg(feature = "VK_KHR_surface")]
+pub struct SwapchainBuilder<Surface: VkHandle<Handle = VkSurfaceKHR>>(VkSwapchainCreateInfoKHR, Surface);
 #[cfg(feature = "VK_KHR_swapchain")]
-impl<'d> SwapchainBuilder<'d> {
+#[cfg(feature = "VK_KHR_surface")]
+impl<Surface: VkHandle<Handle = VkSurfaceKHR>> SwapchainBuilder<Surface> {
     pub fn new(
-        surface: &'d Surface,
+        surface: Surface,
         min_image_count: u32,
         format: &VkSurfaceFormatKHR,
         extent: &VkExtent2D,
@@ -263,10 +129,12 @@ impl<'d> SwapchainBuilder<'d> {
             surface,
         )
     }
+
     pub fn array_layers(&mut self, layers: u32) -> &mut Self {
         self.0.imageArrayLayers = layers;
         self
     }
+
     pub fn share(&mut self, queue_families: &[u32]) -> &mut Self {
         self.0.imageSharingMode = if queue_families.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
@@ -277,18 +145,22 @@ impl<'d> SwapchainBuilder<'d> {
         self.0.pQueueFamilyIndices = queue_families.as_ptr();
         self
     }
+
     pub fn pre_transform(&mut self, tf: SurfaceTransform) -> &mut Self {
         self.0.preTransform = tf as _;
         self
     }
+
     pub fn composite_alpha(&mut self, a: CompositeAlpha) -> &mut Self {
         self.0.compositeAlpha = a as _;
         self
     }
+
     pub fn present_mode(&mut self, mode: PresentMode) -> &mut Self {
         self.0.presentMode = mode as _;
         self
     }
+
     /// Enables whether the Vulkan implementation is allowed to discard rendering operations
     /// that affect regions of the surface which aren't visible
     pub fn enable_clip(&mut self) -> &mut Self {
@@ -306,42 +178,31 @@ impl<'d> SwapchainBuilder<'d> {
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     /// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
     #[cfg(feature = "Implements")]
-    pub fn create(&self, device: &Device) -> crate::Result<Swapchain> {
+    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<SwapchainObject<Device, Surface>> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
                 .create_swapchain_khr(device.native_ptr(), &self.0, std::ptr::null(), &mut h)
                 .into_result()
                 .map(|_| {
-                    Swapchain(
-                        SwapchainCell {
-                            obj: h,
-                            dev: device.clone(),
-                            _target: self.1.clone(),
-                            fmt: self.0.imageFormat,
-                            size: self.0.imageExtent.clone().with_depth(1),
-                        }
-                        .into(),
+                    SwapchainObject(
+                        h,
+                        device,
+                        self.1,
+                        self.0.imageFormat,
+                        self.0.imageExtent.clone().with_depth(1),
                     )
                 })
         }
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-impl<'d, 's> crate::ext::Chainable<'d, FullScreenExclusiveEXT> for SwapchainBuilder<'s> {
+impl<'d, Surface: VkHandle<Handle = VkSurfaceKHR>> crate::ext::Chainable<'d, FullScreenExclusiveEXT>
+    for SwapchainBuilder<Surface>
+{
     fn chain(&mut self, next: &'d FullScreenExclusiveEXT) -> &mut Self {
         self.0.pNext = next as *const _ as _;
         self
-    }
-}
-
-#[cfg(feature = "VK_KHR_swapchain")]
-impl Swapchain {
-    pub fn format(&self) -> VkFormat {
-        self.0.fmt
-    }
-    pub fn size(&self) -> &VkExtent3D {
-        &self.0.size
     }
 }
 
@@ -353,8 +214,11 @@ pub enum CompletionHandler<Fence: VkHandle<Handle = VkFence>, Semaphore: VkHandl
     Queue(Semaphore),
 }
 
-#[cfg(all(feature = "Implements", feature = "VK_KHR_swapchain"))]
-impl Swapchain {
+#[cfg(feature = "VK_KHR_swapchain")]
+pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
+    fn format(&self) -> VkFormat;
+    fn size(&self) -> &VkExtent3D;
+
     /// Retrieve the index of the next available presentation image
     /// # Failures
     /// On failure, this command returns
@@ -364,7 +228,8 @@ impl Swapchain {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    pub fn acquire_next(
+    #[cfg(feature = "Implements")]
+    fn acquire_next(
         &mut self,
         timeout: Option<u64>,
         completion: CompletionHandler<impl VkHandle<Handle = VkFence>, impl VkHandle<Handle = VkSemaphore>>,
@@ -388,6 +253,7 @@ impl Swapchain {
                 .map(|_| n)
         }
     }
+
     /// Queue an image for presentation
     /// # Failures
     /// On failure, this command returns
@@ -397,9 +263,10 @@ impl Swapchain {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    pub fn queue_present(
+    #[cfg(feature = "Implements")]
+    fn queue_present(
         &mut self,
-        queue: &mut Queue,
+        queue: &mut impl VkHandle<Handle = VkQueue>,
         index: u32,
         wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
     ) -> crate::Result<()> {
@@ -421,10 +288,74 @@ impl Swapchain {
                 .and_then(|_| res.into_result())
         }
     }
+
+    /// Acquire full-screen exclusive mode for a swapchain.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
+    fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
+        let fp: PFN_vkAcquireFullScreenExclusiveModeEXT = self
+            .device()
+            .extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
+            .expect("No full screen exclusive extension procedure found");
+        (fp)(self.device().native_ptr(), self.native_ptr()).into_result()
+    }
+
+    /// Release full-screen exclusive mode from a swapchain.
+    #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
+    fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
+        let fp: PFN_vkReleaseFullScreenExclusiveModeEXT = self
+            .device()
+            .extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
+            .expect("No full screen exclusive extension procedure found");
+        (fp)(self.device().native_ptr(), self.native_ptr()).into_result()
+    }
+
+    /// Obtain the array of presentable images associated with a swapchain
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
+    fn get_images(&self) -> crate::Result<Vec<crate::SwapchainImage<&Self>>>
+    where
+        Self: Sized,
+    {
+        let mut n = 0;
+        unsafe {
+            Resolver::get()
+                .get_swapchain_images_khr(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    &mut n,
+                    std::ptr::null_mut(),
+                )
+                .into_result()?;
+        }
+        let mut v = Vec::with_capacity(n as _);
+        unsafe {
+            v.set_len(n as _);
+            Resolver::get()
+                .get_swapchain_images_khr(self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr())
+                .into_result()
+                .map(|_| {
+                    v.into_iter()
+                        .map(|r| crate::SwapchainImage(r, self, self.format()))
+                        .collect()
+                })
+        }
+    }
 }
+
 #[cfg(feature = "Implements")]
-impl Queue {
-    /// [Implements][VK_KHR_swapchain] Queue images for presentation
+impl<Device: crate::Device> Queue<Device> {
+    /// Queue images for presentation
     /// # Failures
     /// On failure, this command returns
     ///
@@ -436,7 +367,7 @@ impl Queue {
     #[cfg(feature = "VK_KHR_swapchain")]
     pub fn present(
         &mut self,
-        swapchains: &[(&mut Swapchain, u32)],
+        swapchains: &[(&mut impl Swapchain, u32)],
         wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
     ) -> crate::Result<Vec<VkResult>> {
         let mut res = vec![0; swapchains.len()];
@@ -555,34 +486,6 @@ impl FullScreenExclusiveInfoEXT {
             fullScreenExclusive: flags as _,
             ..Default::default()
         })
-    }
-}
-
-#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
-impl Swapchain {
-    /// Acquire full-screen exclusive mode for a swapchain.
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    pub fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        let fp: PFN_vkAcquireFullScreenExclusiveModeEXT = self
-            .device()
-            .extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
-            .expect("No full screen exclusive extension procedure found");
-        (fp)(self.device().native_ptr(), self.native_ptr()).into_result()
-    }
-
-    /// Release full-screen exclusive mode from a swapchain.
-    pub fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        let fp: PFN_vkReleaseFullScreenExclusiveModeEXT = self
-            .device()
-            .extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
-            .expect("No full screen exclusive extension procedure found");
-        (fp)(self.device().native_ptr(), self.native_ptr()).into_result()
     }
 }
 
