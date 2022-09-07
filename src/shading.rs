@@ -1,11 +1,11 @@
 //! Vulkan Shading(Shader/Pipeline)
 
 use crate::LifetimeBound;
-use crate::{vk::*, DeviceChild};
+use crate::{vk::*, DeviceChild, VkHandle};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VkHandle, VkResultHandler,
+    VkResultHandler,
 };
 use std::borrow::Cow;
 use std::ffi::CString;
