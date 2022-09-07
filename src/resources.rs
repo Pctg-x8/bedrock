@@ -153,8 +153,10 @@ impl<Device: crate::Device> DeviceMemory for DeviceMemoryObject<Device> {}
 /// Opaque handle to a buffer object(constructed via `BufferDesc`)
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_BUFFER"]
-pub struct Buffer<Device: crate::Device>(VkBuffer, Device);
-impl<Device: crate::Device> DeviceChild for Buffer<Device> {
+pub struct BufferObject<Device: crate::Device>(VkBuffer, Device);
+unsafe impl<Device: crate::Device + Sync> Sync for BufferObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for BufferObject<Device> {}
+impl<Device: crate::Device> DeviceChild for BufferObject<Device> {
     type ConcreteDevice = Device;
 
     fn device(&self) -> &Device {
@@ -162,10 +164,40 @@ impl<Device: crate::Device> DeviceChild for Buffer<Device> {
     }
 }
 #[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for Buffer<Device> {
+impl<Device: crate::Device> Drop for BufferObject<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_buffer(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> Buffer for BufferObject<Device> {}
+impl<Device: crate::Device> MemoryBound for BufferObject<Device> {
+    #[cfg(feature = "Implements")]
+    fn requirements(&self) -> VkMemoryRequirements {
+        let mut p = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get().get_buffer_memory_requirements(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                p.as_mut_ptr(),
+            );
+
+            p.assume_init()
+        }
+    }
+
+    #[cfg(feature = "Implements")]
+    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
+        unsafe {
+            Resolver::get()
+                .bind_buffer_memory(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    memory.native_ptr(),
+                    offset as _,
+                )
+                .into_result()
         }
     }
 }
@@ -173,8 +205,10 @@ impl<Device: crate::Device> Drop for Buffer<Device> {
 /// Opaque handle to a image object(constructed via `ImageDesc`)
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_IMAGE"]
-pub struct Image<Device: crate::Device>(VkImage, Device, VkImageType, VkFormat, VkExtent3D);
-impl<Device: crate::Device> DeviceChild for Image<Device> {
+pub struct ImageObject<Device: crate::Device>(VkImage, Device, VkImageType, VkFormat, VkExtent3D);
+unsafe impl<Device: crate::Device + Sync> Sync for ImageObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
+impl<Device: crate::Device> DeviceChild for ImageObject<Device> {
     type ConcreteDevice = Device;
 
     fn device(&self) -> &Self::ConcreteDevice {
@@ -182,10 +216,57 @@ impl<Device: crate::Device> DeviceChild for Image<Device> {
     }
 }
 #[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for Image<Device> {
+impl<Device: crate::Device> Drop for ImageObject<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_image(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> Image for ImageObject<Device> {
+    fn format(&self) -> VkFormat {
+        self.3
+    }
+
+    fn size(&self) -> &VkExtent3D {
+        &self.4
+    }
+
+    fn dimension(&self) -> VkImageViewType {
+        match self.2 {
+            VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
+            VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
+            VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D,
+            _ => unreachable!(),
+        }
+    }
+}
+impl<Device: crate::Device> MemoryBound for ImageObject<Device> {
+    #[cfg(feature = "Implements")]
+    fn requirements(&self) -> VkMemoryRequirements {
+        let mut p = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get().get_image_memory_requirements(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                p.as_mut_ptr(),
+            );
+
+            p.assume_init()
+        }
+    }
+
+    #[cfg(feature = "Implements")]
+    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
+        unsafe {
+            Resolver::get()
+                .bind_image_memory(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    memory.native_ptr(),
+                    offset as _,
+                )
+                .into_result()
         }
     }
 }
@@ -194,25 +275,67 @@ impl<Device: crate::Device> Drop for Image<Device> {
 #[cfg(feature = "VK_KHR_swapchain")]
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_IMAGE"]
-pub struct SwapchainImage<Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkFormat)
-where
-    Swapchain: VkHandle<Handle = VkSwapchainKHR>;
+pub struct SwapchainImage<Swapchain: crate::Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkFormat);
 #[cfg(feature = "VK_KHR_swapchain")]
-impl<Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild> DeviceChild for SwapchainImage<Swapchain> {
+impl<Swapchain: crate::Swapchain> DeviceChild for SwapchainImage<Swapchain> {
     type ConcreteDevice = Swapchain::ConcreteDevice;
 
     fn device(&self) -> &Self::ConcreteDevice {
         self.1.device()
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Swapchain: crate::Swapchain> Image for SwapchainImage<Swapchain> {
+    fn format(&self) -> VkFormat {
+        self.2
+    }
+
+    fn size(&self) -> &VkExtent3D {
+        self.1.size()
+    }
+
+    fn dimension(&self) -> VkImageViewType {
+        VK_IMAGE_VIEW_TYPE_2D
+    }
+}
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Swapchain: crate::Swapchain> MemoryBound for SwapchainImage<Swapchain> {
+    #[cfg(feature = "Implements")]
+    fn requirements(&self) -> VkMemoryRequirements {
+        let mut p = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get().get_image_memory_requirements(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                p.as_mut_ptr(),
+            );
+
+            p.assume_init()
+        }
+    }
+
+    #[cfg(feature = "Implements")]
+    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
+        unsafe {
+            Resolver::get()
+                .bind_image_memory(
+                    self.device().native_ptr(),
+                    self.native_ptr(),
+                    memory.native_ptr(),
+                    offset as _,
+                )
+                .into_result()
+        }
+    }
+}
 
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
 /// Opaque handle to a buffer view object
-pub struct BufferView<Buffer>(VkBufferView, Buffer)
-where
-    Buffer: VkHandle<Handle = VkBuffer> + DeviceChild;
-impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> DeviceChild for BufferView<Buffer> {
+pub struct BufferViewObject<Buffer: crate::Buffer>(VkBufferView, Buffer);
+unsafe impl<Buffer: crate::Buffer + Sync> Sync for BufferViewObject<Buffer> {}
+unsafe impl<Buffer: crate::Buffer + Send> Send for BufferViewObject<Buffer> {}
+impl<Buffer: crate::Buffer> DeviceChild for BufferViewObject<Buffer> {
     type ConcreteDevice = Buffer::ConcreteDevice;
 
     fn device(&self) -> &Self::ConcreteDevice {
@@ -220,21 +343,22 @@ impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> DeviceChild for BufferVi
     }
 }
 #[cfg(feature = "Implements")]
-impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> Drop for BufferView<Buffer> {
+impl<Buffer: crate::Buffer> Drop for BufferViewObject<Buffer> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_buffer_view(self.1.device().native_ptr(), self.0, std::ptr::null());
         }
     }
 }
+impl<Buffer: crate::Buffer> BufferView for BufferViewObject<Buffer> {}
 
 /// Opaque handle to a image view object
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_IMAGE_VIEW"]
-pub struct ImageView<Image>(VkImageView, Image)
-where
-    Image: VkHandle<Handle = VkImage> + DeviceChild;
-impl<Image: VkHandle<Handle = VkImage> + DeviceChild> DeviceChild for ImageView<Image> {
+pub struct ImageViewObject<Image: crate::Image>(VkImageView, Image);
+unsafe impl<Image: crate::Image + Sync> Sync for ImageViewObject<Image> {}
+unsafe impl<Image: crate::Image + Send> Send for ImageViewObject<Image> {}
+impl<Image: crate::Image> DeviceChild for ImageViewObject<Image> {
     type ConcreteDevice = Image::ConcreteDevice;
 
     fn device(&self) -> &Self::ConcreteDevice {
@@ -242,45 +366,29 @@ impl<Image: VkHandle<Handle = VkImage> + DeviceChild> DeviceChild for ImageView<
     }
 }
 #[cfg(feature = "Implements")]
-impl<Image: VkHandle<Handle = VkImage> + DeviceChild> Drop for ImageView<Image> {
+impl<Image: crate::Image> Drop for ImageViewObject<Image> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null());
         }
     }
 }
+impl<Image: crate::Image> ImageView for ImageViewObject<Image> {}
 
-impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild> Deref for BufferView<Buffer> {
+impl<Buffer: crate::Buffer> Deref for BufferViewObject<Buffer> {
     type Target = Buffer;
 
     fn deref(&self) -> &Buffer {
         &self.1
     }
 }
-impl<Image: VkHandle<Handle = VkImage> + DeviceChild> Deref for ImageView<Image> {
+impl<Image: crate::Image> Deref for ImageViewObject<Image> {
     type Target = Image;
 
     fn deref(&self) -> &Image {
         &self.1
     }
 }
-
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: crate::Device + Sync> Sync for Buffer<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: crate::Device + Send> Send for Buffer<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: crate::Device + Sync> Sync for Image<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: crate::Device + Send> Send for Image<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild + Sync> Sync for BufferView<Buffer> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Buffer: VkHandle<Handle = VkBuffer> + DeviceChild + Send> Send for BufferView<Buffer> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Image: VkHandle<Handle = VkImage> + DeviceChild + Sync> Sync for ImageView<Image> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Image: VkHandle<Handle = VkImage> + DeviceChild + Send> Send for ImageView<Image> {}
 
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -462,11 +570,11 @@ impl BufferDesc {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<Buffer<Device>> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<BufferObject<Device>> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_buffer(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| Buffer(h, device))
+            .map(|_| BufferObject(h, device))
     }
 }
 
@@ -682,62 +790,35 @@ impl AsRef<VkImageCreateInfo> for ImageDesc<'_> {
 #[cfg(feature = "Implements")]
 impl ImageDesc<'_> {
     /// Create an image
-    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<Image<Device>> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<ImageObject<Device>> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_image(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| Image(h, device, self.0.imageType, self.0.format, self.0.extent.clone()))
+            .map(|_| ImageObject(h, device, self.0.imageType, self.0.format, self.0.extent.clone()))
     }
 }
 
-impl<Device: crate::Device> Image<Device> {
+pub trait Image: VkHandle<Handle = VkImage> + DeviceChild + MemoryBound {
     /// The pixel format of an image
-    pub const fn format(&self) -> VkFormat {
-        self.3
-    }
+    fn format(&self) -> VkFormat;
 
     /// The size of an image
-    pub const fn size(&self) -> &VkExtent3D {
-        &self.4
-    }
+    fn size(&self) -> &VkExtent3D;
 
-    const fn dimension(&self) -> VkImageViewType {
-        match self.2 {
-            VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
-            VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
-            VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D,
-            _ => unreachable!(),
-        }
-    }
-}
+    fn dimension(&self) -> VkImageViewType;
 
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Buffer<Device> {
-    /// Create a buffer view
-    pub fn create_view(&self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferView<&Self>> {
-        let cinfo = VkBufferViewCreateInfo {
-            buffer: self.native_ptr(),
-            format,
-            offset: range.start,
-            range: range.end - range.start,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| BufferView(h, self))
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Image<Device> {
     /// Create an image view
-    pub fn create_view(
-        &self,
+    #[cfg(feature = "Implements")]
+    fn create_view(
+        self,
         format: Option<VkFormat>,
         vtype: Option<VkImageViewType>,
         cmap: &ComponentMapping,
         subresource_range: &ImageSubresourceRange,
-    ) -> crate::Result<ImageView<&Self>> {
+    ) -> crate::Result<ImageViewObject<Self>>
+    where
+        Self: Sized,
+    {
         let (format, vtype) = (
             format.unwrap_or_else(|| self.format()),
             vtype.unwrap_or_else(|| self.dimension()),
@@ -753,12 +834,13 @@ impl<Device: crate::Device> Image<Device> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| ImageView(h, self))
+            .map(|_| ImageViewObject(h, self))
     }
 
     /// Retrieve information about an image subresource  
     /// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
-    pub fn image_subresource_layout(
+    #[cfg(feature = "Implements")]
+    fn image_subresource_layout(
         &self,
         subres_aspect: AspectMask,
         subres_mip_level: u32,
@@ -780,6 +862,53 @@ impl<Device: crate::Device> Image<Device> {
 
             s.assume_init()
         }
+    }
+
+    /// Query the memory requirements for a sparse image
+    #[cfg(feature = "Implements")]
+    fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
+        let mut n = 0;
+        unsafe {
+            Resolver::get().get_image_sparse_memory_requirements(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut n,
+                std::ptr::null_mut(),
+            );
+        };
+        let mut v = Vec::with_capacity(n as _);
+        unsafe {
+            v.set_len(n as _);
+            Resolver::get().get_image_sparse_memory_requirements(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut n,
+                v.as_mut_ptr(),
+            )
+        };
+
+        v
+    }
+}
+
+pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild + MemoryBound {
+    /// Create a buffer view
+    #[cfg(feature = "Implements")]
+    fn create_view(self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferViewObject<Self>>
+    where
+        Self: Sized,
+    {
+        let cinfo = VkBufferViewCreateInfo {
+            buffer: self.native_ptr(),
+            format,
+            offset: range.start,
+            range: range.end - range.start,
+            ..Default::default()
+        };
+        let mut h = VK_NULL_HANDLE as _;
+        unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
+            .into_result()
+            .map(|_| BufferViewObject(h, self))
     }
 }
 
@@ -831,9 +960,9 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
 }
 
 /// Common operations for memory bound objects
-#[cfg(feature = "Implements")]
 pub trait MemoryBound {
     /// Returns the memory requirements for specified Vulkan object
+    #[cfg(feature = "Implements")]
     fn requirements(&self) -> VkMemoryRequirements;
 
     /// Bind device memory to the object
@@ -842,92 +971,13 @@ pub trait MemoryBound {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
     fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()>;
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> MemoryBound for Buffer<Device> {
-    fn requirements(&self) -> VkMemoryRequirements {
-        let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            Resolver::get().get_buffer_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                p.as_mut_ptr(),
-            );
 
-            p.assume_init()
-        }
-    }
+pub trait BufferView: VkHandle<Handle = VkBufferView> + DeviceChild {}
 
-    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
-        unsafe {
-            Resolver::get()
-                .bind_buffer_memory(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    memory.native_ptr(),
-                    offset as _,
-                )
-                .into_result()
-        }
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> MemoryBound for Image<Device> {
-    fn requirements(&self) -> VkMemoryRequirements {
-        let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            Resolver::get().get_image_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                p.as_mut_ptr(),
-            );
-
-            p.assume_init()
-        }
-    }
-
-    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
-        unsafe {
-            Resolver::get()
-                .bind_image_memory(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    memory.native_ptr(),
-                    offset as _,
-                )
-                .into_result()
-        }
-    }
-}
-
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Image<Device> {
-    /// Query the memory requirements for a sparse image
-    pub fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
-        let mut n = 0;
-        unsafe {
-            Resolver::get().get_image_sparse_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                &mut n,
-                std::ptr::null_mut(),
-            );
-        };
-        let mut v = Vec::with_capacity(n as _);
-        unsafe {
-            v.set_len(n as _);
-            Resolver::get().get_image_sparse_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                &mut n,
-                v.as_mut_ptr(),
-            )
-        };
-
-        v
-    }
-}
+pub trait ImageView: VkHandle<Handle = VkImageView> + DeviceChild {}
 
 /// Image Dimension by corresponding extent type
 pub trait ImageSize {

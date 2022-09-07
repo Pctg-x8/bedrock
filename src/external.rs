@@ -108,8 +108,8 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
 impl<'d, Semaphore, CommandBuffer> crate::Chainable<'d, D3D12FenceSubmitInfo<'d>>
     for crate::SubmissionBatch<'d, Semaphore, CommandBuffer>
 where
-    Semaphore: VkHandle<Handle = VkSemaphore> + Clone,
-    CommandBuffer: VkHandle<Handle = VkCommandBuffer> + Clone,
+    Semaphore: crate::Semaphore + Clone,
+    CommandBuffer: crate::CommandBuffer + Clone,
 {
     fn chain(&mut self, next: &'d D3D12FenceSubmitInfo<'d>) -> &mut Self {
         self.chained = Some(&next.0 as _);
@@ -331,51 +331,5 @@ impl std::fmt::Debug for ExternalFenceHandleTypes {
             self.0,
             bit_strings.join("/")
         )
-    }
-}
-
-#[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-impl<Device: VkHandle<Handle = VkDevice>> crate::Fence<Device> {
-    /// Get a POSIX file descriptor handle for a type
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    pub fn get_fd(&self, ty: ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
-        let info = VkFenceGetFdInfoKHR {
-            fence: self.native_ptr(),
-            handleType: ty as _,
-            ..Default::default()
-        };
-        let mut fd = 0;
-        let f = self
-            .device()
-            .extra_procedure::<PFN_vkGetFenceFdKHR>("vkGetFenceFdKHR")
-            .expect("No vkGetFenceFdKHR exported");
-        (f)(self.device().native_ptr(), &info, &mut fd)
-            .into_result()
-            .map(move |_| fd)
-    }
-
-    /// Import a fence from a POSIX file descriptor
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    pub fn import(&self, ty: ExternalFenceFdType, fd: std::os::unix::io::RawFd, temporary: bool) -> crate::Result<()> {
-        let info = VkImportFenceFdInfoKHR {
-            fence: self.native_ptr(),
-            flags: if temporary { VK_FENCE_IMPORT_TEMPORARY_BIT } else { 0 },
-            handleType: ty as _,
-            fd,
-            ..Default::default()
-        };
-        let f = self
-            .device()
-            .extra_procedure::<PFN_vkImportFenceFdKHR>("vkImportFenceFdKHR")
-            .expect("No vkImportFenceFdKHR exported");
-        (f)(self.device().native_ptr(), &info).into_result()
     }
 }

@@ -34,7 +34,7 @@ impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
 #[cfg(feature = "VK_KHR_swapchain")]
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_SWAPCHAIN_KHR"]
-pub struct SwapchainObject<Device: crate::Device, Surface: VkHandle<Handle = VkSurfaceKHR>>(
+pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface>(
     VkSwapchainKHR,
     Device,
     Surface,
@@ -45,21 +45,21 @@ pub struct SwapchainObject<Device: crate::Device, Surface: VkHandle<Handle = VkS
 unsafe impl<Device, Surface> Sync for SwapchainObject<Device, Surface>
 where
     Device: crate::Device + Sync,
-    Surface: VkHandle<Handle = VkSurfaceKHR> + Sync,
+    Surface: crate::Surface + Sync,
 {
 }
 #[cfg(feature = "VK_KHR_swapchain")]
 unsafe impl<Device, Surface> Send for SwapchainObject<Device, Surface>
 where
     Device: crate::Device + Send,
-    Surface: VkHandle<Handle = VkSurfaceKHR> + Send,
+    Surface: crate::Surface + Send,
 {
 }
 #[cfg(feature = "VK_KHR_swapchain")]
 impl<Device, Surface> DeviceChild for SwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: crate::Surface,
 {
     type ConcreteDevice = Device;
 
@@ -72,7 +72,7 @@ where
 impl<Device, Surface> Drop for SwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: crate::Surface,
 {
     fn drop(&mut self) {
         unsafe {
@@ -83,7 +83,7 @@ where
 impl<Device, Surface> Swapchain for SwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: crate::Surface,
 {
     fn format(&self) -> VkFormat {
         self.3
@@ -100,10 +100,10 @@ pub trait Surface: VkHandle<Handle = VkSurfaceKHR> {}
 /// Builder object to construct a `Swapchain`
 #[cfg(feature = "VK_KHR_swapchain")]
 #[cfg(feature = "VK_KHR_surface")]
-pub struct SwapchainBuilder<Surface: VkHandle<Handle = VkSurfaceKHR>>(VkSwapchainCreateInfoKHR, Surface);
+pub struct SwapchainBuilder<Surface: crate::Surface>(VkSwapchainCreateInfoKHR, Surface);
 #[cfg(feature = "VK_KHR_swapchain")]
 #[cfg(feature = "VK_KHR_surface")]
-impl<Surface: VkHandle<Handle = VkSurfaceKHR>> SwapchainBuilder<Surface> {
+impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
     pub fn new(
         surface: Surface,
         min_image_count: u32,
@@ -197,9 +197,7 @@ impl<Surface: VkHandle<Handle = VkSurfaceKHR>> SwapchainBuilder<Surface> {
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-impl<'d, Surface: VkHandle<Handle = VkSurfaceKHR>> crate::ext::Chainable<'d, FullScreenExclusiveEXT>
-    for SwapchainBuilder<Surface>
-{
+impl<'d, Surface: crate::Surface> crate::ext::Chainable<'d, FullScreenExclusiveEXT> for SwapchainBuilder<Surface> {
     fn chain(&mut self, next: &'d FullScreenExclusiveEXT) -> &mut Self {
         self.0.pNext = next as *const _ as _;
         self
@@ -207,7 +205,7 @@ impl<'d, Surface: VkHandle<Handle = VkSurfaceKHR>> crate::ext::Chainable<'d, Ful
 }
 
 /// A semaphore or a fence
-pub enum CompletionHandler<Fence: VkHandle<Handle = VkFence>, Semaphore: VkHandle<Handle = VkSemaphore>> {
+pub enum CompletionHandler<Fence: crate::Fence, Semaphore: crate::Semaphore> {
     /// A Host synchronizer(aka Fence)
     Host(Fence),
     /// A Queue synchronizer(aka Semaphore)
@@ -232,7 +230,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn acquire_next(
         &mut self,
         timeout: Option<u64>,
-        completion: CompletionHandler<impl VkHandle<Handle = VkFence>, impl VkHandle<Handle = VkSemaphore>>,
+        completion: CompletionHandler<impl crate::Fence, impl crate::Semaphore>,
     ) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
             CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
@@ -350,6 +348,39 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
                         .collect()
                 })
         }
+    }
+}
+impl<T> Swapchain for &'_ T
+where
+    T: Swapchain,
+{
+    fn format(&self) -> VkFormat {
+        T::format(self)
+    }
+    fn size(&self) -> &VkExtent3D {
+        T::size(self)
+    }
+}
+impl<T> Swapchain for std::rc::Rc<T>
+where
+    T: Swapchain,
+{
+    fn format(&self) -> VkFormat {
+        T::format(self)
+    }
+    fn size(&self) -> &VkExtent3D {
+        T::size(self)
+    }
+}
+impl<T> Swapchain for std::sync::Arc<T>
+where
+    T: Swapchain,
+{
+    fn format(&self) -> VkFormat {
+        T::format(self)
+    }
+    fn size(&self) -> &VkExtent3D {
+        T::size(self)
     }
 }
 

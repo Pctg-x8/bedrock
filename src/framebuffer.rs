@@ -1,6 +1,6 @@
 //! Vulkan RenderPass/Framebuffer
 
-use crate::vk::*;
+use crate::{vk::*, DeviceChild, DeviceChildTransferrable};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -12,50 +12,64 @@ use std::ops::*;
 /// Opaque handle to a render pass object
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_RENDER_PASS"]
-pub struct RenderPass<Device>(VkRenderPass, Device)
-where
-    Device: VkHandle<Handle = VkDevice>;
+pub struct RenderPassObject<Device: crate::Device>(VkRenderPass, Device);
+unsafe impl<Device: crate::Device + Sync> Sync for RenderPassObject<Device> {}
+#[cfg(feature = "Multithreaded")]
+unsafe impl<Device: crate::Device + Send> Send for RenderPassObject<Device> {}
+impl<Device: crate::Device> DeviceChild for RenderPassObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
 #[cfg(feature = "Implements")]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for RenderPass<Device> {
+impl<Device: crate::Device> Drop for RenderPassObject<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_render_pass(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
+impl<Device: crate::Device> RenderPass for RenderPassObject<Device> {}
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
-pub struct Framebuffer<Device, ImageView>(VkFramebuffer, Device, Vec<ImageView>, VkExtent2D)
+pub struct FramebufferObject<Device: crate::Device, ImageView: crate::ImageView>(
+    pub(crate) VkFramebuffer,
+    pub(crate) Device,
+    pub(crate) Vec<ImageView>,
+    pub(crate) VkExtent2D,
+);
+unsafe impl<Device, ImageView> Sync for FramebufferObject<Device, ImageView>
 where
-    Device: VkHandle<Handle = VkDevice>,
-    ImageView: VkHandle<Handle = VkImageView>;
-#[cfg(feature = "Implements")]
-impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageView>> Drop
-    for Framebuffer<Device, ImageView>
+    Device: crate::Device + Sync,
+    ImageView: crate::ImageView + Sync,
 {
+}
+unsafe impl<Device, ImageView> Send for FramebufferObject<Device, ImageView>
+where
+    Device: crate::Device + Send,
+    ImageView: crate::ImageView + Send,
+{
+}
+impl<Device: crate::Device, ImageView: crate::ImageView> DeviceChild for FramebufferObject<Device, ImageView> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Device {
+        &self.1
+    }
+}
+#[cfg(feature = "Implements")]
+impl<Device: crate::Device, ImageView: crate::ImageView> Drop for FramebufferObject<Device, ImageView> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
-
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for RenderPass<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for RenderPass<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync, ImageView: VkHandle<Handle = VkImageView> + Sync> Sync
-    for Framebuffer<Device, ImageView>
-{
-}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send, ImageView: VkHandle<Handle = VkImageView> + Send> Send
-    for Framebuffer<Device, ImageView>
-{
-}
+impl<Device: crate::Device, ImageView: crate::ImageView> Framebuffer for FramebufferObject<Device, ImageView> {}
 
 /// Builder structure to construct the `VkAttachmentDescription`
 #[repr(transparent)]
@@ -404,7 +418,7 @@ impl RenderPassBuilder {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create<Device: VkHandle<Handle = VkDevice>>(&self, device: Device) -> crate::Result<RenderPass<Device>> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<RenderPassObject<Device>> {
         let subpasses = self
             .subpasses
             .iter()
@@ -440,29 +454,30 @@ impl RenderPassBuilder {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| RenderPass(h, device))
+            .map(|_| RenderPassObject(h, device))
     }
 }
-#[cfg(feature = "Implements")]
-impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageView>> Framebuffer<Device, ImageView> {
+
+pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     /// Create a new framebuffer object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new(
-        mold: &RenderPass<Device>,
+    #[cfg(feature = "Implements")]
+    fn new_framebuffer<ImageView: crate::ImageView>(
+        self,
         attachment_objects: Vec<ImageView>,
         size: &VkExtent2D,
         layers: u32,
-    ) -> crate::Result<Self>
+    ) -> crate::Result<FramebufferObject<Self::ConcreteDevice, ImageView>>
     where
-        Device: Clone,
+        Self: Sized + DeviceChildTransferrable,
     {
         let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         let cinfo = VkFramebufferCreateInfo {
-            renderPass: mold.0,
+            renderPass: self.native_ptr(),
             attachmentCount: views.len() as _,
             pAttachments: views.as_ptr(),
             width: size.width,
@@ -471,59 +486,31 @@ impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageVi
             ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_framebuffer(mold.1.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
+        unsafe { Resolver::get().create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| Framebuffer(h, mold.1.clone(), attachment_objects, size.as_ref().clone()))
+            .map(|_| FramebufferObject(h, self.transfer_device(), attachment_objects, size.as_ref().clone()))
     }
 
-    /// Create a new framebuffer object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn new_ext_device(
-        device: Device,
-        mold: &RenderPass<Device>,
-        attachment_objects: Vec<ImageView>,
-        size: &VkExtent2D,
-        layers: u32,
-    ) -> crate::Result<Self> {
-        let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-        let cinfo = VkFramebufferCreateInfo {
-            renderPass: mold.0,
-            attachmentCount: views.len() as _,
-            pAttachments: views.as_ptr(),
-            width: size.width,
-            height: size.height,
-            layers,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_framebuffer(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| Framebuffer(h, device, attachment_objects, size.as_ref().clone()))
+    /// Returns the granularity for optimal render area
+    #[cfg(feature = "Implements")]
+    fn optimal_granularity(&self) -> VkExtent2D {
+        let mut e = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get().get_render_area_granularity(self.device().native_ptr(), self.native_ptr(), e.as_mut_ptr());
+
+            e.assume_init()
+        }
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>, ImageView: VkHandle<Handle = VkImageView>> Framebuffer<Device, ImageView> {
+
+pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> + DeviceChild {}
+
+impl<Device: crate::Device, ImageView: crate::ImageView> FramebufferObject<Device, ImageView> {
     pub const fn size(&self) -> &VkExtent2D {
         &self.3
     }
 
     pub fn resources(&self) -> &[ImageView] {
         &self.2
-    }
-}
-
-#[cfg(feature = "Implements")]
-impl<Device: VkHandle<Handle = VkDevice>> RenderPass<Device> {
-    /// Returns the granularity for optimal render area
-    pub fn optimal_granularity(&self) -> VkExtent2D {
-        let mut e = std::mem::MaybeUninit::uninit();
-        unsafe {
-            Resolver::get().get_render_area_granularity(self.1.native_ptr(), self.0, e.as_mut_ptr());
-
-            e.assume_init()
-        }
     }
 }

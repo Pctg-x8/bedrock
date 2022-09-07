@@ -1164,6 +1164,139 @@ pub trait Device: VkHandle<Handle = VkDevice> {
                 .map(|_| crate::CommandPoolObject(h, self))
         }
     }
+
+    /// Create a new descriptor set layout
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    #[cfg(feature = "Implements")]
+    fn new_descriptor_set_layout(
+        self,
+        bindings: &[crate::DescriptorSetLayoutBinding],
+    ) -> crate::Result<crate::DescriptorSetLayoutObject<Self>>
+    where
+        Self: Sized,
+    {
+        let binding_structures: Vec<_> = bindings
+            .into_iter()
+            .enumerate()
+            .map(|(n, b)| b.make_structure_with_binding_index(n as _))
+            .collect();
+        let cinfo = VkDescriptorSetLayoutCreateInfo {
+            bindingCount: binding_structures.len() as _,
+            pBindings: binding_structures.as_ptr(),
+            ..Default::default()
+        };
+
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_descriptor_set_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| crate::DescriptorSetLayoutObject(h.assume_init(), self))
+        }
+    }
+
+    /// Creates a descriptor pool object
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    #[cfg(feature = "Implements")]
+    fn new_descriptor_pool(
+        self,
+        max_sets: u32,
+        pool_sizes: &[crate::DescriptorPoolSize],
+        allow_free: bool,
+    ) -> crate::Result<crate::DescriptorPoolObject<Self>>
+    where
+        Self: Sized,
+    {
+        let mut h = VK_NULL_HANDLE as _;
+        let cinfo = VkDescriptorPoolCreateInfo {
+            maxSets: max_sets,
+            flags: if allow_free {
+                VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
+            } else {
+                0
+            },
+            poolSizeCount: pool_sizes.len() as _,
+            pPoolSizes: pool_sizes.as_ptr() as *const _,
+            ..Default::default()
+        };
+        unsafe {
+            Resolver::get()
+                .create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .into_result()
+                .map(|_| crate::DescriptorPoolObject(h, self))
+        }
+    }
+
+    /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
+    #[cfg(feature = "Implements")]
+    fn new_descriptor_update_template(
+        self,
+        entries: &[VkDescriptorUpdateTemplateEntry],
+        dsl: Option<&impl crate::DescriptorSetLayout>,
+    ) -> crate::Result<crate::DescriptorUpdateTemplateObject<Self>>
+    where
+        Self: Sized + InstanceChild,
+    {
+        use crate::Instance;
+
+        let cinfo = VkDescriptorUpdateTemplateCreateInfo {
+            descriptorUpdateEntryCount: entries.len() as _,
+            pDescriptorUpdateEntries: entries.as_ptr(),
+            templateType: if dsl.is_none() {
+                VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS
+            } else {
+                VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET
+            },
+            descriptorSetLayout: dsl.map_or(VK_NULL_HANDLE as _, VkHandle::native_ptr),
+            ..Default::default()
+        };
+        let mut handle = std::mem::MaybeUninit::uninit();
+        unsafe {
+            self.instance()
+                .create_descriptor_update_template(self.native_ptr(), &cinfo, std::ptr::null(), handle.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self))
+        }
+    }
+
+    /// Create a new framebuffer object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
+    fn new_framebuffer<ImageView: crate::ImageView>(
+        self,
+        mold: &impl crate::RenderPass,
+        attachment_objects: Vec<ImageView>,
+        size: &VkExtent2D,
+        layers: u32,
+    ) -> crate::Result<crate::FramebufferObject<Self, ImageView>>
+    where
+        Self: Sized,
+    {
+        let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+        let cinfo = VkFramebufferCreateInfo {
+            renderPass: mold.native_ptr(),
+            attachmentCount: views.len() as _,
+            pAttachments: views.as_ptr(),
+            width: size.width,
+            height: size.height,
+            layers,
+            ..Default::default()
+        };
+        let mut h = VK_NULL_HANDLE as _;
+        unsafe { Resolver::get().create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
+            .into_result()
+            .map(|_| crate::FramebufferObject(h, self, attachment_objects, size.as_ref().clone()))
+    }
 }
 
 /// Child of a device object
@@ -1227,7 +1360,7 @@ impl<Device: crate::Device> Queue<Device> {
 }
 
 /// Sparse Binding operation batch
-pub struct SparseBindingOpBatch<'s, Semaphore: VkHandle<Handle = VkSemaphore> + Clone> {
+pub struct SparseBindingOpBatch<'s, Semaphore: crate::Semaphore + Clone> {
     /// An array of semaphores upon which to wait on before the sparse binding operations
     /// for this batch begin execution
     pub wait_semaphores: Cow<'s, [Semaphore]>,
@@ -1241,7 +1374,7 @@ pub struct SparseBindingOpBatch<'s, Semaphore: VkHandle<Handle = VkSemaphore> + 
     /// operations for this batch have completed execution
     pub signal_semaphores: Cow<'s, [Semaphore]>,
 }
-impl<'s, Semaphore: VkHandle<Handle = VkSemaphore> + Clone> Default for SparseBindingOpBatch<'s, Semaphore> {
+impl<'s, Semaphore: crate::Semaphore + Clone> Default for SparseBindingOpBatch<'s, Semaphore> {
     fn default() -> Self {
         SparseBindingOpBatch {
             wait_semaphores: Cow::Borrowed(&[]),
@@ -1263,8 +1396,8 @@ impl<Device: crate::Device> Queue<Device> {
     /// * `VK_ERROR_DEVICE_LOST`
     pub fn bind_sparse(
         &mut self,
-        batches: &[SparseBindingOpBatch<'_, impl VkHandle<Handle = VkSemaphore> + Clone>],
-        fence: Option<&mut impl VkHandle<Handle = VkFence>>,
+        batches: &[SparseBindingOpBatch<'_, impl crate::Semaphore + Clone>],
+        fence: Option<&mut impl crate::Fence>,
     ) -> crate::Result<()> {
         let sem_ptrs = batches.iter().map(|x| {
             (
@@ -1303,18 +1436,14 @@ impl<Device: crate::Device> Queue<Device> {
 }
 
 /// Semaphore/Command submission operation batch
-pub struct SubmissionBatch<
-    'd,
-    Semaphore: VkHandle<Handle = VkSemaphore> + Clone,
-    CommandBuffer: VkHandle<Handle = VkCommandBuffer> + Clone,
-> {
+pub struct SubmissionBatch<'d, Semaphore: crate::Semaphore + Clone, CommandBuffer: crate::CommandBuffer + Clone> {
     pub wait_semaphores: Cow<'d, [(Semaphore, PipelineStageFlags)]>,
     pub command_buffers: Cow<'d, [CommandBuffer]>,
     pub signal_semaphores: Cow<'d, [Semaphore]>,
     pub chained: Option<&'d dyn std::any::Any>,
 }
-impl<Semaphore: VkHandle<Handle = VkSemaphore> + Clone, CommandBuffer: VkHandle<Handle = VkCommandBuffer> + Clone>
-    Default for SubmissionBatch<'_, Semaphore, CommandBuffer>
+impl<Semaphore: crate::Semaphore + Clone, CommandBuffer: crate::CommandBuffer + Clone> Default
+    for SubmissionBatch<'_, Semaphore, CommandBuffer>
 {
     fn default() -> Self {
         SubmissionBatch {
@@ -1336,10 +1465,7 @@ impl<Device: crate::Device> Queue<Device> {
     /// * `VK_ERROR_DEVICE_LOST`
     pub fn submit(
         &mut self,
-        batches: &[SubmissionBatch<
-            impl VkHandle<Handle = VkSemaphore> + Clone,
-            impl VkHandle<Handle = VkCommandBuffer> + Clone,
-        >],
+        batches: &[SubmissionBatch<impl crate::Semaphore + Clone, impl crate::CommandBuffer + Clone>],
         fence: Option<&mut impl VkHandle<Handle = VkFence>>,
     ) -> crate::Result<()> {
         let sem_ptrs: Vec<((Vec<_>, Vec<_>), Vec<_>, Vec<_>)> = batches
