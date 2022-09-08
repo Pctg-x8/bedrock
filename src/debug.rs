@@ -17,7 +17,9 @@ pub struct DebugReportCallbackObject<Instance: crate::Instance>(
     pub(crate) Instance,
     pub(crate) PFN_vkDestroyDebugReportCallbackEXT,
 );
+#[cfg(feature = "VK_EXT_debug_report")]
 unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
+#[cfg(feature = "VK_EXT_debug_report")]
 unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
 #[cfg(feature = "VK_EXT_debug_report")]
 impl<Instance: crate::Instance> InstanceChild for DebugReportCallbackObject<Instance> {
@@ -171,8 +173,11 @@ pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(
     Instance,
     PFN_vkDestroyDebugUtilsMessengerEXT,
 );
+#[cfg(feature = "VK_EXT_debug_utils")]
 unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
+#[cfg(feature = "VK_EXT_debug_utils")]
 unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
+#[cfg(feature = "VK_EXT_debug_utils")]
 impl<Instance: crate::Instance> InstanceChild for DebugUtilsMessengerObject<Instance> {
     type ConcreteInstance = Instance;
 
