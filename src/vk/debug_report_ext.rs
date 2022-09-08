@@ -4,7 +4,6 @@ pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 8;
 pub static VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &'static str = "VK_EXT_debug_report";
 
 use super::*;
-use libc::*;
 
 mod nd_handle_base_ts {
     pub enum VkDebugReportCallbackEXT {}

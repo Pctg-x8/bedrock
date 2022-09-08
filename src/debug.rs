@@ -1,10 +1,10 @@
 //! Vulkan Debug Layer Extensions
 
 #[cfg(feature = "Implements")]
-use crate::VkResultHandler;
+use crate::{VkResultHandler, Instance};
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
-use crate::{Instance, VkHandle};
+use crate::{InstanceChild, VkHandle};
 #[allow(unused_imports)]
 use derives::*;
 
@@ -12,26 +12,42 @@ use derives::*;
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT"]
 #[cfg(feature = "VK_EXT_debug_report")]
-pub struct DebugReportCallback(VkDebugReportCallbackEXT, Instance, PFN_vkDestroyDebugReportCallbackEXT);
+pub struct DebugReportCallbackObject<Instance: crate::Instance>(
+    pub(crate) VkDebugReportCallbackEXT,
+    pub(crate) Instance,
+    pub(crate) PFN_vkDestroyDebugReportCallbackEXT,
+);
+unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
+unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
+#[cfg(feature = "VK_EXT_debug_report")]
+impl<Instance: crate::Instance> InstanceChild for DebugReportCallbackObject<Instance> {
+    type ConcreteInstance = Instance;
+
+    fn instance(&self) -> &Self::ConcreteInstance {
+        &self.1
+    }
+}
 #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-impl Drop for DebugReportCallback {
+impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
     fn drop(&mut self) {
         (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
     }
 }
+#[cfg(feature = "VK_EXT_debug_report")]
+impl<Instance: crate::Instance> DebugReportCallback for DebugReportCallbackObject<Instance> {}
 
 #[cfg(feature = "VK_EXT_debug_report")]
-pub struct DebugReportCallbackBuilder<'i> {
+pub struct DebugReportCallbackBuilder<Instance: crate::Instance> {
     #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-    instance: &'i Instance,
+    instance: Instance,
     flags: VkDebugReportFlagsEXT,
     #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
     callback: PFN_vkDebugReportCallbackEXT,
 }
 #[cfg(feature = "VK_EXT_debug_report")]
-impl<'i> DebugReportCallbackBuilder<'i> {
+impl<Instance: crate::Instance> DebugReportCallbackBuilder<Instance> {
     /// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
-    pub fn new(instance: &'i Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
+    pub fn new(instance: Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
         DebugReportCallbackBuilder {
             instance,
             flags: 0,
@@ -71,72 +87,13 @@ impl<'i> DebugReportCallbackBuilder<'i> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[cfg(feature = "Implements")]
-    pub fn create(&mut self) -> crate::Result<DebugReportCallback> {
-        DebugReportCallback::new(self.instance, self.flags, self.callback)
+    pub fn create(self) -> crate::Result<DebugReportCallbackObject<Instance>> {
+        self.instance.new_debug_report_callback(self.flags, self.callback)
     }
 }
 
-#[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-impl DebugReportCallback {
-    /// Register a debug report callback
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    fn new(
-        instance: &Instance,
-        flags: VkDebugReportFlagsEXT,
-        callback: PFN_vkDebugReportCallbackEXT,
-    ) -> crate::Result<Self> {
-        let ctor: PFN_vkCreateDebugReportCallbackEXT = instance
-            .extra_procedure("vkCreateDebugReportCallbackEXT")
-            .expect("Requiring vkCreateDebugReportCallbackEXT function");
-        let dtor: PFN_vkDestroyDebugReportCallbackEXT = instance
-            .extra_procedure("vkDestroyDebugReportCallbackEXT")
-            .expect("Requiring vkDestroyDebugReportCallbackEXT function");
-        let s = VkDebugReportCallbackCreateInfoEXT {
-            flags,
-            pfnCallback: callback,
-            ..Default::default()
-        };
-        let mut h = VK_NULL_HANDLE as _;
-        ctor(instance.native_ptr(), &s, std::ptr::null(), &mut h)
-            .into_result()
-            .map(|_| DebugReportCallback(h, instance.clone(), dtor))
-    }
-}
-#[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-impl Instance {
-    /// Inject its own messages into the debug stream
-    pub fn debug_message(
-        &self,
-        flags: VkDebugReportFlagsEXT,
-        object_type: DebugReportObjectType,
-        object: u64,
-        location: libc::size_t,
-        message_count: i32,
-        layer_prefix: &str,
-        message: &str,
-    ) {
-        let (lp, msg) = (
-            std::ffi::CString::new(layer_prefix).unwrap(),
-            std::ffi::CString::new(message).unwrap(),
-        );
-        let msgf: PFN_vkDebugReportMessageEXT = self
-            .extra_procedure("vkDebugReportMessageEXT")
-            .expect("Requiring vkDebugReportMessageEXT function");
-        msgf(
-            self.native_ptr(),
-            flags,
-            object_type as _,
-            object,
-            location,
-            message_count,
-            lp.as_ptr(),
-            msg.as_ptr(),
-        );
-    }
-}
+#[cfg(feature = "VK_EXT_debug_report")]
+pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}
 
 /// The type of an object passed to the `VkDebugMarkerObjectNameInfoEXT` and `VkDebugMarkerObjectTagInfoEXT` commands
 #[repr(C)]
@@ -209,13 +166,28 @@ pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT"]
-pub struct DebugUtilsMessenger<Owner: Instance>(VkDebugUtilsMessengerEXT, Owner, PFN_vkDestroyDebugUtilsMessengerEXT);
+pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(
+    VkDebugUtilsMessengerEXT,
+    Instance,
+    PFN_vkDestroyDebugUtilsMessengerEXT,
+);
+unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
+unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
+impl<Instance: crate::Instance> InstanceChild for DebugUtilsMessengerObject<Instance> {
+    type ConcreteInstance = Instance;
+
+    fn instance(&self) -> &Self::ConcreteInstance {
+        &self.1
+    }
+}
 #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-impl<Owner: Instance> Drop for DebugUtilsMessenger<Owner> {
+impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
     fn drop(&mut self) {
         (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
     }
 }
+#[cfg(feature = "VK_EXT_debug_utils")]
+impl<Instance: crate::Instance> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
@@ -367,7 +339,7 @@ impl DebugUtilsMessengerCreateInfo {
     pub fn create<Instance: crate::Instance>(
         &self,
         instance: Instance,
-    ) -> super::Result<DebugUtilsMessenger<Instance>> {
+    ) -> super::Result<DebugUtilsMessengerObject<Instance>> {
         let create_fn: PFN_vkCreateDebugUtilsMessengerEXT = instance
             .extra_procedure("vkCreateDebugUtilsMessengerEXT")
             .expect("Requiring vkCreateDebugUtilsMessengerEXT function");
@@ -378,9 +350,12 @@ impl DebugUtilsMessengerCreateInfo {
         let mut h = VK_NULL_HANDLE as _;
         create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h)
             .into_result()
-            .map(|_| DebugUtilsMessenger(h, instance, destroy_fn))
+            .map(|_| DebugUtilsMessengerObject(h, instance, destroy_fn))
     }
 }
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub trait DebugUtilsMessenger: VkHandle<Handle = VkDebugUtilsMessengerEXT> + InstanceChild {}
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 /// thin pointer to generic handle(u64) conversion helper

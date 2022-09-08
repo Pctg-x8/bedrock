@@ -362,6 +362,70 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             .expect("No vkDestroyDescriptorUpdateTemplate");
         (f)(device, handle, alloc)
     }
+
+    /// Register a debug report callback
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[cfg(feature = "VK_EXT_debug_report")]
+    #[cfg(feature = "Implements")]
+    fn new_debug_report_callback(
+        self,
+        flags: VkDebugReportFlagsEXT,
+        callback: PFN_vkDebugReportCallbackEXT,
+    ) -> crate::Result<crate::DebugReportCallbackObject<Self>>
+    where
+        Self: Sized,
+    {
+        let ctor: PFN_vkCreateDebugReportCallbackEXT = self
+            .extra_procedure("vkCreateDebugReportCallbackEXT")
+            .expect("Requiring vkCreateDebugReportCallbackEXT function");
+        let dtor: PFN_vkDestroyDebugReportCallbackEXT = self
+            .extra_procedure("vkDestroyDebugReportCallbackEXT")
+            .expect("Requiring vkDestroyDebugReportCallbackEXT function");
+        let s = VkDebugReportCallbackCreateInfoEXT {
+            flags,
+            pfnCallback: callback,
+            ..Default::default()
+        };
+        let mut h = VK_NULL_HANDLE as _;
+        ctor(self.native_ptr(), &s, std::ptr::null(), &mut h)
+            .into_result()
+            .map(|_| crate::DebugReportCallbackObject(h, self, dtor))
+    }
+
+    /// Inject its own messages into the debug stream
+    #[cfg(feature = "VK_EXT_debug_report")]
+    #[cfg(feature = "Implements")]
+    fn debug_message(
+        &self,
+        flags: VkDebugReportFlagsEXT,
+        object_type: crate::DebugReportObjectType,
+        object: u64,
+        location: libc::size_t,
+        message_count: i32,
+        layer_prefix: &str,
+        message: &str,
+    ) {
+        let (lp, msg) = (
+            std::ffi::CString::new(layer_prefix).unwrap(),
+            std::ffi::CString::new(message).unwrap(),
+        );
+        let msgf: PFN_vkDebugReportMessageEXT = self
+            .extra_procedure("vkDebugReportMessageEXT")
+            .expect("Requiring vkDebugReportMessageEXT function");
+        msgf(
+            self.native_ptr(),
+            flags,
+            object_type as _,
+            object,
+            location,
+            message_count,
+            lp.as_ptr(),
+            msg.as_ptr(),
+        );
+    }
 }
 impl<T> Instance for &'_ T where T: Instance {}
 impl<T> Instance for std::rc::Rc<T> where T: Instance {}
