@@ -17,11 +17,30 @@ use crate::{
 pub struct FenceObject<Device: crate::Device>(pub(crate) VkFence, pub(crate) Device);
 unsafe impl<Device: crate::Device + Send> Send for FenceObject<Device> {}
 unsafe impl<Device: crate::Device + Sync> Sync for FenceObject<Device> {}
+impl<Device: crate::Device> DeviceChild for FenceObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Drop for FenceObject<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_fence(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> Fence for FenceObject<Device> {}
+impl<Device: crate::Device> Status for FenceObject<Device> {
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        let vr = unsafe { Resolver::get().get_fence_status(self.device().native_ptr(), self.native_ptr()) };
+        match vr {
+            VK_SUCCESS => Ok(true),
+            VK_NOT_READY => Ok(false),
+            _ => Err(VkResultBox(vr)),
         }
     }
 }
@@ -32,6 +51,13 @@ impl<Device: crate::Device> Drop for FenceObject<Device> {
 pub struct SemaphoreObject<Device: crate::Device>(pub(crate) VkSemaphore, pub(crate) Device);
 unsafe impl<Device: crate::Device + Send> Send for SemaphoreObject<Device> {}
 unsafe impl<Device: crate::Device + Sync> Sync for SemaphoreObject<Device> {}
+impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Drop for SemaphoreObject<Device> {
     fn drop(&mut self) {
@@ -40,6 +66,7 @@ impl<Device: crate::Device> Drop for SemaphoreObject<Device> {
         }
     }
 }
+impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
 
 /// Opaque handle to a event object
 #[derive(VkHandle)]
@@ -47,11 +74,30 @@ impl<Device: crate::Device> Drop for SemaphoreObject<Device> {
 pub struct EventObject<Device: crate::Device>(pub(crate) VkEvent, pub(crate) Device);
 unsafe impl<Device: crate::Device + Send> Send for EventObject<Device> {}
 unsafe impl<Device: crate::Device + Sync> Sync for EventObject<Device> {}
+impl<Device: crate::Device> DeviceChild for EventObject<Device> {
+    type ConcreteDevice = Device;
+
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Drop for EventObject<Device> {
     fn drop(&mut self) {
         unsafe {
             Resolver::get().destroy_event(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+    }
+}
+impl<Device: crate::Device> Event for EventObject<Device> {}
+impl<Device: crate::Device> Status for EventObject<Device> {
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        let vr = unsafe { Resolver::get().get_event_status(self.device().native_ptr(), self.native_ptr()) };
+        match vr {
+            VK_EVENT_SET => Ok(true),
+            VK_EVENT_RESET => Ok(false),
+            _ => Err(VkResultBox(vr)),
         }
     }
 }
@@ -100,16 +146,6 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             Resolver::get()
                 .reset_fences(self.device().native_ptr(), 1, &self.native_ptr())
                 .into_result()
-        }
-    }
-
-    #[cfg(feature = "Implements")]
-    fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { Resolver::get().get_fence_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr {
-            VK_SUCCESS => Ok(true),
-            VK_NOT_READY => Ok(false),
-            _ => Err(VkResultBox(vr)),
         }
     }
 
@@ -194,16 +230,6 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
             Resolver::get()
                 .reset_event(self.device().native_ptr(), self.native_ptr())
                 .into_result()
-        }
-    }
-
-    #[cfg(feature = "Implements")]
-    fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { Resolver::get().get_event_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr {
-            VK_EVENT_SET => Ok(true),
-            VK_EVENT_RESET => Ok(false),
-            _ => Err(VkResultBox(vr)),
         }
     }
 }
