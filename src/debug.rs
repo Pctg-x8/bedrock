@@ -1,9 +1,9 @@
 //! Vulkan Debug Layer Extensions
 
-#[cfg(feature = "Implements")]
-use crate::{VkResultHandler, Instance};
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
+#[cfg(feature = "Implements")]
+use crate::{Instance, VkResultHandler};
 use crate::{InstanceChild, VkHandle};
 #[allow(unused_imports)]
 use derives::*;
