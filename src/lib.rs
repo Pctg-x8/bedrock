@@ -49,6 +49,32 @@ pub use vkresolve::{Resolver, ResolverInterface};
 #[cfg(feature = "Implements")]
 mod fnconv;
 
+macro_rules! DefineStdDeviceChildObject {
+    { $(#[$m: meta])* $name: ident($vkh: ty): $i: ty { drop $dropper: ident } } => {
+        #[derive(VkHandle)]
+        $(#[$m])*
+        pub struct $name<Device: crate::Device>(pub(crate) $vkh, pub(crate) Device);
+        unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
+        unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
+        impl<Device: $crate::Device> DeviceChild for $name<Device> {
+            type ConcreteDevice = Device;
+
+            fn device(&self) -> &Self::ConcreteDevice {
+                &self.1
+            }
+        }
+        #[cfg(feature = "Implements")]
+        impl<Device: $crate::Device> Drop for $name<Device> {
+            fn drop(&mut self) {
+                unsafe {
+                    $crate::Resolver::get().$dropper(self.1.native_ptr(), self.0, std::ptr::null());
+                }
+            }
+        }
+        impl<Device: crate::Device> $i for $name<Device> {}
+    }
+}
+
 pub type Result<T> = std::result::Result<T, VkResultBox>;
 pub trait VkResultHandler {
     fn into_result(self) -> Result<()>;

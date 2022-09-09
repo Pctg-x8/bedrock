@@ -1,6 +1,6 @@
 //! Vulkan Descriptors
 
-use crate::{vk::*, DeviceChild, Instance, InstanceChild};
+use crate::{vk::*, DeviceChild, Instance};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -8,26 +8,10 @@ use crate::{
 };
 use crate::{ImageLayout, ShaderStage, VkHandle};
 
-/// Opaque handle to a descriptor set layout object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT"]
-pub struct DescriptorSetLayoutObject<Device: crate::Device>(pub(crate) VkDescriptorSetLayout, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for DescriptorSetLayoutObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for DescriptorSetLayoutObject<Device> {}
-impl<Device: crate::Device> DeviceChild for DescriptorSetLayoutObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for DescriptorSetLayoutObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_descriptor_set_layout(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a descriptor set layout object
+    #[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT"]
+    DescriptorSetLayoutObject(VkDescriptorSetLayout): DescriptorSetLayout { drop destroy_descriptor_set_layout }
 }
 impl<Device: crate::Device> std::cmp::PartialEq for DescriptorSetLayoutObject<Device> {
     fn eq(&self, other: &Self) -> bool {
@@ -40,30 +24,12 @@ impl<Device: crate::Device> std::hash::Hash for DescriptorSetLayoutObject<Device
         self.0.hash(state)
     }
 }
-impl<Device: crate::Device> DescriptorSetLayout for DescriptorSetLayoutObject<Device> {}
 
-/// Opaque handle to a descriptor pool object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_POOL"]
-pub struct DescriptorPoolObject<Device: crate::Device>(pub(crate) VkDescriptorPool, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for DescriptorPoolObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for DescriptorPoolObject<Device> {}
-impl<Device: crate::Device> DeviceChild for DescriptorPoolObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a descriptor pool object
+    #[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_POOL"]
+    DescriptorPoolObject(VkDescriptorPool): DescriptorPool { drop destroy_descriptor_pool }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for DescriptorPoolObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_descriptor_pool(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> DescriptorPool for DescriptorPoolObject<Device> {}
 
 #[repr(transparent)]
 #[derive(Clone, Copy)]
@@ -359,13 +325,13 @@ macro_rules! DescriptorUpdateTemplateEntries
 
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE"]
-pub struct DescriptorUpdateTemplateObject<Device: crate::Device + InstanceChild>(
+pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
     pub(crate) VkDescriptorUpdateTemplate,
     pub(crate) Device,
 );
-unsafe impl<Device: crate::Device + InstanceChild + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
-unsafe impl<Device: crate::Device + InstanceChild + Send> Send for DescriptorUpdateTemplateObject<Device> {}
-impl<Device: crate::Device + InstanceChild> DeviceChild for DescriptorUpdateTemplateObject<Device> {
+unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
+impl<Device: crate::Device> DeviceChild for DescriptorUpdateTemplateObject<Device> {
     type ConcreteDevice = Device;
 
     fn device(&self) -> &Self::ConcreteDevice {
@@ -373,7 +339,7 @@ impl<Device: crate::Device + InstanceChild> DeviceChild for DescriptorUpdateTemp
     }
 }
 #[cfg(feature = "Implements")]
-impl<Device: crate::Device + InstanceChild> Drop for DescriptorUpdateTemplateObject<Device> {
+impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
     fn drop(&mut self) {
         unsafe {
             self.1
@@ -382,7 +348,7 @@ impl<Device: crate::Device + InstanceChild> Drop for DescriptorUpdateTemplateObj
         }
     }
 }
-impl<Device: crate::Device + InstanceChild> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
+impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
 
 pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate> + DeviceChild {
     #[cfg(feature = "Implements")]

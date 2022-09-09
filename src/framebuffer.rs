@@ -9,29 +9,11 @@ use crate::{
 use crate::{ImageLayout, VkHandle};
 use std::ops::*;
 
-/// Opaque handle to a render pass object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_RENDER_PASS"]
-pub struct RenderPassObject<Device: crate::Device>(VkRenderPass, Device);
-unsafe impl<Device: crate::Device + Sync> Sync for RenderPassObject<Device> {}
-#[cfg(feature = "Multithreaded")]
-unsafe impl<Device: crate::Device + Send> Send for RenderPassObject<Device> {}
-impl<Device: crate::Device> DeviceChild for RenderPassObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a render pass object
+    #[object_type = "VK_OBJECT_TYPE_RENDER_PASS"]
+    RenderPassObject(VkRenderPass): RenderPass { drop destroy_render_pass }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for RenderPassObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_render_pass(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> RenderPass for RenderPassObject<Device> {}
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle)]

@@ -13,29 +13,10 @@ use std::mem::replace;
 use std::mem::{size_of, transmute};
 use std::ops::Range;
 
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_COMMAND_POOL"]
-/// Opaque handle to a command pool object
-pub struct CommandPoolObject<Device: crate::Device>(pub(crate) VkCommandPool, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for CommandPoolObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for CommandPoolObject<Device> {}
-impl<Device: crate::Device> DeviceChild for CommandPoolObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for CommandPoolObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_command_pool(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> CommandPool for CommandPoolObject<Device> {
-    type BoundDevice = Device;
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a command pool object
+    #[object_type = "VK_OBJECT_TYPE_COMMAND_POOL"]
+    CommandPoolObject(VkCommandPool): CommandPool { drop destroy_command_pool }
 }
 
 /// Opaque handle to a command buffer object
@@ -67,8 +48,6 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> Drop for CmdRecord<'
 }
 
 pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
-    type BoundDevice: crate::Device;
-
     /// Allocate command buffers from an existing command pool
     /// # Failures
     /// On failure, this command returns
@@ -76,7 +55,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBufferObject<Self::BoundDevice>>> {
+    fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBufferObject<Self::ConcreteDevice>>> {
         let ainfo = VkCommandBufferAllocateInfo {
             commandBufferCount: count,
             level: if primary {

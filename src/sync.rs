@@ -11,28 +11,11 @@ use crate::{
     VkResultBox, VkResultHandler,
 };
 
-/// Opaque handle to a fence object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_FENCE"]
-pub struct FenceObject<Device: crate::Device>(pub(crate) VkFence, pub(crate) Device);
-unsafe impl<Device: crate::Device + Send> Send for FenceObject<Device> {}
-unsafe impl<Device: crate::Device + Sync> Sync for FenceObject<Device> {}
-impl<Device: crate::Device> DeviceChild for FenceObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque Handle to a fence object
+    #[object_type = "VK_OBJECT_TYPE_FENCE"]
+    FenceObject(VkFence): Fence { drop destroy_fence }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for FenceObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_fence(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> Fence for FenceObject<Device> {}
 impl<Device: crate::Device> Status for FenceObject<Device> {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {
@@ -45,51 +28,17 @@ impl<Device: crate::Device> Status for FenceObject<Device> {
     }
 }
 
-/// Opaque handle to a semaphore object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_SEMAPHORE"]
-pub struct SemaphoreObject<Device: crate::Device>(pub(crate) VkSemaphore, pub(crate) Device);
-unsafe impl<Device: crate::Device + Send> Send for SemaphoreObject<Device> {}
-unsafe impl<Device: crate::Device + Sync> Sync for SemaphoreObject<Device> {}
-impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
-    type ConcreteDevice = Device;
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a semaphore object
+    #[object_type = "VK_OBJECT_TYPE_SEMAPHORE"]
+    SemaphoreObject(VkSemaphore): Semaphore { drop destroy_semaphore }
+}
 
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a event object
+    #[object_type = "VK_OBJECT_TYPE_EVENT"]
+    EventObject(VkEvent): Event { drop destroy_event }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for SemaphoreObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_semaphore(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
-
-/// Opaque handle to a event object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_EVENT"]
-pub struct EventObject<Device: crate::Device>(pub(crate) VkEvent, pub(crate) Device);
-unsafe impl<Device: crate::Device + Send> Send for EventObject<Device> {}
-unsafe impl<Device: crate::Device + Sync> Sync for EventObject<Device> {}
-impl<Device: crate::Device> DeviceChild for EventObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for EventObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_event(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> Event for EventObject<Device> {}
 impl<Device: crate::Device> Status for EventObject<Device> {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {

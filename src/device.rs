@@ -178,7 +178,7 @@ impl<PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Physic
     }
 }
 
-pub trait Device: VkHandle<Handle = VkDevice> {
+pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Return a function pointer for a command
     /// # Failures
     /// If function is not provided by instance or `name` is empty, returns `None`
