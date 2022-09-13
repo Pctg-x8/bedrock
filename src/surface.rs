@@ -28,6 +28,7 @@ impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
         }
     }
 }
+#[cfg(feature = "VK_KHR_surface")]
 impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
 
 /// Opaque handle to as swapchain object
@@ -80,6 +81,8 @@ where
         }
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "VK_KHR_surface")]
 impl<Device, Surface> Swapchain for SwapchainObject<Device, Surface>
 where
     Device: crate::Device,
@@ -95,7 +98,7 @@ where
 }
 
 #[cfg(feature = "VK_KHR_surface")]
-pub trait Surface: VkHandle<Handle = VkSurfaceKHR> {}
+pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
 
 /// Builder object to construct a `Swapchain`
 #[cfg(feature = "VK_KHR_swapchain")]
