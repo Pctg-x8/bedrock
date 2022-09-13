@@ -175,99 +175,34 @@ pub enum StencilFaceMask {
     Both = VK_STENCIL_FRONT_AND_BACK as _,
 }
 
-/// Opaque handle to a shader module object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_SHADER_MODULE"]
-pub struct ShaderModuleObject<Device: crate::Device>(pub(crate) VkShaderModule, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for ShaderModuleObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for ShaderModuleObject<Device> {}
-impl<Device: crate::Device> DeviceChild for ShaderModuleObject<Device> {
-    type ConcreteDevice = Device;
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a shader module object
+    #[object_type = "VK_OBJECT_TYPE_SHADER_MODULE"]
+    ShaderModuleObject(VkShaderModule): ShaderModule { drop destroy_shader_module }
+}
 
-    fn device(&self) -> &Device {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a pipeline cache object
+    #[object_type = "VK_OBJECT_TYPE_PIPELINE_CACHE"]
+    PipelineCacheObject(VkPipelineCache): PipelineCache { drop destroy_pipeline_cache }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for ShaderModuleObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_shader_module(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> ShaderModule for ShaderModuleObject<Device> {}
 
-/// Opaque handle to a pipeline cache object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_PIPELINE_CACHE"]
-pub struct PipelineCacheObject<Device: crate::Device>(pub(crate) VkPipelineCache, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for PipelineCacheObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for PipelineCacheObject<Device> {}
-impl<Device: crate::Device> DeviceChild for PipelineCacheObject<Device> {
-    type ConcreteDevice = Device;
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a pipeline layout object
+    #[object_type = "VK_OBJECT_TYPE_PIPELINE_LAYOUT"]
+    PipelineLayoutObject(VkPipelineLayout): PipelineLayout { drop destroy_pipeline_layout }
+}
 
-    fn device(&self) -> &Device {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a pipeline object
+    #[object_type = "VK_OBJECT_TYPE_PIPELINE"]
+    PipelineObject(VkPipeline): Pipeline { drop destroy_pipeline }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for PipelineCacheObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_pipeline_cache(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> PipelineCache for PipelineCacheObject<Device> {}
-
-/// Opaque handle to a pipeline layout object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_PIPELINE_LAYOUT"]
-pub struct PipelineLayoutObject<Device: crate::Device>(pub(crate) VkPipelineLayout, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for PipelineLayoutObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for PipelineLayoutObject<Device> {}
-impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for PipelineLayoutObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_pipeline_layout(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> PipelineLayout for PipelineLayoutObject<Device> {}
-
-/// Opaque handle to a pipeline object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_PIPELINE"]
-pub struct PipelineObject<Device: crate::Device>(pub(crate) VkPipeline, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for PipelineObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for PipelineObject<Device> {}
-impl<Device: crate::Device> DeviceChild for PipelineObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for PipelineObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_pipeline(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> Pipeline for PipelineObject<Device> {}
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}
+impl<T> ShaderModule for &'_ T where T: ShaderModule {}
+impl<T> ShaderModule for std::rc::Rc<T> where T: ShaderModule {}
+impl<T> ShaderModule for std::sync::Arc<T> where T: ShaderModule {}
 
 pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     /// Get the data store from a pipeline cache
@@ -325,10 +260,19 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
         }
     }
 }
+impl<T> PipelineCache for &'_ T where T: PipelineCache {}
+impl<T> PipelineCache for std::rc::Rc<T> where T: PipelineCache {}
+impl<T> PipelineCache for std::sync::Arc<T> where T: PipelineCache {}
 
 pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
+impl<T> PipelineLayout for &'_ T where T: PipelineLayout {}
+impl<T> PipelineLayout for std::rc::Rc<T> where T: PipelineLayout {}
+impl<T> PipelineLayout for std::sync::Arc<T> where T: PipelineLayout {}
 
 pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
+impl<T> Pipeline for &'_ T where T: Pipeline {}
+impl<T> Pipeline for std::rc::Rc<T> where T: Pipeline {}
+impl<T> Pipeline for std::sync::Arc<T> where T: Pipeline {}
 
 /// Disabled, Specified in the command buffer or Specified in the pipeline state
 pub enum SwitchOrDynamicState<T> {

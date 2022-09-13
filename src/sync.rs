@@ -148,8 +148,14 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         (f)(self.device().native_ptr(), &info).into_result()
     }
 }
+impl<T> Fence for &'_ T where T: Fence {}
+impl<T> Fence for std::rc::Rc<T> where T: Fence {}
+impl<T> Fence for std::sync::Arc<T> where T: Fence {}
 
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> {}
+impl<T> Semaphore for &'_ T where T: Semaphore {}
+impl<T> Semaphore for std::rc::Rc<T> where T: Semaphore {}
+impl<T> Semaphore for std::sync::Arc<T> where T: Semaphore {}
 
 pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
     /// Set an event to signaled state
@@ -182,6 +188,9 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
         }
     }
 }
+impl<T> Event for &'_ T where T: Event {}
+impl<T> Event for std::rc::Rc<T> where T: Event {}
+impl<T> Event for std::sync::Arc<T> where T: Event {}
 
 pub trait Status {
     /// Retrieve the status(whether is signaled or not) of a synchronize object
@@ -193,4 +202,31 @@ pub trait Status {
     /// * `VK_ERROR_DEVICE_LOST`
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool>;
+}
+impl<T> Status for &'_ T
+where
+    T: Status,
+{
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        T::status(self)
+    }
+}
+impl<T> Status for std::rc::Rc<T>
+where
+    T: Status,
+{
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        T::status(self)
+    }
+}
+impl<T> Status for std::sync::Arc<T>
+where
+    T: Status,
+{
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        T::status(self)
+    }
 }

@@ -110,6 +110,9 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
         );
     }
 }
+impl<T> CommandPool for &'_ T where T: CommandPool {}
+impl<T> CommandPool for std::rc::Rc<T> where T: CommandPool {}
+impl<T> CommandPool for std::sync::Arc<T> where T: CommandPool {}
 
 pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     /// Start recording a primary command buffer
@@ -243,6 +246,9 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
         }
     }
 }
+impl<T> CommandBuffer for &'_ T where T: CommandBuffer {}
+impl<T> CommandBuffer for std::rc::Rc<T> where T: CommandBuffer {}
+impl<T> CommandBuffer for std::sync::Arc<T> where T: CommandBuffer {}
 
 pub struct SynchronizedCommandBuffer<
     'p,

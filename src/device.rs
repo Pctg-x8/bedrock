@@ -1298,6 +1298,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .map(|_| crate::FramebufferObject(h, self, attachment_objects, size.as_ref().clone()))
     }
 }
+impl<T> Device for &'_ T where T: Device {}
+impl<T> Device for std::rc::Rc<T> where T: Device {}
+impl<T> Device for std::sync::Arc<T> where T: Device {}
 
 /// Child of a device object
 pub trait DeviceChild {
@@ -1324,7 +1327,7 @@ where
     type ConcreteDevice = T::ConcreteDevice;
 
     fn device(&self) -> &Self::ConcreteDevice {
-        T::device(&**self)
+        T::device(self)
     }
 }
 impl<T> DeviceChild for std::sync::Arc<T>
@@ -1334,7 +1337,7 @@ where
     type ConcreteDevice = T::ConcreteDevice;
 
     fn device(&self) -> &Self::ConcreteDevice {
-        T::device(&**self)
+        T::device(self)
     }
 }
 

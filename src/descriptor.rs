@@ -123,6 +123,9 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
 }
 
 pub trait DescriptorSetLayout: VkHandle<Handle = VkDescriptorSetLayout> + DeviceChild {}
+impl<T> DescriptorSetLayout for &'_ T where T: DescriptorSetLayout {}
+impl<T> DescriptorSetLayout for std::rc::Rc<T> where T: DescriptorSetLayout {}
+impl<T> DescriptorSetLayout for std::sync::Arc<T> where T: DescriptorSetLayout {}
 
 /*
 # DescriptorPoolのフラグメンテーションについて(from `VkDescriptorPoolCreateInfo` Manual)
@@ -223,6 +226,9 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
         }
     }
 }
+impl<T> DescriptorPool for &'_ T where T: DescriptorPool {}
+impl<T> DescriptorPool for std::rc::Rc<T> where T: DescriptorPool {}
+impl<T> DescriptorPool for std::sync::Arc<T> where T: DescriptorPool {}
 
 /// Structure specifying the parameters of a descriptor set write operation
 /// Element order: DescriptorSet, Binding, ArrayIndex, Description
@@ -363,3 +369,6 @@ pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate
         }
     }
 }
+impl<T> DescriptorUpdateTemplate for &'_ T where T: DescriptorUpdateTemplate {}
+impl<T> DescriptorUpdateTemplate for std::rc::Rc<T> where T: DescriptorUpdateTemplate {}
+impl<T> DescriptorUpdateTemplate for std::sync::Arc<T> where T: DescriptorUpdateTemplate {}
