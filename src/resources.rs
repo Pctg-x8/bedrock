@@ -899,7 +899,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
 }
 impl<T> Image for &'_ T
 where
-    T: Image,
+    T: Image + ?Sized,
 {
     fn format(&self) -> VkFormat {
         T::format(self)
@@ -915,7 +915,7 @@ where
 }
 impl<T> Image for std::rc::Rc<T>
 where
-    T: Image,
+    T: Image + ?Sized,
 {
     fn format(&self) -> VkFormat {
         T::format(self)
@@ -931,7 +931,7 @@ where
 }
 impl<T> Image for std::sync::Arc<T>
 where
-    T: Image,
+    T: Image + ?Sized,
 {
     fn format(&self) -> VkFormat {
         T::format(self)
@@ -966,9 +966,9 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
             .map(|_| BufferViewObject(h, self))
     }
 }
-impl<T> Buffer for &'_ T where T: Buffer {}
-impl<T> Buffer for std::rc::Rc<T> where T: Buffer {}
-impl<T> Buffer for std::sync::Arc<T> where T: Buffer {}
+impl<T> Buffer for &'_ T where T: Buffer + ?Sized {}
+impl<T> Buffer for std::rc::Rc<T> where T: Buffer + ?Sized {}
+impl<T> Buffer for std::sync::Arc<T> where T: Buffer + ?Sized {}
 
 pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     /// Map a memory object into application address space
@@ -1016,9 +1016,9 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
         b
     }
 }
-impl<T> DeviceMemory for &'_ T where T: DeviceMemory {}
-impl<T> DeviceMemory for std::rc::Rc<T> where T: DeviceMemory {}
-impl<T> DeviceMemory for std::sync::Arc<T> where T: DeviceMemory {}
+impl<T> DeviceMemory for &'_ T where T: DeviceMemory + ?Sized {}
+impl<T> DeviceMemory for std::rc::Rc<T> where T: DeviceMemory + ?Sized {}
+impl<T> DeviceMemory for std::sync::Arc<T> where T: DeviceMemory + ?Sized {}
 
 /// Common operations for memory bound objects
 pub trait MemoryBound {

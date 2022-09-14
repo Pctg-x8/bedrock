@@ -200,9 +200,9 @@ DefineStdDeviceChildObject! {
 }
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}
-impl<T> ShaderModule for &'_ T where T: ShaderModule {}
-impl<T> ShaderModule for std::rc::Rc<T> where T: ShaderModule {}
-impl<T> ShaderModule for std::sync::Arc<T> where T: ShaderModule {}
+impl<T> ShaderModule for &'_ T where T: ShaderModule + ?Sized {}
+impl<T> ShaderModule for std::rc::Rc<T> where T: ShaderModule + ?Sized {}
+impl<T> ShaderModule for std::sync::Arc<T> where T: ShaderModule + ?Sized {}
 
 pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     /// Get the data store from a pipeline cache
@@ -260,19 +260,19 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
         }
     }
 }
-impl<T> PipelineCache for &'_ T where T: PipelineCache {}
-impl<T> PipelineCache for std::rc::Rc<T> where T: PipelineCache {}
-impl<T> PipelineCache for std::sync::Arc<T> where T: PipelineCache {}
+impl<T> PipelineCache for &'_ T where T: PipelineCache + ?Sized {}
+impl<T> PipelineCache for std::rc::Rc<T> where T: PipelineCache + ?Sized {}
+impl<T> PipelineCache for std::sync::Arc<T> where T: PipelineCache + ?Sized {}
 
 pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
-impl<T> PipelineLayout for &'_ T where T: PipelineLayout {}
-impl<T> PipelineLayout for std::rc::Rc<T> where T: PipelineLayout {}
-impl<T> PipelineLayout for std::sync::Arc<T> where T: PipelineLayout {}
+impl<T> PipelineLayout for &'_ T where T: PipelineLayout + ?Sized {}
+impl<T> PipelineLayout for std::rc::Rc<T> where T: PipelineLayout + ?Sized {}
+impl<T> PipelineLayout for std::sync::Arc<T> where T: PipelineLayout + ?Sized {}
 
 pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
-impl<T> Pipeline for &'_ T where T: Pipeline {}
-impl<T> Pipeline for std::rc::Rc<T> where T: Pipeline {}
-impl<T> Pipeline for std::sync::Arc<T> where T: Pipeline {}
+impl<T> Pipeline for &'_ T where T: Pipeline + ?Sized {}
+impl<T> Pipeline for std::rc::Rc<T> where T: Pipeline + ?Sized {}
+impl<T> Pipeline for std::sync::Arc<T> where T: Pipeline + ?Sized {}
 
 /// Disabled, Specified in the command buffer or Specified in the pipeline state
 pub enum SwitchOrDynamicState<T> {

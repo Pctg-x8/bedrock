@@ -1298,9 +1298,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .map(|_| crate::FramebufferObject(h, self, attachment_objects, size.as_ref().clone()))
     }
 }
-impl<T> Device for &'_ T where T: Device {}
-impl<T> Device for std::rc::Rc<T> where T: Device {}
-impl<T> Device for std::sync::Arc<T> where T: Device {}
+impl<T> Device for &'_ T where T: Device + ?Sized {}
+impl<T> Device for std::rc::Rc<T> where T: Device + ?Sized {}
+impl<T> Device for std::sync::Arc<T> where T: Device + ?Sized {}
 
 /// Child of a device object
 pub trait DeviceChild {
@@ -1312,7 +1312,7 @@ pub trait DeviceChild {
 }
 impl<T> DeviceChild for &'_ T
 where
-    T: DeviceChild,
+    T: DeviceChild + ?Sized,
 {
     type ConcreteDevice = T::ConcreteDevice;
 
@@ -1322,7 +1322,7 @@ where
 }
 impl<T> DeviceChild for std::rc::Rc<T>
 where
-    T: DeviceChild,
+    T: DeviceChild + ?Sized,
 {
     type ConcreteDevice = T::ConcreteDevice;
 
@@ -1332,7 +1332,7 @@ where
 }
 impl<T> DeviceChild for std::sync::Arc<T>
 where
-    T: DeviceChild,
+    T: DeviceChild + ?Sized,
 {
     type ConcreteDevice = T::ConcreteDevice;
 
@@ -1346,7 +1346,7 @@ pub trait DeviceChildTransferrable: DeviceChild {
 }
 impl<T> DeviceChildTransferrable for &'_ T
 where
-    T: DeviceChild,
+    T: DeviceChild + ?Sized,
     T::ConcreteDevice: Clone,
 {
     fn transfer_device(self) -> Self::ConcreteDevice {

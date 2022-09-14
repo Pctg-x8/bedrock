@@ -115,7 +115,7 @@ pub trait VkHandle {
 }
 impl<T> VkHandle for &'_ T
 where
-    T: VkHandle,
+    T: VkHandle + ?Sized,
 {
     type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
@@ -126,7 +126,7 @@ where
 }
 impl<T> VkHandle for &'_ mut T
 where
-    T: VkHandle,
+    T: VkHandle + ?Sized,
 {
     type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
@@ -137,7 +137,7 @@ where
 }
 impl<T> VkHandle for std::rc::Rc<T>
 where
-    T: VkHandle,
+    T: VkHandle + ?Sized,
 {
     type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
@@ -148,7 +148,7 @@ where
 }
 impl<T> VkHandle for std::sync::Arc<T>
 where
-    T: VkHandle,
+    T: VkHandle + ?Sized,
 {
     type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
@@ -159,7 +159,7 @@ where
 }
 impl<T> VkHandle for std::cell::RefCell<T>
 where
-    T: VkHandle,
+    T: VkHandle + ?Sized,
 {
     type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
@@ -170,7 +170,7 @@ where
 }
 impl<T> VkHandle for std::sync::MutexGuard<'_, T>
 where
-    T: VkHandle,
+    T: VkHandle + ?Sized,
 {
     type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;

@@ -97,11 +97,11 @@ impl<Instance: crate::Instance> DebugReportCallbackBuilder<Instance> {
 #[cfg(feature = "VK_EXT_debug_report")]
 pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}
 #[cfg(feature = "VK_EXT_debug_report")]
-impl<T> DebugReportCallback for &'_ T where T: DebugReportCallback {}
+impl<T> DebugReportCallback for &'_ T where T: DebugReportCallback + ?Sized {}
 #[cfg(feature = "VK_EXT_debug_report")]
-impl<T> DebugReportCallback for std::rc::Rc<T> where T: DebugReportCallback {}
+impl<T> DebugReportCallback for std::rc::Rc<T> where T: DebugReportCallback + ?Sized {}
 #[cfg(feature = "VK_EXT_debug_report")]
-impl<T> DebugReportCallback for std::sync::Arc<T> where T: DebugReportCallback {}
+impl<T> DebugReportCallback for std::sync::Arc<T> where T: DebugReportCallback + ?Sized {}
 
 /// The type of an object passed to the `VkDebugMarkerObjectNameInfoEXT` and `VkDebugMarkerObjectTagInfoEXT` commands
 #[repr(C)]
@@ -368,11 +368,11 @@ impl DebugUtilsMessengerCreateInfo {
 #[cfg(feature = "VK_EXT_debug_utils")]
 pub trait DebugUtilsMessenger: VkHandle<Handle = VkDebugUtilsMessengerEXT> + InstanceChild {}
 #[cfg(feature = "VK_EXT_debug_utils")]
-impl<T> DebugUtilsMessenger for &'_ T where T: DebugUtilsMessenger {}
+impl<T> DebugUtilsMessenger for &'_ T where T: DebugUtilsMessenger + ?Sized {}
 #[cfg(feature = "VK_EXT_debug_utils")]
-impl<T> DebugUtilsMessenger for std::rc::Rc<T> where T: DebugUtilsMessenger {}
+impl<T> DebugUtilsMessenger for std::rc::Rc<T> where T: DebugUtilsMessenger + ?Sized {}
 #[cfg(feature = "VK_EXT_debug_utils")]
-impl<T> DebugUtilsMessenger for std::sync::Arc<T> where T: DebugUtilsMessenger {}
+impl<T> DebugUtilsMessenger for std::sync::Arc<T> where T: DebugUtilsMessenger + ?Sized {}
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 /// thin pointer to generic handle(u64) conversion helper

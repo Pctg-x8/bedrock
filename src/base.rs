@@ -427,9 +427,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         );
     }
 }
-impl<T> Instance for &'_ T where T: Instance {}
-impl<T> Instance for std::rc::Rc<T> where T: Instance {}
-impl<T> Instance for std::sync::Arc<T> where T: Instance {}
+impl<T> Instance for &'_ T where T: Instance + ?Sized {}
+impl<T> Instance for std::rc::Rc<T> where T: Instance + ?Sized {}
+impl<T> Instance for std::sync::Arc<T> where T: Instance + ?Sized {}
 
 /// A PhysicalDevice interface
 pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
@@ -1246,9 +1246,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 }
-impl<T> PhysicalDevice for &'_ T where T: PhysicalDevice {}
-impl<T> PhysicalDevice for std::rc::Rc<T> where T: PhysicalDevice {}
-impl<T> PhysicalDevice for std::sync::Arc<T> where T: PhysicalDevice {}
+impl<T> PhysicalDevice for &'_ T where T: PhysicalDevice + ?Sized {}
+impl<T> PhysicalDevice for std::rc::Rc<T> where T: PhysicalDevice + ?Sized {}
+impl<T> PhysicalDevice for std::sync::Arc<T> where T: PhysicalDevice + ?Sized {}
 
 pub trait InstanceChild {
     type ConcreteInstance: Instance;
@@ -1257,7 +1257,7 @@ pub trait InstanceChild {
 }
 impl<T> InstanceChild for &'_ T
 where
-    T: InstanceChild,
+    T: InstanceChild + ?Sized,
 {
     type ConcreteInstance = T::ConcreteInstance;
 
@@ -1267,7 +1267,7 @@ where
 }
 impl<T> InstanceChild for std::rc::Rc<T>
 where
-    T: InstanceChild,
+    T: InstanceChild + ?Sized,
 {
     type ConcreteInstance = T::ConcreteInstance;
 
@@ -1277,7 +1277,7 @@ where
 }
 impl<T> InstanceChild for std::sync::Arc<T>
 where
-    T: InstanceChild,
+    T: InstanceChild + ?Sized,
 {
     type ConcreteInstance = T::ConcreteInstance;
 
