@@ -96,6 +96,25 @@ where
         &self.4
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "VK_KHR_surface")]
+impl<Device, Surface> SwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: crate::Surface,
+{
+    /// Deconstructs the swapchain and retrieves its parents
+    pub fn deconstruct(self) -> (Device, Surface) {
+        let d = unsafe { std::ptr::read(&self.1) };
+        let s = unsafe { std::ptr::read(&self.2) };
+        unsafe {
+            Resolver::get().destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
+        }
+        std::mem::forget(self);
+
+        (d, s)
+    }
+}
 
 #[cfg(feature = "VK_KHR_surface")]
 pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
