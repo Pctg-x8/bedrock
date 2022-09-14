@@ -328,6 +328,13 @@ impl<Swapchain: crate::Swapchain> MemoryBound for SwapchainImage<Swapchain> {
         }
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Swapchain: crate::Swapchain + Clone> SwapchainImage<&'_ Swapchain> {
+    /// Clones parent reference
+    pub fn clone_parent(self) -> SwapchainImage<Swapchain> {
+        SwapchainImage(self.0, self.1.clone(), self.2)
+    }
+}
 
 #[derive(VkHandle)]
 #[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
