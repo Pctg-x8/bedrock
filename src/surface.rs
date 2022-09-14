@@ -104,6 +104,7 @@ where
     Surface: crate::Surface,
 {
     /// Deconstructs the swapchain and retrieves its parents
+    #[cfg(feature = "Implements")]
     pub fn deconstruct(self) -> (Device, Surface) {
         let d = unsafe { std::ptr::read(&self.1) };
         let s = unsafe { std::ptr::read(&self.2) };
