@@ -36,6 +36,13 @@ impl<Instance: crate::Instance> Drop for DeviceObject<Instance> {
     }
 }
 impl<Instance: crate::Instance> Device for DeviceObject<Instance> {}
+impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
+    /// Clones parent reference
+    #[inline]
+    pub fn clone_parent(self) -> DeviceObject<Instance> {
+        DeviceObject(self.0, self.1.clone())
+    }
+}
 
 /// Opaque handle to a queue object
 #[derive(Clone, VkHandle)]
