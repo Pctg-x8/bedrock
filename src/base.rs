@@ -70,6 +70,13 @@ impl<Owner: Instance> InstanceChildTransferrable for PhysicalDeviceObject<Owner>
         self.1
     }
 }
+impl<Instance: crate::Instance + Clone> PhysicalDeviceObject<&'_ Instance> {
+    /// Clones parent reference
+    #[inline]
+    pub fn clone_parent(self) -> PhysicalDeviceObject<Instance> {
+        PhysicalDeviceObject(self.0, self.1.clone())
+    }
+}
 
 pub struct IterPhysicalDevices<'i, Source: Instance + 'i>(Vec<VkPhysicalDevice>, usize, &'i Source);
 impl<'i, Source: Instance + 'i> Iterator for IterPhysicalDevices<'i, Source> {
