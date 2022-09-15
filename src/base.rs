@@ -2,6 +2,7 @@
 
 use crate::vk::*;
 use crate::VkHandle;
+use crate::VkObject;
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute,
@@ -24,8 +25,10 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
 
 /// Opaque handle to a instance object
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_INSTANCE"]
 pub struct InstanceObject(VkInstance);
+impl VkObject for InstanceObject {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_INSTANCE;
+}
 unsafe impl Sync for InstanceObject {}
 unsafe impl Send for InstanceObject {}
 #[cfg(feature = "Implements")]
@@ -48,8 +51,10 @@ impl Instance for InstanceObject {}
 /// * `win32_presentation_support(&self, queue_family: u32) -> bool`: VK_KHR_win32_surface
 /// * Methods for Android and Mir surfaces are not implemented
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_PHYSICAL_DEVICE"]
 pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, Owner);
+impl<Instance: crate::Instance> VkObject for PhysicalDeviceObject<Instance> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_PHYSICAL_DEVICE;
+}
 unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}

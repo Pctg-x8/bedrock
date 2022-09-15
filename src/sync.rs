@@ -13,8 +13,7 @@ use crate::{
 
 DefineStdDeviceChildObject! {
     /// Opaque Handle to a fence object
-    #[object_type = "VK_OBJECT_TYPE_FENCE"]
-    FenceObject(VkFence): Fence { drop destroy_fence }
+    FenceObject(VkFence, VK_OBJECT_TYPE_FENCE): Fence { drop destroy_fence }
 }
 impl<Device: crate::Device> Status for FenceObject<Device> {
     #[cfg(feature = "Implements")]
@@ -30,14 +29,12 @@ impl<Device: crate::Device> Status for FenceObject<Device> {
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a semaphore object
-    #[object_type = "VK_OBJECT_TYPE_SEMAPHORE"]
-    SemaphoreObject(VkSemaphore): Semaphore { drop destroy_semaphore }
+    SemaphoreObject(VkSemaphore, VK_OBJECT_TYPE_SEMAPHORE): Semaphore { drop destroy_semaphore }
 }
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a event object
-    #[object_type = "VK_OBJECT_TYPE_EVENT"]
-    EventObject(VkEvent): Event { drop destroy_event }
+    EventObject(VkEvent, VK_OBJECT_TYPE_EVENT): Event { drop destroy_event }
 }
 impl<Device: crate::Device> Status for EventObject<Device> {
     #[cfg(feature = "Implements")]

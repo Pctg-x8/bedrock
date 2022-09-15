@@ -50,10 +50,13 @@ pub use vkresolve::{Resolver, ResolverInterface};
 mod fnconv;
 
 macro_rules! DefineStdDeviceChildObject {
-    { $(#[$m: meta])* $name: ident($vkh: ty): $i: ty { drop $dropper: ident } } => {
+    { $(#[$m: meta])* $name: ident($vkh: ty, $ot: expr): $i: ty { drop $dropper: ident } } => {
         #[derive(VkHandle)]
         $(#[$m])*
-        pub struct $name<Device: crate::Device>(pub(crate) $vkh, pub(crate) Device);
+        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, pub(crate) Device);
+        impl<Device: $crate::Device> $crate::VkObject for $name<Device> {
+            const TYPE: VkObjectType = $ot;
+        }
         unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
         unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
         impl<Device: $crate::Device> DeviceChild for $name<Device> {
@@ -92,13 +95,87 @@ impl VkResultHandler for VkResult {
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {
     type Handle;
-    const TYPE: VkObjectType;
 
     /// Retrieve an underlying handle
     fn native_ptr(&self) -> Self::Handle;
+}
+impl<T> VkHandle for &'_ T
+where
+    T: VkHandle + ?Sized,
+{
+    type Handle = T::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(*self)
+    }
+}
+impl<T> VkHandle for &'_ mut T
+where
+    T: VkHandle + ?Sized,
+{
+    type Handle = T::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(*self)
+    }
+}
+impl<T> VkHandle for std::rc::Rc<T>
+where
+    T: VkHandle + ?Sized,
+{
+    type Handle = T::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&**self)
+    }
+}
+impl<T> VkHandle for std::sync::Arc<T>
+where
+    T: VkHandle + ?Sized,
+{
+    type Handle = T::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&**self)
+    }
+}
+impl<T> VkHandle for std::cell::RefCell<T>
+where
+    T: VkHandle + ?Sized,
+{
+    type Handle = T::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&self.borrow())
+    }
+}
+impl<T> VkHandle for std::sync::MutexGuard<'_, T>
+where
+    T: VkHandle + ?Sized,
+{
+    type Handle = T::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        T::native_ptr(&**self)
+    }
+}
+
+/// Unwrapping Option-ed Reference to VkHandles.  
+/// Returns "Empty Handle" when the value is `None`.
+impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
+    type Handle = <H as VkHandle>::Handle;
+
+    fn native_ptr(&self) -> Self::Handle {
+        self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr())
+    }
+}
+
+/// An object in Vulkan
+pub trait VkObject: VkHandle {
+    const TYPE: VkObjectType;
 
     #[cfg(all(feature = "Implements", feature = "VK_EXT_debug_utils"))]
-    /// [Implements][VK_EXT_debug_utils] Give a user-friendly name to this object.
+    /// Give a user-friendly name to this object.
     /// # Failures
     /// On failure, this command returns
     ///
@@ -113,82 +190,41 @@ pub trait VkHandle {
         DebugUtilsObjectNameInfo::new(self, name).apply(self.device())
     }
 }
-impl<T> VkHandle for &'_ T
+impl<T> VkObject for &'_ T
 where
-    T: VkHandle + ?Sized,
+    T: VkObject + ?Sized,
 {
-    type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(*self)
-    }
 }
-impl<T> VkHandle for &'_ mut T
+impl<T> VkObject for &'_ mut T
 where
-    T: VkHandle + ?Sized,
+    T: VkObject + ?Sized,
 {
-    type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(*self)
-    }
 }
-impl<T> VkHandle for std::rc::Rc<T>
+impl<T> VkObject for std::rc::Rc<T>
 where
-    T: VkHandle + ?Sized,
+    T: VkObject + ?Sized,
 {
-    type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&**self)
-    }
 }
-impl<T> VkHandle for std::sync::Arc<T>
+impl<T> VkObject for std::sync::Arc<T>
 where
-    T: VkHandle + ?Sized,
+    T: VkObject + ?Sized,
 {
-    type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&**self)
-    }
 }
-impl<T> VkHandle for std::cell::RefCell<T>
+impl<T> VkObject for std::cell::RefCell<T>
 where
-    T: VkHandle + ?Sized,
+    T: VkObject + ?Sized,
 {
-    type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&self.borrow())
-    }
 }
-impl<T> VkHandle for std::sync::MutexGuard<'_, T>
+impl<T> VkObject for std::sync::MutexGuard<'_, T>
 where
-    T: VkHandle + ?Sized,
+    T: VkObject + ?Sized,
 {
-    type Handle = T::Handle;
     const TYPE: VkObjectType = T::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&**self)
-    }
-}
-
-/// Unwrapping Option-ed Reference to VkHandles.  
-/// Returns "Empty Handle" when the value is `None`.
-impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
-    type Handle = <H as VkHandle>::Handle;
-    const TYPE: VkObjectType = <H as VkHandle>::TYPE;
-
-    fn native_ptr(&self) -> Self::Handle {
-        self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr())
-    }
 }
 
 // A single Number or a Range
@@ -393,8 +429,10 @@ pub mod traits {
 
 /// Opaque handle to a query pool object
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_QUERY_POOL"]
 pub struct QueryPool<Device: crate::Device>(VkQueryPool, Device);
+impl<Device: crate::Device> VkObject for QueryPool<Device> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_QUERY_POOL;
+}
 unsafe impl<Device: crate::Device + Sync> Sync for QueryPool<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for QueryPool<Device> {}
 impl<Device: crate::Device> DeviceChild for QueryPool<Device> {

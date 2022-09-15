@@ -5,8 +5,11 @@ use super::*;
 /// Opaque handle to a surface object
 #[cfg(feature = "VK_KHR_surface")]
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_SURFACE_KHR"]
 pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) VkSurfaceKHR, pub(crate) Instance);
+#[cfg(feature = "VK_KHR_surface")]
+impl<Instance: crate::Instance> VkObject for SurfaceObject<Instance> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
+}
 #[cfg(feature = "VK_KHR_surface")]
 unsafe impl<Instance: crate::Instance + Sync> Sync for SurfaceObject<Instance> {}
 #[cfg(feature = "VK_KHR_surface")]
@@ -34,7 +37,6 @@ impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
 /// Opaque handle to as swapchain object
 #[cfg(feature = "VK_KHR_swapchain")]
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_SWAPCHAIN_KHR"]
 pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface>(
     VkSwapchainKHR,
     Device,
@@ -42,6 +44,10 @@ pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface>(
     VkFormat,
     VkExtent3D,
 );
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Device: crate::Device, Surface: crate::Surface> VkObject for SwapchainObject<Device, Surface> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
+}
 #[cfg(feature = "VK_KHR_swapchain")]
 unsafe impl<Device, Surface> Sync for SwapchainObject<Device, Surface>
 where

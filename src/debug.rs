@@ -4,19 +4,23 @@
 use crate::{vk::*, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{Instance, VkResultHandler};
-use crate::{InstanceChild, VkHandle};
+#[allow(unused_imports)]
+use crate::{InstanceChild, VkHandle, VkObject};
 #[allow(unused_imports)]
 use derives::*;
 
 /// Opaque object to a debug report callback object
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT"]
 #[cfg(feature = "VK_EXT_debug_report")]
 pub struct DebugReportCallbackObject<Instance: crate::Instance>(
     pub(crate) VkDebugReportCallbackEXT,
     pub(crate) Instance,
     pub(crate) PFN_vkDestroyDebugReportCallbackEXT,
 );
+#[cfg(feature = "VK_EXT_debug_report")]
+impl<Instance: crate::Instance> VkObject for DebugReportCallbackObject<Instance> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT;
+}
 #[cfg(feature = "VK_EXT_debug_report")]
 unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
 #[cfg(feature = "VK_EXT_debug_report")]
@@ -173,12 +177,15 @@ pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT"]
 pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(
     VkDebugUtilsMessengerEXT,
     Instance,
     PFN_vkDestroyDebugUtilsMessengerEXT,
 );
+#[cfg(feature = "VK_EXT_debug_utils")]
+impl<Instance: crate::Instance> VkObject for DebugUtilsMessengerObject<Instance> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT;
+}
 #[cfg(feature = "VK_EXT_debug_utils")]
 unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -400,7 +407,7 @@ pub struct DebugUtilsObjectNameInfo<'d>(
 );
 #[cfg(feature = "VK_EXT_debug_utils")]
 impl<'d> DebugUtilsObjectNameInfo<'d> {
-    pub fn new<H: VkHandle + ?Sized>(handle: &H, name: Option<&'d std::ffi::CStr>) -> Self
+    pub fn new<H: VkHandle + VkObject + ?Sized>(handle: &H, name: Option<&'d std::ffi::CStr>) -> Self
     where
         H::Handle: PointerHandleConversion,
     {

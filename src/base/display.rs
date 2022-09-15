@@ -1,7 +1,7 @@
 //! Direct Display Rendering
 //! All functionality requires VK_KHR_display feature.
 
-use crate::vk::*;
+use crate::{vk::*, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{Resolver, ResolverInterface, VkHandle, VkResultHandler};
 #[allow(unused_imports)]
@@ -10,12 +10,17 @@ use std::ops::Deref;
 
 #[repr(transparent)]
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DISPLAY_KHR"]
 pub struct Display(VkDisplayKHR);
+impl VkObject for Display {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
+}
+
 #[repr(transparent)]
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DISPLAY_MODE_KHR"]
 pub struct DisplayMode(pub(crate) VkDisplayModeKHR);
+impl VkObject for DisplayMode {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
+}
 
 impl Display {
     /// [Implements][VK_KHR_display] Query the set of mode properties supported by the display.

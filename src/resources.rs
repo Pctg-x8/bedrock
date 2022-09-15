@@ -116,7 +116,7 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-use crate::{vk::*, DeviceChild};
+use crate::{vk::*, DeviceChild, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -127,51 +127,15 @@ use crate::{AnalogNumRange, CompareOp, VkHandle};
 use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
 
-/// Opaque handle to a device memory object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DEVICE_MEMORY"]
-pub struct DeviceMemoryObject<Device: crate::Device>(pub(crate) VkDeviceMemory, pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for DeviceMemoryObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for DeviceMemoryObject<Device> {}
-impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
-    type ConcreteDevice = Device;
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a device memory object
+    DeviceMemoryObject(VkDeviceMemory, VK_OBJECT_TYPE_DEVICE_MEMORY): DeviceMemory { drop free_memory }
+}
 
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a buffer object(constructed via [`BufferDesc`])
+    BufferObject(VkBuffer, VK_OBJECT_TYPE_BUFFER): Buffer { drop destroy_buffer }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for DeviceMemoryObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().free_memory(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> DeviceMemory for DeviceMemoryObject<Device> {}
-
-/// Opaque handle to a buffer object(constructed via `BufferDesc`)
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_BUFFER"]
-pub struct BufferObject<Device: crate::Device>(VkBuffer, Device);
-unsafe impl<Device: crate::Device + Sync> Sync for BufferObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for BufferObject<Device> {}
-impl<Device: crate::Device> DeviceChild for BufferObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for BufferObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_buffer(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
-impl<Device: crate::Device> Buffer for BufferObject<Device> {}
 impl<Device: crate::Device> MemoryBound for BufferObject<Device> {
     #[cfg(feature = "Implements")]
     fn requirements(&self) -> VkMemoryRequirements {
@@ -204,8 +168,10 @@ impl<Device: crate::Device> MemoryBound for BufferObject<Device> {
 
 /// Opaque handle to a image object(constructed via `ImageDesc`)
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_IMAGE"]
 pub struct ImageObject<Device: crate::Device>(VkImage, Device, VkImageType, VkFormat, VkExtent3D);
+impl<Device: crate::Device> VkObject for ImageObject<Device> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
+}
 unsafe impl<Device: crate::Device + Sync> Sync for ImageObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
 impl<Device: crate::Device> DeviceChild for ImageObject<Device> {
@@ -274,8 +240,11 @@ impl<Device: crate::Device> MemoryBound for ImageObject<Device> {
 /// Opaque handle to a image object, backed by Swapchain.
 #[cfg(feature = "VK_KHR_swapchain")]
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_IMAGE"]
 pub struct SwapchainImage<Swapchain: crate::Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkFormat);
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Swapchain: crate::Swapchain> VkObject for SwapchainImage<Swapchain> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
+}
 #[cfg(feature = "VK_KHR_swapchain")]
 impl<Swapchain: crate::Swapchain> DeviceChild for SwapchainImage<Swapchain> {
     type ConcreteDevice = Swapchain::ConcreteDevice;
@@ -337,9 +306,11 @@ impl<Swapchain: crate::Swapchain + Clone> SwapchainImage<&'_ Swapchain> {
 }
 
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
 /// Opaque handle to a buffer view object
 pub struct BufferViewObject<Buffer: crate::Buffer>(VkBufferView, Buffer);
+impl<Buffer: crate::Buffer> VkObject for BufferViewObject<Buffer> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER_VIEW;
+}
 unsafe impl<Buffer: crate::Buffer + Sync> Sync for BufferViewObject<Buffer> {}
 unsafe impl<Buffer: crate::Buffer + Send> Send for BufferViewObject<Buffer> {}
 impl<Buffer: crate::Buffer> DeviceChild for BufferViewObject<Buffer> {
@@ -361,8 +332,10 @@ impl<Buffer: crate::Buffer> BufferView for BufferViewObject<Buffer> {}
 
 /// Opaque handle to a image view object
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_IMAGE_VIEW"]
 pub struct ImageViewObject<Image: crate::Image>(VkImageView, Image);
+impl<Image: crate::Image> VkObject for ImageViewObject<Image> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE_VIEW;
+}
 unsafe impl<Image: crate::Image + Sync> Sync for ImageViewObject<Image> {}
 unsafe impl<Image: crate::Image + Send> Send for ImageViewObject<Image> {}
 impl<Image: crate::Image> DeviceChild for ImageViewObject<Image> {
@@ -1341,25 +1314,15 @@ impl ImageSubresourceRange {
     }
 }
 
-/// Opaque handle to a sampler object
-#[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_SAMPLER"]
-pub struct Sampler<Device: crate::Device>(VkSampler, Device);
-impl<Device: crate::Device> DeviceChild for Sampler<Device> {
-    type ConcreteDevice = Device;
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a sampler object
+    SamplerObject(VkSampler, VK_OBJECT_TYPE_SAMPLER): Sampler { drop destroy_sampler }
+}
 
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for Sampler<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            Resolver::get().destroy_sampler(self.1.native_ptr(), self.0, std::ptr::null());
-        }
-    }
-}
+pub trait Sampler: VkHandle<Handle = VkSampler> + DeviceChild {}
+impl<T> Sampler for &'_ T where T: Sampler + ?Sized {}
+impl<T> Sampler for std::rc::Rc<T> where T: Sampler + ?Sized {}
+impl<T> Sampler for std::sync::Arc<T> where T: Sampler + ?Sized {}
 
 /// Specify behavior of sampling with texture coordinates outside an image
 #[repr(C)]
@@ -1526,10 +1489,10 @@ impl SamplerBuilder {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     #[cfg(feature = "Implements")]
-    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<Sampler<Device>> {
+    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<SamplerObject<Device>> {
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_sampler(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
             .into_result()
-            .map(|_| Sampler(h, device))
+            .map(|_| SamplerObject(h, device))
     }
 }

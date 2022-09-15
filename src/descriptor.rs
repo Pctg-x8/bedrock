@@ -1,6 +1,6 @@
 //! Vulkan Descriptors
 
-use crate::{vk::*, DeviceChild, Instance};
+use crate::{vk::*, DeviceChild, Instance, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -10,8 +10,7 @@ use crate::{ImageLayout, ShaderStage, VkHandle};
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a descriptor set layout object
-    #[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT"]
-    DescriptorSetLayoutObject(VkDescriptorSetLayout): DescriptorSetLayout { drop destroy_descriptor_set_layout }
+    DescriptorSetLayoutObject(VkDescriptorSetLayout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT): DescriptorSetLayout { drop destroy_descriptor_set_layout }
 }
 impl<Device: crate::Device> std::cmp::PartialEq for DescriptorSetLayoutObject<Device> {
     fn eq(&self, other: &Self) -> bool {
@@ -27,8 +26,7 @@ impl<Device: crate::Device> std::hash::Hash for DescriptorSetLayoutObject<Device
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a descriptor pool object
-    #[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_POOL"]
-    DescriptorPoolObject(VkDescriptorPool): DescriptorPool { drop destroy_descriptor_pool }
+    DescriptorPoolObject(VkDescriptorPool, VK_OBJECT_TYPE_DESCRIPTOR_POOL): DescriptorPool { drop destroy_descriptor_pool }
 }
 
 #[repr(transparent)]
@@ -330,11 +328,13 @@ macro_rules! DescriptorUpdateTemplateEntries
 }
 
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE"]
 pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
     pub(crate) VkDescriptorUpdateTemplate,
     pub(crate) Device,
 );
+impl<Device: crate::Device> VkObject for DescriptorUpdateTemplateObject<Device> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE;
+}
 unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
 impl<Device: crate::Device> DeviceChild for DescriptorUpdateTemplateObject<Device> {

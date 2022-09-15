@@ -1,6 +1,6 @@
 //! Vulkan RenderPass/Framebuffer
 
-use crate::{vk::*, DeviceChild, DeviceChildTransferrable};
+use crate::{vk::*, DeviceChild, DeviceChildTransferrable, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -11,19 +11,20 @@ use std::ops::*;
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a render pass object
-    #[object_type = "VK_OBJECT_TYPE_RENDER_PASS"]
-    RenderPassObject(VkRenderPass): RenderPass { drop destroy_render_pass }
+    RenderPassObject(VkRenderPass, VK_OBJECT_TYPE_RENDER_PASS): RenderPass { drop destroy_render_pass }
 }
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle)]
-#[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
 pub struct FramebufferObject<Device: crate::Device, ImageView: crate::ImageView>(
     pub(crate) VkFramebuffer,
     pub(crate) Device,
     pub(crate) Vec<ImageView>,
     pub(crate) VkExtent2D,
 );
+impl<Device: crate::Device, ImageView: crate::ImageView> VkObject for FramebufferObject<Device, ImageView> {
+    const TYPE: VkObjectType = VK_OBJECT_TYPE_FRAMEBUFFER;
+}
 unsafe impl<Device, ImageView> Sync for FramebufferObject<Device, ImageView>
 where
     Device: crate::Device + Sync,
