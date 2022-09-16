@@ -237,6 +237,55 @@ impl InstanceBuilder {
     }
 }
 
+/// Returns up to all of global layer properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+#[cfg(feature = "Implements")]
+pub fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>> {
+    let mut n = 0;
+    unsafe {
+        Resolver::get()
+            .enumerate_instance_layer_properties(&mut n, std::ptr::null_mut())
+            .into_result()?;
+    }
+    let mut v = Vec::with_capacity(n as _);
+    unsafe { v.set_len(n as _) };
+    unsafe {
+        Resolver::get()
+            .enumerate_instance_layer_properties(&mut n, v.as_mut_ptr())
+            .into_result()
+            .map(|_| v)
+    }
+}
+
+/// Returns up to all of global extension properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `VK_ERROR_LAYER_NOT_PRESENT`
+#[cfg(feature = "Implements")]
+pub fn enumerate_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
+    let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
+    let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or_else(std::ptr::null);
+    unsafe {
+        let mut n = 0;
+        Resolver::get()
+            .enumerate_instance_extension_properties(cptr, &mut n, std::ptr::null_mut())
+            .into_result()?;
+        let mut v = Vec::with_capacity(n as _);
+        v.set_len(n as _);
+        Resolver::get()
+            .enumerate_instance_extension_properties(cptr, &mut n, v.as_mut_ptr())
+            .into_result()
+            .map(|_| v)
+    }
+}
+
 /// A Vulkan Instance interface
 pub trait Instance: VkHandle<Handle = VkInstance> {
     /// Return a function pointer for a command
@@ -296,55 +345,6 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
                 .enumerate_physical_devices(self.native_ptr(), &mut n, v.as_mut_ptr())
                 .into_result()
                 .map(move |_| IterPhysicalDevices(v, 0, self))
-        }
-    }
-
-    /// Returns up to all of global layer properties
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>> {
-        let mut n = 0;
-        unsafe {
-            Resolver::get()
-                .enumerate_instance_layer_properties(&mut n, std::ptr::null_mut())
-                .into_result()?;
-        }
-        let mut v = Vec::with_capacity(n as _);
-        unsafe { v.set_len(n as _) };
-        unsafe {
-            Resolver::get()
-                .enumerate_instance_layer_properties(&mut n, v.as_mut_ptr())
-                .into_result()
-                .map(|_| v)
-        }
-    }
-
-    /// Returns up to all of global extension properties
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    #[cfg(feature = "Implements")]
-    fn enumerate_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
-        let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
-        let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or_else(std::ptr::null);
-        unsafe {
-            let mut n = 0;
-            Resolver::get()
-                .enumerate_instance_extension_properties(cptr, &mut n, std::ptr::null_mut())
-                .into_result()?;
-            let mut v = Vec::with_capacity(n as _);
-            v.set_len(n as _);
-            Resolver::get()
-                .enumerate_instance_extension_properties(cptr, &mut n, v.as_mut_ptr())
-                .into_result()
-                .map(|_| v)
         }
     }
 
