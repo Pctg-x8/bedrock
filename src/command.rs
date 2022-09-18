@@ -1386,14 +1386,14 @@ pub struct ImageMemoryBarrier(VkImageMemoryBarrier);
 impl ImageMemoryBarrier {
     /// Construct a new barrier descriptor from discrete pair of resource and subresource range
     pub fn new(
-        res: &impl VkHandle<Handle = VkImage>,
-        subres: &impl AsRef<VkImageSubresourceRange>,
+        res: &(impl VkHandle<Handle = VkImage> + ?Sized),
+        subres: impl Into<VkImageSubresourceRange>,
         old: ImageLayout,
         new: ImageLayout,
     ) -> Self {
-        ImageMemoryBarrier(VkImageMemoryBarrier {
+        Self(VkImageMemoryBarrier {
             image: res.native_ptr(),
-            subresourceRange: subres.as_ref().clone(),
+            subresourceRange: subres.into(),
             oldLayout: old as _,
             newLayout: new as _,
             srcAccessMask: old.default_access_mask(),
@@ -1401,33 +1401,50 @@ impl ImageMemoryBarrier {
             ..Default::default()
         })
     }
+
     /// Update the source access mask
+    #[inline]
     pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self {
         self.0.srcAccessMask = mask;
         self
     }
+
     /// Update the destination access mask
+    #[inline]
     pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self {
         self.0.dstAccessMask = mask;
         self
     }
+
+    /// Update the access mask transition
+    #[inline]
+    pub fn access_mask_transition(mut self, src: VkAccessFlags, dst: VkAccessFlags) -> Self {
+        self.0.srcAccessMask = src;
+        self.0.dstAccessMask = dst;
+        self
+    }
+
     /// Flip access masks and image layouts
+    #[inline]
     pub fn flip(mut self) -> Self {
         self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
         self.0.newLayout = replace(&mut self.0.oldLayout, self.0.newLayout);
         self
     }
 }
-impl Into<VkImageMemoryBarrier> for ImageMemoryBarrier {
-    fn into(self) -> VkImageMemoryBarrier {
-        self.0
-    }
-}
 impl From<VkImageMemoryBarrier> for ImageMemoryBarrier {
+    #[inline]
     fn from(v: VkImageMemoryBarrier) -> Self {
-        ImageMemoryBarrier(v)
+        Self(v)
     }
 }
+impl From<ImageMemoryBarrier> for VkImageMemoryBarrier {
+    #[inline]
+    fn from(v: ImageMemoryBarrier) -> Self {
+        v.0
+    }
+}
+
 /// Wrapper object of `VkBufferMemoryBarrier`, describes a memory barrier of a buffer.
 #[derive(Clone)]
 #[repr(transparent)]
@@ -1435,12 +1452,12 @@ pub struct BufferMemoryBarrier(VkBufferMemoryBarrier);
 impl BufferMemoryBarrier {
     /// Construct a new buffer descriptor
     pub fn new(
-        buf: &impl VkHandle<Handle = VkBuffer>,
+        buf: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
         range: Range<VkDeviceSize>,
         src_access_mask: VkAccessFlags,
         dst_access_mask: VkAccessFlags,
     ) -> Self {
-        BufferMemoryBarrier(VkBufferMemoryBarrier {
+        Self(VkBufferMemoryBarrier {
             buffer: buf.native_ptr(),
             offset: range.start,
             size: range.end - range.start,
@@ -1449,29 +1466,43 @@ impl BufferMemoryBarrier {
             ..Default::default()
         })
     }
+
     /// Update the source access mask
+    #[inline]
     pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self {
         self.0.srcAccessMask = mask;
         self
     }
+
     /// Update the destination access mask
+    #[inline]
     pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self {
         self.0.dstAccessMask = mask;
         self
     }
+
+    /// Update the access mask transition
+    #[inline]
+    pub fn access_mask_transition(self, src: VkAccessFlags, dst: VkAccessFlags) -> Self {
+        self.src_access_mask(src).dest_access_mask(dst)
+    }
+
     /// Flip access masks
+    #[inline]
     pub fn flip(mut self) -> Self {
         self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
         self
     }
 }
-impl Into<VkBufferMemoryBarrier> for BufferMemoryBarrier {
-    fn into(self) -> VkBufferMemoryBarrier {
-        self.0
-    }
-}
 impl From<VkBufferMemoryBarrier> for BufferMemoryBarrier {
+    #[inline]
     fn from(v: VkBufferMemoryBarrier) -> Self {
         BufferMemoryBarrier(v)
+    }
+}
+impl From<BufferMemoryBarrier> for VkBufferMemoryBarrier {
+    #[inline]
+    fn from(v: BufferMemoryBarrier) -> Self {
+        v.0
     }
 }
