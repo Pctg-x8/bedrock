@@ -171,8 +171,8 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     unsafe fn begin_inherit(
         &mut self,
         renderpass: Option<(
-            &impl VkHandle<Handle = VkFramebuffer>,
-            &impl VkHandle<Handle = VkRenderPass>,
+            &(impl crate::Framebuffer + ?Sized),
+            &(impl crate::RenderPass + ?Sized),
             u32,
         )>,
         query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>,
@@ -293,8 +293,8 @@ impl<'p, 'b: 'p, Pool: crate::CommandPool + 'p, Buffer: crate::CommandBuffer + '
     pub fn begin_inherit(
         &mut self,
         renderpass: Option<(
-            &impl VkHandle<Handle = VkFramebuffer>,
-            &impl VkHandle<Handle = VkRenderPass>,
+            &(impl crate::Framebuffer + ?Sized),
+            &(impl crate::RenderPass + ?Sized),
             u32,
         )>,
         query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>,
@@ -318,8 +318,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Begin a new render pass
     pub fn begin_render_pass(
         &mut self,
-        pass: &impl VkHandle<Handle = VkRenderPass>,
-        framebuffer: &impl VkHandle<Handle = VkFramebuffer>,
+        pass: &(impl crate::RenderPass + ?Sized),
+        framebuffer: &(impl crate::Framebuffer + ?Sized),
         render_area: VkRect2D,
         clear_values: &[ClearValue],
         inline_commands: bool,
@@ -368,7 +368,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
 #[cfg(feature = "Implements")]
 impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Bind a pipeline object to a command buffer
-    pub fn bind_graphics_pipeline(&mut self, pipeline: &impl crate::Pipeline) -> &mut Self {
+    pub fn bind_graphics_pipeline(&mut self, pipeline: &(impl crate::Pipeline + ?Sized)) -> &mut Self {
         unsafe {
             Resolver::get().cmd_bind_pipeline(
                 self.ptr.native_ptr(),
@@ -378,8 +378,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         }
         self
     }
+
     /// Bind a pipeline object to a command buffer
-    pub fn bind_compute_pipeline(&mut self, pipeline: &impl crate::Pipeline) -> &mut Self {
+    pub fn bind_compute_pipeline(&mut self, pipeline: &(impl crate::Pipeline + ?Sized)) -> &mut Self {
         unsafe {
             Resolver::get().cmd_bind_pipeline(
                 self.ptr.native_ptr(),
@@ -389,34 +390,39 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         }
         self
     }
+
     /// Bind a pipeline layout object to a command buffer
-    pub fn bind_graphics_pipeline_layout(&mut self, layout: &impl crate::PipelineLayout) -> &mut Self {
+    pub fn bind_graphics_pipeline_layout(&mut self, layout: &(impl crate::PipelineLayout + ?Sized)) -> &mut Self {
         self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize] = Some(layout.native_ptr());
         self
     }
+
     /// Bind a pipeline layout object to a command buffer
-    pub fn bind_compute_pipeline_layout(&mut self, layout: &impl crate::PipelineLayout) -> &mut Self {
+    pub fn bind_compute_pipeline_layout(&mut self, layout: &(impl crate::PipelineLayout + ?Sized)) -> &mut Self {
         self.layout[VK_PIPELINE_BIND_POINT_COMPUTE as usize] = Some(layout.native_ptr());
         self
     }
+
     /// Bind a pipeline object and a pipeline layout object to a command buffer
     pub fn bind_graphics_pipeline_pair(
         &mut self,
-        pipeline: &impl crate::Pipeline,
-        layout: &impl crate::PipelineLayout,
+        pipeline: &(impl crate::Pipeline + ?Sized),
+        layout: &(impl crate::PipelineLayout + ?Sized),
     ) -> &mut Self {
         self.bind_graphics_pipeline_layout(layout)
             .bind_graphics_pipeline(pipeline)
     }
+
     /// Bind a pipeline object and a pipeline layout object to a command buffer
     pub fn bind_compute_pipeline_pair(
         &mut self,
-        pipeline: &impl crate::Pipeline,
-        layout: &impl crate::PipelineLayout,
+        pipeline: &(impl crate::Pipeline + ?Sized),
+        layout: &(impl crate::PipelineLayout + ?Sized),
     ) -> &mut Self {
         self.bind_compute_pipeline_layout(layout)
             .bind_compute_pipeline(pipeline)
     }
+
     fn current_pipeline_layout_g(&self) -> VkPipelineLayout {
         self.layout[VK_PIPELINE_BIND_POINT_GRAPHICS as usize].expect("Pipeline is not bound for Graphics")
     }
@@ -692,7 +698,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Bind an index buffer to a command buffer
     pub fn bind_index_buffer(
         &mut self,
-        buffer: &impl VkHandle<Handle = VkBuffer>,
+        buffer: &(impl crate::Buffer + ?Sized),
         offset: usize,
         index_type: IndexType,
     ) -> &mut Self {
@@ -710,7 +716,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     pub fn bind_vertex_buffers(
         &mut self,
         first: u32,
-        buffers: &[(&impl VkHandle<Handle = VkBuffer>, usize)],
+        buffers: &[(&(impl crate::Buffer + ?Sized), usize)],
     ) -> &mut Self {
         let (bufs, ofs): (Vec<_>, Vec<_>) = buffers
             .iter()
@@ -775,7 +781,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Issue an indirect draw into a command buffer
     pub fn draw_indirect(
         &mut self,
-        buffer: &impl VkHandle<Handle = VkBuffer>,
+        buffer: &(impl crate::Buffer + ?Sized),
         offset: usize,
         draw_count: u32,
         stride: u32,
@@ -794,7 +800,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Perform an indexed indirect draw
     pub fn draw_indexed_indirect(
         &mut self,
-        buffer: &impl VkHandle<Handle = VkBuffer>,
+        buffer: &(impl crate::Buffer + ?Sized),
         offset: usize,
         draw_count: u32,
         stride: u32,
@@ -823,7 +829,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         self
     }
     /// Dispatch compute work items using indirect parameters
-    pub fn dispatch_indirect(&mut self, buffer: &impl VkHandle<Handle = VkBuffer>, offset: usize) -> &mut Self {
+    pub fn dispatch_indirect(&mut self, buffer: &(impl crate::Buffer + ?Sized), offset: usize) -> &mut Self {
         unsafe {
             Resolver::get().cmd_dispatch_indirect(self.ptr.native_ptr(), buffer.native_ptr(), offset as _);
         }
@@ -837,8 +843,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy data between buffer regions
     pub fn copy_buffer(
         &mut self,
-        src: &impl VkHandle<Handle = VkBuffer>,
-        dst: &impl VkHandle<Handle = VkBuffer>,
+        src: &(impl crate::Buffer + ?Sized),
+        dst: &(impl crate::Buffer + ?Sized),
         regions: &[VkBufferCopy],
     ) -> &mut Self {
         unsafe {
@@ -855,9 +861,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy data between images
     pub fn copy_image(
         &mut self,
-        src: &impl VkHandle<Handle = VkImage>,
+        src: &(impl crate::Image + ?Sized),
         src_layout: ImageLayout,
-        dst: &impl VkHandle<Handle = VkImage>,
+        dst: &(impl crate::Image + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkImageCopy],
     ) -> &mut Self {
@@ -877,9 +883,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy regions of an image, potentially performing format conversion
     pub fn blit_image(
         &mut self,
-        src: &impl VkHandle<Handle = VkImage>,
+        src: &(impl crate::Image + ?Sized),
         src_layout: ImageLayout,
-        dst: &impl VkHandle<Handle = VkImage>,
+        dst: &(impl crate::Image + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkImageBlit],
         filter: FilterMode,
@@ -901,8 +907,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy data from a buffer into an image
     pub fn copy_buffer_to_image(
         &mut self,
-        src_buffer: &impl VkHandle<Handle = VkBuffer>,
-        dst_image: &impl VkHandle<Handle = VkImage>,
+        src_buffer: &(impl crate::Buffer + ?Sized),
+        dst_image: &(impl crate::Image + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkBufferImageCopy],
     ) -> &mut Self {
@@ -921,9 +927,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy image data into a buffer
     pub fn copy_image_to_buffer(
         &mut self,
-        src_image: &impl VkHandle<Handle = VkImage>,
+        src_image: &(impl crate::Image + ?Sized),
         src_layout: ImageLayout,
-        dst_buffer: &impl VkHandle<Handle = VkBuffer>,
+        dst_buffer: &(impl crate::Buffer + ?Sized),
         regions: &[VkBufferImageCopy],
     ) -> &mut Self {
         unsafe {
@@ -941,7 +947,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Update a buffer's contents from host memory
     pub fn update_buffer<T>(
         &mut self,
-        dst: &impl VkHandle<Handle = VkBuffer>,
+        dst: &(impl crate::Buffer + ?Sized),
         dst_offset: usize,
         size: usize,
         data: &T,
@@ -967,7 +973,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// `size` is number of bytes to fill
     pub fn fill_buffer(
         &mut self,
-        dst: &impl VkHandle<Handle = VkBuffer>,
+        dst: &(impl crate::Buffer + ?Sized),
         dst_offset: usize,
         size: usize,
         data: u32,
@@ -986,7 +992,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Clear regions of a color image
     pub fn clear_color_image(
         &mut self,
-        image: &impl VkHandle<Handle = VkImage>,
+        image: &(impl crate::Image + ?Sized),
         layout: ImageLayout,
         colors: &[ClearColorValue],
         ranges: &[VkImageSubresourceRange],
@@ -1008,7 +1014,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Fill regions of a combined depth/stencil image
     pub fn clear_depth_stencil_image(
         &mut self,
-        image: &impl VkHandle<Handle = VkImage>,
+        image: &(impl crate::Image + ?Sized),
         layout: ImageLayout,
         depth: f32,
         stencil: u32,
@@ -1060,9 +1066,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Resolve regions of an image
     pub fn resolve_image(
         &mut self,
-        src: &impl VkHandle<Handle = VkImage>,
+        src: &(impl crate::Image + ?Sized),
         src_layout: ImageLayout,
-        dst: &impl VkHandle<Handle = VkImage>,
+        dst: &(impl crate::Image + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkImageResolve],
     ) -> &mut Self {
@@ -1091,6 +1097,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         }
         self
     }
+
     /// Reset an event object to non-signaled state
     pub fn reset_event(&mut self, event: impl VkHandle<Handle = VkEvent>, stage_mask: PipelineStageFlags) -> &mut Self {
         unsafe {
@@ -1098,10 +1105,11 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         }
         self
     }
+
     /// Wait for one or more events and insert a set of memory
     pub fn wait_events(
         &mut self,
-        events: &[impl VkHandle<Handle = VkEvent>],
+        events: &[impl crate::Event],
         src_stage_mask: PipelineStageFlags,
         dst_stage_mask: PipelineStageFlags,
         memory_barriers: &[VkMemoryBarrier],
@@ -1126,6 +1134,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         }
         self
     }
+
     /// Insert a memory dependency
     pub fn pipeline_barrier(
         &mut self,
@@ -1160,7 +1169,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Begin a query
     pub fn begin_query(
         &mut self,
-        pool: &impl VkHandle<Handle = VkQueryPool>,
+        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         query: u32,
         precise_query: bool,
     ) -> &mut Self {
@@ -1172,7 +1181,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     }
 
     /// Ends a query
-    pub fn end_query(&mut self, pool: &impl VkHandle<Handle = VkQueryPool>, query: u32) -> &mut Self {
+    pub fn end_query(&mut self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), query: u32) -> &mut Self {
         unsafe {
             Resolver::get().cmd_end_query(self.ptr.native_ptr(), pool.native_ptr(), query);
         }
@@ -1180,7 +1189,11 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     }
 
     /// Reset queries in a query pool
-    pub fn reset_query_pool(&mut self, pool: &impl VkHandle<Handle = VkQueryPool>, range: Range<u32>) -> &mut Self {
+    pub fn reset_query_pool(
+        &mut self,
+        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        range: Range<u32>,
+    ) -> &mut Self {
         unsafe {
             Resolver::get().cmd_reset_query_pool(
                 self.ptr.native_ptr(),
@@ -1196,7 +1209,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     pub fn write_timestamp(
         &mut self,
         stage: PipelineStageFlags,
-        pool: &impl VkHandle<Handle = VkQueryPool>,
+        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         query: u32,
     ) -> &mut Self {
         unsafe {
@@ -1209,9 +1222,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     #[allow(clippy::too_many_arguments)]
     pub fn copy_query_pool_results(
         &mut self,
-        pool: &impl VkHandle<Handle = VkQueryPool>,
+        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         range: Range<u32>,
-        dst: &impl VkHandle<Handle = VkBuffer>,
+        dst: &(impl crate::Buffer + ?Sized),
         dst_offset: usize,
         stride: usize,
         wide_result: bool,
