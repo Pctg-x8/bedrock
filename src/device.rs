@@ -10,7 +10,6 @@ use crate::{
 };
 use crate::{vk::*, InstanceChild, VkObject};
 use crate::{PipelineStageFlags, VkHandle};
-use std::borrow::Cow;
 
 /// Opaque handle to a device object
 #[derive(VkHandle)]
@@ -1373,32 +1372,163 @@ impl<Device: crate::Device> Queue<Device> {
     }
 }
 
-/// Sparse Binding operation batch
-pub struct SparseBindingOpBatch<'s, Semaphore: crate::Semaphore + Clone> {
-    /// An array of semaphores upon which to wait on before the sparse binding operations
-    /// for this batch begin execution
-    pub wait_semaphores: Cow<'s, [Semaphore]>,
-    /// An array of `VkSparseBufferMemoryBindInfo` structures
-    pub buffer_binds: Cow<'s, [VkSparseBufferMemoryBindInfo]>,
-    /// An array of `VkSparseImageOpaqueMemoryBindInfo` structures
-    pub image_opaque_binds: Cow<'s, [VkSparseImageOpaqueMemoryBindInfo]>,
-    /// An array of `VkSparseImageMemoryBindInfo` structures
-    pub image_binds: Cow<'s, [VkSparseImageMemoryBindInfo]>,
-    /// An array of semaphores which will be signaled when the sparse binding
-    /// operations for this batch have completed execution
-    pub signal_semaphores: Cow<'s, [Semaphore]>,
+pub trait SparseBindingOpBatch {
+    fn make_info_struct(&self) -> VkBindSparseInfo;
+
+    #[inline]
+    fn with_buffer_binds<'d>(
+        self,
+        buffer_binds: &'d [VkSparseBufferMemoryBindInfo],
+    ) -> SparseBindingOpBatchWithBufferBinds<'d, Self>
+    where
+        Self: Sized,
+    {
+        SparseBindingOpBatchWithBufferBinds(self, buffer_binds)
+    }
+
+    #[inline]
+    fn with_image_binds<'d>(
+        self,
+        buffer_binds: &'d [VkSparseImageMemoryBindInfo],
+    ) -> SparseBindingOpBatchWithImageBinds<'d, Self>
+    where
+        Self: Sized,
+    {
+        SparseBindingOpBatchWithImageBinds(self, buffer_binds)
+    }
+
+    #[inline]
+    fn with_image_opaque_binds<'d>(
+        self,
+        buffer_binds: &'d [VkSparseImageOpaqueMemoryBindInfo],
+    ) -> SparseBindingOpBatchWithImageOpaqueBinds<'d, Self>
+    where
+        Self: Sized,
+    {
+        SparseBindingOpBatchWithImageOpaqueBinds(self, buffer_binds)
+    }
+
+    #[inline]
+    fn with_wait_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+        self,
+        semaphores: &'d [Semaphore],
+    ) -> SparseBindingOpBatchWithWaitSemaphores<'d, Self, Semaphore>
+    where
+        Self: Sized,
+    {
+        SparseBindingOpBatchWithWaitSemaphores(
+            self,
+            semaphores.iter().map(VkHandle::native_ptr).collect(),
+            std::marker::PhantomData,
+        )
+    }
+
+    #[inline]
+    fn with_signal_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+        self,
+        semaphores: &'d [Semaphore],
+    ) -> SparseBindingOpBatchWithSignalSemaphores<'d, Self, Semaphore>
+    where
+        Self: Sized,
+    {
+        SparseBindingOpBatchWithSignalSemaphores(
+            self,
+            semaphores.iter().map(VkHandle::native_ptr).collect(),
+            std::marker::PhantomData,
+        )
+    }
 }
-impl<'s, Semaphore: crate::Semaphore + Clone> Default for SparseBindingOpBatch<'s, Semaphore> {
-    fn default() -> Self {
-        SparseBindingOpBatch {
-            wait_semaphores: Cow::Borrowed(&[]),
-            buffer_binds: Cow::Borrowed(&[]),
-            image_opaque_binds: Cow::Borrowed(&[]),
-            image_binds: Cow::Borrowed(&[]),
-            signal_semaphores: Cow::Borrowed(&[]),
+impl SparseBindingOpBatch for VkBindSparseInfo {
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        self.clone()
+    }
+}
+
+pub struct EmptyBindingOpBatch;
+impl SparseBindingOpBatch for EmptyBindingOpBatch {
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        Default::default()
+    }
+}
+pub struct SparseBindingOpBatchWithBufferBinds<'d, Parent: SparseBindingOpBatch>(
+    Parent,
+    &'d [VkSparseBufferMemoryBindInfo],
+);
+impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithBufferBinds<'d, Parent> {
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        VkBindSparseInfo {
+            bufferBindCount: self.1.len() as _,
+            pBufferBinds: self.1.as_ptr(),
+            ..self.0.make_info_struct()
         }
     }
 }
+pub struct SparseBindingOpBatchWithImageBinds<'d, Parent: SparseBindingOpBatch>(
+    Parent,
+    &'d [VkSparseImageMemoryBindInfo],
+);
+impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithImageBinds<'d, Parent> {
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        VkBindSparseInfo {
+            imageBindCount: self.1.len() as _,
+            pImageBinds: self.1.as_ptr(),
+            ..self.0.make_info_struct()
+        }
+    }
+}
+pub struct SparseBindingOpBatchWithImageOpaqueBinds<'d, Parent: SparseBindingOpBatch>(
+    Parent,
+    &'d [VkSparseImageOpaqueMemoryBindInfo],
+);
+impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithImageOpaqueBinds<'d, Parent> {
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        VkBindSparseInfo {
+            imageOpaqueBindCount: self.1.len() as _,
+            pImageOpaqueBinds: self.1.as_ptr(),
+            ..self.0.make_info_struct()
+        }
+    }
+}
+pub struct SparseBindingOpBatchWithWaitSemaphores<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd>(
+    Parent,
+    Vec<VkSemaphore>,
+    std::marker::PhantomData<&'d [Semaphore]>,
+);
+impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseBindingOpBatch
+    for SparseBindingOpBatchWithWaitSemaphores<'d, Parent, Semaphore>
+{
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        VkBindSparseInfo {
+            waitSemaphoreCount: self.1.len() as _,
+            pWaitSemaphores: self.1.as_ptr(),
+            ..self.0.make_info_struct()
+        }
+    }
+}
+pub struct SparseBindingOpBatchWithSignalSemaphores<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd>(
+    Parent,
+    Vec<VkSemaphore>,
+    std::marker::PhantomData<&'d [Semaphore]>,
+);
+impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseBindingOpBatch
+    for SparseBindingOpBatchWithSignalSemaphores<'d, Parent, Semaphore>
+{
+    #[inline]
+    fn make_info_struct(&self) -> VkBindSparseInfo {
+        VkBindSparseInfo {
+            signalSemaphoreCount: self.1.len() as _,
+            pSignalSemaphores: self.1.as_ptr(),
+            ..self.0.make_info_struct()
+        }
+    }
+}
+
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Queue<Device> {
     /// Bind device memory to a sparse resource object
@@ -1410,32 +1540,11 @@ impl<Device: crate::Device> Queue<Device> {
     /// * `VK_ERROR_DEVICE_LOST`
     pub fn bind_sparse(
         &mut self,
-        batches: &[SparseBindingOpBatch<'_, impl crate::Semaphore + Clone>],
+        batches: &[impl SparseBindingOpBatch],
         fence: Option<&mut impl crate::Fence>,
     ) -> crate::Result<()> {
-        let sem_ptrs = batches.iter().map(|x| {
-            (
-                x.wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>(),
-                x.signal_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>(),
-            )
-        });
-        let batches: Vec<_> = batches
-            .iter()
-            .zip(sem_ptrs)
-            .map(|(x, (ws, ss))| VkBindSparseInfo {
-                waitSemaphoreCount: ws.len() as _,
-                pWaitSemaphores: ws.as_ptr(),
-                bufferBindCount: x.buffer_binds.len() as _,
-                pBufferBinds: x.buffer_binds.as_ptr(),
-                imageOpaqueBindCount: x.image_opaque_binds.len() as _,
-                pImageOpaqueBinds: x.image_opaque_binds.as_ptr(),
-                imageBindCount: x.image_binds.len() as _,
-                pImageBinds: x.image_binds.as_ptr(),
-                signalSemaphoreCount: ss.len() as _,
-                pSignalSemaphores: ss.as_ptr(),
-                ..Default::default()
-            })
-            .collect();
+        let batches: Vec<_> = batches.iter().map(SparseBindingOpBatch::make_info_struct).collect();
+
         unsafe {
             Resolver::get()
                 .queue_bind_sparse(
@@ -1449,25 +1558,125 @@ impl<Device: crate::Device> Queue<Device> {
     }
 }
 
-/// Semaphore/Command submission operation batch
-pub struct SubmissionBatch<'d, Semaphore: crate::Semaphore + Clone, CommandBuffer: crate::CommandBuffer + Clone> {
-    pub wait_semaphores: Cow<'d, [(Semaphore, PipelineStageFlags)]>,
-    pub command_buffers: Cow<'d, [CommandBuffer]>,
-    pub signal_semaphores: Cow<'d, [Semaphore]>,
-    pub chained: Option<&'d dyn std::any::Any>,
+pub trait SubmissionBatch {
+    fn make_info_struct(&self) -> VkSubmitInfo;
+
+    #[inline]
+    fn with_command_buffers<'d, CommandBuffer: crate::CommandBuffer + 'd>(
+        self,
+        command_buffers: &'d [CommandBuffer],
+    ) -> SubmissionWithCommandBuffers<'d, Self, CommandBuffer>
+    where
+        Self: Sized,
+    {
+        SubmissionWithCommandBuffers(
+            self,
+            command_buffers.iter().map(VkHandle::native_ptr).collect(),
+            std::marker::PhantomData,
+        )
+    }
+
+    #[inline]
+    fn with_wait_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+        self,
+        wait_semaphores: &'d [(Semaphore, PipelineStageFlags)],
+    ) -> SubmissionWithWaitSemaphores<'d, Self, Semaphore>
+    where
+        Self: Sized,
+    {
+        let (hs, fs) = wait_semaphores.iter().map(|(a, b)| (a.native_ptr(), b.0)).unzip();
+        SubmissionWithWaitSemaphores(self, hs, fs, std::marker::PhantomData)
+    }
+
+    #[inline]
+    fn with_signal_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+        self,
+        signal_semaphores: &'d [Semaphore],
+    ) -> SubmissionWithSignalSemaphores<'d, Self, Semaphore>
+    where
+        Self: Sized,
+    {
+        SubmissionWithSignalSemaphores(
+            self,
+            signal_semaphores.iter().map(VkHandle::native_ptr).collect(),
+            std::marker::PhantomData,
+        )
+    }
 }
-impl<Semaphore: crate::Semaphore + Clone, CommandBuffer: crate::CommandBuffer + Clone> Default
-    for SubmissionBatch<'_, Semaphore, CommandBuffer>
+impl SubmissionBatch for VkSubmitInfo {
+    #[inline]
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        self.clone()
+    }
+}
+
+pub struct EmptySubmissionBatch;
+impl SubmissionBatch for EmptySubmissionBatch {
+    #[inline]
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        Default::default()
+    }
+}
+pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch, CommandBuffer: crate::CommandBuffer + 'd>(
+    Parent,
+    Vec<VkCommandBuffer>,
+    std::marker::PhantomData<&'d [CommandBuffer]>,
+);
+impl<'d, Parent, CommandBuffer> SubmissionBatch for SubmissionWithCommandBuffers<'d, Parent, CommandBuffer>
+where
+    Parent: SubmissionBatch,
+    CommandBuffer: crate::CommandBuffer + 'd,
 {
-    fn default() -> Self {
-        SubmissionBatch {
-            wait_semaphores: Cow::Borrowed(&[]),
-            command_buffers: Cow::Borrowed(&[]),
-            signal_semaphores: Cow::Borrowed(&[]),
-            chained: None,
+    #[inline]
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        VkSubmitInfo {
+            commandBufferCount: self.1.len() as _,
+            pCommandBuffers: self.1.as_ptr(),
+            ..self.0.make_info_struct()
         }
     }
 }
+pub struct SubmissionWithWaitSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
+    Parent,
+    Vec<VkSemaphore>,
+    Vec<VkPipelineStageFlags>,
+    std::marker::PhantomData<&'d [Semaphore]>,
+);
+impl<'d, Parent, Semaphore> SubmissionBatch for SubmissionWithWaitSemaphores<'d, Parent, Semaphore>
+where
+    Parent: SubmissionBatch,
+    Semaphore: crate::Semaphore + 'd,
+{
+    #[inline]
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        VkSubmitInfo {
+            waitSemaphoreCount: self.1.len() as _,
+            pWaitSemaphores: self.1.as_ptr(),
+            pWaitDstStageMask: self.2.as_ptr(),
+            ..self.0.make_info_struct()
+        }
+    }
+}
+pub struct SubmissionWithSignalSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
+    Parent,
+    Vec<VkSemaphore>,
+    std::marker::PhantomData<&'d [Semaphore]>,
+);
+impl<'d, Parent, Semaphore> SubmissionBatch for SubmissionWithSignalSemaphores<'d, Parent, Semaphore>
+where
+    Parent: SubmissionBatch,
+    Semaphore: crate::Semaphore + 'd,
+{
+    #[inline]
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        VkSubmitInfo {
+            signalSemaphoreCount: self.1.len() as _,
+            pSignalSemaphores: self.1.as_ptr() as _,
+            ..self.0.make_info_struct()
+        }
+    }
+}
+
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Queue<Device> {
     /// Submits a sequence of semaphores or command buffers to a queue
@@ -1479,38 +1688,13 @@ impl<Device: crate::Device> Queue<Device> {
     /// * `VK_ERROR_DEVICE_LOST`
     pub fn submit(
         &mut self,
-        batches: &[SubmissionBatch<impl crate::Semaphore + Clone, impl crate::CommandBuffer + Clone>],
+        batches: &[impl SubmissionBatch],
         fence: Option<&mut impl VkHandle<Handle = VkFence>>,
     ) -> crate::Result<()> {
-        let sem_ptrs: Vec<((Vec<_>, Vec<_>), Vec<_>, Vec<_>)> = batches
-            .iter()
-            .map(|x| {
-                (
-                    x.wait_semaphores
-                        .iter()
-                        .map(|&(ref x, p)| (x.native_ptr(), p.0))
-                        .unzip(),
-                    x.command_buffers.iter().map(|x| x.native_ptr()).collect(),
-                    x.signal_semaphores.iter().map(|x| x.native_ptr()).collect(),
-                )
-            })
-            .collect();
-        let batches: Vec<_> = sem_ptrs
-            .iter()
-            .map(|&(ref ws, ref cbs, ref ss)| VkSubmitInfo {
-                waitSemaphoreCount: ws.0.len() as _,
-                pWaitSemaphores: ws.0.as_ptr(),
-                pWaitDstStageMask: ws.1.as_ptr(),
-                commandBufferCount: cbs.len() as _,
-                pCommandBuffers: cbs.as_ptr(),
-                signalSemaphoreCount: ss.len() as _,
-                pSignalSemaphores: ss.as_ptr(),
-                ..Default::default()
-            })
-            .collect();
-
+        let batches: Vec<_> = batches.iter().map(SubmissionBatch::make_info_struct).collect();
         self.submit_raw(&batches, fence)
     }
+
     /// Submits a sequence of semaphores or command buffers to a queue
     /// # Failure
     /// On failure, this command returns

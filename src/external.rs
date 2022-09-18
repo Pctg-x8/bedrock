@@ -104,6 +104,7 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
         Self(v, std::marker::PhantomData)
     }
 }
+/* TODO: 連結リスト作るのなんかうまい方法考えないとねぇ
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 impl<'d, Semaphore, CommandBuffer> crate::Chainable<'d, D3D12FenceSubmitInfo<'d>>
     for crate::SubmissionBatch<'d, Semaphore, CommandBuffer>
@@ -116,6 +117,7 @@ where
         self
     }
 }
+*/
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(transparent)]
