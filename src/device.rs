@@ -2,7 +2,6 @@
 
 #![cfg_attr(not(feature = "Implements"), allow(dead_code))]
 
-use crate::VkHandle;
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute,
@@ -10,6 +9,7 @@ use crate::{
     DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
+use crate::{TemporalSubmissionBatchResources, VkHandle};
 
 /// Opaque handle to a device object
 #[derive(VkHandle)]
@@ -1427,7 +1427,18 @@ impl<Device: crate::Device> Queue<Device> {
         batches: &[impl SubmissionBatch],
         fence: Option<&mut impl crate::Fence>,
     ) -> crate::Result<()> {
-        let batches: Vec<_> = batches.iter().map(SubmissionBatch::make_info_struct).collect();
+        let batch_resources: Vec<_> = batches
+            .iter()
+            .map(|b| {
+                let mut resources = TemporalSubmissionBatchResources::new();
+                b.collect_resources(&mut resources);
+                resources
+            })
+            .collect();
+        let batches: Vec<_> = batch_resources
+            .iter()
+            .map(TemporalSubmissionBatchResources::make_info_struct)
+            .collect();
 
         self.submit_raw(&batches, fence)
     }

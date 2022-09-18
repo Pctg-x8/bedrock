@@ -1,7 +1,38 @@
 use crate::{vk::*, PipelineStageFlags, VkHandle};
 
+#[doc(hidden)]
+pub struct TemporalSubmissionBatchResources {
+    command_buffers: Vec<VkCommandBuffer>,
+    wait_semaphores: Vec<VkSemaphore>,
+    wait_stages: Vec<VkPipelineStageFlags>,
+    signal_semaphores: Vec<VkSemaphore>,
+}
+impl TemporalSubmissionBatchResources {
+    pub(crate) const fn new() -> Self {
+        Self {
+            command_buffers: Vec::new(),
+            wait_semaphores: Vec::new(),
+            wait_stages: Vec::new(),
+            signal_semaphores: Vec::new(),
+        }
+    }
+
+    pub(crate) fn make_info_struct(&self) -> VkSubmitInfo {
+        VkSubmitInfo {
+            commandBufferCount: self.command_buffers.len() as _,
+            pCommandBuffers: self.command_buffers.as_ptr(),
+            waitSemaphoreCount: self.wait_semaphores.len() as _,
+            pWaitSemaphores: self.wait_semaphores.as_ptr(),
+            pWaitDstStageMask: self.wait_stages.as_ptr(),
+            signalSemaphoreCount: self.signal_semaphores.len() as _,
+            pSignalSemaphores: self.signal_semaphores.as_ptr(),
+            ..Default::default()
+        }
+    }
+}
+
 pub trait SubmissionBatch {
-    fn make_info_struct(&self) -> VkSubmitInfo;
+    fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources);
 
     #[inline]
     fn with_command_buffers<'d, CommandBuffer: crate::CommandBuffer + 'd>(
@@ -45,19 +76,10 @@ pub trait SubmissionBatch {
         )
     }
 }
-impl SubmissionBatch for VkSubmitInfo {
-    #[inline]
-    fn make_info_struct(&self) -> VkSubmitInfo {
-        self.clone()
-    }
-}
 
 pub struct EmptySubmissionBatch;
 impl SubmissionBatch for EmptySubmissionBatch {
-    #[inline]
-    fn make_info_struct(&self) -> VkSubmitInfo {
-        Default::default()
-    }
+    fn collect_resources(&self, _: &mut TemporalSubmissionBatchResources) {}
 }
 pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch, CommandBuffer: crate::CommandBuffer + 'd>(
     Parent,
@@ -69,13 +91,8 @@ where
     Parent: SubmissionBatch,
     CommandBuffer: crate::CommandBuffer + 'd,
 {
-    #[inline]
-    fn make_info_struct(&self) -> VkSubmitInfo {
-        VkSubmitInfo {
-            commandBufferCount: self.1.len() as _,
-            pCommandBuffers: self.1.as_ptr(),
-            ..self.0.make_info_struct()
-        }
+    fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
+        target.command_buffers.extend(self.1.iter().copied());
     }
 }
 pub struct SubmissionWithWaitSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
@@ -89,14 +106,9 @@ where
     Parent: SubmissionBatch,
     Semaphore: crate::Semaphore + 'd,
 {
-    #[inline]
-    fn make_info_struct(&self) -> VkSubmitInfo {
-        VkSubmitInfo {
-            waitSemaphoreCount: self.1.len() as _,
-            pWaitSemaphores: self.1.as_ptr(),
-            pWaitDstStageMask: self.2.as_ptr(),
-            ..self.0.make_info_struct()
-        }
+    fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
+        target.wait_semaphores.extend(self.1.iter().copied());
+        target.wait_stages.extend(self.2.iter().copied());
     }
 }
 pub struct SubmissionWithSignalSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
@@ -109,13 +121,8 @@ where
     Parent: SubmissionBatch,
     Semaphore: crate::Semaphore + 'd,
 {
-    #[inline]
-    fn make_info_struct(&self) -> VkSubmitInfo {
-        VkSubmitInfo {
-            signalSemaphoreCount: self.1.len() as _,
-            pSignalSemaphores: self.1.as_ptr() as _,
-            ..self.0.make_info_struct()
-        }
+    fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
+        target.signal_semaphores.extend(self.1.iter().copied());
     }
 }
 
