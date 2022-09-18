@@ -152,7 +152,7 @@ impl<Device: crate::Device> MemoryBound for BufferObject<Device> {
     }
 
     #[cfg(feature = "Implements")]
-    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
+    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_buffer_memory(
@@ -223,7 +223,7 @@ impl<Device: crate::Device> MemoryBound for ImageObject<Device> {
     }
 
     #[cfg(feature = "Implements")]
-    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
+    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_image_memory(
@@ -284,7 +284,7 @@ impl<Swapchain: crate::Swapchain> MemoryBound for SwapchainImage<Swapchain> {
     }
 
     #[cfg(feature = "Implements")]
-    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()> {
+    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()> {
         unsafe {
             Resolver::get()
                 .bind_image_memory(
@@ -1006,7 +1006,7 @@ pub trait MemoryBound {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn bind(&mut self, memory: &impl VkHandle<Handle = VkDeviceMemory>, offset: usize) -> crate::Result<()>;
+    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()>;
 }
 
 pub trait BufferView: VkHandle<Handle = VkBufferView> + DeviceChild {}
