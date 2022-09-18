@@ -76,7 +76,7 @@ pub trait SubmissionBatch {
         )
     }
 }
-impl<T: SubmissionBatch> SubmissionBatch for Box<T> {
+impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
         T::collect_resources(self, target)
     }
