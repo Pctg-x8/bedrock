@@ -416,6 +416,8 @@ mod ext;
 pub use ext::*;
 mod external;
 pub use external::*;
+mod batching;
+pub use self::batching::*;
 
 mod fmt;
 pub use self::fmt::*;
