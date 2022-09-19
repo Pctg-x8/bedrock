@@ -861,9 +861,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy data between images
     pub fn copy_image(
         &mut self,
-        src: &(impl crate::Image + ?Sized),
+        src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst: &(impl crate::Image + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkImageCopy],
     ) -> &mut Self {
@@ -883,9 +883,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy regions of an image, potentially performing format conversion
     pub fn blit_image(
         &mut self,
-        src: &(impl crate::Image + ?Sized),
+        src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst: &(impl crate::Image + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkImageBlit],
         filter: FilterMode,
@@ -908,7 +908,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     pub fn copy_buffer_to_image(
         &mut self,
         src_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_image: &(impl crate::Image + ?Sized),
+        dst_image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkBufferImageCopy],
     ) -> &mut Self {
@@ -927,7 +927,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy image data into a buffer
     pub fn copy_image_to_buffer(
         &mut self,
-        src_image: &(impl crate::Image + ?Sized),
+        src_image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
         dst_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         regions: &[VkBufferImageCopy],
@@ -992,7 +992,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Clear regions of a color image
     pub fn clear_color_image(
         &mut self,
-        image: &(impl crate::Image + ?Sized),
+        image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         layout: ImageLayout,
         colors: &[ClearColorValue],
         ranges: &[VkImageSubresourceRange],
@@ -1014,7 +1014,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Fill regions of a combined depth/stencil image
     pub fn clear_depth_stencil_image(
         &mut self,
-        image: &(impl crate::Image + ?Sized),
+        image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         layout: ImageLayout,
         depth: f32,
         stencil: u32,
@@ -1066,9 +1066,9 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Resolve regions of an image
     pub fn resolve_image(
         &mut self,
-        src: &(impl crate::Image + ?Sized),
+        src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst: &(impl crate::Image + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkImageResolve],
     ) -> &mut Self {
