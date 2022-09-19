@@ -973,9 +973,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_MVK_macos_surface")]
-    fn new_surface_macos(self, view_ptr: *const libc::c_void) -> crate::Result<crate::SurfaceObject<Self>>
+    fn new_surface_macos(self, view_ptr: *const libc::c_void) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
-        Self: Sized,
+        Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkMacOSSurfaceCreateInfoMVK {
             pView: view_ptr,
@@ -986,7 +986,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .create_macos_surface_mvk(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self))
+                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
         }
     }
 
