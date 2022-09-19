@@ -78,6 +78,23 @@ macro_rules! DefineStdDeviceChildObject {
     }
 }
 
+macro_rules! DerefContainerBracketImpl {
+    (for $t: path { $($required: item)* }) => {
+        impl<T> $t for &'_ T where T: $t + ?Sized {
+            $($required)*
+        }
+        impl<T> $t for std::rc::Rc<T> where T: $t + ?Sized {
+            $($required)*
+        }
+        impl<T> $t for std::sync::Arc<T> where T: $t + ?Sized {
+            $($required)*
+        }
+        impl<T> $t for Box<T> where T: $t + ?Sized {
+            $($required)*
+        }
+    }
+}
+
 pub type Result<T> = std::result::Result<T, VkResultBox>;
 pub trait VkResultHandler {
     fn into_result(self) -> Result<()>;
@@ -99,16 +116,11 @@ pub trait VkHandle {
     /// Retrieve an underlying handle
     fn native_ptr(&self) -> Self::Handle;
 }
-impl<T> VkHandle for &'_ T
-where
-    T: VkHandle + ?Sized,
-{
+DerefContainerBracketImpl!(for VkHandle {
     type Handle = T::Handle;
 
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(*self)
-    }
-}
+    fn native_ptr(&self) -> Self::Handle { T::native_ptr(self) }
+});
 impl<T> VkHandle for &'_ mut T
 where
     T: VkHandle + ?Sized,
@@ -117,26 +129,6 @@ where
 
     fn native_ptr(&self) -> Self::Handle {
         T::native_ptr(*self)
-    }
-}
-impl<T> VkHandle for std::rc::Rc<T>
-where
-    T: VkHandle + ?Sized,
-{
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&**self)
-    }
-}
-impl<T> VkHandle for std::sync::Arc<T>
-where
-    T: VkHandle + ?Sized,
-{
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&**self)
     }
 }
 impl<T> VkHandle for std::cell::RefCell<T>

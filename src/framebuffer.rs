@@ -485,14 +485,10 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
         }
     }
 }
-impl<T> RenderPass for &'_ T where T: RenderPass + ?Sized {}
-impl<T> RenderPass for std::rc::Rc<T> where T: RenderPass + ?Sized {}
-impl<T> RenderPass for std::sync::Arc<T> where T: RenderPass + ?Sized {}
+DerefContainerBracketImpl!(for RenderPass {});
 
 pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> + DeviceChild {}
-impl<T> Framebuffer for &'_ T where T: Framebuffer + ?Sized {}
-impl<T> Framebuffer for std::rc::Rc<T> where T: Framebuffer + ?Sized {}
-impl<T> Framebuffer for std::sync::Arc<T> where T: Framebuffer + ?Sized {}
+DerefContainerBracketImpl!(for Framebuffer {});
 
 impl<Device: crate::Device, ImageView: crate::ImageView> FramebufferObject<Device, ImageView> {
     pub const fn size(&self) -> &VkExtent2D {

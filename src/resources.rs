@@ -877,10 +877,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         v
     }
 }
-impl<T> Image for &'_ T
-where
-    T: Image + ?Sized,
-{
+DerefContainerBracketImpl!(for Image {
     fn format(&self) -> VkFormat {
         T::format(self)
     }
@@ -892,75 +889,18 @@ where
     fn dimension(&self) -> VkImageViewType {
         T::dimension(self)
     }
-}
-impl<T> Image for std::rc::Rc<T>
-where
-    T: Image + ?Sized,
-{
-    fn format(&self) -> VkFormat {
-        T::format(self)
-    }
-
-    fn size(&self) -> &VkExtent3D {
-        T::size(self)
-    }
-
-    fn dimension(&self) -> VkImageViewType {
-        T::dimension(self)
-    }
-}
-impl<T> Image for std::sync::Arc<T>
-where
-    T: Image + ?Sized,
-{
-    fn format(&self) -> VkFormat {
-        T::format(self)
-    }
-
-    fn size(&self) -> &VkExtent3D {
-        T::size(self)
-    }
-
-    fn dimension(&self) -> VkImageViewType {
-        T::dimension(self)
-    }
-}
+});
 
 pub trait ImageChild {
     type ConcreteImage: crate::Image;
 
     fn image(&self) -> &Self::ConcreteImage;
 }
-impl<T> ImageChild for &'_ T
-where
-    T: ImageChild,
-{
+DerefContainerBracketImpl!(for ImageChild {
     type ConcreteImage = T::ConcreteImage;
 
-    fn image(&self) -> &Self::ConcreteImage {
-        T::image(self)
-    }
-}
-impl<T> ImageChild for std::rc::Rc<T>
-where
-    T: ImageChild,
-{
-    type ConcreteImage = T::ConcreteImage;
-
-    fn image(&self) -> &Self::ConcreteImage {
-        T::image(self)
-    }
-}
-impl<T> ImageChild for std::sync::Arc<T>
-where
-    T: ImageChild,
-{
-    type ConcreteImage = T::ConcreteImage;
-
-    fn image(&self) -> &Self::ConcreteImage {
-        T::image(self)
-    }
-}
+    fn image(&self) -> &Self::ConcreteImage { T::image(self) }
+});
 
 pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
     /// Create a buffer view
@@ -982,9 +922,7 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
             .map(|_| BufferViewObject(h, self))
     }
 }
-impl<T> Buffer for &'_ T where T: Buffer + ?Sized {}
-impl<T> Buffer for std::rc::Rc<T> where T: Buffer + ?Sized {}
-impl<T> Buffer for std::sync::Arc<T> where T: Buffer + ?Sized {}
+DerefContainerBracketImpl!(for Buffer {});
 
 pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     /// Map a memory object into application address space
@@ -1032,9 +970,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
         b
     }
 }
-impl<T> DeviceMemory for &'_ T where T: DeviceMemory + ?Sized {}
-impl<T> DeviceMemory for std::rc::Rc<T> where T: DeviceMemory + ?Sized {}
-impl<T> DeviceMemory for std::sync::Arc<T> where T: DeviceMemory + ?Sized {}
+DerefContainerBracketImpl!(for DeviceMemory {});
 
 /// Common operations for memory bound objects
 pub trait MemoryBound {
@@ -1053,14 +989,10 @@ pub trait MemoryBound {
 }
 
 pub trait BufferView: VkHandle<Handle = VkBufferView> + DeviceChild {}
-impl<T> BufferView for &'_ T where T: BufferView + ?Sized {}
-impl<T> BufferView for std::rc::Rc<T> where T: BufferView + ?Sized {}
-impl<T> BufferView for std::sync::Arc<T> where T: BufferView + ?Sized {}
+DerefContainerBracketImpl!(for BufferView {});
 
 pub trait ImageView: VkHandle<Handle = VkImageView> + DeviceChild {}
-impl<T> ImageView for &'_ T where T: ImageView + ?Sized {}
-impl<T> ImageView for std::rc::Rc<T> where T: ImageView + ?Sized {}
-impl<T> ImageView for std::sync::Arc<T> where T: ImageView + ?Sized {}
+DerefContainerBracketImpl!(for ImageView {});
 
 /// Image Dimension by corresponding extent type
 pub trait ImageSize {
@@ -1369,9 +1301,7 @@ DefineStdDeviceChildObject! {
 }
 
 pub trait Sampler: VkHandle<Handle = VkSampler> + DeviceChild {}
-impl<T> Sampler for &'_ T where T: Sampler + ?Sized {}
-impl<T> Sampler for std::rc::Rc<T> where T: Sampler + ?Sized {}
-impl<T> Sampler for std::sync::Arc<T> where T: Sampler + ?Sized {}
+DerefContainerBracketImpl!(for Sampler {});
 
 /// Specify behavior of sampling with texture coordinates outside an image
 #[repr(C)]

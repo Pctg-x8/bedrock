@@ -126,11 +126,7 @@ where
 #[cfg(feature = "VK_KHR_surface")]
 pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
 #[cfg(feature = "VK_KHR_surface")]
-impl<T> Surface for &'_ T where T: Surface + ?Sized {}
-#[cfg(feature = "VK_KHR_surface")]
-impl<T> Surface for std::rc::Rc<T> where T: Surface + ?Sized {}
-#[cfg(feature = "VK_KHR_surface")]
-impl<T> Surface for std::sync::Arc<T> where T: Surface + ?Sized {}
+DerefContainerBracketImpl!(for Surface {});
 
 /// Builder object to construct a `Swapchain`
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -386,41 +382,15 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     }
 }
 #[cfg(feature = "VK_KHR_swapchain")]
-impl<T> Swapchain for &'_ T
-where
-    T: Swapchain + ?Sized,
-{
+DerefContainerBracketImpl!(for Swapchain {
     fn format(&self) -> VkFormat {
         T::format(self)
     }
+
     fn size(&self) -> &VkExtent3D {
         T::size(self)
     }
-}
-#[cfg(feature = "VK_KHR_swapchain")]
-impl<T> Swapchain for std::rc::Rc<T>
-where
-    T: Swapchain + ?Sized,
-{
-    fn format(&self) -> VkFormat {
-        T::format(self)
-    }
-    fn size(&self) -> &VkExtent3D {
-        T::size(self)
-    }
-}
-#[cfg(feature = "VK_KHR_swapchain")]
-impl<T> Swapchain for std::sync::Arc<T>
-where
-    T: Swapchain + ?Sized,
-{
-    fn format(&self) -> VkFormat {
-        T::format(self)
-    }
-    fn size(&self) -> &VkExtent3D {
-        T::size(self)
-    }
-}
+});
 
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Queue<Device> {

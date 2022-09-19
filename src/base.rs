@@ -439,9 +439,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         );
     }
 }
-impl<T> Instance for &'_ T where T: Instance + ?Sized {}
-impl<T> Instance for std::rc::Rc<T> where T: Instance + ?Sized {}
-impl<T> Instance for std::sync::Arc<T> where T: Instance + ?Sized {}
+DerefContainerBracketImpl!(for Instance {});
 
 /// A PhysicalDevice interface
 pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
@@ -1258,45 +1256,18 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 }
-impl<T> PhysicalDevice for &'_ T where T: PhysicalDevice + ?Sized {}
-impl<T> PhysicalDevice for std::rc::Rc<T> where T: PhysicalDevice + ?Sized {}
-impl<T> PhysicalDevice for std::sync::Arc<T> where T: PhysicalDevice + ?Sized {}
+DerefContainerBracketImpl!(for PhysicalDevice {});
 
 pub trait InstanceChild {
     type ConcreteInstance: Instance;
 
     fn instance(&self) -> &Self::ConcreteInstance;
 }
-impl<T> InstanceChild for &'_ T
-where
-    T: InstanceChild + ?Sized,
-{
+DerefContainerBracketImpl!(for InstanceChild {
     type ConcreteInstance = T::ConcreteInstance;
 
-    fn instance(&self) -> &Self::ConcreteInstance {
-        T::instance(self)
-    }
-}
-impl<T> InstanceChild for std::rc::Rc<T>
-where
-    T: InstanceChild + ?Sized,
-{
-    type ConcreteInstance = T::ConcreteInstance;
-
-    fn instance(&self) -> &Self::ConcreteInstance {
-        T::instance(&**self)
-    }
-}
-impl<T> InstanceChild for std::sync::Arc<T>
-where
-    T: InstanceChild + ?Sized,
-{
-    type ConcreteInstance = T::ConcreteInstance;
-
-    fn instance(&self) -> &Self::ConcreteInstance {
-        T::instance(&**self)
-    }
-}
+    fn instance(&self) -> &Self::ConcreteInstance { T::instance(self) }
+});
 
 pub trait InstanceChildTransferrable: InstanceChild {
     fn transfer_instance(self) -> Self::ConcreteInstance;
