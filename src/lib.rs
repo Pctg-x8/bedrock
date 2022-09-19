@@ -109,58 +109,8 @@ impl VkResultHandler for VkResult {
     }
 }
 
-/// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
-pub trait VkHandle {
-    type Handle;
-
-    /// Retrieve an underlying handle
-    fn native_ptr(&self) -> Self::Handle;
-}
-DerefContainerBracketImpl!(for VkHandle {
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle { T::native_ptr(self) }
-});
-impl<T> VkHandle for &'_ mut T
-where
-    T: VkHandle + ?Sized,
-{
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(*self)
-    }
-}
-impl<T> VkHandle for std::cell::RefCell<T>
-where
-    T: VkHandle + ?Sized,
-{
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&self.borrow())
-    }
-}
-impl<T> VkHandle for std::sync::MutexGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(&**self)
-    }
-}
-
-/// Unwrapping Option-ed Reference to VkHandles.  
-/// Returns "Empty Handle" when the value is `None`.
-impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
-    type Handle = <H as VkHandle>::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr())
-    }
-}
+mod handle;
+pub use self::handle::*;
 
 /// An object in Vulkan
 pub trait VkObject: VkHandle {
