@@ -694,7 +694,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Bind an index buffer to a command buffer
     pub fn bind_index_buffer(
         &mut self,
-        buffer: &(impl crate::Buffer + ?Sized),
+        buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         offset: usize,
         index_type: IndexType,
     ) -> &mut Self {
@@ -712,7 +712,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     pub fn bind_vertex_buffers(
         &mut self,
         first: u32,
-        buffers: &[(&(impl crate::Buffer + ?Sized), usize)],
+        buffers: &[(&(impl crate::VkHandle<Handle = VkBuffer> + ?Sized), usize)],
     ) -> &mut Self {
         let (bufs, ofs): (Vec<_>, Vec<_>) = buffers
             .iter()
@@ -777,7 +777,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Issue an indirect draw into a command buffer
     pub fn draw_indirect(
         &mut self,
-        buffer: &(impl crate::Buffer + ?Sized),
+        buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         offset: usize,
         draw_count: u32,
         stride: u32,
@@ -796,7 +796,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Perform an indexed indirect draw
     pub fn draw_indexed_indirect(
         &mut self,
-        buffer: &(impl crate::Buffer + ?Sized),
+        buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         offset: usize,
         draw_count: u32,
         stride: u32,
@@ -825,7 +825,11 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         self
     }
     /// Dispatch compute work items using indirect parameters
-    pub fn dispatch_indirect(&mut self, buffer: &(impl crate::Buffer + ?Sized), offset: usize) -> &mut Self {
+    pub fn dispatch_indirect(
+        &mut self,
+        buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
+        offset: usize,
+    ) -> &mut Self {
         unsafe {
             Resolver::get().cmd_dispatch_indirect(self.ptr.native_ptr(), buffer.native_ptr(), offset as _);
         }
@@ -839,8 +843,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy data between buffer regions
     pub fn copy_buffer(
         &mut self,
-        src: &(impl crate::Buffer + ?Sized),
-        dst: &(impl crate::Buffer + ?Sized),
+        src: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         regions: &[VkBufferCopy],
     ) -> &mut Self {
         unsafe {
@@ -903,7 +907,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Copy data from a buffer into an image
     pub fn copy_buffer_to_image(
         &mut self,
-        src_buffer: &(impl crate::Buffer + ?Sized),
+        src_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_image: &(impl crate::Image + ?Sized),
         dst_layout: ImageLayout,
         regions: &[VkBufferImageCopy],
@@ -925,7 +929,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         &mut self,
         src_image: &(impl crate::Image + ?Sized),
         src_layout: ImageLayout,
-        dst_buffer: &(impl crate::Buffer + ?Sized),
+        dst_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         regions: &[VkBufferImageCopy],
     ) -> &mut Self {
         unsafe {
@@ -943,7 +947,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// Update a buffer's contents from host memory
     pub fn update_buffer<T>(
         &mut self,
-        dst: &(impl crate::Buffer + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: usize,
         size: usize,
         data: &T,
@@ -969,7 +973,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
     /// `size` is number of bytes to fill
     pub fn fill_buffer(
         &mut self,
-        dst: &(impl crate::Buffer + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: usize,
         size: usize,
         data: u32,
@@ -1220,7 +1224,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         &mut self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         range: Range<u32>,
-        dst: &(impl crate::Buffer + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: usize,
         stride: usize,
         wide_result: bool,
