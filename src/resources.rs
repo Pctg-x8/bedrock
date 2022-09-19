@@ -369,6 +369,13 @@ impl<Image: crate::Image> Deref for ImageViewObject<Image> {
         &self.1
     }
 }
+impl<Image: crate::Image> ImageChild for ImageViewObject<Image> {
+    type ConcreteImage = Image;
+
+    fn image(&self) -> &Image {
+        &self.1
+    }
+}
 
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -916,6 +923,42 @@ where
 
     fn dimension(&self) -> VkImageViewType {
         T::dimension(self)
+    }
+}
+
+pub trait ImageChild {
+    type ConcreteImage: crate::Image;
+
+    fn image(&self) -> &Self::ConcreteImage;
+}
+impl<T> ImageChild for &'_ T
+where
+    T: ImageChild,
+{
+    type ConcreteImage = T::ConcreteImage;
+
+    fn image(&self) -> &Self::ConcreteImage {
+        T::image(self)
+    }
+}
+impl<T> ImageChild for std::rc::Rc<T>
+where
+    T: ImageChild,
+{
+    type ConcreteImage = T::ConcreteImage;
+
+    fn image(&self) -> &Self::ConcreteImage {
+        T::image(self)
+    }
+}
+impl<T> ImageChild for std::sync::Arc<T>
+where
+    T: ImageChild,
+{
+    type ConcreteImage = T::ConcreteImage;
+
+    fn image(&self) -> &Self::ConcreteImage {
+        T::image(self)
     }
 }
 
