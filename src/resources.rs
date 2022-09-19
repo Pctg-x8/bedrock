@@ -1053,8 +1053,14 @@ pub trait MemoryBound {
 }
 
 pub trait BufferView: VkHandle<Handle = VkBufferView> + DeviceChild {}
+impl<T> BufferView for &'_ T where T: BufferView + ?Sized {}
+impl<T> BufferView for std::rc::Rc<T> where T: BufferView + ?Sized {}
+impl<T> BufferView for std::sync::Arc<T> where T: BufferView + ?Sized {}
 
 pub trait ImageView: VkHandle<Handle = VkImageView> + DeviceChild {}
+impl<T> ImageView for &'_ T where T: ImageView + ?Sized {}
+impl<T> ImageView for std::rc::Rc<T> where T: ImageView + ?Sized {}
+impl<T> ImageView for std::sync::Arc<T> where T: ImageView + ?Sized {}
 
 /// Image Dimension by corresponding extent type
 pub trait ImageSize {
