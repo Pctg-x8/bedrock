@@ -837,9 +837,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         self,
         display: *mut x11::xlib::Display,
         window: x11::xlib::Window,
-    ) -> crate::Result<crate::SurfaceObject<Self>>
+    ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
-        Self: Sized,
+        Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkXlibSurfaceCreateInfoKHR {
             dpy: display,
@@ -851,7 +851,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .create_xlib_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self))
+                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
         }
     }
 
@@ -866,9 +866,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         self,
         connection: *mut xcb::ffi::xcb_connection_t,
         window: xcb::ffi::xcb_window_t,
-    ) -> crate::Result<crate::SurfaceObject<Self>>
+    ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
-        Self: Sized,
+        Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkXcbSurfaceCreateInfoKHR {
             connection,
@@ -880,7 +880,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .create_xcb_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self))
+                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
         }
     }
 
@@ -895,9 +895,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         self,
         display: *mut wayland_client::sys::wl_display,
         surface: *mut wayland_client::sys::wl_proxy,
-    ) -> crate::Result<crate::SurfaceObject<Self>>
+    ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
-        Self: Sized,
+        Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkWaylandSurfaceCreateInfoKHR {
             display,
@@ -909,7 +909,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .create_wayland_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self))
+                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
         }
     }
 
@@ -920,9 +920,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_KHR_android_surface")]
-    fn new_surface_android(self, window: *mut android::ANativeWindow) -> crate::Result<crate::SurfaceObject<Self>>
+    fn new_surface_android(
+        self,
+        window: *mut android::ANativeWindow,
+    ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
-        Self: Sized,
+        Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkAndroidSurfaceCreateInfoKHR {
             window,
@@ -933,7 +936,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .create_android_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self))
+                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
         }
     }
 
