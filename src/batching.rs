@@ -1,6 +1,5 @@
 use crate::{vk::*, PipelineStageFlags, VkHandle};
 
-#[doc(hidden)]
 pub struct TemporalSubmissionBatchResources {
     command_buffers: Vec<VkCommandBuffer>,
     wait_semaphores: Vec<VkSemaphore>,
@@ -8,7 +7,7 @@ pub struct TemporalSubmissionBatchResources {
     signal_semaphores: Vec<VkSemaphore>,
 }
 impl TemporalSubmissionBatchResources {
-    pub(crate) const fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             command_buffers: Vec::new(),
             wait_semaphores: Vec::new(),
@@ -17,7 +16,7 @@ impl TemporalSubmissionBatchResources {
         }
     }
 
-    pub(crate) fn make_info_struct(&self) -> VkSubmitInfo {
+    pub fn make_info_struct(&self) -> VkSubmitInfo {
         VkSubmitInfo {
             commandBufferCount: self.command_buffers.len() as _,
             pCommandBuffers: self.command_buffers.as_ptr(),
