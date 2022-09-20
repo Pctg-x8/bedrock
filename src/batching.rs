@@ -34,6 +34,13 @@ pub trait SubmissionBatch {
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources);
 
     #[inline]
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        let mut res = TemporalSubmissionBatchResources::new();
+        self.collect_resources(&mut res);
+        res.make_info_struct()
+    }
+
+    #[inline]
     fn with_command_buffers<'d, CommandBuffer: crate::CommandBuffer + 'd>(
         self,
         command_buffers: &'d [CommandBuffer],
@@ -84,6 +91,10 @@ impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
 pub struct EmptySubmissionBatch;
 impl SubmissionBatch for EmptySubmissionBatch {
     fn collect_resources(&self, _: &mut TemporalSubmissionBatchResources) {}
+
+    fn make_info_struct(&self) -> VkSubmitInfo {
+        Default::default()
+    }
 }
 pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch, CommandBuffer: crate::CommandBuffer + 'd>(
     Parent,
