@@ -74,7 +74,10 @@ impl<Instance: crate::Instance + Clone> PhysicalDeviceObject<&'_ Instance> {
     /// Clones parent reference
     #[inline]
     pub fn clone_parent(self) -> PhysicalDeviceObject<Instance> {
-        PhysicalDeviceObject(self.0, self.1.clone())
+        let r = PhysicalDeviceObject(self.0, self.1.clone());
+        // disable dropping self.0
+        std::mem::forget(self);
+        r
     }
 }
 

@@ -301,7 +301,10 @@ impl<Swapchain: crate::Swapchain> MemoryBound for SwapchainImage<Swapchain> {
 impl<Swapchain: crate::Swapchain + Clone> SwapchainImage<&'_ Swapchain> {
     /// Clones parent reference
     pub fn clone_parent(self) -> SwapchainImage<Swapchain> {
-        SwapchainImage(self.0, self.1.clone(), self.2)
+        let r = SwapchainImage(self.0, self.1.clone(), self.2);
+        // disable dropping self.0
+        std::mem::forget(self);
+        r
     }
 }
 
