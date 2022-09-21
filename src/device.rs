@@ -116,7 +116,8 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
     pub fn mod_features(&mut self) -> &mut VkPhysicalDeviceFeatures {
         &mut self.features
     }
-    /// [feature = "Implements"] Create a new device instance
+
+    /// Create a new device instance
     /// # Failures
     /// On failure, this command returns
     ///

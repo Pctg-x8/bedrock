@@ -27,13 +27,17 @@ macro_rules! WrapAPI {
         #[cfg(not(feature = "DynamicLoaded"))]
         #[inline(always)]
         #[allow(clippy::too_many_arguments)]
-        unsafe fn $xt(&self, $($an: $at),*) { $n($($an),*); }
+        unsafe fn $xt(&self, $($an: $at),*) {
+            log::trace!(target: "br-vkapi-call", stringify!($n));
+            $n($($an),*);
+        }
         #[cfg(feature = "DynamicLoaded")]
         unsafe fn $xt(&self, $($an: $at),*)
         {
             static mut F: Option<RawSymbol<fn($($at),*)>> = None;
             static ONCE: Once = ONCE_INIT;
             ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*)>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
+            log::trace!(target: "br-vkapi-call", stringify!($n));
             (F.as_ref().unwrap())($($an),*);
         }
     };
@@ -41,13 +45,17 @@ macro_rules! WrapAPI {
         #[cfg(not(feature = "DynamicLoaded"))]
         #[inline(always)]
         #[allow(clippy::too_many_arguments)]
-        unsafe fn $xt(&self, $($an: $at),*) -> $rt { $n($($an),*) }
+        unsafe fn $xt(&self, $($an: $at),*) -> $rt {
+            log::trace!(target: "br-vkapi-call", stringify!($n));
+            $n($($an),*)
+        }
         #[cfg(feature = "DynamicLoaded")]
         unsafe fn $xt(&self, $($an: $at),*) -> $rt
         {
             static mut F: Option<RawSymbol<fn($($at),*) -> $rt>> = None;
             static ONCE: Once = ONCE_INIT;
             ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*) -> $rt>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
+            log::trace!(target: "br-vkapi-call", stringify!($n));
             (F.as_ref().unwrap())($($an),*)
         }
     };
