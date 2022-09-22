@@ -83,6 +83,7 @@ pub trait SubmissionBatch {
     }
 }
 impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
+    #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
         T::collect_resources(self, target)
     }
@@ -106,7 +107,9 @@ where
     Parent: SubmissionBatch,
     CommandBuffer: crate::CommandBuffer + 'd,
 {
+    #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
+        self.0.collect_resources(target);
         target.command_buffers.extend(self.1.iter().copied());
     }
 }
@@ -121,7 +124,9 @@ where
     Parent: SubmissionBatch,
     Semaphore: crate::Semaphore + 'd,
 {
+    #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
+        self.0.collect_resources(target);
         target.wait_semaphores.extend(self.1.iter().copied());
         target.wait_stages.extend(self.2.iter().copied());
     }
@@ -136,7 +141,9 @@ where
     Parent: SubmissionBatch,
     Semaphore: crate::Semaphore + 'd,
 {
+    #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
+        self.0.collect_resources(target);
         target.signal_semaphores.extend(self.1.iter().copied());
     }
 }
