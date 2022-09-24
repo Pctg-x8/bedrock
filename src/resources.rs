@@ -242,6 +242,10 @@ impl<Device: crate::Device> MemoryBound for ImageObject<Device> {
 #[derive(VkHandle)]
 pub struct SwapchainImage<Swapchain: crate::Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkFormat);
 #[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl<Swapchain: crate::Swapchain + Sync> Sync for SwapchainImage<Swapchain> {}
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl<Swapchain: crate::Swapchain + Send> Send for SwapchainImage<Swapchain> {}
+#[cfg(feature = "VK_KHR_swapchain")]
 impl<Swapchain: crate::Swapchain> VkObject for SwapchainImage<Swapchain> {
     const TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
 }
