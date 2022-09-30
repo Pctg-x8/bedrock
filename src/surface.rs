@@ -38,11 +38,11 @@ impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
 #[cfg(feature = "VK_KHR_swapchain")]
 #[derive(VkHandle)]
 pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface>(
-    VkSwapchainKHR,
-    Device,
-    Surface,
-    VkFormat,
-    VkExtent3D,
+    pub(crate) VkSwapchainKHR,
+    pub(crate) Device,
+    pub(crate) Surface,
+    pub(crate) VkFormat,
+    pub(crate) VkExtent3D,
 );
 #[cfg(feature = "VK_KHR_swapchain")]
 impl<Device: crate::Device, Surface: crate::Surface> VkObject for SwapchainObject<Device, Surface> {
@@ -198,40 +198,35 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         self.0.clipped = true as _;
         self
     }
+}
+impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surface> {
+    type RootStructure = VkSwapchainCreateInfoKHR;
 
-    /// Create a swapchain
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    /// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
-    #[cfg(feature = "Implements")]
-    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<SwapchainObject<Device, Surface>> {
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe {
-            Resolver::get()
-                .create_swapchain_khr(device.native_ptr(), &self.0, std::ptr::null(), &mut h)
-                .into_result()
-                .map(|_| {
-                    SwapchainObject(
-                        h,
-                        device,
-                        self.1,
-                        self.0.imageFormat,
-                        self.0.imageExtent.clone().with_depth(1),
-                    )
-                })
-        }
+    fn build(&mut self, root: &mut VkSwapchainCreateInfoKHR) -> &mut GenericVulkanStructure {
+        *root = self.0.clone();
+        unsafe { std::mem::transmute(root) }
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-impl<'d, Surface: crate::Surface> crate::ext::Chainable<'d, FullScreenExclusiveEXT> for SwapchainBuilder<Surface> {
-    fn chain(&mut self, next: &'d FullScreenExclusiveEXT) -> &mut Self {
-        self.0.pNext = next as *const _ as _;
-        self
+impl<Surface: crate::Surface> Extendable<FullScreenExclusiveEXT> for SwapchainBuilder<Surface> {}
+
+pub trait TransferSurfaceObject {
+    type ConcreteSurface: crate::Surface;
+
+    fn transfer_surface(self) -> Self::ConcreteSurface;
+}
+impl<Surface: crate::Surface> TransferSurfaceObject for SwapchainBuilder<Surface> {
+    type ConcreteSurface = Surface;
+
+    fn transfer_surface(self) -> Self::ConcreteSurface {
+        self.1
+    }
+}
+impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurfaceObject for Extends<Parent, T> {
+    type ConcreteSurface = Parent::ConcreteSurface;
+
+    fn transfer_surface(self) -> Self::ConcreteSurface {
+        self.0.transfer_surface()
     }
 }
 

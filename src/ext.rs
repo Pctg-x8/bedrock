@@ -74,3 +74,25 @@ impl<'a> Iterator for StructureChainIterator<'a> {
         }
     }
 }
+
+pub trait VulkanStructureProvider {
+    type RootStructure;
+
+    fn build<'s>(&'s mut self, root: &mut Self::RootStructure) -> &mut GenericVulkanStructure;
+}
+pub struct Extends<Parent: VulkanStructureProvider, T>(pub(crate) Parent, pub(crate) T);
+impl<Parent: VulkanStructureProvider, T> VulkanStructureProvider for Extends<Parent, T> {
+    type RootStructure = Parent::RootStructure;
+
+    fn build(&mut self, root: &mut Self::RootStructure) -> &mut GenericVulkanStructure {
+        let parent = self.0.build(root);
+        parent.pNext = &self.1 as *const _ as _;
+        unsafe { std::mem::transmute(&mut self.1) }
+    }
+}
+pub trait Extendable<T>: Sized + VulkanStructureProvider {
+    #[inline]
+    fn extends(self, next: T) -> Extends<Self, T> {
+        Extends(self, next)
+    }
+}
