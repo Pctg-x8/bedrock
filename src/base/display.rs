@@ -8,10 +8,9 @@ use crate::{Resolver, ResolverInterface, VkHandle, VkResultHandler};
 use derives::*;
 use std::ops::Deref;
 
-#[repr(transparent)]
 #[derive(VkHandle)]
-pub struct Display(VkDisplayKHR);
-impl VkObject for Display {
+pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub(crate) VkDisplayKHR, pub(crate) PhysicalDevice);
+impl<PhysicalDevice: crate::PhysicalDevice> VkObject for Display<PhysicalDevice> {
     const TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
 }
 
@@ -22,136 +21,152 @@ impl VkObject for DisplayMode {
     const TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
 }
 
-impl Display {
-    /// [Implements][VK_KHR_display] Query the set of mode properties supported by the display.
+impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
+    /// Query the set of mode properties supported by the display.
     /// # Failures
     /// On failure, this command returns
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[cfg(feature = "Implements")]
-    pub fn mode_properties(
-        &self,
-        physical_device: &impl crate::PhysicalDevice,
-    ) -> crate::Result<Vec<DisplayModeProperties>> {
+    pub fn mode_properties(&self) -> crate::Result<Vec<DisplayModeProperties>> {
         unsafe {
             let mut n = 0;
             Resolver::get()
-                .get_display_mode_properties_khr(physical_device.native_ptr(), self.0, &mut n, std::ptr::null_mut())
+                .get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
                 .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
             Resolver::get()
-                .get_display_mode_properties_khr(physical_device.native_ptr(), self.0, &mut n, v.as_mut_ptr() as *mut _)
+                .get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, v.as_mut_ptr() as *mut _)
                 .into_result()
                 .map(move |_| v)
         }
     }
 
-    /// [Implements][VK_EXT_direct_mode_display] Release access to an acquired VkDisplayKHR
+    /// Release access to an acquired VkDisplayKHR
     #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
-    pub fn release(&self, physical_device: &crate::PhysicalDevice) {
+    pub fn release(&self) {
         let fp: PFN_vkReleaseDisplayEXT = physical_device
             .parent()
             .extra_procedure("vkReleaseDisplayEXT")
             .expect("no vkReleaseDisplayEXT exported?");
-        fp(physical_device.native_ptr(), self.native_ptr());
+        fp(self.1.native_ptr(), self.native_ptr());
     }
 
-    /// [Implements][VK_EXT_acquire_xlib_display] Acquire access to a VkDisplayKHR using Xlib
+    /// Acquire access to a VkDisplayKHR using Xlib
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
-    pub fn acquire_xlib_display(
-        &self,
-        physical_device: &crate::PhysicalDevice,
-        dpy: *mut x11::xlib::Display,
-    ) -> crate::Result<()> {
-        let fp: PFN_vkAcquireXlibDisplayEXT = physical_device
+    pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
+        let fp: PFN_vkAcquireXlibDisplayEXT = self
+            .1
             .parent()
             .extra_procedure("vkAcquireXlibDisplayEXT")
             .expect("no vkAcquireXlibDisplayEXT exported?");
-        fp(physical_device.native_ptr(), dpy, self.native_ptr()).into_result()
+        fp(self.1.native_ptr(), dpy, self.native_ptr()).into_result()
+    }
+
+    /// Create a display mode
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    #[cfg(feature = "Implements")]
+    pub fn create_display_mode(&self, params: VkDisplayModeParametersKHR) -> crate::Result<DisplayMode> {
+        unsafe {
+            let cinfo = VkDisplayModeCreateInfoKHR {
+                parameters: params,
+                ..Default::default()
+            };
+            let mut h = VK_NULL_HANDLE as _;
+            Resolver::get()
+                .create_display_mode_khr(self.1.native_ptr(), self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .into_result()
+                .map(move |_| DisplayMode(h))
+        }
     }
 }
 
-#[repr(transparent)]
-pub struct DisplayProperties(VkDisplayPropertiesKHR);
-impl From<VkDisplayPropertiesKHR> for DisplayProperties {
-    fn from(v: VkDisplayPropertiesKHR) -> Self {
-        Self(v)
-    }
-}
-impl From<DisplayProperties> for VkDisplayPropertiesKHR {
-    fn from(v: DisplayProperties) -> Self {
+pub struct DisplayProperties<PhysicalDevice: crate::PhysicalDevice>(
+    pub(crate) VkDisplayPropertiesKHR,
+    pub(crate) PhysicalDevice,
+);
+impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayProperties<PhysicalDevice>> for VkDisplayPropertiesKHR {
+    fn from(v: DisplayProperties<PhysicalDevice>) -> Self {
         v.0
     }
 }
-impl Deref for DisplayProperties {
+impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayProperties<PhysicalDevice> {
     type Target = VkDisplayPropertiesKHR;
     fn deref(&self) -> &VkDisplayPropertiesKHR {
         &self.0
     }
 }
-impl AsRef<VkDisplayPropertiesKHR> for DisplayProperties {
+impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPropertiesKHR> for DisplayProperties<PhysicalDevice> {
     fn as_ref(&self) -> &VkDisplayPropertiesKHR {
         &self.0
     }
 }
-impl DisplayProperties {
+impl<PhysicalDevice: crate::PhysicalDevice> DisplayProperties<PhysicalDevice> {
     /// A handle that is used to refer to the display described here.
     /// This handle will be valid for the lifetime of the Vulkan instance.
-    pub fn display(&self) -> Display {
-        Display(self.display)
+    pub fn display(&self) -> Display<&PhysicalDevice> {
+        Display(self.display, &self.1)
     }
+
     /// The name of the display.
     pub fn display_name(&self) -> &std::ffi::CStr {
         unsafe { std::ffi::CStr::from_ptr(self.displayName) }
     }
+
     /// Whether the planes on this display can have their z order changed.
     pub fn can_reorder_plane(&self) -> bool {
         self.planeReorderPossible == VK_TRUE
     }
+
     /// Whether the display supports self-refresh/internal buffering.
     pub fn has_persistent_content(&self) -> bool {
         self.persistentContent == VK_TRUE
     }
 }
 
-#[repr(transparent)]
-pub struct DisplayPlaneProperties(VkDisplayPlanePropertiesKHR);
-impl From<VkDisplayPlanePropertiesKHR> for DisplayPlaneProperties {
-    fn from(v: VkDisplayPlanePropertiesKHR) -> Self {
-        Self(v)
-    }
-}
-impl From<DisplayPlaneProperties> for VkDisplayPlanePropertiesKHR {
-    fn from(v: DisplayPlaneProperties) -> Self {
+pub struct DisplayPlaneProperties<PhysicalDevice: crate::PhysicalDevice>(
+    pub(crate) VkDisplayPlanePropertiesKHR,
+    pub(crate) PhysicalDevice,
+);
+impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPlaneProperties<PhysicalDevice>>
+    for VkDisplayPlanePropertiesKHR
+{
+    fn from(v: DisplayPlaneProperties<PhysicalDevice>) -> Self {
         v.0
     }
 }
-impl Deref for DisplayPlaneProperties {
+impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPlaneProperties<PhysicalDevice> {
     type Target = VkDisplayPlanePropertiesKHR;
     fn deref(&self) -> &VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
-impl AsRef<VkDisplayPlanePropertiesKHR> for DisplayPlaneProperties {
+impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPlanePropertiesKHR>
+    for DisplayPlaneProperties<PhysicalDevice>
+{
     fn as_ref(&self) -> &VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
-impl DisplayPlaneProperties {
+impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlaneProperties<PhysicalDevice> {
     /// The handle of the display the plane is currently associated with.
     /// If the plane is not currently attached to any displays, this will be `None`
-    pub fn current_display(&self) -> Option<Display> {
+    pub fn current_display(&self) -> Option<Display<&PhysicalDevice>> {
         if self.currentDisplay == VK_NULL_HANDLE as _ {
             None
         } else {
-            Some(Display(self.currentDisplay))
+            Some(Display(self.currentDisplay, &self.1))
         }
     }
 }

@@ -1083,7 +1083,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[cfg(feature = "VK_KHR_display")]
     #[cfg(feature = "Implements")]
-    fn display_properties(&self) -> crate::Result<Vec<DisplayProperties>> {
+    fn display_properties(&self) -> crate::Result<Vec<DisplayProperties<&Self>>> {
         unsafe {
             let mut n = 0;
             Resolver::get()
@@ -1094,7 +1094,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .get_physical_device_display_properties_khr(self.native_ptr(), &mut n, v.as_mut_ptr() as *mut _)
                 .into_result()
-                .map(move |_| v)
+                .map(move |_| v.into_iter().map(|x| DisplayProperties(x, self)).collect())
         }
     }
 
@@ -1106,7 +1106,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[cfg(feature = "VK_KHR_display")]
     #[cfg(feature = "Implements")]
-    fn display_plane_properties(&self) -> crate::Result<Vec<DisplayPlaneProperties>> {
+    fn display_plane_properties(&self) -> crate::Result<Vec<DisplayPlaneProperties<&Self>>> {
         unsafe {
             let mut n = 0;
             Resolver::get()
@@ -1117,7 +1117,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             Resolver::get()
                 .get_physical_device_display_plane_properties_khr(self.native_ptr(), &mut n, v.as_mut_ptr() as *mut _)
                 .into_result()
-                .map(move |_| v)
+                .map(move |_| v.into_iter().map(|x| DisplayPlaneProperties(x, self)).collect())
         }
     }
 
@@ -1129,7 +1129,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[cfg(feature = "VK_KHR_display")]
     #[cfg(feature = "Implements")]
-    fn display_plane_supported_displays(&self, plane_index: u32) -> crate::Result<Vec<Display>> {
+    fn display_plane_supported_displays(&self, plane_index: u32) -> crate::Result<Vec<Display<&Self>>> {
         unsafe {
             let mut n = 0;
             Resolver::get()
@@ -1145,35 +1145,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                     v.as_mut_ptr() as *mut _,
                 )
                 .into_result()
-                .map(move |_| v)
-        }
-    }
-
-    /// Create a display mode
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
-    fn create_display_mode(&self, display: &Display, params: VkDisplayModeParametersKHR) -> crate::Result<DisplayMode> {
-        unsafe {
-            let cinfo = VkDisplayModeCreateInfoKHR {
-                parameters: params,
-                ..Default::default()
-            };
-            let mut h = VK_NULL_HANDLE as _;
-            Resolver::get()
-                .create_display_mode_khr(
-                    self.native_ptr(),
-                    display.native_ptr(),
-                    &cinfo,
-                    std::ptr::null(),
-                    &mut h,
-                )
-                .into_result()
-                .map(move |_| DisplayMode(h))
+                .map(move |_| v.into_iter().map(|x| Display(x, self)).collect())
         }
     }
 
