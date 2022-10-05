@@ -199,6 +199,8 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         self
     }
 }
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "VK_KHR_surface")]
 impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surface> {
     type RootStructure = VkSwapchainCreateInfoKHR;
 
@@ -208,11 +210,13 @@ impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surfa
     }
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 pub trait TransferSurfaceObject {
     type ConcreteSurface: crate::Surface;
 
     fn transfer_surface(self) -> Self::ConcreteSurface;
 }
+#[cfg(feature = "VK_KHR_surface")]
 impl<Surface: crate::Surface> TransferSurfaceObject for SwapchainBuilder<Surface> {
     type ConcreteSurface = Surface;
 
@@ -220,6 +224,7 @@ impl<Surface: crate::Surface> TransferSurfaceObject for SwapchainBuilder<Surface
         self.1
     }
 }
+#[cfg(feature = "VK_KHR_surface")]
 impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurfaceObject for Extends<Parent, T> {
     type ConcreteSurface = Parent::ConcreteSurface;
 
@@ -521,6 +526,8 @@ impl FullScreenExclusiveInfoEXT {
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "VK_KHR_surface")]
 impl<T> Extendable<FullScreenExclusiveInfoEXT> for T where
     T: VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR>
 {
@@ -561,6 +568,8 @@ impl FullScreenExclusiveWin32InfoEXT {
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "VK_KHR_surface")]
 impl<T> Extendable<FullScreenExclusiveWin32InfoEXT> for T where
     T: VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR>
 {
