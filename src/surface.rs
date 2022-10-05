@@ -207,8 +207,6 @@ impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surfa
         unsafe { std::mem::transmute(root) }
     }
 }
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
-impl<Surface: crate::Surface> Extendable<FullScreenExclusiveEXT> for SwapchainBuilder<Surface> {}
 
 pub trait TransferSurfaceObject {
     type ConcreteSurface: crate::Surface;
@@ -522,6 +520,11 @@ impl FullScreenExclusiveInfoEXT {
         })
     }
 }
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+impl<T> Extendable<FullScreenExclusiveInfoEXT> for T where
+    T: VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR>
+{
+}
 
 /// Hint values an application can specify affecting full-screen transition behavior
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
@@ -556,6 +559,11 @@ impl FullScreenExclusiveWin32InfoEXT {
             ..Default::default()
         })
     }
+}
+#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+impl<T> Extendable<FullScreenExclusiveWin32InfoEXT> for T where
+    T: VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR>
+{
 }
 
 #[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
