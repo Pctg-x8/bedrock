@@ -1578,6 +1578,3 @@ impl QueueFlags {
 mod display;
 #[cfg(feature = "VK_KHR_display")]
 pub use self::display::*;
-
-mod ext_query;
-pub use self::ext_query::*;
