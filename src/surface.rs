@@ -526,6 +526,12 @@ impl FullScreenExclusiveInfoEXT {
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+impl From<FullScreenExclusiveInfoEXT> for VkSurfaceFullScreenExclusiveInfoEXT {
+    fn from(v: FullScreenExclusiveInfoEXT) -> Self {
+        v.0
+    }
+}
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[cfg(feature = "VK_KHR_surface")]
 impl<T> Extendable<FullScreenExclusiveInfoEXT> for T where
@@ -568,19 +574,17 @@ impl FullScreenExclusiveWin32InfoEXT {
     }
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+impl From<FullScreenExclusiveWin32InfoEXT> for VkSurfaceFullScreenExclusiveWin32InfoEXT {
+    fn from(v: FullScreenExclusiveWin32InfoEXT) -> Self {
+        v.0
+    }
+}
+#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[cfg(feature = "VK_KHR_surface")]
 impl<T> Extendable<FullScreenExclusiveWin32InfoEXT> for T where
     T: VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR>
 {
-}
-
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
-impl<'d> crate::ext::Chainable<'d, FullScreenExclusiveWin32InfoEXT> for FullScreenExclusiveInfoEXT {
-    fn chain(&mut self, next: &'d FullScreenExclusiveWin32InfoEXT) -> &mut Self {
-        self.0.pNext = next as *const _ as _;
-        self
-    }
 }
 
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
