@@ -1222,7 +1222,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
 
         let mut p = std::mem::MaybeUninit::<VkSurfaceCapabilities2KHR>::uninit();
         unsafe {
-            (*p.as_mut_ptr()).sType = VkPhysicalDeviceSurfaceInfo2KHR::TYPE;
+            (*p.as_mut_ptr()).sType = VkSurfaceCapabilities2KHR::TYPE;
             (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
         }
         unsafe {
