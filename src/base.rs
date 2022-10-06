@@ -1218,7 +1218,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<VkSurfaceCapabilities2KHR> {
-        let mut p = std::mem::MaybeUninit::uninit();
+        use crate::VulkanStructure;
+
+        let mut p = std::mem::MaybeUninit::<VkSurfaceCapabilities2KHR>::uninit();
+        unsafe {
+            (*p.as_mut_ptr()).sType = VkPhysicalDeviceSurfaceInfo2KHR::TYPE;
+            (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
+        }
         unsafe {
             crate::Resolver::get()
                 .get_physical_device_surface_capabilities2_khr(self.native_ptr(), surface_info, p.as_mut_ptr())
