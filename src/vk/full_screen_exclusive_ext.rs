@@ -64,11 +64,10 @@ unsafe impl VulkanStructure for VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
 }
 impl VkSurfaceCapabilitiesFullScreenExclusiveEXT {
-    pub fn uninit() -> std::mem::MaybeUninit<Self> {
-        let mut p = std::mem::MaybeUninit::<Self>::uninit();
+    pub fn zeroed() -> std::mem::MaybeUninit<Self> {
+        let mut p = std::mem::MaybeUninit::<Self>::zeroed();
         unsafe {
             (*p.as_mut_ptr()).sType = Self::TYPE;
-            (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
         }
         p
     }
