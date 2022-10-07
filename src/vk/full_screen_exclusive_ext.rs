@@ -3,6 +3,8 @@
 pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_SPEC_VERSION: usize = 3;
 pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME: &str = "VK_EXT_full_screen_exclusive";
 
+use crate::VulkanStructure;
+
 use super::*;
 
 pub type VkFullScreenExclusiveEXT = i32;
@@ -18,15 +20,19 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub pNext: *mut c_void,
     pub fullScreenExclusive: VkFullScreenExclusiveEXT,
 }
+unsafe impl VulkanStructure for VkSurfaceFullScreenExclusiveInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT;
+}
 impl Default for VkSurfaceFullScreenExclusiveInfoEXT {
     fn default() -> Self {
         VkSurfaceFullScreenExclusiveInfoEXT {
             sType: VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT,
-            ..unsafe { std::mem::zeroed() }
+            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
         }
     }
 }
-#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "VK_KHR_win32_surface"))]
+
+#[cfg(windows)]
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
@@ -34,21 +40,38 @@ pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
     pub pNext: *const c_void,
     pub hmonitor: winapi::shared::windef::HMONITOR,
 }
-#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "VK_KHR_win32_surface"))]
+unsafe impl VulkanStructure for VkSurfaceFullScreenExclusiveWin32InfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
+}
+#[cfg(windows)]
 impl Default for VkSurfaceFullScreenExclusiveWin32InfoEXT {
     fn default() -> Self {
         VkSurfaceFullScreenExclusiveWin32InfoEXT {
-            sType: VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT,
-            ..unsafe { std::mem::zeroed() }
+            sType: Self::TYPE,
+            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
         }
     }
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub fullScreenExclusiveSupported: VkBool32,
+}
+unsafe impl VulkanStructure for VkSurfaceCapabilitiesFullScreenExclusiveEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
+}
+impl VkSurfaceCapabilitiesFullScreenExclusiveEXT {
+    pub fn uninit() -> std::mem::MaybeUninit<Self> {
+        let mut p = std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            (*p.as_mut_ptr()).sType = Self::TYPE;
+            (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
+        }
+        p
+    }
 }
 
 pub type PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = extern "system" fn(

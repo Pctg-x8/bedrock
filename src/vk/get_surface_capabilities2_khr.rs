@@ -3,6 +3,8 @@
 pub const VK_KHR_GET_SURFACE_CAPABILITIES_2_SPEC_VERSION: usize = 1;
 pub static VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME: &'static str = "VK_KHR_get_surface_capabilities2";
 
+use crate::VulkanStructure;
+
 use super::*;
 
 #[repr(C)]
@@ -20,7 +22,7 @@ impl Default for VkPhysicalDeviceSurfaceInfo2KHR {
         }
     }
 }
-unsafe impl crate::VulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
+unsafe impl VulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
 }
 
@@ -31,16 +33,18 @@ pub struct VkSurfaceCapabilities2KHR {
     pub pNext: *mut c_void,
     pub surfaceCapabilities: VkSurfaceCapabilitiesKHR,
 }
-impl Default for VkSurfaceCapabilities2KHR {
-    fn default() -> Self {
-        VkSurfaceCapabilities2KHR {
-            sType: VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-unsafe impl crate::VulkanStructure for VkSurfaceCapabilities2KHR {
+unsafe impl VulkanStructure for VkSurfaceCapabilities2KHR {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
+}
+impl VkSurfaceCapabilities2KHR {
+    pub fn uninit() -> std::mem::MaybeUninit<Self> {
+        let mut p = std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            (*p.as_mut_ptr()).sType = Self::TYPE;
+            (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
+        }
+        p
+    }
 }
 
 #[repr(C)]

@@ -586,12 +586,3 @@ impl<T> Extendable<FullScreenExclusiveWin32InfoEXT> for T where
     T: VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR>
 {
 }
-
-#[cfg(feature = "VK_EXT_full_screen_exclusive")]
-unsafe impl crate::ext::VulkanStructure for VkSurfaceCapabilitiesFullScreenExclusiveEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT;
-}
-#[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "VK_KHR_win32_surface"))]
-unsafe impl crate::ext::VulkanStructure for VkSurfaceFullScreenExclusiveWin32InfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT;
-}
