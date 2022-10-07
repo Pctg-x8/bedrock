@@ -1213,8 +1213,31 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 
-    #[cfg(all(feature = "VK_KHR_get_surface_capabilities2", feature = "Implements"))]
+    /// Reports capabilities of a surface on a physical device
+    ///
+    /// # Failures
+    ///
+    /// On failure, this command returns
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+    #[cfg(feature = "Implements")]
     fn surface_capabilities2(
+        &self,
+        surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
+        sink: &mut VkSurfaceCapabilities2KHR,
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::Resolver::get()
+                .get_physical_device_surface_capabilities2_khr(self.native_ptr(), surface_info, sink)
+                .into_result()
+        }
+    }
+
+    #[cfg(all(feature = "VK_KHR_get_surface_capabilities2", feature = "Implements"))]
+    #[deprecated = "this function could not contains additional informations in pNext"]
+    fn surface_capabilities2_old(
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<VkSurfaceCapabilities2KHR> {

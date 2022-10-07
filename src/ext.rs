@@ -1,5 +1,7 @@
 //! Extension Helper
 
+use std::iter::FusedIterator;
+
 pub trait Chainable<'d, T> {
     fn chain(&mut self, next: &'d T) -> &mut Self;
 }
@@ -74,6 +76,7 @@ impl<'a> Iterator for StructureChainIterator<'a> {
         }
     }
 }
+impl FusedIterator for StructureChainIterator<'_> {}
 
 pub trait VulkanStructureProvider {
     type RootStructure;
