@@ -1265,6 +1265,36 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             p.assume_init()
         }
     }
+
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    #[cfg(feature = "Implements")]
+    /// Query supported presentation modes.
+    ///
+    /// # Failures
+    ///
+    /// On failure, this command returns
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    fn surface_present_modes2(
+        &self,
+        surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
+    ) -> crate::Result<Vec<VkPresentModeKHR>> {
+        let cmdfn: PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = self
+            .instance()
+            .extra_procedure("vkGetPhysicalDeviceSurfacePresentModes2EXT")
+            .expect("no extra procedures loaded");
+
+        let mut n = 0;
+        cmdfn(self.native_ptr(), surface_info, &mut n, std::ptr::null_mut()).into_result()?;
+        let mut x = Vec::with_capacity(n as _);
+        unsafe {
+            x.set_len(n as _);
+        }
+        cmdfn(self.native_ptr(), surface_info, &mut n, x.as_mut_ptr())
+            .into_result()
+            .map(move |_| x)
+    }
 }
 DerefContainerBracketImpl!(for PhysicalDevice {});
 

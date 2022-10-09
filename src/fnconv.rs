@@ -91,3 +91,6 @@ FnTransmuteImpl!(for PFN_vkGetMemoryHostPointerPropertiesEXT);
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 FnTransmuteImpl!(for PFN_vkCreateDebugUtilsMessengerEXT, PFN_vkDestroyDebugUtilsMessengerEXT, PFN_vkSetDebugUtilsObjectNameEXT);
+
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
