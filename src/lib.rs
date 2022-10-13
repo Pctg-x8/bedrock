@@ -51,21 +51,14 @@ mod fnconv;
 
 macro_rules! DefineStdDeviceChildObject {
     { $(#[$m: meta])* $name: ident($vkh: ty, $ot: expr): $i: ty { drop $dropper: ident } } => {
-        #[derive(VkHandle)]
+        #[derive(VkHandle, $crate::DeviceChild)]
         $(#[$m])*
-        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, pub(crate) Device);
+        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, #[parent] pub(crate) Device);
         impl<Device: $crate::Device> $crate::VkObject for $name<Device> {
             const TYPE: VkObjectType = $ot;
         }
         unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
         unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
-        impl<Device: $crate::Device> DeviceChild for $name<Device> {
-            type ConcreteDevice = Device;
-
-            fn device(&self) -> &Self::ConcreteDevice {
-                &self.1
-            }
-        }
         #[cfg(feature = "Implements")]
         impl<Device: $crate::Device> Drop for $name<Device> {
             fn drop(&mut self) {

@@ -20,11 +20,9 @@ DefineStdDeviceChildObject! {
 
 /// Opaque handle to a command buffer object
 #[repr(transparent)]
-#[derive(Clone, Copy, VkHandle)]
+#[derive(Clone, Copy, VkHandle, VkObject)]
+#[object_type = "VK_OBJECT_TYPE_COMMAND_BUFFER"]
 pub struct CommandBufferObject<Device: crate::Device>(VkCommandBuffer, std::marker::PhantomData<Device>);
-impl<Device: crate::Device> VkObject for CommandBufferObject<Device> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
-}
 unsafe impl<Device: crate::Device + Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}

@@ -24,11 +24,10 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
 }
 
 /// Opaque handle to a instance object
-#[derive(VkHandle)]
+#[derive(VkHandle, VkObject)]
+#[object_type = "VK_OBJECT_TYPE_INSTANCE"]
+#[repr(transparent)]
 pub struct InstanceObject(VkInstance);
-impl VkObject for InstanceObject {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_INSTANCE;
-}
 unsafe impl Sync for InstanceObject {}
 unsafe impl Send for InstanceObject {}
 #[cfg(feature = "Implements")]
@@ -50,26 +49,12 @@ impl Instance for InstanceObject {}
 /// * `wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool`: VK_KHR_wayland_surface
 /// * `win32_presentation_support(&self, queue_family: u32) -> bool`: VK_KHR_win32_surface
 /// * Methods for Android and Mir surfaces are not implemented
-#[derive(VkHandle)]
-pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, Owner);
-impl<Instance: crate::Instance> VkObject for PhysicalDeviceObject<Instance> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_PHYSICAL_DEVICE;
-}
+#[derive(VkHandle, VkObject, crate::InstanceChild, crate::InstanceChildTransferrable)]
+#[object_type = "VK_OBJECT_TYPE_PHYSICAL_DEVICE"]
+pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, #[parent] Owner);
 unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
-impl<Owner: Instance> InstanceChild for PhysicalDeviceObject<Owner> {
-    type ConcreteInstance = Owner;
-
-    fn instance(&self) -> &Owner {
-        &self.1
-    }
-}
-impl<Owner: Instance> InstanceChildTransferrable for PhysicalDeviceObject<Owner> {
-    fn transfer_instance(self) -> Self::ConcreteInstance {
-        self.1
-    }
-}
 impl<Instance: crate::Instance + Clone> PhysicalDeviceObject<&'_ Instance> {
     /// Clones parent reference
     #[inline]

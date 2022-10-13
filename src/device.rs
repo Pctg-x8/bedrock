@@ -12,20 +12,11 @@ use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObjec
 use crate::{TemporalSubmissionBatchResources, VkHandle};
 
 /// Opaque handle to a device object
-#[derive(VkHandle)]
-pub struct DeviceObject<Instance: crate::Instance>(VkDevice, Instance);
-impl<Instance: crate::Instance> VkObject for DeviceObject<Instance> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE;
-}
+#[derive(VkHandle, VkObject, InstanceChild)]
+#[object_type = "VK_OBJECT_TYPE_DEVICE"]
+pub struct DeviceObject<Instance: crate::Instance>(VkDevice, #[parent] Instance);
 unsafe impl<Instance: crate::Instance + Sync> Sync for DeviceObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for DeviceObject<Instance> {}
-impl<Instance: crate::Instance> InstanceChild for DeviceObject<Instance> {
-    type ConcreteInstance = Instance;
-
-    fn instance(&self) -> &Instance {
-        &self.1
-    }
-}
 #[cfg(feature = "Implements")]
 impl<Instance: crate::Instance> Drop for DeviceObject<Instance> {
     fn drop(&mut self) {
@@ -47,20 +38,11 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
 }
 
 /// Opaque handle to a queue object
-#[derive(Clone, VkHandle)]
-pub struct Queue<Device: crate::Device>(VkQueue, Device);
-impl<Device: crate::Device> VkObject for Queue<Device> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_QUEUE;
-}
+#[derive(Clone, VkHandle, VkObject, crate::DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_QUEUE"]
+pub struct Queue<Device: crate::Device>(VkQueue, #[parent] Device);
 unsafe impl<Device: crate::Device + Sync> Sync for Queue<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for Queue<Device> {}
-impl<Device: crate::Device> DeviceChild for Queue<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
 
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
