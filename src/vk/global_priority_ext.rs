@@ -4,7 +4,6 @@ pub const VK_EXT_GLOBAL_PRIORITY_SPEC_VERSION: usize = 2;
 pub const VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_EXT_global_priority";
 
 use super::*;
-use std::mem::zeroed;
 
 pub type VkQueueGlobalPriorityEXT = i32;
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_EXT: VkQueueGlobalPriorityEXT = 128;

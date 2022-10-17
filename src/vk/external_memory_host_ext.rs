@@ -4,7 +4,6 @@ pub const VK_EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION: usize = 1;
 pub const VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME: &str = "VK_EXT_external_memory_host";
 
 use super::*;
-use std::mem::zeroed;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]

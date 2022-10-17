@@ -87,6 +87,9 @@ impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h H> {
     type Handle = <H as VkHandle>::Handle;
 
     fn native_ptr(&self) -> Self::Handle {
-        self.map_or(unsafe { std::mem::zeroed() }, |x| x.native_ptr())
+        self.map_or_else(
+            || unsafe { std::mem::MaybeUninit::zeroed().assume_init() },
+            |x| x.native_ptr(),
+        )
     }
 }

@@ -4,7 +4,6 @@ pub const VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION: usize = 1;
 pub const VK_EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_EXT_vertex_attribute_divisor";
 
 use super::*;
-use std::mem::zeroed;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]

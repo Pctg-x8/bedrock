@@ -21,7 +21,6 @@
 
 use libc::*;
 use std;
-use std::mem::zeroed;
 
 #[macro_export]
 macro_rules! VK_MAKE_VERSION {
@@ -1579,18 +1578,22 @@ impl Clone for VkPhysicalDeviceMemoryProperties {
             memoryTypeCount: self.memoryTypeCount,
             memoryHeapCount: self.memoryHeapCount,
             memoryTypes: {
-                let mut s: [_; VK_MAX_MEMORY_TYPES] = unsafe { std::mem::zeroed() };
+                let mut s = std::mem::MaybeUninit::<[_; VK_MAX_MEMORY_TYPES]>::uninit();
                 for (i, e) in self.memoryTypes.iter().enumerate() {
-                    s[i] = e.clone();
+                    unsafe {
+                        *s.as_ptr().add(i) = e.clone();
+                    }
                 }
-                s
+                unsafe { s.assume_init() }
             },
             memoryHeaps: {
-                let mut s: [_; VK_MAX_MEMORY_HEAPS] = unsafe { std::mem::zeroed() };
+                let mut s = std::mem::MaybeUninit::<[_; VK_MAX_MEMORY_HEAPS]>::uninit();
                 for (i, e) in self.memoryHeaps.iter().enumerate() {
-                    s[i] = e.clone();
+                    unsafe {
+                        *s.as_ptr().add(i) = e.clone();
+                    }
                 }
-                s
+                unsafe { s.assume_init() }
             },
         }
     }
