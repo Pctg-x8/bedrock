@@ -6,10 +6,11 @@ pub static VK_KHR_MAINTENANCE1_EXTENSION_NAME: &'static str = "VK_KHR_maintenanc
 use super::*;
 
 pub type VkCommandPoolTrimFlagsKHR = VkFlags;
-pub type PFN_vkTrimCommandPoolKHR = extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
+pub type PFN_vkTrimCommandPoolKHR =
+    extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
+#[cfg(not(feature = "DynamicLoaded"))]
+extern "system" {
     pub fn vkTrimCommandPoolKHR(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
 }

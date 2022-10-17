@@ -11,6 +11,7 @@ pub type PFN_vkAcquireXlibDisplayEXT = extern "system" fn(physicalDevice: VkPhys
 pub type PFN_vkGetRandROutputDisplayEXT = extern "system" fn(physicalDevice: VkPhysicalDevice, dpy: *mut Display, rrOutput: RROutput, pDisplay: *mut VkDisplayKHR) -> VkResult;
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system"
 {
     pub fn vkAcquireXlibDisplayEXT(physicalDevice: VkPhysicalDevice, dpy: *mut Display, display: VkDisplayKHR) -> VkResult;

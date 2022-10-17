@@ -112,6 +112,7 @@ pub type PFN_vkDebugReportMessageEXT = extern "system" fn(
 );
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkCreateDebugReportCallbackEXT(
         instance: VkInstance,

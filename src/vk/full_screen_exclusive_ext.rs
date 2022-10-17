@@ -91,6 +91,7 @@ pub type PFN_vkReleaseFullScreenExclusiveModeEXT =
     extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkGetPhysicalDeviceSurfacePresentModes2EXT(
         physicalDevice: VkPhysicalDevice,

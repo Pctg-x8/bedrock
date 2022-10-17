@@ -80,6 +80,7 @@ pub type PFN_vkGetPhysicalDeviceSurfaceFormats2KHR = extern "system" fn(
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkGetPhysicalDeviceSurfaceCapabilities2KHR(
         physicalDevice: VkPhysicalDevice,

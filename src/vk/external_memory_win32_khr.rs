@@ -3,30 +3,35 @@
 pub const VK_KHR_EXTERNAL_MEMORY_WIN32_SPEC_VERSION: usize = 1;
 pub static VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_memory_win32";
 
-use winapi::shared::{
-    ntdef::{LPCWSTR, HANDLE},
-    minwindef::DWORD
-};
 use super::*;
+use winapi::shared::{
+    minwindef::DWORD,
+    ntdef::{HANDLE, LPCWSTR},
+};
 
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkImportMemoryWin32HandleInfoKHR {
-    pub sType: VkStructureType, pub pNext: *const c_void,
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
     pub handleType: VkExternalMemoryHandleTypeFlags,
-    pub handle: HANDLE, pub name: LPCWSTR
+    pub handle: HANDLE,
+    pub name: LPCWSTR,
 }
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkExportMemoryWin32HandleInfoKHR {
-    pub sType: VkStructureType, pub pNext: *const c_void,
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
     pub pAttributes: *const winapi::um::minwinbase::SECURITY_ATTRIBUTES,
     pub dwAccess: DWORD,
-    pub name: LPCWSTR
+    pub name: LPCWSTR,
 }
 impl Default for VkImportMemoryWin32HandleInfoKHR {
     fn default() -> VkImportMemoryWin32HandleInfoKHR {
         VkImportMemoryWin32HandleInfoKHR {
             sType: VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
-            .. unsafe { std::mem::zeroed() }
+            ..unsafe { std::mem::zeroed() }
         }
     }
 }
@@ -34,52 +39,68 @@ impl Default for VkExportMemoryWin32HandleInfoKHR {
     fn default() -> VkExportMemoryWin32HandleInfoKHR {
         VkExportMemoryWin32HandleInfoKHR {
             sType: VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
-            .. unsafe { std::mem::zeroed() }
+            ..unsafe { std::mem::zeroed() }
         }
     }
 }
 
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VkMemoryWin32HandlePropertiesKHR
-{
-    pub sType: VkStructureType, pub pNext: *mut c_void, pub memoryTypeBits: u32
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VkMemoryWin32HandlePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub memoryTypeBits: u32,
 }
-impl Default for VkMemoryWin32HandlePropertiesKHR
-{
-    fn default() -> Self
-    {
-        VkMemoryWin32HandlePropertiesKHR
-        {
+impl Default for VkMemoryWin32HandlePropertiesKHR {
+    fn default() -> Self {
+        VkMemoryWin32HandlePropertiesKHR {
             sType: VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR,
-            .. unsafe { std::mem::zeroed() }
+            ..unsafe { std::mem::zeroed() }
         }
     }
 }
 
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VkMemoryGetWin32HandleInfoKHR
-{
-    pub sType: VkStructureType, pub pNext: *const c_void,
-    pub memory: VkDeviceMemory, pub handleType: VkExternalMemoryHandleTypeFlags
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VkMemoryGetWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
+    pub memory: VkDeviceMemory,
+    pub handleType: VkExternalMemoryHandleTypeFlags,
 }
-impl Default for VkMemoryGetWin32HandleInfoKHR
-{
-    fn default() -> Self
-    {
-        VkMemoryGetWin32HandleInfoKHR
-        {
+impl Default for VkMemoryGetWin32HandleInfoKHR {
+    fn default() -> Self {
+        VkMemoryGetWin32HandleInfoKHR {
             sType: VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR,
-            .. unsafe { std::mem::zeroed() }
+            ..unsafe { std::mem::zeroed() }
         }
     }
 }
 
-pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut HANDLE) -> VkResult;
-pub type PFN_vkGetMemoryWin32HandlePropertiesKHR = extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags, handle: HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult;
+pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(
+    device: VkDevice,
+    pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR,
+    pHandle: *mut HANDLE,
+) -> VkResult;
+pub type PFN_vkGetMemoryWin32HandlePropertiesKHR = extern "system" fn(
+    device: VkDevice,
+    handleType: VkExternalMemoryHandleTypeFlags,
+    handle: HANDLE,
+    pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
+) -> VkResult;
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
-    pub fn vkGetMemoryWin32HandleKHR(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut HANDLE) -> VkResult;
-    pub fn vkGetMemoryWin32HandlePropertiesKHR(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlags, handle: HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult;
+#[cfg(not(feature = "DynamicLoaded"))]
+extern "system" {
+    pub fn vkGetMemoryWin32HandleKHR(
+        device: VkDevice,
+        pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR,
+        pHandle: *mut HANDLE,
+    ) -> VkResult;
+    pub fn vkGetMemoryWin32HandlePropertiesKHR(
+        device: VkDevice,
+        handleType: VkExternalMemoryHandleTypeFlags,
+        handle: HANDLE,
+        pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
+    ) -> VkResult;
 }

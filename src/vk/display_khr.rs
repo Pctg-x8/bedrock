@@ -149,6 +149,7 @@ pub type PFN_vkCreateDisplayPlaneSurfaceKHR = extern "system" fn(
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkGetPhysicalDeviceDisplayPropertiesKHR(
         physicalDevice: VkPhysicalDevice,

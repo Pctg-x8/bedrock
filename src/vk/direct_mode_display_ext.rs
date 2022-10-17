@@ -5,10 +5,11 @@ pub static VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME: &'static str = "VK_EXT_dir
 
 use super::*;
 
-pub type PFN_vkReleaseDisplayEXT = extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult;
+pub type PFN_vkReleaseDisplayEXT =
+    extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult;
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
+#[cfg(not(feature = "DynamicLoaded"))]
+extern "system" {
     pub fn vkReleaseDisplayEXT(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult;
 }

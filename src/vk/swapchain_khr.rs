@@ -93,6 +93,7 @@ pub type PFN_vkAcquireNextImageKHR = extern "system" fn(
 pub type PFN_vkQueuePresentKHR = extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkCreateSwapchainKHR(
         device: VkDevice,

@@ -15,22 +15,62 @@ pub type VkPhysicalDeviceMemoryProperites2KHR = VkPhysicalDeviceMemoryProperties
 pub type VkSparseImageFormatProperites2KHR = VkSparseImageFormatProperties2;
 pub type VkPhysicalDeviceSparseImageFormatInfo2KHR = VkPhysicalDeviceSparseImageFormatInfo2;
 
-pub type PFN_vkGetPhysicalDeviceFeatures2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2);
-pub type PFN_vkGetPhysicalDeviceProperties2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2);
-pub type PFN_vkGetPhysicalDeviceFormatProperties2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2);
-pub type PFN_vkGetPhysicalDeviceImageFormatProperties2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2, pImageFormatProperties: *mut VkImageFormatProperties2) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2);
-pub type PFN_vkGetPhysicalDeviceMemoryProeprties2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2);
-pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = extern "system" fn(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2);
+pub type PFN_vkGetPhysicalDeviceFeatures2KHR =
+    extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2);
+pub type PFN_vkGetPhysicalDeviceProperties2KHR =
+    extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2);
+pub type PFN_vkGetPhysicalDeviceFormatProperties2KHR =
+    extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2);
+pub type PFN_vkGetPhysicalDeviceImageFormatProperties2KHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2,
+    pImageFormatProperties: *mut VkImageFormatProperties2,
+) -> VkResult;
+pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    pQueueFamilyPropertyCount: *mut u32,
+    pQueueFamilyProperties: *mut VkQueueFamilyProperties2,
+);
+pub type PFN_vkGetPhysicalDeviceMemoryProeprties2KHR =
+    extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2);
+pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2,
+    pPropertyCount: *mut u32,
+    pProperties: *mut VkSparseImageFormatProperties2,
+);
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
+#[cfg(not(feature = "DynamicLoaded"))]
+extern "system" {
     fn vkGetPhysicalDeviceFeatures2KHR(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2);
-    fn vkGetPhysicalDeviceProperties2KHR(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2);
-    fn vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2);
-    fn vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2, pImageFormatProperties: *mut VkImageFormatProperties2) -> VkResult;
-    fn vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2);
-    fn vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2);
-    fn vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2);
+    fn vkGetPhysicalDeviceProperties2KHR(
+        physicalDevice: VkPhysicalDevice,
+        pProperties: *mut VkPhysicalDeviceProperties2,
+    );
+    fn vkGetPhysicalDeviceFormatProperties2KHR(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        pFormatProperties: *mut VkFormatProperties2,
+    );
+    fn vkGetPhysicalDeviceImageFormatProperties2KHR(
+        physicalDevice: VkPhysicalDevice,
+        pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2,
+        pImageFormatProperties: *mut VkImageFormatProperties2,
+    ) -> VkResult;
+    fn vkGetPhysicalDeviceQueueFamilyProperties2KHR(
+        physicalDevice: VkPhysicalDevice,
+        pQueueFamilyPropertyCount: *mut u32,
+        pQueueFamilyProperties: *mut VkQueueFamilyProperties2,
+    );
+    fn vkGetPhysicalDeviceMemoryProperties2KHR(
+        physicalDevice: VkPhysicalDevice,
+        pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2,
+    );
+    fn vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
+        physicalDevice: VkPhysicalDevice,
+        pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkSparseImageFormatProperties2,
+    );
 }

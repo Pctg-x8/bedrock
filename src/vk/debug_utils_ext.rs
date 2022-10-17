@@ -145,6 +145,7 @@ pub type PFN_vkSubmitDebugUtilsMessageEXT = extern "system" fn(
 );
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn PFN_vkSetDebugUtilsObjectNameEXT(
         device: VkDevice,

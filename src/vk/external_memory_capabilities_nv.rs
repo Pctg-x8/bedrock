@@ -16,20 +16,37 @@ pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_NV: VkExternalMemoryFeat
 pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_NV: VkExternalMemoryFeatureFlagsNV = 0x02;
 pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_NV: VkExternalMemoryFeatureFlagsNV = 0x04;
 
-#[repr(C)] #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VkExternalImageFormatPropertiesNV
-{
-	pub imageFormatProperties: VkImageFormatProperties,
-	pub externalMemoryFeatures: VkExternalMemoryFeatureFlagsNV,
-	pub exportFromImportedHandleTypes: VkExternalMemoryHandleTypeFlagsNV,
-	pub compatibleHandleTypes: VkExternalMemoryHandleTypeFlagsNV
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct VkExternalImageFormatPropertiesNV {
+    pub imageFormatProperties: VkImageFormatProperties,
+    pub externalMemoryFeatures: VkExternalMemoryFeatureFlagsNV,
+    pub exportFromImportedHandleTypes: VkExternalMemoryHandleTypeFlagsNV,
+    pub compatibleHandleTypes: VkExternalMemoryHandleTypeFlagsNV,
 }
 
-pub type PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV = extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, itype: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, externalHandleType: VkExternalMemoryHandleTypeFlagsNV, pExternalImageFormatProperties: *mut VkExternalImageFormatPropertiesNV) -> VkResult;
+pub type PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV = extern "system" fn(
+    physicalDevice: VkPhysicalDevice,
+    format: VkFormat,
+    itype: VkImageType,
+    tiling: VkImageTiling,
+    usage: VkImageUsageFlags,
+    flags: VkImageCreateFlags,
+    externalHandleType: VkExternalMemoryHandleTypeFlagsNV,
+    pExternalImageFormatProperties: *mut VkExternalImageFormatPropertiesNV,
+) -> VkResult;
 
 #[cfg(feature = "Implements")]
-extern "system"
-{
-    pub fn vkGetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice: VkPhysicalDevice, format: VkFormat, _type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags,
-        externalHandleType: VkExternalMemoryHandleTypeFlagsNV, pExternalImageFormatProperties: *mut VkExternalImageFormatPropertiesNV) -> VkResult;
+#[cfg(not(feature = "DynamicLoaded"))]
+extern "system" {
+    pub fn vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        _type: VkImageType,
+        tiling: VkImageTiling,
+        usage: VkImageUsageFlags,
+        flags: VkImageCreateFlags,
+        externalHandleType: VkExternalMemoryHandleTypeFlagsNV,
+        pExternalImageFormatProperties: *mut VkExternalImageFormatPropertiesNV,
+    ) -> VkResult;
 }

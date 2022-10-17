@@ -110,6 +110,7 @@ pub type PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = extern "system" fn(
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
     pub fn vkGetPhysicalDeviceSurfaceSupportKHR(
