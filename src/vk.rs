@@ -22,27 +22,29 @@
 use libc::*;
 use std;
 
-#[macro_export]
-macro_rules! VK_MAKE_VERSION {
-    ($major: expr, $minor: expr, $patch: expr) => {
-        $major << 22 | $minor << 12 | $patch
-    };
+#[inline]
+pub const fn VK_MAKE_VERSION(major: u16, minor: u16, patch: u16) -> u32 {
+    major << 22 | minor << 16 | patch
 }
-/// Vulkan 1.0 version number
-pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION!(1, 0, 0);
 
-#[macro_export]
-macro_rules! VK_VERSION {
-    (MAJOR $v: expr) => {
-        $v as usize >> 22
-    };
-    (MINOR $v: expr) => {
-        ($v as usize >> 12) & 0x3ff
-    };
-    (PATCH $v: expr) => {
-        $v as usize & 0xfff
-    };
+/// Vulkan 1.0 version number
+pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(1, 0, 0);
+
+#[inline]
+pub const fn VK_MAJOR_VERSION(version: u32) -> u16 {
+    (v >> 22) as _
 }
+
+#[inline]
+pub const fn VK_MINOR_VERSION(version: u32) -> u16 {
+    ((v >> 22) & 0x3ff) as _
+}
+
+#[inline]
+pub const fn VK_PATCH_VERSION(version: u32) -> u16 {
+    (v & 0xfff) as _
+}
+
 /// Version of this file
 pub const VK_HEADER_VERSION: u32 = 70;
 
