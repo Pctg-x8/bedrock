@@ -10,7 +10,8 @@ use winapi::shared::{
 };
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR"]
 pub struct VkImportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -18,8 +19,10 @@ pub struct VkImportMemoryWin32HandleInfoKHR {
     pub handle: HANDLE,
     pub name: LPCWSTR,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR"]
 pub struct VkExportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -27,54 +30,24 @@ pub struct VkExportMemoryWin32HandleInfoKHR {
     pub dwAccess: DWORD,
     pub name: LPCWSTR,
 }
-impl Default for VkImportMemoryWin32HandleInfoKHR {
-    fn default() -> VkImportMemoryWin32HandleInfoKHR {
-        VkImportMemoryWin32HandleInfoKHR {
-            sType: VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-impl Default for VkExportMemoryWin32HandleInfoKHR {
-    fn default() -> VkExportMemoryWin32HandleInfoKHR {
-        VkExportMemoryWin32HandleInfoKHR {
-            sType: VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR"]
 pub struct VkMemoryWin32HandlePropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryTypeBits: u32,
 }
-impl Default for VkMemoryWin32HandlePropertiesKHR {
-    fn default() -> Self {
-        VkMemoryWin32HandlePropertiesKHR {
-            sType: VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR"]
 pub struct VkMemoryGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub memory: VkDeviceMemory,
     pub handleType: VkExternalMemoryHandleTypeFlags,
-}
-impl Default for VkMemoryGetWin32HandleInfoKHR {
-    fn default() -> Self {
-        VkMemoryGetWin32HandleInfoKHR {
-            sType: VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(

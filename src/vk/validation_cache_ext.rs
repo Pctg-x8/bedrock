@@ -7,7 +7,6 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkDebugReportObjectT
 
 use super::*;
 use libc::*;
-use std::mem::zeroed;
 
 #[cfg(target_pointer_width = "64")]
 mod nd_handle_base_ts {
@@ -21,7 +20,8 @@ pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVer
 pub type VkValidationCacheCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT"]
 pub struct VkValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -29,17 +29,10 @@ pub struct VkValidationCacheCreateInfoEXT {
     pub initialDataSize: size_t,
     pub pInitialData: *const c_void,
 }
-impl Default for VkValidationCacheCreateInfoEXT {
-    fn default() -> Self {
-        VkValidationCacheCreateInfoEXT {
-            sType: VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT"]
 pub struct VkShaderModuleValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

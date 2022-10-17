@@ -10,21 +10,14 @@ pub static VK_KHR_XLIB_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_xlib_surfa
 pub type VkXlibSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR"]
 pub struct VkXlibSurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkXlibSurfaceCreateFlagsKHR,
     pub dpy: *mut Display,
     pub window: Window,
-}
-impl Default for VkXlibSurfaceCreateInfoKHR {
-    fn default() -> Self {
-        VkXlibSurfaceCreateInfoKHR {
-            sType: VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkCreateXlibSurfaceKHR = extern "system" fn(

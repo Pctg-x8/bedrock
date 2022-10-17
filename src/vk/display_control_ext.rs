@@ -18,64 +18,39 @@ pub type VkDisplayEventTypeEXT = i32;
 pub const VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT: VkDisplayEventTypeEXT = 0;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT"]
 pub struct VkDisplayPowerInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub powerState: VkDisplayPowerStateEXT,
 }
-impl Default for VkDisplayPowerInfoEXT {
-    fn default() -> Self {
-        VkDisplayPowerInfoEXT {
-            sType: VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT"]
 pub struct VkDeviceEventInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub deviceEvent: VkDeviceEventTypeEXT,
 }
-impl Default for VkDeviceEventInfoEXT {
-    fn default() -> Self {
-        VkDeviceEventInfoEXT {
-            sType: VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT"]
 pub struct VkDisplayEventInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub displayEvent: VkDisplayEventTypeEXT,
 }
-impl Default for VkDisplayEventInfoEXT {
-    fn default() -> Self {
-        VkDisplayEventInfoEXT {
-            sType: VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT"]
 pub struct VkSwapchainCounterCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub surfaceCounters: VkSurfaceCounterFlagsEXT,
-}
-impl Default for VkSwapchainCounterCreateInfoEXT {
-    fn default() -> Self {
-        VkSwapchainCounterCreateInfoEXT {
-            sType: VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkDisplayPowerControlEXT = extern "system" fn(

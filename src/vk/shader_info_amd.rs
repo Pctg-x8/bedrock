@@ -19,6 +19,7 @@ pub struct VkShaderResourceUsageAMD {
     pub ldsUsageSizeInBytes: size_t,
     pub scratchMemUsageInBytes: size_t,
 }
+
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct VkShaderStatisticsInfoAMD {

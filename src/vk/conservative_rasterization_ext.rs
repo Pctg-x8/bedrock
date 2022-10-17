@@ -13,9 +13,12 @@ pub const VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT: VkConservativeRa
 
 pub type VkPipelineRasterizationConservativeStateCreateFlagsEXT = VkFlags;
 
-#[repr(C)] #[derive(Clone, Debug)]
+#[repr(C)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT"]
 pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
-    pub sType: VkStructureType, pub pNext: *mut c_void,
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
     pub primitiveOverestimationSize: c_float,
     pub maxExtraPrimitiveOverestimationSize: c_float,
     pub extraPrimitiveOverestimationSizeGranularity: c_float,
@@ -24,35 +27,16 @@ pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
     pub degenerateTrianglesRasterized: VkBool32,
     pub degenerateLinesRasterized: VkBool32,
     pub fullyCoveredFragmentShaderInputVariable: VkBool32,
-    pub conservativeRasterizationPostDepthCoverage: VkBool32
-}
-impl Default for VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
-    fn default() -> Self {
-        VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
-            .. unsafe { MaybeUninit::zeroed().assume_init() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT;
+    pub conservativeRasterizationPostDepthCoverage: VkBool32,
 }
 
-#[repr(C)] #[derive(Clone, Debug)]
+#[repr(C)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT"]
 pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
-    pub sType: VkStructureType, pub pNext: *const c_void,
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
     pub flags: VkPipelineRasterizationConservativeStateCreateFlagsEXT,
     pub conservativeRasterizationMode: VkConservativeRasterizationModeEXT,
-    pub extraPrimitiveOverestimationSize: c_float
-}
-impl Default for VkPipelineRasterizationConservativeStateCreateInfoEXT {
-    fn default() -> Self {
-        VkPipelineRasterizationConservativeStateCreateInfoEXT {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT,
-            .. unsafe { MaybeUninit::zeroed().assume_init() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPipelineRasterizationConservativeStateCreateInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT;
+    pub extraPrimitiveOverestimationSize: c_float,
 }

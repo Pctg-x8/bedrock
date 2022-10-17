@@ -57,26 +57,14 @@ pub const VK_DEBUG_REPORT_ERROR_BIT_EXT: VkDebugReportFlagsEXT = 0x08;
 pub const VK_DEBUG_REPORT_DEBUG_BIT_EXT: VkDebugReportFlagsEXT = 0x10;
 
 #[repr(C)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT"]
 pub struct VkDebugReportCallbackCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkDebugReportFlagsEXT,
     pub pfnCallback: PFN_vkDebugReportCallbackEXT,
     pub pUserData: *mut c_void,
-}
-impl Default for VkDebugReportCallbackCreateInfoEXT {
-    fn default() -> Self {
-        VkDebugReportCallbackCreateInfoEXT {
-            sType: VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
-            pNext: std::ptr::null(),
-            flags: 0,
-            pfnCallback: unsafe {
-                #[allow(invalid_value)]
-                std::mem::MaybeUninit::zeroed().assume_init()
-            },
-            pUserData: std::ptr::null_mut(),
-        }
-    }
 }
 
 pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(

@@ -11,6 +11,7 @@ use libc::*;
 pub struct VkRefreshCycleDurationGOOGLE {
     pub refreshDuration: u64,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkPastPresentationTimingGOOGLE {
@@ -20,27 +21,22 @@ pub struct VkPastPresentationTimingGOOGLE {
     pub earliestPresentTime: u64,
     pub presentMargin: u64,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkPresentTimeGOOGLE {
     pub presentID: u32,
     pub desiredPresentTime: u64,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE"]
 pub struct VkPresentTimesInfoGOOGLE {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub swapchainCount: u32,
     pTimes: *const VkPresentTimeGOOGLE,
-}
-impl Default for VkPresentTimesInfoGOOGLE {
-    fn default() -> Self {
-        VkPresentTimesInfoGOOGLE {
-            sType: VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkGetRefreshCycleDurationGOOGLE = extern "system" fn(

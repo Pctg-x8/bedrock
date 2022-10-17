@@ -12,20 +12,11 @@ pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_EXT: VkQueueGlobalPriorityEXT = 256;
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_EXT: VkQueueGlobalPriorityEXT = 512;
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT: VkQueueGlobalPriorityEXT = 1024;
 
-#[repr(C)] #[derive(Clone, Debug)]
-pub struct VkDeviceQueueGlobalPriorityCreateInfoEXT
-{
-    pub sType: VkStructureType, pub pNext: *const c_void,
-    pub globalPriority: VkQueueGlobalPriorityEXT
-}
-impl Default for VkDeviceQueueGlobalPriorityCreateInfoEXT
-{
-    fn default() -> Self
-    {
-        VkDeviceQueueGlobalPriorityCreateInfoEXT
-        {
-            sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT,
-            .. unsafe { zeroed() }
-        }
-    }
+#[repr(C)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT"]
+pub struct VkDeviceQueueGlobalPriorityCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
+    pub globalPriority: VkQueueGlobalPriorityEXT,
 }

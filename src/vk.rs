@@ -1260,7 +1260,8 @@ pub type PFN_vkInternalFreeNotification = extern "system" fn(
 pub type PFN_vkVoidFunction = extern "system" fn();
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_APPLICATION_INFO"]
 pub struct VkApplicationInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1270,18 +1271,10 @@ pub struct VkApplicationInfo {
     pub engineVersion: u32,
     pub apiVersion: u32,
 }
-impl Default for VkApplicationInfo {
-    fn default() -> Self {
-        VkApplicationInfo {
-            sType: VK_STRUCTURE_TYPE_APPLICATION_INFO,
-            apiVersion: VK_API_VERSION_1_0,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO"]
 pub struct VkInstanceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1292,17 +1285,9 @@ pub struct VkInstanceCreateInfo {
     pub enabledExtensionCount: u32,
     pub ppEnabledExtensionNames: *const *const c_char,
 }
-impl Default for VkInstanceCreateInfo {
-    fn default() -> Self {
-        VkInstanceCreateInfo {
-            sType: VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct VkAllocationCallbacks {
     pub pUserData: *mut c_void,
     pub pfnAllocation: PFN_vkAllocationFunction,
@@ -1371,11 +1356,6 @@ pub struct VkPhysicalDeviceFeatures {
     pub variableMultisampleRate: VkBool32,
     pub inheritedQueries: VkBool32,
 }
-impl Default for VkPhysicalDeviceFeatures {
-    fn default() -> Self {
-        unsafe { std::mem::zeroed() }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone)]
@@ -1393,31 +1373,27 @@ pub struct VkExtent3D {
     pub depth: u32,
 }
 impl VkExtent3D {
-    pub fn new1(width: u32) -> Self {
-        VkExtent3D {
+    #[inline]
+    pub const fn new1(width: u32) -> Self {
+        Self {
             width,
-            ..Default::default()
-        }
-    }
-    pub fn new2(width: u32, height: u32) -> Self {
-        VkExtent3D {
-            width,
-            height,
-            ..Default::default()
-        }
-    }
-    pub fn new(width: u32, height: u32, depth: u32) -> Self {
-        VkExtent3D { width, height, depth }
-    }
-}
-/// `VkExtent3D { width: 1, height: 1, depth: 1 }`
-impl Default for VkExtent3D {
-    fn default() -> Self {
-        VkExtent3D {
-            width: 1,
             height: 1,
             depth: 1,
         }
+    }
+
+    #[inline]
+    pub const fn new2(width: u32, height: u32) -> Self {
+        Self {
+            width,
+            height,
+            depth: 1,
+        }
+    }
+
+    #[inline]
+    pub const fn new(width: u32, height: u32, depth: u32) -> Self {
+        Self { width, height, depth }
     }
 }
 
@@ -1553,7 +1529,7 @@ pub struct VkPhysicalDeviceSparseProperties {
 }
 
 #[repr(C)]
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct VkPhysicalDeviceProperties {
     pub apiVersion: u32,
     pub driverVersion: u32,
@@ -1581,12 +1557,14 @@ pub struct VkMemoryType {
     pub propertyFlags: VkMemoryPropertyFlags,
     pub heapIndex: u32,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkMemoryHeap {
     pub size: VkDeviceSize,
     pub flags: VkMemoryHeapFlags,
 }
+
 #[repr(C)]
 #[derive(Debug, PartialEq, Eq)]
 pub struct VkPhysicalDeviceMemoryProperties {
@@ -1619,7 +1597,8 @@ impl Clone for VkPhysicalDeviceMemoryProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO"]
 pub struct VkDeviceQueueCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1628,18 +1607,10 @@ pub struct VkDeviceQueueCreateInfo {
     pub queueCount: u32,
     pub pQueuePriorities: *const c_float,
 }
-/// Apply default structure type and fill remains by zero.
-impl Default for VkDeviceQueueCreateInfo {
-    fn default() -> Self {
-        VkDeviceQueueCreateInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO"]
 pub struct VkDeviceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1652,21 +1623,16 @@ pub struct VkDeviceCreateInfo {
     pub ppEnabledExtensionNames: *const *const c_char,
     pub pEnabledFeatures: *const VkPhysicalDeviceFeatures,
 }
-impl Default for VkDeviceCreateInfo {
-    fn default() -> Self {
-        VkDeviceCreateInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
+#[derive(Clone, Debug)]
 pub struct VkExtensionProperties {
     pub extensionName: [c_char; VK_MAX_EXTENSION_NAME_SIZE],
     pub specVersion: u32,
 }
+
 #[repr(C)]
+#[derive(Clone, Debug)]
 pub struct VkLayerProperties {
     pub layerName: [c_char; VK_MAX_EXTENSION_NAME_SIZE],
     pub specVersion: u32,
@@ -1675,7 +1641,8 @@ pub struct VkLayerProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SUBMIT_INFO"]
 pub struct VkSubmitInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1687,48 +1654,26 @@ pub struct VkSubmitInfo {
     pub signalSemaphoreCount: u32,
     pub pSignalSemaphores: *const VkSemaphore,
 }
-impl Default for VkSubmitInfo {
-    fn default() -> Self {
-        VkSubmitInfo {
-            sType: VK_STRUCTURE_TYPE_SUBMIT_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO"]
 pub struct VkMemoryAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub allocationSize: VkDeviceSize,
     pub memoryTypeIndex: u32,
 }
-impl Default for VkMemoryAllocateInfo {
-    fn default() -> Self {
-        VkMemoryAllocateInfo {
-            sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE"]
 pub struct VkMappedMemoryRange {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub memory: VkDeviceMemory,
     pub offset: VkDeviceSize,
     pub size: VkDeviceSize,
-}
-impl Default for VkMappedMemoryRange {
-    fn default() -> Self {
-        VkMappedMemoryRange {
-            sType: VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -1738,6 +1683,7 @@ pub struct VkMemoryRequirements {
     pub alignment: VkDeviceSize,
     pub memoryTypeBits: u32,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSparseImageFormatProperties {
@@ -1745,6 +1691,7 @@ pub struct VkSparseImageFormatProperties {
     pub imageGranularity: VkExtent3D,
     pub flags: VkSparseImageFormatFlags,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSparseImageMemoryRequirements {
@@ -1754,6 +1701,7 @@ pub struct VkSparseImageMemoryRequirements {
     pub imageMipTailOffset: VkDeviceSize,
     pub imageMipTailStride: VkDeviceSize,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSparseMemoryBind {
@@ -1763,6 +1711,7 @@ pub struct VkSparseMemoryBind {
     pub memoryOffset: VkDeviceSize,
     pub flags: VkSparseMemoryBindFlags,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSparseBufferMemoryBindInfo {
@@ -1770,6 +1719,7 @@ pub struct VkSparseBufferMemoryBindInfo {
     pub bindCount: u32,
     pub pBinds: *const VkSparseMemoryBind,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSparseImageOpaqueMemoryBindInfo {
@@ -1777,21 +1727,13 @@ pub struct VkSparseImageOpaqueMemoryBindInfo {
     pub bindCount: u32,
     pub pBinds: *const VkSparseMemoryBind,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkImageSubresource {
     pub aspectMask: VkImageAspectFlags,
     pub mipLevel: u32,
     pub arrayLayer: u32,
-}
-impl Default for VkImageSubresource {
-    fn default() -> VkImageSubresource {
-        VkImageSubresource {
-            aspectMask: 0,
-            mipLevel: 0,
-            arrayLayer: 0,
-        }
-    }
 }
 
 #[repr(C)]
@@ -1802,26 +1744,19 @@ pub struct VkOffset3D {
     pub z: i32,
 }
 impl VkOffset3D {
-    pub fn new1(x: i32) -> Self {
-        VkOffset3D {
-            x,
-            ..Default::default()
-        }
+    #[inline]
+    pub const fn new1(x: i32) -> Self {
+        Self { x, y: 0, z: 0 }
     }
-    pub fn new2(x: i32, y: i32) -> Self {
-        VkOffset3D {
-            x,
-            y,
-            ..Default::default()
-        }
+
+    #[inline]
+    pub const fn new2(x: i32, y: i32) -> Self {
+        Self { x, y, z: 0 }
     }
-    pub fn new(x: i32, y: i32, z: i32) -> Self {
-        VkOffset3D { x, y, z }
-    }
-}
-impl Default for VkOffset3D {
-    fn default() -> Self {
-        VkOffset3D { x: 0, y: 0, z: 0 }
+
+    #[inline]
+    pub const fn new(x: i32, y: i32, z: i32) -> Self {
+        Self { x, y, z }
     }
 }
 
@@ -1835,6 +1770,7 @@ pub struct VkSparseImageMemoryBind {
     pub memoryOffset: VkDeviceSize,
     pub flags: VkSparseMemoryBindFlags,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSparseImageMemoryBindInfo {
@@ -1844,7 +1780,8 @@ pub struct VkSparseImageMemoryBindInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BIND_SPARSE_INFO"]
 pub struct VkBindSparseInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1859,65 +1796,37 @@ pub struct VkBindSparseInfo {
     pub signalSemaphoreCount: u32,
     pub pSignalSemaphores: *const VkSemaphore,
 }
-impl Default for VkBindSparseInfo {
-    fn default() -> Self {
-        VkBindSparseInfo {
-            sType: VK_STRUCTURE_TYPE_BIND_SPARSE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_FENCE_CREATE_INFO"]
 pub struct VkFenceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkFenceCreateFlags,
 }
-impl Default for VkFenceCreateInfo {
-    fn default() -> Self {
-        VkFenceCreateInfo {
-            sType: VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO"]
 pub struct VkSemaphoreCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkSemaphoreCreateFlags,
 }
-impl Default for VkSemaphoreCreateInfo {
-    fn default() -> Self {
-        VkSemaphoreCreateInfo {
-            sType: VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EVENT_CREATE_INFO"]
 pub struct VkEventCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkEventCreateFlags,
 }
-impl Default for VkEventCreateInfo {
-    fn default() -> Self {
-        VkEventCreateInfo {
-            sType: VK_STRUCTURE_TYPE_EVENT_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO"]
 pub struct VkQueryPoolCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1926,17 +1835,10 @@ pub struct VkQueryPoolCreateInfo {
     pub queryCount: u32,
     pub pipelineStatistics: VkQueryPipelineStatisticFlags,
 }
-impl Default for VkQueryPoolCreateInfo {
-    fn default() -> Self {
-        VkQueryPoolCreateInfo {
-            sType: VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO"]
 pub struct VkBufferCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1947,17 +1849,10 @@ pub struct VkBufferCreateInfo {
     pub queueFamilyIndexCount: u32,
     pub pQueueFamilyIndices: *const u32,
 }
-impl Default for VkBufferCreateInfo {
-    fn default() -> Self {
-        VkBufferCreateInfo {
-            sType: VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO"]
 pub struct VkBufferViewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1967,17 +1862,10 @@ pub struct VkBufferViewCreateInfo {
     pub offset: VkDeviceSize,
     pub range: VkDeviceSize,
 }
-impl Default for VkBufferViewCreateInfo {
-    fn default() -> Self {
-        VkBufferViewCreateInfo {
-            sType: VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO"]
 pub struct VkImageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1995,14 +1883,6 @@ pub struct VkImageCreateInfo {
     pub pQueueFamilyIndices: *const u32,
     pub initialLayout: VkImageLayout,
 }
-impl Default for VkImageCreateInfo {
-    fn default() -> Self {
-        VkImageCreateInfo {
-            sType: VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2013,6 +1893,7 @@ pub struct VkSubresourceLayout {
     pub arrayPitch: VkDeviceSize,
     pub depthPitch: VkDeviceSize,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkComponentMapping {
@@ -2031,6 +1912,7 @@ impl Default for VkComponentMapping {
         }
     }
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkImageSubresourceRange {
@@ -2040,17 +1922,10 @@ pub struct VkImageSubresourceRange {
     pub baseArrayLayer: u32,
     pub layerCount: u32,
 }
-impl Default for VkImageSubresourceRange {
-    fn default() -> Self {
-        VkImageSubresourceRange {
-            levelCount: 1,
-            layerCount: 1,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO"]
 pub struct VkImageViewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2061,17 +1936,10 @@ pub struct VkImageViewCreateInfo {
     pub components: VkComponentMapping,
     pub subresourceRange: VkImageSubresourceRange,
 }
-impl Default for VkImageViewCreateInfo {
-    fn default() -> Self {
-        VkImageViewCreateInfo {
-            sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO"]
 pub struct VkShaderModuleCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2079,31 +1947,16 @@ pub struct VkShaderModuleCreateInfo {
     pub codeSize: size_t,
     pub pCode: *const u32,
 }
-impl Default for VkShaderModuleCreateInfo {
-    fn default() -> Self {
-        VkShaderModuleCreateInfo {
-            sType: VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO"]
 pub struct VkPipelineCacheCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkPipelineCacheCreateFlags,
     pub initialDataSize: size_t,
     pub pInitialData: *const c_void,
-}
-impl Default for VkPipelineCacheCreateInfo {
-    fn default() -> Self {
-        VkPipelineCacheCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2113,6 +1966,7 @@ pub struct VkSpecializationMapEntry {
     pub offset: u32,
     pub size: size_t,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSpecializationInfo {
@@ -2121,8 +1975,10 @@ pub struct VkSpecializationInfo {
     pub dataSize: size_t,
     pub pData: *const c_void,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO"]
 pub struct VkPipelineShaderStageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2132,14 +1988,6 @@ pub struct VkPipelineShaderStageCreateInfo {
     pub pName: *const c_char,
     pub pSpecializationInfo: *const VkSpecializationInfo,
 }
-impl Default for VkPipelineShaderStageCreateInfo {
-    fn default() -> Self {
-        VkPipelineShaderStageCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2148,6 +1996,7 @@ pub struct VkVertexInputBindingDescription {
     pub stride: u32,
     pub inputRate: VkVertexInputRate,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkVertexInputAttributeDescription {
@@ -2156,8 +2005,10 @@ pub struct VkVertexInputAttributeDescription {
     pub format: VkFormat,
     pub offset: u32,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STAE_CREATE_INFO"]
 pub struct VkPipelineVertexInputStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2167,17 +2018,10 @@ pub struct VkPipelineVertexInputStateCreateInfo {
     pub vertexAttributeDescriptionCount: u32,
     pub pVertexAttributeDescriptions: *const VkVertexInputAttributeDescription,
 }
-impl Default for VkPipelineVertexInputStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineVertexInputStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STAGE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO"]
 pub struct VkPipelineInputAssemblyStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2185,30 +2029,15 @@ pub struct VkPipelineInputAssemblyStateCreateInfo {
     pub topology: VkPrimitiveTopology,
     pub primitiveRestartEnable: VkBool32,
 }
-impl Default for VkPipelineInputAssemblyStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineInputAssemblyStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO"]
 pub struct VkPipelineTessellationStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkPipelineTessellationStateCreateFlags,
     pub patchControlPoints: u32,
-}
-impl Default for VkPipelineTessellationStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineTessellationStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2221,57 +2050,31 @@ pub struct VkViewport {
     pub minDepth: c_float,
     pub maxDepth: c_float,
 }
-impl Default for VkViewport {
-    fn default() -> Self {
-        VkViewport {
-            x: 0.0,
-            y: 0.0,
-            width: 0.0,
-            height: 0.0,
-            minDepth: 0.0,
-            maxDepth: 1.0,
-        }
-    }
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkOffset2D {
     pub x: i32,
     pub y: i32,
 }
-impl Default for VkOffset2D {
-    fn default() -> Self {
-        VkOffset2D { x: 0, y: 0 }
-    }
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkExtent2D {
     pub width: u32,
     pub height: u32,
 }
-impl Default for VkExtent2D {
-    fn default() -> Self {
-        VkExtent2D { width: 0, height: 0 }
-    }
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkRect2D {
     pub offset: VkOffset2D,
     pub extent: VkExtent2D,
 }
-impl Default for VkRect2D {
-    fn default() -> Self {
-        VkRect2D {
-            offset: Default::default(),
-            extent: Default::default(),
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO"]
 pub struct VkPipelineViewportStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2281,17 +2084,10 @@ pub struct VkPipelineViewportStateCreateInfo {
     pub scissorCount: u32,
     pub pScissors: *const VkRect2D,
 }
-impl Default for VkPipelineViewportStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineViewportStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO"]
 pub struct VkPipelineRasterizationStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2307,18 +2103,10 @@ pub struct VkPipelineRasterizationStateCreateInfo {
     pub depthBiasSlopeFactor: c_float,
     pub lineWidth: c_float,
 }
-impl Default for VkPipelineRasterizationStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineRasterizationStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
-            lineWidth: 1.0,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO"]
 pub struct VkPipelineMultisampleStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2329,14 +2117,6 @@ pub struct VkPipelineMultisampleStateCreateInfo {
     pub pSampleMask: *const VkSampleMask,
     pub alphaToCoverageEnable: VkBool32,
     pub alphaToOneEnable: VkBool32,
-}
-impl Default for VkPipelineMultisampleStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineMultisampleStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2350,8 +2130,10 @@ pub struct VkStencilOpState {
     pub writeMask: u32,
     pub reference: u32,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO"]
 pub struct VkPipelineDepthStencilStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2366,16 +2148,6 @@ pub struct VkPipelineDepthStencilStateCreateInfo {
     pub minDepthBounds: c_float,
     pub maxDepthBounds: c_float,
 }
-impl Default for VkPipelineDepthStencilStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineDepthStencilStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
-            minDepthBounds: 0.0,
-            maxDepthBounds: 1.0,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2389,19 +2161,10 @@ pub struct VkPipelineColorBlendAttachmentState {
     pub alphaBlendOp: VkBlendOp,
     pub colorWriteMask: VkColorComponentFlags,
 }
-impl Default for VkPipelineColorBlendAttachmentState {
-    fn default() -> Self {
-        VkPipelineColorBlendAttachmentState {
-            colorWriteMask: VK_COLOR_COMPONENT_R_BIT
-                | VK_COLOR_COMPONENT_G_BIT
-                | VK_COLOR_COMPONENT_B_BIT
-                | VK_COLOR_COMPONENT_A_BIT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO"]
 pub struct VkPipelineColorBlendStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2412,17 +2175,10 @@ pub struct VkPipelineColorBlendStateCreateInfo {
     pub pAttachments: *const VkPipelineColorBlendAttachmentState,
     pub blendConstants: [c_float; 4],
 }
-impl Default for VkPipelineColorBlendStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineColorBlendStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO"]
 pub struct VkPipelineDynamicStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2430,17 +2186,10 @@ pub struct VkPipelineDynamicStateCreateInfo {
     pub dynamicStateCount: u32,
     pub pDynamicStates: *const VkDynamicState,
 }
-impl Default for VkPipelineDynamicStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineDynamicStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO"]
 pub struct VkGraphicsPipelineCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2462,17 +2211,10 @@ pub struct VkGraphicsPipelineCreateInfo {
     pub basePipelineHandle: VkPipeline,
     pub basePipelineIndex: i32,
 }
-impl Default for VkGraphicsPipelineCreateInfo {
-    fn default() -> Self {
-        VkGraphicsPipelineCreateInfo {
-            sType: VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO"]
 pub struct VkComputePipelineCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2482,14 +2224,6 @@ pub struct VkComputePipelineCreateInfo {
     pub basePipelineHandle: VkPipeline,
     pub basePipelineIndex: i32,
 }
-impl Default for VkComputePipelineCreateInfo {
-    fn default() -> Self {
-        VkComputePipelineCreateInfo {
-            sType: VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2498,8 +2232,10 @@ pub struct VkPushConstantRange {
     pub offset: u32,
     pub size: u32,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO"]
 pub struct VkPipelineLayoutCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2509,17 +2245,10 @@ pub struct VkPipelineLayoutCreateInfo {
     pub pushConstantRangeCount: u32,
     pub pPushConstantRanges: *const VkPushConstantRange,
 }
-impl Default for VkPipelineLayoutCreateInfo {
-    fn default() -> Self {
-        VkPipelineLayoutCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO"]
 pub struct VkSamplerCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2540,14 +2269,6 @@ pub struct VkSamplerCreateInfo {
     pub borderColor: VkBorderColor,
     pub unnormalizedCoordinates: VkBool32,
 }
-impl Default for VkSamplerCreateInfo {
-    fn default() -> Self {
-        VkSamplerCreateInfo {
-            sType: VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2558,22 +2279,16 @@ pub struct VkDescriptorSetLayoutBinding {
     pub stageFlags: VkShaderStageFlags,
     pub pImmutableSamplers: *const VkSampler,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO"]
 pub struct VkDescriptorSetLayoutCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkDescriptorSetLayoutCreateFlags,
     pub bindingCount: u32,
     pub pBindings: *const VkDescriptorSetLayoutBinding,
-}
-impl Default for VkDescriptorSetLayoutCreateInfo {
-    fn default() -> Self {
-        VkDescriptorSetLayoutCreateInfo {
-            sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2582,8 +2297,10 @@ pub struct VkDescriptorPoolSize {
     pub _type: VkDescriptorType,
     pub descriptorCount: u32,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO"]
 pub struct VkDescriptorPoolCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2592,31 +2309,16 @@ pub struct VkDescriptorPoolCreateInfo {
     pub poolSizeCount: u32,
     pub pPoolSizes: *const VkDescriptorPoolSize,
 }
-impl Default for VkDescriptorPoolCreateInfo {
-    fn default() -> Self {
-        VkDescriptorPoolCreateInfo {
-            sType: VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO"]
 pub struct VkDescriptorSetAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub descriptorPool: VkDescriptorPool,
     pub descriptorSetCount: u32,
     pub pSetLayouts: *const VkDescriptorSetLayout,
-}
-impl Default for VkDescriptorSetAllocateInfo {
-    fn default() -> Self {
-        VkDescriptorSetAllocateInfo {
-            sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2626,6 +2328,7 @@ pub struct VkDescriptorImageInfo {
     pub imageView: VkImageView,
     pub imageLayout: VkImageLayout,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkDescriptorBufferInfo {
@@ -2633,8 +2336,10 @@ pub struct VkDescriptorBufferInfo {
     pub offset: VkDeviceSize,
     pub range: VkDeviceSize,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET"]
 pub struct VkWriteDescriptorSet {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2647,8 +2352,10 @@ pub struct VkWriteDescriptorSet {
     pub pBufferInfo: *const VkDescriptorBufferInfo,
     pub pTexelBufferView: *const VkBufferView,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET"]
 pub struct VkCopyDescriptorSet {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2660,25 +2367,10 @@ pub struct VkCopyDescriptorSet {
     pub dstArrayElement: u32,
     pub descriptorCount: u32,
 }
-impl Default for VkWriteDescriptorSet {
-    fn default() -> Self {
-        VkWriteDescriptorSet {
-            sType: VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-impl Default for VkCopyDescriptorSet {
-    fn default() -> Self {
-        VkCopyDescriptorSet {
-            sType: VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO"]
 pub struct VkFramebufferCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2689,14 +2381,6 @@ pub struct VkFramebufferCreateInfo {
     pub width: u32,
     pub height: u32,
     pub layers: u32,
-}
-impl Default for VkFramebufferCreateInfo {
-    fn default() -> Self {
-        VkFramebufferCreateInfo {
-            sType: VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2794,12 +2478,14 @@ pub struct VkAttachmentDescription {
     /// During a render pass instance, an attachment *can* use a different layout in each subpass, if desired.
     pub finalLayout: VkImageLayout,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkAttachmentReference {
     pub attachment: u32,
     pub layout: VkImageLayout,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSubpassDescription {
@@ -2825,14 +2511,7 @@ pub struct VkSubpassDescription {
     pub preserveAttachmentCount: u32,
     pub pPreserveAttachments: *const u32,
 }
-impl Default for VkSubpassDescription {
-    fn default() -> Self {
-        VkSubpassDescription {
-            pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSubpassDependency {
@@ -2844,19 +2523,10 @@ pub struct VkSubpassDependency {
     pub dstAccessMask: VkAccessFlags,
     pub dependencyFlags: VkDependencyFlags,
 }
-/// srcSubpass = External, dstSubpass = External, otherwise = 0
-impl Default for VkSubpassDependency {
-    fn default() -> Self {
-        VkSubpassDependency {
-            srcSubpass: VK_SUBPASS_EXTERNAL,
-            dstSubpass: VK_SUBPASS_EXTERNAL,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO"]
 pub struct VkRenderPassCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2868,34 +2538,20 @@ pub struct VkRenderPassCreateInfo {
     pub dependencyCount: u32,
     pub pDependencies: *const VkSubpassDependency,
 }
-impl Default for VkRenderPassCreateInfo {
-    fn default() -> Self {
-        VkRenderPassCreateInfo {
-            sType: VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO"]
 pub struct VkCommandPoolCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkCommandPoolCreateFlags,
     pub queueFamilyIndex: u32,
 }
-impl Default for VkCommandPoolCreateInfo {
-    fn default() -> Self {
-        VkCommandPoolCreateInfo {
-            sType: VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO"]
 pub struct VkCommandBufferAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2903,17 +2559,10 @@ pub struct VkCommandBufferAllocateInfo {
     pub level: VkCommandBufferLevel,
     pub commandBufferCount: u32,
 }
-impl Default for VkCommandBufferAllocateInfo {
-    fn default() -> Self {
-        VkCommandBufferAllocateInfo {
-            sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO"]
 pub struct VkCommandBufferInheritanceInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2924,30 +2573,15 @@ pub struct VkCommandBufferInheritanceInfo {
     pub queryFlags: VkQueryControlFlags,
     pub pipelineStatistics: VkQueryPipelineStatisticFlags,
 }
-impl Default for VkCommandBufferInheritanceInfo {
-    fn default() -> Self {
-        VkCommandBufferInheritanceInfo {
-            sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO"]
 pub struct VkCommandBufferBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkCommandBufferUsageFlags,
     pub pInheritanceInfo: *const VkCommandBufferInheritanceInfo,
-}
-impl Default for VkCommandBufferBeginInfo {
-    fn default() -> Self {
-        VkCommandBufferBeginInfo {
-            sType: VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -2957,6 +2591,7 @@ pub struct VkBufferCopy {
     pub dstOffset: VkDeviceSize,
     pub size: VkDeviceSize,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkImageSubresourceLayers {
@@ -2965,17 +2600,7 @@ pub struct VkImageSubresourceLayers {
     pub baseArrayLayer: u32,
     pub layerCount: u32,
 }
-/// Aspect: Color Mip0 Array0 1 layer
-impl Default for VkImageSubresourceLayers {
-    fn default() -> Self {
-        VkImageSubresourceLayers {
-            aspectMask: VK_IMAGE_ASPECT_COLOR_BIT,
-            mipLevel: 0,
-            baseArrayLayer: 0,
-            layerCount: 1,
-        }
-    }
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkImageCopy {
@@ -2985,6 +2610,7 @@ pub struct VkImageCopy {
     pub dstOffset: VkOffset3D,
     pub extent: VkExtent3D,
 }
+
 #[repr(C)]
 #[derive(Debug, PartialEq, Eq)]
 pub struct VkImageBlit {
@@ -3003,6 +2629,7 @@ impl Clone for VkImageBlit {
         }
     }
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkBufferImageCopy {
@@ -3013,6 +2640,7 @@ pub struct VkBufferImageCopy {
     pub imageOffset: VkOffset3D,
     pub imageExtent: VkExtent3D,
 }
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union VkClearColorValue {
@@ -3020,18 +2648,21 @@ pub union VkClearColorValue {
     pub int32: [i32; 4],
     pub uint32: [u32; 4],
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct VkClearDepthStencilValue {
     pub depth: c_float,
     pub stencil: u32,
 }
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub union VkClearValue {
     pub color: VkClearColorValue,
     pub depthStencil: VkClearDepthStencilValue,
 }
+
 #[repr(C)]
 #[derive(Clone)]
 pub struct VkClearAttachment {
@@ -3039,21 +2670,13 @@ pub struct VkClearAttachment {
     pub colorAttachment: u32,
     pub clearValue: VkClearValue,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkClearRect {
     pub rect: VkRect2D,
     pub baseArrayLayer: u32,
     pub layerCount: u32,
-}
-impl Default for VkClearRect {
-    fn default() -> Self {
-        VkClearRect {
-            rect: Default::default(),
-            baseArrayLayer: 0,
-            layerCount: 1,
-        }
-    }
 }
 
 #[repr(C)]
@@ -3067,15 +2690,18 @@ pub struct VkImageResolve {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_BARRIER"]
 pub struct VkMemoryBarrier {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub srcAccessMask: VkAccessFlags,
     pub dstAccessMask: VkAccessFlags,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER"]
 pub struct VkBufferMemoryBarrier {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -3087,8 +2713,10 @@ pub struct VkBufferMemoryBarrier {
     pub offset: VkDeviceSize,
     pub size: VkDeviceSize,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER"]
 pub struct VkImageMemoryBarrier {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -3101,38 +2729,10 @@ pub struct VkImageMemoryBarrier {
     pub image: VkImage,
     pub subresourceRange: VkImageSubresourceRange,
 }
-impl Default for VkMemoryBarrier {
-    fn default() -> Self {
-        VkMemoryBarrier {
-            sType: VK_STRUCTURE_TYPE_MEMORY_BARRIER,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-impl Default for VkBufferMemoryBarrier {
-    fn default() -> Self {
-        VkBufferMemoryBarrier {
-            sType: VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
-            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-            dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-impl Default for VkImageMemoryBarrier {
-    fn default() -> Self {
-        VkImageMemoryBarrier {
-            sType: VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-            dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-            subresourceRange: Default::default(),
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO"]
 pub struct VkRenderPassBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -3142,14 +2742,6 @@ pub struct VkRenderPassBeginInfo {
     pub clearValueCount: u32,
     pub pClearValues: *const VkClearValue,
 }
-impl Default for VkRenderPassBeginInfo {
-    fn default() -> Self {
-        VkRenderPassBeginInfo {
-            sType: VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -3158,6 +2750,7 @@ pub struct VkDispatchIndirectCommand {
     pub y: u32,
     pub z: u32,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkDrawIndexedIndirectCommand {
@@ -3167,14 +2760,7 @@ pub struct VkDrawIndexedIndirectCommand {
     pub vertexOffset: i32,
     pub firstInstance: u32,
 }
-impl Default for VkDrawIndexedIndirectCommand {
-    fn default() -> Self {
-        VkDrawIndexedIndirectCommand {
-            instanceCount: 1,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkDrawIndirectCommand {
@@ -3182,14 +2768,6 @@ pub struct VkDrawIndirectCommand {
     pub instanceCount: u32,
     pub firstVertex: u32,
     pub firstInstance: u32,
-}
-impl Default for VkDrawIndirectCommand {
-    fn default() -> Self {
-        VkDrawIndirectCommand {
-            instanceCount: 1,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkCreateInstance = extern "system" fn(
@@ -4637,7 +4215,8 @@ pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT: VkExternalSemaphoreFeatu
 pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT: VkExternalSemaphoreFeatureFlags = 0x02;
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES"]
 pub struct VkPhysicalDeviceSubgroupProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4646,17 +4225,10 @@ pub struct VkPhysicalDeviceSubgroupProperties {
     pub supportedOperations: VkSubgroupFeatureFlags,
     pub quadOperationsInAllStages: VkBool32,
 }
-impl Default for VkPhysicalDeviceSubgroupProperties {
-    fn default() -> Self {
-        VkPhysicalDeviceSubgroupProperties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO"]
 pub struct VkBindBufferMemoryInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4664,8 +4236,10 @@ pub struct VkBindBufferMemoryInfo {
     pub memory: VkDeviceMemory,
     pub memoryOffset: VkDeviceSize,
 }
+
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO"]
 pub struct VkBindImageMemoryInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4673,25 +4247,10 @@ pub struct VkBindImageMemoryInfo {
     pub memory: VkDeviceMemory,
     pub memoryOffset: VkDeviceSize,
 }
-impl Default for VkBindBufferMemoryInfo {
-    fn default() -> Self {
-        VkBindBufferMemoryInfo {
-            sType: VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkBindImageMemoryInfo {
-    fn default() -> Self {
-        VkBindImageMemoryInfo {
-            sType: VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES"]
 pub struct VkPhysicalDevice16BitStorageFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4700,67 +4259,40 @@ pub struct VkPhysicalDevice16BitStorageFeatures {
     pub storagePushConstant16: VkBool32,
     pub storageInputOutput16: VkBool32,
 }
-impl Default for VkPhysicalDevice16BitStorageFeatures {
-    fn default() -> Self {
-        VkPhysicalDevice16BitStorageFeatures {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS"]
 pub struct VkMemoryDedicatedRequirements {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub prefersDedicatedAllocation: VkBool32,
     pub requiresDedicatedAllocaion: VkBool32,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO"]
 pub struct VkMemoryDedicatedAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub image: VkImage,
     pub buffer: VkBuffer,
 }
-impl Default for VkMemoryDedicatedRequirements {
-    fn default() -> Self {
-        VkMemoryDedicatedRequirements {
-            sType: VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkMemoryDedicatedAllocateInfo {
-    fn default() -> Self {
-        VkMemoryDedicatedAllocateInfo {
-            sType: VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO"]
 pub struct VkMemoryAllocateFlagsInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkMemoryAllocateFlags,
     pub deviceMask: u32,
 }
-impl Default for VkMemoryAllocateFlagsInfo {
-    fn default() -> Self {
-        VkMemoryAllocateFlagsInfo {
-            sType: VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO"]
 pub struct VkDeviceGroupRenderPassBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4768,33 +4300,19 @@ pub struct VkDeviceGroupRenderPassBeginInfo {
     pub deviceRenderAreaCount: u32,
     pub pDeviceRenderAreas: *const VkRect2D,
 }
-impl Default for VkDeviceGroupRenderPassBeginInfo {
-    fn default() -> Self {
-        VkDeviceGroupRenderPassBeginInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO"]
 pub struct VkDeviceGroupCommandBufferBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub deviceMask: u32,
 }
-impl Default for VkDeviceGroupCommandBufferBeginInfo {
-    fn default() -> Self {
-        VkDeviceGroupCommandBufferBeginInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO"]
 pub struct VkDeviceGroupSubmitInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4805,50 +4323,30 @@ pub struct VkDeviceGroupSubmitInfo {
     pub signalSemaphoreCount: u32,
     pub pSignalSemaphoreDeviceIndices: *const u32,
 }
-impl Default for VkDeviceGroupSubmitInfo {
-    fn default() -> Self {
-        VkDeviceGroupSubmitInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO"]
 pub struct VkDeviceGroupBindSparseInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub resourceDeviceIndex: u32,
     pub memoryDeviceIndex: u32,
 }
-impl Default for VkDeviceGroupBindSparseInfo {
-    fn default() -> Self {
-        VkDeviceGroupBindSparseInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO"]
 pub struct VkBindBufferMemoryDeviceGroupInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub deviceIndexCount: u32,
     pub pDeviceIndices: *const u32,
 }
-impl Default for VkBindBufferMemoryDeviceGroupInfo {
-    fn default() -> Self {
-        VkBindBufferMemoryDeviceGroupInfo {
-            sType: VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO"]
 pub struct VkBindImageMemoryDeviceGroupInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4857,17 +4355,10 @@ pub struct VkBindImageMemoryDeviceGroupInfo {
     pub splitInstanceBindRegionCount: u32,
     pub pSplitInstanceBindRegions: *const VkRect2D,
 }
-impl Default for VkBindImageMemoryDeviceGroupInfo {
-    fn default() -> Self {
-        VkBindImageMemoryDeviceGroupInfo {
-            sType: VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES"]
 pub struct VkPhysicalDeviceGroupProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4875,186 +4366,101 @@ pub struct VkPhysicalDeviceGroupProperties {
     pub physicalDevices: [VkPhysicalDevice; VK_MAX_DEVICE_GROUP_SIZE],
     pub subsetAllocation: VkBool32,
 }
-impl Default for VkPhysicalDeviceGroupProperties {
-    fn default() -> Self {
-        VkPhysicalDeviceGroupProperties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO"]
 pub struct VkDeviceGroupDeviceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub physicalDeviceCount: u32,
     pub pPhysicalDevices: *const VkPhysicalDevice,
 }
-impl Default for VkDeviceGroupDeviceCreateInfo {
-    fn default() -> Self {
-        VkDeviceGroupDeviceCreateInfo {
-            sType: VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2"]
 pub struct VkBufferMemoryRequirementsInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub buffer: VkBuffer,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2"]
 pub struct VkImageMemoryRequirementsInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub image: VkImage,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2"]
 pub struct VkImageSparseMemoryRequirementsInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub image: VkImage,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2"]
 pub struct VkMemoryRequirements2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryRequirements: VkMemoryRequirements,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2"]
 pub struct VkSparseImageMemoryRequirements2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryRequirements: VkSparseImageMemoryRequirements,
 }
-impl Default for VkBufferMemoryRequirementsInfo2 {
-    fn default() -> Self {
-        VkBufferMemoryRequirementsInfo2 {
-            sType: VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkImageMemoryRequirementsInfo2 {
-    fn default() -> Self {
-        VkImageMemoryRequirementsInfo2 {
-            sType: VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkImageSparseMemoryRequirementsInfo2 {
-    fn default() -> Self {
-        VkImageSparseMemoryRequirementsInfo2 {
-            sType: VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkMemoryRequirements2 {
-    fn default() -> Self {
-        VkMemoryRequirements2 {
-            sType: VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkSparseImageMemoryRequirements2 {
-    fn default() -> Self {
-        VkSparseImageMemoryRequirements2 {
-            sType: VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2"]
 pub struct VkPhysicalDeviceFeatures2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub features: VkPhysicalDeviceFeatures,
 }
-impl Default for VkPhysicalDeviceFeatures2 {
-    fn default() -> Self {
-        VkPhysicalDeviceFeatures2 {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceFeatures2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
-}
 
 #[repr(C)]
-#[derive(Clone)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2"]
 pub struct VkPhysicalDeviceProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub properties: VkPhysicalDeviceProperties,
 }
-impl Default for VkPhysicalDeviceProperties2 {
-    fn default() -> Self {
-        VkPhysicalDeviceProperties2 {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceProperties2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2"]
 pub struct VkFormatProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub formatProperties: VkFormatProperties,
 }
-impl Default for VkFormatProperties2 {
-    fn default() -> Self {
-        VkFormatProperties2 {
-            sType: VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkFormatProperties2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2"]
 pub struct VkImageFormatProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub imageFormatProperties: VkImageFormatProperties,
 }
-impl Default for VkImageFormatProperties2 {
-    fn default() -> Self {
-        VkImageFormatProperties2 {
-            sType: VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkImageFormatProperties2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2"]
 pub struct VkPhysicalDeviceImageFormatInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -5064,77 +4470,37 @@ pub struct VkPhysicalDeviceImageFormatInfo2 {
     pub usage: VkImageUsageFlags,
     pub flags: VkImageCreateFlags,
 }
-impl Default for VkPhysicalDeviceImageFormatInfo2 {
-    fn default() -> Self {
-        VkPhysicalDeviceImageFormatInfo2 {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceImageFormatInfo2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2"]
 pub struct VkQueueFamilyProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub queueFamilyProperties: VkQueueFamilyProperties,
 }
-impl Default for VkQueueFamilyProperties2 {
-    fn default() -> Self {
-        VkQueueFamilyProperties2 {
-            sType: VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkQueueFamilyProperties2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2"]
 pub struct VkPhysicalDeviceMemoryProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryProperties: VkPhysicalDeviceMemoryProperties,
 }
-impl Default for VkPhysicalDeviceMemoryProperties2 {
-    fn default() -> Self {
-        VkPhysicalDeviceMemoryProperties2 {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMemoryProperties2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2"]
 pub struct VkSparseImageFormatProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub properties: VkSparseImageFormatProperties,
 }
-impl Default for VkSparseImageFormatProperties2 {
-    fn default() -> Self {
-        VkSparseImageFormatProperties2 {
-            sType: VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkSparseImageFormatProperties2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2"]
 pub struct VkPhysicalDeviceSparseImageFormatInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -5144,35 +4510,14 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2 {
     pub usage: VkImageUsageFlags,
     pub tiling: VkImageTiling,
 }
-impl Default for VkPhysicalDeviceSparseImageFormatInfo2 {
-    fn default() -> Self {
-        VkPhysicalDeviceSparseImageFormatInfo2 {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceSparseImageFormatInfo2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES"]
 pub struct VkPhysicalDevicePointClippingProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub pointClippingBehavior: VkPointClippingBehavior,
-}
-impl Default for VkPhysicalDevicePointClippingProperties {
-    fn default() -> Self {
-        VkPhysicalDevicePointClippingProperties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDevicePointClippingProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES;
 }
 
 #[repr(C)]
@@ -5184,65 +4529,36 @@ pub struct VkInputAttachmentAspectReference {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO"]
 pub struct VkRenderPassInputAttachmentAspectCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub aspectReferenceCount: u32,
     pub pAspectReferneces: *const VkInputAttachmentAspectReference,
 }
-impl Default for VkRenderPassInputAttachmentAspectCreateInfo {
-    fn default() -> Self {
-        VkRenderPassInputAttachmentAspectCreateInfo {
-            sType: VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkRenderPassInputAttachmentAspectCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO"]
 pub struct VkImageViewUsageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub usage: VkImageUsageFlags,
 }
-impl Default for VkImageViewUsageCreateInfo {
-    fn default() -> Self {
-        VkImageViewUsageCreateInfo {
-            sType: VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkImageViewUsageCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO"]
 pub struct VkPipelineTessellationDomainOriginStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub domainOrigin: VkTessellationDomainOrigin,
 }
-impl Default for VkPipelineTessellationDomainOriginStateCreateInfo {
-    fn default() -> Self {
-        VkPipelineTessellationDomainOriginStateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPipelineTessellationDomainOriginStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO"]
 pub struct VkRenderPassMultiviewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -5253,20 +4569,10 @@ pub struct VkRenderPassMultiviewCreateInfo {
     pub correlationMaskCount: u32,
     pub pCorrelationMasks: *const u32,
 }
-impl Default for VkRenderPassMultiviewCreateInfo {
-    fn default() -> Self {
-        VkRenderPassMultiviewCreateInfo {
-            sType: VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkRenderPassMultiviewCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES"]
 pub struct VkPhysicalDeviceMultiviewFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -5274,98 +4580,48 @@ pub struct VkPhysicalDeviceMultiviewFeatures {
     pub multiviewGeometryShader: VkBool32,
     pub multiviewTessellationShader: VkBool32,
 }
-impl Default for VkPhysicalDeviceMultiviewFeatures {
-    fn default() -> Self {
-        VkPhysicalDeviceMultiviewFeatures {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMultiviewFeatures {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES"]
 pub struct VkPhysicalDeviceMultiviewProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub maxMultiviewViewCount: u32,
     pub maxMultiviewInstanceIndex: u32,
 }
-impl Default for VkPhysicalDeviceMultiviewProperties {
-    fn default() -> Self {
-        VkPhysicalDeviceMultiviewProperties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMultiviewProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES"]
 pub struct VkPhysicalDeviceVariablePointerFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub variablePointersStorageBuffer: VkBool32,
     pub variablePointers: VkBool32,
 }
-impl Default for VkPhysicalDeviceVariablePointerFeatures {
-    fn default() -> Self {
-        VkPhysicalDeviceVariablePointerFeatures {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceVariablePointerFeatures {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES"]
 pub struct VkPhysicalDeviceProtectedMemoryFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub protectedMemory: VkBool32,
 }
-impl Default for VkPhysicalDeviceProtectedMemoryFeatures {
-    fn default() -> Self {
-        VkPhysicalDeviceProtectedMemoryFeatures {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceProtectedMemoryFeatures {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES"]
 pub struct VkPhysicalDeviceProtectedMemoryProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub protectedNoFault: VkBool32,
 }
-impl Default for VkPhysicalDeviceProtectedMemoryProperties {
-    fn default() -> Self {
-        VkPhysicalDeviceProtectedMemoryProperties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceProtectedMemoryProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2"]
 pub struct VkDeviceQueueInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -5373,39 +4629,19 @@ pub struct VkDeviceQueueInfo2 {
     pub queueFamilyIndex: u32,
     pub queueIndex: u32,
 }
-impl Default for VkDeviceQueueInfo2 {
-    fn default() -> Self {
-        VkDeviceQueueInfo2 {
-            sType: VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkDeviceQueueInfo2 {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO"]
 pub struct VkProtectedSubmitInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub protectedSubmit: VkBool32,
 }
-impl Default for VkProtectedSubmitInfo {
-    fn default() -> Self {
-        VkProtectedSubmitInfo {
-            sType: VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkProtectedSubmitInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO"]
 pub struct VkSamplerYcbcrConversionCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -5418,115 +4654,55 @@ pub struct VkSamplerYcbcrConversionCreateInfo {
     pub chromaFilter: VkFilter,
     pub forceExplicitReconstruction: VkBool32,
 }
-impl Default for VkSamplerYcbcrConversionCreateInfo {
-    fn default() -> Self {
-        VkSamplerYcbcrConversionCreateInfo {
-            sType: VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkSamplerYcbcrConversionCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO"]
 pub struct VkSamplerYcbcrConversionInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub conversion: VkSamplerYcbcrConversion,
 }
-impl Default for VkSamplerYcbcrConversionInfo {
-    fn default() -> Self {
-        VkSamplerYcbcrConversionInfo {
-            sType: VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkSamplerYcbcrConversionInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO"]
 pub struct VkBindImagePlaneMemoryInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub planeAspect: VkImageAspectFlags,
 }
-impl Default for VkBindImagePlaneMemoryInfo {
-    fn default() -> Self {
-        VkBindImagePlaneMemoryInfo {
-            sType: VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkBindImagePlaneMemoryInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO"]
 pub struct VkImagePlaneMemoryRequirementsInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub planeAspect: VkImageAspectFlags,
 }
-impl Default for VkImagePlaneMemoryRequirementsInfo {
-    fn default() -> Self {
-        VkImagePlaneMemoryRequirementsInfo {
-            sType: VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkImagePlaneMemoryRequirementsInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES"]
 pub struct VkPhysicalDeviceSamplerYcbcrConversionFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub samplerYcbcrConversion: VkBool32,
 }
-impl Default for VkPhysicalDeviceSamplerYcbcrConversionFeatures {
-    fn default() -> Self {
-        VkPhysicalDeviceSamplerYcbcrConversionFeatures {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeatures {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES"]
 pub struct VkSamplerYcbcrConversionImageFormatProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub combinedImageSamplerDescriptorCount: u32,
 }
-impl VkSamplerYcbcrConversionImageFormatProperties {
-    fn default() -> Self {
-        VkSamplerYcbcrConversionImageFormatProperties {
-            sType: VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkSamplerYcbcrConversionImageFormatProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_ENTRY"]
 pub struct VkDescriptorUpdateTemplateEntry {
     pub dstBinding: u32,
     pub dstArrayElement: u32,
@@ -5535,14 +4711,10 @@ pub struct VkDescriptorUpdateTemplateEntry {
     pub offset: size_t,
     pub stride: size_t,
 }
-impl Default for VkDescriptorUpdateTemplateEntry {
-    fn default() -> Self {
-        unsafe { zeroed() }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO"]
 pub struct VkDescriptorUpdateTemplateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -5555,17 +4727,6 @@ pub struct VkDescriptorUpdateTemplateCreateInfo {
     pub pipelineLayout: VkPipelineLayout,
     pub set: u32,
 }
-impl Default for VkDescriptorUpdateTemplateCreateInfo {
-    fn default() -> Self {
-        VkDescriptorUpdateTemplateCreateInfo {
-            sType: VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkDescriptorUpdateTemplateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO;
-}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -5574,46 +4735,28 @@ pub struct VkExternalMemoryProperties {
     pub exportFromImportedHandleTypes: VkExternalMemoryHandleTypeFlags,
     pub compatibleHandleTypes: VkExternalMemoryHandleTypeFlags,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO"]
 pub struct VkPhysicalDeviceExternalImageFormatInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleType: VkExternalMemoryHandleTypeFlags,
 }
-impl Default for VkPhysicalDeviceExternalImageFormatInfo {
-    fn default() -> Self {
-        VkPhysicalDeviceExternalImageFormatInfo {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalImageFormatInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES"]
 pub struct VkExternalImageFormatProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub externalMemoryProperties: VkExternalMemoryProperties,
 }
-impl Default for VkExternalImageFormatProperties {
-    fn default() -> Self {
-        VkExternalImageFormatProperties {
-            sType: VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExternalImageFormatProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO"]
 pub struct VkPhysicalDeviceExternalBufferInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -5621,39 +4764,19 @@ pub struct VkPhysicalDeviceExternalBufferInfo {
     pub usage: VkBufferUsageFlags,
     pub handleType: VkExternalMemoryHandleTypeFlags,
 }
-impl Default for VkPhysicalDeviceExternalBufferInfo {
-    fn default() -> Self {
-        VkPhysicalDeviceExternalBufferInfo {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalBufferInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES"]
 pub struct VkExternalBufferProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub externalMemoryProperties: VkExternalMemoryProperties,
 }
-impl Default for VkExternalBufferProperties {
-    fn default() -> Self {
-        VkExternalBufferProperties {
-            sType: VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExternalBufferProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanSTructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES"]
 pub struct VkPhysicalDeviceIDProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -5663,84 +4786,46 @@ pub struct VkPhysicalDeviceIDProperties {
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,
 }
-impl Default for VkPhysicalDeviceIDProperties {
-    fn default() -> Self {
-        VkPhysicalDeviceIDProperties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceIDProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO"]
 pub struct VkExternalMemoryImageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleTypes: VkExternalMemoryHandleTypeFlags,
 }
-impl Default for VkExternalMemoryImageCreateInfo {
-    fn default() -> Self {
-        VkExternalMemoryImageCreateInfo {
-            sType: VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExternalMemoryImageCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanSTructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO"]
 pub struct VkExternalMemoryBufferCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleTypes: VkExternalMemoryHandleTypeFlags,
 }
-impl Default for VkExternalMemoryBufferCreateInfo {
-    fn default() -> Self {
-        VkExternalMemoryBufferCreateInfo {
-            sType: VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExternalMemoryBufferCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO"]
 pub struct VkExportMemoryAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleTypes: VkExternalMemoryHandleTypeFlags,
 }
-impl Default for VkExportMemoryAllocateInfo {
-    fn default() -> Self {
-        VkExportMemoryAllocateInfo {
-            sType: VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExportMemoryAllocateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO"]
 pub struct VkPhysicalDeviceExternalFenceInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleType: VkExternalFenceHandleTypeFlags,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES"]
 pub struct VkExternalFenceProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -5748,76 +4833,37 @@ pub struct VkExternalFenceProperties {
     pub compatibleHandleTypes: VkExternalFenceHandleTypeFlags,
     pub externalFenceFeatures: VkExternalFenceFeatureFlags,
 }
-impl Default for VkPhysicalDeviceExternalFenceInfo {
-    fn default() -> Self {
-        VkPhysicalDeviceExternalFenceInfo {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkExternalFenceProperties {
-    fn default() -> Self {
-        VkExternalFenceProperties {
-            sType: VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalFenceInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO;
-}
-unsafe impl crate::ext::VulkanStructure for VkExternalFenceProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO"]
 pub struct VkExportFenceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleTypes: VkExternalFenceHandleTypeFlags,
 }
-impl Default for VkExportFenceCreateInfo {
-    fn default() -> Self {
-        VkExportFenceCreateInfo {
-            sType: VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExportFenceCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO"]
 pub struct VkExportSemaphoreCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleTypes: VkExternalSemaphoreHandleTypeFlags,
 }
-impl Default for VkExportSemaphoreCreateInfo {
-    fn default() -> Self {
-        VkExportSemaphoreCreateInfo {
-            sType: VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkExportSemaphoreCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNALK_SEMAPHORE_INFO"]
 pub struct VkPhysicalDeviceExternalSemaphoreInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleType: VkExternalSemaphoreHandleTypeFlags,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES"]
 pub struct VkExternalSemaphoreProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -5825,85 +4871,33 @@ pub struct VkExternalSemaphoreProperties {
     pub compatibleHandleTypes: VkExternalSemaphoreHandleTypeFlags,
     pub externalSemaphoreFeatures: VkExternalSemaphoreFeatureFlags,
 }
-impl Default for VkPhysicalDeviceExternalSemaphoreInfo {
-    fn default() -> Self {
-        VkPhysicalDeviceExternalSemaphoreInfo {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-impl Default for VkExternalSemaphoreProperties {
-    fn default() -> Self {
-        VkExternalSemaphoreProperties {
-            sType: VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceExternalSemaphoreInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO;
-}
-unsafe impl crate::ext::VulkanStructure for VkExternalSemaphoreProperties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES"]
 pub struct VkPhysicalDeviceMaintenance3Properties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub maxPerSetDescriptors: u32,
     pub maxMemoryAllocationSize: VkDeviceSize,
 }
-impl Default for VkPhysicalDeviceMaintenance3Properties {
-    fn default() -> Self {
-        VkPhysicalDeviceMaintenance3Properties {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceMaintenance3Properties {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT"]
 pub struct VkDescriptorSetLayoutSupport {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub supported: VkBool32,
 }
-impl Default for VkDescriptorSetLayoutSupport {
-    fn default() -> Self {
-        VkDescriptorSetLayoutSupport {
-            sType: VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkDescriptorSetLayoutSupport {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES"]
 pub struct VkPhysicalDeviceShaderDrawParameterFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub shaderDrawParameters: VkBool32,
-}
-impl Default for VkPhysicalDeviceShaderDrawParameterFeatures {
-    fn default() -> Self {
-        VkPhysicalDeviceShaderDrawParameterFeatures {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES,
-            ..unsafe { zeroed() }
-        }
-    }
-}
-unsafe impl crate::ext::VulkanStructure for VkPhysicalDeviceShaderDrawParameterFeatures {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES;
 }
 
 pub type PFN_vkEnumerateInstanceVersion = extern "system" fn(pApiVersion: *mut u32) -> VkResult;
@@ -6176,13 +5170,6 @@ macro_rules! ExportExtensions {
     };
 }
 
-#[cfg(feature = "VK_KHR_android_surface")]
-extern crate android;
-#[cfg(feature = "VK_KHR_wayland_surface")]
-extern crate wayland;
-#[cfg(feature = "VK_KHR_xcb_surface")]
-extern crate xcb;
-
 ExportExtensions!("VK_KHR_surface": surface_khr);
 ExportExtensions!("VK_KHR_swapchain": swapchain_khr);
 ExportExtensions!("VK_KHR_display": display_khr);
@@ -6275,3 +5262,4 @@ ExportExtensions!("VK_AMD_buffer_marker": buffer_marker_amd);
 ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ext);
 ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
+ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);

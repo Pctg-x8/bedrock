@@ -68,19 +68,12 @@ pub struct VkSurfaceCapabilitiesKHR {
     pub supportedCompositeAlpha: VkCompositeAlphaFlagsKHR,
     pub supportedUsageFlags: VkImageUsageFlags,
 }
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkSurfaceFormatKHR {
     pub format: VkFormat,
     pub colorSpace: VkColorSpaceKHR,
-}
-impl Default for VkSurfaceFormatKHR {
-    fn default() -> Self {
-        VkSurfaceFormatKHR {
-            format: VK_FORMAT_UNDEFINED,
-            colorSpace: VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
-        }
-    }
 }
 
 pub type PFN_vkDestroySurfaceKHR =

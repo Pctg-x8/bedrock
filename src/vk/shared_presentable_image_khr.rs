@@ -7,19 +7,12 @@ use super::*;
 use libc::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR"]
 pub struct VkSharedPresentSurfaceCapabilitiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub sharedPresentSupportedUsageFlags: VkImageUsageFlags,
-}
-impl Default for VkSharedPresentSurfaceCapabilitiesKHR {
-    fn default() -> Self {
-        VkSharedPresentSurfaceCapabilitiesKHR {
-            sType: VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkGetSwapchainStatusKHR = extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;

@@ -31,19 +31,18 @@ pub type VkDebugUtilsMessageSeverityFlagsEXT = VkFlags;
 pub type VkDebugUtilsMessenegerCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT"]
 pub struct VkDebugUtilsLabelEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub pLabelName: *const c_char,
     pub color: [c_float; 4],
 }
-unsafe impl crate::ext::VulkanStructure for VkDebugUtilsLabelEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT"]
 pub struct VkDebugUtilsObjectNameInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -51,12 +50,10 @@ pub struct VkDebugUtilsObjectNameInfoEXT {
     pub objectHandle: u64,
     pub pObjectName: *const c_char,
 }
-unsafe impl crate::ext::VulkanStructure for VkDebugUtilsObjectNameInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-}
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT"]
 pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -70,9 +67,6 @@ pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub pCmdBufLabels: *const VkDebugUtilsLabelEXT,
     pub objectCount: u32,
     pub pObjects: *const VkDebugUtilsObjectNameInfoEXT,
-}
-unsafe impl crate::ext::VulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
 }
 
 pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(

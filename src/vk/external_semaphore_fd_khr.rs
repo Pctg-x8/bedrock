@@ -7,7 +7,8 @@ use super::*;
 use libc::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR"]
 pub struct VkImportSemaphoreFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -16,29 +17,15 @@ pub struct VkImportSemaphoreFdInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
     pub fd: c_int,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR"]
 pub struct VkSemaphoreGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub semaphore: VkSemaphore,
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
-}
-impl Default for VkImportSemaphoreFdInfoKHR {
-    fn default() -> Self {
-        VkImportSemaphoreFdInfoKHR {
-            sType: VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-impl Default for VkSemaphoreGetFdInfoKHR {
-    fn default() -> Self {
-        VkSemaphoreGetFdInfoKHR {
-            sType: VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkImportSemaphoreFdKHR =

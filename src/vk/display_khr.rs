@@ -48,20 +48,13 @@ pub struct VkDisplayModePropertiesKHR {
     pub parameters: VkDisplayModeParametersKHR,
 }
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR"]
 pub struct VkDisplayModeCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkDisplayModeCreateFlagsKHR,
     pub parameters: VkDisplayModeParametersKHR,
-}
-impl Default for VkDisplayModeCreateInfoKHR {
-    fn default() -> Self {
-        VkDisplayModeCreateInfoKHR {
-            sType: VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 #[repr(C)]
@@ -84,7 +77,8 @@ pub struct VkDisplayPlanePropertiesKHR {
     pub currentStackIndex: u32,
 }
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR"]
 pub struct VkDisplaySurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -96,14 +90,6 @@ pub struct VkDisplaySurfaceCreateInfoKHR {
     pub globalAlpha: c_float,
     pub alphaMode: VkDisplayPlaneAlphaFlagsKHR,
     pub imageExtent: VkExtent2D,
-}
-impl Default for VkDisplaySurfaceCreateInfoKHR {
-    fn default() -> Self {
-        VkDisplaySurfaceCreateInfoKHR {
-            sType: VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkGetPhysicalDeviceDisplayPropertiesKHR = extern "system" fn(

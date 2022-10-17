@@ -10,7 +10,8 @@ pub type VkSurfaceCounterFlagsEXT = VkFlags;
 pub const VK_SURFACE_COUNTER_VBLANK_EXT: VkSurfaceCounterFlagsEXT = 0x01;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT"]
 pub struct VkSurfaceCapabilities2EXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -25,14 +26,6 @@ pub struct VkSurfaceCapabilities2EXT {
     pub supportedCompositeAlpha: VkCompositeAlphaFlagsKHR,
     pub supportedUsageFlags: VkImageUsageFlags,
     pub supportedSurfaceCounters: VkSurfaceCounterFlagsEXT,
-}
-impl Default for VkSurfaceCapabilities2EXT {
-    fn default() -> Self {
-        VkSurfaceCapabilities2EXT {
-            sType: VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT = extern "system" fn(

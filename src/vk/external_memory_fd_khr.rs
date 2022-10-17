@@ -7,53 +7,32 @@ use super::*;
 use libc::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR"]
 pub struct VkImportMemoryFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleType: VkExternalMemoryHandleTypeFlags,
     pub fd: c_int,
 }
-impl Default for VkImportMemoryFdInfoKHR {
-    fn default() -> Self {
-        VkImportMemoryFdInfoKHR {
-            sType: VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR"]
 pub struct VkMemoryFdPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryTypeBits: u32,
 }
-impl Default for VkMemoryFdPropertiesKHR {
-    fn default() -> Self {
-        VkMemoryFdPropertiesKHR {
-            sType: VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR"]
 pub struct VkMemoryGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub memory: VkDeviceMemory,
     pub handleType: VkExternalMemoryHandleTypeFlags,
-}
-impl Default for VkMemoryGetFdInfoKHR {
-    fn default() -> Self {
-        VkMemoryGetFdInfoKHR {
-            sType: VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkGetMemoryFdKHR =

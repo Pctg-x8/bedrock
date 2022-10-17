@@ -201,3 +201,31 @@ pub fn derive_device_child_transferrable(tok: TokenStream) -> TokenStream {
         }
     })
 }
+
+#[proc_macro_derive(VulkanStructure, attributes(structure_type))]
+pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
+    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let ty = input
+        .attrs
+        .iter()
+        .filter_map(|a| a.parse_meta().ok())
+        .filter_map(|a| match a {
+            syn::Meta::NameValue(nv) if nv.path.is_ident("structure_type") => Some(nv.lit),
+            _ => None,
+        })
+        .next()
+        .expect("no structure_type found");
+    let ty: syn::Path = match ty {
+        syn::Lit::Str(s) => s.parse().expect("invalid path string specified for structure_type"),
+        _ => panic!("expected #[type = \"...\"]"),
+    };
+    // TODO: some checks here......
+
+    TokenStream::from(quote! {
+        unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
+            const TYPE: VkStructureType = #ty;
+        }
+    })
+}

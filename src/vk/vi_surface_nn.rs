@@ -9,20 +9,13 @@ use libc::*;
 pub type VkViSurfaceCreateFlagsNN = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN"]
 pub struct VkViSurfaceCreateInfoNN {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkViSurfaceCreateFlagsNN,
     pub window: *mut c_void,
-}
-impl Default for VkViSurfaceCreateInfoNN {
-    fn default() -> Self {
-        VkViSurfaceCreateInfoNN {
-            sType: VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkCreateViSurfaceNN = extern "system" fn(

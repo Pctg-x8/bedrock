@@ -4,7 +4,6 @@ pub const VK_EXT_SAMPLE_LOCATIONS_SPEC_VERSION: usize = 1;
 pub const VK_EXT_SAMPLE_LOCATIONS_EXTENSION_NAME: &str = "VK_EXT_sample_locations";
 
 use super::*;
-use libc::*;
 use std::mem::zeroed;
 
 #[repr(C)]
@@ -15,7 +14,8 @@ pub struct VkSampleLocationEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT"]
 pub struct VkSampleLocationsInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -24,14 +24,7 @@ pub struct VkSampleLocationsInfoEXT {
     pub sampleLocationsCount: u32,
     pub pSampleLocations: *const VkSampleLocationEXT,
 }
-impl Default for VkSampleLocationsInfoEXT {
-    fn default() -> Self {
-        VkSampleLocationsInfoEXT {
-            sType: VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT,
-            ..unsafe { zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
 #[derive(Clone, Debug)]
 pub struct VkAttachmentSampleLocationsEXT {
@@ -46,7 +39,8 @@ pub struct VkSubpassSampleLocationsEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT"]
 pub struct VkRenderPassSampleLocationsBeginInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -55,34 +49,20 @@ pub struct VkRenderPassSampleLocationsBeginInfoEXT {
     pub postSubpassSampleLocationsCount: u32,
     pub pPostSubpassSampleLocations: *const VkSubpassSampleLocationsEXT,
 }
-impl Default for VkRenderPassSampleLocationsBeginInfoEXT {
-    fn default() -> Self {
-        VkRenderPassSampleLocationsBeginInfoEXT {
-            sType: VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT"]
 pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub sampleLocationsEnable: VkBool32,
     pub sampleLocationsInfo: VkSampleLocationsInfoEXT,
 }
-impl Default for VkPipelineSampleLocationsStateCreateInfoEXT {
-    fn default() -> Self {
-        VkPipelineSampleLocationsStateCreateInfoEXT {
-            sType: VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT"]
 pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -92,28 +72,14 @@ pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub sampleLocationSubpixelBits: u32,
     pub variableSampleLocations: VkBool32,
 }
-impl Default for VkPhysicalDeviceSampleLocationsPropertiesEXT {
-    fn default() -> Self {
-        VkPhysicalDeviceSampleLocationsPropertiesEXT {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT,
-            ..unsafe { zeroed() }
-        }
-    }
-}
 
 #[repr(C)]
+#[derive(Clone, Debug, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT"]
 pub struct VkMultisamplePropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub maxSampleLocationGridSize: VkExtent2D,
-}
-impl Default for VkMultisamplePropertiesEXT {
-    fn default() -> Self {
-        VkMultisamplePropertiesEXT {
-            sType: VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT,
-            ..unsafe { zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkCmdSetSampleLocationsEXT =

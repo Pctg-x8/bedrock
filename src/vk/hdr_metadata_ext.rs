@@ -12,8 +12,10 @@ pub struct VkXYColorEXT {
     pub x: c_float,
     pub y: c_float,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_HDR_METADATA_EXT"]
 pub struct VkHdrMetadataEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -25,14 +27,6 @@ pub struct VkHdrMetadataEXT {
     pub minLuminance: c_float,
     pub maxContentLightLevel: c_float,
     pub maxFrameAverageLightLevel: c_float,
-}
-impl Default for VkHdrMetadataEXT {
-    fn default() -> Self {
-        VkHdrMetadataEXT {
-            sType: VK_STRUCTURE_TYPE_HDR_METADATA_EXT,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkSetHdrMetadataEXT = extern "system" fn(

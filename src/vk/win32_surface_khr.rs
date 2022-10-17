@@ -11,21 +11,14 @@ pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
 pub type VkWin32SurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR"]
 pub struct VkWin32SurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkWin32SurfaceCreateFlagsKHR,
     pub hinstance: HINSTANCE,
     pub hwnd: HWND,
-}
-impl Default for VkWin32SurfaceCreateInfoKHR {
-    fn default() -> Self {
-        VkWin32SurfaceCreateInfoKHR {
-            sType: VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkCreateWin32SurfaceKHR = extern "system" fn(

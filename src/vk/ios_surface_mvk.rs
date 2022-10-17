@@ -9,20 +9,13 @@ use libc::*;
 pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK"]
 pub struct VkIOSSurfaceCreateInfoMVK {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkIOSSurfaceCreateFlagsMVK,
     pub pView: *const c_void,
-}
-impl Default for VkIOSSurfaceCreateInfoMVK {
-    fn default() -> Self {
-        VkIOSSurfaceCreateInfoMVK {
-            sType: VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkCreateIOSSurfaceMVK = extern "system" fn(

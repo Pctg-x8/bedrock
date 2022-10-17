@@ -6,7 +6,8 @@ pub static VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME: &'static str = "VK_KH
 use super::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR"]
 pub struct VkImportSemaphoreWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -16,8 +17,10 @@ pub struct VkImportSemaphoreWin32HandleInfoKHR {
     pub handle: winapi::shared::ntdef::HANDLE,
     pub name: winapi::shared::ntdef::LPCWSTR,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR"]
 pub struct VkExportSemaphoreWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -25,25 +28,10 @@ pub struct VkExportSemaphoreWin32HandleInfoKHR {
     pub dwAccess: winapi::shared::minwindef::DWORD,
     pub name: winapi::shared::ntdef::LPCWSTR,
 }
-impl Default for VkImportSemaphoreWin32HandleInfoKHR {
-    fn default() -> Self {
-        VkImportSemaphoreWin32HandleInfoKHR {
-            sType: VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR,
-            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
-        }
-    }
-}
-impl Default for VkExportSemaphoreWin32HandleInfoKHR {
-    fn default() -> Self {
-        VkExportSemaphoreWin32HandleInfoKHR {
-            sType: VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR,
-            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR"]
 pub struct VkD3D12FenceSubmitInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -52,30 +40,15 @@ pub struct VkD3D12FenceSubmitInfoKHR {
     pub signalSemaphoreValuesCount: u32,
     pub pSignalSemaphoreValues: *const u64,
 }
-impl Default for VkD3D12FenceSubmitInfoKHR {
-    fn default() -> Self {
-        VkD3D12FenceSubmitInfoKHR {
-            sType: VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR,
-            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
-        }
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR"]
 pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub semaphore: VkSemaphore,
     pub handleType: VkExternalSemaphoreHandleTypeFlags,
-}
-impl Default for VkSemaphoreGetWin32HandleInfoKHR {
-    fn default() -> Self {
-        VkSemaphoreGetWin32HandleInfoKHR {
-            sType: VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR,
-            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
-        }
-    }
 }
 
 pub type PFN_vkImportSemaphoreWin32HandleKHR = extern "system" fn(

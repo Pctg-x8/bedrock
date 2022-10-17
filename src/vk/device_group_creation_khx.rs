@@ -7,7 +7,8 @@ use super::*;
 use libc::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHX"]
 pub struct VkPhysicalDeviceGroupPropertiesKHX {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -15,29 +16,15 @@ pub struct VkPhysicalDeviceGroupPropertiesKHX {
     pub physicalDevices: [VkPhysicalDevice; VK_MAX_DEVICE_GROUP_SIZE_KHX],
     pub subsetAllocation: VkBool32,
 }
-impl Default for VkPhysicalDeviceGroupPropertiesKHX {
-    fn default() -> Self {
-        VkPhysicalDeviceGroupPropertiesKHX {
-            sType: VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHX,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHX"]
 pub struct VkDeviceGroupDeviceCreateInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub physicalDeviceCount: u32,
     pub pPhysicalDevices: *const VkPhysicalDevice,
-}
-impl Default for VkDeviceGroupDeviceCreateInfoKHX {
-    fn default() -> Self {
-        VkDeviceGroupDeviceCreateInfoKHX {
-            sType: VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHX,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkEnumeratePhysicalDeviceGroupsKHX = extern "system" fn(

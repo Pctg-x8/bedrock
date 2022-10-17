@@ -7,7 +7,8 @@ use super::*;
 use libc::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_FENCE_FD_INFO_KHR"]
 pub struct VkImportFenceFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -16,29 +17,15 @@ pub struct VkImportFenceFdInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlags,
     pub fd: c_int,
 }
+
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[structure_type = "VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR"]
 pub struct VkFenceGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub fence: VkFence,
     pub handleType: VkExternalFenceHandleTypeFlags,
-}
-impl Default for VkImportFenceFdInfoKHR {
-    fn default() -> Self {
-        VkImportFenceFdInfoKHR {
-            sType: VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
-}
-impl Default for VkFenceGetFdInfoKHR {
-    fn default() -> Self {
-        VkFenceGetFdInfoKHR {
-            sType: VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR,
-            ..unsafe { std::mem::zeroed() }
-        }
-    }
 }
 
 pub type PFN_vkImportFenceFdKHR =
