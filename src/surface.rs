@@ -559,11 +559,13 @@ pub enum FullScreenExclusiveEXT {
 }
 
 /// Wraps VkSurfaceFullScreenExclusiveWin32InfoEXT structure: Specifying additional creation parameters specific to Win32 fullscreen exclusive mode.
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[cfg(windows)]
 #[repr(transparent)]
 #[derive(Clone, Debug)]
 pub struct FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT);
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[cfg(windows)]
 impl FullScreenExclusiveWin32InfoEXT {
     /// Constructs the structure, with a handle identifying the display to create the surface with.
     pub fn new(handle: winapi::shared::windef::HMONITOR) -> Self {
@@ -573,13 +575,15 @@ impl FullScreenExclusiveWin32InfoEXT {
         })
     }
 }
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
+#[cfg(windows)]
 impl From<FullScreenExclusiveWin32InfoEXT> for VkSurfaceFullScreenExclusiveWin32InfoEXT {
     fn from(v: FullScreenExclusiveWin32InfoEXT) -> Self {
         v.0
     }
 }
-#[cfg(feature = "VK_EXT_full_screen_exclusive_win32")]
+#[cfg(windows)]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[cfg(feature = "VK_KHR_surface")]
 impl<T> Extendable<FullScreenExclusiveWin32InfoEXT> for T where

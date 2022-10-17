@@ -9,7 +9,6 @@
 //! - `Multithreaded`: Enables to use objects from some threads(experimental)
 //! - `Presentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
-//!   - Pseudo Extension: `VK_EXT_full_screen_exclusive_win32` for using `VK_EXT_full_screen_exclusive` on Win32 platform
 #![warn(clippy::all)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
