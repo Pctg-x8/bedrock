@@ -13,7 +13,7 @@ pub const VK_SAMPLER_REDUCTION_MODE_MAX_EXT: VkSamplerReductionModeEXT = 2;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_*TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT"]
+#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT"]
 pub struct VkSamplerReductionModeCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
