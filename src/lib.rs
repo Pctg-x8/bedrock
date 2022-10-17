@@ -348,7 +348,7 @@ pub use surface::*;
 mod debug;
 pub use debug::*;
 mod ext;
-pub use ext::*;
+pub use self::ext::*;
 mod external;
 pub use external::*;
 mod batching;
