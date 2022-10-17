@@ -19,9 +19,9 @@
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
+use crate::VulkanStructure;
 use libc::*;
 use std;
-use crate::VulkanStructure;
 
 #[inline]
 pub const fn VK_MAKE_VERSION(major: u16, minor: u16, patch: u16) -> u32 {
