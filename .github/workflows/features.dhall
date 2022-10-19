@@ -20,7 +20,7 @@ let PlatformIndependent =
       , "VK_KHR_display_swapchain"
       , "VK_GOOGLE_display_timing"
       , "VK_AMD_draw_indirect_count"
-      , "VK_NV_external_fence_capabilities"
+      , "VK_NV_external_memory_capabilities"
       , "VK_EXT_external_memory_host"
       , "VK_NV_external_memory"
       , "VK_NV_fill_rectangle"
