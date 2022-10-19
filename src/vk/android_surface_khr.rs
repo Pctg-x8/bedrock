@@ -2,7 +2,6 @@
 
 use super::*;
 use android::*;
-use derives::GenericVulkanStructure;
 use libc::*;
 
 pub const VK_KHR_ANDROID_SURFACE_SPEC_VERSION: usize = 6;

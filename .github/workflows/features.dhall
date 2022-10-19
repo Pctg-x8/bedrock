@@ -87,6 +87,9 @@ let Win32Specific =
       , "VK_NV_win32_keyed_mutex"
       , "VK_KHR_win32_surface"
       , "VK_KHR_surface"
+      , "VK_NV_external_memory"
+      , "VK_KHR_get_surface_capabilities2"
+      , "VK_KHR_swapchain"
       ]
 
 let UnixSpecific =
@@ -100,6 +103,7 @@ let UnixSpecific =
       , "VK_KHR_xcb_surface"
       , "VK_KHR_xlib_surface"
       , "VK_KHR_surface"
+      , "VK_KHR_display"
       ]
 
 let MacSpecific =
