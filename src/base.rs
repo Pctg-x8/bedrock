@@ -839,6 +839,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_KHR_xlib_surface")]
+    #[cfg(feature = "Implements")]
     fn new_surface_xlib(
         self,
         display: *mut x11::xlib::Display,
@@ -869,6 +870,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_KHR_xcb_surface")]
+    #[cfg(feature = "Implements")]
     fn new_surface_xcb(
         self,
         connection: *mut xcb::ffi::xcb_connection_t,
@@ -899,6 +901,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_KHR_wayland_surface")]
+    #[cfg(feature = "Implements")]
     fn new_surface_wayland(
         self,
         display: *mut wayland_client::sys::wl_display,
@@ -929,6 +932,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_KHR_android_surface")]
+    #[cfg(feature = "Implements")]
     fn new_surface_android(
         self,
         window: *mut android::ANativeWindow,
@@ -957,6 +961,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_KHR_win32_surface")]
+    #[cfg(feature = "Implements")]
     fn new_surface_win32(
         self,
         hinstance: winapi::shared::minwindef::HINSTANCE,
@@ -988,6 +993,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "VK_MVK_macos_surface")]
+    #[cfg(feature = "Implements")]
     fn new_surface_macos(
         self,
         view_ptr: *const libc::c_void,

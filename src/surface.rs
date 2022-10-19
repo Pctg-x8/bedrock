@@ -223,19 +223,20 @@ pub trait TransferSurfaceObject {
     fn transfer_surface(self) -> Self::ConcreteSurface;
 }
 #[cfg(feature = "VK_KHR_surface")]
-impl<Surface: crate::Surface> TransferSurfaceObject for SwapchainBuilder<Surface> {
-    type ConcreteSurface = Surface;
-
-    fn transfer_surface(self) -> Self::ConcreteSurface {
-        self.1
-    }
-}
-#[cfg(feature = "VK_KHR_surface")]
 impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurfaceObject for Extends<Parent, T> {
     type ConcreteSurface = Parent::ConcreteSurface;
 
     fn transfer_surface(self) -> Self::ConcreteSurface {
         self.0.transfer_surface()
+    }
+}
+#[cfg(feature = "VK_KHR_surface")]
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<Surface: crate::Surface> TransferSurfaceObject for SwapchainBuilder<Surface> {
+    type ConcreteSurface = Surface;
+
+    fn transfer_surface(self) -> Self::ConcreteSurface {
+        self.1
     }
 }
 
