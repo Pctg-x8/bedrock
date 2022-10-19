@@ -163,7 +163,7 @@ jobs:
       uses: "actions-rs/cargo@v1"
       with:
         args: "--features VK_MVK_ios_surface,VK_MVK_macos_surface,VK_KHR_surface"
-        command: test
+        command: check
     - if: "failure()"
       name: Configure AWS Credentials
       uses: "aws-actions/configure-aws-credentials@v1"
@@ -196,7 +196,7 @@ jobs:
       uses: "actions-rs/cargo@v1"
       with:
         args: "--features VK_EXT_acquire_xlib_display,VK_KHR_android_surface,VK_KHR_external_fence_fd,VK_EXT_external_memory_dma_buf,VK_KHR_external_memory_fd,VK_KHR_external_semaphore_fd,VK_KHR_wayland_surface,VK_KHR_xcb_surface,VK_KHR_xlib_surface,VK_KHR_surface,VK_KHR_display"
-        command: test
+        command: check
     - if: "failure()"
       name: Configure AWS Credentials
       uses: "aws-actions/configure-aws-credentials@v1"
@@ -229,7 +229,7 @@ jobs:
       uses: "actions-rs/cargo@v1"
       with:
         args: "--features VK_KHR_external_fence_win32,VK_KHR_external_memory_win32,VK_NV_external_memory_win32,VK_KHR_external_semaphore_win32,VK_EXT_full_screen_exclusive,VK_KHR_win32_keyed_mutex,VK_NV_win32_keyed_mutex,VK_KHR_win32_surface,VK_KHR_surface,VK_NV_external_memory,VK_KHR_get_surface_capabilities2,VK_KHR_swapchain"
-        command: test
+        command: check
     - if: "failure()"
       name: Configure AWS Credentials
       uses: "aws-actions/configure-aws-credentials@v1"

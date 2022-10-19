@@ -137,7 +137,7 @@ let testStepWin32 =
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
-            , command = "test"
+            , command = "check"
             , args = Some
                 "--features ${Text/concatSep "," Features.Win32Specific}"
             }
@@ -158,7 +158,7 @@ let testStepUnix =
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
-            , command = "test"
+            , command = "check"
             , args = Some
                 "--features ${Text/concatSep "," Features.UnixSpecific}"
             }
@@ -179,7 +179,7 @@ let testStepMac =
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
-            , command = "test"
+            , command = "check"
             , args = Some
                 "--features ${Text/concatSep "," Features.MacSpecific}"
             }
