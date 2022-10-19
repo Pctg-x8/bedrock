@@ -20,10 +20,14 @@ let List/map = https://prelude.dhall-lang.org/List/map
 
 let List/concat = https://prelude.dhall-lang.org/List/concat
 
+let Text/concatSep = https://prelude.dhall-lang.org/Text/concatSep
+
 let DocumentDeployment = ../actions/deployment-doc-peridot/schema.dhall
 
 let SlackNotifierAction =
       https://raw.githubusercontent.com/Pctg-x8/ci-notifications-post-invoker/master/schema.dhall
+
+let Features = ./features.dhall
 
 let depends =
       \(deps : List Text) ->
@@ -105,7 +109,7 @@ let checkFormatStep =
 
 let testStep =
       GithubActions.Job::{
-      , name = Some "Run Tests"
+      , name = Some "Run Tests (Platform Independent)"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
         [ Checkout.step Checkout.Params::{=}
@@ -113,11 +117,75 @@ let testStep =
         , RunCargo.step
             RunCargo.Params::{
             , command = "test"
-            , args = Some "--features Presentation,VK_EXT_debug_report"
+            , args = Some
+                "--features ${Text/concatSep "," Features.PlatformIndependent}"
             }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
             (     slackNotifyIfFailureStep "Run Tests"
+              //  { name = "Notify as Failure" }
+            )
+        ]
+      }
+
+let testStepWin32 =
+      GithubActions.Job::{
+      , name = Some "Run Tests (Win32 Specific)"
+      , runs-on = GithubActions.RunnerPlatform.windows-latest
+      , steps =
+        [ Checkout.step Checkout.Params::{=}
+        , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
+        , RunCargo.step
+            RunCargo.Params::{
+            , command = "test"
+            , args = Some
+                "--features ${Text/concatSep "," Features.Win32Specific}"
+            }
+        , runStepOnFailure configureSlackNotification
+        , runStepOnFailure
+            (     slackNotifyIfFailureStep "Run Tests (Win32 Specific)"
+              //  { name = "Notify as Failure" }
+            )
+        ]
+      }
+
+let testStepUnix =
+      GithubActions.Job::{
+      , name = Some "Run Tests (Unix Specific)"
+      , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
+      , steps =
+        [ Checkout.step Checkout.Params::{=}
+        , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
+        , RunCargo.step
+            RunCargo.Params::{
+            , command = "test"
+            , args = Some
+                "--features ${Text/concatSep "," Features.UnixSpecific}"
+            }
+        , runStepOnFailure configureSlackNotification
+        , runStepOnFailure
+            (     slackNotifyIfFailureStep "Run Tests (Unix Specific)"
+              //  { name = "Notify as Failure" }
+            )
+        ]
+      }
+
+let testStepMac =
+      GithubActions.Job::{
+      , name = Some "Run Tests (Mac Specific)"
+      , runs-on = GithubActions.RunnerPlatform.macos-latest
+      , steps =
+        [ Checkout.step Checkout.Params::{=}
+        , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
+        , RunCargo.step
+            RunCargo.Params::{
+            , command = "test"
+            , args = Some
+                "--features ${Text/concatSep "," Features.MacSpecific}"
+            }
+        , runStepOnFailure configureSlackNotification
+        , runStepOnFailure
+            (     slackNotifyIfFailureStep "Run Tests (Mac Specific)"
               //  { name = "Notify as Failure" }
             )
         ]
@@ -134,8 +202,7 @@ let documentDeploymentStep =
         , RunCargo.step
             RunCargo.Params::{
             , command = "rustdoc"
-            , args = Some
-                "--features Implements,Multithreaded,Presentation,VK_EXT_debug_report -- --cfg docsrs"
+            , args = Some "--all-features -- --cfg docsrs"
             , toolchain = Some "nightly"
             }
         , GoogleAuth.step
@@ -174,13 +241,29 @@ in  GithubActions.Workflow::{
         { preconditions
         , check-format = depends [ "preconditions" ] checkFormatStep
         , test = depends [ "preconditions" ] testStep
+        , test-win32 = depends [ "perconditions", "test" ] testStepWin32
+        , test-unix = depends [ "perconditions", "test" ] testStepUnix
+        , test-mac = depends [ "perconditions", "test" ] testStepMac
         , document-deploy =
             depends
-              [ "preconditions", "test", "check-format" ]
+              [ "preconditions"
+              , "test"
+              , "check-format"
+              , "test-win32"
+              , "test-unix"
+              , "test-mac"
+              ]
               documentDeploymentStep
         , report-success =
             depends
-              [ "preconditions", "test", "check-format", "document-deploy" ]
+              [ "preconditions"
+              , "test"
+              , "check-format"
+              , "document-deploy"
+              , "test-win32"
+              , "test-unix"
+              , "test-mac"
+              ]
               reportSuccessJob
         }
     }
