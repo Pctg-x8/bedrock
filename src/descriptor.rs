@@ -4,7 +4,7 @@ use crate::{vk::*, DeviceChild, Instance, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VkResultHandler, VulkanStructure
+    VkResultHandler, VulkanStructure,
 };
 use crate::{ImageLayout, ShaderStage, VkHandle};
 
