@@ -55,7 +55,7 @@ let PlatformIndependent =
       , "VK_KHR_sampler_mirror_clamp_to_edge"
       , "VK_AMD_shader_ballot"
       , "VK_KHR_shader_draw_parameters"
-      , "VK_AMD_shader_explicit_vertex_parameters"
+      , "VK_AMD_shader_explicit_vertex_parameter"
       , "VK_AMD_shader_fragment_mask"
       , "VK_EXT_shader_group_ballot"
       , "VK_AMD_shader_image_load_store_lod"
