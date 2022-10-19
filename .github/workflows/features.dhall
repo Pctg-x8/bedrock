@@ -88,6 +88,7 @@ let Win32Specific =
       , "VK_KHR_win32_surface"
       , "VK_KHR_surface"
       , "VK_NV_external_memory"
+      , "VK_NV_external_memory_capabilities"
       , "VK_KHR_get_surface_capabilities2"
       , "VK_KHR_swapchain"
       ]
