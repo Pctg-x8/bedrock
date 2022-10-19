@@ -4,7 +4,6 @@ pub const VK_EXT_SAMPLER_FILTER_MINMAX_SPEC_VERSION: usize = 1;
 pub static VK_EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME: &'static str = "VK_EXT_sampler_filter_minmax";
 
 use super::*;
-use libc::*;
 
 pub type VkSamplerReductionModeEXT = i32;
 pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT: VkSamplerReductionModeEXT = 0;

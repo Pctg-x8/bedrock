@@ -1,7 +1,6 @@
 //! VK_KHR_display_swapchain extensions
 
 use super::*;
-use libc::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

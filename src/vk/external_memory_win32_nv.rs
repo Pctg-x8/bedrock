@@ -4,7 +4,6 @@ pub const VK_NV_EXTERNAL_MEMORY_WIN32_SPEC_VERSION: usize = 1;
 pub static VK_NV_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &'static str = "VK_NV_external_memory_win32";
 
 use super::*;
-use winapi::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -13,7 +12,7 @@ pub struct VkImportMemoryWin32HandleInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleType: VkExternalMemoryHandleTypeFlagsNV,
-    pub handle: HANDLE,
+    pub handle: winapi::shared::ntdef::HANDLE,
 }
 
 #[repr(C)]
@@ -22,15 +21,15 @@ pub struct VkImportMemoryWin32HandleInfoNV {
 pub struct VkExportMemoryWin32HandleInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub pAttributes: *const SECURITY_ATTRIBUTES,
-    pub dwAccess: DWORD,
+    pub pAttributes: *const winapi::um::minwinbase::SECURITY_ATTRIBUTES,
+    pub dwAccess: winapi::shared::minwindef::DWORD,
 }
 
 pub type PFN_vkGetMemoryWin32HandleNV = extern "system" fn(
     device: VkDevice,
     memory: VkDeviceMemory,
     handleType: VkExternalMemoryHandleTypeFlagsNV,
-    pHandle: *mut HANDLE,
+    pHandle: *mut winapi::shared::ntdef::HANDLE,
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
@@ -40,6 +39,6 @@ extern "system" {
         device: VkDevice,
         memory: VkDeviceMemory,
         handleType: VkExternalMemoryHandleTypeFlagsNV,
-        pHandle: *mut HANDLE,
+        pHandle: *mut winapi::shared::ntdef::HANDLE,
     ) -> VkResult;
 }

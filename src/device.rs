@@ -6,7 +6,7 @@
 use crate::{
     fnconv::FnTransmute,
     vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler,
+    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler, VulkanStructure,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
@@ -62,7 +62,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             queue_infos: Vec::new(),
             layers: Vec::new(),
             extensions: Vec::new(),
-            features: VkPhysicalDeviceFeatures::default(),
+            features: Default::default(),
         }
     }
     pub fn add_layer(&mut self, name: &str) -> &mut Self {
@@ -122,15 +122,20 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             .queue_infos
             .iter()
             .map(|&DeviceQueueCreateInfo(fi, ref ps)| VkDeviceQueueCreateInfo {
+                sType: VkDeviceQueueCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 queueFamilyIndex: fi,
                 queueCount: ps.len() as _,
                 pQueuePriorities: ps.as_ptr(),
-                ..Default::default()
             })
             .collect::<Vec<_>>();
         let layers = self.layers.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
         let extensions = self.extensions.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
         let cinfo = VkDeviceCreateInfo {
+            sType: VkDeviceCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             queueCreateInfoCount: qinfos.len() as _,
             pQueueCreateInfos: qinfos.as_ptr(),
             enabledLayerCount: layers.len() as _,
@@ -138,7 +143,6 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             enabledExtensionCount: extensions.len() as _,
             ppEnabledExtensionNames: extensions.as_ptr(),
             pEnabledFeatures: &self.features,
-            ..Default::default()
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -254,6 +258,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .iter()
             .map(
                 |&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet {
+                    sType: VkWriteDescriptorSet::TYPE,
+                    pNext: std::ptr::null(),
                     dstSet: set,
                     dstBinding: binding,
                     dstArrayElement: array,
@@ -262,13 +268,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                     pImageInfo: iv.as_ptr(),
                     pBufferInfo: bv.as_ptr(),
                     pTexelBufferView: bvv.as_ptr(),
-                    ..Default::default()
                 },
             )
             .collect::<Vec<_>>();
         let c = copy
             .iter()
             .map(|x| VkCopyDescriptorSet {
+                sType: VkCopyDescriptorSet::TYPE,
+                pNext: std::ptr::null(),
                 srcSet: x.src.0,
                 srcBinding: x.src.1,
                 srcArrayElement: x.src.2,
@@ -276,7 +283,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 dstBinding: x.dst.1,
                 dstArrayElement: x.dst.2,
                 descriptorCount: x.count,
-                ..Default::default()
             })
             .collect::<Vec<_>>();
         unsafe {
@@ -312,11 +318,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         name: &widestring::WideCString,
     ) -> crate::Result<()> {
         let info = VkImportSemaphoreWin32HandleInfoKHR {
+            sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             semaphore: target.native_ptr(),
             handleType: handle.as_type_bits(),
             handle: handle.handle(),
             name: name.as_ptr(),
-            ..Default::default()
         };
 
         let f = self
@@ -340,9 +347,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalSemaphoreHandleTypeWin32,
     ) -> crate::Result<winapi::shared::ntdef::HANDLE> {
         let info = VkSemaphoreGetWin32HandleInfoKHR {
+            sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             semaphore: target.native_ptr(),
             handleType: handle_type as _,
-            ..Default::default()
         };
         let mut h = std::ptr::null_mut();
 
@@ -367,9 +375,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeWin32,
     ) -> crate::Result<winapi::shared::ntdef::HANDLE> {
         let info = VkMemoryGetWin32HandleInfoKHR {
+            sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             memory: memory.native_ptr(),
             handleType: handle_type as _,
-            ..Default::default()
         };
         let mut h = std::ptr::null_mut();
 
@@ -392,9 +401,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeFd,
     ) -> crate::Result<libc::c_int> {
         let info = VkMemoryGetFdInfoKHR {
+            sType: VkMemoryGetFdInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             memory: memory.native_ptr(),
             handleType: handle_type as _,
-            ..Default::default()
         };
         let mut fd = 0;
 
@@ -416,14 +426,17 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeWin32,
         handle: winapi::shared::ntdef::HANDLE,
     ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        let mut info = Default::default();
+        let mut info = std::mem::MaybeUninit::<VkMemoryWin32HandlePropertiesKHR>::uninit();
+        unsafe {
+            (*info.as_mut_ptr()).sType = VkMemoryWin32HandlePropertiesKHR::TYPE;
+        }
 
         let f = self
             .extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
             .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
-        (f)(self.native_ptr(), handle_type as _, handle, &mut info)
+        (f)(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr())
             .into_result()
-            .map(move |_| info)
+            .map(move |_| unsafe { info.assume_init() })
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
@@ -438,14 +451,17 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeFd,
         fd: libc::c_int,
     ) -> crate::Result<VkMemoryFdPropertiesKHR> {
-        let mut info = Default::default();
+        let mut info = std::mem::MaybeUninit::<VkMemoryFdPropertiesKHR>::uninit();
+        unsafe {
+            (*info.as_mut_ptr()).sType = VkMemoryFdPropertiesKHR::TYPE;
+        }
 
         let f = self
             .extra_procedure::<PFN_vkGetMemoryFdPropertiesKHR>("vkGetMemoryFdPropertiesKHR")
             .expect("No vkGetMemoryFdPropertiesKHR exported");
-        (f)(self.native_ptr(), handle_type as _, fd, &mut info)
+        (f)(self.native_ptr(), handle_type as _, fd, info.as_mut_ptr())
             .into_result()
-            .map(move |_| info)
+            .map(move |_| unsafe { info.assume_init() })
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
@@ -460,14 +476,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleType,
         host_pointer: *const (),
     ) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
-        let mut info = Default::default();
+        let mut info = std::mem::MaybeUninit::<VkMemoryHostPointerPropertiesEXT>::uninit();
+        unsafe {
+            (*info.as_mut_ptr()).sType = VkMemoryHostPointerPropertiesEXT::TYPE;
+        }
 
         let f = self
             .extra_procedure::<PFN_vkGetMemoryHostPointerPropertiesEXT>("vkGetMemoryHostPointerPropertiesEXT")
             .expect("No vkGetMemoryHostPointerPropertiesEXT exported");
-        (f)(self.native_ptr(), handle_type as _, host_pointer as _, &mut info)
-            .into_result()
-            .map(move |_| info)
+        (f)(
+            self.native_ptr(),
+            handle_type as _,
+            host_pointer as _,
+            info.as_mut_ptr(),
+        )
+        .into_result()
+        .map(move |_| unsafe { info.assume_init() })
     }
 
     /// Multiple Binding for Buffers
@@ -483,10 +507,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let infos: Vec<_> = bounds
             .iter()
             .map(|&(b, m, offs)| VkBindBufferMemoryInfo {
+                sType: VkBindBufferMemoryInfo::TYPE,
+                pNext: std::ptr::null(),
                 buffer: b.native_ptr(),
                 memory: m.native_ptr(),
                 memoryOffset: offs,
-                ..Default::default()
             })
             .collect();
         unsafe {
@@ -509,10 +534,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let infos: Vec<_> = bounds
             .iter()
             .map(|&(i, m, offs)| VkBindImageMemoryInfo {
+                sType: VkBindImageMemoryInfo::TYPE,
+                pNext: std::ptr::null(),
                 image: i.native_ptr(),
                 memory: m.native_ptr(),
                 memoryOffset: offs,
-                ..Default::default()
             })
             .collect();
         unsafe {
@@ -553,25 +579,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .into_result()
     }
 
-    /// Creates a new shader module object from bytes on the memory
+    /// Creates a new shader module object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn new_shader_module_from_memory(
-        self,
-        buffer: &(impl AsRef<[u8]> + ?Sized),
-    ) -> crate::Result<crate::ShaderModuleObject<Self>>
+    fn new_shader_module(self, code: &(impl AsRef<[u8]> + ?Sized)) -> crate::Result<crate::ShaderModuleObject<Self>>
     where
         Self: Sized,
     {
         #[allow(clippy::cast_ptr_alignment)]
         let cinfo = VkShaderModuleCreateInfo {
-            codeSize: buffer.as_ref().len() as _,
-            pCode: buffer.as_ref().as_ptr() as *const _,
-            ..Default::default()
+            sType: VkShaderModuleCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            codeSize: code.as_ref().len() as _,
+            pCode: code.as_ref().as_ptr() as *const _,
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -580,27 +605,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 .into_result()
                 .map(|_| crate::ShaderModuleObject(h, self))
         }
-    }
-
-    /// Creates a new shader module object from a file
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// IO Errors may be occured when reading file
-    #[cfg(feature = "Implements")]
-    fn new_shader_module_from_file(
-        self,
-        path: &(impl AsRef<std::path::Path> + ?Sized),
-    ) -> Result<crate::ShaderModuleObject<Self>, Box<dyn std::error::Error>>
-    where
-        Self: Sized,
-    {
-        std::fs::read(path)
-            .map_err(From::from)
-            .and_then(move |b| self.new_shader_module_from_memory(&b).map_err(From::from))
     }
 
     /// Creates a new pipeline cache
@@ -618,9 +622,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let cinfo = VkPipelineCacheCreateInfo {
+            sType: VkPipelineCacheCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             initialDataSize: initial.as_ref().len() as _,
             pInitialData: initial.as_ref().as_ptr() as *const _,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -656,11 +662,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             })
             .collect::<Vec<_>>();
         let cinfo = VkPipelineLayoutCreateInfo {
+            sType: VkPipelineLayoutCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             setLayoutCount: layouts.len() as _,
             pSetLayouts: layouts.as_ptr(),
             pushConstantRangeCount: push_constants.len() as _,
             pPushConstantRanges: push_constants.as_ptr(),
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -725,9 +733,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .iter()
             .zip(stages.into_iter())
             .map(|(b, stage)| VkComputePipelineCreateInfo {
+                sType: VkComputePipelineCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                basePipelineHandle: std::ptr::null_mut(),
+                basePipelineIndex: -1,
                 stage,
                 layout: b.layout.native_ptr(),
-                ..Default::default()
             })
             .collect::<Vec<_>>();
 
@@ -766,9 +778,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = VK_NULL_HANDLE as _;
         let cinfo = VkMemoryAllocateInfo {
+            sType: VkMemoryAllocateInfo::TYPE,
+            pNext: std::ptr::null(),
             allocationSize: size as _,
             memoryTypeIndex: type_index,
-            ..Default::default()
         };
         unsafe { Resolver::get().allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
             .into_result()
@@ -796,16 +809,17 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let import_info = VkImportMemoryWin32HandleInfoKHR {
+            sType: VkImportMemoryWin32HandleInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             handleType: handle_type as _,
             handle,
             name: name.as_ptr(),
-            ..Default::default()
         };
         let ainfo = VkMemoryAllocateInfo {
+            sType: VkMemoryAllocateInfo::TYPE,
             pNext: &import_info as *const _ as _,
             allocationSize: size as _,
             memoryTypeIndex: type_index,
-            ..Default::default()
         };
 
         let mut h = VK_NULL_HANDLE as _;
@@ -838,16 +852,17 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let export_info = VkExportMemoryWin32HandleInfoKHR {
+            sType: VkExportMemoryWin32HandleInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
             dwAccess: access,
             name: name.as_ptr(),
-            ..Default::default()
         };
         let ainfo = VkMemoryAllocateInfo {
+            sType: VkMemoryAllocateInfo::TYPE,
             pNext: &export_info as *const _ as _,
             allocationSize: size as _,
             memoryTypeIndex: type_index,
-            ..Default::default()
         };
 
         let mut h = VK_NULL_HANDLE as _;
@@ -879,15 +894,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let import_info = VkImportMemoryFdInfoKHR {
+            sType: VkImportMemoryFdInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             handleType: handle_type as _,
             fd,
-            ..Default::default()
         };
         let ainfo = VkMemoryAllocateInfo {
+            sType: VkMemoryAllocateInfo::TYPE,
             pNext: &import_info as *const _ as _,
             allocationSize: size as _,
             memoryTypeIndex: type_index,
-            ..Default::default()
         };
 
         let mut h = VK_NULL_HANDLE as _;
@@ -919,15 +935,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let import_info = VkImportMemoryHostPointerInfoEXT {
+            sType: VkImportMemoryHostPointerInfoEXT::TYPE,
+            pNext: std::ptr::null(),
             handleType: handle_type as _,
             pHostPointer: host_pointer as _,
-            ..Default::default()
         };
         let ainfo = VkMemoryAllocateInfo {
+            sType: VkMemoryAllocateInfo::TYPE,
             pNext: &import_info as *const _ as _,
             allocationSize: size as _,
             memoryTypeIndex: type_index,
-            ..Default::default()
         };
 
         let mut h = VK_NULL_HANDLE as _;
@@ -957,8 +974,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 .create_fence(
                     self.native_ptr(),
                     &VkFenceCreateInfo {
+                        sType: VkFenceCreateInfo::TYPE,
+                        pNext: std::ptr::null(),
                         flags,
-                        ..Default::default()
                     },
                     std::ptr::null(),
                     &mut h,
@@ -986,13 +1004,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = VK_NULL_HANDLE as _;
         let exp_info = VkExportFenceCreateInfo {
+            sType: VkExportFenceCreateInfo::TYPE,
+            pNext: std::ptr::null(),
             handleTypes: compatible_handle_types.0,
-            ..Default::default()
         };
         let cinfo = VkFenceCreateInfo {
+            sType: VkFenceCreateInfo::TYPE,
             flags: if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 },
             pNext: &exp_info as *const _ as _,
-            ..Default::default()
         };
         unsafe {
             Resolver::get()
@@ -1016,7 +1035,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_semaphore(self.native_ptr(), &Default::default(), std::ptr::null(), &mut h)
+                .create_semaphore(
+                    self.native_ptr(),
+                    &VkSemaphoreCreateInfo {
+                        sType: VkSemaphoreCreateInfo::TYPE,
+                        pNext: std::ptr::null(),
+                        flags: 0,
+                    },
+                    std::ptr::null(),
+                    &mut h,
+                )
                 .into_result()
                 .map(|_| crate::SemaphoreObject(h, self))
         }
@@ -1070,7 +1098,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
             Resolver::get()
-                .create_event(self.native_ptr(), &Default::default(), std::ptr::null(), &mut h)
+                .create_event(
+                    self.native_ptr(),
+                    &VkEventCreateInfo {
+                        sType: VkEventCreateInfo::TYPE,
+                        pNext: std::ptr::null(),
+                        flags: 0,
+                    },
+                    std::ptr::null(),
+                    &mut h,
+                )
                 .into_result()
                 .map(|_| crate::EventObject(h, self))
         }
@@ -1140,6 +1177,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let cinfo = VkCommandPoolCreateInfo {
+            sType: VkCommandPoolCreateInfo::TYPE,
+            pNext: std::ptr::null(),
             queueFamilyIndex: queue_family,
             flags: if transient {
                 VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
@@ -1150,7 +1189,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             } else {
                 0
             },
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -1180,9 +1218,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .map(|(n, b)| b.make_structure_with_binding_index(n as _))
             .collect();
         let cinfo = VkDescriptorSetLayoutCreateInfo {
+            sType: VkDescriptorSetLayoutCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             bindingCount: binding_structures.len() as _,
             pBindings: binding_structures.as_ptr(),
-            ..Default::default()
         };
 
         let mut h = std::mem::MaybeUninit::uninit();
@@ -1211,6 +1251,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = VK_NULL_HANDLE as _;
         let cinfo = VkDescriptorPoolCreateInfo {
+            sType: VkDescriptorPoolCreateInfo::TYPE,
+            pNext: std::ptr::null(),
             maxSets: max_sets,
             flags: if allow_free {
                 VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
@@ -1219,7 +1261,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             },
             poolSizeCount: pool_sizes.len() as _,
             pPoolSizes: pool_sizes.as_ptr() as *const _,
-            ..Default::default()
         };
         unsafe {
             Resolver::get()
@@ -1242,6 +1283,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         use crate::Instance;
 
         let cinfo = VkDescriptorUpdateTemplateCreateInfo {
+            sType: VkDescriptorUpdateTemplateCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
+            set: 0,
+            pipelineLayout: VK_NULL_HANDLE as _,
             descriptorUpdateEntryCount: entries.len() as _,
             pDescriptorUpdateEntries: entries.as_ptr(),
             templateType: if dsl.is_none() {
@@ -1250,7 +1297,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET
             },
             descriptorSetLayout: dsl.map_or(VK_NULL_HANDLE as _, VkHandle::native_ptr),
-            ..Default::default()
         };
         let mut handle = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -1280,13 +1326,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         let cinfo = VkFramebufferCreateInfo {
+            sType: VkFramebufferCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             renderPass: mold.native_ptr(),
             attachmentCount: views.len() as _,
             pAttachments: views.as_ptr(),
             width: size.width,
             height: size.height,
             layers,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), &mut h) }

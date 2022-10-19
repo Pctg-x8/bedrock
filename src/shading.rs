@@ -1,7 +1,7 @@
 //! Vulkan Shading(Shader/Pipeline)
 
 use crate::LifetimeBound;
-use crate::{vk::*, DeviceChild, VkHandle};
+use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -365,9 +365,11 @@ impl From<Vec<VkDynamicState>> for PipelineDynamicStates {
 impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d PipelineDynamicStates {
     fn into(self) -> LifetimeBound<'d, VkPipelineDynamicStateCreateInfo> {
         LifetimeBound::new(VkPipelineDynamicStateCreateInfo {
+            sType: VkPipelineDynamicStateCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             dynamicStateCount: self.0.len() as _,
             pDynamicStates: self.0.as_ptr(),
-            ..Default::default()
         })
     }
 }
@@ -536,15 +538,20 @@ impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderMo
         VertexProcessingStages {
             vertex: vsh,
             vi: VkPipelineVertexInputStateCreateInfo {
+                sType: VkPipelineVertexInputStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 vertexBindingDescriptionCount: vbind.len() as _,
                 pVertexBindingDescriptions: vbind.as_ptr() as _,
                 vertexAttributeDescriptionCount: vattr.len() as _,
                 pVertexAttributeDescriptions: vattr.as_ptr(),
-                ..Default::default()
             },
             ia: VkPipelineInputAssemblyStateCreateInfo {
+                sType: VkPipelineInputAssemblyStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 topology: primitive_topo,
-                ..Default::default()
+                primitiveRestartEnable: VK_FALSE,
             },
             geometry: None,
             fragment: None,
@@ -661,7 +668,21 @@ pub struct RasterizationState {
 impl Default for RasterizationState {
     fn default() -> Self {
         RasterizationState {
-            base: VkPipelineRasterizationStateCreateInfo::default(),
+            base: VkPipelineRasterizationStateCreateInfo {
+                sType: VkPipelineRasterizationStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                depthClampEnable: VK_FALSE,
+                rasterizerDiscardEnable: VK_FALSE,
+                polygonMode: VK_POLYGON_MODE_FILL,
+                cullMode: VK_CULL_MODE_NONE,
+                frontFace: VK_FRONT_FACE_CLOCKWISE,
+                depthBiasEnable: VK_FALSE,
+                depthBiasConstantFactor: 0.0,
+                depthBiasClamp: 1.0,
+                depthBiasSlopeFactor: 1.0,
+                lineWidth: 1.0,
+            },
             is_dynamic_depth_bias: false,
             is_dynamic_line_width: false,
             #[cfg(feature = "VK_EXT_conservative_rasterization")]
@@ -740,7 +761,13 @@ impl RasterizationState {
         extra: Option<f32>,
     ) -> &mut Self {
         if self.conservative.is_none() {
-            self.conservative = Some(Default::default());
+            self.conservative = Some(VkPipelineRasterizationConservativeStateCreateInfoEXT {
+                sType: VkPipelineRasterizationConservativeStateCreateInfoEXT::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                conservativeRasterizationMode: VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT,
+                extraPrimitiveOverestimationSize: 0.0,
+            });
         }
         let mut r = self.conservative.as_mut().unwrap();
         r.conservativeRasterizationMode = mode as _;
@@ -768,8 +795,15 @@ impl<'d> MultisampleState<'d> {
     pub fn new() -> Self {
         MultisampleState {
             data: VkPipelineMultisampleStateCreateInfo {
+                sType: VkPipelineMultisampleStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 rasterizationSamples: 1,
-                ..Default::default()
+                sampleShadingEnable: VK_FALSE,
+                minSampleShading: 1.0,
+                pSampleMask: std::ptr::null(),
+                alphaToCoverageEnable: VK_FALSE,
+                alphaToOneEnable: VK_FALSE,
             },
             _samplemask_lifetime_binder: PhantomData,
         }
@@ -884,7 +918,12 @@ impl<
     /// Number of control points per patch
     pub fn patch_control_point_count(&mut self, count: u32) -> &mut Self {
         if self.tess_state.is_none() {
-            self.tess_state = Some(Default::default());
+            self.tess_state = Some(Box::new(VkPipelineTessellationStateCreateInfo {
+                sType: VkPipelineTessellationStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                patchControlPoints: 0,
+            }));
         }
         self.tess_state.as_mut().unwrap().patchControlPoints = count;
         self
@@ -919,23 +958,43 @@ impl<
     /// Application must guarantee that the number of viewports and scissors are identical
     pub unsafe fn viewports(&mut self, vps: DynamicArrayState<VkViewport>) -> &mut Self {
         if self.viewport_state.is_none() {
-            self.viewport_state = Some(Default::default());
+            self.viewport_state = Some(Box::new(VkPipelineViewportStateCreateInfo {
+                sType: VkPipelineViewportStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                viewportCount: 0,
+                pViewports: std::ptr::null(),
+                scissorCount: 0,
+                pScissors: std::ptr::null(),
+            }));
         }
+
         self.viewport_state.as_mut().unwrap().viewportCount = vps.count() as _;
         self.viewport_state.as_mut().unwrap().pViewports = vps.as_ptr();
         self.dynamic_state_flags
             .set(VK_DYNAMIC_STATE_VIEWPORT, vps.is_dynamic());
+
         self
     }
     /// # Safety
     /// Application must guarantee that the number of viewports and scissors are identical
     pub unsafe fn scissors(&mut self, scs: DynamicArrayState<VkRect2D>) -> &mut Self {
         if self.viewport_state.is_none() {
-            self.viewport_state = Some(Default::default());
+            self.viewport_state = Some(Box::new(VkPipelineViewportStateCreateInfo {
+                sType: VkPipelineViewportStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                viewportCount: 0,
+                pViewports: std::ptr::null(),
+                scissorCount: 0,
+                pScissors: std::ptr::null(),
+            }));
         }
+
         self.viewport_state.as_mut().unwrap().scissorCount = scs.count() as _;
         self.viewport_state.as_mut().unwrap().pScissors = scs.as_ptr();
         self.dynamic_state_flags.set(VK_DYNAMIC_STATE_SCISSOR, scs.is_dynamic());
+
         self
     }
     /// Safety way calling `viewports` and `scissors`
@@ -993,7 +1052,36 @@ impl<
     }
     fn dss_ref(&mut self) -> &mut VkPipelineDepthStencilStateCreateInfo {
         if self.ds_state.is_none() {
-            self.ds_state = Some(Box::new(Default::default()));
+            self.ds_state = Some(Box::new(VkPipelineDepthStencilStateCreateInfo {
+                sType: VkPipelineDepthStencilStateCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                depthTestEnable: VK_FALSE,
+                depthWriteEnable: VK_FALSE,
+                depthCompareOp: VK_COMPARE_OP_LESS,
+                depthBoundsTestEnable: VK_FALSE,
+                stencilTestEnable: VK_FALSE,
+                front: VkStencilOpState {
+                    failOp: VK_STENCIL_OP_KEEP,
+                    passOp: VK_STENCIL_OP_KEEP,
+                    depthFailOp: VK_STENCIL_OP_KEEP,
+                    compareOp: VK_COMPARE_OP_EQUAL,
+                    compareMask: 0,
+                    writeMask: 0,
+                    reference: 0,
+                },
+                back: VkStencilOpState {
+                    failOp: VK_STENCIL_OP_KEEP,
+                    passOp: VK_STENCIL_OP_KEEP,
+                    depthFailOp: VK_STENCIL_OP_KEEP,
+                    compareOp: VK_COMPARE_OP_EQUAL,
+                    compareMask: 0,
+                    writeMask: 0,
+                    reference: 0,
+                },
+                minDepthBounds: 0.0,
+                maxDepthBounds: 1.0,
+            }));
         }
         self.ds_state.as_mut().unwrap()
     }
@@ -1150,12 +1238,26 @@ pub enum BlendOp {
 #[derive(Clone)]
 pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
 impl AttachmentColorBlendState {
-    pub fn noblend() -> Self {
-        AttachmentColorBlendState(Default::default())
-    }
-    // https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
-    pub fn premultiplied() -> Self {
+    #[inline]
+    pub const fn noblend() -> Self {
         AttachmentColorBlendState(VkPipelineColorBlendAttachmentState {
+            colorWriteMask: VK_COLOR_COMPONENT_A_BIT
+                | VK_COLOR_COMPONENT_R_BIT
+                | VK_COLOR_COMPONENT_G_BIT
+                | VK_COLOR_COMPONENT_B_BIT,
+            blendEnable: VK_FALSE,
+            ..unsafe { std::mem::MaybeUninit::uninit().assume_init() }
+        })
+    }
+
+    #[inline]
+    // https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
+    pub const fn premultiplied() -> Self {
+        AttachmentColorBlendState(VkPipelineColorBlendAttachmentState {
+            colorWriteMask: VK_COLOR_COMPONENT_A_BIT
+                | VK_COLOR_COMPONENT_R_BIT
+                | VK_COLOR_COMPONENT_G_BIT
+                | VK_COLOR_COMPONENT_B_BIT,
             blendEnable: VK_TRUE,
             srcColorBlendFactor: BlendFactor::One as _,
             dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
@@ -1165,7 +1267,6 @@ impl AttachmentColorBlendState {
             srcAlphaBlendFactor: BlendFactor::One as _,
             dstAlphaBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
             alphaBlendOp: BlendOp::Add as _,
-            ..Default::default()
         })
     }
 
@@ -1233,7 +1334,19 @@ impl<
         Vec<VkPipelineColorBlendAttachmentState>,
     ) {
         if self.color_blending.is_none() {
-            self.color_blending = Some((Default::default(), Vec::new()))
+            self.color_blending = Some((
+                Box::new(VkPipelineColorBlendStateCreateInfo {
+                    sType: VkPipelineColorBlendStateCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags: 0,
+                    logicOpEnable: VK_FALSE,
+                    logicOp: VK_LOGIC_OP_NO_OP,
+                    attachmentCount: 0,
+                    pAttachments: std::ptr::null(),
+                    blendConstants: [0.0; 4],
+                }),
+                Vec::new(),
+            ))
         }
         self.color_blending.as_mut().unwrap()
     }
@@ -1426,6 +1539,9 @@ impl<'d, Module: ShaderModule> PipelineShader<'d, Module> {
         });
         (
             VkPipelineShaderStageCreateInfo {
+                sType: VkPipelineShaderStageCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 stage: stage.0,
                 module: self.module.native_ptr(),
                 pName: self.entry_name.as_ptr(),
@@ -1433,7 +1549,6 @@ impl<'d, Module: ShaderModule> PipelineShader<'d, Module> {
                     .as_ref()
                     .map(|x| &**x as *const _)
                     .unwrap_or_else(std::ptr::null),
-                ..Default::default()
             },
             specinfo,
         )
@@ -1529,6 +1644,8 @@ impl<
         };
 
         let cinfo = VkGraphicsPipelineCreateInfo {
+            sType: VkGraphicsPipelineCreateInfo::TYPE,
+            pNext: std::ptr::null(),
             stageCount: stages.len() as _,
             pStages: stages.as_ptr(),
             pVertexInputState: &self.vp.vi,
@@ -1566,7 +1683,6 @@ impl<
             },
             basePipelineIndex: -1,
             flags,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -1609,9 +1725,13 @@ impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipel
     ) -> crate::Result<PipelineObject<Device>> {
         let (stage, _specinfo) = self.shader.createinfo_native(ShaderStage::COMPUTE);
         let cinfo = VkComputePipelineCreateInfo {
+            sType: VkComputePipelineCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            basePipelineHandle: VK_NULL_HANDLE as _,
+            basePipelineIndex: -1,
             stage,
             layout: self.layout.native_ptr(),
-            ..Default::default()
         };
 
         let mut pipeline = ::std::mem::MaybeUninit::uninit();

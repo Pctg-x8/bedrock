@@ -1,7 +1,7 @@
 //! Direct Display Rendering
 //! All functionality requires VK_KHR_display feature.
 
-use crate::{vk::*, VkObject};
+use crate::{vk::*, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{Resolver, ResolverInterface, VkHandle, VkResultHandler};
 #[allow(unused_imports)]
@@ -47,8 +47,11 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// Release access to an acquired VkDisplayKHR
     #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
     pub fn release(&self) {
-        let fp: PFN_vkReleaseDisplayEXT = physical_device
-            .parent()
+        use crate::Instance;
+
+        let fp: PFN_vkReleaseDisplayEXT = self
+            .1
+            .instance()
             .extra_procedure("vkReleaseDisplayEXT")
             .expect("no vkReleaseDisplayEXT exported?");
         fp(self.1.native_ptr(), self.native_ptr());
@@ -80,8 +83,10 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn create_display_mode(&self, params: VkDisplayModeParametersKHR) -> crate::Result<DisplayMode> {
         unsafe {
             let cinfo = VkDisplayModeCreateInfoKHR {
+                sType: VkDisplayModeCreateInfoKHR::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 parameters: params,
-                ..Default::default()
             };
             let mut h = VK_NULL_HANDLE as _;
             Resolver::get()

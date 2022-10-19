@@ -5,4 +5,6 @@ pub static VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME: &'static str = "VK_
 
 use super::*;
 
+pub type VkDescriptorUpdateTemplateKHR = VkDescriptorUpdateTemplate;
+
 pub type PFN_vkCmdPushDescriptorSetWithTemplateKHR = extern "system" fn(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const c_void);

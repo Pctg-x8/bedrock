@@ -25,25 +25,32 @@ use std;
 
 #[inline]
 pub const fn VK_MAKE_VERSION(major: u16, minor: u16, patch: u16) -> u32 {
-    major << 22 | minor << 16 | patch
+    ((major as u32) << 22) | ((minor as u32) << 16) | patch as u32
 }
 
 /// Vulkan 1.0 version number
 pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(1, 0, 0);
 
 #[inline]
-pub const fn VK_MAJOR_VERSION(version: u32) -> u16 {
+pub const fn VK_MAJOR_VERSION(v: u32) -> u16 {
     (v >> 22) as _
 }
 
 #[inline]
-pub const fn VK_MINOR_VERSION(version: u32) -> u16 {
+pub const fn VK_MINOR_VERSION(v: u32) -> u16 {
     ((v >> 22) & 0x3ff) as _
 }
 
 #[inline]
-pub const fn VK_PATCH_VERSION(version: u32) -> u16 {
+pub const fn VK_PATCH_VERSION(v: u32) -> u16 {
     (v & 0xfff) as _
+}
+
+macro_rules! DefineFlags {
+    ($t: ident { $($f: ident = $x: expr),* }) => {
+        pub type $t = VkFlags;
+        $(pub const $f: $t = $x;)*
+    }
 }
 
 /// Version of this file
@@ -192,7 +199,7 @@ pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO: VkStructureType = 15;
 pub const VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO: VkStructureType = 16;
 pub const VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO: VkStructureType = 17;
 pub const VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO: VkStructureType = 18;
-pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STAGE_CREATE_INFO: VkStructureType = 19;
+pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO: VkStructureType = 19;
 pub const VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO: VkStructureType = 20;
 pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO: VkStructureType = 21;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO: VkStructureType = 22;
@@ -236,7 +243,11 @@ pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO: VkStructureType = 100
 pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO: VkStructureType = 100_0060_013;
 pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO: VkStructureType = 100_0060_014;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES: VkStructureType = 100_0070_000;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHX: VkStructureType =
+    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO: VkStructureType = 100_0070_001;
+pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHX: VkStructureType =
+    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
 pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_000;
 pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_001;
 pub const VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_002;
@@ -378,6 +389,7 @@ pub const VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT: VkStruc
 pub const VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT: VkStructureType = 100_0143_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT: VkStructureType = 100_0143_003;
 pub const VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT: VkStructureType = 100_0143_004;
+pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR: VkStructureType = 100_0147_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: VkStructureType = 100_0148_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT: VkStructureType = 100_0148_001;
 pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT: VkStructureType = 100_0148_002;
@@ -1289,7 +1301,7 @@ pub struct VkInstanceCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct VkAllocationCallbacks {
     pub pUserData: *mut c_void,
     pub pfnAllocation: PFN_vkAllocationFunction,
@@ -1357,6 +1369,11 @@ pub struct VkPhysicalDeviceFeatures {
     pub sparseResidencyAliased: VkBool32,
     pub variableMultisampleRate: VkBool32,
     pub inheritedQueries: VkBool32,
+}
+impl Default for VkPhysicalDeviceFeatures {
+    fn default() -> Self {
+        unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
+    }
 }
 
 #[repr(C)]
@@ -1584,7 +1601,7 @@ impl Clone for VkPhysicalDeviceMemoryProperties {
                 let mut s = std::mem::MaybeUninit::<[_; VK_MAX_MEMORY_TYPES]>::uninit();
                 for (i, e) in self.memoryTypes.iter().enumerate() {
                     unsafe {
-                        *s.as_ptr().add(i) = e.clone();
+                        (*s.as_mut_ptr())[i] = e.clone();
                     }
                 }
                 unsafe { s.assume_init() }
@@ -1593,7 +1610,7 @@ impl Clone for VkPhysicalDeviceMemoryProperties {
                 let mut s = std::mem::MaybeUninit::<[_; VK_MAX_MEMORY_HEAPS]>::uninit();
                 for (i, e) in self.memoryHeaps.iter().enumerate() {
                     unsafe {
-                        *s.as_ptr().add(i) = e.clone();
+                        (*s.as_mut_ptr())[i] = e.clone();
                     }
                 }
                 unsafe { s.assume_init() }
@@ -2014,7 +2031,7 @@ pub struct VkVertexInputAttributeDescription {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STAE_CREATE_INFO"]
+#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO"]
 pub struct VkPipelineVertexInputStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4118,7 +4135,7 @@ extern "system" {
 
 // --- Vulkan 1.1 --- //
 pub const VK_VERSION_1_1: u32 = 1;
-pub const VK_API_VERSION_1_1: u32 = VK_MAKE_VERSION!(1, 1, 0); // Patch version should always be set to 0
+pub const VK_API_VERSION_1_1: u32 = VK_MAKE_VERSION(1, 1, 0); // Patch version should always be set to 0
 
 pub type VkSamplerYcbcrConversion = VK_NON_DISPATCHABLE_HANDLE!(VkSamplerYcbcrConversion);
 pub type VkDescriptorUpdateTemplate = VK_NON_DISPATCHABLE_HANDLE!(VkDescriptorUpdateTemplate);
@@ -4199,6 +4216,13 @@ pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT: VkExternalFenceHandleT
 pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT: VkExternalFenceHandleTypeFlags = 0x04;
 pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT: VkExternalFenceHandleTypeFlags = 0x08;
 
+DefineFlags!(VkExternalFenceHandleTypeFlagsKHR {
+    VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT,
+    VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT,
+    VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
+    VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT
+});
+
 pub type VkExternalFenceFeatureFlags = VkFlags;
 pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT: VkExternalFenceFeatureFlags = 0x01;
 pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT: VkExternalFenceFeatureFlags = 0x02;
@@ -4206,15 +4230,32 @@ pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT: VkExternalFenceFeatureFlags 
 pub type VkFenceImportFlags = VkFlags;
 pub const VK_FENCE_IMPORT_TEMPORARY_BIT: VkFenceImportFlags = 0x01;
 
-pub type VkSemaphoreImportFlags = VkFlags;
-pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT: VkSemaphoreImportFlags = 0x01;
+pub type VkFenceImportFlagsKHR = VkFenceImportFlags;
+pub const VK_FENCE_IMPORT_TEMPORARY_BIT_KHR: VkFenceImportFlagsKHR = VK_FENCE_IMPORT_TEMPORARY_BIT;
 
-pub type VkExternalSemaphoreHandleTypeFlags = VkFlags;
-pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT: VkExternalSemaphoreHandleTypeFlags = 0x01;
-pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT: VkExternalSemaphoreHandleTypeFlags = 0x02;
-pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT: VkExternalSemaphoreHandleTypeFlags = 0x04;
-pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT: VkExternalSemaphoreHandleTypeFlags = 0x08;
-pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT: VkExternalSemaphoreHandleTypeFlags = 0x10;
+DefineFlags!(VkSemaphoreImportFlags {
+    VK_SEMAPHORE_IMPORT_TEMPORARY_BIT = 0x01
+});
+
+DefineFlags!(VkSemaphoreImportFlagsKHR {
+    VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR = VK_SEMAPHORE_IMPORT_TEMPORARY_BIT
+});
+
+DefineFlags!(VkExternalSemaphoreHandleTypeFlags {
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT = 0x01,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT = 0x02,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT = 0x04,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT = 0x08,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT = 0x10
+});
+
+DefineFlags!(VkExternalSemaphoreHandleTypeFlagsKHR {
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT,
+    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT
+});
 
 pub type VkExternalSemaphoreFeatureFlags = VkFlags;
 pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT: VkExternalSemaphoreFeatureFlags = 0x01;
@@ -4707,8 +4748,7 @@ pub struct VkSamplerYcbcrConversionImageFormatProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_ENTRY"]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkDescriptorUpdateTemplateEntry {
     pub dstBinding: u32,
     pub dstArrayElement: u32,
@@ -4723,7 +4763,7 @@ pub struct VkDescriptorUpdateTemplateEntry {
 #[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO"]
 pub struct VkDescriptorUpdateTemplateCreateInfo {
     pub sType: VkStructureType,
-    pub pNext: *mut c_void,
+    pub pNext: *const c_void,
     pub flags: VkDescriptorUpdateTemplateCreateFlags,
     pub descriptorUpdateEntryCount: u32,
     pub pDescriptorUpdateEntries: *const VkDescriptorUpdateTemplateEntry,
@@ -4781,7 +4821,7 @@ pub struct VkExternalBufferProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, VulkanSTructure)]
+#[derive(Debug, Clone, VulkanStructure)]
 #[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES"]
 pub struct VkPhysicalDeviceIDProperties {
     pub sType: VkStructureType,
@@ -4803,7 +4843,7 @@ pub struct VkExternalMemoryImageCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, VulkanSTructure)]
+#[derive(Debug, Clone, VulkanStructure)]
 #[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO"]
 pub struct VkExternalMemoryBufferCreateInfo {
     pub sType: VkStructureType,
@@ -4860,7 +4900,7 @@ pub struct VkExportSemaphoreCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNALK_SEMAPHORE_INFO"]
+#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO"]
 pub struct VkPhysicalDeviceExternalSemaphoreInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

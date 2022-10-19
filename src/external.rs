@@ -1,6 +1,7 @@
 //! External Memory Import/Export Operations
 
 use crate::vk::*;
+use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 #[allow(unused_imports)]
 use crate::{DeviceChild, VkHandle, VkResultHandler};
@@ -88,11 +89,12 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
     pub fn new(wait_semaphore_values: &'t [u64], signal_semaphore_values: &'t [u64]) -> Self {
         Self(
             VkD3D12FenceSubmitInfoKHR {
+                sType: VkD3D12FenceSubmitInfoKHR::TYPE,
+                pNext: std::ptr::null(),
                 waitSemaphoreValuesCount: wait_semaphore_values.len() as _,
                 pWaitSemaphoreValues: wait_semaphore_values.as_ptr(),
                 signalSemaphoreValuesCount: signal_semaphore_values.len() as _,
                 pSignalSemaphoreValues: signal_semaphore_values.as_ptr(),
-                ..Default::default()
             },
             std::marker::PhantomData,
         )
@@ -156,10 +158,11 @@ impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
     ) -> Self {
         Self(
             VkExportSemaphoreWin32HandleInfoKHR {
+                sType: VkExportSemaphoreWin32HandleInfoKHR::TYPE,
+                pNext: std::ptr::null(),
                 pAttributes: security_attributes.map_or_else(std::ptr::null, |x| x as *const _),
                 dwAccess: access,
                 name: name.as_ptr(),
-                ..Default::default()
             },
             std::marker::PhantomData,
         )
@@ -262,8 +265,9 @@ pub struct ExternalMemoryImageCreateInfo(VkExternalMemoryImageCreateInfo);
 impl ExternalMemoryImageCreateInfo {
     pub fn new(handle_types: ExternalMemoryHandleTypes) -> Self {
         Self(VkExternalMemoryImageCreateInfo {
+            sType: VkExternalMemoryImageCreateInfo::TYPE,
+            pNext: std::ptr::null(),
             handleTypes: handle_types.into(),
-            ..Default::default()
         })
     }
 }

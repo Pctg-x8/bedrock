@@ -4,10 +4,10 @@ pub const VK_KHR_EXTERNAL_FENCE_WIN32_SPEC_VERSION: usize = 1;
 pub static VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_fence_win32";
 
 use super::*;
-use winapi::*;
 
+#[cfg(windows)]
 #[repr(C)]
-#[derive(Debug, Clone, ParitalEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[structure_type = "VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR"]
 pub struct VkImportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -15,8 +15,8 @@ pub struct VkImportFenceWin32HandleInfoKHR {
     pub fence: VkFence,
     pub flags: VkFenceImportFlagsKHR,
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
-    pub handle: HANDLE,
-    pub name: LPCWSTR,
+    pub handle: winapi::shared::ntdef::HANDLE,
+    pub name: winapi::shared::ntdef::LPCWSTR,
 }
 
 #[repr(C)]
@@ -25,9 +25,9 @@ pub struct VkImportFenceWin32HandleInfoKHR {
 pub struct VkExportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub pAttributes: *const SECURITY_ATTRIBUTES,
-    pub dwAccess: DWORD,
-    pub name: LPCWSTR,
+    pub pAttributes: *const winapi::um::minwinbase::SECURITY_ATTRIBUTES,
+    pub dwAccess: winapi::shared::minwindef::DWORD,
+    pub name: winapi::shared::ntdef::LPCWSTR,
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -46,7 +46,7 @@ pub type PFN_vkImportFenceWin32HandleKHR = extern "system" fn(
 pub type PFN_vkGetFenceWin32HandleKHR = extern "system" fn(
     device: VkDevice,
     pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-    pHandle: *mut HANDLE,
+    pHandle: *mut winapi::um::winnt::HANDLE,
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
@@ -59,6 +59,6 @@ extern "system" {
     pub fn vkGetFenceWin32HandleKHR(
         device: VkDevice,
         pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-        pHandle: *mut HANDLE,
+        pHandle: *mut winapi::um::winnt::HANDLE,
     ) -> VkResult;
 }

@@ -4,7 +4,6 @@ pub const VK_AMD_TEXTURE_GATHER_BIAS_LOD_SPEC_VERSION: usize = 1;
 pub static VK_AMD_TEXTURE_GATHER_BIAS_LOD_EXTENSION_NAME: &'static str = "VK_AMD_texture_gather_bias_lod";
 
 use super::*;
-use libc::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

@@ -144,6 +144,9 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
     ) -> Self {
         SwapchainBuilder(
             VkSwapchainCreateInfoKHR {
+                sType: VkSwapchainCreateInfoKHR::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 surface: surface.native_ptr(),
                 minImageCount: min_image_count,
                 imageFormat: format.format,
@@ -155,7 +158,10 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                 preTransform: SurfaceTransform::Inherit as _,
                 compositeAlpha: CompositeAlpha::Inherit as _,
                 presentMode: PresentMode::FIFO as _,
-                ..Default::default()
+                queueFamilyIndexCount: 0,
+                pQueueFamilyIndices: std::ptr::null(),
+                clipped: VK_FALSE,
+                oldSwapchain: VK_NULL_HANDLE as _,
             },
             surface,
         )
@@ -300,13 +306,14 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         let mut res = 0;
         let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         let pinfo = VkPresentInfoKHR {
+            sType: VkPresentInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             waitSemaphoreCount: wait_semaphores.len() as _,
             pWaitSemaphores: wait_semaphores.as_ptr(),
             swapchainCount: 1,
             pSwapchains: &self.native_ptr(),
             pImageIndices: &index,
             pResults: &mut res,
-            ..Default::default()
         };
         unsafe {
             Resolver::get()
@@ -411,13 +418,14 @@ impl<Device: crate::Device> Queue<Device> {
         let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         let (swapchains, indices): (Vec<_>, Vec<_>) = swapchains.iter().map(|&(ref x, n)| (x.native_ptr(), n)).unzip();
         let pinfo = VkPresentInfoKHR {
+            sType: VkPresentInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             waitSemaphoreCount: wait_semaphores.len() as _,
             pWaitSemaphores: wait_semaphores.as_ptr(),
             swapchainCount: swapchains.len() as _,
             pSwapchains: swapchains.as_ptr(),
             pImageIndices: indices.as_ptr(),
             pResults: res.as_mut_ptr(),
-            ..Default::default()
         };
         unsafe {
             Resolver::get()
@@ -520,8 +528,9 @@ impl FullScreenExclusiveInfoEXT {
     /// Constructs the structure, specifying the preferred full-screen transition behavior.
     pub fn new(flags: FullScreenExclusiveEXT) -> Self {
         FullScreenExclusiveInfoEXT(VkSurfaceFullScreenExclusiveInfoEXT {
+            sType: VkSurfaceFullScreenExclusiveInfoEXT::TYPE,
+            pNext: std::ptr::null_mut(),
             fullScreenExclusive: flags as _,
-            ..Default::default()
         })
     }
 }
@@ -569,9 +578,10 @@ pub struct FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32Info
 impl FullScreenExclusiveWin32InfoEXT {
     /// Constructs the structure, with a handle identifying the display to create the surface with.
     pub fn new(handle: winapi::shared::windef::HMONITOR) -> Self {
-        FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32InfoEXT {
+        Self(VkSurfaceFullScreenExclusiveWin32InfoEXT {
+            sType: VkSurfaceFullScreenExclusiveWin32InfoEXT::TYPE,
+            pNext: std::ptr::null(),
             hmonitor: handle,
-            ..Default::default()
         })
     }
 }

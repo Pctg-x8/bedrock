@@ -4,7 +4,6 @@ pub const VK_NV_VIEWPORT_SWIZZLE_SPEC_VERSION: usize = 1;
 pub static VK_NV_VIEWPORT_SWIZZLE_EXTENSION_NAME: &'static str = "VK_NV_viewport_swizzle";
 
 use super::*;
-use libc::*;
 
 pub type VkViewportCoordinateSwizzleNV = i32;
 pub const VK_VIEWPORT_COORDINATE_SWIZZLE_POSITIVE_X_NV: VkViewportCoordinateSwizzleNV = 0;

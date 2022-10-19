@@ -4,7 +4,7 @@ use crate::{vk::*, DeviceChild, Instance, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VkResultHandler,
+    VkResultHandler, VulkanStructure
 };
 use crate::{ImageLayout, ShaderStage, VkHandle};
 
@@ -175,10 +175,11 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     fn alloc(&mut self, layouts: &[impl DescriptorSetLayout]) -> crate::Result<Vec<DescriptorSet>> {
         let layout_ptrs = layouts.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let ainfo = VkDescriptorSetAllocateInfo {
+            sType: VkDescriptorSetAllocateInfo::TYPE,
+            pNext: std::ptr::null(),
             descriptorPool: self.native_ptr(),
             descriptorSetCount: layout_ptrs.len() as _,
             pSetLayouts: layout_ptrs.as_ptr(),
-            ..Default::default()
         };
         let mut hs = vec![VK_NULL_HANDLE as _; layout_ptrs.len()];
         unsafe {

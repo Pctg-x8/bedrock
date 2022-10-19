@@ -6,7 +6,6 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkDebugReportObjectT
     VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT;
 
 use super::*;
-use libc::*;
 
 #[cfg(target_pointer_width = "64")]
 mod nd_handle_base_ts {

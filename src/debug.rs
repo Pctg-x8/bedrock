@@ -94,7 +94,8 @@ impl<Instance: crate::Instance> DebugReportCallbackBuilder<Instance> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[cfg(feature = "Implements")]
     pub fn create(self) -> crate::Result<DebugReportCallbackObject<Instance>> {
-        self.instance.new_debug_report_callback(self.flags, self.callback)
+        self.instance
+            .new_debug_report_callback(self.flags, self.callback, None::<&mut ()>)
     }
 }
 

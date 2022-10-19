@@ -5,7 +5,7 @@ use crate::{vk::*, DeviceChild, VkObject};
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
     FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
-    VkResultHandler,
+    VkResultHandler, VulkanStructure,
 };
 use crate::{ImageLayout, VkHandle};
 use std::mem::replace;
@@ -56,6 +56,8 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     #[cfg(feature = "Implements")]
     fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBufferObject<Self::ConcreteDevice>>> {
         let ainfo = VkCommandBufferAllocateInfo {
+            sType: VkCommandBufferAllocateInfo::TYPE,
+            pNext: std::ptr::null(),
             commandBufferCount: count,
             level: if primary {
                 VK_COMMAND_BUFFER_LEVEL_PRIMARY
@@ -63,7 +65,6 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
                 VK_COMMAND_BUFFER_LEVEL_SECONDARY
             },
             commandPool: self.native_ptr(),
-            ..Default::default()
         };
         let mut hs = vec![VK_NULL_HANDLE as _; count as _];
         unsafe {
@@ -122,8 +123,15 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
     #[cfg(feature = "Implements")]
     unsafe fn begin(&mut self) -> crate::Result<CmdRecord<Self>> {
+        let info = VkCommandBufferBeginInfo {
+            sType: VkCommandBufferBeginInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            pInheritanceInfo: std::ptr::null(),
+        };
+
         Resolver::get()
-            .begin_command_buffer(self.native_ptr(), &Default::default())
+            .begin_command_buffer(self.native_ptr(), &info)
             .into_result()
             .map(move |_| CmdRecord {
                 ptr: self,
@@ -142,8 +150,10 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     #[cfg(feature = "Implements")]
     unsafe fn begin_once(&mut self) -> crate::Result<CmdRecord<Self>> {
         let info = VkCommandBufferBeginInfo {
+            sType: VkCommandBufferBeginInfo::TYPE,
+            pNext: std::ptr::null(),
             flags: VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT,
-            ..Default::default()
+            pInheritanceInfo: std::ptr::null(),
         };
 
         Resolver::get()
@@ -183,6 +193,8 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
             .unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
         let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
         let inherit = VkCommandBufferInheritanceInfo {
+            sType: VkCommandBufferInheritanceInfo::TYPE,
+            pNext: std::ptr::null(),
             framebuffer: fb,
             renderPass: rp,
             subpass: s,
@@ -193,12 +205,12 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
                 0
             },
             pipelineStatistics: psq,
-            ..Default::default()
         };
         let binfo = VkCommandBufferBeginInfo {
-            pInheritanceInfo: &inherit,
+            sType: VkCommandBufferBeginInfo::TYPE,
+            pNext: std::ptr::null(),
             flags,
-            ..Default::default()
+            pInheritanceInfo: &inherit,
         };
 
         Resolver::get()
@@ -319,12 +331,13 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
         inline_commands: bool,
     ) -> &mut Self {
         let binfo = VkRenderPassBeginInfo {
+            sType: VkRenderPassBeginInfo::TYPE,
+            pNext: std::ptr::null(),
             renderPass: pass.native_ptr(),
             framebuffer: framebuffer.native_ptr(),
             renderArea: render_area,
             clearValueCount: clear_values.len() as _,
             pClearValues: clear_values.as_ptr(),
-            ..Default::default()
         };
         let contents = if inline_commands {
             VK_SUBPASS_CONTENTS_INLINE
@@ -526,6 +539,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
             .iter()
             .map(
                 |&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet {
+                    sType: VkWriteDescriptorSet::TYPE,
+                    pNext: std::ptr::null(),
                     dstSet: set,
                     dstBinding: binding,
                     dstArrayElement: array,
@@ -534,7 +549,6 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
                     pImageInfo: iv.as_ptr(),
                     pBufferInfo: bv.as_ptr(),
                     pTexelBufferView: bvv.as_ptr(),
-                    ..Default::default()
                 },
             )
             .collect::<Vec<_>>();
@@ -583,6 +597,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
             .iter()
             .map(
                 |&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet {
+                    sType: VkWriteDescriptorSet::TYPE,
+                    pNext: std::ptr::null(),
                     dstSet: set,
                     dstBinding: binding,
                     dstArrayElement: array,
@@ -591,7 +607,6 @@ impl<'d, CommandBuffer: crate::CommandBuffer + ?Sized + 'd> CmdRecord<'d, Comman
                     pImageInfo: iv.as_ptr(),
                     pBufferInfo: bv.as_ptr(),
                     pTexelBufferView: bvv.as_ptr(),
-                    ..Default::default()
                 },
             )
             .collect::<Vec<_>>();
@@ -1403,13 +1418,16 @@ impl ImageMemoryBarrier {
         new: ImageLayout,
     ) -> Self {
         Self(VkImageMemoryBarrier {
+            sType: VkImageMemoryBarrier::TYPE,
+            pNext: std::ptr::null(),
             image: res.native_ptr(),
             subresourceRange: subres.into(),
             oldLayout: old as _,
             newLayout: new as _,
             srcAccessMask: old.default_access_mask(),
             dstAccessMask: new.default_access_mask(),
-            ..Default::default()
+            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+            dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
         })
     }
 
@@ -1469,12 +1487,15 @@ impl BufferMemoryBarrier {
         dst_access_mask: VkAccessFlags,
     ) -> Self {
         Self(VkBufferMemoryBarrier {
+            sType: VkBufferMemoryBarrier::TYPE,
+            pNext: std::ptr::null(),
             buffer: buf.native_ptr(),
             offset: range.start,
             size: range.end - range.start,
             srcAccessMask: src_access_mask,
             dstAccessMask: dst_access_mask,
-            ..Default::default()
+            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+            dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
         })
     }
 

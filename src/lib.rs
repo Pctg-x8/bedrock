@@ -393,10 +393,12 @@ impl<Device: crate::Device> QueryPool<Device> {
             QueryType::Timestamp => (VK_QUERY_TYPE_TIMESTAMP, 0),
         };
         let cinfo = VkQueryPoolCreateInfo {
+            sType: VkQueryPoolCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             queryType: qtype,
             queryCount: count,
             pipelineStatistics: stats,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }

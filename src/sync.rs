@@ -102,11 +102,13 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+    #[cfg(unix)]
     fn get_fd(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
         let info = VkFenceGetFdInfoKHR {
+            sType: VkFenceGetFdInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             fence: self.native_ptr(),
             handleType: ty as _,
-            ..Default::default()
         };
         let mut fd = 0;
         let f = self
@@ -125,6 +127,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+    #[cfg(unix)]
     fn import(
         &self,
         ty: crate::ExternalFenceFdType,
@@ -132,11 +135,12 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         temporary: bool,
     ) -> crate::Result<()> {
         let info = VkImportFenceFdInfoKHR {
+            sType: VkImportFenceFdInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             fence: self.native_ptr(),
             flags: if temporary { VK_FENCE_IMPORT_TEMPORARY_BIT } else { 0 },
             handleType: ty as _,
             fd,
-            ..Default::default()
         };
         let f = self
             .device()

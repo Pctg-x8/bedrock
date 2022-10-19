@@ -4,7 +4,6 @@ pub const VK_EXT_DISPLAY_CONTROL_SPEC_VERSION: usize = 1;
 pub static VK_EXT_DISPLAY_CONTROL_EXTENSION_NAME: &'static str = "VK_EXT_display_control";
 
 use super::*;
-use libc::*;
 
 pub type VkDisplayPowerStateEXT = i32;
 pub const VK_DISPLAY_POWER_STATE_OFF_EXT: VkDisplayPowerStateEXT = 0;

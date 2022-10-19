@@ -4,7 +4,6 @@ pub const VK_EXT_HDR_METADATA_SPEC_VERSION: usize = 1;
 pub static VK_EXT_HDR_METADATA_EXTENSION_NAME: &'static str = "VK_EXT_hdr_metadata";
 
 use super::*;
-use libc::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq)]

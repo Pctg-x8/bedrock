@@ -4,7 +4,6 @@ pub const VK_NV_DEDICATED_ALLOCATION_SPEC_VERSION: usize = 1;
 pub static VK_NV_DEDICATED_ALLOCATION_EXTENSION_NAME: &'static str = "VK_NV_dedicated_allocation";
 
 use super::*;
-use libc::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

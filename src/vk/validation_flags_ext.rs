@@ -4,7 +4,6 @@ pub const VK_EXT_VALIDATION_FLAGS_SPEC_VERSION: usize = 1;
 pub static VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &'static str = "VK_EXT_validation_flags";
 
 use super::*;
-use libc::*;
 
 pub type VkValidationCheckEXT = i32;
 pub const VK_VALIDATION_CHECK_ALL_EXT: VkValidationCheckEXT = 0;

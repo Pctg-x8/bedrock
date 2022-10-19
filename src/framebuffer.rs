@@ -4,7 +4,7 @@ use crate::{vk::*, DeviceChild, DeviceChildTransferrable, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VkResultHandler,
+    VkResultHandler, VulkanStructure,
 };
 use crate::{ImageLayout, VkHandle};
 use std::ops::*;
@@ -406,6 +406,8 @@ impl RenderPassBuilder {
             .subpasses
             .iter()
             .map(|x| VkSubpassDescription {
+                flags: 0,
+                pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
                 inputAttachmentCount: x.input_attachments.len() as _,
                 pInputAttachments: x.input_attachments.as_ptr(),
                 colorAttachmentCount: x.color_attachments.len() as _,
@@ -422,17 +424,18 @@ impl RenderPassBuilder {
                 },
                 preserveAttachmentCount: x.preserve_attachments.len() as _,
                 pPreserveAttachments: x.preserve_attachments.as_ptr(),
-                ..Default::default()
             })
             .collect::<Vec<_>>();
         let cinfo = VkRenderPassCreateInfo {
+            sType: VkRenderPassCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             attachmentCount: self.attachments.len() as _,
             pAttachments: self.attachments.as_ptr(),
             subpassCount: subpasses.len() as _,
             pSubpasses: subpasses.as_ptr(),
             dependencyCount: self.dependencies.len() as _,
             pDependencies: self.dependencies.as_ptr(),
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
@@ -460,13 +463,15 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     {
         let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         let cinfo = VkFramebufferCreateInfo {
+            sType: VkFramebufferCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             renderPass: self.native_ptr(),
             attachmentCount: views.len() as _,
             pAttachments: views.as_ptr(),
             width: size.width,
             height: size.height,
             layers,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }

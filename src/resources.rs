@@ -116,7 +116,7 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-use crate::{vk::*, DeviceChild, VkObject};
+use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -533,9 +533,14 @@ pub struct BufferDesc(VkBufferCreateInfo);
 impl BufferDesc {
     pub fn new(byte_size: usize, usage: BufferUsage) -> Self {
         Self(VkBufferCreateInfo {
+            sType: VkBufferCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             size: byte_size as _,
             usage: usage.0,
-            ..Default::default()
+            sharingMode: VK_SHARING_MODE_EXCLUSIVE,
+            queueFamilyIndexCount: 0,
+            pQueueFamilyIndices: std::ptr::null(),
         })
     }
 
@@ -713,6 +718,9 @@ impl<'d> ImageDesc<'d> {
     pub fn new<Size: ImageSize>(size: &Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self {
         ImageDesc(
             VkImageCreateInfo {
+                sType: VkImageCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
                 imageType: Size::DIMENSION,
                 extent: size.conv(),
                 format,
@@ -721,7 +729,10 @@ impl<'d> ImageDesc<'d> {
                 arrayLayers: 1,
                 samples: 1,
                 initialLayout: initial_layout as _,
-                ..Default::default()
+                tiling: VK_IMAGE_TILING_OPTIMAL,
+                sharingMode: VK_SHARING_MODE_EXCLUSIVE,
+                queueFamilyIndexCount: 0,
+                pQueueFamilyIndices: std::ptr::null(),
             },
             std::marker::PhantomData,
         )
@@ -818,12 +829,14 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             vtype.unwrap_or_else(|| self.dimension()),
         );
         let cinfo = VkImageViewCreateInfo {
+            sType: VkImageViewCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             image: self.native_ptr(),
             viewType: vtype,
             format,
             components: cmap.clone().into(),
             subresourceRange: subresource_range.0.clone(),
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
@@ -917,11 +930,13 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
         Self: Sized,
     {
         let cinfo = VkBufferViewCreateInfo {
+            sType: VkBufferViewCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             buffer: self.native_ptr(),
             format,
             offset: range.start,
             range: range.end - range.start,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
@@ -1371,7 +1386,10 @@ pub struct SamplerBuilder(VkSamplerCreateInfo);
 /// A default sampler builder: Linear Filtering, Repeat addressing, no anisotrophy and no lod biases
 impl Default for SamplerBuilder {
     fn default() -> Self {
-        SamplerBuilder(VkSamplerCreateInfo {
+        Self(VkSamplerCreateInfo {
+            sType: VkSamplerCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             magFilter: FilterMode::Linear as _,
             minFilter: FilterMode::Linear as _,
             mipmapMode: MipmapFilterMode::Linear as _,
@@ -1386,7 +1404,7 @@ impl Default for SamplerBuilder {
             maxLod: 0.0,
             borderColor: BorderColor::TransparentBlackF as _,
             unnormalizedCoordinates: false as _,
-            ..Default::default()
+            maxAnisotropy: 1.0,
         })
     }
 }

@@ -4,7 +4,6 @@ pub const VK_NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION: usize = 1;
 pub static VK_NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME: &'static str = "VK_NV_framebuffer_mixed_samples";
 
 use super::*;
-use libc::*;
 
 pub type VkCoverageModulationModeNV = i32;
 pub const VK_COVERAGE_MODULATION_MODE_NONE_NV: VkCoverageModulationModeNV = 0;

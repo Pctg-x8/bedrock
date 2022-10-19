@@ -4,7 +4,6 @@ pub const VK_KHR_IMAGE_FORMAT_LIST_SPEC_VERSION: usize = 1;
 pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME: &str = "VK_KHR_iamge_format_list";
 
 use super::*;
-use libc::*;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]

@@ -4,7 +4,6 @@ pub const VK_EXT_DISPLAY_SURFACE_COUNTER_SPEC_VERSION: usize = 1;
 pub static VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME: &'static str = "VK_EXT_display_surface_counter";
 
 use super::*;
-use libc::*;
 
 pub type VkSurfaceCounterFlagsEXT = VkFlags;
 pub const VK_SURFACE_COUNTER_VBLANK_EXT: VkSurfaceCounterFlagsEXT = 0x01;

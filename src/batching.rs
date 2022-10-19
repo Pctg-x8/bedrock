@@ -1,4 +1,4 @@
-use crate::{vk::*, PipelineStageFlags, VkHandle};
+use crate::{vk::*, PipelineStageFlags, VkHandle, VulkanStructure};
 
 pub struct TemporalSubmissionBatchResources {
     command_buffers: Vec<VkCommandBuffer>,
@@ -18,6 +18,8 @@ impl TemporalSubmissionBatchResources {
 
     pub fn make_info_struct(&self) -> VkSubmitInfo {
         VkSubmitInfo {
+            sType: VkSubmitInfo::TYPE,
+            pNext: std::ptr::null(),
             commandBufferCount: self.command_buffers.len() as _,
             pCommandBuffers: self.command_buffers.as_ptr(),
             waitSemaphoreCount: self.wait_semaphores.len() as _,
@@ -25,7 +27,6 @@ impl TemporalSubmissionBatchResources {
             pWaitDstStageMask: self.wait_stages.as_ptr(),
             signalSemaphoreCount: self.signal_semaphores.len() as _,
             pSignalSemaphores: self.signal_semaphores.as_ptr(),
-            ..Default::default()
         }
     }
 }
@@ -94,7 +95,17 @@ impl SubmissionBatch for EmptySubmissionBatch {
     fn collect_resources(&self, _: &mut TemporalSubmissionBatchResources) {}
 
     fn make_info_struct(&self) -> VkSubmitInfo {
-        Default::default()
+        VkSubmitInfo {
+            sType: VkSubmitInfo::TYPE,
+            pNext: std::ptr::null(),
+            waitSemaphoreCount: 0,
+            pWaitSemaphores: std::ptr::null(),
+            pWaitDstStageMask: std::ptr::null(),
+            commandBufferCount: 0,
+            pCommandBuffers: std::ptr::null(),
+            signalSemaphoreCount: 0,
+            pSignalSemaphores: std::ptr::null(),
+        }
     }
 }
 pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch, CommandBuffer: crate::CommandBuffer + 'd>(
@@ -225,7 +236,20 @@ pub struct EmptyBindingOpBatch;
 impl SparseBindingOpBatch for EmptyBindingOpBatch {
     #[inline]
     fn make_info_struct(&self) -> VkBindSparseInfo {
-        Default::default()
+        VkBindSparseInfo {
+            sType: VkBindSparseInfo::TYPE,
+            pNext: std::ptr::null(),
+            waitSemaphoreCount: 0,
+            pWaitSemaphores: std::ptr::null(),
+            bufferBindCount: 0,
+            pBufferBinds: std::ptr::null(),
+            imageBindCount: 0,
+            pImageBinds: std::ptr::null(),
+            imageOpaqueBindCount: 0,
+            pImageOpaqueBinds: std::ptr::null(),
+            signalSemaphoreCount: 0,
+            pSignalSemaphores: std::ptr::null(),
+        }
     }
 }
 pub struct SparseBindingOpBatchWithBufferBinds<'d, Parent: SparseBindingOpBatch>(

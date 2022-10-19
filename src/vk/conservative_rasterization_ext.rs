@@ -4,7 +4,6 @@ pub const VK_EXT_CONSERVATIVE_RASTERIZATION_SPEC_VERSION: usize = 1;
 pub const VK_EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME: &str = "VK_EXT_conservative_rasterization";
 
 use super::*;
-use std::mem::MaybeUninit;
 
 pub type VkConservativeRasterizationModeEXT = i32;
 pub const VK_CONSERVATIVE_RASTERIZATION_MODE_DISABLED_EXT: VkConservativeRasterizationModeEXT = 0;

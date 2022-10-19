@@ -4,11 +4,10 @@ pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
 pub static VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME: &'static str = "VK_KHR_external_fence_fd";
 
 use super::*;
-use libc::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_FENCE_FD_INFO_KHR"]
+#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR"]
 pub struct VkImportFenceFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

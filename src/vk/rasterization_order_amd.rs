@@ -4,7 +4,6 @@ pub const VK_AMD_RASTERIZATION_ORDER_SPEC_VERSION: usize = 1;
 pub static VK_AMD_RASTERIZATION_ORDER_EXTENSION_NAME: &'static str = "VK_AMD_rasterization_order";
 
 use super::*;
-use libc::*;
 
 pub type VkRasterizationOrderAMD = i32;
 pub const VK_RASTERIZATION_ORDER_STRICT_AMD: VkRasterizationOrderAMD = 0;

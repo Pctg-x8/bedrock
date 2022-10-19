@@ -3,6 +3,7 @@
 use crate::vk::*;
 use crate::VkHandle;
 use crate::VkObject;
+use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute,
@@ -115,22 +116,35 @@ impl InstanceBuilder {
         engine_name: &str,
         engine_version: (u32, u32, u32),
     ) -> Self {
-        InstanceBuilder {
+        Self {
             _app_name: std::ffi::CString::new(app_name).unwrap(),
             _engine_name: std::ffi::CString::new(engine_name).unwrap(),
             extensions: Vec::new(),
             layers: Vec::new(),
             ext_structures: Vec::new(),
             appinfo: VkApplicationInfo {
-                applicationVersion: VK_MAKE_VERSION!(app_version.0, app_version.1, app_version.2),
-                engineVersion: VK_MAKE_VERSION!(engine_version.0, engine_version.1, engine_version.2),
-                ..Default::default()
+                sType: VkApplicationInfo::TYPE,
+                pNext: std::ptr::null(),
+                apiVersion: VK_API_VERSION_1_0,
+                pApplicationName: std::ptr::null(),
+                pEngineName: std::ptr::null(),
+                applicationVersion: VK_MAKE_VERSION(app_version.0 as _, app_version.1 as _, app_version.2 as _),
+                engineVersion: VK_MAKE_VERSION(engine_version.0 as _, engine_version.1 as _, engine_version.2 as _),
             },
-            cinfo: VkInstanceCreateInfo { ..Default::default() },
+            cinfo: VkInstanceCreateInfo {
+                sType: VkInstanceCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                pApplicationInfo: std::ptr::null(),
+                enabledLayerCount: 0,
+                ppEnabledLayerNames: std::ptr::null(),
+                enabledExtensionCount: 0,
+                ppEnabledExtensionNames: std::ptr::null(),
+            },
         }
     }
-    pub fn set_api_version(&mut self, major: u32, minor: u32, patch: u32) -> &mut Self {
-        self.appinfo.apiVersion = VK_MAKE_VERSION!(major, minor, patch);
+    pub fn set_api_version(&mut self, major: u16, minor: u16, patch: u16) -> &mut Self {
+        self.appinfo.apiVersion = VK_MAKE_VERSION(major, minor, patch);
         self
     }
     pub fn add_extension(&mut self, extension: &str) -> &mut Self {
@@ -370,10 +384,11 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[cfg(feature = "VK_EXT_debug_report")]
     #[cfg(feature = "Implements")]
-    fn new_debug_report_callback(
+    fn new_debug_report_callback<T>(
         self,
         flags: VkDebugReportFlagsEXT,
         callback: PFN_vkDebugReportCallbackEXT,
+        userdata: Option<&mut T>,
     ) -> crate::Result<crate::DebugReportCallbackObject<Self>>
     where
         Self: Sized,
@@ -385,9 +400,11 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             .extra_procedure("vkDestroyDebugReportCallbackEXT")
             .expect("Requiring vkDestroyDebugReportCallbackEXT function");
         let s = VkDebugReportCallbackCreateInfoEXT {
+            sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
+            pNext: std::ptr::null(),
             flags,
             pfnCallback: callback,
-            ..Default::default()
+            pUserData: userdata.map_or_else(std::ptr::null_mut, |x| x as *mut _ as _),
         };
         let mut h = VK_NULL_HANDLE as _;
         ctor(self.native_ptr(), &s, std::ptr::null(), &mut h)
@@ -634,7 +651,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> ExternalFenceProperties {
         let mut r = std::mem::MaybeUninit::uninit();
         unsafe {
-            *r.as_mut_ptr() = Default::default();
+            *r.as_mut_ptr().sType = VkExternalFencePropertires::TYPE;
         }
         let f: PFN_vkGetPhysicalDeviceExternalFenceProperties = self
             .1
@@ -643,8 +660,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         (f)(
             self.native_ptr(),
             &VkPhysicalDeviceExternalFenceInfo {
+                sType: VkPhysicalDeviceExternalFenceInfo::TYPE,
+                pNext: std::ptr::null(),
                 handleType: handle_type as _,
-                ..Default::default()
             },
             r.as_mut_ptr(),
         );
@@ -830,9 +848,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkXlibSurfaceCreateInfoKHR {
+            sType: VkXlibSurfaceCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             dpy: display,
             window,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -859,9 +878,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkXcbSurfaceCreateInfoKHR {
+            sType: VkXcbSurfaceCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             connection,
             window,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -888,9 +908,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkWaylandSurfaceCreateInfoKHR {
+            sType: VkWaylandSurfaceCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             display,
             surface,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -916,8 +937,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkAndroidSurfaceCreateInfoKHR {
+            sType: VkAndroidSurfaceCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
             window,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -944,9 +966,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkWin32SurfaceCreateInfoKHR {
+            sType: VkWin32SurfaceCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             hinstance,
             hwnd,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -972,8 +996,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkMacOSSurfaceCreateInfoMVK {
+            sType: VkMacOSSurfaceCreateInfoMVK::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             pView: view_ptr,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -1023,11 +1049,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         refresh_rate: u32,
     ) -> crate::Result<VkDisplayModeKHR> {
         let cinfo = VkDisplayModeCreateInfoKHR {
+            sType: VkDisplayModeCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             parameters: VkDisplayModeParametersKHR {
                 visibleRegion: region,
                 refreshRate: refresh_rate,
             },
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
@@ -1179,6 +1207,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized + InstanceChildTransferrable,
     {
         let cinfo = VkDisplaySurfaceCreateInfoKHR {
+            sType: VkDisplaySurfaceCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
             displayMode: mode.0,
             planeIndex: plane_index,
             planeStackIndex: plane_stack_index,
@@ -1186,7 +1217,6 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             globalAlpha: global_alpha,
             alphaMode: alpha_mode as _,
             imageExtent: extent,
-            ..Default::default()
         };
         let mut h = VK_NULL_HANDLE as _;
 
@@ -1226,8 +1256,6 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<VkSurfaceCapabilities2KHR> {
-        use crate::VulkanStructure;
-
         let mut p = std::mem::MaybeUninit::<VkSurfaceCapabilities2KHR>::uninit();
         unsafe {
             (*p.as_mut_ptr()).sType = VkSurfaceCapabilities2KHR::TYPE;
