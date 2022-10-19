@@ -241,9 +241,9 @@ in  GithubActions.Workflow::{
         { preconditions
         , check-format = depends [ "preconditions" ] checkFormatStep
         , test = depends [ "preconditions" ] testStep
-        , test-win32 = depends [ "perconditions", "test" ] testStepWin32
-        , test-unix = depends [ "perconditions", "test" ] testStepUnix
-        , test-mac = depends [ "perconditions", "test" ] testStepMac
+        , test-win32 = depends [ "preconditions", "test" ] testStepWin32
+        , test-unix = depends [ "preconditions", "test" ] testStepUnix
+        , test-mac = depends [ "preconditions", "test" ] testStepMac
         , document-deploy =
             depends
               [ "preconditions"

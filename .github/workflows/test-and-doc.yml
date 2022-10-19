@@ -149,7 +149,7 @@ jobs:
   "test-mac":
     name: "Run Tests (Mac Specific)"
     needs:
-    - perconditions
+    - preconditions
     - test
     "runs-on": "macos-latest"
     steps:
@@ -182,7 +182,7 @@ jobs:
   "test-unix":
     name: "Run Tests (Unix Specific)"
     needs:
-    - perconditions
+    - preconditions
     - test
     "runs-on": "ubuntu-latest"
     steps:
@@ -215,7 +215,7 @@ jobs:
   "test-win32":
     name: "Run Tests (Win32 Specific)"
     needs:
-    - perconditions
+    - preconditions
     - test
     "runs-on": "windows-latest"
     steps:
