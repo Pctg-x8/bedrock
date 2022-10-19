@@ -1,11 +1,11 @@
 //! Vulkan Commands
 
-use crate::{vk::*, DeviceChild, VkObject};
+use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
     FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
-    VkResultHandler, VulkanStructure,
+    VkResultHandler,
 };
 use crate::{ImageLayout, VkHandle};
 use std::mem::replace;
