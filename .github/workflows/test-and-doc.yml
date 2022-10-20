@@ -6,7 +6,7 @@ jobs:
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
-      uses: "actions/checkout@v2"
+      uses: "actions/checkout@v3"
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
@@ -87,7 +87,7 @@ jobs:
     steps:
     - id: begintime
       name: Getting begintime
-      run: "echo \"::set-output name=begintime::$(date +%s)\""
+      run: "echo \"begintime=$(date +%s)\" >> $GITHUB_OUTPUT"
   "report-success":
     name: Report as Success
     needs:
@@ -101,7 +101,7 @@ jobs:
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
-      uses: "actions/checkout@v2"
+      uses: "actions/checkout@v3"
     - name: Configure AWS Credentials
       uses: "aws-actions/configure-aws-credentials@v1"
       with:
@@ -121,7 +121,7 @@ jobs:
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
-      uses: "actions/checkout@v2"
+      uses: "actions/checkout@v3"
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
@@ -154,7 +154,7 @@ jobs:
     "runs-on": "macos-latest"
     steps:
     - name: Checking out
-      uses: "actions/checkout@v2"
+      uses: "actions/checkout@v3"
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
@@ -187,7 +187,7 @@ jobs:
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
-      uses: "actions/checkout@v2"
+      uses: "actions/checkout@v3"
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:
@@ -220,7 +220,7 @@ jobs:
     "runs-on": "windows-latest"
     steps:
     - name: Checking out
-      uses: "actions/checkout@v2"
+      uses: "actions/checkout@v3"
     - name: Install Rust Toolchain
       uses: "actions-rs/toolchain@v1"
       with:

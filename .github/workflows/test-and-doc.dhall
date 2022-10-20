@@ -95,7 +95,7 @@ let checkFormatStep =
       , name = Some "Check Format"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{ command = "fmt", args = Some "-- --check" }
@@ -112,7 +112,7 @@ let testStep =
       , name = Some "Run Tests (Platform Independent)"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -133,7 +133,7 @@ let testStepWin32 =
       , name = Some "Run Tests (Win32 Specific)"
       , runs-on = GithubActions.RunnerPlatform.windows-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -154,7 +154,7 @@ let testStepUnix =
       , name = Some "Run Tests (Unix Specific)"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -175,7 +175,7 @@ let testStepMac =
       , name = Some "Run Tests (Mac Specific)"
       , runs-on = GithubActions.RunnerPlatform.macos-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -236,7 +236,7 @@ let reportSuccessJob =
       , name = Some "Report as Success"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , configureSlackNotification
         , slackNotifySuccessStep
         ]
