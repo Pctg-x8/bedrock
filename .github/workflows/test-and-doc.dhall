@@ -72,7 +72,7 @@ let preconditionRecordBeginTimeStep =
       GithubActions.Step::{
       , name = "Getting begintime"
       , id = Some "begintime"
-      , run = Some "echo \"::set-output name=begintime::\$(date +%s)\""
+      , run = Some "echo \"begintime=\$(date +%s)\" >> \$GITHUB_OUTPUT"
       }
 
 let preconditions =
