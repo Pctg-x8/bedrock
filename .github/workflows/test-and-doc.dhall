@@ -30,14 +30,14 @@ let SlackNotifierAction =
 let Features = ./features.dhall
 
 let depends =
-      \(deps : List Text) ->
-      \(job : GithubActions.Job.Type) ->
-        job // { needs = Some deps }
+      λ(deps : List Text) →
+      λ(job : GithubActions.Job.Type) →
+        job ⫽ { needs = Some deps }
 
 let withConditionStep =
-      \(cond : Text) ->
-      \(step : GithubActions.Step.Type) ->
-        step // { `if` = Some cond }
+      λ(cond : Text) →
+      λ(step : GithubActions.Step.Type) →
+        step ⫽ { if = Some cond }
 
 let runStepOnFailure = withConditionStep "failure()"
 
@@ -50,7 +50,7 @@ let configureSlackNotification =
         }
 
 let slackNotifyIfFailureStep =
-      \(stepName : Text) ->
+      λ(stepName : Text) →
         SlackNotifierAction.step
           { status = SlackNotifierAction.Status.Failure stepName
           , begintime =
@@ -72,7 +72,7 @@ let preconditionRecordBeginTimeStep =
       GithubActions.Step::{
       , name = "Getting begintime"
       , id = Some "begintime"
-      , run = Some "echo \"::set-output name=begintime::\$(date +%s)\""
+      , run = Some "echo \"begintime=\$(date +%s)\" >> \$GITHUB_OUTPUT"
       }
 
 let preconditions =
@@ -95,14 +95,14 @@ let checkFormatStep =
       , name = Some "Check Format"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{ command = "fmt", args = Some "-- --check" }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
-            (     slackNotifyIfFailureStep "Check Format"
-              //  { name = "Notify as Failure" }
+            (   slackNotifyIfFailureStep "Check Format"
+              ⫽ { name = "Notify as Failure" }
             )
         ]
       }
@@ -112,7 +112,7 @@ let testStep =
       , name = Some "Run Tests (Platform Independent)"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -122,8 +122,8 @@ let testStep =
             }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
-            (     slackNotifyIfFailureStep "Run Tests"
-              //  { name = "Notify as Failure" }
+            (   slackNotifyIfFailureStep "Run Tests"
+              ⫽ { name = "Notify as Failure" }
             )
         ]
       }
@@ -133,7 +133,7 @@ let testStepWin32 =
       , name = Some "Run Tests (Win32 Specific)"
       , runs-on = GithubActions.RunnerPlatform.windows-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -143,8 +143,8 @@ let testStepWin32 =
             }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
-            (     slackNotifyIfFailureStep "Run Tests (Win32 Specific)"
-              //  { name = "Notify as Failure" }
+            (   slackNotifyIfFailureStep "Run Tests (Win32 Specific)"
+              ⫽ { name = "Notify as Failure" }
             )
         ]
       }
@@ -154,7 +154,7 @@ let testStepUnix =
       , name = Some "Run Tests (Unix Specific)"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -164,8 +164,8 @@ let testStepUnix =
             }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
-            (     slackNotifyIfFailureStep "Run Tests (Unix Specific)"
-              //  { name = "Notify as Failure" }
+            (   slackNotifyIfFailureStep "Run Tests (Unix Specific)"
+              ⫽ { name = "Notify as Failure" }
             )
         ]
       }
@@ -175,7 +175,7 @@ let testStepMac =
       , name = Some "Run Tests (Mac Specific)"
       , runs-on = GithubActions.RunnerPlatform.macos-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , InstallRust.step InstallRust.Params::{ toolchain = Some "stable" }
         , RunCargo.step
             RunCargo.Params::{
@@ -185,8 +185,8 @@ let testStepMac =
             }
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
-            (     slackNotifyIfFailureStep "Run Tests (Mac Specific)"
-              //  { name = "Notify as Failure" }
+            (   slackNotifyIfFailureStep "Run Tests (Mac Specific)"
+              ⫽ { name = "Notify as Failure" }
             )
         ]
       }
@@ -202,7 +202,16 @@ let documentDeploymentStep =
         , RunCargo.step
             RunCargo.Params::{
             , command = "rustdoc"
-            , args = Some "--all-features -- --cfg docsrs"
+            , args = Some
+                "--features ${Text/concatSep
+                                ","
+                                ( List/concat
+                                    Text
+                                    [ Features.PlatformIndependent
+                                    , Features.UnixSpecific
+                                    , Features.MacSpecific
+                                    ]
+                                )} -- --cfg docsrs"
             , toolchain = Some "nightly"
             }
         , GoogleAuth.step
@@ -216,8 +225,8 @@ let documentDeploymentStep =
         , DocumentDeployment.step
         , runStepOnFailure configureSlackNotification
         , runStepOnFailure
-            (     slackNotifyIfFailureStep "Deploy Latest Document"
-              //  { name = "Notify as Failure" }
+            (   slackNotifyIfFailureStep "Deploy Latest Document"
+              ⫽ { name = "Notify as Failure" }
             )
         ]
       }
@@ -227,7 +236,7 @@ let reportSuccessJob =
       , name = Some "Report as Success"
       , runs-on = GithubActions.RunnerPlatform.ubuntu-latest
       , steps =
-        [ Checkout.step Checkout.Params::{=}
+        [ Checkout.stepv3 Checkout.Params::{=}
         , configureSlackNotification
         , slackNotifySuccessStep
         ]

@@ -112,7 +112,7 @@ CustomResolver = []
 [dependencies]
 libc = "0.2"
 x11 = { version = "^2.15", optional = true }
-xcb = { version = "~0.8", optional = true }
+xcb = { version = "^1.1", optional = true }
 wayland-client = { version = "~0.9", optional = true }
 android = { git = "https://github.com/Pctg-x8/android-defs-rs", optional = true }
 winapi = { version = "~0.3", optional = true, features = ["windef", "minwindef", "ntdef", "minwinbase"] }
