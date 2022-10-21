@@ -679,7 +679,7 @@ impl Default for RasterizationState {
                 frontFace: VK_FRONT_FACE_CLOCKWISE,
                 depthBiasEnable: VK_FALSE,
                 depthBiasConstantFactor: 0.0,
-                depthBiasClamp: 1.0,
+                depthBiasClamp: 0.0,
                 depthBiasSlopeFactor: 1.0,
                 lineWidth: 1.0,
             },
