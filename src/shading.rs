@@ -1239,14 +1239,14 @@ pub enum BlendOp {
 pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
 impl AttachmentColorBlendState {
     #[inline]
-    pub const fn noblend() -> Self {
+    pub fn noblend() -> Self {
         AttachmentColorBlendState(VkPipelineColorBlendAttachmentState {
             colorWriteMask: VK_COLOR_COMPONENT_A_BIT
                 | VK_COLOR_COMPONENT_R_BIT
                 | VK_COLOR_COMPONENT_G_BIT
                 | VK_COLOR_COMPONENT_B_BIT,
             blendEnable: VK_FALSE,
-            ..unsafe { std::mem::MaybeUninit::uninit().assume_init() }
+            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
         })
     }
 
