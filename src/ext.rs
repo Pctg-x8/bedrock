@@ -81,16 +81,19 @@ impl FusedIterator for StructureChainIterator<'_> {}
 pub trait VulkanStructureProvider {
     type RootStructure;
 
-    fn build<'s>(&'s mut self, root: &mut Self::RootStructure) -> &mut GenericVulkanStructure;
+    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut GenericVulkanStructure;
 }
 pub struct Extends<Parent: VulkanStructureProvider, T>(pub(crate) Parent, pub(crate) T);
-impl<Parent: VulkanStructureProvider, T> VulkanStructureProvider for Extends<Parent, T> {
+impl<Parent: VulkanStructureProvider, T> VulkanStructureProvider for Extends<Parent, T>
+where
+    T: VulkanStructure,
+{
     type RootStructure = Parent::RootStructure;
 
-    fn build(&mut self, root: &mut Self::RootStructure) -> &mut GenericVulkanStructure {
+    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut GenericVulkanStructure {
         let parent = self.0.build(root);
         parent.pNext = &self.1 as *const _ as _;
-        unsafe { std::mem::transmute(&mut self.1) }
+        self.1.as_generic_mut()
     }
 }
 pub trait Extendable<T>: Sized + VulkanStructureProvider {

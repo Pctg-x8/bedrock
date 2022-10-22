@@ -6,7 +6,7 @@
 use crate::{
     fnconv::FnTransmute,
     vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler, VulkanStructure,
+    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler, VulkanStructure, VulkanStructureProvider,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
@@ -492,6 +492,29 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         )
         .into_result()
         .map(move |_| unsafe { info.assume_init() })
+    }
+
+    /// Create a new buffer object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
+    fn new_buffer(
+        self,
+        mut create_info: impl VulkanStructureProvider<RootStructure = VkBufferCreateInfo>,
+    ) -> crate::Result<crate::BufferObject<Self>>
+    where
+        Self: Sized,
+    {
+        let mut h = VK_NULL_HANDLE as _;
+        let mut s = std::mem::MaybeUninit::uninit();
+        create_info.build(unsafe { &mut *s.as_mut_ptr() });
+        let s = unsafe { s.assume_init_ref() };
+        unsafe { Resolver::get().create_buffer(self.native_ptr(), s, std::ptr::null(), &mut h) }
+            .into_result()
+            .map(move |_| crate::BufferObject(h, self))
     }
 
     /// Multiple Binding for Buffers
