@@ -798,7 +798,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         queue_family: u32,
         connection: *mut xcb::ffi::xcb_connection_t,
-        visual: xcb::ffi::xcb_visualid_t,
+        visual: xcb::x::Visualid,
     ) -> bool {
         unsafe {
             Resolver::get().get_physical_device_xcb_presentation_support_khr(
@@ -851,6 +851,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let cinfo = VkXlibSurfaceCreateInfoKHR {
             sType: VkXlibSurfaceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
+            flags: 0,
             dpy: display,
             window,
         };
@@ -874,7 +875,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn new_surface_xcb(
         self,
         connection: *mut xcb::ffi::xcb_connection_t,
-        window: xcb::ffi::xcb_window_t,
+        window: xcb::x::Window,
     ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
         Self: Sized + InstanceChildTransferrable,
@@ -882,6 +883,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let cinfo = VkXcbSurfaceCreateInfoKHR {
             sType: VkXcbSurfaceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
+            flags: 0,
             connection,
             window,
         };
@@ -913,6 +915,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let cinfo = VkWaylandSurfaceCreateInfoKHR {
             sType: VkWaylandSurfaceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
+            flags: 0,
             display,
             surface,
         };

@@ -18,7 +18,7 @@ use std::sync::{Once, ONCE_INIT};
 #[cfg(feature = "VK_KHR_xlib_surface")]
 use x11::xlib::{Display, VisualID};
 #[cfg(feature = "VK_KHR_xcb_surface")]
-use xcb::ffi::{xcb_connection_t, xcb_visualid_t};
+use xcb::ffi::xcb_connection_t;
 
 use libc::*;
 
@@ -1244,7 +1244,7 @@ pub trait ResolverInterface {
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         connection: *mut xcb_connection_t,
-        visual_id: xcb_visualid_t,
+        visual_id: xcb::x::Visualid,
     ) -> VkBool32;
 
     #[cfg(feature = "VK_KHR_android_surface")]
@@ -2381,7 +2381,7 @@ impl ResolverInterface for Resolver {
     #[cfg(feature = "VK_KHR_xcb_surface")]
     WrapAPI!(create_xcb_surface_khr = vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
     #[cfg(feature = "VK_KHR_xcb_surface")]
-    WrapAPI!(get_physical_device_xcb_presentation_support_khr = vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb_connection_t, visual_id: xcb_visualid_t) -> VkBool32);
+    WrapAPI!(get_physical_device_xcb_presentation_support_khr = vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32);
 
     #[cfg(feature = "VK_KHR_android_surface")]
     WrapAPI!(create_android_surface_khr = vkCreateAndroidSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);

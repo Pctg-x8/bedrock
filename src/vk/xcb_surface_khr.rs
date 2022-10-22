@@ -1,7 +1,6 @@
 //! VK_KHR_xcb_surface extensions
 
 use super::*;
-use libc::*;
 use xcb::ffi::*;
 
 pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
@@ -17,7 +16,7 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub pNext: *const c_void,
     pub flags: VkXcbSurfaceCreateFlagsKHR,
     pub connection: *mut xcb_connection_t,
-    pub window: xcb_window_t,
+    pub window: xcb::x::Window,
 }
 
 pub type PFN_vkCreateXcbSurfaceKHR = extern "system" fn(
@@ -30,7 +29,7 @@ pub type PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
     queueFamilyIndex: u32,
     connection: *mut xcb_connection_t,
-    visual_id: xcb_visualid_t,
+    visual_id: xcb::x::Visualid,
 ) -> VkBool32;
 
 #[cfg(feature = "Implements")]
@@ -46,6 +45,6 @@ extern "system" {
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         connection: *mut xcb_connection_t,
-        visual_id: xcb_visualid_t,
+        visual_id: xcb::x::Visualid,
     ) -> VkBool32;
 }
