@@ -67,7 +67,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
         let fp: PFN_vkAcquireXlibDisplayEXT = self
             .1
-            .parent()
+            .instance()
             .extra_procedure("vkAcquireXlibDisplayEXT")
             .expect("no vkAcquireXlibDisplayEXT exported?");
         fp(self.1.native_ptr(), dpy, self.native_ptr()).into_result()

@@ -946,6 +946,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let cinfo = VkAndroidSurfaceCreateInfoKHR {
             sType: VkAndroidSurfaceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
+            flags: 0,
             window,
         };
         let mut h = VK_NULL_HANDLE as _;
@@ -1186,7 +1187,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Self: Sized,
     {
         let fp: PFN_vkGetRandROutputDisplayEXT = self
-            .parent()
+            .instance()
             .extra_procedure("vkGetRandROutputDisplayEXT")
             .expect("no vkGetRandROutputDisplayEXT exported?");
         let mut d = std::mem::MaybeUninit::uninit();
