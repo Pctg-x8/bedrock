@@ -1178,10 +1178,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "VK_EXT_acquire_xlib_display")]
     #[cfg(feature = "Implements")]
     fn get_randr_output_display(
-        &self,
+        self,
         dpy: *mut x11::xlib::Display,
         rr_output: x11::xrandr::RROutput,
-    ) -> crate::Result<Display> {
+    ) -> crate::Result<Display<Self>>
+    where
+        Self: Sized,
+    {
         let fp: PFN_vkGetRandROutputDisplayEXT = self
             .parent()
             .extra_procedure("vkGetRandROutputDisplayEXT")
@@ -1189,7 +1192,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let mut d = std::mem::MaybeUninit::uninit();
         fp(self.native_ptr(), dpy, rr_output, d.as_mut_ptr())
             .into_result()
-            .map(move |_| unsafe { Display(d.assume_init()) })
+            .map(move |_| unsafe { Display(d.assume_init(), self) })
     }
 
     /// Create a `Surface` object representing a display plane and mode

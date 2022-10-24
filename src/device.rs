@@ -320,6 +320,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let info = VkImportSemaphoreWin32HandleInfoKHR {
             sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
             pNext: std::ptr::null(),
+            flags: 0,
             semaphore: target.native_ptr(),
             handleType: handle.as_type_bits(),
             handle: handle.handle(),
@@ -1090,13 +1091,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let exp_info = VkExportSemaphoreCreateInfo {
-            handleTypes: handle_types.into(),
+            sType: VkExportSemaphoreCreateInfo::TYPE,
             pNext: export_info.as_ref() as *const _ as _,
-            ..Default::default()
+            handleTypes: handle_types.into(),
         };
         let info = VkSemaphoreCreateInfo {
+            sType: VkSemaphoreCreateInfo::TYPE,
             pNext: &exp_info as *const _ as _,
-            ..Default::default()
+            flags: 0,
         };
         let mut h = VK_NULL_HANDLE as _;
         unsafe {
