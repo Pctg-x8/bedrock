@@ -65,6 +65,8 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
+        use crate::Instance;
+
         let fp: PFN_vkAcquireXlibDisplayEXT = self
             .1
             .instance()
