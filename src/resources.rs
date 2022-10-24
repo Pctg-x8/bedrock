@@ -569,11 +569,16 @@ impl BufferDesc {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<BufferObject<Device>> {
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_buffer(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| BufferObject(h, device))
+    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<BufferObject<Device>> {
+        device.new_buffer(self)
+    }
+}
+impl crate::VulkanStructureProvider for BufferDesc {
+    type RootStructure = VkBufferCreateInfo;
+
+    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut crate::GenericVulkanStructure {
+        *root = self.0.clone();
+        root.as_generic_mut()
     }
 }
 

@@ -210,6 +210,7 @@ let documentDeploymentStep =
                                     [ Features.PlatformIndependent
                                     , Features.UnixSpecific
                                     , Features.MacSpecific
+                                    , [ "Implements" ]
                                     ]
                                 )} -- --cfg docsrs"
             , toolchain = Some "nightly"

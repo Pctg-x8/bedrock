@@ -210,9 +210,9 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
 impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surface> {
     type RootStructure = VkSwapchainCreateInfoKHR;
 
-    fn build(&mut self, root: &mut VkSwapchainCreateInfoKHR) -> &mut GenericVulkanStructure {
+    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut VkSwapchainCreateInfoKHR) -> &'r mut GenericVulkanStructure {
         *root = self.0.clone();
-        unsafe { std::mem::transmute(root) }
+        root.as_generic_mut()
     }
 }
 
