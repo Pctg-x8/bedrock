@@ -91,6 +91,7 @@ let Win32Specific =
       , "VK_NV_external_memory_capabilities"
       , "VK_KHR_get_surface_capabilities2"
       , "VK_KHR_swapchain"
+      , "Implements"
       ]
 
 let UnixSpecific =
@@ -105,9 +106,14 @@ let UnixSpecific =
       , "VK_KHR_xlib_surface"
       , "VK_KHR_surface"
       , "VK_KHR_display"
+      , "Implements"
       ]
 
 let MacSpecific =
-      [ "VK_MVK_ios_surface", "VK_MVK_macos_surface", "VK_KHR_surface" ]
+      [ "VK_MVK_ios_surface"
+      , "VK_MVK_macos_surface"
+      , "VK_KHR_surface"
+      , "Implements"
+      ]
 
 in  { PlatformIndependent, Win32Specific, UnixSpecific, MacSpecific }

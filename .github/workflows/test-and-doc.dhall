@@ -37,7 +37,7 @@ let depends =
 let withConditionStep =
       λ(cond : Text) →
       λ(step : GithubActions.Step.Type) →
-        step ⫽ { if = Some cond }
+        step ⫽ { `if` = Some cond }
 
 let runStepOnFailure = withConditionStep "failure()"
 
