@@ -14,8 +14,8 @@ pub struct VkImportSemaphoreWin32HandleInfoKHR {
     pub semaphore: VkSemaphore,
     pub flags: VkSemaphoreImportFlags,
     pub handleType: VkExternalSemaphoreHandleTypeFlags,
-    pub handle: winapi::shared::ntdef::HANDLE,
-    pub name: winapi::shared::ntdef::LPCWSTR,
+    pub handle: windows::Win32::Foundation::HANDLE,
+    pub name: windows::core::PCWSTR,
 }
 
 #[repr(C)]
@@ -24,9 +24,9 @@ pub struct VkImportSemaphoreWin32HandleInfoKHR {
 pub struct VkExportSemaphoreWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub pAttributes: *const winapi::um::minwinbase::SECURITY_ATTRIBUTES,
-    pub dwAccess: winapi::shared::minwindef::DWORD,
-    pub name: winapi::shared::ntdef::LPCWSTR,
+    pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
+    pub dwAccess: u32,
+    pub name: windows::core::PCWSTR,
 }
 
 #[repr(C)]
@@ -58,7 +58,7 @@ pub type PFN_vkImportSemaphoreWin32HandleKHR = extern "system" fn(
 pub type PFN_vkGetSemaphoreWin32HandleKHR = extern "system" fn(
     device: VkDevice,
     pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR,
-    pHandle: *mut winapi::shared::ntdef::HANDLE,
+    pHandle: *mut windows::Win32::Foundation::HANDLE,
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
@@ -71,6 +71,6 @@ extern "system" {
     pub fn vkGetSemaphoreWin32HandleKHR(
         device: VkDevice,
         pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR,
-        pHandle: *mut winapi::shared::ntdef::HANDLE,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
     ) -> VkResult;
 }
