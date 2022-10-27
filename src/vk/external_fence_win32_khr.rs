@@ -15,8 +15,8 @@ pub struct VkImportFenceWin32HandleInfoKHR {
     pub fence: VkFence,
     pub flags: VkFenceImportFlagsKHR,
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
-    pub handle: winapi::shared::ntdef::HANDLE,
-    pub name: winapi::shared::ntdef::LPCWSTR,
+    pub handle: windows::Win32::Foundation::HANDLE,
+    pub name: windows::core::PCWSTR,
 }
 
 #[repr(C)]
@@ -25,9 +25,9 @@ pub struct VkImportFenceWin32HandleInfoKHR {
 pub struct VkExportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub pAttributes: *const winapi::um::minwinbase::SECURITY_ATTRIBUTES,
-    pub dwAccess: winapi::shared::minwindef::DWORD,
-    pub name: winapi::shared::ntdef::LPCWSTR,
+    pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
+    pub dwAccess: u32,
+    pub name: windows::core::PCWSTR,
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -46,7 +46,7 @@ pub type PFN_vkImportFenceWin32HandleKHR = extern "system" fn(
 pub type PFN_vkGetFenceWin32HandleKHR = extern "system" fn(
     device: VkDevice,
     pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-    pHandle: *mut winapi::um::winnt::HANDLE,
+    pHandle: *mut windows::Win32::Foundation::HANDLE,
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
@@ -59,6 +59,6 @@ extern "system" {
     pub fn vkGetFenceWin32HandleKHR(
         device: VkDevice,
         pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-        pHandle: *mut winapi::um::winnt::HANDLE,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
     ) -> VkResult;
 }

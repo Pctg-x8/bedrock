@@ -29,7 +29,7 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
 pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub hmonitor: winapi::shared::windef::HMONITOR,
+    pub hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
 }
 
 #[repr(C)]

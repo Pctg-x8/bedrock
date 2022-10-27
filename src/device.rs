@@ -374,14 +374,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         &self,
         memory: &impl VkHandle<Handle = VkDeviceMemory>,
         handle_type: crate::ExternalMemoryHandleTypeWin32,
-    ) -> crate::Result<winapi::shared::ntdef::HANDLE> {
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
         let info = VkMemoryGetWin32HandleInfoKHR {
             sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
             pNext: std::ptr::null(),
             memory: memory.native_ptr(),
             handleType: handle_type as _,
         };
-        let mut h = std::ptr::null_mut();
+        let mut h = windows::Win32::Foundation::HANDLE(0);
 
         let f = self
             .extra_procedure::<PFN_vkGetMemoryWin32HandleKHR>("vkGetMemoryWin32HandleKHR")
@@ -425,7 +425,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn get_memory_win32_handle_properties(
         &self,
         handle_type: crate::ExternalMemoryHandleTypeWin32,
-        handle: winapi::shared::ntdef::HANDLE,
+        handle: windows::Win32::Foundation::HANDLE,
     ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
         let mut info = std::mem::MaybeUninit::<VkMemoryWin32HandlePropertiesKHR>::uninit();
         unsafe {
@@ -826,7 +826,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         size: usize,
         type_index: u32,
         handle_type: crate::ExternalMemoryHandleTypeWin32,
-        handle: winapi::shared::ntdef::HANDLE,
+        handle: windows::Win32::Foundation::HANDLE,
         name: &widestring::WideCString,
     ) -> crate::Result<crate::DeviceMemoryObject<Self>>
     where
@@ -837,7 +837,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: std::ptr::null(),
             handleType: handle_type as _,
             handle,
-            name: name.as_ptr(),
+            name: windows::core::PCWSTR::from_raw(name.as_ptr()),
         };
         let ainfo = VkMemoryAllocateInfo {
             sType: VkMemoryAllocateInfo::TYPE,
@@ -868,8 +868,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         self,
         size: usize,
         type_index: u32,
-        security_attributes: Option<&winapi::um::minwinbase::SECURITY_ATTRIBUTES>,
-        access: winapi::shared::minwindef::DWORD,
+        security_attributes: Option<&windows::Win32::Security::SECURITY_ATTRIBUTES>,
+        access: u32,
         name: &widestring::WideCString,
     ) -> crate::Result<crate::DeviceMemoryObject<Self>>
     where
@@ -880,7 +880,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: std::ptr::null(),
             pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
             dwAccess: access,
-            name: name.as_ptr(),
+            name: windows::core::PCWSTR::from_raw(name.as_ptr()),
         };
         let ainfo = VkMemoryAllocateInfo {
             sType: VkMemoryAllocateInfo::TYPE,

@@ -578,7 +578,7 @@ pub struct FullScreenExclusiveWin32InfoEXT(VkSurfaceFullScreenExclusiveWin32Info
 #[cfg(windows)]
 impl FullScreenExclusiveWin32InfoEXT {
     /// Constructs the structure, with a handle identifying the display to create the surface with.
-    pub fn new(handle: winapi::shared::windef::HMONITOR) -> Self {
+    pub fn new(handle: windows::Win32::Graphics::Gdi::HMONITOR) -> Self {
         Self(VkSurfaceFullScreenExclusiveWin32InfoEXT {
             sType: VkSurfaceFullScreenExclusiveWin32InfoEXT::TYPE,
             pNext: std::ptr::null(),

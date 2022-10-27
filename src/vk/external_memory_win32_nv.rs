@@ -12,7 +12,7 @@ pub struct VkImportMemoryWin32HandleInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleType: VkExternalMemoryHandleTypeFlagsNV,
-    pub handle: winapi::shared::ntdef::HANDLE,
+    pub handle: windows::Win32::Foundation::HANDLE,
 }
 
 #[repr(C)]
@@ -21,15 +21,15 @@ pub struct VkImportMemoryWin32HandleInfoNV {
 pub struct VkExportMemoryWin32HandleInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub pAttributes: *const winapi::um::minwinbase::SECURITY_ATTRIBUTES,
-    pub dwAccess: winapi::shared::minwindef::DWORD,
+    pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
+    pub dwAccess: u32,
 }
 
 pub type PFN_vkGetMemoryWin32HandleNV = extern "system" fn(
     device: VkDevice,
     memory: VkDeviceMemory,
     handleType: VkExternalMemoryHandleTypeFlagsNV,
-    pHandle: *mut winapi::shared::ntdef::HANDLE,
+    pHandle: *mut windows::Win32::Foundation::HANDLE,
 ) -> VkResult;
 
 #[cfg(feature = "Implements")]
@@ -39,6 +39,6 @@ extern "system" {
         device: VkDevice,
         memory: VkDeviceMemory,
         handleType: VkExternalMemoryHandleTypeFlagsNV,
-        pHandle: *mut winapi::shared::ntdef::HANDLE,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
     ) -> VkResult;
 }

@@ -968,8 +968,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "Implements")]
     fn new_surface_win32(
         self,
-        hinstance: winapi::shared::minwindef::HINSTANCE,
-        hwnd: winapi::shared::windef::HWND,
+        hinstance: windows::Win32::Foundation::HINSTANCE,
+        hwnd: windows::Win32::Foundation::HWND,
     ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
         Self: Sized + InstanceChildTransferrable,

@@ -1,9 +1,6 @@
 //! VK_KHR_win32_surface extensions
 
 use super::*;
-use libc::c_void;
-use winapi::shared::minwindef::HINSTANCE;
-use winapi::shared::windef::HWND;
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
 pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
@@ -17,8 +14,8 @@ pub struct VkWin32SurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkWin32SurfaceCreateFlagsKHR,
-    pub hinstance: HINSTANCE,
-    pub hwnd: HWND,
+    pub hinstance: windows::Win32::Foundation::HINSTANCE,
+    pub hwnd: windows::Win32::Foundation::HWND,
 }
 
 pub type PFN_vkCreateWin32SurfaceKHR = extern "system" fn(

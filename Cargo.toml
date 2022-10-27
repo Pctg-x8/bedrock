@@ -15,21 +15,21 @@ VK_KHR_xlib_surface = ["x11"]
 VK_KHR_xcb_surface = ["xcb"]
 VK_KHR_wayland_surface = ["wayland-client"]
 VK_KHR_android_surface = ["android"]
-VK_KHR_win32_surface = ["winapi"]
+VK_KHR_win32_surface = ["windows"]
 VK_KHR_sampler_mirror_clamp_to_edge = []
 VK_KHR_shader_draw_parameters = []
 VK_KHR_maintenance1 = []
-VK_KHR_external_memory_win32 = ["winapi", "winapi/d3d12", "widestring"]
+VK_KHR_external_memory_win32 = ["windows", "windows/Win32_Security", "widestring"]
 VK_KHR_external_memory_fd = []
 VK_KHR_win32_keyed_mutex = []
-VK_KHR_external_semaphore_win32 = ["winapi", "winapi/d3d12", "widestring"]
+VK_KHR_external_semaphore_win32 = ["windows", "widestring"]
 VK_KHR_external_semaphore_fd = []
 VK_KHR_push_descriptor = []
 VK_KHR_incremental_present = []
 VK_KHR_descriptor_update_template = []
 VK_KHR_shared_presentable_image = []
 VK_KHR_external_fence_capabilities = []
-VK_KHR_external_fence_win32 = ["winapi"]
+VK_KHR_external_fence_win32 = ["windows", "windows/Win32_Security"]
 VK_KHR_external_fence_fd = []
 VK_KHR_get_physical_device_properties2 = []
 VK_KHR_get_surface_capabilities2 = []
@@ -57,7 +57,7 @@ VK_AMD_shader_image_load_store_lod = []
 VK_IMG_format_pvrtc = []
 VK_NV_external_memory_capabilities = []
 VK_NV_external_memory = []
-VK_NV_external_memory_win32 = ["winapi"]
+VK_NV_external_memory_win32 = ["windows", "windows/Win32_Security"]
 VK_NV_win32_keyed_mutex = []
 VK_KHX_device_group = []
 VK_EXT_validation_flags = []
@@ -115,7 +115,7 @@ x11 = { version = "^2.15", optional = true }
 xcb = { version = "^1.1", optional = true }
 wayland-client = { version = "~0.9", optional = true }
 android = { git = "https://github.com/Pctg-x8/android-defs-rs", optional = true }
-winapi = { version = "~0.3", optional = true, features = ["windef", "minwindef", "ntdef", "minwinbase"] }
+windows = { version = "0.43", optional = true, features = ["Win32_Foundation", "Win32_Graphics_Gdi"] }
 libloading = { version = "0.5", optional = true }
 widestring = { version = "0.4", optional = true }
 log = "0.4"
