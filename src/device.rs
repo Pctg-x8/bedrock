@@ -346,14 +346,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         &self,
         target: &impl VkHandle<Handle = VkSemaphore>,
         handle_type: crate::ExternalSemaphoreHandleTypeWin32,
-    ) -> crate::Result<winapi::shared::ntdef::HANDLE> {
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
         let info = VkSemaphoreGetWin32HandleInfoKHR {
             sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
             pNext: std::ptr::null(),
             semaphore: target.native_ptr(),
             handleType: handle_type as _,
         };
-        let mut h = std::ptr::null_mut();
+        let mut h = windows::Win32::Foundation::HANDLE(0);
 
         let f = self
             .extra_procedure::<PFN_vkGetSemaphoreWin32HandleKHR>("vkGetSemaphoreWin32HandleKHR")

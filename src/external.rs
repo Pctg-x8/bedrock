@@ -40,9 +40,9 @@ impl ExternalSemaphoreHandleTypes {
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 pub enum ExternalSemaphoreHandleWin32 {
-    OpaqueWin32(winapi::shared::ntdef::HANDLE),
-    OpaqueWin32KMT(winapi::shared::ntdef::HANDLE),
-    D3DFence(winapi::shared::ntdef::HANDLE),
+    OpaqueWin32(windows::Win32::Foundation::HANDLE),
+    OpaqueWin32KMT(windows::Win32::Foundation::HANDLE),
+    D3DFence(windows::Win32::Foundation::HANDLE),
 }
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 impl ExternalSemaphoreHandleWin32 {
@@ -55,7 +55,7 @@ impl ExternalSemaphoreHandleWin32 {
         }
     }
 
-    pub(crate) fn handle(&self) -> winapi::shared::ntdef::HANDLE {
+    pub(crate) fn handle(&self) -> windows::Win32::Foundation::HANDLE {
         match self {
             &Self::OpaqueWin32(h) | &Self::OpaqueWin32KMT(h) | &Self::D3DFence(h) => h,
         }
