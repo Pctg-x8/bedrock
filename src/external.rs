@@ -126,7 +126,7 @@ where
 pub struct ExportSemaphoreWin32HandleInfo<'d>(
     VkExportSemaphoreWin32HandleInfoKHR,
     std::marker::PhantomData<(
-        Option<&'d winapi::um::minwinbase::SECURITY_ATTRIBUTES>,
+        Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
         &'d widestring::WideCString,
     )>,
 );
@@ -152,8 +152,8 @@ impl std::ops::Deref for ExportSemaphoreWin32HandleInfo<'_> {
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
     pub fn new(
-        security_attributes: Option<&'d winapi::um::minwinbase::SECURITY_ATTRIBUTES>,
-        access: winapi::shared::minwindef::DWORD,
+        security_attributes: Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
+        access: u32,
         name: &'d widestring::WideCString,
     ) -> Self {
         Self(
@@ -162,7 +162,7 @@ impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
                 pNext: std::ptr::null(),
                 pAttributes: security_attributes.map_or_else(std::ptr::null, |x| x as *const _),
                 dwAccess: access,
-                name: name.as_ptr(),
+                name: windows::core::PCWSTR(name.as_ptr()),
             },
             std::marker::PhantomData,
         )

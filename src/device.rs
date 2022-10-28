@@ -324,7 +324,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             semaphore: target.native_ptr(),
             handleType: handle.as_type_bits(),
             handle: handle.handle(),
-            name: name.as_ptr(),
+            name: windows::core::PCWSTR(name.as_ptr()),
         };
 
         let f = self
@@ -837,7 +837,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: std::ptr::null(),
             handleType: handle_type as _,
             handle,
-            name: windows::core::PCWSTR::from_raw(name.as_ptr()),
+            name: windows::core::PCWSTR(name.as_ptr()),
         };
         let ainfo = VkMemoryAllocateInfo {
             sType: VkMemoryAllocateInfo::TYPE,
@@ -880,7 +880,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: std::ptr::null(),
             pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
             dwAccess: access,
-            name: windows::core::PCWSTR::from_raw(name.as_ptr()),
+            name: windows::core::PCWSTR(name.as_ptr()),
         };
         let ainfo = VkMemoryAllocateInfo {
             sType: VkMemoryAllocateInfo::TYPE,
