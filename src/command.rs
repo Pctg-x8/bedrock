@@ -5,7 +5,6 @@ use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
     FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
-    VkResultHandler,
 };
 use crate::{ImageLayout, VkHandle};
 use std::mem::replace;
@@ -94,6 +93,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
             Resolver::get()
                 .reset_command_pool(self.device().native_ptr(), self.native_ptr(), flags)
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -240,6 +240,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
         Resolver::get()
             .reset_command_buffer(self.native_ptr(), flags)
             .into_result()
+            .map(drop)
     }
 
     /// Locking CommandBuffer with CommandPool to satisfy externally synchronization restriction.

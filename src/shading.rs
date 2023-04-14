@@ -1,12 +1,9 @@
 //! Vulkan Shading(Shader/Pipeline)
 
+#[cfg(feature = "Implements")]
+use crate::vkresolve::{Resolver, ResolverInterface};
 use crate::LifetimeBound;
 use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
-#[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VkResultHandler,
-};
 use std::borrow::Cow;
 use std::ffi::CString;
 use std::marker::PhantomData;
@@ -251,6 +248,7 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
                     srcs.as_ptr(),
                 )
                 .into_result()
+                .map(drop)
         }
     }
 }

@@ -52,3 +52,18 @@ impl std::fmt::Display for VkResultBox {
     }
 }
 impl std::error::Error for VkResultBox {}
+impl VkResultBox {
+    #[inline]
+    pub fn is_err(&self) -> bool {
+        self.0 < 0
+    }
+
+    #[inline]
+    pub fn into_result(self) -> Result<Self, Self> {
+        if self.is_err() {
+            Err(self)
+        } else {
+            Ok(self)
+        }
+    }
+}

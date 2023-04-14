@@ -80,18 +80,6 @@ macro_rules! DerefContainerBracketImpl {
 }
 
 pub type Result<T> = std::result::Result<T, VkResultBox>;
-pub trait VkResultHandler {
-    fn into_result(self) -> Result<()>;
-}
-impl VkResultHandler for VkResult {
-    fn into_result(self) -> Result<()> {
-        if self == VK_SUCCESS {
-            Ok(())
-        } else {
-            Err(VkResultBox(self))
-        }
-    }
-}
 
 mod handle;
 pub use self::handle::*;

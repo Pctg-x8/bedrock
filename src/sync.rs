@@ -8,7 +8,7 @@ use crate::VkHandle;
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    Device, VkResultBox, VkResultHandler, VulkanStructure,
+    Device, VkResultBox, VulkanStructure,
 };
 
 DefineStdDeviceChildObject! {

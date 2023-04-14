@@ -4,7 +4,7 @@ use crate::vk::*;
 use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 #[allow(unused_imports)]
-use crate::{DeviceChild, VkHandle, VkResultHandler};
+use crate::{DeviceChild, VkHandle};
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]

@@ -4,6 +4,7 @@
 #![allow(non_snake_case)]
 
 use crate::vk::*;
+use crate::VkResultBox;
 #[cfg(feature = "DynamicLoaded")]
 #[cfg(unix)]
 use libloading::os::unix::Symbol as RawSymbol;
@@ -41,6 +42,24 @@ macro_rules! WrapAPI {
             (F.as_ref().unwrap())($($an),*);
         }
     };
+    ($xt: ident = $n: ident ( $($an: ident : $at: ty),* ) -> VkResult) => {
+        #[cfg(not(feature = "DynamicLoaded"))]
+        #[inline(always)]
+        #[allow(clippy::too_many_arguments)]
+        unsafe fn $xt(&self, $($an: $at),*) -> VkResultBox {
+            log::trace!(target: "br-vkapi-call", stringify!($n));
+            VkResultBox($n($($an),*))
+        }
+        #[cfg(feature = "DynamicLoaded")]
+        unsafe fn $xt(&self, $($an: $at),*) -> VkResultBox
+        {
+            static mut F: Option<RawSymbol<fn($($at),*) -> VkResult>> = None;
+            static ONCE: Once = ONCE_INIT;
+            ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*) -> VkResult>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
+            log::trace!(target: "br-vkapi-call", stringify!($n));
+            VkResultBox((F.as_ref().unwrap())($($an),*))
+        }
+    };
     ($xt: ident = $n: ident ( $($an: ident : $at: ty),* ) -> $rt: ty) => {
         #[cfg(not(feature = "DynamicLoaded"))]
         #[inline(always)]
@@ -70,7 +89,7 @@ use std::sync::atomic::AtomicPtr;
 use std::sync::atomic::Ordering;
 thread_local!(static STATIC_RESOLVER_INITIALIZED: RefCell<bool> = RefCell::new(false));
 #[cfg(not(feature = "CustomResolver"))]
-static STATIC_RESOLVER: AtomicPtr<Resolver> = AtomicPtr::new(0 as *mut _);
+static STATIC_RESOLVER: AtomicPtr<Resolver> = AtomicPtr::new(std::ptr::null_mut());
 #[cfg(feature = "CustomResolver")]
 static STATIC_RESOLVER: AtomicPtr<ResolverInterface> = AtomicPtr::new(0 as *mut _);
 
@@ -90,14 +109,14 @@ pub trait ResolverInterface {
         create_info: *const VkInstanceCreateInfo,
         allocator: *const VkAllocationCallbacks,
         instance: *mut VkInstance,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_instance(&self, instance: VkInstance, allocator: *const VkAllocationCallbacks);
     unsafe fn enumerate_physical_devices(
         &self,
         instance: VkInstance,
         physical_device_count: *mut u32,
         physical_devices: *mut VkPhysicalDevice,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_physical_device_features(
         &self,
         physicalDevice: VkPhysicalDevice,
@@ -118,7 +137,7 @@ pub trait ResolverInterface {
         usage: VkImageUsageFlags,
         flags: VkImageCreateFlags,
         pImageFormatProperties: *mut VkImageFormatProperties,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_physical_device_properties(
         &self,
         physicalDevice: VkPhysicalDevice,
@@ -143,32 +162,32 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkDeviceCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pDevice: *mut VkDevice,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_device(&self, device: VkDevice, pAllocator: *const VkAllocationCallbacks);
     unsafe fn enumerate_instance_extension_properties(
         &self,
         pLayerName: *const c_char,
         pPropertyCount: *mut u32,
         pProperties: *mut VkExtensionProperties,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn enumerate_device_extension_properties(
         &self,
         physicalDevice: VkPhysicalDevice,
         pLayerName: *const c_char,
         pPropertyCount: *mut u32,
         pProperties: *mut VkExtensionProperties,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn enumerate_instance_layer_properties(
         &self,
         pPropertyCount: *mut u32,
         pProperties: *mut VkLayerProperties,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn enumerate_device_layer_properties(
         &self,
         physicalDevice: VkPhysicalDevice,
         pPropertyCount: *mut u32,
         pProperties: *mut VkLayerProperties,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_device_queue(&self, device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue);
     unsafe fn queue_submit(
         &self,
@@ -176,16 +195,16 @@ pub trait ResolverInterface {
         submitCount: u32,
         pSubmits: *const VkSubmitInfo,
         fence: VkFence,
-    ) -> VkResult;
-    unsafe fn queue_wait_idle(&self, queue: VkQueue) -> VkResult;
-    unsafe fn device_wait_idle(&self, device: VkDevice) -> VkResult;
+    ) -> VkResultBox;
+    unsafe fn queue_wait_idle(&self, queue: VkQueue) -> VkResultBox;
+    unsafe fn device_wait_idle(&self, device: VkDevice) -> VkResultBox;
     unsafe fn allocate_memory(
         &self,
         device: VkDevice,
         pAllocateInfo: *const VkMemoryAllocateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pMemory: *mut VkDeviceMemory,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn free_memory(&self, device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks);
     unsafe fn map_memory(
         &self,
@@ -195,20 +214,20 @@ pub trait ResolverInterface {
         size: VkDeviceSize,
         flags: VkMemoryMapFlags,
         ppData: *mut *mut c_void,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn unmap_memory(&self, device: VkDevice, memory: VkDeviceMemory);
     unsafe fn flush_mapped_memory_ranges(
         &self,
         device: VkDevice,
         memoryRangeCount: u32,
         pMemoryRanges: *const VkMappedMemoryRange,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn invalidate_mapped_memory_ranges(
         &self,
         device: VkDevice,
         memoryRangeCount: u32,
         pMemoryRanges: *const VkMappedMemoryRange,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_device_memory_commitment(
         &self,
         device: VkDevice,
@@ -221,14 +240,14 @@ pub trait ResolverInterface {
         buffer: VkBuffer,
         memory: VkDeviceMemory,
         memoryOffset: VkDeviceSize,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn bind_image_memory(
         &self,
         device: VkDevice,
         image: VkImage,
         memory: VkDeviceMemory,
         memoryOffset: VkDeviceSize,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_buffer_memory_requirements(
         &self,
         device: VkDevice,
@@ -265,17 +284,17 @@ pub trait ResolverInterface {
         bindInfoCount: u32,
         pBindInfo: *const VkBindSparseInfo,
         fence: VkFence,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn create_fence(
         &self,
         device: VkDevice,
         pCreateInfo: *const VkFenceCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pFence: *mut VkFence,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_fence(&self, device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks);
-    unsafe fn reset_fences(&self, device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult;
-    unsafe fn get_fence_status(&self, device: VkDevice, fence: VkFence) -> VkResult;
+    unsafe fn reset_fences(&self, device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResultBox;
+    unsafe fn get_fence_status(&self, device: VkDevice, fence: VkFence) -> VkResultBox;
     unsafe fn wait_for_fences(
         &self,
         device: VkDevice,
@@ -283,14 +302,14 @@ pub trait ResolverInterface {
         pFences: *const VkFence,
         waitAll: VkBool32,
         timeout: u64,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn create_semaphore(
         &self,
         device: VkDevice,
         pCreateInfo: *const VkSemaphoreCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pSemaphore: *mut VkSemaphore,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_semaphore(
         &self,
         device: VkDevice,
@@ -303,18 +322,18 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkEventCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pEvent: *mut VkEvent,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_event(&self, device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks);
-    unsafe fn get_event_status(&self, device: VkDevice, event: VkEvent) -> VkResult;
-    unsafe fn set_event(&self, device: VkDevice, event: VkEvent) -> VkResult;
-    unsafe fn reset_event(&self, device: VkDevice, event: VkEvent) -> VkResult;
+    unsafe fn get_event_status(&self, device: VkDevice, event: VkEvent) -> VkResultBox;
+    unsafe fn set_event(&self, device: VkDevice, event: VkEvent) -> VkResultBox;
+    unsafe fn reset_event(&self, device: VkDevice, event: VkEvent) -> VkResultBox;
     unsafe fn create_query_pool(
         &self,
         device: VkDevice,
         pCreateInfo: *const VkQueryPoolCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pQueryPool: *mut VkQueryPool,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_query_pool(
         &self,
         device: VkDevice,
@@ -331,14 +350,14 @@ pub trait ResolverInterface {
         pData: *mut c_void,
         stride: VkDeviceSize,
         flags: VkQueryResultFlags,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn create_buffer(
         &self,
         device: VkDevice,
         pCreateInfo: *const VkBufferCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pBuffer: *mut VkBuffer,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_buffer(&self, device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks);
     unsafe fn create_buffer_view(
         &self,
@@ -346,7 +365,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkBufferViewCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pView: *mut VkBufferView,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_buffer_view(
         &self,
         device: VkDevice,
@@ -359,7 +378,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkImageCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pImage: *mut VkImage,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_image(&self, device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks);
     unsafe fn get_image_subresource_layout(
         &self,
@@ -374,7 +393,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkImageViewCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pView: *mut VkImageView,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_image_view(
         &self,
         device: VkDevice,
@@ -387,7 +406,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkShaderModuleCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pShaderModule: *mut VkShaderModule,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_shader_module(
         &self,
         device: VkDevice,
@@ -400,7 +419,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkPipelineCacheCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pPipelineCache: *mut VkPipelineCache,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_pipeline_cache(
         &self,
         device: VkDevice,
@@ -413,14 +432,14 @@ pub trait ResolverInterface {
         pipelineCache: VkPipelineCache,
         pDataSize: *mut size_t,
         pData: *mut c_void,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn merge_pipeline_caches(
         &self,
         device: VkDevice,
         dstCache: VkPipelineCache,
         srcCacheCount: u32,
         pSrcCaches: *const VkPipelineCache,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn create_graphics_pipelines(
         &self,
         device: VkDevice,
@@ -429,7 +448,7 @@ pub trait ResolverInterface {
         pCreateInfos: *const VkGraphicsPipelineCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pPipelines: *mut VkPipeline,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn create_compute_pipelines(
         &self,
         device: VkDevice,
@@ -438,7 +457,7 @@ pub trait ResolverInterface {
         pCreateInfos: *const VkComputePipelineCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pPipelines: *mut VkPipeline,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_pipeline(&self, device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks);
     unsafe fn create_pipeline_layout(
         &self,
@@ -446,7 +465,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkPipelineLayoutCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pPipelineLayout: *mut VkPipelineLayout,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_pipeline_layout(
         &self,
         device: VkDevice,
@@ -459,7 +478,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkSamplerCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pSampler: *mut VkSampler,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_sampler(&self, device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks);
     unsafe fn create_descriptor_set_layout(
         &self,
@@ -467,7 +486,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkDescriptorSetLayoutCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pSetLayout: *mut VkDescriptorSetLayout,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_descriptor_set_layout(
         &self,
         device: VkDevice,
@@ -480,7 +499,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkDescriptorPoolCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pDescriptorPool: *mut VkDescriptorPool,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_descriptor_pool(
         &self,
         device: VkDevice,
@@ -492,20 +511,20 @@ pub trait ResolverInterface {
         device: VkDevice,
         descriptorPool: VkDescriptorPool,
         flags: VkDescriptorPoolResetFlags,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn allocate_descriptor_sets(
         &self,
         device: VkDevice,
         pAllocateInfo: *const VkDescriptorSetAllocateInfo,
         pDescriptorSets: *mut VkDescriptorSet,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn free_descriptor_sets(
         &self,
         device: VkDevice,
         descriptorPool: VkDescriptorPool,
         descriptorSetCount: u32,
         pDescriptorSets: *const VkDescriptorSet,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn update_descriptor_sets(
         &self,
         device: VkDevice,
@@ -520,7 +539,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkFramebufferCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pFramebuffer: *mut VkFramebuffer,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_framebuffer(
         &self,
         device: VkDevice,
@@ -533,7 +552,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkRenderPassCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pRenderPass: *mut VkRenderPass,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_render_pass(
         &self,
         device: VkDevice,
@@ -552,7 +571,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkCommandPoolCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pCommandPool: *mut VkCommandPool,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_command_pool(
         &self,
         device: VkDevice,
@@ -564,13 +583,13 @@ pub trait ResolverInterface {
         device: VkDevice,
         commandPool: VkCommandPool,
         flags: VkCommandPoolResetFlags,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn allocate_command_buffers(
         &self,
         device: VkDevice,
         pAllocateInfo: *const VkCommandBufferAllocateInfo,
         pCommandBuffers: *mut VkCommandBuffer,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn free_command_buffers(
         &self,
         device: VkDevice,
@@ -582,10 +601,13 @@ pub trait ResolverInterface {
         &self,
         commandBuffer: VkCommandBuffer,
         pBeginInfo: *const VkCommandBufferBeginInfo,
-    ) -> VkResult;
-    unsafe fn end_command_buffer(&self, commandBuffer: VkCommandBuffer) -> VkResult;
-    unsafe fn reset_command_buffer(&self, commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags)
-        -> VkResult;
+    ) -> VkResultBox;
+    unsafe fn end_command_buffer(&self, commandBuffer: VkCommandBuffer) -> VkResultBox;
+    unsafe fn reset_command_buffer(
+        &self,
+        commandBuffer: VkCommandBuffer,
+        flags: VkCommandBufferResetFlags,
+    ) -> VkResultBox;
 
     unsafe fn cmd_bind_pipeline(
         &self,
@@ -983,19 +1005,19 @@ pub trait ResolverInterface {
     );
 
     // 1,1
-    unsafe fn enumerate_instance_version(&self, pApiVersion: *mut u32) -> VkResult;
+    unsafe fn enumerate_instance_version(&self, pApiVersion: *mut u32) -> VkResultBox;
     unsafe fn bind_buffer_memory2(
         &self,
         device: VkDevice,
         bindInfoCount: u32,
         pBindInfos: *const VkBindBufferMemoryInfo,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn bind_image_memory2(
         &self,
         device: VkDevice,
         bindInfoCount: u32,
         pBindInfos: *const VkBindImageMemoryInfo,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_device_group_peer_memory_features(
         &self,
         device: VkDevice,
@@ -1055,7 +1077,7 @@ pub trait ResolverInterface {
         physicalDevice: VkPhysicalDevice,
         pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2,
         pImageFormatProperties: *mut VkImageFormatProperties2,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn get_physical_device_queue_family_properties2(
         &self,
         physicalDevice: VkPhysicalDevice,
@@ -1082,7 +1104,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkSamplerYcbcrConversionCreateInfo,
         pAllocator: *const VkAllocationCallbacks,
         pYcbcrConversion: *mut VkSamplerYcbcrConversion,
-    ) -> VkResult;
+    ) -> VkResultBox;
     unsafe fn destroy_sampler_ycbcr_conversion(
         &self,
         device: VkDevice,
@@ -1145,14 +1167,14 @@ pub trait ResolverInterface {
         queueFamilyIndex: u32,
         surface: VkSurfaceKHR,
         pSupported: *mut VkBool32,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_surface")]
     unsafe fn get_physical_device_surface_capabilities_khr(
         &self,
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_surface")]
     unsafe fn get_physical_device_surface_formats_khr(
         &self,
@@ -1160,7 +1182,7 @@ pub trait ResolverInterface {
         surface: VkSurfaceKHR,
         pSurfaceFormatCount: *mut u32,
         pSurfaceFormats: *mut VkSurfaceFormatKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_surface")]
     unsafe fn get_physical_device_surface_present_modes_khr(
         &self,
@@ -1168,14 +1190,14 @@ pub trait ResolverInterface {
         surface: VkSurfaceKHR,
         pPresentModeCount: *mut u32,
         pPresentModes: *mut VkPresentModeKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(
         &self,
         physicalDevice: VkPhysicalDevice,
         surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR,
         surface_capabilities: *mut VkSurfaceCapabilities2KHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
 
     #[cfg(feature = "VK_KHR_swapchain")]
     unsafe fn create_swapchain_khr(
@@ -1184,7 +1206,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkSwapchainCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSwapchain: *mut VkSwapchainKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_swapchain")]
     unsafe fn destroy_swapchain_khr(
         &self,
@@ -1199,7 +1221,7 @@ pub trait ResolverInterface {
         swapchain: VkSwapchainKHR,
         pSwapchainImageCount: *mut u32,
         pSwapchainImages: *mut VkImage,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_swapchain")]
     unsafe fn acquire_next_image_khr(
         &self,
@@ -1209,7 +1231,7 @@ pub trait ResolverInterface {
         semaphore: VkSemaphore,
         fence: VkFence,
         pImageIndex: *mut u32,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_swapchain")]
     unsafe fn queue_present_khr(&self, queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
 
@@ -1220,7 +1242,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_xlib_surface")]
     unsafe fn get_physical_device_xlib_presentation_support_khr(
         &self,
@@ -1237,7 +1259,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkXcbSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_xcb_surface")]
     unsafe fn get_physical_device_xcb_presentation_support_khr(
         &self,
@@ -1254,7 +1276,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_wayland_surface")]
     unsafe fn get_physical_device_wayland_presentation_support_khr(
         &self,
@@ -1270,7 +1292,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
 
     #[cfg(feature = "VK_KHR_win32_surface")]
     unsafe fn create_win32_surface_khr(
@@ -1279,7 +1301,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_win32_surface")]
     unsafe fn get_physical_device_win32_presentation_support_khr(
         &self,
@@ -1294,7 +1316,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
 
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn get_physical_device_display_properties_khr(
@@ -1302,14 +1324,14 @@ pub trait ResolverInterface {
         physicalDevice: VkPhysicalDevice,
         pPropertyCount: *mut u32,
         pProperties: *mut VkDisplayPropertiesKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn get_physical_device_display_plane_properties_khr(
         &self,
         physicalDevice: VkPhysicalDevice,
         pPropertyCount: *mut u32,
         pProperties: *mut VkDisplayPlanePropertiesKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn get_display_plane_supported_displays_khr(
         &self,
@@ -1317,7 +1339,7 @@ pub trait ResolverInterface {
         planeIndex: u32,
         pDisplayCount: *mut u32,
         pDisplays: *mut VkDisplayKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn get_display_mode_properties_khr(
         &self,
@@ -1325,7 +1347,7 @@ pub trait ResolverInterface {
         display: VkDisplayKHR,
         pPropertyCount: *mut u32,
         pProperties: *mut VkDisplayModePropertiesKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn create_display_mode_khr(
         &self,
@@ -1334,7 +1356,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkDisplayModeCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pMode: *mut VkDisplayModeKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn get_display_plane_capabilities_khr(
         &self,
@@ -1342,7 +1364,7 @@ pub trait ResolverInterface {
         mode: VkDisplayModeKHR,
         planeIndex: u32,
         pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn create_display_plane_surface_khr(
         &self,
@@ -1350,7 +1372,7 @@ pub trait ResolverInterface {
         pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+    ) -> VkResultBox;
 
     #[cfg(feature = "VK_EXT_sample_locations")]
     unsafe fn get_physical_device_multisample_properties_ext(

@@ -4,7 +4,7 @@ use crate::{vk::*, DeviceChild, Instance, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VkResultHandler, VulkanStructure,
+    VulkanStructure,
 };
 use crate::{ImageLayout, ShaderStage, VkHandle};
 
@@ -202,6 +202,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
         Resolver::get()
             .reset_descriptor_pool(self.device().native_ptr(), self.native_ptr(), 0)
             .into_result()
+            .map(drop)
     }
 
     /// Free one or more descriptor sets
@@ -220,6 +221,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
                     sets.as_ptr(),
                 )
                 .into_result()
+                .map(drop)
         }
     }
 }

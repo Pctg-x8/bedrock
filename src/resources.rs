@@ -116,12 +116,9 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VkResultHandler,
-};
+use crate::vkresolve::{Resolver, ResolverInterface};
+use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
 use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
@@ -162,6 +159,7 @@ impl<Device: crate::Device> MemoryBound for BufferObject<Device> {
                     offset as _,
                 )
                 .into_result()
+                .map(drop)
         }
     }
 }
@@ -233,6 +231,7 @@ impl<Device: crate::Device> MemoryBound for ImageObject<Device> {
                     offset as _,
                 )
                 .into_result()
+                .map(drop)
         }
     }
 }
@@ -298,6 +297,7 @@ impl<Swapchain: crate::Swapchain> MemoryBound for SwapchainImage<Swapchain> {
                     offset as _,
                 )
                 .into_result()
+                .map(drop)
         }
     }
 }

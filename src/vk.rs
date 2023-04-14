@@ -168,6 +168,7 @@ pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = -9;
 pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = -10;
 pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = -11;
 pub const VK_ERROR_FRAGMENTED_POOL: VkResult = -12;
+pub const VK_ERROR_UNKNOWN: VkResult = -13;
 pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = -100_0000_000;
 pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = -100_0000_001;
 pub const VK_SUBOPTIMAL_KHR: VkResult = 100_0001_003;
@@ -5067,19 +5068,10 @@ pub type PFN_vkGetDescriptorSetLayoutSupport = extern "system" fn(
 );
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
-#[cfg_attr(
-    all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")),
-    link(name = "vulkan")
-)]
-#[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
-#[cfg_attr(
-    all(target_os = "macos", not(feature = "DynamicLoaded")),
-    link(name = "MoltenVK", kind = "framework")
-)]
-#[cfg_attr(
-    all(target_os = "macos", not(feature = "DynamicLoaded")),
-    link(name = "Metal", kind = "framework")
-)]
+#[cfg_attr(all(not(windows), not(target_os = "macos")), link(name = "vulkan"))]
+#[cfg_attr(windows, link(name = "vulkan-1"))]
+#[cfg_attr(target_os = "macos", link(name = "MoltenVK", kind = "framework"))]
+#[cfg_attr(target_os = "macos", link(name = "Metal", kind = "framework"))]
 extern "system" {
     pub fn vkEnumerateInstanceVersion(pApiVersion: *mut u32) -> VkResult;
     pub fn vkBindBufferMemory2(

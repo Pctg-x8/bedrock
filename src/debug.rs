@@ -1,9 +1,10 @@
 //! Vulkan Debug Layer Extensions
 
+#[cfg(feature = "Implements")]
+use crate::Instance;
+use crate::VkResultBox;
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
-#[cfg(feature = "Implements")]
-use crate::{Instance, VkResultHandler};
 #[allow(unused_imports)]
 use crate::{InstanceChild, VkHandle, VkObject};
 #[allow(unused_imports)]
@@ -363,7 +364,7 @@ impl DebugUtilsMessengerCreateInfo {
             .expect("Requiring vkDestroyDebugUtilsMessengerEXT function");
 
         let mut h = VK_NULL_HANDLE as _;
-        create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h)
+        VkResultBox(create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h))
             .into_result()
             .map(|_| DebugUtilsMessengerObject(h, instance, destroy_fn))
     }
@@ -431,6 +432,8 @@ impl<'d> DebugUtilsObjectNameInfo<'d> {
             .instance()
             .extra_procedure("vkSetDebugUtilsObjectNameEXT")
             .expect("no vkSetDebugUtilsObjectNameEXT found");
-        name_setter(device.native_ptr(), &self.0).into_result()
+        VkResultBox(name_setter(device.native_ptr(), &self.0))
+            .into_result()
+            .map(drop)
     }
 }

@@ -1,12 +1,11 @@
 //! Vulkan Device and Queues
 
-#![cfg_attr(not(feature = "Implements"), allow(dead_code))]
-
+use crate::VkResultBox;
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute,
     vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkResultHandler, VulkanStructure, VulkanStructureProvider,
+    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VulkanStructure, VulkanStructureProvider,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
@@ -220,6 +219,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Resolver::get()
             .invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
             .into_result()
+            .map(drop)
     }
 
     /// Update the contents of a descriptor set object
@@ -301,7 +301,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// All VkQueue objects created from this device must be externally synchronized.
     #[cfg(feature = "Implements")]
     unsafe fn wait(&self) -> crate::Result<()> {
-        Resolver::get().device_wait_idle(self.native_ptr()).into_result()
+        Resolver::get()
+            .device_wait_idle(self.native_ptr())
+            .into_result()
+            .map(drop)
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
@@ -386,7 +389,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let f = self
             .extra_procedure::<PFN_vkGetMemoryWin32HandleKHR>("vkGetMemoryWin32HandleKHR")
             .expect("No vkGetMemoryWin32HandleKHR exported");
-        (f)(self.native_ptr(), &info, &mut h).into_result().map(move |_| h)
+        VkResultBox((f)(self.native_ptr(), &info, &mut h))
+            .into_result()
+            .map(move |_| h)
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
@@ -412,7 +417,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let f = self
             .extra_procedure::<PFN_vkGetMemoryFdKHR>("vkGetMemoryFdKHR")
             .expect("No vkGetMemoryFdKHR exported");
-        (f)(self.native_ptr(), &info, &mut fd).into_result().map(move |_| fd)
+        VkResultBox((f)(self.native_ptr(), &info, &mut fd))
+            .into_result()
+            .map(move |_| fd)
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
@@ -435,7 +442,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let f = self
             .extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
             .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
-        (f)(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr())
+        VkResultBox((f)(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr()))
             .into_result()
             .map(move |_| unsafe { info.assume_init() })
     }
@@ -460,7 +467,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let f = self
             .extra_procedure::<PFN_vkGetMemoryFdPropertiesKHR>("vkGetMemoryFdPropertiesKHR")
             .expect("No vkGetMemoryFdPropertiesKHR exported");
-        (f)(self.native_ptr(), handle_type as _, fd, info.as_mut_ptr())
+        VkResultBox((f)(self.native_ptr(), handle_type as _, fd, info.as_mut_ptr()))
             .into_result()
             .map(move |_| unsafe { info.assume_init() })
     }
@@ -485,12 +492,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let f = self
             .extra_procedure::<PFN_vkGetMemoryHostPointerPropertiesEXT>("vkGetMemoryHostPointerPropertiesEXT")
             .expect("No vkGetMemoryHostPointerPropertiesEXT exported");
-        (f)(
+        VkResultBox((f)(
             self.native_ptr(),
             handle_type as _,
             host_pointer as _,
             info.as_mut_ptr(),
-        )
+        ))
         .into_result()
         .map(move |_| unsafe { info.assume_init() })
     }
@@ -542,6 +549,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             Resolver::get()
                 .bind_buffer_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -569,6 +577,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             Resolver::get()
                 .bind_image_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -601,6 +610,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Resolver::get()
             .flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
             .into_result()
+            .map(drop)
     }
 
     /// Creates a new shader module object
@@ -1162,10 +1172,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 timeout.unwrap_or(std::u64::MAX),
             )
         };
-        match vr {
+        match vr.0 {
             VK_SUCCESS => Ok(false),
             VK_TIMEOUT => Ok(true),
-            _ => Err(crate::VkResultBox(vr)),
+            _ => Err(vr),
         }
     }
 
@@ -1182,6 +1192,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             Resolver::get()
                 .reset_fences(self.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr())
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -1436,7 +1447,7 @@ where
 impl<Device: crate::Device> Queue<Device> {
     /// Wait for a object to become idle
     pub fn wait(&mut self) -> crate::Result<()> {
-        unsafe { Resolver::get().queue_wait_idle(self.0).into_result() }
+        unsafe { Resolver::get().queue_wait_idle(self.0).into_result().map(drop) }
     }
 }
 
@@ -1480,6 +1491,7 @@ impl<Device: crate::Device> Queue<Device> {
                     fence.map_or_else(std::ptr::null_mut, |h| h.native_ptr()),
                 )
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -1528,6 +1540,7 @@ impl<Device: crate::Device> Queue<Device> {
                     fence.map_or_else(std::ptr::null_mut, |h| h.native_ptr()),
                 )
                 .into_result()
+                .map(drop)
         }
     }
 }

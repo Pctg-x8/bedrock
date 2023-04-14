@@ -3,12 +3,13 @@
 use crate::vk::*;
 use crate::VkHandle;
 use crate::VkObject;
+use crate::VkResultBox;
 use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute,
     vkresolve::{Resolver, ResolverInterface},
-    ImageFlags, ImageUsage, VkResultHandler,
+    ImageFlags, ImageUsage,
 };
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
@@ -357,11 +358,11 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         info: &VkDescriptorUpdateTemplateCreateInfo,
         alloc: *const VkAllocationCallbacks,
         handle: *mut VkDescriptorUpdateTemplate,
-    ) -> VkResult {
+    ) -> VkResultBox {
         let f: PFN_vkCreateDescriptorUpdateTemplate = self
             .extra_procedure("vkCreateDescriptorUpdateTemplate")
             .expect("No vkCreateDescriptorUpdateTemplate found");
-        (f)(device, info, alloc, handle)
+        VkResultBox((f)(device, info, alloc, handle))
     }
 
     #[cfg(feature = "Implements")]
@@ -407,7 +408,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             pUserData: userdata.map_or_else(std::ptr::null_mut, |x| x as *mut _ as _),
         };
         let mut h = VK_NULL_HANDLE as _;
-        ctor(self.native_ptr(), &s, std::ptr::null(), &mut h)
+        VkResultBox(ctor(self.native_ptr(), &s, std::ptr::null(), &mut h))
             .into_result()
             .map(|_| crate::DebugReportCallbackObject(h, self, dtor))
     }
@@ -1260,6 +1261,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             crate::Resolver::get()
                 .get_physical_device_surface_capabilities2_khr(self.native_ptr(), surface_info, sink)
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -1312,12 +1314,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .expect("no extra procedures loaded");
 
         let mut n = 0;
-        cmdfn(self.native_ptr(), surface_info, &mut n, std::ptr::null_mut()).into_result()?;
+        VkResultBox(cmdfn(self.native_ptr(), surface_info, &mut n, std::ptr::null_mut())).into_result()?;
         let mut x = Vec::with_capacity(n as _);
         unsafe {
             x.set_len(n as _);
         }
-        cmdfn(self.native_ptr(), surface_info, &mut n, x.as_mut_ptr())
+        VkResultBox(cmdfn(self.native_ptr(), surface_info, &mut n, x.as_mut_ptr()))
             .into_result()
             .map(move |_| x)
     }

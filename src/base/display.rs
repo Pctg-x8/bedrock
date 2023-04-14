@@ -3,7 +3,7 @@
 
 use crate::{vk::*, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
-use crate::{Resolver, ResolverInterface, VkHandle, VkResultHandler};
+use crate::{Resolver, ResolverInterface, VkHandle};
 #[allow(unused_imports)]
 use derives::*;
 use std::ops::Deref;
