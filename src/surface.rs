@@ -305,7 +305,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
     ) -> crate::Result<()> {
         let mut res = 0;
-        let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+        let wait_semaphores = wait_semaphores.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let pinfo = VkPresentInfoKHR {
             sType: VkPresentInfoKHR::TYPE,
             pNext: std::ptr::null(),
