@@ -23,6 +23,10 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
                     #[inline]
                     fn native_ptr(&self) -> Self::Handle { self.0 }
                 }
+                impl #impl_generics crate::VkHandleMut for #name #ty_generics #where_clause {
+                    #[inline]
+                    fn native_ptr_mut(&mut self) -> Self::Handle { self.0 }
+                }
             }
         }
         _ => unimplemented!("Named Fields"),

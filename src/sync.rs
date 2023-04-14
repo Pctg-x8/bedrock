@@ -19,10 +19,10 @@ impl<Device: crate::Device> Status for FenceObject<Device> {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {
         let vr = unsafe { Resolver::get().get_fence_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr {
+        match vr.0 {
             VK_SUCCESS => Ok(true),
             VK_NOT_READY => Ok(false),
-            _ => Err(VkResultBox(vr)),
+            _ => Err(vr),
         }
     }
 }
@@ -40,10 +40,10 @@ impl<Device: crate::Device> Status for EventObject<Device> {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {
         let vr = unsafe { Resolver::get().get_event_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr {
+        match vr.0 {
             VK_EVENT_SET => Ok(true),
             VK_EVENT_RESET => Ok(false),
-            _ => Err(VkResultBox(vr)),
+            _ => Err(vr),
         }
     }
 }
@@ -61,10 +61,10 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         let vr = unsafe {
             Resolver::get().wait_for_fences(self.device().native_ptr(), 1, &self.native_ptr(), false as _, timeout)
         };
-        match vr {
+        match vr.0 {
             VK_SUCCESS => Ok(false),
             VK_TIMEOUT => Ok(true),
-            _ => Err(VkResultBox(vr)),
+            _ => Err(vr),
         }
     }
 
@@ -92,6 +92,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             Resolver::get()
                 .reset_fences(self.device().native_ptr(), 1, &self.native_ptr())
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -167,6 +168,7 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
             Resolver::get()
                 .set_event(self.device().native_ptr(), self.native_ptr())
                 .into_result()
+                .map(drop)
         }
     }
 
@@ -182,6 +184,7 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
             Resolver::get()
                 .reset_event(self.device().native_ptr(), self.native_ptr())
                 .into_result()
+                .map(drop)
         }
     }
 }

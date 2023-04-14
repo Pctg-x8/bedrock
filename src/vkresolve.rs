@@ -1233,7 +1233,7 @@ pub trait ResolverInterface {
         pImageIndex: *mut u32,
     ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_swapchain")]
-    unsafe fn queue_present_khr(&self, queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+    unsafe fn queue_present_khr(&self, queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResultBox;
 
     #[cfg(feature = "VK_KHR_xlib_surface")]
     unsafe fn create_xlib_surface_khr(

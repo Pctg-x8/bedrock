@@ -320,7 +320,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             Resolver::get()
                 .queue_present_khr(queue.native_ptr(), &pinfo)
                 .into_result()
-                .and_then(|_| res.into_result())
+                .and_then(|x| if x.0 == VK_SUCCESS { Ok(()) } else { Err(x) })
         }
     }
 
@@ -338,7 +338,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             .device()
             .extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
             .expect("No full screen exclusive extension procedure found");
-        (fp)(self.device().native_ptr(), self.native_ptr()).into_result()
+        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr())).into_result().map(drop)
     }
 
     /// Release full-screen exclusive mode from a swapchain.
@@ -348,7 +348,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             .device()
             .extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
             .expect("No full screen exclusive extension procedure found");
-        (fp)(self.device().native_ptr(), self.native_ptr()).into_result()
+        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr())).into_result().map(drop)
     }
 
     /// Obtain the array of presentable images associated with a swapchain

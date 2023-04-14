@@ -160,7 +160,7 @@ impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h mut H> {
     type Handle = <H as VkHandle>::Handle;
 
     fn native_ptr(&self) -> Self::Handle {
-        self.map_or_else(
+        self.as_ref().map_or_else(
             || unsafe { std::mem::MaybeUninit::zeroed().assume_init() },
             |x| x.native_ptr(),
         )
@@ -170,7 +170,7 @@ impl<'h, H: VkHandle + ?Sized + 'h> VkHandle for Option<&'h mut H> {
 /// Returns "Empty Handle" when trhe value is `None`.
 impl<'h, H: VkHandleMut + ?Sized + 'h> VkHandleMut for Option<&'h mut H> {
     fn native_ptr_mut(&mut self) -> Self::Handle {
-        self.map_or_else(
+        self.as_mut().map_or_else(
             || unsafe { std::mem::MaybeUninit::zeroed().assume_init() },
             |x| x.native_ptr_mut(),
         )
