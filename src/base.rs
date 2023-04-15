@@ -195,7 +195,7 @@ impl InstanceBuilder {
     /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
     /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
     #[cfg(feature = "Implements")]
-    pub fn create(&mut self) -> crate::Result<InstanceObject> {
+    pub fn create(mut self) -> crate::Result<InstanceObject> {
         // construct ext chains
         if !self.ext_structures.is_empty() {
             for n in 0..self.ext_structures.len() - 1 {
@@ -446,6 +446,11 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     }
 }
 DerefContainerBracketImpl!(for Instance {});
+impl<T> Instance for &'_ mut T where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
+impl<T> Instance for std::sync::RwLockWriteGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
+impl<T> Instance for std::sync::MutexGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
+impl<T> Instance for parking_lot::MutexGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
+impl<T> Instance for parking_lot::RwLockWriteGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
 
 /// A PhysicalDevice interface
 pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {

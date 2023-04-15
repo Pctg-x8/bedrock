@@ -1,6 +1,6 @@
 //! Vulkan Commands
 
-use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
+use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -53,7 +53,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBufferObject<Self::ConcreteDevice>>> {
+    fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBufferObject<Self::ConcreteDevice>>> where Self: VkHandleMut {
         let ainfo = VkCommandBufferAllocateInfo {
             sType: VkCommandBufferAllocateInfo::TYPE,
             pNext: std::ptr::null(),
@@ -63,7 +63,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
             } else {
                 VK_COMMAND_BUFFER_LEVEL_SECONDARY
             },
-            commandPool: self.native_ptr(),
+            commandPool: self.native_ptr_mut(),
         };
         let mut hs = vec![VK_NULL_HANDLE as _; count as _];
         unsafe {
@@ -83,7 +83,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn reset(&mut self, release_resources: bool) -> crate::Result<()> {
+    fn reset(&mut self, release_resources: bool) -> crate::Result<()> where Self: VkHandleMut {
         let flags = if release_resources {
             VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT
         } else {
@@ -91,7 +91,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
         };
         unsafe {
             Resolver::get()
-                .reset_command_pool(self.device().native_ptr(), self.native_ptr(), flags)
+                .reset_command_pool(self.device().native_ptr(), self.native_ptr_mut(), flags)
                 .into_result()
                 .map(drop)
         }
@@ -101,10 +101,10 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     /// # Safety
     /// Each member of `buffers` must be externally synchronized
     #[cfg(feature = "Implements")]
-    unsafe fn free(&mut self, buffers: &[impl CommandBuffer]) {
+    unsafe fn free(&mut self, buffers: &[impl CommandBuffer]) where Self: VkHandleMut {
         Resolver::get().free_command_buffers(
             self.device().native_ptr(),
-            self.native_ptr(),
+            self.native_ptr_mut(),
             buffers.len() as _,
             buffers.as_ptr() as *const _,
         );

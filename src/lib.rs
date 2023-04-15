@@ -128,7 +128,13 @@ where
 {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for std::cell::RefCell<T>
+impl<T> VkObject for std::cell::Ref<'_, T>
+where
+    T: VkObject + ?Sized,
+{
+    const TYPE: VkObjectType = T::TYPE;
+}
+impl<T> VkObject for std::cell::RefMut<'_, T>
 where
     T: VkObject + ?Sized,
 {
