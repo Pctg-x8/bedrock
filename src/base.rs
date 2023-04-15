@@ -27,7 +27,7 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
 
 /// Opaque handle to a instance object
 #[derive(VkHandle, VkObject)]
-#[object_type = "VK_OBJECT_TYPE_INSTANCE"]
+#[VkObject(type = VK_OBJECT_TYPE_INSTANCE)]
 #[repr(transparent)]
 pub struct InstanceObject(VkInstance);
 unsafe impl Sync for InstanceObject {}
@@ -52,7 +52,7 @@ impl Instance for InstanceObject {}
 /// * `win32_presentation_support(&self, queue_family: u32) -> bool`: VK_KHR_win32_surface
 /// * Methods for Android and Mir surfaces are not implemented
 #[derive(VkHandle, VkObject, crate::InstanceChild, crate::InstanceChildTransferrable)]
-#[object_type = "VK_OBJECT_TYPE_PHYSICAL_DEVICE"]
+#[VkObject(type = VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
 pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, #[parent] Owner);
 unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}

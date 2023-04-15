@@ -9,7 +9,7 @@ pub const VK_MAX_DEVICE_GROUP_SIZE_KHX: usize = VK_MAX_DEVICE_GROUP_SIZE;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHX)]
 pub struct VkPhysicalDeviceGroupPropertiesKHX {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -20,7 +20,7 @@ pub struct VkPhysicalDeviceGroupPropertiesKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHX)]
 pub struct VkDeviceGroupDeviceCreateInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

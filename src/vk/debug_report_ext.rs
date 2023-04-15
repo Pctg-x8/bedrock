@@ -58,7 +58,7 @@ pub const VK_DEBUG_REPORT_DEBUG_BIT_EXT: VkDebugReportFlagsEXT = 0x10;
 
 #[repr(C)]
 #[derive(Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT)]
 pub struct VkDebugReportCallbackCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

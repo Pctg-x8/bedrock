@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT)]
 pub struct VkImportMemoryHostPointerInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -17,7 +17,7 @@ pub struct VkImportMemoryHostPointerInfoEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT)]
 pub struct VkMemoryHostPointerPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -26,7 +26,7 @@ pub struct VkMemoryHostPointerPropertiesEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

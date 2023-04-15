@@ -13,7 +13,7 @@ pub type VkPipelineDiscardRectangleStateCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceDiscardRectanglePropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -22,7 +22,7 @@ pub struct VkPhysicalDeviceDiscardRectanglePropertiesEXT {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

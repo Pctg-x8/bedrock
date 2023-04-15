@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR)]
 pub struct VkImportFenceFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -19,7 +19,7 @@ pub struct VkImportFenceFdInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR)]
 pub struct VkFenceGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

@@ -14,7 +14,7 @@ pub struct VkXYColorEXT {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_HDR_METADATA_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_HDR_METADATA_EXT)]
 pub struct VkHdrMetadataEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

@@ -4,7 +4,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR)]
 pub struct VkDisplayPresentInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

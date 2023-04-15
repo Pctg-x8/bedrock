@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD)]
 pub struct VkTextureLODGatherFormatPropertiesAMD {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

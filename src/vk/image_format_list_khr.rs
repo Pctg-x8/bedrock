@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR)]
 pub struct VkImageFormatListCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

@@ -15,7 +15,7 @@ pub const VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT: VkFullScreenExclu
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT)]
 pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -25,7 +25,7 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
 #[cfg(windows)]
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT)]
 pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -34,7 +34,7 @@ pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT)]
 pub struct VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

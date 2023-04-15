@@ -41,7 +41,7 @@ pub const VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX: VkObjectEntryUsageFlagsNVX = 0x
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX)]
 pub struct VkDeviceGeneratedCommandsFeaturesNVX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -50,7 +50,7 @@ pub struct VkDeviceGeneratedCommandsFeaturesNVX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX)]
 pub struct VkDeviceGeneratedCommandsLimitsNVX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -80,7 +80,7 @@ pub struct VkIndirectCommandsLayoutTokenNVX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX)]
 pub struct VkIndirectCommandsLayoutCreateInfoNVX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -92,7 +92,7 @@ pub struct VkIndirectCommandsLayoutCreateInfoNVX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX)]
 pub struct VkCmdProcessCommandsInfoNVX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -110,7 +110,7 @@ pub struct VkCmdProcessCommandsInfoNVX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX)]
 pub struct VkCmdReserveSpaceForCommandsInfoNVX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -121,7 +121,7 @@ pub struct VkCmdReserveSpaceForCommandsInfoNVX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX)]
 pub struct VkObjectTableCreateInfoNVX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

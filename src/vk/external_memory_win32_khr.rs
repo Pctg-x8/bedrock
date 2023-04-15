@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -18,7 +18,7 @@ pub struct VkImportMemoryWin32HandleInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkExportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -29,7 +29,7 @@ pub struct VkExportMemoryWin32HandleInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR)]
 pub struct VkMemoryWin32HandlePropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -38,7 +38,7 @@ pub struct VkMemoryWin32HandlePropertiesKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR)]
 pub struct VkMemoryGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

@@ -11,7 +11,7 @@ pub const VK_RASTERIZATION_ORDER_RELAXED_AMD: VkRasterizationOrderAMD = 1;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD)]
 pub struct VkPipelineRasterizationStateRasterizationOrderAMD {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

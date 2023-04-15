@@ -10,7 +10,7 @@ pub const VK_SURFACE_COUNTER_VBLANK_EXT: VkSurfaceCounterFlagsEXT = 0x01;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT)]
 pub struct VkSurfaceCapabilities2EXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

@@ -16,7 +16,7 @@ DefineStdDeviceChildObject! {
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle, VkObject, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
+#[VkObject(type = VK_OBJECT_TYPE_FRAMEBUFFER)]
 pub struct FramebufferObject<Device: crate::Device, ImageView: crate::ImageView>(
     pub(crate) VkFramebuffer,
     #[parent] pub(crate) Device,

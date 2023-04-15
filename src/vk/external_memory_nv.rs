@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV)]
 pub struct VkExternalMemoryImageCreateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -16,7 +16,7 @@ pub struct VkExternalMemoryImageCreateInfoNV {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_NV)]
 pub struct VkExportMemoryAllocateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

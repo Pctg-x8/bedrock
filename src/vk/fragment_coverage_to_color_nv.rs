@@ -9,7 +9,7 @@ pub type VkPipelineCoverageToColorStateCreateFlagsNV = VkFlags;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV)]
 pub struct VkPipelineCoverageToColorStateCreateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

@@ -49,7 +49,7 @@ pub struct VkDisplayModePropertiesKHR {
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR)]
 pub struct VkDisplayModeCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -78,7 +78,7 @@ pub struct VkDisplayPlanePropertiesKHR {
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR)]
 pub struct VkDisplaySurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

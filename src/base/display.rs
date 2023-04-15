@@ -9,12 +9,12 @@ use derives::*;
 use std::ops::Deref;
 
 #[derive(VkHandle, VkObject)]
-#[object_type = "VK_OBJECT_TYPE_DISPLAY_KHR"]
+#[VkObject(type = VK_OBJECT_TYPE_DISPLAY_KHR)]
 pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub(crate) VkDisplayKHR, pub(crate) PhysicalDevice);
 
 #[repr(transparent)]
 #[derive(VkHandle, VkObject)]
-#[object_type = "VK_OBJECT_TYPE_DISPLAY_MODE_KHR"]
+#[VkObject(type = VK_OBJECT_TYPE_DISPLAY_MODE_KHR)]
 pub struct DisplayMode(pub(crate) VkDisplayModeKHR);
 
 impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {

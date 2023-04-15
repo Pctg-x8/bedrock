@@ -1,5 +1,6 @@
 use proc_macro::TokenStream;
 use quote::*;
+use syn::Expr;
 
 #[proc_macro_derive(VkHandle)]
 pub fn derive_handle(tok: TokenStream) -> TokenStream {
@@ -35,16 +36,21 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
     TokenStream::from(implement)
 }
 
-#[proc_macro_derive(VkObject, attributes(object_type))]
+#[proc_macro_derive(VkObject, attributes(VkObject))]
 pub fn derive_object(tok: TokenStream) -> TokenStream {
     let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
     let name = &input.ident;
-    let object_type_attr = input
-        .attrs
-        .iter()
-        .find(|a| a.meta.path().is_ident("object_type"))
-        .expect("object_type required");
-    let object_type = &object_type_attr.meta.require_name_value().expect("object_type requires name-value form").value;
+    let object_attrs = input.attrs.iter().find(|a| a.path().is_ident("VkObject")).expect("VkObject attribute required");
+    let mut object_type = None;
+    object_attrs.parse_nested_meta(|meta| {
+        if meta.path.is_ident("type") {
+            object_type = Some(meta.value()?.parse::<Expr>()?);
+            return Ok(());
+        }
+
+        Err(meta.error("unknown attrs"))
+    }).expect("Failed to parse VkObject inner");
+    let object_type = object_type.expect("No object type specified");
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
     TokenStream::from(quote! {
@@ -192,13 +198,22 @@ pub fn derive_device_child_transferrable(tok: TokenStream) -> TokenStream {
     })
 }
 
-#[proc_macro_derive(VulkanStructure, attributes(structure_type))]
+#[proc_macro_derive(VulkanStructure, attributes(VulkanStructure))]
 pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
     let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let ty_attr = input.attrs.iter().find(|a| a.path().is_ident("structure_type")).expect("structure_type required");
-    let ty = &ty_attr.meta.require_name_value().expect("expected #[structure_type = \"...\"]").value;
+    let attrs = input.attrs.iter().find(|a| a.path().is_ident("VulkanStructure")).expect("VulkanStructure requried");
+    let mut ty = None;
+    attrs.parse_nested_meta(|meta| {
+        if meta.path.is_ident("type") {
+            ty = Some(meta.value()?.parse::<Expr>()?);
+            return Ok(());
+        }
+
+        Err(meta.error("unknown attribute"))
+    }).expect("Failed to parse VulkanStructure inner meta");
+    let ty = ty.expect("No type specified");
     // TODO: some checks here......
 
     TokenStream::from(quote! {

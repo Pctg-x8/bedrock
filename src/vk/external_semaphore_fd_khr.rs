@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR)]
 pub struct VkImportSemaphoreFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -19,7 +19,7 @@ pub struct VkImportSemaphoreFdInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR)]
 pub struct VkSemaphoreGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

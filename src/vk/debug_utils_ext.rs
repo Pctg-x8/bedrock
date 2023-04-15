@@ -32,7 +32,7 @@ pub type VkDebugUtilsMessenegerCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT)]
 pub struct VkDebugUtilsLabelEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -42,7 +42,7 @@ pub struct VkDebugUtilsLabelEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT)]
 pub struct VkDebugUtilsObjectNameInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -53,7 +53,7 @@ pub struct VkDebugUtilsObjectNameInfoEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT)]
 pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

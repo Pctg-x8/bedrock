@@ -14,7 +14,7 @@ pub type VkPipelineRasterizationConservativeStateCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -31,7 +31,7 @@ pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

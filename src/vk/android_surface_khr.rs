@@ -11,7 +11,7 @@ pub type VkAndroidSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR)]
 pub struct VkAndroidSurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

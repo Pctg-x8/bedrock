@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV)]
 pub struct VkDedicatedAllocationImageCreateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -16,7 +16,7 @@ pub struct VkDedicatedAllocationImageCreateInfoNV {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV)]
 pub struct VkDedicatedAllocationBufferCreateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -25,7 +25,7 @@ pub struct VkDedicatedAllocationBufferCreateInfoNV {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV)]
 pub struct VkDedicatedAllocationMemoryAllocateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

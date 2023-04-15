@@ -15,7 +15,7 @@ pub type VkPipelineCoverageModulationStateCreateFlagsNV = VkFlags;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV)]
 pub struct VkPipelineCoverageModulationStateCreateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

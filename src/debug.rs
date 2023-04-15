@@ -14,7 +14,7 @@ cfg_if::cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_report")] {
         /// Opaque object to a debug report callback object
         #[derive(VkHandle, VkObject, InstanceChild)]
-        #[object_type = "VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT"]
+        #[VkObject(type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
         pub struct DebugReportCallbackObject<Instance: crate::Instance>(
             pub(crate) VkDebugReportCallbackEXT,
             #[parent] pub(crate) Instance,
@@ -96,7 +96,7 @@ cfg_if::cfg_if! {
         pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
 
         #[derive(VkHandle, VkObject, InstanceChild)]
-        #[object_type = "VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT"]
+        #[VkObject(type = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT)]
         pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(
             VkDebugUtilsMessengerEXT,
             #[parent] Instance,

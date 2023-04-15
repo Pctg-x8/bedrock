@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT)]
 pub struct VkDebugMarkerObjectNameInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -17,7 +17,7 @@ pub struct VkDebugMarkerObjectNameInfoEXT {
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT)]
 pub struct VkDebugMarkerObjectTagInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -29,7 +29,7 @@ pub struct VkDebugMarkerObjectTagInfoEXT {
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT)]
 pub struct VkDebugMarkerMarkerInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

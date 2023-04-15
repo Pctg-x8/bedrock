@@ -9,7 +9,7 @@ pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK)]
 pub struct VkIOSSurfaceCreateInfoMVK {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

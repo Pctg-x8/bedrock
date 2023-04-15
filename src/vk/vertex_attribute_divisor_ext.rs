@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -23,7 +23,7 @@ pub struct VkVertexInputBindingDivisorDescriptionEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineVertexInputDivisorStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

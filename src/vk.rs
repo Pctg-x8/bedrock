@@ -1276,7 +1276,7 @@ pub type PFN_vkVoidFunction = extern "system" fn();
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_APPLICATION_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_APPLICATION_INFO)]
 pub struct VkApplicationInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1289,7 +1289,7 @@ pub struct VkApplicationInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)]
 pub struct VkInstanceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1622,7 +1622,7 @@ impl Clone for VkPhysicalDeviceMemoryProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)]
 pub struct VkDeviceQueueCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1634,7 +1634,7 @@ pub struct VkDeviceQueueCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)]
 pub struct VkDeviceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1666,7 +1666,7 @@ pub struct VkLayerProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SUBMIT_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBMIT_INFO)]
 pub struct VkSubmitInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1681,7 +1681,7 @@ pub struct VkSubmitInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO)]
 pub struct VkMemoryAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1691,7 +1691,7 @@ pub struct VkMemoryAllocateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE)]
 pub struct VkMappedMemoryRange {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1805,7 +1805,7 @@ pub struct VkSparseImageMemoryBindInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_SPARSE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO)]
 pub struct VkBindSparseInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1823,7 +1823,7 @@ pub struct VkBindSparseInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_FENCE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO)]
 pub struct VkFenceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1832,7 +1832,7 @@ pub struct VkFenceCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO)]
 pub struct VkSemaphoreCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1841,7 +1841,7 @@ pub struct VkSemaphoreCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EVENT_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO)]
 pub struct VkEventCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1850,7 +1850,7 @@ pub struct VkEventCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO)]
 pub struct VkQueryPoolCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1862,7 +1862,7 @@ pub struct VkQueryPoolCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO)]
 pub struct VkBufferCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1876,7 +1876,7 @@ pub struct VkBufferCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO)]
 pub struct VkBufferViewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1889,7 +1889,7 @@ pub struct VkBufferViewCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)]
 pub struct VkImageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1949,7 +1949,7 @@ pub struct VkImageSubresourceRange {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)]
 pub struct VkImageViewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1963,7 +1963,7 @@ pub struct VkImageViewCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)]
 pub struct VkShaderModuleCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -1974,7 +1974,7 @@ pub struct VkShaderModuleCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO)]
 pub struct VkPipelineCacheCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2002,7 +2002,7 @@ pub struct VkSpecializationInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)]
 pub struct VkPipelineShaderStageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2032,7 +2032,7 @@ pub struct VkVertexInputAttributeDescription {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)]
 pub struct VkPipelineVertexInputStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2045,7 +2045,7 @@ pub struct VkPipelineVertexInputStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)]
 pub struct VkPipelineInputAssemblyStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2056,7 +2056,7 @@ pub struct VkPipelineInputAssemblyStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO)]
 pub struct VkPipelineTessellationStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2098,7 +2098,7 @@ pub struct VkRect2D {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)]
 pub struct VkPipelineViewportStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2111,7 +2111,7 @@ pub struct VkPipelineViewportStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO)]
 pub struct VkPipelineRasterizationStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2130,7 +2130,7 @@ pub struct VkPipelineRasterizationStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)]
 pub struct VkPipelineMultisampleStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2157,7 +2157,7 @@ pub struct VkStencilOpState {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO)]
 pub struct VkPipelineDepthStencilStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2188,7 +2188,7 @@ pub struct VkPipelineColorBlendAttachmentState {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO)]
 pub struct VkPipelineColorBlendStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2202,7 +2202,7 @@ pub struct VkPipelineColorBlendStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO)]
 pub struct VkPipelineDynamicStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2213,7 +2213,7 @@ pub struct VkPipelineDynamicStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO)]
 pub struct VkGraphicsPipelineCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2238,7 +2238,7 @@ pub struct VkGraphicsPipelineCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO)]
 pub struct VkComputePipelineCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2259,7 +2259,7 @@ pub struct VkPushConstantRange {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)]
 pub struct VkPipelineLayoutCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2272,7 +2272,7 @@ pub struct VkPipelineLayoutCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO)]
 pub struct VkSamplerCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2306,7 +2306,7 @@ pub struct VkDescriptorSetLayoutBinding {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)]
 pub struct VkDescriptorSetLayoutCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2324,7 +2324,7 @@ pub struct VkDescriptorPoolSize {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO)]
 pub struct VkDescriptorPoolCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2336,7 +2336,7 @@ pub struct VkDescriptorPoolCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO)]
 pub struct VkDescriptorSetAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2363,7 +2363,7 @@ pub struct VkDescriptorBufferInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET)]
 pub struct VkWriteDescriptorSet {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2379,7 +2379,7 @@ pub struct VkWriteDescriptorSet {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET)]
 pub struct VkCopyDescriptorSet {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2394,7 +2394,7 @@ pub struct VkCopyDescriptorSet {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)]
 pub struct VkFramebufferCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2550,7 +2550,7 @@ pub struct VkSubpassDependency {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)]
 pub struct VkRenderPassCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2565,7 +2565,7 @@ pub struct VkRenderPassCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO)]
 pub struct VkCommandPoolCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2575,7 +2575,7 @@ pub struct VkCommandPoolCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)]
 pub struct VkCommandBufferAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2586,7 +2586,7 @@ pub struct VkCommandBufferAllocateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO)]
 pub struct VkCommandBufferInheritanceInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2600,7 +2600,7 @@ pub struct VkCommandBufferInheritanceInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)]
 pub struct VkCommandBufferBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2715,7 +2715,7 @@ pub struct VkImageResolve {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_BARRIER"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_BARRIER)]
 pub struct VkMemoryBarrier {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2725,7 +2725,7 @@ pub struct VkMemoryBarrier {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER)]
 pub struct VkBufferMemoryBarrier {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2740,7 +2740,7 @@ pub struct VkBufferMemoryBarrier {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER)]
 pub struct VkImageMemoryBarrier {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -2756,7 +2756,7 @@ pub struct VkImageMemoryBarrier {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)]
 pub struct VkRenderPassBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4264,7 +4264,7 @@ pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT: VkExternalSemaphoreFeatu
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES)]
 pub struct VkPhysicalDeviceSubgroupProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4276,7 +4276,7 @@ pub struct VkPhysicalDeviceSubgroupProperties {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO)]
 pub struct VkBindBufferMemoryInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4287,7 +4287,7 @@ pub struct VkBindBufferMemoryInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO)]
 pub struct VkBindImageMemoryInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4298,7 +4298,7 @@ pub struct VkBindImageMemoryInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES)]
 pub struct VkPhysicalDevice16BitStorageFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4310,7 +4310,7 @@ pub struct VkPhysicalDevice16BitStorageFeatures {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS)]
 pub struct VkMemoryDedicatedRequirements {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4320,7 +4320,7 @@ pub struct VkMemoryDedicatedRequirements {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO)]
 pub struct VkMemoryDedicatedAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4330,7 +4330,7 @@ pub struct VkMemoryDedicatedAllocateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO)]
 pub struct VkMemoryAllocateFlagsInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4340,7 +4340,7 @@ pub struct VkMemoryAllocateFlagsInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO)]
 pub struct VkDeviceGroupRenderPassBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4351,7 +4351,7 @@ pub struct VkDeviceGroupRenderPassBeginInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO)]
 pub struct VkDeviceGroupCommandBufferBeginInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4360,7 +4360,7 @@ pub struct VkDeviceGroupCommandBufferBeginInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO)]
 pub struct VkDeviceGroupSubmitInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4374,7 +4374,7 @@ pub struct VkDeviceGroupSubmitInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO)]
 pub struct VkDeviceGroupBindSparseInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4384,7 +4384,7 @@ pub struct VkDeviceGroupBindSparseInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO)]
 pub struct VkBindBufferMemoryDeviceGroupInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4394,7 +4394,7 @@ pub struct VkBindBufferMemoryDeviceGroupInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO)]
 pub struct VkBindImageMemoryDeviceGroupInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4406,7 +4406,7 @@ pub struct VkBindImageMemoryDeviceGroupInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES)]
 pub struct VkPhysicalDeviceGroupProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4417,7 +4417,7 @@ pub struct VkPhysicalDeviceGroupProperties {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO)]
 pub struct VkDeviceGroupDeviceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4427,7 +4427,7 @@ pub struct VkDeviceGroupDeviceCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2)]
 pub struct VkBufferMemoryRequirementsInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4436,7 +4436,7 @@ pub struct VkBufferMemoryRequirementsInfo2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2)]
 pub struct VkImageMemoryRequirementsInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4445,7 +4445,7 @@ pub struct VkImageMemoryRequirementsInfo2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2)]
 pub struct VkImageSparseMemoryRequirementsInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4454,7 +4454,7 @@ pub struct VkImageSparseMemoryRequirementsInfo2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2)]
 pub struct VkMemoryRequirements2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4463,7 +4463,7 @@ pub struct VkMemoryRequirements2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2)]
 pub struct VkSparseImageMemoryRequirements2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4472,7 +4472,7 @@ pub struct VkSparseImageMemoryRequirements2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2)]
 pub struct VkPhysicalDeviceFeatures2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4481,7 +4481,7 @@ pub struct VkPhysicalDeviceFeatures2 {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2)]
 pub struct VkPhysicalDeviceProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4490,7 +4490,7 @@ pub struct VkPhysicalDeviceProperties2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2)]
 pub struct VkFormatProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4499,7 +4499,7 @@ pub struct VkFormatProperties2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2)]
 pub struct VkImageFormatProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4508,7 +4508,7 @@ pub struct VkImageFormatProperties2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2)]
 pub struct VkPhysicalDeviceImageFormatInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4521,7 +4521,7 @@ pub struct VkPhysicalDeviceImageFormatInfo2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2)]
 pub struct VkQueueFamilyProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4530,7 +4530,7 @@ pub struct VkQueueFamilyProperties2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2)]
 pub struct VkPhysicalDeviceMemoryProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4539,7 +4539,7 @@ pub struct VkPhysicalDeviceMemoryProperties2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2)]
 pub struct VkSparseImageFormatProperties2 {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4548,7 +4548,7 @@ pub struct VkSparseImageFormatProperties2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2)]
 pub struct VkPhysicalDeviceSparseImageFormatInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4561,7 +4561,7 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2 {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES)]
 pub struct VkPhysicalDevicePointClippingProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4578,7 +4578,7 @@ pub struct VkInputAttachmentAspectReference {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO)]
 pub struct VkRenderPassInputAttachmentAspectCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4588,7 +4588,7 @@ pub struct VkRenderPassInputAttachmentAspectCreateInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO)]
 pub struct VkImageViewUsageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4597,7 +4597,7 @@ pub struct VkImageViewUsageCreateInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO)]
 pub struct VkPipelineTessellationDomainOriginStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4606,7 +4606,7 @@ pub struct VkPipelineTessellationDomainOriginStateCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO)]
 pub struct VkRenderPassMultiviewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4620,7 +4620,7 @@ pub struct VkRenderPassMultiviewCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES)]
 pub struct VkPhysicalDeviceMultiviewFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4631,7 +4631,7 @@ pub struct VkPhysicalDeviceMultiviewFeatures {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES)]
 pub struct VkPhysicalDeviceMultiviewProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4641,7 +4641,7 @@ pub struct VkPhysicalDeviceMultiviewProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES)]
 pub struct VkPhysicalDeviceVariablePointerFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4651,7 +4651,7 @@ pub struct VkPhysicalDeviceVariablePointerFeatures {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES)]
 pub struct VkPhysicalDeviceProtectedMemoryFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4660,7 +4660,7 @@ pub struct VkPhysicalDeviceProtectedMemoryFeatures {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES)]
 pub struct VkPhysicalDeviceProtectedMemoryProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4669,7 +4669,7 @@ pub struct VkPhysicalDeviceProtectedMemoryProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2)]
 pub struct VkDeviceQueueInfo2 {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4680,7 +4680,7 @@ pub struct VkDeviceQueueInfo2 {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO)]
 pub struct VkProtectedSubmitInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4689,7 +4689,7 @@ pub struct VkProtectedSubmitInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO)]
 pub struct VkSamplerYcbcrConversionCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4705,7 +4705,7 @@ pub struct VkSamplerYcbcrConversionCreateInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO)]
 pub struct VkSamplerYcbcrConversionInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4714,7 +4714,7 @@ pub struct VkSamplerYcbcrConversionInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO)]
 pub struct VkBindImagePlaneMemoryInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4723,7 +4723,7 @@ pub struct VkBindImagePlaneMemoryInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO)]
 pub struct VkImagePlaneMemoryRequirementsInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4732,7 +4732,7 @@ pub struct VkImagePlaneMemoryRequirementsInfo {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES)]
 pub struct VkPhysicalDeviceSamplerYcbcrConversionFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4741,7 +4741,7 @@ pub struct VkPhysicalDeviceSamplerYcbcrConversionFeatures {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES)]
 pub struct VkSamplerYcbcrConversionImageFormatProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4761,7 +4761,7 @@ pub struct VkDescriptorUpdateTemplateEntry {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO)]
 pub struct VkDescriptorUpdateTemplateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4785,7 +4785,7 @@ pub struct VkExternalMemoryProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO)]
 pub struct VkPhysicalDeviceExternalImageFormatInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4794,7 +4794,7 @@ pub struct VkPhysicalDeviceExternalImageFormatInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES)]
 pub struct VkExternalImageFormatProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4803,7 +4803,7 @@ pub struct VkExternalImageFormatProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO)]
 pub struct VkPhysicalDeviceExternalBufferInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4814,7 +4814,7 @@ pub struct VkPhysicalDeviceExternalBufferInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES)]
 pub struct VkExternalBufferProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4823,7 +4823,7 @@ pub struct VkExternalBufferProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES)]
 pub struct VkPhysicalDeviceIDProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4836,7 +4836,7 @@ pub struct VkPhysicalDeviceIDProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO)]
 pub struct VkExternalMemoryImageCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4845,7 +4845,7 @@ pub struct VkExternalMemoryImageCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO)]
 pub struct VkExternalMemoryBufferCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4854,7 +4854,7 @@ pub struct VkExternalMemoryBufferCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO)]
 pub struct VkExportMemoryAllocateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4863,7 +4863,7 @@ pub struct VkExportMemoryAllocateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO)]
 pub struct VkPhysicalDeviceExternalFenceInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4872,7 +4872,7 @@ pub struct VkPhysicalDeviceExternalFenceInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES)]
 pub struct VkExternalFenceProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4883,7 +4883,7 @@ pub struct VkExternalFenceProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO)]
 pub struct VkExportFenceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4892,7 +4892,7 @@ pub struct VkExportFenceCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO)]
 pub struct VkExportSemaphoreCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4901,7 +4901,7 @@ pub struct VkExportSemaphoreCreateInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO)]
 pub struct VkPhysicalDeviceExternalSemaphoreInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -4910,7 +4910,7 @@ pub struct VkPhysicalDeviceExternalSemaphoreInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES)]
 pub struct VkExternalSemaphoreProperties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4921,7 +4921,7 @@ pub struct VkExternalSemaphoreProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES)]
 pub struct VkPhysicalDeviceMaintenance3Properties {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4931,7 +4931,7 @@ pub struct VkPhysicalDeviceMaintenance3Properties {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT)]
 pub struct VkDescriptorSetLayoutSupport {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -4940,7 +4940,7 @@ pub struct VkDescriptorSetLayoutSupport {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES)]
 pub struct VkPhysicalDeviceShaderDrawParameterFeatures {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

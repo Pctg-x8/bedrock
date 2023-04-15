@@ -9,7 +9,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR)]
 pub struct VkPhysicalDeviceSurfaceInfo2KHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -18,7 +18,7 @@ pub struct VkPhysicalDeviceSurfaceInfo2KHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR)]
 pub struct VkSurfaceCapabilities2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -27,7 +27,7 @@ pub struct VkSurfaceCapabilities2KHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR)]
 pub struct VkSurfaceFormat2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

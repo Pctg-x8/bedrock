@@ -30,7 +30,7 @@ pub struct VkPresentTimeGOOGLE {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE)]
 pub struct VkPresentTimesInfoGOOGLE {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

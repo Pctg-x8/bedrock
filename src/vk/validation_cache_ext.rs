@@ -20,7 +20,7 @@ pub type VkValidationCacheCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT)]
 pub struct VkValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -31,7 +31,7 @@ pub struct VkValidationCacheCreateInfoEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT)]
 pub struct VkShaderModuleValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

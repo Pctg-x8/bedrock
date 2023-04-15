@@ -18,7 +18,7 @@ pub const VK_SWAPCHAIN_CREATE_BIND_SFR_BIT_KHX: VkSwapchainCreateFlagsKHR = 0x01
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR)]
 pub struct VkSwapchainCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -42,7 +42,7 @@ pub struct VkSwapchainCreateInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PRESENT_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR)]
 pub struct VkPresentInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

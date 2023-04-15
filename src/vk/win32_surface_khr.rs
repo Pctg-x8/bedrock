@@ -9,7 +9,7 @@ pub type VkWin32SurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR)]
 pub struct VkWin32SurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

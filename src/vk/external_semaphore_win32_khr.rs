@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportSemaphoreWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -20,7 +20,7 @@ pub struct VkImportSemaphoreWin32HandleInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR)]
 pub struct VkExportSemaphoreWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -31,7 +31,7 @@ pub struct VkExportSemaphoreWin32HandleInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR)]
 pub struct VkD3D12FenceSubmitInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -43,7 +43,7 @@ pub struct VkD3D12FenceSubmitInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR)]
 pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

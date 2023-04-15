@@ -14,7 +14,7 @@ pub struct VkViewportWScalingNV {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV)]
 pub struct VkPipelineViewportWScalingStateCreateInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

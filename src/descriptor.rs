@@ -338,7 +338,7 @@ macro_rules! DescriptorUpdateTemplateEntries
 }
 
 #[derive(VkHandle, VkObject, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE"]
+#[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE)]
 pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
     pub(crate) VkDescriptorUpdateTemplate,
     #[parent] pub(crate) Device,

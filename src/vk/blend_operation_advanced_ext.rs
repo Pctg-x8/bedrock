@@ -12,7 +12,7 @@ pub const VK_BLEND_OVERLAP_CONJOINT_EXT: VkBlendOverlapEXT = 2;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT)]
 pub struct VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -21,7 +21,7 @@ pub struct VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -35,7 +35,7 @@ pub struct VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineColorBlendAdvancedStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

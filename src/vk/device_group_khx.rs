@@ -14,7 +14,7 @@ pub const VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHX: VkDeviceGroup
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHX)]
 pub struct VkBindBufferMemoryInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -27,7 +27,7 @@ pub struct VkBindBufferMemoryInfoKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHX)]
 pub struct VkBindImageMemoryInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -42,7 +42,7 @@ pub struct VkBindImageMemoryInfoKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHX)]
 pub struct VkDeviceGroupPresentCapabilitiesKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -52,7 +52,7 @@ pub struct VkDeviceGroupPresentCapabilitiesKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHX)]
 pub struct VkImageSwapchainCreateInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -61,7 +61,7 @@ pub struct VkImageSwapchainCreateInfoKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHX)]
 pub struct VkBindImageMemorySwapchainInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -71,7 +71,7 @@ pub struct VkBindImageMemorySwapchainInfoKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHX)]
 pub struct VkAcquireNextImageInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -84,7 +84,7 @@ pub struct VkAcquireNextImageInfoKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHX)]
 pub struct VkDeviceGroupPresentInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -95,7 +95,7 @@ pub struct VkDeviceGroupPresentInfoKHX {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX)]
 pub struct VkDeviceGroupSwapchainCreateInfoKHX {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

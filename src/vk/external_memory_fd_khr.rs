@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR)]
 pub struct VkImportMemoryFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -17,7 +17,7 @@ pub struct VkImportMemoryFdInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR)]
 pub struct VkMemoryFdPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -26,7 +26,7 @@ pub struct VkMemoryFdPropertiesKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR)]
 pub struct VkMemoryGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

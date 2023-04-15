@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_NV)]
 pub struct VkImportMemoryWin32HandleInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -17,7 +17,7 @@ pub struct VkImportMemoryWin32HandleInfoNV {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_NV)]
 pub struct VkExportMemoryWin32HandleInfoNV {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

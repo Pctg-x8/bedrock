@@ -14,7 +14,7 @@ pub struct VkSampleLocationEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT)]
 pub struct VkSampleLocationsInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -39,7 +39,7 @@ pub struct VkSubpassSampleLocationsEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT)]
 pub struct VkRenderPassSampleLocationsBeginInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -51,7 +51,7 @@ pub struct VkRenderPassSampleLocationsBeginInfoEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -61,7 +61,7 @@ pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -74,7 +74,7 @@ pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
 
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT)]
 pub struct VkMultisamplePropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

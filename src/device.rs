@@ -12,7 +12,7 @@ use crate::{TemporalSubmissionBatchResources, VkHandle};
 
 /// Opaque handle to a device object
 #[derive(VkHandle, VkObject, InstanceChild)]
-#[object_type = "VK_OBJECT_TYPE_DEVICE"]
+#[VkObject(type = VK_OBJECT_TYPE_DEVICE)]
 pub struct DeviceObject<Instance: crate::Instance>(VkDevice, #[parent] Instance);
 unsafe impl<Instance: crate::Instance + Sync> Sync for DeviceObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for DeviceObject<Instance> {}
@@ -38,7 +38,7 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
 
 /// Opaque handle to a queue object
 #[derive(Clone, VkHandle, VkObject, crate::DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_QUEUE"]
+#[VkObject(type = VK_OBJECT_TYPE_QUEUE)]
 pub struct QueueObject<Device: crate::Device>(VkQueue, #[parent] Device);
 unsafe impl<Device: crate::Device + Sync> Sync for QueueObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for QueueObject<Device> {}
@@ -1454,6 +1454,7 @@ where
 
 pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// Wait for a object to become idle
+    #[cfg(feature = "Implements")]
     fn wait(&mut self) -> crate::Result<()>
     where
         Self: VkHandleMut,
@@ -1473,6 +1474,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    #[cfg(feature = "Implements")]
     fn bind_sparse(
         &mut self,
         batches: &[impl SparseBindingOpBatch],
@@ -1493,6 +1495,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    #[cfg(feature = "Implements")]
     fn bind_sparse_raw(
         &mut self,
         batches: &[VkBindSparseInfo],
@@ -1521,6 +1524,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    #[cfg(feature = "Implements")]
     fn submit(
         &mut self,
         batches: &[impl SubmissionBatch],
@@ -1552,6 +1556,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    #[cfg(feature = "Implements")]
     fn submit_raw(
         &mut self,
         batches: &[VkSubmitInfo],

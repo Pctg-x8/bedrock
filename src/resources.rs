@@ -116,12 +116,9 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-use crate::{vk::*, DeviceChild, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VkHandleMut,
-};
+use crate::vkresolve::{Resolver, ResolverInterface};
+use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
@@ -175,7 +172,7 @@ where
 
 /// Opaque handle to a image object(constructed via `ImageDesc`)
 #[derive(VkHandle, VkObject, DeviceChild)]
-#[object_type = "VK_OBJECT_TYPE_IMAGE"]
+#[VkObject(type = VK_OBJECT_TYPE_IMAGE)]
 pub struct ImageObject<Device: crate::Device>(VkImage, #[parent] Device, VkImageType, VkFormat, VkExtent3D);
 unsafe impl<Device: crate::Device + Sync> Sync for ImageObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
@@ -246,7 +243,7 @@ cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_swapchain")] {
         /// Opaque handle to a image object, backed by Swapchain.
         #[derive(VkHandle, VkObject)]
-        #[object_type = "VK_OBJECT_TYPE_IMAGE"]
+        #[VkObject(type = VK_OBJECT_TYPE_IMAGE)]
         pub struct SwapchainImage<Swapchain: crate::Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkFormat);
         unsafe impl<Swapchain: crate::Swapchain + Sync> Sync for SwapchainImage<Swapchain> {}
         unsafe impl<Swapchain: crate::Swapchain + Send> Send for SwapchainImage<Swapchain> {}
@@ -313,7 +310,7 @@ cfg_if::cfg_if! {
 }
 
 #[derive(VkHandle, VkObject)]
-#[object_type = "VK_OBJECT_TYPE_BUFFER_VIEW"]
+#[VkObject(type = VK_OBJECT_TYPE_BUFFER_VIEW)]
 /// Opaque handle to a buffer view object
 pub struct BufferViewObject<Buffer: crate::Buffer>(VkBufferView, Buffer);
 unsafe impl<Buffer: crate::Buffer + Sync> Sync for BufferViewObject<Buffer> {}
@@ -337,7 +334,7 @@ impl<Buffer: crate::Buffer> BufferView for BufferViewObject<Buffer> {}
 
 /// Opaque handle to a image view object
 #[derive(VkHandle, VkObject)]
-#[object_type = "VK_OBJECT_TYPE_IMAGE_VIEW"]
+#[VkObject(type = VK_OBJECT_TYPE_IMAGE_VIEW)]
 pub struct ImageViewObject<Image: crate::Image>(VkImageView, Image);
 unsafe impl<Image: crate::Image + Sync> Sync for ImageViewObject<Image> {}
 unsafe impl<Image: crate::Image + Send> Send for ImageViewObject<Image> {}

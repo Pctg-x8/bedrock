@@ -8,7 +8,7 @@ use super::*;
 #[cfg(windows)]
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -21,7 +21,7 @@ pub struct VkImportFenceWin32HandleInfoKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR)]
 pub struct VkExportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -31,7 +31,7 @@ pub struct VkExportFenceWin32HandleInfoKHR {
 }
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR)]
 pub struct VkFenceGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,

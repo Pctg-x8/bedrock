@@ -12,7 +12,7 @@ pub const VK_SAMPLER_REDUCTION_MODE_MAX_EXT: VkSamplerReductionModeEXT = 2;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT)]
 pub struct VkSamplerReductionModeCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
@@ -21,7 +21,7 @@ pub struct VkSamplerReductionModeCreateInfoEXT {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

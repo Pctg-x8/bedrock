@@ -7,7 +7,7 @@ use super::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[structure_type = "VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR"]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR)]
 pub struct VkSharedPresentSurfaceCapabilitiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
