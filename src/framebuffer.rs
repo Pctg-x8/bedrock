@@ -15,16 +15,14 @@ DefineStdDeviceChildObject! {
 }
 
 /// Opaque handle to a framebuffer object
-#[derive(VkHandle)]
+#[derive(VkHandle, VkObject, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_FRAMEBUFFER"]
 pub struct FramebufferObject<Device: crate::Device, ImageView: crate::ImageView>(
     pub(crate) VkFramebuffer,
-    pub(crate) Device,
+    #[parent] pub(crate) Device,
     pub(crate) Vec<ImageView>,
     pub(crate) VkExtent2D,
 );
-impl<Device: crate::Device, ImageView: crate::ImageView> VkObject for FramebufferObject<Device, ImageView> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_FRAMEBUFFER;
-}
 unsafe impl<Device, ImageView> Sync for FramebufferObject<Device, ImageView>
 where
     Device: crate::Device + Sync,
@@ -36,13 +34,6 @@ where
     Device: crate::Device + Send,
     ImageView: crate::ImageView + Send,
 {
-}
-impl<Device: crate::Device, ImageView: crate::ImageView> DeviceChild for FramebufferObject<Device, ImageView> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
 }
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device, ImageView: crate::ImageView> Drop for FramebufferObject<Device, ImageView> {
@@ -491,9 +482,11 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     }
 }
 DerefContainerBracketImpl!(for RenderPass {});
+GuardsImpl!(for RenderPass {});
 
 pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> + DeviceChild {}
 DerefContainerBracketImpl!(for Framebuffer {});
+GuardsImpl!(for Framebuffer {});
 
 impl<Device: crate::Device, ImageView: crate::ImageView> FramebufferObject<Device, ImageView> {
     pub const fn size(&self) -> &VkExtent2D {

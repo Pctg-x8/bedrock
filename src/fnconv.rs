@@ -8,10 +8,8 @@ pub trait FnTransmute: Sized {
     /// If source pointer is not pointed valid function entry point, calling returned pointer has undefined behavior
     unsafe fn from_fn(p: PFN_vkVoidFunction) -> Self;
 }
-macro_rules! FnTransmuteImpl
-{
-	(for $($t: ty),*) =>
-	{
+macro_rules! FnTransmuteImpl {
+	(for $($t: ty),*) => {
 		$(impl FnTransmute for $t { unsafe fn from_fn(p: PFN_vkVoidFunction) -> Self { std::mem::transmute(p) } })*
 	}
 }

@@ -16,16 +16,6 @@ DerefContainerBracketImpl!(for VkHandle {
 
     fn native_ptr(&self) -> Self::Handle { T::native_ptr(self) }
 });
-impl<T> VkHandle for &'_ mut T
-where
-    T: VkHandle + ?Sized,
-{
-    type Handle = T::Handle;
-
-    fn native_ptr(&self) -> Self::Handle {
-        T::native_ptr(*self)
-    }
-}
 impl<T> VkHandleMut for &'_ mut T
 where
     T: VkHandleMut + ?Sized,
@@ -153,6 +143,15 @@ where
     }
 }
 impl<T> VkHandleMut for parking_lot::MutexGuard<'_, T>
+where
+    T: VkHandleMut + ?Sized,
+{
+    fn native_ptr_mut(&mut self) -> Self::Handle {
+        T::native_ptr_mut(&mut **self)
+    }
+}
+
+impl<T> VkHandleMut for Box<T>
 where
     T: VkHandleMut + ?Sized,
 {

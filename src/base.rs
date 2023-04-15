@@ -446,11 +446,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     }
 }
 DerefContainerBracketImpl!(for Instance {});
-impl<T> Instance for &'_ mut T where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
-impl<T> Instance for std::sync::RwLockWriteGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
-impl<T> Instance for std::sync::MutexGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
-impl<T> Instance for parking_lot::MutexGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
-impl<T> Instance for parking_lot::RwLockWriteGuard<'_, T> where T: VkHandle<Handle = VkInstance> + Instance + ?Sized {}
+GuardsImpl!(for Instance {});
 
 /// A PhysicalDevice interface
 pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
@@ -1330,6 +1326,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     }
 }
 DerefContainerBracketImpl!(for PhysicalDevice {});
+GuardsImpl!(for PhysicalDevice {});
 
 pub trait InstanceChild {
     type ConcreteInstance: Instance;
@@ -1340,6 +1337,11 @@ DerefContainerBracketImpl!(for InstanceChild {
     type ConcreteInstance = T::ConcreteInstance;
 
     fn instance(&self) -> &Self::ConcreteInstance { T::instance(self) }
+});
+GuardsImpl!(for InstanceChild {
+    type ConcreteInstance = T::ConcreteInstance;
+
+    fn instance(&self) -> &Self::ConcreteInstance { T::instance(&self) }
 });
 
 pub trait InstanceChildTransferrable: InstanceChild {

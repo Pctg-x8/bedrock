@@ -338,7 +338,9 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             .device()
             .extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
             .expect("No full screen exclusive extension procedure found");
-        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr())).into_result().map(drop)
+        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr()))
+            .into_result()
+            .map(drop)
     }
 
     /// Release full-screen exclusive mode from a swapchain.
@@ -348,7 +350,9 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             .device()
             .extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
             .expect("No full screen exclusive extension procedure found");
-        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr())).into_result().map(drop)
+        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr()))
+            .into_result()
+            .map(drop)
     }
 
     /// Obtain the array of presentable images associated with a swapchain
@@ -397,45 +401,6 @@ DerefContainerBracketImpl!(for Swapchain {
         T::size(self)
     }
 });
-
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Queue<Device> {
-    /// Queue images for presentation
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn present(
-        &mut self,
-        swapchains: &[(&mut impl Swapchain, u32)],
-        wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
-    ) -> crate::Result<Vec<VkResult>> {
-        let mut res = vec![0; swapchains.len()];
-        let wait_semaphores = wait_semaphores.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-        let (swapchains, indices): (Vec<_>, Vec<_>) = swapchains.iter().map(|&(ref x, n)| (x.native_ptr(), n)).unzip();
-        let pinfo = VkPresentInfoKHR {
-            sType: VkPresentInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            waitSemaphoreCount: wait_semaphores.len() as _,
-            pWaitSemaphores: wait_semaphores.as_ptr(),
-            swapchainCount: swapchains.len() as _,
-            pSwapchains: swapchains.as_ptr(),
-            pImageIndices: indices.as_ptr(),
-            pResults: res.as_mut_ptr(),
-        };
-        unsafe {
-            Resolver::get()
-                .queue_present_khr(self.native_ptr(), &pinfo)
-                .into_result()
-                .map(|_| res)
-        }
-    }
-}
 
 #[cfg(feature = "VK_KHR_surface")]
 /// Presentation mode supported for a surface

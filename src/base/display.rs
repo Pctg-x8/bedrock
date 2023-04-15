@@ -8,18 +8,14 @@ use crate::{Resolver, ResolverInterface, VkHandle};
 use derives::*;
 use std::ops::Deref;
 
-#[derive(VkHandle)]
+#[derive(VkHandle, VkObject)]
+#[object_type = "VK_OBJECT_TYPE_DISPLAY_KHR"]
 pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub(crate) VkDisplayKHR, pub(crate) PhysicalDevice);
-impl<PhysicalDevice: crate::PhysicalDevice> VkObject for Display<PhysicalDevice> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
-}
 
 #[repr(transparent)]
-#[derive(VkHandle)]
+#[derive(VkHandle, VkObject)]
+#[object_type = "VK_OBJECT_TYPE_DISPLAY_MODE_KHR"]
 pub struct DisplayMode(pub(crate) VkDisplayModeKHR);
-impl VkObject for DisplayMode {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
-}
 
 impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// Query the set of mode properties supported by the display.

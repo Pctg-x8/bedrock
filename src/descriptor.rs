@@ -4,7 +4,7 @@ use crate::{vk::*, DeviceChild, Instance, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    VulkanStructure,
+    VkHandleMut, VulkanStructure,
 };
 use crate::{ImageLayout, ShaderStage, VkHandle};
 
@@ -122,6 +122,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
 
 pub trait DescriptorSetLayout: VkHandle<Handle = VkDescriptorSetLayout> + DeviceChild {}
 DerefContainerBracketImpl!(for DescriptorSetLayout {});
+GuardsImpl!(for DescriptorSetLayout {});
 
 /*
 # DescriptorPoolのフラグメンテーションについて(from `VkDescriptorPoolCreateInfo` Manual)
@@ -172,12 +173,15 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
     #[cfg(feature = "Implements")]
-    fn alloc(&mut self, layouts: &[impl DescriptorSetLayout]) -> crate::Result<Vec<DescriptorSet>> {
+    fn alloc(&mut self, layouts: &[impl DescriptorSetLayout]) -> crate::Result<Vec<DescriptorSet>>
+    where
+        Self: VkHandleMut,
+    {
         let layout_ptrs = layouts.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let ainfo = VkDescriptorSetAllocateInfo {
             sType: VkDescriptorSetAllocateInfo::TYPE,
             pNext: std::ptr::null(),
-            descriptorPool: self.native_ptr(),
+            descriptorPool: self.native_ptr_mut(),
             descriptorSetCount: layout_ptrs.len() as _,
             pSetLayouts: layout_ptrs.as_ptr(),
         };
@@ -198,34 +202,41 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[cfg(feature = "Implements")]
-    unsafe fn reset(&mut self) -> crate::Result<()> {
+    unsafe fn reset(&mut self) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
         Resolver::get()
-            .reset_descriptor_pool(self.device().native_ptr(), self.native_ptr(), 0)
+            .reset_descriptor_pool(self.device().native_ptr(), self.native_ptr_mut(), 0)
             .into_result()
             .map(drop)
     }
 
     /// Free one or more descriptor sets
+    /// # Safety
+    /// Host access to each member of pDescriptorSets must be externally synchronized
     /// # Failures
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[cfg(feature = "Implements")]
-    fn free(&mut self, sets: &[VkDescriptorSet]) -> crate::Result<()> {
-        unsafe {
-            Resolver::get()
-                .free_descriptor_sets(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    sets.len() as _,
-                    sets.as_ptr(),
-                )
-                .into_result()
-                .map(drop)
-        }
+    unsafe fn free(&mut self, sets: &[VkDescriptorSet]) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
+        Resolver::get()
+            .free_descriptor_sets(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                sets.len() as _,
+                sets.as_ptr(),
+            )
+            .into_result()
+            .map(drop)
     }
 }
 DerefContainerBracketImpl!(for DescriptorPool {});
+GuardsImpl!(for DescriptorPool {});
 
 /// Structure specifying the parameters of a descriptor set write operation
 /// Element order: DescriptorSet, Binding, ArrayIndex, Description
@@ -326,23 +337,14 @@ macro_rules! DescriptorUpdateTemplateEntries
     } };
 }
 
-#[derive(VkHandle)]
+#[derive(VkHandle, VkObject, DeviceChild)]
+#[object_type = "VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE"]
 pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
     pub(crate) VkDescriptorUpdateTemplate,
-    pub(crate) Device,
+    #[parent] pub(crate) Device,
 );
-impl<Device: crate::Device> VkObject for DescriptorUpdateTemplateObject<Device> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE;
-}
 unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
-impl<Device: crate::Device> DeviceChild for DescriptorUpdateTemplateObject<Device> {
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
     fn drop(&mut self) {
@@ -369,3 +371,4 @@ pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate
     }
 }
 DerefContainerBracketImpl!(for DescriptorUpdateTemplate {});
+GuardsImpl!(for DescriptorUpdateTemplate {});

@@ -62,116 +62,109 @@ impl ExternalSemaphoreHandleWin32 {
     }
 }
 
-#[repr(transparent)]
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-pub struct D3D12FenceSubmitInfo<'t>(VkD3D12FenceSubmitInfoKHR, std::marker::PhantomData<&'t [u64]>);
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'t> From<D3D12FenceSubmitInfo<'t>> for VkD3D12FenceSubmitInfoKHR {
-    fn from(v: D3D12FenceSubmitInfo) -> Self {
-        v.0
-    }
-}
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'t> AsRef<VkD3D12FenceSubmitInfoKHR> for D3D12FenceSubmitInfo<'t> {
-    fn as_ref(&self) -> &VkD3D12FenceSubmitInfoKHR {
-        &self.0
-    }
-}
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'t> std::ops::Deref for D3D12FenceSubmitInfo<'t> {
-    type Target = VkD3D12FenceSubmitInfoKHR;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'t> D3D12FenceSubmitInfo<'t> {
-    pub fn new(wait_semaphore_values: &'t [u64], signal_semaphore_values: &'t [u64]) -> Self {
-        Self(
-            VkD3D12FenceSubmitInfoKHR {
-                sType: VkD3D12FenceSubmitInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                waitSemaphoreValuesCount: wait_semaphore_values.len() as _,
-                pWaitSemaphoreValues: wait_semaphore_values.as_ptr(),
-                signalSemaphoreValuesCount: signal_semaphore_values.len() as _,
-                pSignalSemaphoreValues: signal_semaphore_values.as_ptr(),
-            },
-            std::marker::PhantomData,
-        )
-    }
+cfg_if::cfg_if! {
+    if #[cfg(feature = "VK_KHR_external_semaphore_win32")] {
+        #[repr(transparent)]
+        pub struct D3D12FenceSubmitInfo<'t>(VkD3D12FenceSubmitInfoKHR, std::marker::PhantomData<&'t [u64]>);
+        impl<'t> From<D3D12FenceSubmitInfo<'t>> for VkD3D12FenceSubmitInfoKHR {
+            fn from(v: D3D12FenceSubmitInfo) -> Self {
+                v.0
+            }
+        }
+        impl<'t> AsRef<VkD3D12FenceSubmitInfoKHR> for D3D12FenceSubmitInfo<'t> {
+            fn as_ref(&self) -> &VkD3D12FenceSubmitInfoKHR {
+                &self.0
+            }
+        }
+        impl<'t> std::ops::Deref for D3D12FenceSubmitInfo<'t> {
+            type Target = VkD3D12FenceSubmitInfoKHR;
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+        impl<'t> D3D12FenceSubmitInfo<'t> {
+            pub fn new(wait_semaphore_values: &'t [u64], signal_semaphore_values: &'t [u64]) -> Self {
+                Self(
+                    VkD3D12FenceSubmitInfoKHR {
+                        sType: VkD3D12FenceSubmitInfoKHR::TYPE,
+                        pNext: std::ptr::null(),
+                        waitSemaphoreValuesCount: wait_semaphore_values.len() as _,
+                        pWaitSemaphoreValues: wait_semaphore_values.as_ptr(),
+                        signalSemaphoreValuesCount: signal_semaphore_values.len() as _,
+                        pSignalSemaphoreValues: signal_semaphore_values.as_ptr(),
+                    },
+                    std::marker::PhantomData,
+                )
+            }
 
-    /// # Safety
-    /// `pWaitSemaphoreValues` and `pSignalSemaphoreValues` must live in lifetime `'t`
-    pub unsafe fn from_raw_structure(v: VkD3D12FenceSubmitInfoKHR) -> Self {
-        Self(v, std::marker::PhantomData)
-    }
-}
-/* TODO: 連結リスト作るのなんかうまい方法考えないとねぇ
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'d, Semaphore, CommandBuffer> crate::Chainable<'d, D3D12FenceSubmitInfo<'d>>
-    for crate::SubmissionBatch<'d, Semaphore, CommandBuffer>
-where
-    Semaphore: crate::Semaphore + Clone,
-    CommandBuffer: crate::CommandBuffer + Clone,
-{
-    fn chain(&mut self, next: &'d D3D12FenceSubmitInfo<'d>) -> &mut Self {
-        self.chained = Some(&next.0 as _);
-        self
-    }
-}
-*/
+            /// # Safety
+            /// `pWaitSemaphoreValues` and `pSignalSemaphoreValues` must live in lifetime `'t`
+            pub unsafe fn from_raw_structure(v: VkD3D12FenceSubmitInfoKHR) -> Self {
+                Self(v, std::marker::PhantomData)
+            }
+        }
+        /* TODO: 連結リスト作るのなんかうまい方法考えないとねぇ
+        impl<'d, Semaphore, CommandBuffer> crate::Chainable<'d, D3D12FenceSubmitInfo<'d>>
+            for crate::SubmissionBatch<'d, Semaphore, CommandBuffer>
+        where
+            Semaphore: crate::Semaphore + Clone,
+            CommandBuffer: crate::CommandBuffer + Clone,
+        {
+            fn chain(&mut self, next: &'d D3D12FenceSubmitInfo<'d>) -> &mut Self {
+                self.chained = Some(&next.0 as _);
+                self
+            }
+        }
+        */
 
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-#[repr(transparent)]
-pub struct ExportSemaphoreWin32HandleInfo<'d>(
-    VkExportSemaphoreWin32HandleInfoKHR,
-    std::marker::PhantomData<(
-        Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
-        &'d widestring::WideCString,
-    )>,
-);
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'d> From<ExportSemaphoreWin32HandleInfo<'d>> for VkExportSemaphoreWin32HandleInfoKHR {
-    fn from(v: ExportSemaphoreWin32HandleInfo<'d>) -> Self {
-        v.0
-    }
-}
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl AsRef<VkExportSemaphoreWin32HandleInfoKHR> for ExportSemaphoreWin32HandleInfo<'_> {
-    fn as_ref(&self) -> &VkExportSemaphoreWin32HandleInfoKHR {
-        &self.0
-    }
-}
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl std::ops::Deref for ExportSemaphoreWin32HandleInfo<'_> {
-    type Target = VkExportSemaphoreWin32HandleInfoKHR;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-#[cfg(feature = "VK_KHR_external_semaphore_win32")]
-impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
-    pub fn new(
-        security_attributes: Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
-        access: u32,
-        name: &'d widestring::WideCString,
-    ) -> Self {
-        Self(
-            VkExportSemaphoreWin32HandleInfoKHR {
-                sType: VkExportSemaphoreWin32HandleInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                pAttributes: security_attributes.map_or_else(std::ptr::null, |x| x as *const _),
-                dwAccess: access,
-                name: windows::core::PCWSTR(name.as_ptr()),
-            },
-            std::marker::PhantomData,
-        )
-    }
+        #[repr(transparent)]
+        pub struct ExportSemaphoreWin32HandleInfo<'d>(
+            VkExportSemaphoreWin32HandleInfoKHR,
+            std::marker::PhantomData<(
+                Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
+                &'d widestring::WideCString,
+            )>,
+        );
+        impl<'d> From<ExportSemaphoreWin32HandleInfo<'d>> for VkExportSemaphoreWin32HandleInfoKHR {
+            fn from(v: ExportSemaphoreWin32HandleInfo<'d>) -> Self {
+                v.0
+            }
+        }
+        impl AsRef<VkExportSemaphoreWin32HandleInfoKHR> for ExportSemaphoreWin32HandleInfo<'_> {
+            fn as_ref(&self) -> &VkExportSemaphoreWin32HandleInfoKHR {
+                &self.0
+            }
+        }
+        impl std::ops::Deref for ExportSemaphoreWin32HandleInfo<'_> {
+            type Target = VkExportSemaphoreWin32HandleInfoKHR;
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+        impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
+            pub fn new(
+                security_attributes: Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
+                access: u32,
+                name: &'d widestring::WideCString,
+            ) -> Self {
+                Self(
+                    VkExportSemaphoreWin32HandleInfoKHR {
+                        sType: VkExportSemaphoreWin32HandleInfoKHR::TYPE,
+                        pNext: std::ptr::null(),
+                        pAttributes: security_attributes.map_or_else(std::ptr::null, |x| x as *const _),
+                        dwAccess: access,
+                        name: windows::core::PCWSTR(name.as_ptr()),
+                    },
+                    std::marker::PhantomData,
+                )
+            }
 
-    /// # Safety
-    /// `pAttributes` and `name` must live in lifetime `'d`
-    pub unsafe fn from_raw_structure(v: VkExportSemaphoreWin32HandleInfoKHR) -> Self {
-        Self(v, std::marker::PhantomData)
+            /// # Safety
+            /// `pAttributes` and `name` must live in lifetime `'d`
+            pub unsafe fn from_raw_structure(v: VkExportSemaphoreWin32HandleInfoKHR) -> Self {
+                Self(v, std::marker::PhantomData)
+            }
+        }
     }
 }
 

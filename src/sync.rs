@@ -1,14 +1,12 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
-#![cfg_attr(not(feature = "Implements"), allow(dead_code))]
-
 use crate::vk::*;
 use crate::DeviceChild;
 use crate::VkHandle;
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
-    Device, VkResultBox, VulkanStructure,
+    VkHandleMut,
 };
 
 DefineStdDeviceChildObject! {
@@ -76,7 +74,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
     #[cfg(feature = "Implements")]
-    fn wait(&mut self) -> crate::Result<()> {
+    fn wait(&self) -> crate::Result<()> {
         self.wait_timeout(std::u64::MAX).map(drop)
     }
 
@@ -87,10 +85,13 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn reset(&mut self) -> crate::Result<()> {
+    fn reset(&mut self) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
         unsafe {
             Resolver::get()
-                .reset_fences(self.device().native_ptr(), 1, &self.native_ptr())
+                .reset_fences(self.device().native_ptr(), 1, &self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -105,6 +106,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
     fn get_fd(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
+        use crate::VkResultBox;
+
         let info = VkFenceGetFdInfoKHR {
             sType: VkFenceGetFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -116,7 +119,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             .device()
             .extra_procedure::<PFN_vkGetFenceFdKHR>("vkGetFenceFdKHR")
             .expect("No vkGetFenceFdKHR exported");
-        (f)(self.device().native_ptr(), &info, &mut fd)
+        VkResultBox((f)(self.device().native_ptr(), &info, &mut fd))
             .into_result()
             .map(move |_| fd)
     }
@@ -135,6 +138,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         fd: std::os::unix::io::RawFd,
         temporary: bool,
     ) -> crate::Result<()> {
+        use crate::VkResultBox;
+
         let info = VkImportFenceFdInfoKHR {
             sType: VkImportFenceFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -147,13 +152,17 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             .device()
             .extra_procedure::<PFN_vkImportFenceFdKHR>("vkImportFenceFdKHR")
             .expect("No vkImportFenceFdKHR exported");
-        (f)(self.device().native_ptr(), &info).into_result()
+        VkResultBox((f)(self.device().native_ptr(), &info))
+            .into_result()
+            .map(drop)
     }
 }
 DerefContainerBracketImpl!(for Fence {});
+GuardsImpl!(for Fence {});
 
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> {}
 DerefContainerBracketImpl!(for Semaphore {});
+GuardsImpl!(for Semaphore {});
 
 pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
     /// Set an event to signaled state
@@ -163,10 +172,13 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn set(&mut self) -> crate::Result<()> {
+    fn set(&mut self) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
         unsafe {
             Resolver::get()
-                .set_event(self.device().native_ptr(), self.native_ptr())
+                .set_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -179,16 +191,20 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn reset(&mut self) -> crate::Result<()> {
+    fn reset(&mut self) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
         unsafe {
             Resolver::get()
-                .reset_event(self.device().native_ptr(), self.native_ptr())
+                .reset_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
     }
 }
 DerefContainerBracketImpl!(for Event {});
+GuardsImpl!(for Event {});
 
 pub trait Status {
     /// Retrieve the status(whether is signaled or not) of a synchronize object
@@ -205,5 +221,11 @@ DerefContainerBracketImpl!(for Status {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {
         T::status(self)
+    }
+});
+GuardsImpl!(for Status {
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        T::status(&self)
     }
 });

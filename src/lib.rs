@@ -67,6 +67,9 @@ macro_rules! DerefContainerBracketImpl {
         impl<T> $t for &'_ T where T: $t + ?Sized {
             $($required)*
         }
+        impl<T> $t for &'_ mut T where T: $t + ?Sized {
+            $($required)*
+        }
         impl<T> $t for std::rc::Rc<T> where T: $t + ?Sized {
             $($required)*
         }
@@ -77,6 +80,18 @@ macro_rules! DerefContainerBracketImpl {
             $($required)*
         }
     }
+}
+macro_rules! GuardsImpl {
+    (for $t: path { $($required: item)* }) => {
+        impl<T> $t for std::cell::Ref<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::cell::RefMut<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::sync::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::sync::RwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::sync::MutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::MutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::RwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
+    };
 }
 
 pub type Result<T> = std::result::Result<T, VkResultBox>;

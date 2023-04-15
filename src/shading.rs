@@ -1,7 +1,7 @@
 //! Vulkan Shading(Shader/Pipeline)
 
 #[cfg(feature = "Implements")]
-use crate::vkresolve::{Resolver, ResolverInterface};
+use crate::{vkresolve::{Resolver, ResolverInterface}, VkHandleMut};
 use crate::LifetimeBound;
 use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
 use std::borrow::Cow;
@@ -194,6 +194,7 @@ DefineStdDeviceChildObject! {
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}
 DerefContainerBracketImpl!(for ShaderModule {});
+GuardsImpl!(for ShaderModule {});
 
 pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     /// Get the data store from a pipeline cache
@@ -237,13 +238,16 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn merge_into(&mut self, src: &[impl PipelineCache]) -> crate::Result<()> {
+    fn merge_into(&mut self, src: &[impl PipelineCache]) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
         let srcs = src.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         unsafe {
             Resolver::get()
                 .merge_pipeline_caches(
                     self.device().native_ptr(),
-                    self.native_ptr(),
+                    self.native_ptr_mut(),
                     srcs.len() as _,
                     srcs.as_ptr(),
                 )
@@ -253,12 +257,15 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     }
 }
 DerefContainerBracketImpl!(for PipelineCache {});
+GuardsImpl!(for PipelineCache {});
 
 pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
 DerefContainerBracketImpl!(for PipelineLayout {});
+GuardsImpl!(for PipelineLayout {});
 
 pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
 DerefContainerBracketImpl!(for Pipeline {});
+GuardsImpl!(for Pipeline {});
 
 /// Disabled, Specified in the command buffer or Specified in the pipeline state
 pub enum SwitchOrDynamicState<T> {
