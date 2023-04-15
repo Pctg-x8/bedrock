@@ -39,20 +39,12 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
 pub fn derive_object(tok: TokenStream) -> TokenStream {
     let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
     let name = &input.ident;
-    let object_type = input
+    let object_type_attr = input
         .attrs
         .iter()
-        .filter_map(|a| a.parse_meta().ok())
-        .filter_map(|a| match a {
-            syn::Meta::NameValue(nv) if nv.path.is_ident("object_type") => Some(nv.lit),
-            _ => None,
-        })
-        .next()
-        .expect("no object_type found");
-    let object_type: syn::Path = match object_type {
-        syn::Lit::Str(s) => s.parse().expect("invalid path string specified for object_type"),
-        _ => panic!("expected #[object_type = \"...\"]"),
-    };
+        .find(|a| a.meta.path().is_ident("object_type"))
+        .expect("object_type required");
+    let object_type = &object_type_attr.meta.require_name_value().expect("object_type requires name-value form").value;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
     TokenStream::from(quote! {
@@ -70,10 +62,7 @@ fn find_parent_field(fields: &syn::Fields) -> (usize, &syn::Field) {
                 .iter()
                 .enumerate()
                 .filter(|(_, n)| {
-                    n.attrs.iter().filter_map(|a| a.parse_meta().ok()).any(|a| match a {
-                        syn::Meta::Path(p) => p.is_ident("parent"),
-                        _ => false,
-                    })
+                    n.attrs.iter().any(|a| a.meta.require_path_only().map_or(false, |m| m.is_ident("parent")))
                 })
                 .collect::<Vec<_>>();
             match parents.len() {
@@ -88,10 +77,7 @@ fn find_parent_field(fields: &syn::Fields) -> (usize, &syn::Field) {
                 .iter()
                 .enumerate()
                 .filter(|(_, n)| {
-                    n.attrs
-                        .iter()
-                        .filter_map(|a| a.parse_meta().ok())
-                        .any(|a| matches!(a, syn::Meta::Path(p) if p.is_ident("parent")))
+                    n.attrs.iter().any(|a| a.meta.require_path_only().map_or(false, |m| m.is_ident("parent")))
                 })
                 .collect::<Vec<_>>();
             match parents.len() {
@@ -211,20 +197,8 @@ pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
     let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let ty = input
-        .attrs
-        .iter()
-        .filter_map(|a| a.parse_meta().ok())
-        .filter_map(|a| match a {
-            syn::Meta::NameValue(nv) if nv.path.is_ident("structure_type") => Some(nv.lit),
-            _ => None,
-        })
-        .next()
-        .expect("no structure_type found");
-    let ty: syn::Path = match ty {
-        syn::Lit::Str(s) => s.parse().expect("invalid path string specified for structure_type"),
-        _ => panic!("expected #[type = \"...\"]"),
-    };
+    let ty_attr = input.attrs.iter().find(|a| a.path().is_ident("structure_type")).expect("structure_type required");
+    let ty = &ty_attr.meta.require_name_value().expect("expected #[structure_type = \"...\"]").value;
     // TODO: some checks here......
 
     TokenStream::from(quote! {
