@@ -106,7 +106,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
     fn get_fd(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
-        use crate::VkResultBox;
+        use crate::{ext::VulkanStructure, Device, VkResultBox};
 
         let info = VkFenceGetFdInfoKHR {
             sType: VkFenceGetFdInfoKHR::TYPE,
@@ -138,7 +138,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         fd: std::os::unix::io::RawFd,
         temporary: bool,
     ) -> crate::Result<()> {
-        use crate::VkResultBox;
+        use crate::{ext::VulkanStructure, Device, VkResultBox};
 
         let info = VkImportFenceFdInfoKHR {
             sType: VkImportFenceFdInfoKHR::TYPE,

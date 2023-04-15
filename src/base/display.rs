@@ -68,7 +68,9 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
             .instance()
             .extra_procedure("vkAcquireXlibDisplayEXT")
             .expect("no vkAcquireXlibDisplayEXT exported?");
-        fp(self.1.native_ptr(), dpy, self.native_ptr()).into_result()
+        crate::VkResultBox(fp(self.1.native_ptr(), dpy, self.native_ptr()))
+            .into_result()
+            .map(drop)
     }
 
     /// Create a display mode

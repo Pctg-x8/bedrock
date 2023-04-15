@@ -1193,7 +1193,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .extra_procedure("vkGetRandROutputDisplayEXT")
             .expect("no vkGetRandROutputDisplayEXT exported?");
         let mut d = std::mem::MaybeUninit::uninit();
-        fp(self.native_ptr(), dpy, rr_output, d.as_mut_ptr())
+        crate::VkResultBox(fp(self.native_ptr(), dpy, rr_output, d.as_mut_ptr()))
             .into_result()
             .map(move |_| unsafe { Display(d.assume_init(), self) })
     }
