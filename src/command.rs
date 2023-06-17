@@ -352,7 +352,12 @@ impl<'p, 'b: 'p, Pool: crate::CommandPool + VkHandleMut + 'p, Buffer: crate::Com
 impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Finish recording a command buffer
     pub fn end(self) -> crate::Result<()> {
-        unsafe { Resolver::get().end_command_buffer(self.ptr.native_ptr()).into_result().map(drop) }
+        unsafe {
+            Resolver::get()
+                .end_command_buffer(self.ptr.native_ptr())
+                .into_result()
+                .map(drop)
+        }
     }
 }
 
