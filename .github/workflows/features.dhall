@@ -106,6 +106,7 @@ let UnixSpecific =
       , "VK_KHR_xlib_surface"
       , "VK_KHR_surface"
       , "VK_KHR_display"
+      , "VK_EXT_image_drm_format_modifier"
       , "Implements"
       ]
 
