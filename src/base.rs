@@ -523,6 +523,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 
+    /// Lists physical device's format capabilities
+    /// # Safety
+    /// Caller must guarantee that all write operations to `out` are safe.
+    #[cfg(all(feature = "Implements", feature = "Allow1_1APIs"))]
+    unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2) {
+        Resolver::get().get_physical_device_format_properties2(self.native_ptr(), format, out)
+    }
+
     /// Lists physical device's image format capabilities
     /// # Failures
     /// On failure, this command returns

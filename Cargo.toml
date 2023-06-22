@@ -102,12 +102,14 @@ VK_EXT_external_memory_host = []
 VK_AMD_buffer_marker = []
 VK_EXT_vertex_attribute_divisor = []
 VK_KHR_image_format_list = []
+VK_EXT_image_drm_format_modifier = []
 
 Implements = []
 Multithreaded = []
 Presentation = ["VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display"]
 DynamicLoaded = ["Implements", "libloading"]
 CustomResolver = []
+Allow1_1APIs = []
 
 [dependencies]
 libc = "0.2"

@@ -894,6 +894,25 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
 
         v
     }
+
+    /// Returns an image's DRM format modifier
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_image_drm_format_modifier"))]
+    fn drm_format_modifier_properties(&self) -> crate::Result<VkImageDrmFormatModifierPropertiesEXT> {
+        let mut properties = VkImageDrmFormatModifierPropertiesEXT {
+            sType: VkImageDrmFormatModifierPropertiesEXT::TYPE,
+            pNext: std::ptr::null_mut(),
+            drmFormatModifier: 0,
+        };
+        unsafe {
+            Resolver::get().get_image_drm_format_modifier_properties_ext(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut properties,
+            )
+        }
+        .into_result()
+        .map(move |_| properties)
+    }
 }
 DerefContainerBracketImpl!(for Image {
     fn format(&self) -> VkFormat {

@@ -20,6 +20,7 @@
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
 use crate::VulkanStructure;
+use cfg_if::cfg_if;
 use libc::*;
 use std;
 
@@ -179,6 +180,8 @@ pub const VK_ERROR_INVALID_SHADER_NV: VkResult = -100_0012_000;
 pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = -100_0069_000;
 pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = -100_0072_003;
 pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = -100_0255_000;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+pub const VK_ERROR_INVALID_FORMAT_MODIFIER_PLANE_LAYOUT_EXT: VkResult = -1000158000;
 
 pub type VkStructureType = i32;
 pub const VK_STRUCTURE_TYPE_APPLICATION_INFO: VkStructureType = 0;
@@ -299,6 +302,17 @@ pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES: VkStructureType = 100
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES: VkStructureType = 100_0168_000;
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT: VkStructureType = 100_0168_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES: VkStructureType = 100_0063_000;
+cfg_if! {
+    if #[cfg(feature = "VK_EXT_image_drm_format_modifier")] {
+        pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = 1000158000;
+        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT: VkStructureType = 1000158002;
+        pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT: VkStructureType = 1000158003;
+        pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT: VkStructureType = 1000158004;
+        pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT: VkStructureType = 1000158005;
+        #[cfg(feature = "VK_KHR_format_feature_flags2")]
+        pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT: VkStructureType = 1000158006;
+    }
+}
 
 pub const VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 100_0001_000;
 pub const VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: VkStructureType = 100_0001_001;
@@ -660,6 +674,8 @@ pub const VK_IMAGE_TYPE_3D: VkImageType = 2;
 pub type VkImageTiling = i32;
 pub const VK_IMAGE_TILING_OPTIMAL: VkImageTiling = 0;
 pub const VK_IMAGE_TILING_LINEAR: VkImageTiling = 1;
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+pub const VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT: VkImageTiling = 1000158000;
 
 pub type VkPhysicalDeviceType = i32;
 pub const VK_PHYSICAL_DEVICE_TYPE_OTHER: VkPhysicalDeviceType = 0;
@@ -1082,6 +1098,14 @@ pub const VK_IMAGE_ASPECT_METADATA_BIT: VkImageAspectFlags = 0x08;
 pub const VK_IMAGE_ASPECT_PLANE_0_BIT: VkImageAspectFlags = 0x10;
 pub const VK_IMAGE_ASPECT_PLANE_1_BIT: VkImageAspectFlags = 0x20;
 pub const VK_IMAGE_ASPECT_PLANE_2_BIT: VkImageAspectFlags = 0x40;
+cfg_if! {
+    if #[cfg(feature = "VK_EXT_image_drm_format_modifier")] {
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT: VkImageAspectFlags = 0x00000080;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT: VkImageAspectFlags = 0x00000100;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT: VkImageAspectFlags = 0x00000200;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT: VkImageAspectFlags = 0x00000400;
+    }
+}
 
 pub type VkSparseImageFormatFlags = VkFlags;
 pub const VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT: VkSparseImageFormatFlags = 0x01;
@@ -5301,3 +5325,4 @@ ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ex
 ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
+ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);

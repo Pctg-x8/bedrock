@@ -1387,6 +1387,14 @@ pub trait ResolverInterface {
         commandBuffer: VkCommandBuffer,
         pSampleLocationsInfo: *const VkSampleLocationsInfoEXT,
     );
+
+    #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+    unsafe fn get_image_drm_format_modifier_properties_ext(
+        &self,
+        device: VkDevice,
+        image: VkImage,
+        properties: *mut VkImageDrmFormatModifierPropertiesEXT,
+    ) -> VkResultBox;
 }
 
 pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
@@ -2467,4 +2475,11 @@ impl ResolverInterface for Resolver {
             pSampleLocationsInfo: *const VkSampleLocationsInfoEXT
         )
     );
+
+    #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+    WrapAPI!(get_image_drm_format_modifier_properties_ext = vkGetImageDrmFormatModifierPropertiesEXT(
+        device: VkDevice,
+        image: VkImage,
+        properties: *mut VkImageDrmFormatModifierPropertiesEXT
+    ) -> VkResult);
 }
