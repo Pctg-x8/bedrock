@@ -43,7 +43,7 @@ extern "system" {
     pub fn vkEnumeratePhysicalDeviceGroupsKHR(
         instance: VkInstance,
         pPhysicalDeviceGroupCount: *mut u32,
-        pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHX,
+        pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR,
     ) -> VkResult;
 }
 
