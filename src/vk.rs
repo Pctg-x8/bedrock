@@ -54,6 +54,10 @@ macro_rules! DefineFlags {
     }
 }
 
+const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
+    1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
+}
+
 /// Version of this file
 pub const VK_HEADER_VERSION: u32 = 70;
 
@@ -984,33 +988,34 @@ pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = 100_0160_000;
 pub type VkInstanceCreateFlags = VkFlags;
 
 pub type VkFormatFeatureFlags = VkFlags;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT: VkFormatFeatureFlags = 0x0000_0001;
-pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT: VkFormatFeatureFlags = 0x0000_0002;
-pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT: VkFormatFeatureFlags = 0x0000_0004;
-pub const VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT: VkFormatFeatureFlags = 0x0000_0008;
-pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT: VkFormatFeatureFlags = 0x0000_0010;
-pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT: VkFormatFeatureFlags = 0x0000_0020;
-pub const VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT: VkFormatFeatureFlags = 0x0000_0040;
-pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT: VkFormatFeatureFlags = 0x0000_0080;
-pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT: VkFormatFeatureFlags = 0x0000_0100;
-pub const VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT: VkFormatFeatureFlags = 0x0000_0200;
-pub const VK_FORMAT_FEATURE_BLIT_SRC_BIT: VkFormatFeatureFlags = 0x0000_0400;
-pub const VK_FORMAT_FEATURE_BLIT_DST_BIT: VkFormatFeatureFlags = 0x0000_0800;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT: VkFormatFeatureFlags = 0x0000_1000;
-pub const VK_FORMAT_FEATURE_TRANSFER_SRC_BIT: VkFormatFeatureFlags = 0x0000_4000;
-pub const VK_FORMAT_FEATURE_TRANSFER_DST_BIT: VkFormatFeatureFlags = 0x0000_8000;
-pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlags = 0x0002_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlags = 0x0004_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlags =
+pub type VkFormatFeatureFlagBits = VkFlags;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT: VkFormatFeatureFlagBits = 0x0000_0001;
+pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT: VkFormatFeatureFlagBits = 0x0000_0002;
+pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT: VkFormatFeatureFlagBits = 0x0000_0004;
+pub const VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits = 0x0000_0008;
+pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits = 0x0000_0010;
+pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT: VkFormatFeatureFlagBits = 0x0000_0020;
+pub const VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT: VkFormatFeatureFlagBits = 0x0000_0040;
+pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT: VkFormatFeatureFlagBits = 0x0000_0080;
+pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT: VkFormatFeatureFlagBits = 0x0000_0100;
+pub const VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT: VkFormatFeatureFlagBits = 0x0000_0200;
+pub const VK_FORMAT_FEATURE_BLIT_SRC_BIT: VkFormatFeatureFlagBits = 0x0000_0400;
+pub const VK_FORMAT_FEATURE_BLIT_DST_BIT: VkFormatFeatureFlagBits = 0x0000_0800;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT: VkFormatFeatureFlagBits = 0x0000_1000;
+pub const VK_FORMAT_FEATURE_TRANSFER_SRC_BIT: VkFormatFeatureFlagBits = 0x0000_4000;
+pub const VK_FORMAT_FEATURE_TRANSFER_DST_BIT: VkFormatFeatureFlagBits = 0x0000_8000;
+pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x0002_0000;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits = 0x0004_0000;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits =
     0x0008_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlags =
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlagBits =
     0x0010_0000;
 pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT:
-    VkFormatFeatureFlags = 0x0020_0000;
-pub const VK_FORMAT_FEATURE_DISJOINT_BIT: VkFormatFeatureFlags = 0x0040_0000;
-pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlags = 0x0080_0000;
-pub const VK_FORMAT_FeATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlags = 0x0000_2000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT: VkFormatFeatureFlags = 0x0001_0000;
+    VkFormatFeatureFlagBits = 0x0020_0000;
+pub const VK_FORMAT_FEATURE_DISJOINT_BIT: VkFormatFeatureFlagBits = 0x0040_0000;
+pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x0080_0000;
+pub const VK_FORMAT_FeATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlagBits = 0x0000_2000;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT: VkFormatFeatureFlagBits = 0x0001_0000;
 
 pub type VkImageUsageFlags = VkFlags;
 pub const VK_IMAGE_USAGE_TRANSFER_SRC_BIT: VkImageUsageFlags = 0x01;
@@ -1023,28 +1028,30 @@ pub const VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT: VkImageUsageFlags = 0x40;
 pub const VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT: VkImageUsageFlags = 0x80;
 
 pub type VkImageCreateFlags = VkFlags;
-pub const VK_IMAGE_CREATE_SPARSE_BINDING_BIT: VkImageCreateFlags = 0x0001;
-pub const VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT: VkImageCreateFlags = 0x0002;
-pub const VK_IMAGE_CREATE_SPARSE_ALIASED_BIT: VkImageCreateFlags = 0x0004;
-pub const VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT: VkImageCreateFlags = 0x0008;
-pub const VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT: VkImageCreateFlags = 0x0010;
-pub const VK_IMAGE_CREATE_ALIAS_BIT: VkImageCreateFlags = 0x0400;
-pub const VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT: VkImageCreateFlags = 0x0040;
-pub const VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT: VkImageCreateFlags = 0x0020;
-pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT: VkImageCreateFlags = 0x0080;
-pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: VkImageCreateFlags = 0x0100;
-pub const VK_IMAGE_CREATE_PROTECTED_BIT: VkImageCreateFlags = 0x0800;
-pub const VK_IMAGE_CREATE_DISJOINT_BIT: VkImageCreateFlags = 0x0200;
-pub const VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT: VkImageCreateFlags = 0x1000;
+pub type VkImageCreateFlagBits = VkFlags;
+pub const VK_IMAGE_CREATE_SPARSE_BINDING_BIT: VkImageCreateFlagBits = 0x0001;
+pub const VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT: VkImageCreateFlagBits = 0x0002;
+pub const VK_IMAGE_CREATE_SPARSE_ALIASED_BIT: VkImageCreateFlagBits = 0x0004;
+pub const VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT: VkImageCreateFlagBits = 0x0008;
+pub const VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0010;
+pub const VK_IMAGE_CREATE_ALIAS_BIT: VkImageCreateFlagBits = 0x0400;
+pub const VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT: VkImageCreateFlagBits = 0x0040;
+pub const VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0020;
+pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0080;
+pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: VkImageCreateFlagBits = 0x0100;
+pub const VK_IMAGE_CREATE_PROTECTED_BIT: VkImageCreateFlagBits = 0x0800;
+pub const VK_IMAGE_CREATE_DISJOINT_BIT: VkImageCreateFlagBits = 0x0200;
+pub const VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT: VkImageCreateFlagBits = 0x1000;
 
 pub type VkSampleCountFlags = VkFlags;
-pub const VK_SAMPLE_COUNT_1_BIT: VkSampleCountFlags = 0x01;
-pub const VK_SAMPLE_COUNT_2_BIT: VkSampleCountFlags = 0x02;
-pub const VK_SAMPLE_COUNT_4_BIT: VkSampleCountFlags = 0x04;
-pub const VK_SAMPLE_COUNT_8_BIT: VkSampleCountFlags = 0x08;
-pub const VK_SAMPLE_COUNT_16_BIT: VkSampleCountFlags = 0x10;
-pub const VK_SAMPLE_COUNT_32_BIT: VkSampleCountFlags = 0x20;
-pub const VK_SAMPLE_COUNT_64_BIT: VkSampleCountFlags = 0x40;
+pub type VkSampleCountFlagBits = VkFlags;
+pub const VK_SAMPLE_COUNT_1_BIT: VkSampleCountFlagBits = 0x01;
+pub const VK_SAMPLE_COUNT_2_BIT: VkSampleCountFlagBits = 0x02;
+pub const VK_SAMPLE_COUNT_4_BIT: VkSampleCountFlagBits = 0x04;
+pub const VK_SAMPLE_COUNT_8_BIT: VkSampleCountFlagBits = 0x08;
+pub const VK_SAMPLE_COUNT_16_BIT: VkSampleCountFlagBits = 0x10;
+pub const VK_SAMPLE_COUNT_32_BIT: VkSampleCountFlagBits = 0x20;
+pub const VK_SAMPLE_COUNT_64_BIT: VkSampleCountFlagBits = 0x40;
 
 pub type VkQueueFlags = VkFlags;
 pub const VK_QUEUE_GRAPHICS_BIT: VkQueueFlags = 0x01;
@@ -1242,9 +1249,10 @@ pub const VK_ACCESS_COMMAND_PROCESS_WRITE_BIT_NVX: VkAccessFlags = 0x0004_0000;
 pub const VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT: VkAccessFlags = 0x0008_0000;
 
 pub type VkDependencyFlags = VkFlags;
-pub const VK_DEPENDENCY_BY_REGION_BIT: VkDependencyFlags = 0x01;
-pub const VK_DEPENDENCY_VIEW_LOCAL_BIT: VkDependencyFlags = 0x02;
-pub const VK_DEPENDENCY_DEVICE_GROUP_BIT: VkDependencyFlags = 0x04;
+pub type VkDependencyFlagBits = VkFlags;
+pub const VK_DEPENDENCY_BY_REGION_BIT: VkDependencyFlagBits = 0x01;
+pub const VK_DEPENDENCY_VIEW_LOCAL_BIT: VkDependencyFlagBits = 0x02;
+pub const VK_DEPENDENCY_DEVICE_GROUP_BIT: VkDependencyFlagBits = 0x04;
 
 pub type VkCommandPoolCreateFlags = VkFlags;
 pub const VK_COMMAND_POOL_CREATE_TRANSIENT_BIT: VkCommandPoolCreateFlags = 0x01;
@@ -1402,7 +1410,7 @@ impl Default for VkPhysicalDeviceFeatures {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkFormatProperties {
     pub linearTilingFeatures: VkFormatFeatureFlags,
     pub optimalTilingFeatures: VkFormatFeatureFlags,
@@ -1573,7 +1581,7 @@ pub struct VkPhysicalDeviceSparseProperties {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct VkPhysicalDeviceProperties {
     pub apiVersion: u32,
     pub driverVersion: u32,
@@ -5230,6 +5238,14 @@ macro_rules! ExportExtensions {
         #[cfg(feature = $fname)]
         pub use self::$mname::*;
     };
+    (Promoted 1.1 $fname: tt: $mname: ident) => {
+        cfg_if::cfg_if! {
+            if #[cfg(any(feature = $fname, feature = "Allow1_1APIs"))] {
+                mod $mname;
+                pub use self::$mname::*;
+            }
+        }
+    };
 }
 
 ExportExtensions!("VK_KHR_surface": surface_khr);
@@ -5244,7 +5260,7 @@ ExportExtensions!("VK_KHR_android_surface": android_surface_khr);
 ExportExtensions!("VK_KHR_win32_surface": win32_surface_khr);
 ExportExtensions!("VK_KHR_sampler_mirror_clamp_to_edge": sampler_mirror_clamp_to_edge_khr);
 ExportExtensions!("VK_KHR_shader_draw_parameters": shader_draw_parameters_khr);
-ExportExtensions!("VK_KHR_maintenance1": maintenance1_khr);
+ExportExtensions!(Promoted 1.1 "VK_KHR_maintenance1": maintenance1_khr);
 ExportExtensions!("VK_KHR_external_memory_win32": external_memory_win32_khr);
 ExportExtensions!("VK_KHR_external_memory_fd": external_memory_fd_khr);
 ExportExtensions!("VK_KHR_win32_keyed_mutex": win32_keyed_mutex_khr);
@@ -5286,6 +5302,7 @@ ExportExtensions!("VK_NN_vi_surface": vi_surface_nn);
 ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
 ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
 ExportExtensions!("VK_KHX_device_group_creation": device_group_creation_khx);
+ExportExtensions!(Promoted 1.1 "VK_KHR_device_group_creation": device_group_creation_khr);
 ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_nvx);
 ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
@@ -5322,7 +5339,8 @@ ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);
 ExportExtensions!("VK_AMD_buffer_marker": buffer_marker_amd);
 ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ext);
-ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
+ExportExtensions!(Promoted 1.1 "VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
+ExportExtensions!(Promoted 1.1 "VK_KHR_multiview": multiview_khr);

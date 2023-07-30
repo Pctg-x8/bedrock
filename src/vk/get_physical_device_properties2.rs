@@ -5,15 +5,105 @@ pub const VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME: &str = "VK_KHR
 
 use super::*;
 
-pub type VkPhysicalDeviceFeatures2KHR = VkPhysicalDeviceFeatures2;
-pub type VkPhysicalDeviceProperties2KHR = VkPhysicalDeviceProperties2;
-pub type VkFormatProperties2KHR = VkFormatProperties2;
-pub type VkImageFormatProperties2KHR = VkImageFormatProperties2;
-pub type VkPhysicalDeviceImageFormatInfo2KHR = VkPhysicalDeviceImageFormatInfo2;
-pub type VkQueueFamilyProperties2KHR = VkQueueFamilyProperties2;
-pub type VkPhysicalDeviceMemoryProperites2KHR = VkPhysicalDeviceMemoryProperties2;
-pub type VkSparseImageFormatProperites2KHR = VkSparseImageFormatProperties2;
-pub type VkPhysicalDeviceSparseImageFormatInfo2KHR = VkPhysicalDeviceSparseImageFormatInfo2;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR: VkStructureType = ext_enum_value(60, 0) as _;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR: VkStructureType = ext_enum_value(60, 1) as _;
+pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR: VkStructureType = ext_enum_value(60, 2) as _;
+pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = ext_enum_value(60, 3) as _;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR: VkStructureType = ext_enum_value(60, 4) as _;
+pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR: VkStructureType = ext_enum_value(60, 5) as _;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR: VkStructureType = ext_enum_value(60, 6) as _;
+pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = ext_enum_value(60, 7) as _;
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR: VkStructureType =
+    ext_enum_value(60, 8) as _;
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR)]
+pub struct VkFormatProperties2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub formatProperties: VkFormatProperties,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR)]
+pub struct VkPhysicalDeviceFeatures2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub features: VkPhysicalDeviceFeatures,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR)]
+pub struct VkPhysicalDeviceProperties2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub properties: VkPhysicalDeviceProperties,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR)]
+pub struct VkImageFormatProperties2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub imageFormatProperties: VkImageFormatProperties,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR)]
+pub struct VkPhysicalDeviceImageFormatInfo2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
+    pub format: VkFormat,
+    pub r#type: VkImageType,
+    pub tiling: VkImageTiling,
+    pub usage: VkImageUsageFlags,
+    pub flags: VkImageCreateFlags,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR)]
+pub struct VkQueueFamilyProperties2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub queueFamilyProperties: VkQueueFamilyProperties,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR)]
+pub struct VkPhysicalDeviceMemoryProperties2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub memoryProperties: VkPhysicalDeviceMemoryProperties,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR)]
+pub struct VkSparseImageFormatProperties2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut c_void,
+    pub properties: VkSparseImageFormatProperties,
+}
+
+#[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR)]
+pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const c_void,
+    pub format: VkFormat,
+    pub r#type: VkImageType,
+    pub samples: VkSampleCountFlagBits,
+    pub usage: VkImageUsageFlags,
+    pub tiling: VkImageTiling,
+}
 
 pub type PFN_vkGetPhysicalDeviceFeatures2KHR =
     extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2);
@@ -31,7 +121,7 @@ pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR = extern "system" fn(
     pQueueFamilyPropertyCount: *mut u32,
     pQueueFamilyProperties: *mut VkQueueFamilyProperties2,
 );
-pub type PFN_vkGetPhysicalDeviceMemoryProeprties2KHR =
+pub type PFN_vkGetPhysicalDeviceMemoryProperties2KHR =
     extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2);
 pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
@@ -73,4 +163,36 @@ extern "system" {
         pPropertyCount: *mut u32,
         pProperties: *mut VkSparseImageFormatProperties2,
     );
+}
+
+cfg_if! {
+    if #[cfg(feature = "Allow1_1APIs")] {
+        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR;
+        pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR;
+        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR;
+
+        pub type VkPhysicalDeviceFeatures2 = VkPhysicalDeviceFeatures2KHR;
+        pub type VkPhysicalDeviceProperties2 = VkPhysicalDeviceProperties2KHR;
+        pub type VkFormatProperties2 = VkFormatProperties2KHR;
+        pub type VkImageFormatProperties2 = VkImageFormatProperties2KHR;
+        pub type VkPhysicalDeviceImageFormatInfo2 = VkPhysicalDeviceImageFormatInfo2KHR;
+        pub type VkQueueFamilyProperties2 = VkQueueFamilyProperties2KHR;
+        pub type VkPhysicalDeviceMemoryProperties2 = VkPhysicalDeviceMemoryProperties2KHR;
+        pub type VkSparseImageformatProperties2 = VkSparseImageFormatProperties2KHR;
+        pub type VkPhysicalDeviceSparseImageFormatInfo2 = VkPhysicalDeviceSparseImageFormatInfo2KHR;
+
+        pub type PFN_vkGetPhysicalDeviceFeatures2 = PFN_vkGetPhysicalDeviceFeatures2KHR;
+        pub type PFN_vkGetPhysicalDeviceProperties2 = PFN_vkGetPhysicalDeviceProperties2KHR;
+        pub type PFN_vkGetPhysicalDeviceFormatProperties2 = PFN_vkGetPhysicalDeviceFormatProperties2KHR;
+        pub type PFN_vkGetPhysicalDeviceImageFormatProperties2 = PFN_vkGetPhysicalDeviceImageFormatProperties2KHR;
+        pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties2 = PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR;
+        pub type PFN_vkGetPhysicalDeviceMemoryProperties2 = PFN_vkGetPhysicalDeviceMemoryProperties2KHR;
+        pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR;
+    }
 }
