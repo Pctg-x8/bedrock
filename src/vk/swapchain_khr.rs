@@ -14,7 +14,11 @@ pub const VK_KHR_SWAPCHAIN_SPEC_VERSION: usize = 68;
 pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
 
 pub type VkSwapchainCreateFlagsKHR = VkFlags;
-pub const VK_SWAPCHAIN_CREATE_BIND_SFR_BIT_KHX: VkSwapchainCreateFlagsKHR = 0x01;
+vk_bitmask! {
+    pub enum VkSwapchainCreateFlagBitsKHR {
+        pub VK_SWAPCHAIN_CREATE_BIND_SFR_BIT_KHX: 0
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

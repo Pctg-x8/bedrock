@@ -54,9 +54,27 @@ macro_rules! DefineFlags {
     }
 }
 
+// define macros
+
 const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
     1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
 }
+
+macro_rules! vk_bitmask {
+    ($(#[$ty_attr: meta])* $ty_vis: vis enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* }) => {
+        $(#[$ty_attr])* $ty_vis type $ty_name = VkFlags;
+        $(
+            $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
+        )*
+    };
+    (extending enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* }) => {
+        $(
+            $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
+        )*
+    }
+}
+
+// define macros end
 
 /// Version of this file
 pub const VK_HEADER_VERSION: u32 = 70;
@@ -97,7 +115,7 @@ macro_rules! VK_NON_DISPATCHABLE_HANDLE {
     };
 }
 #[cfg(target_pointer_width = "64")]
-macro_rules! VK_NON_DISPATCHABLE_HANDLE { ($name: ident) => (*mut nd_handle_base_ts::$name); }
+macro_rules! VK_NON_DISPATCHABLE_HANDLE { ($name: ident) => (*mut self::nd_handle_base_ts::$name); }
 
 pub type VkFlags = u32;
 pub type VkBool32 = u32;
@@ -1098,19 +1116,23 @@ pub const VK_PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX: VkPipelineStageFlags = 0x00
 pub type VkMemoryMapFlags = VkFlags;
 
 pub type VkImageAspectFlags = VkFlags;
-pub const VK_IMAGE_ASPECT_COLOR_BIT: VkImageAspectFlags = 0x01;
-pub const VK_IMAGE_ASPECT_DEPTH_BIT: VkImageAspectFlags = 0x02;
-pub const VK_IMAGE_ASPECT_STENCIL_BIT: VkImageAspectFlags = 0x04;
-pub const VK_IMAGE_ASPECT_METADATA_BIT: VkImageAspectFlags = 0x08;
-pub const VK_IMAGE_ASPECT_PLANE_0_BIT: VkImageAspectFlags = 0x10;
-pub const VK_IMAGE_ASPECT_PLANE_1_BIT: VkImageAspectFlags = 0x20;
-pub const VK_IMAGE_ASPECT_PLANE_2_BIT: VkImageAspectFlags = 0x40;
+vk_bitmask! {
+    pub enum VkImageAspectFlagBits {
+        pub VK_IMAGE_ASPECT_COLOR_BIT: 0,
+        pub VK_IMAGE_ASPECT_DEPTH_BIT: 1,
+        pub VK_IMAGE_ASPECT_STENCIL_BIT: 2,
+        pub VK_IMAGE_ASPECT_METADATA_BIT: 3,
+        pub VK_IMAGE_ASPECT_PLANE_0_BIT: 4,
+        pub VK_IMAGE_ASPECT_PLANE_1_BIT: 5,
+        pub VK_IMAGE_ASPECT_PLANE_2_BIT: 6
+    }
+}
 cfg_if! {
     if #[cfg(feature = "VK_EXT_image_drm_format_modifier")] {
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT: VkImageAspectFlags = 0x00000080;
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT: VkImageAspectFlags = 0x00000100;
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT: VkImageAspectFlags = 0x00000200;
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT: VkImageAspectFlags = 0x00000400;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT: VkImageAspectFlagBits = 0x00000080;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT: VkImageAspectFlagBits = 0x00000100;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT: VkImageAspectFlagBits = 0x00000200;
+        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT: VkImageAspectFlagBits = 0x00000400;
     }
 }
 
@@ -1170,11 +1192,12 @@ pub type VkShaderModuleCreateFlags = VkFlags;
 pub type VkPipelineCacheCreateFlags = VkFlags;
 
 pub type VkPipelineCreateFlags = VkFlags;
-pub const VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT: VkPipelineCreateFlags = 0x01;
-pub const VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT: VkPipelineCreateFlags = 0x02;
-pub const VK_PIPELINE_CREATE_DERIVATIVE_BIT: VkPipelineCreateFlags = 0x04;
-pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT: VkPipelineCreateFlags = 0x08;
-pub const VK_PIPELINE_CREATE_DISPATCH_BASE: VkPipelineCreateFlags = 0x10;
+pub type VkPipelineCreateFlagBits = VkFlags;
+pub const VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT: VkPipelineCreateFlagBits = 0x01;
+pub const VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT: VkPipelineCreateFlagBits = 0x02;
+pub const VK_PIPELINE_CREATE_DERIVATIVE_BIT: VkPipelineCreateFlagBits = 0x04;
+pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT: VkPipelineCreateFlagBits = 0x08;
+pub const VK_PIPELINE_CREATE_DISPATCH_BASE: VkPipelineCreateFlagBits = 0x10;
 pub type VkPipelineShaderStageCreateFlags = VkFlags;
 
 pub type VkShaderStageFlags = VkFlags;
@@ -5238,14 +5261,6 @@ macro_rules! ExportExtensions {
         #[cfg(feature = $fname)]
         pub use self::$mname::*;
     };
-    (Promoted 1.1 $fname: tt: $mname: ident) => {
-        cfg_if::cfg_if! {
-            if #[cfg(any(feature = $fname, feature = "Allow1_1APIs"))] {
-                mod $mname;
-                pub use self::$mname::*;
-            }
-        }
-    };
 }
 
 ExportExtensions!("VK_KHR_surface": surface_khr);
@@ -5259,8 +5274,6 @@ ExportExtensions!("VK_KHR_wayland_surface": wayland_surface_khr);
 ExportExtensions!("VK_KHR_android_surface": android_surface_khr);
 ExportExtensions!("VK_KHR_win32_surface": win32_surface_khr);
 ExportExtensions!("VK_KHR_sampler_mirror_clamp_to_edge": sampler_mirror_clamp_to_edge_khr);
-ExportExtensions!("VK_KHR_shader_draw_parameters": shader_draw_parameters_khr);
-ExportExtensions!(Promoted 1.1 "VK_KHR_maintenance1": maintenance1_khr);
 ExportExtensions!("VK_KHR_external_memory_win32": external_memory_win32_khr);
 ExportExtensions!("VK_KHR_external_memory_fd": external_memory_fd_khr);
 ExportExtensions!("VK_KHR_win32_keyed_mutex": win32_keyed_mutex_khr);
@@ -5268,13 +5281,10 @@ ExportExtensions!("VK_KHR_external_semaphore_win32": external_semaphore_win32_kh
 ExportExtensions!("VK_KHR_external_semaphore_fd": external_semaphore_fd_khr);
 ExportExtensions!("VK_KHR_push_descriptor": push_descriptor_khr);
 ExportExtensions!("VK_KHR_incremental_present": incremental_present_khr);
-ExportExtensions!("VK_KHR_descriptor_update_template": descriptor_update_template_khr);
 ExportExtensions!("VK_KHR_shared_presentable_image": shared_presentable_image_khr);
 ExportExtensions!("VK_KHR_external_fence_win32": external_fence_win32_khr);
 ExportExtensions!("VK_KHR_external_fence_fd": external_fence_fd_khr);
 ExportExtensions!("VK_KHR_get_surface_capabilities2": get_surface_capabilities2_khr);
-ExportExtensions!("VK_KHR_storage_buffer_storage_class": storage_buffer_storage_class_khr);
-ExportExtensions!("VK_KHR_relaxed_block_layout": relaxed_block_layout_khr);
 ExportExtensions!("VK_EXT_debug_report": debug_report_ext);
 ExportExtensions!("VK_EXT_debug_utils": debug_utils_ext);
 ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
@@ -5296,13 +5306,12 @@ ExportExtensions!("VK_NV_external_memory_capabilities": external_memory_capabili
 ExportExtensions!("VK_NV_external_memory": external_memory_nv);
 ExportExtensions!("VK_NV_external_memory_win32": external_memory_win32_nv);
 ExportExtensions!("VK_NV_win32_keyed_mutex": win32_keyed_mutex_nv);
-ExportExtensions!("VK_KHX_device_group": device_group_khx);
 ExportExtensions!("VK_EXT_validation_flags": validation_flags_ext);
 ExportExtensions!("VK_NN_vi_surface": vi_surface_nn);
 ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
 ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
+ExportExtensions!("VK_KHX_device_group": device_group_khx);
 ExportExtensions!("VK_KHX_device_group_creation": device_group_creation_khx);
-ExportExtensions!(Promoted 1.1 "VK_KHR_device_group_creation": device_group_creation_khr);
 ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_nvx);
 ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
@@ -5339,8 +5348,31 @@ ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);
 ExportExtensions!("VK_AMD_buffer_marker": buffer_marker_amd);
 ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ext);
-ExportExtensions!(Promoted 1.1 "VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
-ExportExtensions!(Promoted 1.1 "VK_KHR_multiview": multiview_khr);
+
+// Promoted Extensions
+ExportExtensions!("VK_KHR_multiview": multiview_khr);
+ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
+ExportExtensions!("VK_KHR_device_group": device_group_khr);
+ExportExtensions!("VK_KHR_shader_draw_parameters": shader_draw_parameters_khr);
+ExportExtensions!("VK_KHR_maintenance1": maintenance1_khr);
+ExportExtensions!("VK_KHR_device_group_creation": device_group_creation_khr);
+ExportExtensions!("VK_KHR_external_memory_capabilities": external_memory_capabilities_khr);
+ExportExtensions!("VK_KHR_external_memory": external_memory_khr);
+ExportExtensions!("VK_KHR_external_semaphore_capabilities": external_semaphore_capabilities_khr);
+ExportExtensions!("VK_KHR_external_semaphore": external_semaphore_khr);
+ExportExtensions!("VK_KHR_16bit_storage": n16bit_storage_khr);
+ExportExtensions!("VK_KHR_descriptor_update_template": descriptor_update_template_khr);
+ExportExtensions!("VK_KHR_external_fence_capabilities": external_fence_capabilities_khr);
+ExportExtensions!("VK_KHR_external_fence": external_fence_khr);
+ExportExtensions!("VK_KHR_maintenance2": maintenance2_khr);
+ExportExtensions!("VK_KHR_variable_pointers": variable_pointers_khr);
+ExportExtensions!("VK_KHR_dedicated_allocation": dedicated_allocation_khr);
+ExportExtensions!("VK_KHR_storage_buffer_storage_class": storage_buffer_storage_class_khr);
+ExportExtensions!("VK_KHR_relaxed_block_layout": relaxed_block_layout_khr);
+ExportExtensions!("VK_KHR_get_memory_requirements2": get_memory_requirements2_khr);
+ExportExtensions!("VK_KHR_sampler_ycbcr_conversion": sampler_ycbcr_conversion_khr);
+ExportExtensions!("VK_KHR_bind_memory2": bind_memory2_khr);
+ExportExtensions!("VK_KHR_maintenance3": maintenance3_khr);
