@@ -184,7 +184,7 @@ cfg_if! {
         pub type VkPhysicalDeviceImageFormatInfo2 = VkPhysicalDeviceImageFormatInfo2KHR;
         pub type VkQueueFamilyProperties2 = VkQueueFamilyProperties2KHR;
         pub type VkPhysicalDeviceMemoryProperties2 = VkPhysicalDeviceMemoryProperties2KHR;
-        pub type VkSparseImageformatProperties2 = VkSparseImageFormatProperties2KHR;
+        pub type VkSparseImageFormatProperties2 = VkSparseImageFormatProperties2KHR;
         pub type VkPhysicalDeviceSparseImageFormatInfo2 = VkPhysicalDeviceSparseImageFormatInfo2KHR;
 
         pub type PFN_vkGetPhysicalDeviceFeatures2 = PFN_vkGetPhysicalDeviceFeatures2KHR;

@@ -1,11 +1,16 @@
 //! VK_EXT_full_screen_exclusive
 
-pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_SPEC_VERSION: usize = 3;
+pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_SPEC_VERSION: usize = 4;
 pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME: &str = "VK_EXT_full_screen_exclusive";
 
-use crate::VulkanStructure;
-
 use super::*;
+
+pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = ext_enum_value(256, 0) as _;
+pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType =
+    ext_enum_value(256, 2) as _;
+
+pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult =
+    unsafe { -std::mem::transmute::<_, VkResult>(ext_enum_value(256, 0) as u32) };
 
 pub type VkFullScreenExclusiveEXT = i32;
 pub const VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT: VkFullScreenExclusiveEXT = 0;
@@ -20,16 +25,6 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub fullScreenExclusive: VkFullScreenExclusiveEXT,
-}
-
-#[cfg(windows)]
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT)]
-pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
 }
 
 #[repr(C)]
@@ -47,12 +42,6 @@ pub type PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = extern "system" fn(
     pPresentModeCount: *mut u32,
     pPresentModes: *mut VkPresentModeKHR,
 ) -> VkResult;
-#[cfg(feature = "VK_KHR_device_group")]
-pub type PFN_vkGetDeviceGroupSurfacePresentModes2EXT = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
-    pModes: *mut VkDeviceGroupPresentModeFlagsKHR,
-) -> VkResult;
 pub type PFN_vkAcquireFullScreenExclusiveModeEXT =
     extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 pub type PFN_vkReleaseFullScreenExclusiveModeEXT =
@@ -67,12 +56,41 @@ extern "system" {
         pPresentModeCount: *mut u32,
         pPresentModes: *mut VkPresentModeKHR,
     ) -> VkResult;
-    #[cfg(feature = "VK_KHR_device_group")]
-    pub fn vkGetDeviceGroupSurfacePresentModes2EXT(
-        physicalDevice: VkPhysicalDevice,
-        pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
-        pModes: *mut VkDeviceGroupPresentModeFlagsKHR,
-    ) -> VkResult;
     pub fn vkAcquireFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
     pub fn vkReleaseFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
+}
+
+cfg_if! {
+    if #[cfg(feature = "VK_KHR_win32_surface")] {
+        pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = ext_enum_value(256, 1) as _;
+
+        #[repr(C)]
+        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT)]
+        pub struct VkSurfaceFullScreenExclusiveWin32InfoEXT {
+            pub sType: VkStructureType,
+            pub pNext: *const c_void,
+            pub hmonitor: windows::Win32::Graphics::Gdi::HMONITOR,
+        }
+    }
+}
+
+cfg_if! {
+    if #[cfg(feature = "VK_KHR_device_group")] {
+        pub type PFN_vkGetDeviceGroupSurfacePresentModes2EXT = extern "system" fn(
+            physicalDevice: VkPhysicalDevice,
+            pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
+            pModes: *mut VkDeviceGroupPresentModeFlagsKHR,
+        ) -> VkResult;
+
+        #[cfg(feature = "Implements")]
+        #[cfg(not(feature = "DynamicLoaded"))]
+        extern "system" {
+            pub fn vkGetDeviceGroupSurfacePresentModes2EXT(
+                physicalDevice: VkPhysicalDevice,
+                pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
+                pModes: *mut VkDeviceGroupPresentModeFlagsKHR,
+            ) -> VkResult;
+        }
+    }
 }

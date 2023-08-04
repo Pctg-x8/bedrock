@@ -104,9 +104,6 @@ mod nd_handle_base_ts {
     pub enum VkDescriptorSet {}
     pub enum VkFramebuffer {}
     pub enum VkCommandPool {}
-
-    pub enum VkSamplerYcbcrConversion {}
-    pub enum VkDescriptorUpdateTemplate {}
 }
 #[cfg(target_pointer_width = "32")]
 macro_rules! VK_NON_DISPATCHABLE_HANDLE {
@@ -199,8 +196,6 @@ pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = -100_0001_004;
 pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = -100_0003_001;
 pub const VK_ERROR_VALIDATION_FAILED_EXT: VkResult = -100_0011_001;
 pub const VK_ERROR_INVALID_SHADER_NV: VkResult = -100_0012_000;
-pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = -100_0069_000;
-pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = -100_0072_003;
 pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = -100_0255_000;
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 pub const VK_ERROR_INVALID_FORMAT_MODIFIER_PLANE_LAYOUT_EXT: VkResult = -1000158000;
@@ -258,43 +253,17 @@ pub const VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO: VkStructureType = 48;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES: VkStructureType = 100_0094_000;
 pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO: VkStructureType = 100_0157_000;
 pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO: VkStructureType = 100_0157_001;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES: VkStructureType = 100_0083_000;
 pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS: VkStructureType = 100_0127_000;
 pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO: VkStructureType = 100_0127_001;
-pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO: VkStructureType = 100_0060_000;
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO: VkStructureType = 100_0060_003;
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO: VkStructureType = 100_0060_004;
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO: VkStructureType = 100_0060_005;
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO: VkStructureType = 100_0060_006;
-pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO: VkStructureType = 100_0060_013;
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO: VkStructureType = 100_0060_014;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES: VkStructureType = 100_0070_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHX: VkStructureType =
-    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO: VkStructureType = 100_0070_001;
-pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHX: VkStructureType =
-    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES;
 pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_000;
 pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_001;
 pub const VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_002;
 pub const VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2: VkStructureType = 100_0146_003;
 pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2: VkStructureType = 100_0146_004;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2: VkStructureType = 100_0059_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2: VkStructureType = 100_0059_001;
-pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2: VkStructureType = 100_0059_002;
-pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2: VkStructureType = 100_0059_003;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2: VkStructureType = 100_0059_004;
-pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2: VkStructureType = 100_0059_005;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2: VkStructureType = 100_0059_006;
-pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2: VkStructureType = 100_0059_007;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2: VkStructureType = 100_0059_008;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES: VkStructureType = 100_0117_000;
 pub const VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO: VkStructureType = 100_0117_001;
 pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO: VkStructureType = 100_0117_002;
 pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO: VkStructureType = 100_0117_003;
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO: VkStructureType = 100_0053_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES: VkStructureType = 100_0053_001;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES: VkStructureType = 100_0053_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES: VkStructureType = 100_0120_000;
 pub const VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO: VkStructureType = 100_0145_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES: VkStructureType = 100_0145_001;
@@ -306,21 +275,14 @@ pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO: VkStructureType = 100_
 pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO: VkStructureType = 100_0156_003;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES: VkStructureType = 100_0156_004;
 pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES: VkStructureType = 100_0156_005;
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO: VkStructureType = 100_0085_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO: VkStructureType = 100_0071_000;
 pub const VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES: VkStructureType = 100_0071_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO: VkStructureType = 100_0071_002;
 pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES: VkStructureType = 100_0071_003;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = 100_0071_004;
-pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO: VkStructureType = 100_0072_000;
-pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO: VkStructureType = 100_0072_001;
-pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO: VkStructureType = 100_0072_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO: VkStructureType = 100_0112_000;
 pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES: VkStructureType = 100_0112_001;
 pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO: VkStructureType = 100_0113_000;
-pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO: VkStructureType = 100_0077_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO: VkStructureType = 100_0076_000;
-pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES: VkStructureType = 100_0076_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES: VkStructureType = 100_0168_000;
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT: VkStructureType = 100_0168_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES: VkStructureType = 100_0063_000;
@@ -440,9 +402,6 @@ pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType 
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT: VkStructureType = 100_0178_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 100_0190_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 100_0190_001;
-pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = 100_0255_000;
-pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType = 100_0255_002;
-pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = 100_0255_001;
 pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT: VkStructureType = 1000128000;
 pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT: VkStructureType = 1000128001;
 pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT: VkStructureType = 1000128002;
@@ -991,7 +950,6 @@ pub const VK_OBJECT_TYPE_DESCRIPTOR_SET: VkObjectType = 23;
 pub const VK_OBJECT_TYPE_FRAMEBUFFER: VkObjectType = 24;
 pub const VK_OBJECT_TYPE_COMMAND_POOL: VkObjectType = 25;
 pub const VK_OBJECT_TYPE_SAMPLE_YCBCR_CONVERSION: VkObjectType = 100_0156_000;
-pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkObjectType = 100_0085_000;
 pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 100_0000_000;
 pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 100_0001_000;
 pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 100_0002_000;
@@ -1020,8 +978,6 @@ pub const VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT: VkFormatFeatureFlagBit
 pub const VK_FORMAT_FEATURE_BLIT_SRC_BIT: VkFormatFeatureFlagBits = 0x0000_0400;
 pub const VK_FORMAT_FEATURE_BLIT_DST_BIT: VkFormatFeatureFlagBits = 0x0000_0800;
 pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT: VkFormatFeatureFlagBits = 0x0000_1000;
-pub const VK_FORMAT_FEATURE_TRANSFER_SRC_BIT: VkFormatFeatureFlagBits = 0x0000_4000;
-pub const VK_FORMAT_FEATURE_TRANSFER_DST_BIT: VkFormatFeatureFlagBits = 0x0000_8000;
 pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x0002_0000;
 pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits = 0x0004_0000;
 pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits =
@@ -1054,7 +1010,6 @@ pub const VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT: VkImageCreateFlagBits = 0x0008;
 pub const VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0010;
 pub const VK_IMAGE_CREATE_ALIAS_BIT: VkImageCreateFlagBits = 0x0400;
 pub const VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT: VkImageCreateFlagBits = 0x0040;
-pub const VK_IMAGE_CREATE_2D_ARRAY_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0020;
 pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0080;
 pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: VkImageCreateFlagBits = 0x0100;
 pub const VK_IMAGE_CREATE_PROTECTED_BIT: VkImageCreateFlagBits = 0x0800;
@@ -1088,7 +1043,6 @@ pub const VK_MEMORY_PROPERTY_PROTECTED_BIT: VkMemoryPropertyFlags = 0x20;
 
 pub type VkMemoryHeapFlags = VkFlags;
 pub const VK_MEMORY_HEAP_DEVICE_LOCAL_BIT: VkMemoryHeapFlags = 0x01;
-pub const VK_MEMORY_HEAP_MULTI_INSTANCE_BIT: VkMemoryHeapFlags = 0x02;
 pub type VkDeviceCreateFlags = VkFlags;
 
 pub type VkDeviceQueueCreateFlags = VkFlags;
@@ -4117,14 +4071,6 @@ extern "system" {
         descriptorWriteCount: u32,
         pDescriptorWrites: *const VkWriteDescriptorSet,
     );
-    #[cfg(feature = "VK_KHR_descriptor_update_template")]
-    pub fn vkCmdPushDescriptorSetWithTemplateKHR(
-        commandBuffer: VkCommandBuffer,
-        descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-        layout: VkPipelineLayout,
-        set: u32,
-        pData: *const c_void,
-    );
     #[cfg(feature = "VK_EXT_debug_marker")]
     pub fn vkCmdDebugMarkerBeginEXT(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT);
     #[cfg(feature = "VK_EXT_debug_marker")]
@@ -4193,13 +4139,6 @@ extern "system" {
 pub const VK_VERSION_1_1: u32 = 1;
 pub const VK_API_VERSION_1_1: u32 = VK_MAKE_VERSION(1, 1, 0); // Patch version should always be set to 0
 
-pub type VkSamplerYcbcrConversion = VK_NON_DISPATCHABLE_HANDLE!(VkSamplerYcbcrConversion);
-pub type VkDescriptorUpdateTemplate = VK_NON_DISPATCHABLE_HANDLE!(VkDescriptorUpdateTemplate);
-
-pub const VK_MAX_DEVICE_GROUP_SIZE: usize = 32;
-pub const VK_LUID_SIZE: usize = 8;
-pub const VK_QUEUE_FAMILY_EXTERNAL: u32 = !0u32 - 1;
-
 pub type VkPointClippingBehavior = i32;
 pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES: VkPointClippingBehavior = 0;
 pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_ONLY: VkPointClippingBehavior = 1;
@@ -4223,10 +4162,6 @@ pub type VkChromaLocation = i32;
 pub const VK_CHROMA_LOCATION_COSITED_EVEN: VkChromaLocation = 0;
 pub const VK_CHROMA_LOCATION_MIDPOINT: VkChromaLocation = 1;
 
-pub type VkDescriptorUpdateTemplateType = i32;
-pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET: VkDescriptorUpdateTemplateType = 0;
-pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS: VkDescriptorUpdateTemplateType = 1;
-
 pub type VkSubgroupFeatureFlags = VkFlags;
 pub const VK_SUBGROUP_FEATURE_BASIC_BIT: VkSubgroupFeatureFlags = 0x01;
 pub const VK_SUBGROUP_FEATURE_VOTE_BIT: VkSubgroupFeatureFlags = 0x02;
@@ -4245,9 +4180,6 @@ pub const VK_PEER_MEMORY_FEATURE_GENERIC_DST_BIT: VkPeerMemoryFeatureFlags = 0x0
 
 pub type VkMemoryAllocateFlags = VkFlags;
 pub const VK_MEMORY_ALLOCATE_DEVICE_MASK_BIT: VkMemoryAllocateFlags = 0x01;
-
-pub type VkCommandPoolTrimFlags = VkFlags;
-pub type VkDescriptorUpdateTemplateCreateFlags = VkFlags;
 
 pub type VkExternalMemoryHandleTypeFlags = VkFlags;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT: VkExternalMemoryHandleTypeFlags = 0x0001;
@@ -4289,34 +4221,6 @@ pub const VK_FENCE_IMPORT_TEMPORARY_BIT: VkFenceImportFlags = 0x01;
 pub type VkFenceImportFlagsKHR = VkFenceImportFlags;
 pub const VK_FENCE_IMPORT_TEMPORARY_BIT_KHR: VkFenceImportFlagsKHR = VK_FENCE_IMPORT_TEMPORARY_BIT;
 
-DefineFlags!(VkSemaphoreImportFlags {
-    VK_SEMAPHORE_IMPORT_TEMPORARY_BIT = 0x01
-});
-
-DefineFlags!(VkSemaphoreImportFlagsKHR {
-    VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR = VK_SEMAPHORE_IMPORT_TEMPORARY_BIT
-});
-
-DefineFlags!(VkExternalSemaphoreHandleTypeFlags {
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT = 0x01,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT = 0x02,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT = 0x04,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT = 0x08,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT = 0x10
-});
-
-DefineFlags!(VkExternalSemaphoreHandleTypeFlagsKHR {
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT,
-    VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT
-});
-
-pub type VkExternalSemaphoreFeatureFlags = VkFlags;
-pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT: VkExternalSemaphoreFeatureFlags = 0x01;
-pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT: VkExternalSemaphoreFeatureFlags = 0x02;
-
 #[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES)]
@@ -4353,18 +4257,6 @@ pub struct VkBindImageMemoryInfo {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES)]
-pub struct VkPhysicalDevice16BitStorageFeatures {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub storageBuffer16BitAccess: VkBool32,
-    pub uniformAndStorageBuffer16BitAccess: VkBool32,
-    pub storagePushConstant16: VkBool32,
-    pub storageInputOutput16: VkBool32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS)]
 pub struct VkMemoryDedicatedRequirements {
     pub sType: VkStructureType,
@@ -4381,60 +4273,6 @@ pub struct VkMemoryDedicatedAllocateInfo {
     pub pNext: *const c_void,
     pub image: VkImage,
     pub buffer: VkBuffer,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO)]
-pub struct VkMemoryAllocateFlagsInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub flags: VkMemoryAllocateFlags,
-    pub deviceMask: u32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO)]
-pub struct VkDeviceGroupRenderPassBeginInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub deviceMask: u32,
-    pub deviceRenderAreaCount: u32,
-    pub pDeviceRenderAreas: *const VkRect2D,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO)]
-pub struct VkDeviceGroupCommandBufferBeginInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub deviceMask: u32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO)]
-pub struct VkDeviceGroupSubmitInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub waitSemaphoreCount: u32,
-    pub pWaitSemaphoreDeviceIndices: *const u32,
-    pub commandBufferCount: u32,
-    pub pCommandBufferDeviceMasks: *const u32,
-    pub signalSemaphoreCount: u32,
-    pub pSignalSemaphoreDeviceIndices: *const u32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO)]
-pub struct VkDeviceGroupBindSparseInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub resourceDeviceIndex: u32,
-    pub memoryDeviceIndex: u32,
 }
 
 #[repr(C)]
@@ -4457,27 +4295,6 @@ pub struct VkBindImageMemoryDeviceGroupInfo {
     pub pDeviceIndices: *const u32,
     pub splitInstanceBindRegionCount: u32,
     pub pSplitInstanceBindRegions: *const VkRect2D,
-}
-
-#[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES)]
-pub struct VkPhysicalDeviceGroupProperties {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub physicalDeviceCount: u32,
-    pub physicalDevices: [VkPhysicalDevice; VK_MAX_DEVICE_GROUP_SIZE],
-    pub subsetAllocation: VkBool32,
-}
-
-#[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO)]
-pub struct VkDeviceGroupDeviceCreateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub physicalDeviceCount: u32,
-    pub pPhysicalDevices: *const VkPhysicalDevice,
 }
 
 #[repr(C)]
@@ -4526,95 +4343,6 @@ pub struct VkSparseImageMemoryRequirements2 {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2)]
-pub struct VkPhysicalDeviceFeatures2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub features: VkPhysicalDeviceFeatures,
-}
-
-#[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2)]
-pub struct VkPhysicalDeviceProperties2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub properties: VkPhysicalDeviceProperties,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2)]
-pub struct VkFormatProperties2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub formatProperties: VkFormatProperties,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2)]
-pub struct VkImageFormatProperties2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub imageFormatProperties: VkImageFormatProperties,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2)]
-pub struct VkPhysicalDeviceImageFormatInfo2 {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub format: VkFormat,
-    pub _type: VkImageType,
-    pub tiling: VkImageTiling,
-    pub usage: VkImageUsageFlags,
-    pub flags: VkImageCreateFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2)]
-pub struct VkQueueFamilyProperties2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub queueFamilyProperties: VkQueueFamilyProperties,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2)]
-pub struct VkPhysicalDeviceMemoryProperties2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub memoryProperties: VkPhysicalDeviceMemoryProperties,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2)]
-pub struct VkSparseImageFormatProperties2 {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub properties: VkSparseImageFormatProperties,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2)]
-pub struct VkPhysicalDeviceSparseImageFormatInfo2 {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub format: VkFormat,
-    pub _type: VkImageType,
-    pub samples: VkSampleCountFlags,
-    pub usage: VkImageUsageFlags,
-    pub tiling: VkImageTiling,
-}
-
-#[repr(C)]
 #[derive(Clone, Debug, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES)]
 pub struct VkPhysicalDevicePointClippingProperties {
@@ -4657,41 +4385,6 @@ pub struct VkPipelineTessellationDomainOriginStateCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub domainOrigin: VkTessellationDomainOrigin,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO)]
-pub struct VkRenderPassMultiviewCreateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub subpassCount: u32,
-    pub pViewMasks: *const u32,
-    pub dependencyCount: u32,
-    pub pViewOffsets: *const i32,
-    pub correlationMaskCount: u32,
-    pub pCorrelationMasks: *const u32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES)]
-pub struct VkPhysicalDeviceMultiviewFeatures {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub multiview: VkBool32,
-    pub multiviewGeometryShader: VkBool32,
-    pub multiviewTessellationShader: VkBool32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES)]
-pub struct VkPhysicalDeviceMultiviewProperties {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub maxMultiviewViewCount: u32,
-    pub maxMultiviewInstanceIndex: u32,
 }
 
 #[repr(C)]
@@ -4805,33 +4498,6 @@ pub struct VkSamplerYcbcrConversionImageFormatProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct VkDescriptorUpdateTemplateEntry {
-    pub dstBinding: u32,
-    pub dstArrayElement: u32,
-    pub descriptorCount: u32,
-    pub descriptorType: VkDescriptorType,
-    pub offset: size_t,
-    pub stride: size_t,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO)]
-pub struct VkDescriptorUpdateTemplateCreateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub flags: VkDescriptorUpdateTemplateCreateFlags,
-    pub descriptorUpdateEntryCount: u32,
-    pub pDescriptorUpdateEntries: *const VkDescriptorUpdateTemplateEntry,
-    pub templateType: VkDescriptorUpdateTemplateType,
-    pub descriptorSetLayout: VkDescriptorSetLayout,
-    pub pipelineBindPoint: VkPipelineBindPoint,
-    pub pipelineLayout: VkPipelineLayout,
-    pub set: u32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkExternalMemoryProperties {
     pub externalMemoryFeatures: VkExternalMemoryFeatureFlags,
     pub exportFromImportedHandleTypes: VkExternalMemoryHandleTypeFlags,
@@ -4878,46 +4544,6 @@ pub struct VkExternalBufferProperties {
 
 #[repr(C)]
 #[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES)]
-pub struct VkPhysicalDeviceIDProperties {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub deviceUUID: [u8; VK_UUID_SIZE],
-    pub driverUUID: [u8; VK_UUID_SIZE],
-    pub deviceLUID: [u8; VK_LUID_SIZE],
-    pub deviceNodeMask: u32,
-    pub deviceLUIDValid: VkBool32,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO)]
-pub struct VkExternalMemoryImageCreateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub handleTypes: VkExternalMemoryHandleTypeFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO)]
-pub struct VkExternalMemoryBufferCreateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub handleTypes: VkExternalMemoryHandleTypeFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO)]
-pub struct VkExportMemoryAllocateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub handleTypes: VkExternalMemoryHandleTypeFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO)]
 pub struct VkPhysicalDeviceExternalFenceInfo {
     pub sType: VkStructureType,
@@ -4943,35 +4569,6 @@ pub struct VkExportFenceCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub handleTypes: VkExternalFenceHandleTypeFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO)]
-pub struct VkExportSemaphoreCreateInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub handleTypes: VkExternalSemaphoreHandleTypeFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO)]
-pub struct VkPhysicalDeviceExternalSemaphoreInfo {
-    pub sType: VkStructureType,
-    pub pNext: *const c_void,
-    pub handleType: VkExternalSemaphoreHandleTypeFlags,
-}
-
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES)]
-pub struct VkExternalSemaphoreProperties {
-    pub sType: VkStructureType,
-    pub pNext: *mut c_void,
-    pub exportFromImportedHandleType: VkExternalSemaphoreHandleTypeFlags,
-    pub compatibleHandleTypes: VkExternalSemaphoreHandleTypeFlags,
-    pub externalSemaphoreFeatures: VkExternalSemaphoreFeatureFlags,
 }
 
 #[repr(C)]
@@ -5024,11 +4621,6 @@ pub type PFN_vkCmdDispatchBase = extern "system" fn(
     groupCountY: u32,
     groupCountZ: u32,
 );
-pub type PFN_vkEnumeratePhysicalDeviceGroups = extern "system" fn(
-    instance: VkInstance,
-    pPhysicalDeviceGroupCount: *mut u32,
-    pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupProperties,
-) -> VkResult;
 pub type PFN_vkGetImageMemoryRequirements2 = extern "system" fn(
     device: VkDevice,
     pInfo: *const VkImageMemoryRequirementsInfo2,
@@ -5069,8 +4661,6 @@ pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = extern "system" f
     pPropertyCount: *mut u32,
     pProperties: *mut VkSparseImageFormatProperties2,
 );
-pub type PFN_vkTrimCommandPool =
-    extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlags);
 pub type PFN_vkGetDeviceQueue2 =
     extern "system" fn(device: VkDevice, pQueueInfo: *const VkDeviceQueueInfo2, pQueue: *mut VkQueue);
 pub type PFN_vkCreateSamplerYcbcrConversion = extern "system" fn(
@@ -5084,23 +4674,6 @@ pub type PFN_vkDestroySamplerYcbcrConversion = extern "system" fn(
     ycbcrConversion: VkSamplerYcbcrConversion,
     pAllocator: *const VkAllocationCallbacks,
 );
-pub type PFN_vkCreateDescriptorUpdateTemplate = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate,
-) -> VkResult;
-pub type PFN_vkDestroyDescriptorUpdateTemplate = extern "system" fn(
-    device: VkDevice,
-    descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    pAllocator: *const VkAllocationCallbacks,
-);
-pub type PFN_vkUpdateDescriptorSetWithTemplate = extern "system" fn(
-    device: VkDevice,
-    descriptorSet: VkDescriptorSet,
-    descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    pData: *const c_void,
-);
 pub type PFN_vkGetPhysicalDeviceExternalBufferProperties = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
     pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfo,
@@ -5110,11 +4683,6 @@ pub type PFN_vkGetPhysicalDeviceExternalFenceProperties = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
     pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfo,
     pExternalFenceProperties: *mut VkExternalFenceProperties,
-);
-pub type PFN_vkGetPhysicalDeviceExternalSemaphoreProperties = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfo,
-    pExternalSemaphoreProperties: *mut VkExternalSemaphoreProperties,
 );
 pub type PFN_vkGetDescriptorSetLayoutSupport = extern "system" fn(
     device: VkDevice,
@@ -5202,7 +4770,6 @@ extern "system" {
         pPropertyCount: *mut u32,
         pProperties: *mut VkSparseImageFormatProperties2,
     );
-    pub fn vkTrimCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlags);
     pub fn vkGetDeviceQueue2(device: VkDevice, pQueueInfo: *const VkDeviceQueueInfo2, pQueue: *mut VkQueue);
     pub fn vkCreateSamplerYcbcrConversion(
         device: VkDevice,
@@ -5215,22 +4782,6 @@ extern "system" {
         ycbcrConversion: VkSamplerYcbcrConversion,
         pAllocator: *const VkAllocationCallbacks,
     );
-    // pub fn vkCreateDescriptorUpdateTemplate(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    //     pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
-    // pub fn vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    //     pAllocator: *const VkAllocationCallbacks);
-    // khr equivalent
-    // pub fn vkCreateDescriptorUpdateTemplateKHR(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    //     pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
-    // khr equivalent
-    // pub fn vkDestroyDescriptorUpdateTemplateKHR(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    //     pAllocator: *const VkAllocationCallbacks);
-    pub fn vkUpdateDescriptorSetWithTemplate(
-        device: VkDevice,
-        descriptorSet: VkDescriptorSet,
-        descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-        pData: *const c_void,
-    );
     pub fn vkGetPhysicalDeviceExternalBufferProperties(
         physicalDevice: VkPhysicalDevice,
         pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfo,
@@ -5240,11 +4791,6 @@ extern "system" {
         physicalDevice: VkPhysicalDevice,
         pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfo,
         pExternalFenceProperties: *mut VkExternalFenceProperties,
-    );
-    pub fn vkGetPhysicalDeviceExternalSemaphoreProperties(
-        physicalDevice: VkPhysicalDevice,
-        pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfo,
-        pExternalSemaphoreProperties: *mut VkExternalSemaphoreProperties,
     );
     pub fn vkGetDescriptorSetLayoutSupport(
         device: VkDevice,

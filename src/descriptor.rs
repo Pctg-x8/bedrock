@@ -1,6 +1,6 @@
 //! Vulkan Descriptors
 
-use crate::{vk::*, DeviceChild, Instance, VkObject};
+use crate::{vk::*, DeviceChild, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
@@ -340,34 +340,38 @@ macro_rules! DescriptorUpdateTemplateEntries
 #[derive(VkHandle, VkObject, DeviceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE)]
 pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
-    pub(crate) VkDescriptorUpdateTemplate,
+    pub(crate) VkDescriptorUpdateTemplateKHR,
     #[parent] pub(crate) Device,
+    pub(crate) PFN_vkDestroyDescriptorUpdateTemplateKHR,
 );
 unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
 #[cfg(feature = "Implements")]
 impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
     fn drop(&mut self) {
-        unsafe {
-            self.1
-                .instance()
-                .destroy_descriptor_update_template(self.1.native_ptr(), self.0, std::ptr::null());
-        }
+        (self.2)(self.1.native_ptr(), self.0, std::ptr::null());
     }
 }
 impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
 
 pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate> + DeviceChild {
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_descriptor_update_template")]
     fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
-        unsafe {
-            Resolver::get().update_descriptor_set_with_template(
-                self.device().native_ptr(),
-                set,
-                self.native_ptr(),
-                data as *const T as *const _,
-            )
-        }
+        // TODO: needs optimize
+
+        use crate::Device;
+        let f: PFN_vkUpdateDescriptorSetWithTemplateKHR = self
+            .device()
+            .extra_procedure("vkUpdateDescriptorSetWithTemplateKHR")
+            .expect("no vkUpdateDescriptorSetWithTemplateKHR");
+
+        (f)(
+            self.device().native_ptr(),
+            set,
+            self.native_ptr(),
+            data as *const T as *const _,
+        )
     }
 }
 DerefContainerBracketImpl!(for DescriptorUpdateTemplate {});

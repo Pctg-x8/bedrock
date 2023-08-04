@@ -17,6 +17,9 @@ pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR: VkStructureType = ex
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType = ext_enum_value(72, 4) as _;
 
+#[promote_1_1]
+pub const VK_LUID_SIZE_KHR: usize = 8;
+
 #[promote_1_1(suffix = "KHR")]
 pub type VkExternalMemoryHandleTypeFlagsKHR = VkFlags;
 #[promote_1_1(suffix = "KHR")]

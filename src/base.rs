@@ -351,33 +351,6 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         }
     }
 
-    #[cfg(feature = "Implements")]
-    unsafe fn create_descriptor_update_template(
-        &self,
-        device: VkDevice,
-        info: &VkDescriptorUpdateTemplateCreateInfo,
-        alloc: *const VkAllocationCallbacks,
-        handle: *mut VkDescriptorUpdateTemplate,
-    ) -> VkResultBox {
-        let f: PFN_vkCreateDescriptorUpdateTemplate = self
-            .extra_procedure("vkCreateDescriptorUpdateTemplate")
-            .expect("No vkCreateDescriptorUpdateTemplate found");
-        VkResultBox((f)(device, info, alloc, handle))
-    }
-
-    #[cfg(feature = "Implements")]
-    unsafe fn destroy_descriptor_update_template(
-        &self,
-        device: VkDevice,
-        handle: VkDescriptorUpdateTemplate,
-        alloc: *const VkAllocationCallbacks,
-    ) {
-        let f: PFN_vkDestroyDescriptorUpdateTemplate = self
-            .extra_procedure("vkDestroyDescriptorUpdateTemplate")
-            .expect("No vkDestroyDescriptorUpdateTemplate");
-        (f)(device, handle, alloc)
-    }
-
     /// Register a debug report callback
     /// # Failures
     /// On failure, this command returns

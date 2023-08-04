@@ -25,7 +25,7 @@ pub const VK_QUEUE_FAMILY_EXTERNAL_KHR: u32 = unsafe { std::mem::transmute(-1) }
 pub struct VkExternalMemoryImageCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub handleTYpes: VkExternalMemoryHandleTypeFlagsKHR,
+    pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
 #[repr(C)]

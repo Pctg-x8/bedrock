@@ -1309,8 +1309,46 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
+    #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_descriptor_update_template")]
+    fn new_descriptor_update_template(
+        self,
+        entries: &[VkDescriptorUpdateTemplateEntry],
+        dsl: &impl crate::DescriptorSetLayout,
+    ) -> crate::Result<crate::DescriptorUpdateTemplateObject<Self>>
+    where
+        Self: Sized + InstanceChild,
+    {
+        let f: PFN_vkCreateDescriptorUpdateTemplateKHR = self
+            .extra_procedure("vkCreateDescriptorUpdateTemplateKHR")
+            .expect("no vkCreateDescriptorUpdateTemplateKHR");
+        let destroy_fn: PFN_vkDestroyDescriptorUpdateTemplateKHR = self
+            .extra_procedure("vkDestroyDescriptorUpdateTemplateKHR")
+            .expect("no vkDestroyDescriptorUpdateTemplateKHR");
+
+        let cinfo = VkDescriptorUpdateTemplateCreateInfo {
+            sType: VkDescriptorUpdateTemplateCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
+            set: 0,
+            pipelineLayout: VK_NULL_HANDLE as _,
+            descriptorUpdateEntryCount: entries.len() as _,
+            pDescriptorUpdateEntries: entries.as_ptr(),
+            templateType: VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
+            descriptorSetLayout: dsl.native_ptr(),
+        };
+        let mut handle = std::mem::MaybeUninit::uninit();
+        unsafe {
+            VkResultBox((f)(self.native_ptr(), &cinfo, std::ptr::null(), handle.as_mut_ptr()))
+                .into_result()
+                .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self, destroy_fn))
+        }
+    }
+
     /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_push_descriptor")]
     fn new_descriptor_update_template(
         self,
         entries: &[VkDescriptorUpdateTemplateEntry],

@@ -918,6 +918,7 @@ pub trait ResolverInterface {
         pDescriptorWrites: *const VkWriteDescriptorSet,
     );
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
+    #[cfg(feature = "VK_KHR_push_descriptor")]
     unsafe fn push_descriptor_set_with_template_khr(
         &self,
         commandBuffer: VkCommandBuffer,
@@ -1110,23 +1111,6 @@ pub trait ResolverInterface {
         device: VkDevice,
         ycbcrConversion: VkSamplerYcbcrConversion,
         pAllocator: *const VkAllocationCallbacks,
-    );
-    // unsafe fn create_descriptor_update_template(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    //     pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
-    // unsafe fn destroy_descriptor_update_template(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    //     pAllocator: *const VkAllocationCallbacks);
-    // khr equivalent
-    // unsafe fn vkCreateDescriptorUpdateTemplateKHR(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    //     pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult;
-    // khr equivalent
-    // unsafe fn vkDestroyDescriptorUpdateTemplateKHR(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    //     pAllocator: *const VkAllocationCallbacks);
-    unsafe fn update_descriptor_set_with_template(
-        &self,
-        device: VkDevice,
-        descriptorSet: VkDescriptorSet,
-        descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-        pData: *const c_void,
     );
     unsafe fn get_physical_device_external_buffer_properties(
         &self,
@@ -2126,6 +2110,7 @@ impl ResolverInterface for Resolver {
         )
     );
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
+    #[cfg(feature = "VK_KHR_push_descriptor")]
     WrapAPI!(
         push_descriptor_set_with_template_khr = vkCmdPushDescriptorSetWithTemplateKHR(
             commandBuffer: VkCommandBuffer,
@@ -2333,24 +2318,6 @@ impl ResolverInterface for Resolver {
             device: VkDevice,
             ycbcrConversion: VkSamplerYcbcrConversion,
             pAllocator: *const VkAllocationCallbacks
-        )
-    );
-    // WrapAPI!(create_descriptor_update_template = vkCreateDescriptorUpdateTemplate(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    //     pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult);
-    // WrapAPI!(destroy_descriptor_update_template = vkDestroyDescriptorUpdateTemplate(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    //     pAllocator: *const VkAllocationCallbacks));
-    // khr equivalent
-    // WrapAPI!(vkCreateDescriptorUpdateTemplateKHR = vkCreateDescriptorUpdateTemplateKHR(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
-    //     pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplate) -> VkResult);
-    // khr equivalent
-    // WrapAPI!(vkDestroyDescriptorUpdateTemplateKHR = vkDestroyDescriptorUpdateTemplateKHR(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-    //     pAllocator: *const VkAllocationCallbacks));
-    WrapAPI!(
-        update_descriptor_set_with_template = vkUpdateDescriptorSetWithTemplate(
-            device: VkDevice,
-            descriptorSet: VkDescriptorSet,
-            descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
-            pData: *const c_void
         )
     );
     WrapAPI!(
