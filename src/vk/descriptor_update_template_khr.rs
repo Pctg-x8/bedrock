@@ -116,7 +116,7 @@ cfg_if! {
 
 cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_report")] {
-        pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT: VkDebugReportObjectTypeEXT = ext_enum_value(86, 0);
+        pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT: VkDebugReportObjectTypeEXT = ext_enum_value(86, 0) as _;
         #[cfg(feature = "Allow1_1APIs")]
         pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_EXT: VkDebugReportObjectTypeEXT = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT;
     }

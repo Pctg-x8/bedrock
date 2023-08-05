@@ -871,12 +871,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             memoryTypeIndex: type_index,
         };
 
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(move |_| crate::DeviceMemoryObject(h, self))
+                .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
     }
 
@@ -914,12 +914,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             memoryTypeIndex: type_index,
         };
 
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(move |_| crate::DeviceMemoryObject(h, self))
+                .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
     }
 
@@ -996,12 +996,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             memoryTypeIndex: type_index,
         };
 
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), &mut h)
+                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(move |_| crate::DeviceMemoryObject(h, self))
+                .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
     }
 

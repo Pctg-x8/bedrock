@@ -22,13 +22,39 @@ pub const VK_LUID_SIZE_KHR: usize = 8;
 
 #[promote_1_1(suffix = "KHR")]
 pub type VkExternalMemoryHandleTypeFlagsKHR = VkFlags;
-#[promote_1_1(suffix = "KHR")]
-pub type VkExternalMemoryHandleTypeFlagBitsKHR = VkFlags;
+vk_bitmask! {
+    #[promote_1_1(suffix = "KHR")]
+    pub enum VkExternalMemoryHandleTypeFlagBitsKHR {
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR: 0,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR: 1,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR: 2,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT_KHR: 3,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR: 4,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR: 5,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR: 6
+    }
+}
 
 #[promote_1_1(suffix = "KHR")]
 pub type VkExternalMemoryFeatureFlagsKHR = VkFlags;
-#[promote_1_1(suffix = "KHR")]
-pub type VkExternalMemoryFeatureFlagBitsKHR = VkFlags;
+vk_bitmask! {
+    #[promote_1_1(suffix = "KHR")]
+    pub enum VkExternalMemoryFeatureFlagBitsKHR {
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHR: 0,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_KHR: 1,
+        #[promote_1_1]
+        pub VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_KHR: 2
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -90,7 +116,7 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub pNext: *mut c_void,
     pub deviceUUID: [u8; VK_UUID_SIZE],
     pub driverUUID: [u8; VK_UUID_SIZE],
-    pub deviceLUID: [u8; VK_LUID_SIZE],
+    pub deviceLUID: [u8; VK_LUID_SIZE_KHR],
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,
 }
@@ -99,7 +125,7 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
 pub type PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
     pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR,
-    pExternalBufferProperties: *mut VkExternalBufferProperties,
+    pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR,
 );
 
 #[cfg(feature = "Implements")]
@@ -109,6 +135,6 @@ extern "system" {
     pub fn vkGetPhysicalDeviceExternalBufferPropertiesKHR(
         physicalDevice: VkPhysicalDevice,
         pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR,
-        pExternalBufferProperties: *mut VkExternalBufferProperties,
+        pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR,
     );
 }
