@@ -360,7 +360,7 @@ cfg_if! {
         }
         impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
 
-        pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate> + DeviceChild {
+        pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplateKHR> + DeviceChild {
             #[cfg(feature = "Implements")]
             fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
                 // TODO: needs optimize

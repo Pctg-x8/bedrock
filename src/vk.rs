@@ -48,15 +48,9 @@ pub const fn VK_PATCH_VERSION(v: u32) -> u16 {
     (v & 0xfff) as _
 }
 
-macro_rules! DefineFlags {
-    ($t: ident { $($f: ident = $x: expr),* }) => {
-        pub type $t = VkFlags;
-        $(pub const $f: $t = $x;)*
-    }
-}
-
 // define macros
 
+#[inline]
 const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
     1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
 }

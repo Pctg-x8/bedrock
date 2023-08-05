@@ -51,7 +51,7 @@ pub const VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR: VkDependencyFlagBits = 1 << 2;
 pub struct VkMemoryAllocateFlagsInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub flags: VkMemoryAllocateFlags,
+    pub flags: VkMemoryAllocateFlagsKHR,
     pub deviceMask: u32,
 }
 
@@ -204,7 +204,7 @@ cfg_if! {
         pub struct VkDeviceGroupPresentCapabilitiesKHR {
             pub sType: VkStructureType,
             pub pNext: *mut c_void,
-            pub presentMask: [u32; VK_MAX_DEVICE_GROUP_SIZE],
+            pub presentMask: [u32; VK_MAX_DEVICE_GROUP_SIZE_KHR],
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
