@@ -114,7 +114,7 @@ pub trait VkObject: VkHandle {
     where
         Self: DeviceChild,
         Self::ConcreteDevice: InstanceChild,
-        Self::Handle: PointerHandleConversion,
+        Self::Handle: Into<u64>,
     {
         DebugUtilsObjectNameInfo::new(self, name).apply(self.device())
     }
