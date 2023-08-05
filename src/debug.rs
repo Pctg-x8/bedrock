@@ -264,10 +264,10 @@ cfg_if::cfg_if! {
                     .extra_procedure("vkDestroyDebugUtilsMessengerEXT")
                     .expect("Requiring vkDestroyDebugUtilsMessengerEXT function");
 
-                let mut h = VK_NULL_HANDLE as _;
-                VkResultBox(create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h))
+                let mut h = std::mem::MaybeUninit::uninit();
+                VkResultBox(create_fn(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr()))
                     .into_result()
-                    .map(|_| DebugUtilsMessengerObject(h, instance, destroy_fn))
+                    .map(|_| DebugUtilsMessengerObject(h.assume_init(), instance, destroy_fn))
             }
         }
 
