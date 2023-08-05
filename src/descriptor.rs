@@ -192,7 +192,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
         let mut hs = vec![VkDescriptorSet::NULL; layout_ptrs.len()];
         unsafe {
             Resolver::get()
-                .allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
+                .allocate_descriptor_sets(self.device().native_ptr(), &dbg!(ainfo), hs.as_mut_ptr())
                 .into_result()
                 .map(|_| std::mem::transmute(hs))
         }
