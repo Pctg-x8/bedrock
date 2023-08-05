@@ -48,6 +48,12 @@ pub const fn VK_PATCH_VERSION(v: u32) -> u16 {
     (v & 0xfff) as _
 }
 
+/// (major, minor, patch)
+#[inline]
+pub const fn vk_deserialize_version(v: u32) -> (u16, u16, u16) {
+    (VK_MAJOR_VERSION(v), VK_MINOR_VERSION(v), VK_PATCH_VERSION(v))
+}
+
 // define macros
 
 #[inline]
