@@ -634,16 +634,17 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> ExternalFenceProperties {
         let mut r = std::mem::MaybeUninit::uninit();
         unsafe {
-            *r.as_mut_ptr().sType = VkExternalFencePropertires::TYPE;
+            *r.as_mut_ptr().sType = VkExternalFencePropertiesKHR::TYPE;
+            *r.as_mut_ptr().pNext = std::ptr::null_mut();
         }
-        let f: PFN_vkGetPhysicalDeviceExternalFenceProperties = self
-            .1
-            .extra_procedure("vkGetPhysicalDeviceExternalFenceProperties")
+        let f: PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR = self
+            .instance()
+            .extra_procedure("vkGetPhysicalDeviceExternalFencePropertiesKHR")
             .expect("no vkGetPhysicalDeviceExternalFenceProperties exported?");
         (f)(
             self.native_ptr(),
-            &VkPhysicalDeviceExternalFenceInfo {
-                sType: VkPhysicalDeviceExternalFenceInfo::TYPE,
+            &VkPhysicalDeviceExternalFenceInfoKHR {
+                sType: VkPhysicalDeviceExternalFenceInfoKHR::TYPE,
                 pNext: std::ptr::null(),
                 handleType: handle_type as _,
             },
@@ -838,12 +839,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             dpy: display,
             window,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_xlib_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_xlib_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -870,12 +871,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             connection,
             window,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_xcb_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_xcb_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -902,12 +903,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             display,
             surface,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_wayland_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_wayland_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -932,12 +933,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             flags: 0,
             window,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_android_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_android_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -994,12 +995,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             flags: 0,
             pView: view_ptr,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_macos_surface_mvk(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_macos_surface_mvk(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -1300,18 +1301,18 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<Vec<VkPresentModeKHR>> {
-        let cmdfn: PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = self
+        let f: PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = self
             .instance()
             .extra_procedure("vkGetPhysicalDeviceSurfacePresentModes2EXT")
             .expect("no extra procedures loaded");
 
         let mut n = 0;
-        VkResultBox(cmdfn(self.native_ptr(), surface_info, &mut n, std::ptr::null_mut())).into_result()?;
+        VkResultBox(f(self.native_ptr(), surface_info, &mut n, std::ptr::null_mut())).into_result()?;
         let mut x = Vec::with_capacity(n as _);
         unsafe {
             x.set_len(n as _);
         }
-        VkResultBox(cmdfn(self.native_ptr(), surface_info, &mut n, x.as_mut_ptr()))
+        VkResultBox(f(self.native_ptr(), surface_info, &mut n, x.as_mut_ptr()))
             .into_result()
             .map(move |_| x)
     }
@@ -1354,43 +1355,48 @@ mod external_fence_capabilities_khr {
 
     #[repr(transparent)]
     /// Structure describing supported external fence handle features
-    pub struct ExternalFenceProperties(VkExternalFenceProperties);
-    impl From<VkExternalFenceProperties> for ExternalFenceProperties {
+    pub struct ExternalFenceProperties(VkExternalFencePropertiesKHR);
+    impl From<VkExternalFencePropertiesKHR> for ExternalFenceProperties {
         fn from(v: VkExternalFenceProperties) -> Self {
             Self(v)
         }
     }
-    impl From<ExternalFenceProperties> for VkExternalFenceProperties {
+    impl From<ExternalFenceProperties> for VkExternalFencePropertiesKHR {
         fn from(v: ExternalFenceProperties) -> Self {
             v.0
         }
     }
-    impl AsRef<VkExternalFenceProperties> for ExternalFenceProperties {
-        fn as_ref(&self) -> &VkExternalFenceProperties {
+    impl AsRef<VkExternalFencePropertiesKHR> for ExternalFenceProperties {
+        fn as_ref(&self) -> &VkExternalFencePropertiesKHR {
             &self.0
         }
     }
     impl std::ops::Deref for ExternalFenceProperties {
-        type Target = VkExternalFenceProperties;
-        fn deref(&self) -> &VkExternalFenceProperties {
+        type Target = VkExternalFencePropertiesKHR;
+        fn deref(&self) -> &VkExternalFencePropertiesKHR {
             &self.0
         }
     }
     impl ExternalFenceProperties {
-        pub fn export_from_imported_handle_types(&self) -> crate::ExternalFenceHandleTypes {
+        #[inline]
+        pub const fn export_from_imported_handle_types(&self) -> crate::ExternalFenceHandleTypes {
             crate::ExternalFenceHandleTypes(self.0.exportFromImportedHandleTypes)
         }
-        pub fn compatible_handle_types(&self) -> crate::ExternalFenceHandleTypes {
+
+        #[inline]
+        pub const fn compatible_handle_types(&self) -> crate::ExternalFenceHandleTypes {
             crate::ExternalFenceHandleTypes(self.0.compatibleHandleTypes)
         }
-        pub fn features(&self) -> ExternalFenceFeatureFlags {
+
+        #[inline]
+        pub const fn features(&self) -> ExternalFenceFeatureFlags {
             ExternalFenceFeatureFlags(self.0.externalFenceFeatures)
         }
     }
     impl std::fmt::Debug for ExternalFenceProperties {
         fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
             fmt.debug_struct("ExternalFenceProperties")
-                .field("pNext", &self.pNext)
+                .field("pNext", &self.0.pNext)
                 .field(
                     "export_from_imported_handle_types",
                     &self.export_from_imported_handle_types(),
@@ -1400,17 +1406,18 @@ mod external_fence_capabilities_khr {
                 .finish()
         }
     }
+
     #[repr(transparent)]
-    #[cfg(feature = "VK_KHR_external_fence_capabilities")]
     #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
     /// Bitfield describing features of an external fence handle type
-    pub struct ExternalFenceFeatureFlags(pub VkExternalFenceFeatureFlags);
+    pub struct ExternalFenceFeatureFlags(pub VkExternalFenceFeatureFlagsKHR);
     impl ExternalFenceFeatureFlags {
         pub const fn contains_exportable(self) -> bool {
-            (self.0 & VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT) != 0
+            (self.0 & VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR) != 0
         }
+
         pub const fn contains_importable(self) -> bool {
-            (self.0 & VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT) != 0
+            (self.0 & VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR) != 0
         }
     }
     impl std::fmt::Debug for ExternalFenceFeatureFlags {

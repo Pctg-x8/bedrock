@@ -144,7 +144,11 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             sType: VkImportFenceFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
             fence: self.native_ptr(),
-            flags: if temporary { VK_FENCE_IMPORT_TEMPORARY_BIT } else { 0 },
+            flags: if temporary {
+                VK_FENCE_IMPORT_TEMPORARY_BIT_KHR
+            } else {
+                0
+            },
             handleType: ty as _,
             fd,
         };

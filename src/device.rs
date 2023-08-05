@@ -595,6 +595,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Multiple Binding for both resources
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_bind_memory2")]
     fn bind_resources(
         &self,
         buf_bounds: &[(
@@ -1051,9 +1052,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
-        let exp_info = VkExportFenceCreateInfo {
-            sType: VkExportFenceCreateInfo::TYPE,
+        let mut h = std::mem::MaybeUninit::uninit();
+        let exp_info = VkExportFenceCreateInfoKHR {
+            sType: VkExportFenceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
             handleTypes: compatible_handle_types.0,
         };
@@ -1064,9 +1065,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         unsafe {
             Resolver::get()
-                .create_fence(self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_fence(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(move |_| crate::FenceObject(h, self))
+                .map(move |_| crate::FenceObject(h.assume_init(), self))
         }
     }
 
@@ -1115,7 +1116,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let exp_info = VkExportSemaphoreCreateInfo {
+        let exp_info = VkExportSemaphoreCreateInfoKHR {
             sType: VkExportSemaphoreCreateInfo::TYPE,
             pNext: export_info.as_ref() as *const _ as _,
             handleTypes: handle_types.into(),
@@ -1125,12 +1126,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: &exp_info as *const _ as _,
             flags: 0,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_semaphore(self.native_ptr(), &info, std::ptr::null(), &mut h)
+                .create_semaphore(self.native_ptr(), &info, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(move |_| crate::SemaphoreObject(h, self))
+                .map(move |_| crate::SemaphoreObject(h.assume_init(), self))
         }
     }
 

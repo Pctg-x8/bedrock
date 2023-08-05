@@ -71,16 +71,5 @@ pub struct VkExternalSemaphorePropertiesKHR {
 pub type PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
     pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR,
-    pExternalSemaphoreProperties: *mut VkExternalSemaphoreProperties,
+    pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR,
 );
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR,
-        pExternalSemaphoreProperties: *mut VkExternalSemaphoreProperties,
-    );
-}

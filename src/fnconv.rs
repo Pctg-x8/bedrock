@@ -72,7 +72,7 @@ FnTransmuteImpl!(for PFN_vkImportSemaphoreWin32HandleKHR, PFN_vkGetSemaphoreWin3
 FnTransmuteImpl!(for PFN_vkGetFenceFdKHR, PFN_vkImportFenceFdKHR);
 
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceExternalFenceProperties);
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR);
 
 #[cfg(feature = "VK_EXT_direct_mode_display")]
 FnTransmuteImpl!(for PFN_vkReleaseDisplayEXT);

@@ -186,7 +186,7 @@ pub enum ExternalMemoryHandleTypeWin32 {
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(C)]
 pub enum ExternalMemoryHandleTypeFd {
-    Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT as _,
+    Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _,
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
     DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _,
 }
@@ -285,8 +285,8 @@ cfg_if! {
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 pub enum ExternalFenceFdType {
-    Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT as _,
-    Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT as _,
+    Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _,
+    Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR as _,
 }
 
 cfg_if! {
@@ -302,9 +302,9 @@ cfg_if! {
         impl ExternalFenceHandleTypes {
             pub const EMPTY: Self = Self(0);
             #[cfg(feature = "VK_KHR_external_fence_fd")]
-            pub const OPAQUE_FD: Self = Self(VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT as _);
+            pub const OPAQUE_FD: Self = Self(VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _);
             #[cfg(feature = "VK_KHR_external_fence_fd")]
-            pub const SYNC_FD: Self = Self(VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT as _);
+            pub const SYNC_FD: Self = Self(VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR as _);
 
             #[cfg(feature = "VK_KHR_external_fence_fd")]
             pub const fn opaque_fd(self) -> Self {

@@ -62,17 +62,6 @@ pub struct VkExternalFencePropertiesKHR {
 #[promote_1_1(suffix = "KHR")]
 pub type PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR = extern "system" fn(
     physicalDevice: VkPhysicalDevice,
-    pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfo,
-    pExternalFenceProperties: *mut VkExternalFenceProperties,
+    pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR,
+    pExternalFenceProperties: *mut VkExternalFencePropertiesKHR,
 );
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetPhysicalDeviceExternalFencePropertiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfo,
-        pExternalFenceProperties: *mut VkExternalFenceProperties,
-    );
-}
