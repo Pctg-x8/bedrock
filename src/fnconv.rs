@@ -96,7 +96,7 @@ FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
 FnTransmuteImpl!(for PFN_vkCreateDescriptorUpdateTemplateKHR, PFN_vkDestroyDescriptorUpdateTemplateKHR, PFN_vkUpdateDescriptorSetWithTemplateKHR);
 
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceFeatures2KHR, PFN_vkGetPhysicalDeviceProperties2KHR);
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceFeatures2KHR, PFN_vkGetPhysicalDeviceProperties2KHR, PFN_vkGetPhysicalDeviceFormatProperties2KHR);
 
 #[cfg(feature = "VK_KHR_maintenance1")]
 FnTransmuteImpl!(for PFN_vkTrimCommandPoolKHR);
