@@ -632,7 +632,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "VK_KHR_external_fence_fd")]
     #[cfg(feature = "Implements")]
     fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> ExternalFenceProperties {
-        let mut r = std::mem::MaybeUninit::uninit();
+        let mut r = std::mem::MaybeUninit::<VkExternalFencePropertiesKHR>::uninit();
         unsafe {
             (*r.as_mut_ptr()).sType = VkExternalFencePropertiesKHR::TYPE;
             (*r.as_mut_ptr()).pNext = std::ptr::null_mut();
