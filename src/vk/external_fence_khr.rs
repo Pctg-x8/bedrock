@@ -8,7 +8,7 @@ use derives::promote_1_1;
 pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(114, 0) as _;
 
 #[promote_1_1(suffix = "KHR")]
-pub type VkFenceImportFlagsKHR = VkFence;
+pub type VkFenceImportFlagsKHR = VkFlags;
 vk_bitmask! {
     #[promote_1_1(suffix = "KHR")]
     pub enum VkFenceImportFlagBitsKHR {

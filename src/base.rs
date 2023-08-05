@@ -634,8 +634,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> ExternalFenceProperties {
         let mut r = std::mem::MaybeUninit::uninit();
         unsafe {
-            *r.as_mut_ptr().sType = VkExternalFencePropertiesKHR::TYPE;
-            *r.as_mut_ptr().pNext = std::ptr::null_mut();
+            (*r.as_mut_ptr()).sType = VkExternalFencePropertiesKHR::TYPE;
+            (*r.as_mut_ptr()).pNext = std::ptr::null_mut();
         }
         let f: PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR = self
             .instance()
@@ -1357,7 +1357,7 @@ mod external_fence_capabilities_khr {
     /// Structure describing supported external fence handle features
     pub struct ExternalFenceProperties(VkExternalFencePropertiesKHR);
     impl From<VkExternalFencePropertiesKHR> for ExternalFenceProperties {
-        fn from(v: VkExternalFenceProperties) -> Self {
+        fn from(v: VkExternalFencePropertiesKHR) -> Self {
             Self(v)
         }
     }
