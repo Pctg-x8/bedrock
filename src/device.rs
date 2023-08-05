@@ -5,7 +5,7 @@ use crate::VkResultBox;
 use crate::{
     fnconv::FnTransmute,
     vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VulkanStructure, VulkanStructureProvider,
+    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure, VulkanStructureProvider,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
@@ -239,7 +239,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                     count,
                     imgs.iter()
                         .map(|&(s, v, l)| VkDescriptorImageInfo {
-                            sampler: s.unwrap_or(VK_NULL_HANDLE as _),
+                            sampler: s.unwrap_or(VkSampler::NULL),
                             imageView: v,
                             imageLayout: l as _,
                         })
@@ -519,13 +519,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         let mut s = std::mem::MaybeUninit::uninit();
         create_info.build(unsafe { &mut *s.as_mut_ptr() });
         let s = unsafe { s.assume_init_ref() };
-        unsafe { Resolver::get().create_buffer(self.native_ptr(), s, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(move |_| crate::BufferObject(h, self))
+        unsafe {
+            Resolver::get()
+                .create_buffer(self.native_ptr(), s, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| crate::BufferObject(h.assume_init(), self))
+        }
     }
 
     /// Multiple Binding for Buffers
@@ -635,12 +638,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             codeSize: code.as_ref().len() as _,
             pCode: code.as_ref().as_ptr() as *const _,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::ShaderModuleObject(h, self))
+                .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
         }
     }
 
@@ -665,12 +668,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             initialDataSize: initial.as_ref().len() as _,
             pInitialData: initial.as_ref().as_ptr() as *const _,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::PipelineCacheObject(h, self))
+                .map(|_| crate::PipelineCacheObject(h.assume_init(), self))
         }
     }
 
@@ -707,12 +710,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pushConstantRangeCount: push_constants.len() as _,
             pPushConstantRanges: push_constants.as_ptr(),
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::PipelineLayoutObject(h, self))
+                .map(|_| crate::PipelineLayoutObject(h.assume_init(), self))
         }
     }
 
@@ -731,11 +734,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Clone,
     {
-        let mut hs = vec![VK_NULL_HANDLE as VkPipeline; infos.len()];
+        let mut hs = vec![VkPipeline::NULL; infos.len()];
         let r = unsafe {
             Resolver::get().create_graphics_pipelines(
                 self.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                 infos.len() as _,
                 infos.as_ptr(),
                 std::ptr::null(),
@@ -773,19 +776,19 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 sType: VkComputePipelineCreateInfo::TYPE,
                 pNext: std::ptr::null(),
                 flags: 0,
-                basePipelineHandle: std::ptr::null_mut(),
+                basePipelineHandle: VkPipeline::NULL,
                 basePipelineIndex: -1,
                 stage,
                 layout: b.layout.native_ptr(),
             })
             .collect::<Vec<_>>();
 
-        let mut pipelines = vec![VK_NULL_HANDLE as _; builders.len()];
+        let mut pipelines = vec![VkPipeline::NULL; builders.len()];
         unsafe {
             Resolver::get()
                 .create_compute_pipelines(
                     self.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                     cinfos.len() as _,
                     cinfos.as_ptr(),
                     std::ptr::null(),
@@ -813,16 +816,19 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         let cinfo = VkMemoryAllocateInfo {
             sType: VkMemoryAllocateInfo::TYPE,
             pNext: std::ptr::null(),
             allocationSize: size as _,
             memoryTypeIndex: type_index,
         };
-        unsafe { Resolver::get().allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| crate::DeviceMemoryObject(h, self))
+        unsafe {
+            Resolver::get()
+                .allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::DeviceMemoryObject(h.assume_init(), self))
+        }
     }
 
     /// Import GPU memory from external apis
@@ -1004,7 +1010,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         let flags = if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
         unsafe {
             Resolver::get()
@@ -1016,10 +1022,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                         flags,
                     },
                     std::ptr::null(),
-                    &mut h,
+                    h.as_mut_ptr(),
                 )
                 .into_result()
-                .map(|_| crate::FenceObject(h, self))
+                .map(|_| crate::FenceObject(h.assume_init(), self))
         }
     }
 
@@ -1069,7 +1075,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
                 .create_semaphore(
@@ -1080,10 +1086,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                         flags: 0,
                     },
                     std::ptr::null(),
-                    &mut h,
+                    h.as_mut_ptr(),
                 )
                 .into_result()
-                .map(|_| crate::SemaphoreObject(h, self))
+                .map(|_| crate::SemaphoreObject(h.assume_init(), self))
         }
     }
 
@@ -1133,7 +1139,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
                 .create_event(
@@ -1144,10 +1150,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                         flags: 0,
                     },
                     std::ptr::null(),
-                    &mut h,
+                    h.as_mut_ptr(),
                 )
                 .into_result()
-                .map(|_| crate::EventObject(h, self))
+                .map(|_| crate::EventObject(h.assume_init(), self))
         }
     }
 
@@ -1229,12 +1235,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 0
             },
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), &mut h)
+                .create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::CommandPoolObject(h, self))
+                .map(|_| crate::CommandPoolObject(h.assume_init(), self))
         }
     }
 
@@ -1288,7 +1294,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         let cinfo = VkDescriptorPoolCreateInfo {
             sType: VkDescriptorPoolCreateInfo::TYPE,
             pNext: std::ptr::null(),
@@ -1303,9 +1309,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         unsafe {
             Resolver::get()
-                .create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::DescriptorPoolObject(h, self))
+                .map(|_| crate::DescriptorPoolObject(h.assume_init(), self))
         }
     }
 
@@ -1332,7 +1338,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             flags: 0,
             pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
             set: 0,
-            pipelineLayout: VK_NULL_HANDLE as _,
+            pipelineLayout: VkPipelineLayout::NULL,
             descriptorUpdateEntryCount: entries.len() as _,
             pDescriptorUpdateEntries: entries.as_ptr(),
             templateType: VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
@@ -1413,10 +1419,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             height: size.height,
             layers,
         };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| crate::FramebufferObject(h, self, attachment_objects, size.as_ref().clone()))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::FramebufferObject(h.assume_init(), self, attachment_objects, size.as_ref().clone()))
+        }
     }
 
     /// Create a swapchain
@@ -1435,17 +1444,17 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
         B: crate::VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR> + crate::TransferSurfaceObject,
     {
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         let mut structure = std::mem::MaybeUninit::uninit();
         builder.build(unsafe { &mut *structure.as_mut_ptr() });
         let structure = unsafe { structure.assume_init() };
         unsafe {
             Resolver::get()
-                .create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), &mut h)
+                .create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     crate::SwapchainObject(
-                        h,
+                        h.assume_init(),
                         self,
                         builder.transfer_surface(),
                         structure.imageFormat,
@@ -1548,7 +1557,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
                     self.native_ptr_mut(),
                     batches.len() as _,
                     batches.as_ptr(),
-                    fence.map_or_else(std::ptr::null_mut, VkHandleMut::native_ptr_mut),
+                    fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
                 )
                 .into_result()
                 .map(drop)
@@ -1609,7 +1618,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
                     self.native_ptr_mut(),
                     batches.len() as _,
                     batches.as_ptr(),
-                    fence.map_or_else(std::ptr::null_mut, VkHandleMut::native_ptr_mut),
+                    fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
                 )
                 .into_result()
                 .map(drop)

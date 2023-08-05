@@ -21,6 +21,7 @@
 
 use crate::VulkanStructure;
 use cfg_if::cfg_if;
+use derives::vk_raw_handle;
 use libc::*;
 use std;
 
@@ -79,32 +80,7 @@ macro_rules! vk_bitmask {
 /// Version of this file
 pub const VK_HEADER_VERSION: u32 = 70;
 
-pub const VK_NULL_HANDLE: *mut c_void = 0 as *mut c_void;
-
 // Handles //
-#[cfg(target_pointer_width = "64")]
-mod nd_handle_base_ts {
-    pub enum VkSemaphore {}
-    pub enum VkFence {}
-    pub enum VkDeviceMemory {}
-    pub enum VkBuffer {}
-    pub enum VkImage {}
-    pub enum VkEvent {}
-    pub enum VkQueryPool {}
-    pub enum VkBufferView {}
-    pub enum VkImageView {}
-    pub enum VkShaderModule {}
-    pub enum VkPipelineCache {}
-    pub enum VkPipelineLayout {}
-    pub enum VkRenderPass {}
-    pub enum VkPipeline {}
-    pub enum VkDescriptorSetLayout {}
-    pub enum VkSampler {}
-    pub enum VkDescriptorPool {}
-    pub enum VkDescriptorSet {}
-    pub enum VkFramebuffer {}
-    pub enum VkCommandPool {}
-}
 #[cfg(target_pointer_width = "32")]
 macro_rules! VK_NON_DISPATCHABLE_HANDLE {
     ($name: ident) => {
@@ -119,36 +95,130 @@ pub type VkBool32 = u32;
 pub type VkDeviceSize = u64;
 pub type VkSampleMask = u32;
 
-pub type VkInstance = *mut VkInstanceT;
-pub enum VkInstanceT {}
-pub type VkPhysicalDevice = *mut VkPhysicalDeviceT;
-pub enum VkPhysicalDeviceT {}
-pub type VkDevice = *mut VkDeviceT;
-pub enum VkDeviceT {}
-pub type VkQueue = *mut VkQueueT;
-pub enum VkQueueT {}
-pub type VkSemaphore = VK_NON_DISPATCHABLE_HANDLE!(VkSemaphore);
-pub type VkCommandBuffer = *mut VkCommandBufferT;
-pub enum VkCommandBufferT {}
-pub type VkFence = VK_NON_DISPATCHABLE_HANDLE!(VkFence);
-pub type VkDeviceMemory = VK_NON_DISPATCHABLE_HANDLE!(VkDeviceMemory);
-pub type VkBuffer = VK_NON_DISPATCHABLE_HANDLE!(VkBuffer);
-pub type VkImage = VK_NON_DISPATCHABLE_HANDLE!(VkImage);
-pub type VkEvent = VK_NON_DISPATCHABLE_HANDLE!(VkEvent);
-pub type VkQueryPool = VK_NON_DISPATCHABLE_HANDLE!(VkQueryPool);
-pub type VkBufferView = VK_NON_DISPATCHABLE_HANDLE!(VkBufferView);
-pub type VkImageView = VK_NON_DISPATCHABLE_HANDLE!(VkImageView);
-pub type VkShaderModule = VK_NON_DISPATCHABLE_HANDLE!(VkShaderModule);
-pub type VkPipelineCache = VK_NON_DISPATCHABLE_HANDLE!(VkPipelineCache);
-pub type VkPipelineLayout = VK_NON_DISPATCHABLE_HANDLE!(VkPipelineLayout);
-pub type VkRenderPass = VK_NON_DISPATCHABLE_HANDLE!(VkRenderPass);
-pub type VkPipeline = VK_NON_DISPATCHABLE_HANDLE!(VkPipeline);
-pub type VkDescriptorSetLayout = VK_NON_DISPATCHABLE_HANDLE!(VkDescriptorSetLayout);
-pub type VkSampler = VK_NON_DISPATCHABLE_HANDLE!(VkSampler);
-pub type VkDescriptorPool = VK_NON_DISPATCHABLE_HANDLE!(VkDescriptorPool);
-pub type VkDescriptorSet = VK_NON_DISPATCHABLE_HANDLE!(VkDescriptorSet);
-pub type VkFramebuffer = VK_NON_DISPATCHABLE_HANDLE!(VkFramebuffer);
-pub type VkCommandPool = VK_NON_DISPATCHABLE_HANDLE!(VkCommandPool);
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_INSTANCE)]
+pub struct VkInstance(pub *mut c_void);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
+pub struct VkPhysicalDevice(pub *mut c_void);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DEVICE)]
+pub struct VkDevice(pub *mut c_void);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_QUEUE)]
+pub struct VkQueue(pub *mut c_void);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_SEMAPHORE)]
+pub struct VkSemaphore(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_COMMAND_BUFFER)]
+pub struct VkCommandBuffer(pub *mut c_void);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_FENCE)]
+pub struct VkFence(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DEVICE_MEMORY)]
+pub struct VkDeviceMemory(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_BUFFER)]
+pub struct VkBuffer(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_IMAGE)]
+pub struct VkImage(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_EVENT)]
+pub struct VkEvent(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_QUERY_POOL)]
+pub struct VkQueryPool(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_BUFFER_VIEW)]
+pub struct VkBufferView(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_IMAGE_VIEW)]
+pub struct VkImageView(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_SHADER_MODULE)]
+pub struct VkShaderModule(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_PIPELINE_CACHE)]
+pub struct VkPipelineCache(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_PIPELINE_LAYOUT)]
+pub struct VkPipelineLayout(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_RENDER_PASS)]
+pub struct VkRenderPass(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_PIPELINE)]
+pub struct VkPipeline(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT)]
+pub struct VkDescriptorSetLayout(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_SAMPLER)]
+pub struct VkSampler(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DESCRIPTOR_POOL)]
+pub struct VkDescriptorPool(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DESCRIPTOR_SET)]
+pub struct VkDescriptorSet(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_FRAMEBUFFER)]
+pub struct VkFramebuffer(pub u64);
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_COMMAND_POOL)]
+pub struct VkCommandPool(pub u64);
 
 pub const VK_LOD_CLAMP_NONE: f32 = 1000.0;
 pub const VK_REMAINING_MIP_LEVELS: u32 = 0xffff_ffff;

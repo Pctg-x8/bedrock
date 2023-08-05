@@ -372,3 +372,57 @@ pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
         _ => unreachable!("unsupported item to promote 1.1"),
     }
 }
+
+fn newtype_struct_org_type(d: &syn::Data) -> &syn::Type {
+    match d {
+        syn::Data::Struct(s) => match &s.fields {
+            syn::Fields::Unnamed(f) => match f.unnamed.first() {
+                Some(fst) => {
+                    if f.unnamed.len() > 1 {
+                        panic!("tuple struct has more than one elements");
+                    }
+
+                    &fst.ty
+                }
+                None => panic!("unit struct?"),
+            },
+            syn::Fields::Named(_) => panic!("named struct is not allowed for deriving VkRawHandle"),
+            syn::Fields::Unit => panic!("unit struct is not allowed for deriving VkRawHandle"),
+        },
+        _ => panic!("other than struct data cannot be derived VkRawHandle"),
+    }
+}
+
+#[proc_macro_attribute]
+pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as syn::DeriveInput);
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+    let is_dispatchable = matches!(newtype_struct_org_type(&input.data), syn::Type::Ptr(_));
+    let null_def = if is_dispatchable {
+        quote! { Self(std::ptr::null_mut()) }
+    } else {
+        quote! { Self(0) }
+    };
+
+    let mut object_type = None::<Expr>;
+    let parser = syn::meta::parser(|p| {
+        if p.path.is_ident("object_type") {
+            object_type = Some(p.value()?.parse()?);
+            Ok(())
+        } else {
+            Err(p.error("unknown attr"))
+        }
+    });
+    parse_macro_input!(args with parser);
+
+    quote! {
+        #input
+        impl #impl_generics crate::handle::VkRawHandle for #name #ty_generics #where_clause {
+            const OBJECT_TYPE: VkObjectType = #object_type;
+            const NULL: Self = #null_def;
+        }
+    }
+    .into()
+}

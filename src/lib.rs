@@ -401,10 +401,13 @@ impl<Device: crate::Device> QueryPool<Device> {
             queryCount: count,
             pipelineStatistics: stats,
         };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| Self(h, device))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| Self(h.assume_init(), device))
+        }
     }
 
     /// Copy results of queries in a query pool to a host memory region

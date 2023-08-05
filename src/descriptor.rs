@@ -177,6 +177,8 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     where
         Self: VkHandleMut,
     {
+        use crate::VkRawHandle;
+
         let layout_ptrs = layouts.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let ainfo = VkDescriptorSetAllocateInfo {
             sType: VkDescriptorSetAllocateInfo::TYPE,
@@ -185,7 +187,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
             descriptorSetCount: layout_ptrs.len() as _,
             pSetLayouts: layout_ptrs.as_ptr(),
         };
-        let mut hs = vec![VK_NULL_HANDLE as _; layout_ptrs.len()];
+        let mut hs = vec![VkDescriptorSet::NULL; layout_ptrs.len()];
         unsafe {
             Resolver::get()
                 .allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())

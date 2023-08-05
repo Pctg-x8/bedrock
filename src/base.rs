@@ -230,12 +230,12 @@ impl InstanceBuilder {
             extensions.as_ptr()
         };
         self.cinfo.pApplicationInfo = &self.appinfo;
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_instance(&self.cinfo, std::ptr::null(), &mut h)
+                .create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| InstanceObject(h))
+                .map(|_| InstanceObject(h.assume_init()))
         }
     }
 }
@@ -964,12 +964,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             hinstance,
             hwnd,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_win32_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_win32_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -1050,12 +1050,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 refreshRate: refresh_rate,
             },
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             Resolver::get()
-                .create_display_mode_khr(self.native_ptr(), display, &cinfo, std::ptr::null(), &mut h)
+                .create_display_mode_khr(self.native_ptr(), display, &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(move |_| h)
+                .map(move |_| h.assume_init())
         }
     }
 
@@ -1214,13 +1214,18 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             alphaMode: alpha_mode as _,
             imageExtent: extent,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
 
         unsafe {
             Resolver::get()
-                .create_display_plane_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_display_plane_surface_khr(
+                    self.instance().native_ptr(),
+                    &cinfo,
+                    std::ptr::null(),
+                    h.as_mut_ptr(),
+                )
                 .into_result()
-                .map(|_| crate::SurfaceObject(h, self.transfer_instance()))
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 

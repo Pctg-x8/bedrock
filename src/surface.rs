@@ -161,7 +161,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: std::ptr::null(),
                 clipped: VK_FALSE,
-                oldSwapchain: VK_NULL_HANDLE as _,
+                oldSwapchain: VkSwapchainKHR::NULL,
             },
             surface,
         )
@@ -269,8 +269,8 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         completion: CompletionHandler<impl crate::Fence, impl crate::Semaphore>,
     ) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
-            CompletionHandler::Host(f) => (VK_NULL_HANDLE as _, f.native_ptr()),
-            CompletionHandler::Queue(s) => (s.native_ptr(), VK_NULL_HANDLE as _),
+            CompletionHandler::Host(f) => (VkSemaphore::NULL, f.native_ptr()),
+            CompletionHandler::Queue(s) => (s.native_ptr(), VkFence::NULL),
         };
         let mut n = 0;
         unsafe {

@@ -794,10 +794,21 @@ impl AsRef<VkImageCreateInfo> for ImageDesc<'_> {
 impl ImageDesc<'_> {
     /// Create an image
     pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<ImageObject<Device>> {
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_image(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| ImageObject(h, device, self.0.imageType, self.0.format, self.0.extent.clone()))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| {
+                    ImageObject(
+                        h.assume_init(),
+                        device,
+                        self.0.imageType,
+                        self.0.format,
+                        self.0.extent.clone(),
+                    )
+                })
+        }
     }
 }
 
@@ -836,10 +847,13 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             components: cmap.clone().into(),
             subresourceRange: subresource_range.0.clone(),
         };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| ImageViewObject(h, self))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| ImageViewObject(h.assume_init(), self))
+        }
     }
 
     /// Retrieve information about an image subresource  
@@ -973,10 +987,13 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
             offset: range.start,
             range: range.end - range.start,
         };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| BufferViewObject(h, self))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| BufferViewObject(h.assume_init(), self))
+        }
     }
 }
 DerefContainerBracketImpl!(for Buffer {});
@@ -1542,9 +1559,12 @@ impl SamplerBuilder {
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     #[cfg(feature = "Implements")]
     pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<SamplerObject<Device>> {
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_sampler(device.native_ptr(), &self.0, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| SamplerObject(h, device))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_sampler(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| SamplerObject(h.assume_init(), device))
+        }
     }
 }
