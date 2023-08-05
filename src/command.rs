@@ -581,6 +581,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
     #[must_use]
     pub fn push_graphics_descriptor_set(&mut self, set: u32, writes: &[crate::DescriptorSetWriteInfo]) -> &mut Self {
         // save flatten results
+
+        use crate::VkRawHandle;
         let wt = writes
             .iter()
             .map(|x| {
@@ -588,7 +590,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
                 let ivs = iv
                     .iter()
                     .map(|&(s, v, l)| VkDescriptorImageInfo {
-                        sampler: s.unwrap_or(VK_NULL_HANDLE as _),
+                        sampler: s.unwrap_or(VkSampler::NULL),
                         imageView: v,
                         imageLayout: l as _,
                     })
@@ -640,6 +642,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
     #[must_use]
     pub fn push_compute_descriptor_set(&mut self, set: u32, writes: &[crate::DescriptorSetWriteInfo]) -> &mut Self {
         // save flatten results
+
+        use crate::VkRawHandle;
         let wt = writes
             .iter()
             .map(|x| {
@@ -647,7 +651,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
                 let ivs = iv
                     .iter()
                     .map(|&(s, v, l)| VkDescriptorImageInfo {
-                        sampler: s.unwrap_or(VK_NULL_HANDLE as _),
+                        sampler: s.unwrap_or(VkSampler::NULL),
                         imageView: v,
                         imageLayout: l as _,
                     })

@@ -380,10 +380,12 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             pfnCallback: callback,
             pUserData: userdata.map_or_else(std::ptr::null_mut, |x| x as *mut _ as _),
         };
-        let mut h = VK_NULL_HANDLE as _;
-        VkResultBox(ctor(self.native_ptr(), &s, std::ptr::null(), &mut h))
-            .into_result()
-            .map(|_| crate::DebugReportCallbackObject(h, self, dtor))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            VkResultBox(ctor(self.native_ptr(), &s, std::ptr::null(), h.as_mut_ptr()))
+                .into_result()
+                .map(|_| crate::DebugReportCallbackObject(h.assume_init(), self, dtor))
+        }
     }
 
     /// Inject its own messages into the debug stream
