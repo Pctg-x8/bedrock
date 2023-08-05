@@ -4262,8 +4262,6 @@ ExportExtensions!("VK_EXT_validation_flags": validation_flags_ext);
 ExportExtensions!("VK_NN_vi_surface": vi_surface_nn);
 ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
 ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
-ExportExtensions!("VK_KHX_device_group": device_group_khx);
-ExportExtensions!("VK_KHX_device_group_creation": device_group_creation_khx);
 ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_nvx);
 ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);

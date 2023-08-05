@@ -12,12 +12,11 @@ pub const VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR: VkStruct
 #[promote_1_1]
 pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR: VkObjectType = ext_enum_value(86, 0) as _;
 
-mod nd_handle_base_ts {
-    pub enum VkDescriptorUpdateTemplateKHR {}
-}
-
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]
 #[promote_1_1(suffix = "KHR")]
-pub type VkDescriptorUpdateTemplateKHR = VK_NON_DISPATCHABLE_HANDLE!(VkDescriptorUpdateTemplateKHR);
+pub struct VkDescriptorUpdateTemplateKHR(pub u64);
 
 #[promote_1_1(suffix = "KHR")]
 pub type VkDescriptorUpdateTemplateCreateFlagsKHR = VkFlags;
@@ -73,7 +72,7 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
 #[promote_1_1(suffix = "KHR")]
 pub type PFN_vkCreateDescriptorUpdateTemplateKHR = extern "system" fn(
     device: VkDevice,
-    pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfo,
+    pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR,
     pAllocator: *const VkAllocationCallbacks,
     pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR,
 ) -> VkResult;
@@ -90,29 +89,6 @@ pub type PFN_vkUpdateDescriptorSetWithTemplateKHR = extern "system" fn(
     descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
     pData: *const c_void,
 );
-
-pub type PFN_vkCmdPushDescriptorSetWithTemplateKHR = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-    layout: VkPipelineLayout,
-    set: u32,
-    pData: *const c_void,
-);
-
-cfg_if! {
-    if #[cfg(feature = "VK_KHR_push_descriptor")] {
-        /// Create descriptor update template for pushed descriptor updates
-        pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateType = 1;
-
-        pub type PFN_vkCmdPushDescriptorSetWithTemplateKHR = extern "system" fn(
-            commandBuffer: VkCommandBuffer,
-            descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-            layout: VkPipelineLayout,
-            set: u32,
-            pData: *const c_void
-        );
-    }
-}
 
 cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_report")] {

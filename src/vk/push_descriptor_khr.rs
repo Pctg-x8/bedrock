@@ -29,7 +29,7 @@ cfg_if! {
 
         pub type PFN_vkCmdPushDescriptorSetWithTemplateKHR = extern "system" fn(
             commandBuffer: VkCommandBuffer,
-            descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
+            descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
             layout: VkPipelineLayout,
             set: u32,
             pData: *const c_void
