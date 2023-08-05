@@ -7,6 +7,10 @@ use derives::promote_1_1;
 
 use super::*;
 
+#[promote_1_1]
+pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult =
+    unsafe { -std::mem::transmute::<_, VkResult>(ext_enum_value(70, 0) as u32) };
+
 vk_bitmask! {
     extending enum VkFormatFeatureFlagBits {
         #[promote_1_1]
