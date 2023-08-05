@@ -23,14 +23,15 @@ VK_KHR_external_memory_win32 = [
     "widestring",
     "VK_KHR_external_memory",
 ]
-VK_KHR_external_memory_fd = []
+VK_KHR_external_memory_fd = ["VK_KHR_external_memory"]
 VK_KHR_win32_keyed_mutex = []
 VK_KHR_external_semaphore_win32 = [
     "windows",
     "windows/Win32_Security",
     "widestring",
+    "VK_KHR_external_semaphore",
 ]
-VK_KHR_external_semaphore_fd = []
+VK_KHR_external_semaphore_fd = ["VK_KHR_external_semaphore"]
 VK_KHR_push_descriptor = []
 VK_KHR_incremental_present = []
 VK_KHR_shared_presentable_image = []

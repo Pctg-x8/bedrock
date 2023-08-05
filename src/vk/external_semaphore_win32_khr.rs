@@ -5,6 +5,11 @@ pub static VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME: &'static str = "VK_KH
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(79, 0) as _;
+pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(79, 1) as _;
+pub const VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR: VkStructureType = ext_enum_value(79, 2) as _;
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(79, 3) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR)]
@@ -12,8 +17,8 @@ pub struct VkImportSemaphoreWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub semaphore: VkSemaphore,
-    pub flags: VkSemaphoreImportFlags,
-    pub handleType: VkExternalSemaphoreHandleTypeFlags,
+    pub flags: VkSemaphoreImportFlagsKHR,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
     pub handle: windows::Win32::Foundation::HANDLE,
     pub name: windows::core::PCWSTR,
 }
@@ -48,7 +53,7 @@ pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub semaphore: VkSemaphore,
-    pub handleType: VkExternalSemaphoreHandleTypeFlags,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 
 pub type PFN_vkImportSemaphoreWin32HandleKHR = extern "system" fn(
@@ -60,17 +65,3 @@ pub type PFN_vkGetSemaphoreWin32HandleKHR = extern "system" fn(
     pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR,
     pHandle: *mut windows::Win32::Foundation::HANDLE,
 ) -> VkResult;
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkImportSemaphoreWin32HandleKHR(
-        device: VkDevice,
-        pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR,
-    ) -> VkResult;
-    pub fn vkGetSemaphoreWin32HandleKHR(
-        device: VkDevice,
-        pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR,
-        pHandle: *mut windows::Win32::Foundation::HANDLE,
-    ) -> VkResult;
-}
