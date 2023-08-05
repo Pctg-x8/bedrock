@@ -533,6 +533,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Multiple Binding for Buffers
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_bind_memory2")]
     fn bind_buffers(
         &self,
         bounds: &[(
@@ -543,24 +544,27 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<()> {
         let infos: Vec<_> = bounds
             .iter()
-            .map(|&(b, m, offs)| VkBindBufferMemoryInfo {
-                sType: VkBindBufferMemoryInfo::TYPE,
+            .map(|&(b, m, offs)| VkBindBufferMemoryInfoKHR {
+                sType: VkBindBufferMemoryInfoKHR::TYPE,
                 pNext: std::ptr::null(),
                 buffer: b.native_ptr(),
                 memory: m.native_ptr(),
                 memoryOffset: offs,
             })
             .collect();
-        unsafe {
-            Resolver::get()
-                .bind_buffer_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
-                .into_result()
-                .map(drop)
-        }
+        // TODO: optimize extra procedure
+        let f: PFN_vkBindBufferMemory2KHR = self
+            .extra_procedure("vkBindBufferMemory2KHR")
+            .expect("no vkBindBufferMemory2KHR");
+
+        VkResultBox((f)(self.native_ptr(), infos.len() as _, infos.as_ptr()))
+            .into_result()
+            .map(drop)
     }
 
     /// Multiple Binding for Images
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_bind_memory2")]
     fn bind_images(
         &self,
         bounds: &[(
@@ -571,20 +575,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<()> {
         let infos: Vec<_> = bounds
             .iter()
-            .map(|&(i, m, offs)| VkBindImageMemoryInfo {
-                sType: VkBindImageMemoryInfo::TYPE,
+            .map(|&(i, m, offs)| VkBindImageMemoryInfoKHR {
+                sType: VkBindImageMemoryInfoKHR::TYPE,
                 pNext: std::ptr::null(),
                 image: i.native_ptr(),
                 memory: m.native_ptr(),
                 memoryOffset: offs,
             })
             .collect();
-        unsafe {
-            Resolver::get()
-                .bind_image_memory2(self.native_ptr(), infos.len() as _, infos.as_ptr())
-                .into_result()
-                .map(drop)
-        }
+        // TODO: optimize extra procedure
+        let f: PFN_vkBindImageMemory2KHR = self
+            .extra_procedure("vkBindImageMemory2KHR")
+            .expect("no vkBindImageMemory2KHR");
+
+        VkResultBox((f)(self.native_ptr(), infos.len() as _, infos.as_ptr()))
+            .into_result()
+            .map(drop)
     }
 
     /// Multiple Binding for both resources

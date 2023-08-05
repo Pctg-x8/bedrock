@@ -1,5 +1,7 @@
 //! Vulkan Descriptors
 
+use cfg_if::cfg_if;
+
 use crate::{vk::*, DeviceChild, VkObject};
 #[cfg(feature = "Implements")]
 use crate::{
@@ -339,42 +341,45 @@ macro_rules! DescriptorUpdateTemplateEntries
     } };
 }
 
-#[derive(VkHandle, VkObject, DeviceChild)]
-#[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE)]
-pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
-    pub(crate) VkDescriptorUpdateTemplateKHR,
-    #[parent] pub(crate) Device,
-    pub(crate) PFN_vkDestroyDescriptorUpdateTemplateKHR,
-);
-unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
-    fn drop(&mut self) {
-        (self.2)(self.1.native_ptr(), self.0, std::ptr::null());
+cfg_if! {
+    if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
+        #[derive(VkHandle, VkObject, DeviceChild)]
+        #[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]
+        pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
+            pub(crate) VkDescriptorUpdateTemplateKHR,
+            #[parent] pub(crate) Device,
+            pub(crate) PFN_vkDestroyDescriptorUpdateTemplateKHR,
+        );
+        unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
+        unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
+        #[cfg(feature = "Implements")]
+        impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
+            fn drop(&mut self) {
+                (self.2)(self.1.native_ptr(), self.0, std::ptr::null());
+            }
+        }
+        impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
+
+        pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate> + DeviceChild {
+            #[cfg(feature = "Implements")]
+            fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
+                // TODO: needs optimize
+
+                use crate::Device;
+                let f: PFN_vkUpdateDescriptorSetWithTemplateKHR = self
+                    .device()
+                    .extra_procedure("vkUpdateDescriptorSetWithTemplateKHR")
+                    .expect("no vkUpdateDescriptorSetWithTemplateKHR");
+
+                (f)(
+                    self.device().native_ptr(),
+                    set,
+                    self.native_ptr(),
+                    data as *const T as *const _,
+                )
+            }
+        }
+        DerefContainerBracketImpl!(for DescriptorUpdateTemplate {});
+        GuardsImpl!(for DescriptorUpdateTemplate {});
     }
 }
-impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
-
-pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate> + DeviceChild {
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_descriptor_update_template")]
-    fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
-        // TODO: needs optimize
-
-        use crate::Device;
-        let f: PFN_vkUpdateDescriptorSetWithTemplateKHR = self
-            .device()
-            .extra_procedure("vkUpdateDescriptorSetWithTemplateKHR")
-            .expect("no vkUpdateDescriptorSetWithTemplateKHR");
-
-        (f)(
-            self.device().native_ptr(),
-            set,
-            self.native_ptr(),
-            data as *const T as *const _,
-        )
-    }
-}
-DerefContainerBracketImpl!(for DescriptorUpdateTemplate {});
-GuardsImpl!(for DescriptorUpdateTemplate {});

@@ -111,13 +111,20 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
 
     /// Trim a command pool
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_maintenance1")]
     fn trim(&mut self)
     where
         Self: VkHandleMut,
     {
-        unsafe {
-            Resolver::get().trim_command_pool(self.device().native_ptr(), self.native_ptr_mut(), 0);
-        }
+        // TODO: optimize extra procedures cache
+
+        use crate::Device;
+        let f: PFN_vkTrimCommandPoolKHR = self
+            .device()
+            .extra_procedure("vkTrimCommandPoolKHR")
+            .expect("no vkTrimCommandPoolKHR");
+
+        (f)(self.device().native_ptr(), self.native_ptr_mut(), 0);
     }
 }
 DerefContainerBracketImpl!(for CommandPool {});

@@ -6,10 +6,10 @@ use derives::promote_1_1;
 
 #[promote_1_1(suffix = "KHR")]
 pub type PFN_vkBindBufferMemory2KHR =
-    extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfo) -> VkResult;
+    extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
 #[promote_1_1(suffix = "KHR")]
 pub type PFN_vkBindImageMemory2KHR =
-    extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfo) -> VkResult;
+    extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult;
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
@@ -18,13 +18,13 @@ extern "system" {
     pub fn vkBindBufferMemory2KHR(
         device: VkDevice,
         bindInfoCount: u32,
-        pBindInfos: *const VkBindBufferMemoryInfo,
+        pBindInfos: *const VkBindBufferMemoryInfoKHR,
     ) -> VkResult;
     #[promote_1_1(suffix = "KHR")]
     pub fn vkBindImageMemory2KHR(
         device: VkDevice,
         bindInfoCount: u32,
-        pBindInfos: *const VkBindImageMemoryInfo,
+        pBindInfos: *const VkBindImageMemoryInfoKHR,
     ) -> VkResult;
 }
 
