@@ -1326,7 +1326,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     fn new_descriptor_update_template(
         self,
-        entries: &[VkDescriptorUpdateTemplateEntry],
+        entries: &[VkDescriptorUpdateTemplateEntryKHR],
         dsl: &impl crate::DescriptorSetLayout,
     ) -> crate::Result<crate::DescriptorUpdateTemplateObject<Self>>
     where
@@ -1339,8 +1339,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .extra_procedure("vkDestroyDescriptorUpdateTemplateKHR")
             .expect("no vkDestroyDescriptorUpdateTemplateKHR");
 
-        let cinfo = VkDescriptorUpdateTemplateCreateInfo {
-            sType: VkDescriptorUpdateTemplateCreateInfo::TYPE,
+        let cinfo = VkDescriptorUpdateTemplateCreateInfoKHR {
+            sType: VkDescriptorUpdateTemplateCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
             pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -1364,21 +1364,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[cfg(feature = "VK_KHR_push_descriptor")]
     fn new_descriptor_update_template(
         self,
-        entries: &[VkDescriptorUpdateTemplateEntry],
+        entries: &[VkDescriptorUpdateTemplateEntryKHR],
         dsl: Option<&impl crate::DescriptorSetLayout>,
     ) -> crate::Result<crate::DescriptorUpdateTemplateObject<Self>>
     where
         Self: Sized + InstanceChild,
     {
-        use crate::Instance;
+        use crate::{Instance, VkRawHandle};
 
-        let cinfo = VkDescriptorUpdateTemplateCreateInfo {
-            sType: VkDescriptorUpdateTemplateCreateInfo::TYPE,
+        let cinfo = VkDescriptorUpdateTemplateCreateInfoKHR {
+            sType: VkDescriptorUpdateTemplateCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
             pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
             set: 0,
-            pipelineLayout: VK_NULL_HANDLE as _,
+            pipelineLayout: VkPipelineLayout::NULL,
             descriptorUpdateEntryCount: entries.len() as _,
             pDescriptorUpdateEntries: entries.as_ptr(),
             templateType: if dsl.is_none() {
@@ -1386,7 +1386,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             } else {
                 VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET
             },
-            descriptorSetLayout: dsl.map_or(VK_NULL_HANDLE as _, VkHandle::native_ptr),
+            descriptorSetLayout: dsl.map_or(VkDescriptorSetLayout::NULL, VkHandle::native_ptr),
         };
         let mut handle = std::mem::MaybeUninit::uninit();
         unsafe {
