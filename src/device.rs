@@ -1117,7 +1117,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Sized,
     {
         let exp_info = VkExportSemaphoreCreateInfoKHR {
-            sType: VkExportSemaphoreCreateInfo::TYPE,
+            sType: VkExportSemaphoreCreateInfoKHR::TYPE,
             pNext: export_info.as_ref() as *const _ as _,
             handleTypes: handle_types.into(),
         };

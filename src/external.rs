@@ -11,9 +11,9 @@ use crate::{DeviceChild, VkHandle};
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]
 pub enum ExternalSemaphoreHandleTypeWin32 {
-    OpaqueWin32 = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT as _,
-    OpaqueWin32KMT = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT as _,
-    D3DFence = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT as _,
+    OpaqueWin32 = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR as _,
+    OpaqueWin32KMT = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR as _,
+    D3DFence = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR as _,
 }
 
 cfg_if! {
@@ -53,12 +53,12 @@ cfg_if! {
             D3DFence(windows::Win32::Foundation::HANDLE),
         }
         impl ExternalSemaphoreHandleWin32 {
-            pub(crate) fn as_type_bits(&self) -> VkExternalSemaphoreHandleTypeFlags {
+            pub(crate) const fn as_type_bits(&self) -> VkExternalSemaphoreHandleTypeFlagsKHR {
                 match self {
-                    Self::OpaqueWin32(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT,
-                    Self::OpaqueWin32KMT(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT,
+                    Self::OpaqueWin32(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR,
+                    Self::OpaqueWin32KMT(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR,
                     // note: same value: VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT
-                    Self::D3DFence(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT,
+                    Self::D3DFence(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR,
                 }
             }
 
