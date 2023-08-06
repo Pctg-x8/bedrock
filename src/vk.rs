@@ -19,7 +19,7 @@
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
-use crate::VulkanStructure;
+use crate::{ffi_helper::FixedCStrBuffer, VulkanStructure};
 use cfg_if::cfg_if;
 use derives::vk_raw_handle;
 use libc::*;
@@ -1591,7 +1591,7 @@ pub struct VkPhysicalDeviceProperties {
     pub vendorID: u32,
     pub deviceID: u32,
     pub deviceType: VkPhysicalDeviceType,
-    pub deviceName: [c_char; VK_MAX_PHYSICAL_DEVICE_NAME_SIZE],
+    pub deviceName: FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
     pub pipelineCacheUUID: [u8; VK_UUID_SIZE],
     pub limits: VkPhysicalDeviceLimits,
     pub sparseProperties: VkPhysicalDeviceSparseProperties,
@@ -1686,17 +1686,17 @@ pub struct VkDeviceCreateInfo {
 #[repr(C)]
 #[derive(Clone, Debug)]
 pub struct VkExtensionProperties {
-    pub extensionName: [c_char; VK_MAX_EXTENSION_NAME_SIZE],
+    pub extensionName: FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
     pub specVersion: u32,
 }
 
 #[repr(C)]
 #[derive(Clone, Debug)]
 pub struct VkLayerProperties {
-    pub layerName: [c_char; VK_MAX_EXTENSION_NAME_SIZE],
+    pub layerName: FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
     pub specVersion: u32,
     pub implementationVersion: u32,
-    pub description: [c_char; VK_MAX_DESCRIPTION_SIZE],
+    pub description: FixedCStrBuffer<VK_MAX_DESCRIPTION_SIZE>,
 }
 
 #[repr(C)]

@@ -327,6 +327,7 @@ impl VkViewport {
 }
 
 mod base;
+pub(crate) mod ffi_helper;
 pub use base::*;
 mod device;
 pub use device::*;
