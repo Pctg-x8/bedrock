@@ -428,10 +428,13 @@ impl RenderPassBuilder {
             dependencyCount: self.dependencies.len() as _,
             pDependencies: self.dependencies.as_ptr(),
         };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| RenderPassObject(h, device))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| RenderPassObject(h.assume_init(), device))
+        }
     }
 }
 
@@ -464,10 +467,20 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
             height: size.height,
             layers,
         };
-        let mut h = VK_NULL_HANDLE as _;
-        unsafe { Resolver::get().create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), &mut h) }
-            .into_result()
-            .map(|_| FramebufferObject(h, self.transfer_device(), attachment_objects, size.as_ref().clone()))
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| {
+                    FramebufferObject(
+                        h.assume_init(),
+                        self.transfer_device(),
+                        attachment_objects,
+                        size.as_ref().clone(),
+                    )
+                })
+        }
     }
 
     /// Returns the granularity for optimal render area

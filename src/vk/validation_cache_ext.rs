@@ -7,11 +7,12 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkDebugReportObjectT
 
 use super::*;
 
-#[cfg(target_pointer_width = "64")]
-mod nd_handle_base_ts {
-    pub enum VkValidationCacheEXT {}
-}
-pub type VkValidationCacheEXT = VK_NON_DISPATCHABLE_HANDLE!(VkValidationCacheEXT);
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_VALIDATION_CACHE_EXT)]
+pub struct VkValidationCacheEXT(pub u64);
+
+pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = ext_enum_value(161, 0) as _;
 
 pub type VkValidationCacheHeaderVersionEXT = i32;
 pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVersionEXT = 1;

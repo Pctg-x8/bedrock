@@ -5,6 +5,9 @@ pub static VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME: &'static str = "VK_KHR_exter
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR: VkStructureType = ext_enum_value(116, 0) as _;
+pub const VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR: VkStructureType = ext_enum_value(116, 1) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR)]
@@ -12,8 +15,8 @@ pub struct VkImportFenceFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub fence: VkFence,
-    pub flags: VkFenceImportFlags,
-    pub handleType: VkExternalFenceHandleTypeFlags,
+    pub flags: VkFenceImportFlagsKHR,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
     pub fd: c_int,
 }
 
@@ -24,17 +27,10 @@ pub struct VkFenceGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub fence: VkFence,
-    pub handleType: VkExternalFenceHandleTypeFlags,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 
 pub type PFN_vkImportFenceFdKHR =
     extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult;
 pub type PFN_vkGetFenceFdKHR =
     extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkImportFenceFdKHR(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult;
-    pub fn vkGetFenceFdKHR(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
-}

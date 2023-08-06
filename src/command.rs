@@ -45,6 +45,8 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     where
         Self: VkHandleMut,
     {
+        use crate::VkRawHandle;
+
         let ainfo = VkCommandBufferAllocateInfo {
             sType: VkCommandBufferAllocateInfo::TYPE,
             pNext: std::ptr::null(),
@@ -56,7 +58,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
             },
             commandPool: self.native_ptr_mut(),
         };
-        let mut hs = vec![VK_NULL_HANDLE as _; count as _];
+        let mut hs = vec![VkCommandBuffer::NULL; count as _];
         unsafe {
             Resolver::get()
                 .allocate_command_buffers(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
@@ -109,13 +111,20 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
 
     /// Trim a command pool
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_maintenance1")]
     fn trim(&mut self)
     where
         Self: VkHandleMut,
     {
-        unsafe {
-            Resolver::get().trim_command_pool(self.device().native_ptr(), self.native_ptr_mut(), 0);
-        }
+        // TODO: optimize extra procedures cache
+
+        use crate::Device;
+        let f: PFN_vkTrimCommandPoolKHR = self
+            .device()
+            .extra_procedure("vkTrimCommandPoolKHR")
+            .expect("no vkTrimCommandPoolKHR");
+
+        (f)(self.device().native_ptr(), self.native_ptr_mut(), 0);
     }
 }
 DerefContainerBracketImpl!(for CommandPool {});
@@ -204,6 +213,8 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     where
         Self: VkHandleMut,
     {
+        use crate::VkRawHandle;
+
         let flags = if renderpass.is_some() {
             VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT
         } else {
@@ -211,7 +222,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
         };
         let (fb, rp, s) = renderpass
             .map(|(f, r, s)| (f.native_ptr(), r.native_ptr(), s))
-            .unwrap_or((VK_NULL_HANDLE as _, VK_NULL_HANDLE as _, 0));
+            .unwrap_or((VkFramebuffer::NULL, VkRenderPass::NULL, 0));
         let (oq, psq) = query.map(|(o, p)| (o, p.0)).unwrap_or((OcclusionQuery::Disable, 0));
         let inherit = VkCommandBufferInheritanceInfo {
             sType: VkCommandBufferInheritanceInfo::TYPE,
@@ -570,6 +581,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
     #[must_use]
     pub fn push_graphics_descriptor_set(&mut self, set: u32, writes: &[crate::DescriptorSetWriteInfo]) -> &mut Self {
         // save flatten results
+
+        use crate::VkRawHandle;
         let wt = writes
             .iter()
             .map(|x| {
@@ -577,7 +590,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
                 let ivs = iv
                     .iter()
                     .map(|&(s, v, l)| VkDescriptorImageInfo {
-                        sampler: s.unwrap_or(VK_NULL_HANDLE as _),
+                        sampler: s.unwrap_or(VkSampler::NULL),
                         imageView: v,
                         imageLayout: l as _,
                     })
@@ -629,6 +642,8 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
     #[must_use]
     pub fn push_compute_descriptor_set(&mut self, set: u32, writes: &[crate::DescriptorSetWriteInfo]) -> &mut Self {
         // save flatten results
+
+        use crate::VkRawHandle;
         let wt = writes
             .iter()
             .map(|x| {
@@ -636,7 +651,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
                 let ivs = iv
                     .iter()
                     .map(|&(s, v, l)| VkDescriptorImageInfo {
-                        sampler: s.unwrap_or(VK_NULL_HANDLE as _),
+                        sampler: s.unwrap_or(VkSampler::NULL),
                         imageView: v,
                         imageLayout: l as _,
                     })

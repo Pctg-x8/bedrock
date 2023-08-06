@@ -1,3 +1,5 @@
+use crate::vk::VkObjectType;
+
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {
     type Handle;
@@ -194,4 +196,9 @@ impl<'h, H: VkHandleMut + ?Sized + 'h> VkHandleMut for Option<&'h mut H> {
             |x| x.native_ptr_mut(),
         )
     }
+}
+
+pub trait VkRawHandle {
+    const OBJECT_TYPE: VkObjectType;
+    const NULL: Self;
 }

@@ -1,12 +1,12 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use crate::LifetimeBound;
 use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
     vkresolve::{Resolver, ResolverInterface},
     VkHandleMut,
 };
+use crate::{LifetimeBound, VkRawHandle};
 use std::borrow::Cow;
 use std::ffi::CString;
 use std::marker::PhantomData;
@@ -1687,24 +1687,25 @@ impl<
             basePipelineHandle: if let BasePipeline::Handle(ref h) = self._base {
                 h.native_ptr()
             } else {
-                VK_NULL_HANDLE as _
+                VkPipeline::NULL
             },
             basePipelineIndex: -1,
             flags,
         };
-        let mut h = VK_NULL_HANDLE as _;
+        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().create_graphics_pipelines(
-                device.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
-                1,
-                &cinfo,
-                std::ptr::null(),
-                &mut h,
-            )
+            Resolver::get()
+                .create_graphics_pipelines(
+                    device.native_ptr(),
+                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                    1,
+                    &cinfo,
+                    std::ptr::null(),
+                    h.as_mut_ptr(),
+                )
+                .into_result()
+                .map(|_| PipelineObject(h.assume_init(), device))
         }
-        .into_result()
-        .map(|_| PipelineObject(h, device))
     }
 }
 
@@ -1736,7 +1737,7 @@ impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipel
             sType: VkComputePipelineCreateInfo::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
-            basePipelineHandle: VK_NULL_HANDLE as _,
+            basePipelineHandle: VkPipeline::NULL,
             basePipelineIndex: -1,
             stage,
             layout: self.layout.native_ptr(),
@@ -1747,7 +1748,7 @@ impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipel
             Resolver::get()
                 .create_compute_pipelines(
                     device.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VK_NULL_HANDLE as _),
+                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                     1,
                     &cinfo,
                     std::ptr::null(),

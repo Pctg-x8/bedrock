@@ -17,25 +17,37 @@ VK_KHR_wayland_surface = ["wayland-client"]
 VK_KHR_android_surface = ["android"]
 VK_KHR_win32_surface = ["windows"]
 VK_KHR_sampler_mirror_clamp_to_edge = []
-VK_KHR_shader_draw_parameters = []
-VK_KHR_maintenance1 = []
-VK_KHR_external_memory_win32 = ["windows", "windows/Win32_Security", "widestring"]
-VK_KHR_external_memory_fd = []
+VK_KHR_external_memory_win32 = [
+    "windows",
+    "windows/Win32_Security",
+    "widestring",
+    "VK_KHR_external_memory",
+]
+VK_KHR_external_memory_fd = ["VK_KHR_external_memory"]
 VK_KHR_win32_keyed_mutex = []
-VK_KHR_external_semaphore_win32 = ["windows", "windows/Win32_Security", "widestring"]
-VK_KHR_external_semaphore_fd = []
+VK_KHR_external_semaphore_win32 = [
+    "windows",
+    "windows/Win32_Security",
+    "widestring",
+    "VK_KHR_external_semaphore",
+]
+VK_KHR_external_semaphore_fd = ["VK_KHR_external_semaphore"]
 VK_KHR_push_descriptor = []
 VK_KHR_incremental_present = []
-VK_KHR_descriptor_update_template = []
 VK_KHR_shared_presentable_image = []
-VK_KHR_external_fence_capabilities = []
-VK_KHR_external_fence_win32 = ["windows", "windows/Win32_Security"]
-VK_KHR_external_fence_fd = []
-VK_KHR_get_physical_device_properties2 = []
+VK_KHR_external_fence_win32 = [
+    "windows",
+    "windows/Win32_Security",
+    "VK_KHR_external_fence",
+]
+VK_KHR_external_fence_fd = ["VK_KHR_external_fence"]
 VK_KHR_get_surface_capabilities2 = []
-VK_EXT_full_screen_exclusive = []
-VK_KHR_storage_buffer_storage_class = []
-VK_KHR_relaxed_block_layout = []
+VK_EXT_full_screen_exclusive = [
+    "VK_KHR_get_physical_device_properties2",
+    "VK_KHR_surface",
+    "VK_KHR_get_surface_capabilities2",
+    "VK_KHR_swapchain",
+]
 VK_EXT_debug_report = []
 VK_EXT_debug_utils = []
 VK_NV_glsl_shader = []
@@ -59,12 +71,10 @@ VK_NV_external_memory_capabilities = []
 VK_NV_external_memory = []
 VK_NV_external_memory_win32 = ["windows", "windows/Win32_Security"]
 VK_NV_win32_keyed_mutex = []
-VK_KHX_device_group = []
 VK_EXT_validation_flags = []
 VK_NN_vi_surface = []
 VK_EXT_shader_group_ballot = []
 VK_EXT_shader_subgroup_vote = []
-VK_KHX_device_group_creation = []
 VK_NVX_device_generated_commands = []
 VK_NV_clip_space_w_scaling = []
 VK_EXT_direct_mode_display = []
@@ -83,7 +93,7 @@ VK_EXT_swapchain_colorspace = []
 VK_EXT_hdr_metadata = []
 VK_MVK_ios_surface = []
 VK_MVK_macos_surface = []
-VK_EXT_external_memory_dma_buf = []
+VK_EXT_external_memory_dma_buf = ["VK_KHR_external_memory_fd"]
 VK_EXT_queue_family_foreign = []
 VK_EXT_sampler_filter_minmax = []
 VK_AMD_gpu_shader_int16 = []
@@ -98,18 +108,80 @@ VK_EXT_post_depth_coverage = []
 VK_EXT_validation_cache = []
 VK_EXT_shader_viewport_index_layer = []
 VK_EXT_global_priority = []
-VK_EXT_external_memory_host = []
+VK_EXT_external_memory_host = ["VK_KHR_external_memory"]
 VK_AMD_buffer_marker = []
 VK_EXT_vertex_attribute_divisor = []
 VK_KHR_image_format_list = []
 VK_EXT_image_drm_format_modifier = []
+
+# 1.1 promoted extensions
+VK_KHR_multiview = ["VK_KHR_get_physical_device_properties2"]
+VK_KHR_get_physical_device_properties2 = []
+VK_KHR_device_group = ["VK_KHR_device_group_creation"]
+VK_KHR_shader_draw_parameters = []
+VK_KHR_maintenance1 = []
+VK_KHR_device_group_creation = []
+VK_KHR_external_memory_capabilities = ["VK_KHR_get_physical_device_properties2"]
+VK_KHR_external_memory = ["VK_KHR_external_memory_capabilities"]
+VK_KHR_external_semaphore_capabilities = [
+    "VK_KHR_get_physical_device_properties2",
+]
+VK_KHR_external_semaphore = ["VK_KHR_external_semaphore_capabilities"]
+VK_KHR_16bit_storage = [
+    "VK_KHR_get_physical_device_properties2",
+    "VK_KHR_storage_buffer_storage_class",
+]
+VK_KHR_descriptor_update_template = []
+VK_KHR_external_fence_capabilities = ["VK_KHR_get_physical_device_properties2"]
+VK_KHR_external_fence = ["VK_KHR_external_fence_capabilities"]
+VK_KHR_maintenance2 = []
+VK_KHR_variable_pointers = [
+    "VK_KHR_get_physical_device_properties2",
+    "VK_KHR_storage_buffer_storage_class",
+]
+VK_KHR_dedicated_allocation = ["VK_KHR_get_memory_requirements2"]
+VK_KHR_storage_buffer_storage_class = []
+VK_KHR_relaxed_block_layout = []
+VK_KHR_get_memory_requirements2 = []
+VK_KHR_sampler_ycbcr_conversion = [
+    "VK_KHR_maintenance1",
+    "VK_KHR_bind_memory2",
+    "VK_KHR_get_memory_requirements2",
+    "VK_KHR_get_physical_device_properties2",
+]
+VK_KHR_bind_memory2 = []
+VK_KHR_maintenance3 = ["VK_KHR_get_physical_device_properties2"]
+Allow1_1APIs = [
+    "VK_KHR_multiview",
+    "VK_KHR_get_physical_device_properties2",
+    "VK_KHR_device_group",
+    "VK_KHR_shader_draw_parameters",
+    "VK_KHR_maintenance1",
+    "VK_KHR_device_group_creation",
+    "VK_KHR_external_memory_capabilities",
+    "VK_KHR_external_memory",
+    "VK_KHR_external_semaphore_capabilities",
+    "VK_KHR_external_semaphore",
+    "VK_KHR_16bit_storage",
+    "VK_KHR_descriptor_update_template",
+    "VK_KHR_external_fence_capabilities",
+    "VK_KHR_external_fence",
+    "VK_KHR_maintenance2",
+    "VK_KHR_variable_pointers",
+    "VK_KHR_dedicated_allocation",
+    "VK_KHR_storage_buffer_storage_class",
+    "VK_KHR_relaxed_block_layout",
+    "VK_KHR_get_memory_requirements2",
+    "VK_KHR_sampler_ycbcr_conversion",
+    "VK_KHR_bind_memory2",
+    "VK_KHR_maintenance3",
+]
 
 Implements = []
 Multithreaded = []
 Presentation = ["VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display"]
 DynamicLoaded = ["Implements", "libloading"]
 CustomResolver = []
-Allow1_1APIs = []
 
 [dependencies]
 libc = "0.2"
@@ -117,7 +189,10 @@ x11 = { version = "^2.15", optional = true }
 xcb = { version = "^1.1", optional = true }
 wayland-client = { version = "~0.9", optional = true }
 android = { git = "https://github.com/Pctg-x8/android-defs-rs", optional = true }
-windows = { version = "0.43", optional = true, features = ["Win32_Foundation", "Win32_Graphics_Gdi"] }
+windows = { version = "0.43", optional = true, features = [
+    "Win32_Foundation",
+    "Win32_Graphics_Gdi",
+] }
 libloading = { version = "0.5", optional = true }
 widestring = { version = "0.4", optional = true }
 log = "0.4"

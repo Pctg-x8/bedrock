@@ -5,13 +5,18 @@ pub static VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_e
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 0) as _;
+pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 1) as _;
+pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType = ext_enum_value(74, 2) as _;
+pub const VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 3) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub handleType: VkExternalMemoryHandleTypeFlags,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
     pub handle: windows::Win32::Foundation::HANDLE,
     pub name: windows::core::PCWSTR,
 }
@@ -43,7 +48,7 @@ pub struct VkMemoryGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub memory: VkDeviceMemory,
-    pub handleType: VkExternalMemoryHandleTypeFlags,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
 pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(
@@ -53,23 +58,7 @@ pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(
 ) -> VkResult;
 pub type PFN_vkGetMemoryWin32HandlePropertiesKHR = extern "system" fn(
     device: VkDevice,
-    handleType: VkExternalMemoryHandleTypeFlags,
+    handleType: VkExternalMemoryHandleTypeFlagsKHR,
     handle: windows::Win32::Foundation::HANDLE,
     pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
 ) -> VkResult;
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetMemoryWin32HandleKHR(
-        device: VkDevice,
-        pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR,
-        pHandle: *mut windows::Win32::Foundation::HANDLE,
-    ) -> VkResult;
-    pub fn vkGetMemoryWin32HandlePropertiesKHR(
-        device: VkDevice,
-        handleType: VkExternalMemoryHandleTypeFlags,
-        handle: windows::Win32::Foundation::HANDLE,
-        pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
-    ) -> VkResult;
-}

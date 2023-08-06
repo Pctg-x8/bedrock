@@ -48,7 +48,6 @@ FnTransmuteImpl!(for PFN_vkCmdBindPipeline, PFN_vkCmdSetViewport, PFN_vkCmdSetSc
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkBuffer, VkDeviceSize, u32, u32)); // CmdDrawIndirect, CmdDrawIndexedIndirect
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkEvent, VkPipelineStageFlags)); // CmdSetEvent, CmdResetEvent
 FnTransmuteImpl!(for extern "system" fn(VkCommandBuffer, VkQueryPool, u32, u32)); // CmdBeginQuery, CmdResetQueryPool
-FnTransmuteImpl!(for PFN_vkCreateDescriptorUpdateTemplate, PFN_vkDestroyDescriptorUpdateTemplate);
 
 #[cfg(feature = "VK_KHR_surface")]
 FnTransmuteImpl!(for PFN_vkDestroySurfaceKHR, PFN_vkGetPhysicalDeviceSurfaceSupportKHR, PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR,
@@ -73,7 +72,7 @@ FnTransmuteImpl!(for PFN_vkImportSemaphoreWin32HandleKHR, PFN_vkGetSemaphoreWin3
 FnTransmuteImpl!(for PFN_vkGetFenceFdKHR, PFN_vkImportFenceFdKHR);
 
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceExternalFenceProperties);
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR);
 
 #[cfg(feature = "VK_EXT_direct_mode_display")]
 FnTransmuteImpl!(for PFN_vkReleaseDisplayEXT);
@@ -92,3 +91,15 @@ FnTransmuteImpl!(for PFN_vkCreateDebugUtilsMessengerEXT, PFN_vkDestroyDebugUtils
 
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
+
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+FnTransmuteImpl!(for PFN_vkCreateDescriptorUpdateTemplateKHR, PFN_vkDestroyDescriptorUpdateTemplateKHR, PFN_vkUpdateDescriptorSetWithTemplateKHR);
+
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+FnTransmuteImpl!(for PFN_vkGetPhysicalDeviceFeatures2KHR, PFN_vkGetPhysicalDeviceProperties2KHR, PFN_vkGetPhysicalDeviceFormatProperties2KHR);
+
+#[cfg(feature = "VK_KHR_maintenance1")]
+FnTransmuteImpl!(for PFN_vkTrimCommandPoolKHR);
+
+#[cfg(feature = "VK_KHR_bind_memory2")]
+FnTransmuteImpl!(for PFN_vkBindBufferMemory2KHR, PFN_vkBindImageMemory2KHR);

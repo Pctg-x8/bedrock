@@ -88,11 +88,17 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
                 flags: 0,
                 parameters: params,
             };
-            let mut h = VK_NULL_HANDLE as _;
+            let mut h = std::mem::MaybeUninit::uninit();
             Resolver::get()
-                .create_display_mode_khr(self.1.native_ptr(), self.native_ptr(), &cinfo, std::ptr::null(), &mut h)
+                .create_display_mode_khr(
+                    self.1.native_ptr(),
+                    self.native_ptr(),
+                    &cinfo,
+                    std::ptr::null(),
+                    h.as_mut_ptr(),
+                )
                 .into_result()
-                .map(move |_| DisplayMode(h))
+                .map(move |_| DisplayMode(h.assume_init()))
         }
     }
 }
@@ -168,7 +174,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlaneProperties<PhysicalDevic
     /// The handle of the display the plane is currently associated with.
     /// If the plane is not currently attached to any displays, this will be `None`
     pub fn current_display(&self) -> Option<Display<&PhysicalDevice>> {
-        if self.currentDisplay == VK_NULL_HANDLE as _ {
+        if self.currentDisplay.0 == 0 {
             None
         } else {
             Some(Display(self.currentDisplay, &self.1))

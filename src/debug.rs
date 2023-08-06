@@ -264,30 +264,17 @@ cfg_if::cfg_if! {
                     .extra_procedure("vkDestroyDebugUtilsMessengerEXT")
                     .expect("Requiring vkDestroyDebugUtilsMessengerEXT function");
 
-                let mut h = VK_NULL_HANDLE as _;
-                VkResultBox(create_fn(instance.native_ptr(), self, std::ptr::null(), &mut h))
-                    .into_result()
-                    .map(|_| DebugUtilsMessengerObject(h, instance, destroy_fn))
+                let mut h = std::mem::MaybeUninit::uninit();
+                unsafe {
+                    VkResultBox(create_fn(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr()))
+                        .into_result()
+                        .map(|_| DebugUtilsMessengerObject(h.assume_init(), instance, destroy_fn))
+                }
             }
         }
 
         pub trait DebugUtilsMessenger: VkHandle<Handle = VkDebugUtilsMessengerEXT> + InstanceChild {}
         DerefContainerBracketImpl!(for DebugUtilsMessenger {});
-
-        /// thin pointer to generic handle(u64) conversion helper
-        pub unsafe trait PointerHandleConversion {
-            fn conv(self) -> u64;
-        }
-        unsafe impl<T> PointerHandleConversion for *const T {
-            fn conv(self) -> u64 {
-                self as usize as _
-            }
-        }
-        unsafe impl<T> PointerHandleConversion for *mut T {
-            fn conv(self) -> u64 {
-                self as usize as _
-            }
-        }
 
         #[repr(transparent)]
         pub struct DebugUtilsObjectNameInfo<'d>(
@@ -297,9 +284,9 @@ cfg_if::cfg_if! {
         impl<'d> DebugUtilsObjectNameInfo<'d> {
             pub fn new<H: VkHandle + VkObject + ?Sized>(handle: &H, name: Option<&'d std::ffi::CStr>) -> Self
             where
-                H::Handle: PointerHandleConversion,
+                H::Handle: Into<u64>,
             {
-                Self::new_raw(H::TYPE, handle.native_ptr().conv(), name)
+                Self::new_raw(H::TYPE, handle.native_ptr().into(), name)
             }
             pub fn new_raw(ty: VkObjectType, handle: u64, name: Option<&'d std::ffi::CStr>) -> Self {
                 DebugUtilsObjectNameInfo(

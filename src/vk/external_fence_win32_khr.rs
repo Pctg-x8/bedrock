@@ -5,6 +5,10 @@ pub static VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_ex
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(115, 0) as _;
+pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(115, 1) as _;
+pub const VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(115, 2) as _;
+
 #[cfg(windows)]
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -48,17 +52,3 @@ pub type PFN_vkGetFenceWin32HandleKHR = extern "system" fn(
     pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
     pHandle: *mut windows::Win32::Foundation::HANDLE,
 ) -> VkResult;
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkImportFenceWin32HandleKHR(
-        device: VkDevice,
-        pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR,
-    ) -> VkResult;
-    pub fn vkGetFenceWin32HandleKHR(
-        device: VkDevice,
-        pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-        pHandle: *mut windows::Win32::Foundation::HANDLE,
-    ) -> VkResult;
-}

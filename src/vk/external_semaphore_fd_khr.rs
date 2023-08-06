@@ -5,6 +5,9 @@ pub static VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME: &'static str = "VK_KHR_e
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR: VkStructureType = ext_enum_value(80, 0) as _;
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR: VkStructureType = ext_enum_value(80, 1) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR)]
@@ -31,17 +34,3 @@ pub type PFN_vkImportSemaphoreFdKHR =
     extern "system" fn(device: VkDevice, pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR) -> VkResult;
 pub type PFN_vkGetSemaphoreFdKHR =
     extern "system" fn(device: VkDevice, pGetFdInfo: *const VkSemaphoreGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkImportSemaphoreFdKHR(
-        device: VkDevice,
-        pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR,
-    ) -> VkResult;
-    pub fn vkGetSemaphoreFdKHR(
-        device: VkDevice,
-        pGetFdInfo: *const VkSemaphoreGetFdInfoKHR,
-        pFd: *mut c_int,
-    ) -> VkResult;
-}
