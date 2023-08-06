@@ -1324,6 +1324,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     #[cfg(feature = "Implements")]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
+    #[cfg(not(feature = "VK_KHR_push_descriptor"))]
     fn new_descriptor_update_template(
         self,
         entries: &[VkDescriptorUpdateTemplateEntryKHR],
@@ -1361,6 +1362,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
     #[cfg(feature = "Implements")]
+    #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(feature = "VK_KHR_push_descriptor")]
     fn new_descriptor_update_template(
         self,
