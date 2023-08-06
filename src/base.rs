@@ -1537,7 +1537,7 @@ impl<'d> Iterator for MemoryHeapIter<'d> {
 /// Bitmask specifying properties for a memory type
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)]
-pub struct MemoryPropertyFlags(VkMemoryPropertyFlags);
+pub struct MemoryPropertyFlags(pub VkMemoryPropertyFlags);
 impl MemoryPropertyFlags {
     /// Empty set
     pub const EMPTY: Self = MemoryPropertyFlags(0);
@@ -1545,7 +1545,7 @@ impl MemoryPropertyFlags {
     pub const DEVICE_LOCAL: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     /// Memory allocated with this type can be mapped for host access using `vkMapMemory`
     pub const HOST_VISIBLE: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
-    /// The host cache management commands `vkFlushMappedmemoryRanges` and `vkInvalidateMappedMemoryRanges`
+    /// The host cache management commands `vkFlushMappedMemoryRanges` and `vkInvalidateMappedMemoryRanges`
     /// are not needed to flush host writes to the device or make device writes visible to the host, respectively.
     pub const HOST_COHERENT: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     /// Memory allocated with this type is cached on the host.
@@ -1554,35 +1554,36 @@ impl MemoryPropertyFlags {
     /// The memory type only allows device access to the memory.
     pub const LAZILY_ALLOCATED: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
 
+    #[inline]
     /// Memory allocated with this type is the most efficient for device access
-    pub fn device_local(mut self) -> Self {
-        self.0 |= Self::DEVICE_LOCAL.0;
-        self
+    pub const fn device_local(self) -> Self {
+        Self(self.0 | Self::DEVICE_LOCAL.0)
     }
+    #[inline]
     /// Memory allocated with this type can be mapped for host access using `vkMapMemory`
-    pub fn host_visible(mut self) -> Self {
-        self.0 |= Self::HOST_VISIBLE.0;
-        self
+    pub const fn host_visible(self) -> Self {
+        Self(self.0 | Self::HOST_VISIBLE.0)
     }
+    #[inline]
     /// The host cache management commands `vkFlushMappedmemoryRanges` and `vkInvalidateMappedMemoryRanges`
     /// are not needed to flush host writes to the device or make device writes visible to the host, respectively.
-    pub fn host_coherent(mut self) -> Self {
-        self.0 |= Self::HOST_COHERENT.0;
-        self
+    pub const fn host_coherent(self) -> Self {
+        Self(self.0 | Self::HOST_COHERENT.0)
     }
+    #[inline]
     /// Memory allocated with this type is cached on the host.
     /// Host memory accesses to uncached memory are slower than to cached memory, however uncached memory is always host coherent
-    pub fn host_cached(mut self) -> Self {
-        self.0 |= Self::HOST_CACHED.0;
-        self
+    pub const fn host_cached(self) -> Self {
+        Self(self.0 | Self::HOST_CACHED.0)
     }
+    #[inline]
     /// The memory type only allows device access to the memory.
-    pub fn lazily_allocated(mut self) -> Self {
-        self.0 |= Self::LAZILY_ALLOCATED.0;
-        self
+    pub const fn lazily_allocated(self) -> Self {
+        Self(self.0 | Self::LAZILY_ALLOCATED.0)
     }
 
-    pub fn bits(self) -> VkMemoryPropertyFlags {
+    #[inline]
+    pub const fn bits(self) -> VkMemoryPropertyFlags {
         self.0
     }
 }
