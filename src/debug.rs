@@ -2,11 +2,11 @@
 
 #[cfg(feature = "Implements")]
 use crate::Instance;
-use crate::VkResultBox;
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
 #[allow(unused_imports)]
 use crate::{InstanceChild, VkHandle, VkObject};
+use crate::{VkRawHandle, VkResultBox};
 #[allow(unused_imports)]
 use derives::*;
 
@@ -153,7 +153,7 @@ cfg_if::cfg_if! {
             pub const fn and_warning(self) -> Self {
                 self.and(Self::WARNING)
             }
-            /// The application has violated a valid usage condiiton of the specification.
+            /// The application has violated a valid usage condition of the specification.
             pub const fn and_error(self) -> Self {
                 self.and(Self::ERROR)
             }
@@ -172,13 +172,13 @@ cfg_if::cfg_if! {
             /// An informational message such as resource details that may be handy when debugging an application.
             Info = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
             /// Use of Vulkan that *may* expose an app bug.
-            /// Such cases may not be immediately harmful, such as a fragment shader outptting to a location with no attachment.
+            /// Such cases may not be immediately harmful, such as a fragment shader outputting to a location with no attachment.
             /// Other cases *may* point to behavior that is almost certainly bad when unintended
             /// such as using an image whose memory has not been filled.
             /// In general if you see a warning but you know that the behavior is intended/desired,
             /// then simply ignore the warning.
             Warning = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
-            /// The application has violated a valid usage condiiton of the specification.
+            /// The application has violated a valid usage condition of the specification.
             Error = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
         }
 
@@ -188,10 +188,10 @@ cfg_if::cfg_if! {
         impl DebugUtilsMessageTypeFlags {
             /// Empty flag set
             pub const EMPTY: Self = Self(0);
-            /// Some general event has occured.
+            /// Some general event has occurred.
             /// This is typically a non-specification, non-performance event.
             pub const GENERAL: Self = Self(VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT);
-            /// Something has occured during validation against the Vulkan specification that may indicate invalid behavior.
+            /// Something has occurred during validation against the Vulkan specification that may indicate invalid behavior.
             pub const VALIDATION: Self = Self(VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT);
             /// A potentially non-optimal use of Vulkan,
             /// e.g. using `vkCmdClearColorImage` when setting `VkAttachmentDescription::loadOp` to `VK_ATTACHMENT_LOAD_OP_CLEAR`
@@ -200,12 +200,12 @@ cfg_if::cfg_if! {
             /// All flags set
             pub const ALL: Self = Self::GENERAL.and(Self::VALIDATION).and(Self::PERFORMANCE);
 
-            /// Some general event has occured.
+            /// Some general event has occurred.
             /// This is typically a non-specification, non-performance event.
             pub const fn and_general(self) -> Self {
                 self.and(Self::GENERAL)
             }
-            /// Something has occured during validation against the Vulkan specification that may indicate invalid behavior.
+            /// Something has occurred during validation against the Vulkan specification that may indicate invalid behavior.
             pub const fn and_validation(self) -> Self {
                 self.and(Self::VALIDATION)
             }
@@ -284,9 +284,9 @@ cfg_if::cfg_if! {
         impl<'d> DebugUtilsObjectNameInfo<'d> {
             pub fn new<H: VkHandle + VkObject + ?Sized>(handle: &H, name: Option<&'d std::ffi::CStr>) -> Self
             where
-                H::Handle: Into<u64>,
+                H::Handle: VkRawHandle,
             {
-                Self::new_raw(H::TYPE, handle.native_ptr().into(), name)
+                Self::new_raw(H::TYPE, handle.native_ptr().raw_handle_value(), name)
             }
             pub fn new_raw(ty: VkObjectType, handle: u64, name: Option<&'d std::ffi::CStr>) -> Self {
                 DebugUtilsObjectNameInfo(

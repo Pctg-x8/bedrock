@@ -201,4 +201,6 @@ impl<'h, H: VkHandleMut + ?Sized + 'h> VkHandleMut for Option<&'h mut H> {
 pub trait VkRawHandle {
     const OBJECT_TYPE: VkObjectType;
     const NULL: Self;
+
+    fn raw_handle_value(&self) -> u64;
 }

@@ -417,16 +417,10 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
     });
     parse_macro_input!(args with parser);
 
-    let extra_conversion = if is_dispatchable {
-        None
+    let raw_handle_conversion = if is_dispatchable {
+        quote! { self.0 as usize as _ }
     } else {
-        Some(quote! {
-            impl #impl_generics core::convert::Into<u64> for #name #ty_generics #where_clause {
-                fn into(self) -> u64 {
-                    self.0
-                }
-            }
-        })
+        quote! { self.0 }
     };
 
     quote! {
@@ -434,8 +428,12 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
         impl #impl_generics crate::handle::VkRawHandle for #name #ty_generics #where_clause {
             const OBJECT_TYPE: VkObjectType = #object_type;
             const NULL: Self = #null_def;
+
+            #[inline]
+            fn raw_handle_value(&self) -> u64 {
+                #raw_handle_conversion
+            }
         }
-        #extra_conversion
     }
     .into()
 }
