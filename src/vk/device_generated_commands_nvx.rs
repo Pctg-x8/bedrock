@@ -11,9 +11,12 @@ use super::*;
 pub struct VkObjectTableNVX(pub u64);
 
 #[repr(transparent)]
-#[derove(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX)]
 pub struct VkIndirectCommandsLayoutNVX(pub u64);
+
+pub const VK_OBJECT_TYPE_OBJECT_TABLE_NVX: VkObjectType = ext_enum_value(87, 0) as _;
+pub const VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX: VkObjectType = ext_enum_value(87, 1) as _;
 
 pub type VkIndirectCommandsTokenTypeNVX = i32;
 pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_PIPELINE_NVX: VkIndirectCommandsTokenTypeNVX = 0;
