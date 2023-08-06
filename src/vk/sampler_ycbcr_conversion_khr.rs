@@ -228,12 +228,11 @@ extern "system" {
     );
 }
 
-mod nd_handle_base_ts {
-    pub enum VkSamplerYcbcrConversionKHR {}
-}
-
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR)]
 #[promote_1_1(suffix = "KHR")]
-pub type VkSamplerYcbcrConversionKHR = VK_NON_DISPATCHABLE_HANDLE!(VkSamplerYcbcrConversionKHR);
+pub struct VkSamplerYcbcrConversionKHR(pub u64);
 
 #[promote_1_1(suffix = "KHR")]
 pub type VkSamplerYcbcrModelConversionKHR = i32;

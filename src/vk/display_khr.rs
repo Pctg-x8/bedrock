@@ -1,20 +1,24 @@
 //! VK_KHR_display extensions
 
+pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
+pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
+
 use super::*;
 #[allow(unused_imports)]
 use libc::*;
 
-mod nd_handle_base_ts {
-    pub enum VkDisplayKHR {}
-    pub enum VkDisplayModeKHR {}
-}
-pub type VkDisplayKHR = VK_NON_DISPATCHABLE_HANDLE!(VkDisplayKHR);
-pub type VkDisplayModeKHR = VK_NON_DISPATCHABLE_HANDLE!(VkDisplayModeKHR);
-pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 1000002000;
-pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 1000002001;
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DISPLAY_KHR)]
+pub struct VkDisplayKHR(pub u64);
 
-pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
-pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DISPLAY_MODE_KHR)]
+pub struct VkDisplayModeKHR(pub u64);
+
+pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = ext_enum_value(3, 0) as _;
+pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = ext_enum_value(3, 1) as _;
 
 pub type VkDisplayPlaneAlphaFlagsKHR = VkFlags;
 pub const VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR: VkDisplayPlaneAlphaFlagsKHR = 0x01;

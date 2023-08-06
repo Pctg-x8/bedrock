@@ -80,16 +80,6 @@ macro_rules! vk_bitmask {
 /// Version of this file
 pub const VK_HEADER_VERSION: u32 = 70;
 
-// Handles //
-#[cfg(target_pointer_width = "32")]
-macro_rules! VK_NON_DISPATCHABLE_HANDLE {
-    ($name: ident) => {
-        u64
-    };
-}
-#[cfg(target_pointer_width = "64")]
-macro_rules! VK_NON_DISPATCHABLE_HANDLE { ($name: ident) => (*mut self::nd_handle_base_ts::$name); }
-
 pub type VkFlags = u32;
 pub type VkBool32 = u32;
 pub type VkDeviceSize = u64;
@@ -221,14 +211,14 @@ pub struct VkFramebuffer(pub u64);
 pub struct VkCommandPool(pub u64);
 
 pub const VK_LOD_CLAMP_NONE: f32 = 1000.0;
-pub const VK_REMAINING_MIP_LEVELS: u32 = 0xffff_ffff;
-pub const VK_REMAINING_ARRAY_LAYERS: u32 = 0xffff_ffff;
-pub const VK_WHOLE_SIZE: u64 = 0xffff_ffff_ffff_ffff;
-pub const VK_ATTACHMENT_UNUSED: u32 = 0xffff_ffff;
+pub const VK_REMAINING_MIP_LEVELS: u32 = !0;
+pub const VK_REMAINING_ARRAY_LAYERS: u32 = !0;
+pub const VK_WHOLE_SIZE: u64 = !0;
+pub const VK_ATTACHMENT_UNUSED: u32 = !0;
 pub const VK_TRUE: VkBool32 = 1;
 pub const VK_FALSE: VkBool32 = 0;
-pub const VK_QUEUE_FAMILY_IGNORED: u32 = 0xffff_ffff;
-pub const VK_SUBPASS_EXTERNAL: u32 = 0xffff_ffff;
+pub const VK_QUEUE_FAMILY_IGNORED: u32 = !0;
+pub const VK_SUBPASS_EXTERNAL: u32 = !0;
 pub const VK_MAX_PHYSICAL_DEVICE_NAME_SIZE: usize = 256;
 pub const VK_UUID_SIZE: usize = 16;
 pub const VK_MAX_MEMORY_TYPES: usize = 32;
@@ -454,11 +444,6 @@ pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType 
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT: VkStructureType = 100_0178_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 100_0190_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 100_0190_001;
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT: VkStructureType = 1000128000;
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT: VkStructureType = 1000128001;
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT: VkStructureType = 1000128002;
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT: VkStructureType = 1000128003;
-pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT: VkStructureType = 1000128004;
 
 pub type VkSystemAllocationScope = i32;
 pub const VK_SYSTEM_ALLOCATION_SCOPE_COMMAND: VkSystemAllocationScope = 0;
@@ -1001,17 +986,6 @@ pub const VK_OBJECT_TYPE_DESCRIPTOR_POOL: VkObjectType = 22;
 pub const VK_OBJECT_TYPE_DESCRIPTOR_SET: VkObjectType = 23;
 pub const VK_OBJECT_TYPE_FRAMEBUFFER: VkObjectType = 24;
 pub const VK_OBJECT_TYPE_COMMAND_POOL: VkObjectType = 25;
-pub const VK_OBJECT_TYPE_SAMPLE_YCBCR_CONVERSION: VkObjectType = 100_0156_000;
-pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 100_0000_000;
-pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 100_0001_000;
-pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 100_0002_000;
-pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 100_0002_001;
-pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 100_0011_000;
-pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR: VkObjectType = 100_0085_000;
-pub const VK_OBJECT_TYPE_OBJECT_TABLE_NVX: VkObjectType = 100_0086_000;
-pub const VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX: VkObjectType = 100_0086_001;
-pub const VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT: VkObjectType = 100_0128_000;
-pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = 100_0160_000;
 
 pub type VkInstanceCreateFlags = VkFlags;
 

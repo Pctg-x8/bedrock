@@ -1316,7 +1316,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         unsafe {
             Resolver::get()
-                .create_descriptor_pool(self.native_ptr(), &dbg!(cinfo), std::ptr::null(), h.as_mut_ptr())
+                .create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::DescriptorPoolObject(h.assume_init(), self))
         }

@@ -5,11 +5,12 @@ pub static VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &'static str = "VK_EXT_debug_repo
 
 use super::*;
 
-mod nd_handle_base_ts {
-    pub enum VkDebugReportCallbackEXT {}
-}
-pub type VkDebugReportCallbackEXT = VK_NON_DISPATCHABLE_HANDLE!(VkDebugReportCallbackEXT);
-pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[vk_raw_handle(object_type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
+pub struct VkDebugReportCallbackEXT(pub u64);
+
+pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = ext_enum_value(12, 0) as _;
 
 pub type VkDebugReportObjectTypeEXT = i32;
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT: VkDebugReportObjectTypeEXT = 0;
@@ -48,11 +49,15 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX_EXT: VkDebugR
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT: VkDebugReportObjectTypeEXT = 33;
 
 pub type VkDebugReportFlagsEXT = VkFlags;
-pub const VK_DEBUG_REPORT_INFORMATION_BIT_EXT: VkDebugReportFlagsEXT = 0x01;
-pub const VK_DEBUG_REPORT_WARNING_BIT_EXT: VkDebugReportFlagsEXT = 0x02;
-pub const VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT: VkDebugReportFlagsEXT = 0x04;
-pub const VK_DEBUG_REPORT_ERROR_BIT_EXT: VkDebugReportFlagsEXT = 0x08;
-pub const VK_DEBUG_REPORT_DEBUG_BIT_EXT: VkDebugReportFlagsEXT = 0x10;
+vk_bitmask! {
+    pub enum VkDebugReportFlagBitsEXT {
+        pub VK_DEBUG_REPORT_INFORMATION_BIT_EXT: 0,
+        pub VK_DEBUG_REPORT_WARNING_BIT_EXT: 1,
+        pub VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT: 2,
+        pub VK_DEBUG_REPORT_ERROR_BIT_EXT: 3,
+        pub VK_DEBUG_REPORT_DEBUG_BIT_EXT: 4
+    }
+}
 
 #[repr(C)]
 #[derive(Clone, VulkanStructure)]
@@ -96,29 +101,3 @@ pub type PFN_vkDebugReportMessageEXT = extern "system" fn(
     pLayerPrefix: *const c_char,
     pMessage: *const c_char,
 );
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateDebugReportCallbackEXT(
-        instance: VkInstance,
-        pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pCallback: *mut VkDebugReportCallbackEXT,
-    ) -> VkResult;
-    pub fn vkDestroyDebugReportCallbackEXT(
-        instance: VkInstance,
-        callback: VkDebugReportCallbackEXT,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-    pub fn vkDebugReportMessageEXT(
-        instance: VkInstance,
-        flags: VkDebugReportFlagsEXT,
-        objectType: VkDebugReportObjectTypeEXT,
-        object: u64,
-        location: size_t,
-        messageCode: i32,
-        pLayerPrefix: *const c_char,
-        pMessage: *const c_char,
-    );
-}
