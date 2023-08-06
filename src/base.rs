@@ -502,12 +502,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Safety
     /// Caller must guarantee that all write operations to `out` are safe.
     #[cfg(all(feature = "Implements", feature = "VK_KHR_get_physical_device_properties2"))]
-    unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2) {
+    unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR) {
         // TODO: optimize extra procedure caching
         let f: PFN_vkGetPhysicalDeviceFormatProperties2KHR = self
             .instance()
             .extra_procedure("vkGetPhysicalDeviceFormatProperties2KHR")
-            .expect("no vkGetPhysicalDeviceFormatproperties2KHR");
+            .expect("no vkGetPhysicalDeviceFormatProperties2KHR");
 
         (f)(self.native_ptr(), format, out)
     }

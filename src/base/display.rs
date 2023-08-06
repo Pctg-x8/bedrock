@@ -174,7 +174,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlaneProperties<PhysicalDevic
     /// The handle of the display the plane is currently associated with.
     /// If the plane is not currently attached to any displays, this will be `None`
     pub fn current_display(&self) -> Option<Display<&PhysicalDevice>> {
-        if self.currentDisplay.is_null() {
+        if self.currentDisplay.0 == 0 {
             None
         } else {
             Some(Display(self.currentDisplay, &self.1))
