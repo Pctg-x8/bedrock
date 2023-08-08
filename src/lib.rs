@@ -260,7 +260,8 @@ impl AsRef<VkOffset2D> for VkOffset2D {
         self
     }
 }
-// AsRef for smaller dimension (safe: same memory footprint for heading elements) //
+
+// AsRef Conversion to smaller-dimension
 impl AsRef<VkExtent2D> for VkExtent3D {
     fn as_ref(&self) -> &VkExtent2D {
         unsafe { std::mem::transmute(self) }
@@ -269,6 +270,88 @@ impl AsRef<VkExtent2D> for VkExtent3D {
 impl AsRef<VkOffset2D> for VkOffset3D {
     fn as_ref(&self) -> &VkOffset2D {
         unsafe { std::mem::transmute(self) }
+    }
+}
+
+// Swizzling
+impl VkExtent3D {
+    #[inline]
+    pub const fn wh(&self) -> VkExtent2D {
+        VkExtent2D {
+            width: self.width,
+            height: self.height,
+        }
+    }
+
+    #[inline]
+    pub const fn wd(&self) -> VkExtent2D {
+        VkExtent2D {
+            width: self.width,
+            height: self.depth,
+        }
+    }
+
+    #[inline]
+    pub const fn hw(&self) -> VkExtent2D {
+        VkExtent2D {
+            width: self.height,
+            height: self.width,
+        }
+    }
+
+    #[inline]
+    pub const fn hd(&self) -> VkExtent2D {
+        VkExtent2D {
+            width: self.height,
+            height: self.depth,
+        }
+    }
+
+    #[inline]
+    pub const fn dw(&self) -> VkExtent2D {
+        VkExtent2D {
+            width: self.depth,
+            height: self.width,
+        }
+    }
+
+    #[inline]
+    pub const fn dh(&self) -> VkExtent2D {
+        VkExtent2D {
+            width: self.depth,
+            height: self.height,
+        }
+    }
+}
+impl VkOffset3D {
+    #[inline]
+    pub const fn xy(&self) -> VkOffset2D {
+        VkOffset2D { x: self.x, y: self.y }
+    }
+
+    #[inline]
+    pub const fn xz(&self) -> VkOffset2D {
+        VkOffset2D { x: self.x, y: self.z }
+    }
+
+    #[inline]
+    pub const fn yx(&self) -> VkOffset2D {
+        VkOffset2D { x: self.y, y: self.x }
+    }
+
+    #[inline]
+    pub const fn yz(&self) -> VkOffset2D {
+        VkOffset2D { x: self.y, y: self.z }
+    }
+
+    #[inline]
+    pub const fn zx(&self) -> VkOffset2D {
+        VkOffset2D { x: self.z, y: self.x }
+    }
+
+    #[inline]
+    pub const fn zy(&self) -> VkOffset2D {
+        VkOffset2D { x: self.z, y: self.y }
     }
 }
 

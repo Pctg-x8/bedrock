@@ -1450,6 +1450,11 @@ impl VkExtent3D {
     pub const fn new(width: u32, height: u32, depth: u32) -> Self {
         Self { width, height, depth }
     }
+
+    #[inline]
+    pub const fn as_2d_ref(&self) -> &VkExtent2D {
+        unsafe { std::mem::transmute(self) }
+    }
 }
 
 #[repr(C)]
@@ -1817,6 +1822,11 @@ impl VkOffset3D {
     pub const fn new(x: i32, y: i32, z: i32) -> Self {
         Self { x, y, z }
     }
+
+    #[inline]
+    pub const fn as_2d_ref(&self) -> &VkOffset2D {
+        unsafe { std::mem::transmute(self) }
+    }
 }
 
 #[repr(C)]
@@ -2116,12 +2126,25 @@ pub struct VkOffset2D {
     pub x: i32,
     pub y: i32,
 }
+impl From<VkOffset3D> for VkOffset2D {
+    fn from(value: VkOffset3D) -> Self {
+        Self { x: value.x, y: value.y }
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VkExtent2D {
     pub width: u32,
     pub height: u32,
+}
+impl From<VkExtent3D> for VkExtent2D {
+    fn from(value: VkExtent3D) -> Self {
+        Self {
+            width: value.width,
+            height: value.height,
+        }
+    }
 }
 
 #[repr(C)]
