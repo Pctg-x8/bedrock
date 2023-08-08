@@ -355,6 +355,24 @@ impl VkOffset3D {
     }
 }
 
+/// Utility Constants
+impl VkExtent2D {
+    pub const ONE: Self = Self { width: 1, height: 1 };
+}
+impl VkExtent3D {
+    pub const ONE: Self = Self {
+        width: 1,
+        height: 1,
+        depth: 1,
+    };
+}
+impl VkOffset2D {
+    pub const ZERO: Self = Self { x: 0, y: 0 };
+}
+impl VkOffset3D {
+    pub const ZERO: Self = Self { x: 0, y: 0, z: 0 };
+}
+
 /// Viewport and Rect Util Functions
 impl VkExtent2D {
     pub const fn into_rect(self, offset: VkOffset2D) -> VkRect2D {
