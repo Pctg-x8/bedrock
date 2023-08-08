@@ -63,10 +63,12 @@ impl AttachmentDescription {
             flags: 0,
         })
     }
+
     pub const fn format(mut self, fmt: VkFormat) -> Self {
         self.0.format = fmt;
         self
     }
+
     pub const fn load_op(mut self, op: LoadOp) -> Self {
         self.0.loadOp = op as _;
         self
@@ -75,6 +77,10 @@ impl AttachmentDescription {
         self.0.storeOp = op as _;
         self
     }
+    pub const fn color_memory_op(self, load: LoadOp, store: StoreOp) -> Self {
+        self.load_op(load).store_op(store)
+    }
+
     pub const fn stencil_load_op(mut self, op: LoadOp) -> Self {
         self.0.stencilLoadOp = op as _;
         self
@@ -83,6 +89,10 @@ impl AttachmentDescription {
         self.0.stencilStoreOp = op as _;
         self
     }
+    pub const fn stencil_memory_op(self, load: LoadOp, store: StoreOp) -> Self {
+        self.stencil_load_op(load).stencil_store_op(store)
+    }
+
     pub const fn init_layout(mut self, layout: ImageLayout) -> Self {
         self.0.initialLayout = layout as _;
         self
@@ -91,6 +101,10 @@ impl AttachmentDescription {
         self.0.finalLayout = layout as _;
         self
     }
+    pub const fn image_layout_transition(self, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
+        self.init_layout(init_layout).fin_layout(fin_layout)
+    }
+
     pub const fn may_alias(mut self) -> Self {
         self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
         self
