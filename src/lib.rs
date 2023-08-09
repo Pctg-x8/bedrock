@@ -220,6 +220,39 @@ impl<'d, T> std::ops::Deref for LifetimeBound<'d, T> {
     }
 }
 
+// Spreading single value to all dimensions
+impl VkExtent2D {
+    pub const fn spread1(value: u32) -> Self {
+        Self {
+            width: value,
+            height: value,
+        }
+    }
+}
+impl VkExtent3D {
+    pub const fn spread1(value: u32) -> Self {
+        Self {
+            width: value,
+            height: value,
+            depth: value,
+        }
+    }
+}
+impl VkOffset2D {
+    pub const fn spread1(value: i32) -> Self {
+        Self { x: value, y: value }
+    }
+}
+impl VkOffset3D {
+    pub const fn spread1(value: i32) -> Self {
+        Self {
+            x: value,
+            y: value,
+            z: value,
+        }
+    }
+}
+
 // into conversion to larger dimension //
 impl VkExtent2D {
     pub const fn with_depth(self, depth: u32) -> VkExtent3D {
@@ -357,20 +390,16 @@ impl VkOffset3D {
 
 /// Utility Constants
 impl VkExtent2D {
-    pub const ONE: Self = Self { width: 1, height: 1 };
+    pub const ONE: Self = Self::spread1(1);
 }
 impl VkExtent3D {
-    pub const ONE: Self = Self {
-        width: 1,
-        height: 1,
-        depth: 1,
-    };
+    pub const ONE: Self = Self::spread1(1);
 }
 impl VkOffset2D {
-    pub const ZERO: Self = Self { x: 0, y: 0 };
+    pub const ZERO: Self = Self::spread1(0);
 }
 impl VkOffset3D {
-    pub const ZERO: Self = Self { x: 0, y: 0, z: 0 };
+    pub const ZERO: Self = Self::spread1(0);
 }
 
 /// Viewport and Rect Util Functions
