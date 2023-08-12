@@ -3470,11 +3470,7 @@ pub type PFN_vkCmdExecuteCommands = extern "system" fn(
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
 #[cfg_attr(
     all(target_os = "macos", not(feature = "DynamicLoaded")),
-    link(name = "MoltenVK", kind = "framework")
-)]
-#[cfg_attr(
-    all(target_os = "macos", not(feature = "DynamicLoaded")),
-    link(name = "Metal", kind = "framework")
+    link(name = "vulkan", kind = "framework")
 )]
 extern "system" {
     pub fn vkCreateInstance(
