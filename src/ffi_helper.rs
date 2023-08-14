@@ -2,7 +2,7 @@
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct FixedCStrBuffer<const L: usize>([u8; L]);
 impl<const L: usize> FixedCStrBuffer<L> {
-    pub const unsafe fn as_cstr_unchecked(&self) -> &std::ffi::CStr {
-        std::ffi::CStr::from_bytes_with_nul_unchecked(&self.0)
+    pub const fn as_cstr(&self) -> Result<&std::ffi::CStr, core::ffi::FromBytesUntilNulError> {
+        core::ffi::CStr::from_bytes_until_nul(&self.0)
     }
 }
