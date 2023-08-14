@@ -1144,6 +1144,10 @@ impl<
         self.dss_ref().back = state;
         self
     }
+    /// Convenient function for setting same stencil_control values both front and back
+    pub fn stencil_control(&mut self, state: VkStencilOpState) -> &mut Self {
+        self.stencil_control_front(state.clone()).stencil_control_back(state)
+    }
     /// Controls the parameter of the compare mask of the stencil test. Tuple ordering: (front, back).
     /// Specifying `None` means that the parameter is a dynamic state
     pub fn stencil_compare_mask(&mut self, mask: Option<(u32, u32)>) -> &mut Self {
