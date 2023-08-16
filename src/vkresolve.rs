@@ -119,7 +119,7 @@ cfg_if! {
             VkResultBox(fnptr(create_info, allocator, instance))
         }
     } else {
-        pub unsafe fn create_instance(create_info: *const VkInstanceCreteInfo, allocator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResultBox {
+        pub unsafe fn create_instance(create_info: *const VkInstanceCreateInfo, allocator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResultBox {
             log::trace!(target: "br-vkapi-call", "vkCreateInstance");
 
             VkResultBox(vkCreateInstance(create_info, allocator, instance))
@@ -128,6 +128,7 @@ cfg_if! {
 }
 
 pub trait ResolverInterface {
+    #[cfg(feature = "DynamicLoaded")]
     unsafe fn load_symbol_unconstrainted<T>(&self, name: &[u8]) -> RawSymbol<T>;
 
     unsafe fn create_instance(
