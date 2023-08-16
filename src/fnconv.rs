@@ -103,3 +103,6 @@ FnTransmuteImpl!(for PFN_vkTrimCommandPoolKHR);
 
 #[cfg(feature = "VK_KHR_bind_memory2")]
 FnTransmuteImpl!(for PFN_vkBindBufferMemory2KHR, PFN_vkBindImageMemory2KHR);
+
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+FnTransmuteImpl!(for PFN_vkGetImageDrmFormatModifierPropertiesEXT);
