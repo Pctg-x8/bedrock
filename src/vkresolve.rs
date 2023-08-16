@@ -44,10 +44,11 @@ impl Resolver {
         cfg_if! {
             if #[cfg(target_os = "macos")] {
                 fn libname() -> std::path::PathBuf {
-                    let mut exepath = std::env::current_exe().unwrap();
-                    exepath.pop();
-                    exepath.push("libvulkan.dylib");
-                    return exepath;
+                    // let mut exepath = std::env::current_exe().unwrap();
+                    // exepath.pop();
+                    // exepath.push("libvulkan.dylib");
+                    // return exepath;
+                    "libvulkan.dylib"
                 }
             } else if #[cfg(windows)] {
                 fn libname() -> &'static str {
