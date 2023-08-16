@@ -870,7 +870,7 @@ WrapAPI2!(
         command_buffer: VkCommandBuffer,
         dst_buffer: VkBuffer,
         dst_offset: VkDeviceSize,
-        size: VkDEviceSize,
+        size: VkDeviceSize,
         data: u32,
     );
 
@@ -963,7 +963,7 @@ WrapAPI2!(
     );
     #[org = vkCmdWriteTimestamp]
     pub fn cmd_write_timestamp(
-        command_buffer: VkCOmmandBuffer,
+        command_buffer: VkCommandBuffer,
         pipeline_stage: VkPipelineStageFlags,
         query_pool: VkQueryPool,
         query: u32,
