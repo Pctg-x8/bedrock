@@ -532,7 +532,7 @@ WrapAPI2!(
         data_size_out: *mut size_t,
         data_out: *mut c_void,
     ) -> VkResult;
-    #[org = vkMergePipelienCaches]
+    #[org = vkMergePipelineCaches]
     pub fn merge_pipeline_caches(
         device: VkDevice,
         dst_cache: VkPipelineCache,
@@ -770,7 +770,7 @@ WrapAPI2!(
         offset: VkDeviceSize,
         index_type: VkIndexType,
     );
-    #[org = vkCmdBindVertexBuffer]
+    #[org = vkCmdBindVertexBuffers]
     pub fn cmd_bind_vertex_buffers(
         command_buffer: VkCommandBuffer,
         first_binding: u32,
