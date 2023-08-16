@@ -110,27 +110,112 @@ pub fn set_custom_resolver(resv: Box<ResolverInterface>) {
 
 cfg_if! {
     if #[cfg(feature = "DynamicLoaded")] {
-        pub unsafe fn create_instance(create_info: *const VkInstanceCreateInfo, allocator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResultBox {
-            static FNPTR: std::sync::OnceLock<RawSymbol<PFN_vkCreateInstance>> = std::sync::OnceLock::new();
-            let fnptr = FNPTR.get_or_init(|| Resolver::get().load_symbol_unconstrainted::<PFN_vkCreateInstance>(b"vkCreateInstance\0"));
-
-            log::trace!(target: "br-vkapi-call", "vkCreateInstance");
-
-            VkResultBox(fnptr(create_info, allocator, instance))
-        }
-    } else {
-        pub unsafe fn create_instance(create_info: *const VkInstanceCreateInfo, allocator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResultBox {
-            log::trace!(target: "br-vkapi-call", "vkCreateInstance");
-
-            VkResultBox(vkCreateInstance(create_info, allocator, instance))
+        pub struct DefaultGlobalResolver;
+        impl ResolverInterface2 for DefaultGlobalResolver {
+            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+                Resolver::get().load_symbol_unconstrainted(name)
+            }
         }
     }
 }
 
-pub trait ResolverInterface {
-    #[cfg(feature = "DynamicLoaded")]
-    unsafe fn load_symbol_unconstrainted<T>(&self, name: &[u8]) -> RawSymbol<T>;
+pub unsafe trait FromPtr {
+    unsafe fn from_ptr(p: *const c_void) -> Self;
+}
+pub unsafe trait PFN: FromPtr {
+    const NAME_NUL: &'static [u8];
+}
 
+pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
+impl<F: PFN, R: ResolverInterface2> ResolvedFnCell<F, R> {
+    pub const fn new(resolver: R) -> Self {
+        Self(resolver, std::sync::OnceLock::new())
+    }
+
+    pub fn resolve(&self) -> &F {
+        self.1
+            .get_or_init(|| unsafe { self.0.load_symbol_unconstrainted::<F>(F::NAME_NUL) })
+    }
+}
+
+macro_rules! WrapAPI2 {
+    ($v: vis $name: ident: $pfn_type: ty = $org_name: ident ($($arg_name: ident: $arg_type: ty),*) -> VkResult) => {
+        cfg_if! {
+            if #[cfg(feature = "DynamicLoaded")] {
+                $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
+                    #[repr(transparent)]
+                    pub struct FT($pfn_type);
+                    unsafe impl FromPtr for FT {
+                        unsafe fn from_ptr(p: *const c_void) -> Self {
+                            core::mem::transmute(p)
+                        }
+                    }
+                    unsafe impl PFN for FT {
+                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_name), "\0").as_bytes();
+                    }
+
+                    static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
+
+                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+
+                    VkResultBox(F.resolve().0($($arg_name),*))
+                }
+            } else {
+                $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
+                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+
+                    VkResultBox($org_name($($arg_name),*))
+                }
+            }
+        }
+    };
+    ($v: vis $name: ident: $pfn_type: ty = $org_name: ident ($($arg_name: ident: $arg_type: ty),*)) => {
+        cfg_if! {
+            if #[cfg(feature = "DynamicLoaded")] {
+                $v unsafe fn $name($($arg_name: $arg_type),*) {
+                    #[repr(transparent)]
+                    pub struct FT($pfn_type);
+                    unsafe impl FromPtr for FT {
+                        unsafe fn from_ptr(p: *const c_void) -> Self {
+                            core::mem::transmute(p)
+                        }
+                    }
+                    unsafe impl PFN for FT {
+                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_name), "\0").as_bytes();
+                    }
+
+                    static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
+
+                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+
+                    F.resolve().0($($arg_name),*);
+                }
+            } else {
+                $v unsafe fn $name($($arg_name: $arg_type),*) {
+                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+
+                    $org_name($($arg_name),*);
+                }
+            }
+        }
+    }
+}
+
+WrapAPI2!(
+    pub create_instance: PFN_vkCreateInstance = vkCreateInstance(
+        create_info: *const VkInstanceCreateInfo,
+        allocator: *const VkAllocationCallbacks,
+        instance: *mut VkInstance
+    ) -> VkResult
+);
+WrapAPI2!(
+    pub destroy_instance: PFN_vkDestroyInstance = vkDestroyInstance(instance: VkInstance, allocator: *const VkAllocationCallbacks)
+);
+
+pub trait ResolverInterface2 {
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
+}
+pub trait ResolverInterface {
     unsafe fn create_instance(
         &self,
         create_info: *const VkInstanceCreateInfo,
@@ -1327,13 +1412,15 @@ impl Resolver {
     }
 }
 
+#[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
+impl ResolverInterface2 for Resolver {
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+        T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
+    }
+}
+
 #[cfg(not(feature = "CustomResolver"))]
 impl ResolverInterface for Resolver {
-    #[cfg(feature = "DynamicLoaded")]
-    unsafe fn load_symbol_unconstrainted<T>(&self, name: &[u8]) -> RawSymbol<T> {
-        self.0.get::<T>(name).unwrap().into_raw()
-    }
-
     WrapAPI!(create_instance = vkCreateInstance(create_info: *const VkInstanceCreateInfo, alloator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResult);
     WrapAPI!(destroy_instance = vkDestroyInstance(instance: VkInstance, allocator: *const VkAllocationCallbacks));
     WrapAPI!(enumerate_physical_devices = vkEnumeratePhysicalDevices(instance: VkInstance, phyical_device_count: *mut u32, physical_devices: *mut VkPhysicalDevice) -> VkResult);
