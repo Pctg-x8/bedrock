@@ -1184,6 +1184,64 @@ WrapAPI2!(
     ) -> VkResult;
 );
 
+// statically provided extension functions: VK_KHR_display
+#[cfg(feature = "VK_KHR_display")]
+WrapAPI2!(
+    #[org = vkGetPhysicalDeviceDisplayPropertiesKHR]
+    pub fn get_physical_device_display_properties_khr(
+        physical_device: VkPhysicalDevice,
+        property_count_out: *mut u32,
+        properties_out: *mut VkDisplayPropertiesKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceDisplayPlanePropertiesKHR]
+    pub fn get_physical_device_display_plane_properties_khr(
+        physical_device: VkPhysicalDevice,
+        property_count_out: *mut u32,
+        properties_out: *mut VkDisplayPlanePropertiesKHR,
+    ) -> VkResult;
+
+    #[org = vkGetDisplayPlaneSupportedDisplaysKHR]
+    pub fn get_display_plane_supported_displays_khr(
+        physical_device: VkPhysicalDevice,
+        plane_index: u32,
+        display_count_out: *mut u32,
+        displays_out: *mut VkDisplayKHR,
+    ) -> VkResult;
+
+    #[org = vkGetDisplayModePropertiesKHR]
+    pub fn get_display_mode_properties_khr(
+        physical_device: VkPhysicalDevice,
+        display: VkDisplayKHR,
+        property_count_out: *mut u32,
+        properties_out: *mut VkDisplayModePropertiesKHR,
+    ) -> VkResult;
+
+    #[org = vkCreateDisplayModeKHR]
+    pub fn create_display_mode_khr(
+        physical_device: VkPhysicalDevice,
+        display: VkDisplayKHR,
+        create_info: *const VkDisplayModeCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        mode_out: *mut VkDisplayModeKHR,
+    ) -> VkResult;
+
+    #[org = vkGetDisplayModeCapabilitiesKHR]
+    pub fn get_display_plane_capabilities_khr(
+        physicalDevice: VkPhysicalDevice,
+        mode: VkDisplayModeKHR,
+        planeIndex: u32,
+        pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
+    ) -> VkResult;
+
+    #[org = vkCreateDisplayPlaneSurfaceKHR]
+    pub fn create_display_plane_surface_khr(
+        instance: VkInstance,
+        create_info: *const VkDisplaySurfaceCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: *mut VkSurfaceKHR,
+    ) -> VkResult;
+);
+
 pub trait ResolverInterface2 {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
 }
@@ -1293,62 +1351,6 @@ pub trait ResolverInterface {
         discardRectangleCount: u32,
         pDiscardRectangles: *const VkRect2D,
     );
-
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn get_physical_device_display_properties_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayPropertiesKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn get_physical_device_display_plane_properties_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayPlanePropertiesKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn get_display_plane_supported_displays_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        planeIndex: u32,
-        pDisplayCount: *mut u32,
-        pDisplays: *mut VkDisplayKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn get_display_mode_properties_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        display: VkDisplayKHR,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayModePropertiesKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn create_display_mode_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        display: VkDisplayKHR,
-        pCreateInfo: *const VkDisplayModeCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pMode: *mut VkDisplayModeKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn get_display_plane_capabilities_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        mode: VkDisplayModeKHR,
-        planeIndex: u32,
-        pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_display")]
-    unsafe fn create_display_plane_surface_khr(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
 
     #[cfg(feature = "VK_EXT_sample_locations")]
     unsafe fn get_physical_device_multisample_properties_ext(

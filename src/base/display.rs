@@ -1,9 +1,9 @@
 //! Direct Display Rendering
 //! All functionality requires VK_KHR_display feature.
 
-use crate::{vk::*, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
-use crate::{Resolver, ResolverInterface, VkHandle};
+use crate::VkHandle;
+use crate::{vk::*, VkObject, VulkanStructure};
 #[allow(unused_imports)]
 use derives::*;
 use std::ops::Deref;
@@ -28,15 +28,23 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn mode_properties(&self) -> crate::Result<Vec<DisplayModeProperties>> {
         unsafe {
             let mut n = 0;
-            Resolver::get()
-                .get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
-                .into_result()?;
+            crate::vkresolve::get_display_mode_properties_khr(
+                self.1.native_ptr(),
+                self.0,
+                &mut n,
+                std::ptr::null_mut(),
+            )
+            .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            Resolver::get()
-                .get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, v.as_mut_ptr() as *mut _)
-                .into_result()
-                .map(move |_| v)
+            crate::vkresolve::get_display_mode_properties_khr(
+                self.1.native_ptr(),
+                self.0,
+                &mut n,
+                v.as_mut_ptr() as *mut _,
+            )
+            .into_result()
+            .map(move |_| v)
         }
     }
 
@@ -89,16 +97,15 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
                 parameters: params,
             };
             let mut h = std::mem::MaybeUninit::uninit();
-            Resolver::get()
-                .create_display_mode_khr(
-                    self.1.native_ptr(),
-                    self.native_ptr(),
-                    &cinfo,
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| DisplayMode(h.assume_init()))
+            crate::vkresolve::create_display_mode_khr(
+                self.1.native_ptr(),
+                self.native_ptr(),
+                &cinfo,
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| DisplayMode(h.assume_init()))
         }
     }
 }
