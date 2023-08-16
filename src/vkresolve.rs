@@ -1220,7 +1220,7 @@ WrapAPI2!(
 // statically provided extension functions: VK_MVK_macos_surface
 #[cfg(feature = "VK_MVK_macos_surface")]
 WrapAPI2!(
-    #[org = vkCreateMacosSurfaceMVK]
+    #[org = vkCreateMacOSSurfaceMVK]
     pub fn create_macos_surface_mvk(
         instance: VkInstance,
         create_info: *const VkMacOSSurfaceCreateInfoMVK,
