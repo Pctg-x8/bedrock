@@ -3,12 +3,9 @@
 use cfg_if::cfg_if;
 
 use crate::{vk::*, DeviceChild, VkObject};
-#[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VkHandleMut, VulkanStructure,
-};
 use crate::{ImageLayout, ShaderStage, VkHandle};
+#[cfg(feature = "Implements")]
+use crate::{VkHandleMut, VulkanStructure};
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a descriptor set layout object
@@ -191,8 +188,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
         };
         let mut hs = vec![VkDescriptorSet::NULL; layout_ptrs.len()];
         unsafe {
-            Resolver::get()
-                .allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
+            crate::vkresolve::allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| std::mem::transmute(hs))
         }
@@ -210,8 +206,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        Resolver::get()
-            .reset_descriptor_pool(self.device().native_ptr(), self.native_ptr_mut(), 0)
+        crate::vkresolve::reset_descriptor_pool(self.device().native_ptr(), self.native_ptr_mut(), 0)
             .into_result()
             .map(drop)
     }
@@ -228,15 +223,14 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        Resolver::get()
-            .free_descriptor_sets(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                sets.len() as _,
-                sets.as_ptr(),
-            )
-            .into_result()
-            .map(drop)
+        crate::vkresolve::free_descriptor_sets(
+            self.device().native_ptr(),
+            self.native_ptr(),
+            sets.len() as _,
+            sets.as_ptr(),
+        )
+        .into_result()
+        .map(drop)
     }
 }
 DerefContainerBracketImpl!(for DescriptorPool {});

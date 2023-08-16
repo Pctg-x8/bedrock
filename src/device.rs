@@ -20,7 +20,7 @@ unsafe impl<Instance: crate::Instance + Send> Send for DeviceObject<Instance> {}
 impl<Instance: crate::Instance> Drop for DeviceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_device(self.0, std::ptr::null());
+            crate::vkresolve::destroy_device(self.0, std::ptr::null());
         }
     }
 }
@@ -146,8 +146,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| DeviceObject(h.assume_init(), self.pdev_ref.transfer_instance()))
         }
@@ -190,9 +189,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         unsafe {
             let fn_cstr = std::ffi::CString::new(name).unwrap();
-            Resolver::get()
-                .get_device_proc_addr(self.native_ptr(), fn_cstr.as_ptr())
-                .map(|f| FnTransmute::from_fn(f))
+            crate::vkresolve::get_device_proc_addr(self.native_ptr(), fn_cstr.as_ptr()).map(|f| FnTransmute::from_fn(f))
         }
     }
 
@@ -204,7 +201,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
+            crate::vkresolve::get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
             QueueObject(h.assume_init(), self)
         }
     }
@@ -217,8 +214,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[cfg(feature = "Implements")]
     unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        Resolver::get()
-            .invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
+        crate::vkresolve::invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
             .into_result()
             .map(drop)
     }
@@ -287,7 +283,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             })
             .collect::<Vec<_>>();
         unsafe {
-            Resolver::get().update_descriptor_sets(
+            crate::vkresolve::update_descriptor_sets(
                 self.native_ptr(),
                 w.len() as _,
                 w.as_ptr(),
@@ -302,8 +298,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// All VkQueue objects created from this device must be externally synchronized.
     #[cfg(feature = "Implements")]
     unsafe fn wait(&self) -> crate::Result<()> {
-        Resolver::get()
-            .device_wait_idle(self.native_ptr())
+        crate::vkresolve::device_wait_idle(self.native_ptr())
             .into_result()
             .map(drop)
     }
@@ -524,8 +519,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         create_info.build(unsafe { &mut *s.as_mut_ptr() });
         let s = unsafe { s.assume_init_ref() };
         unsafe {
-            Resolver::get()
-                .create_buffer(self.native_ptr(), s, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_buffer(self.native_ptr(), s, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::BufferObject(h.assume_init(), self))
         }
@@ -620,8 +614,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[cfg(feature = "Implements")]
     unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        Resolver::get()
-            .flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
+        crate::vkresolve::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
             .into_result()
             .map(drop)
     }
@@ -647,8 +640,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
         }
@@ -677,8 +669,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::PipelineCacheObject(h.assume_init(), self))
         }
@@ -720,8 +711,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::PipelineLayoutObject(h.assume_init(), self))
         }
@@ -744,7 +734,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut hs = vec![VkPipeline::NULL; infos.len()];
         let r = unsafe {
-            Resolver::get().create_graphics_pipelines(
+            crate::vkresolve::create_graphics_pipelines(
                 self.native_ptr(),
                 cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                 infos.len() as _,
@@ -793,22 +783,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut pipelines = vec![VkPipeline::NULL; builders.len()];
         unsafe {
-            Resolver::get()
-                .create_compute_pipelines(
-                    self.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                    cinfos.len() as _,
-                    cinfos.as_ptr(),
-                    std::ptr::null(),
-                    pipelines.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| {
-                    pipelines
-                        .into_iter()
-                        .map(|h| crate::PipelineObject(h, self.clone()))
-                        .collect()
-                })
+            crate::vkresolve::create_compute_pipelines(
+                self.native_ptr(),
+                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                cinfos.len() as _,
+                cinfos.as_ptr(),
+                std::ptr::null(),
+                pipelines.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| {
+                pipelines
+                    .into_iter()
+                    .map(|h| crate::PipelineObject(h, self.clone()))
+                    .collect()
+            })
         }
     }
 
@@ -832,8 +821,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             memoryTypeIndex: type_index,
         };
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -875,8 +863,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -918,8 +905,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -959,8 +945,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -1000,8 +985,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -1021,19 +1005,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut h = std::mem::MaybeUninit::uninit();
         let flags = if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
         unsafe {
-            Resolver::get()
-                .create_fence(
-                    self.native_ptr(),
-                    &VkFenceCreateInfo {
-                        sType: VkFenceCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags,
-                    },
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| crate::FenceObject(h.assume_init(), self))
+            crate::vkresolve::create_fence(
+                self.native_ptr(),
+                &VkFenceCreateInfo {
+                    sType: VkFenceCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags,
+                },
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::FenceObject(h.assume_init(), self))
         }
     }
 
@@ -1065,8 +1048,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: &exp_info as *const _ as _,
         };
         unsafe {
-            Resolver::get()
-                .create_fence(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_fence(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::FenceObject(h.assume_init(), self))
         }
@@ -1085,19 +1067,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_semaphore(
-                    self.native_ptr(),
-                    &VkSemaphoreCreateInfo {
-                        sType: VkSemaphoreCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags: 0,
-                    },
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| crate::SemaphoreObject(h.assume_init(), self))
+            crate::vkresolve::create_semaphore(
+                self.native_ptr(),
+                &VkSemaphoreCreateInfo {
+                    sType: VkSemaphoreCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags: 0,
+                },
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::SemaphoreObject(h.assume_init(), self))
         }
     }
 
@@ -1129,8 +1110,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_semaphore(self.native_ptr(), &info, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_semaphore(self.native_ptr(), &info, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::SemaphoreObject(h.assume_init(), self))
         }
@@ -1149,19 +1129,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_event(
-                    self.native_ptr(),
-                    &VkEventCreateInfo {
-                        sType: VkEventCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags: 0,
-                    },
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| crate::EventObject(h.assume_init(), self))
+            crate::vkresolve::create_event(
+                self.native_ptr(),
+                &VkEventCreateInfo {
+                    sType: VkEventCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags: 0,
+                },
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::EventObject(h.assume_init(), self))
         }
     }
 
@@ -1181,7 +1160,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<bool> {
         let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let vr = unsafe {
-            Resolver::get().wait_for_fences(
+            crate::vkresolve::wait_for_fences(
                 self.native_ptr(),
                 objects_ptr.len() as _,
                 objects_ptr.as_ptr(),
@@ -1206,8 +1185,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn reset_multiple_fences(&self, objects: &[&mut impl crate::Fence]) -> crate::Result<()> {
         let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         unsafe {
-            Resolver::get()
-                .reset_fences(self.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr())
+            crate::vkresolve::reset_fences(self.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr())
                 .into_result()
                 .map(drop)
         }
@@ -1245,8 +1223,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::CommandPoolObject(h.assume_init(), self))
         }
@@ -1280,8 +1257,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_descriptor_set_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_descriptor_set_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DescriptorSetLayoutObject(h.assume_init(), self))
         }
@@ -1316,8 +1292,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pPoolSizes: pool_sizes.as_ptr() as *const _,
         };
         unsafe {
-            Resolver::get()
-                .create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::DescriptorPoolObject(h.assume_init(), self))
         }
@@ -1431,8 +1406,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::FramebufferObject(h.assume_init(), self, attachment_objects, size.as_ref().clone()))
         }
@@ -1517,8 +1491,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .queue_wait_idle(self.native_ptr_mut())
+            crate::vkresolve::queue_wait_idle(self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -1562,15 +1535,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .queue_bind_sparse(
-                    self.native_ptr_mut(),
-                    batches.len() as _,
-                    batches.as_ptr(),
-                    fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::queue_bind_sparse(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr(),
+                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1623,15 +1595,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .queue_submit(
-                    self.native_ptr_mut(),
-                    batches.len() as _,
-                    batches.as_ptr(),
-                    fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::queue_submit(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr(),
+                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 

@@ -116,8 +116,6 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-#[cfg(feature = "Implements")]
-use crate::vkresolve::{Resolver, ResolverInterface};
 use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
@@ -141,7 +139,7 @@ where
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_buffer_memory_requirements(
+            crate::vkresolve::get_buffer_memory_requirements(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 p.as_mut_ptr(),
@@ -157,15 +155,14 @@ where
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .bind_buffer_memory(
-                    self.device().native_ptr(),
-                    self.native_ptr_mut(),
-                    memory.native_ptr(),
-                    offset as _,
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::bind_buffer_memory(
+                self.device().native_ptr(),
+                self.native_ptr_mut(),
+                memory.native_ptr(),
+                offset as _,
+            )
+            .into_result()
+            .map(drop)
         }
     }
 }
@@ -180,7 +177,7 @@ unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
 impl<Device: crate::Device> Drop for ImageObject<Device> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_image(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_image(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -210,7 +207,7 @@ where
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_image_memory_requirements(
+            crate::vkresolve::get_image_memory_requirements(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 p.as_mut_ptr(),
@@ -226,15 +223,14 @@ where
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .bind_image_memory(
-                    self.device().native_ptr(),
-                    self.native_ptr_mut(),
-                    memory.native_ptr(),
-                    offset as _,
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::bind_image_memory(
+                self.device().native_ptr(),
+                self.native_ptr_mut(),
+                memory.native_ptr(),
+                offset as _,
+            )
+            .into_result()
+            .map(drop)
         }
     }
 }
@@ -272,7 +268,7 @@ cfg_if::cfg_if! {
             fn requirements(&self) -> VkMemoryRequirements {
                 let mut p = std::mem::MaybeUninit::uninit();
                 unsafe {
-                    Resolver::get().get_image_memory_requirements(
+                    crate::vkresolve::get_image_memory_requirements(
                         self.device().native_ptr(),
                         self.native_ptr(),
                         p.as_mut_ptr(),
@@ -285,8 +281,7 @@ cfg_if::cfg_if! {
             #[cfg(feature = "Implements")]
             fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()> {
                 unsafe {
-                    Resolver::get()
-                        .bind_image_memory(
+                    crate::vkresolve::bind_image_memory(
                             self.device().native_ptr(),
                             self.native_ptr(),
                             memory.native_ptr(),
@@ -326,7 +321,7 @@ impl<Buffer: crate::Buffer> DeviceChild for BufferViewObject<Buffer> {
 impl<Buffer: crate::Buffer> Drop for BufferViewObject<Buffer> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_buffer_view(self.1.device().native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_buffer_view(self.1.device().native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -349,7 +344,7 @@ impl<Image: crate::Image> DeviceChild for ImageViewObject<Image> {
 impl<Image: crate::Image> Drop for ImageViewObject<Image> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -796,8 +791,7 @@ impl ImageDesc<'_> {
     pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<ImageObject<Device>> {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     ImageObject(
@@ -849,8 +843,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| ImageViewObject(h.assume_init(), self))
         }
@@ -872,7 +865,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         };
         let mut s = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_image_subresource_layout(
+            crate::vkresolve::get_image_subresource_layout(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &subres,
@@ -888,7 +881,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
     fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
         let mut n = 0;
         unsafe {
-            Resolver::get().get_image_sparse_memory_requirements(
+            crate::vkresolve::get_image_sparse_memory_requirements(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &mut n,
@@ -898,7 +891,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         let mut v = Vec::with_capacity(n as _);
         unsafe {
             v.set_len(n as _);
-            Resolver::get().get_image_sparse_memory_requirements(
+            crate::vkresolve::get_image_sparse_memory_requirements(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &mut n,
@@ -918,14 +911,14 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             drmFormatModifier: 0,
         };
         unsafe {
-            Resolver::get().get_image_drm_format_modifier_properties_ext(
+            crate::vkresolve::get_image_drm_format_modifier_properties_ext(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &mut properties,
             )
+            .into_result()
+            .map(move |_| properties)
         }
-        .into_result()
-        .map(move |_| properties)
     }
 }
 DerefContainerBracketImpl!(for Image {
@@ -989,8 +982,7 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| BufferViewObject(h.assume_init(), self))
         }
@@ -1014,17 +1006,16 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .map_memory(
-                    self.device().native_ptr(),
-                    self.native_ptr_mut(),
-                    range.start as _,
-                    (range.end - range.start) as _,
-                    0,
-                    p.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
+            crate::vkresolve::map_memory(
+                self.device().native_ptr(),
+                self.native_ptr_mut(),
+                range.start as _,
+                (range.end - range.start) as _,
+                0,
+                p.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
         }
     }
 
@@ -1037,7 +1028,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        Resolver::get().unmap_memory(self.device().native_ptr(), self.native_ptr_mut());
+        crate::vkresolve::unmap_memory(self.device().native_ptr(), self.native_ptr_mut());
     }
 
     /// Query the current commitment for a `DeviceMemory`
@@ -1045,7 +1036,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     fn commitment_bytes(&self) -> VkDeviceSize {
         let mut b = 0;
         unsafe {
-            Resolver::get().get_device_memory_commitment(self.device().native_ptr(), self.native_ptr(), &mut b);
+            crate::vkresolve::get_device_memory_commitment(self.device().native_ptr(), self.native_ptr(), &mut b);
         }
 
         b
@@ -1561,8 +1552,7 @@ impl SamplerBuilder {
     pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<SamplerObject<Device>> {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_sampler(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_sampler(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| SamplerObject(h.assume_init(), device))
         }

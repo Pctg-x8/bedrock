@@ -1,11 +1,8 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
 #[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VkHandleMut,
-};
+use crate::VkHandleMut;
+use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
 use crate::{LifetimeBound, VkRawHandle};
 use std::borrow::Cow;
 use std::ffi::CString;
@@ -210,27 +207,25 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     fn data(&self) -> crate::Result<Vec<u8>> {
         let mut n = 0;
         unsafe {
-            Resolver::get()
-                .get_pipeline_cache_data(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    &mut n,
-                    std::ptr::null_mut(),
-                )
-                .into_result()?;
+            crate::vkresolve::get_pipeline_cache_data(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut n,
+                std::ptr::null_mut(),
+            )
+            .into_result()?;
         }
         let mut b: Vec<u8> = Vec::with_capacity(n as _);
         unsafe { b.set_len(n as _) };
         unsafe {
-            Resolver::get()
-                .get_pipeline_cache_data(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    &mut n,
-                    b.as_mut_ptr() as *mut _,
-                )
-                .into_result()
-                .map(|_| b)
+            crate::vkresolve::get_pipeline_cache_data(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut n,
+                b.as_mut_ptr() as *mut _,
+            )
+            .into_result()
+            .map(|_| b)
         }
     }
 
@@ -247,15 +242,14 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     {
         let srcs = src.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         unsafe {
-            Resolver::get()
-                .merge_pipeline_caches(
-                    self.device().native_ptr(),
-                    self.native_ptr_mut(),
-                    srcs.len() as _,
-                    srcs.as_ptr(),
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::merge_pipeline_caches(
+                self.device().native_ptr(),
+                self.native_ptr_mut(),
+                srcs.len() as _,
+                srcs.as_ptr(),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 }
@@ -334,15 +328,14 @@ impl<'l, D: crate::Device> PipelineLayoutBuilder<'l, D> {
 
         let mut handle = core::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_pipeline_layout(
-                    device.native_ptr(),
-                    &create_info,
-                    core::ptr::null(),
-                    handle.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| PipelineLayoutObject(handle.assume_init(), device))
+            crate::vkresolve::create_pipeline_layout(
+                device.native_ptr(),
+                &create_info,
+                core::ptr::null(),
+                handle.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| PipelineLayoutObject(handle.assume_init(), device))
         }
     }
 }
@@ -1783,17 +1776,16 @@ impl<
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_graphics_pipelines(
-                    device.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                    1,
-                    &cinfo,
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| PipelineObject(h.assume_init(), device))
+            crate::vkresolve::create_graphics_pipelines(
+                device.native_ptr(),
+                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                1,
+                &cinfo,
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| PipelineObject(h.assume_init(), device))
         }
     }
 }
@@ -1834,17 +1826,16 @@ impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipel
 
         let mut pipeline = ::std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_compute_pipelines(
-                    device.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                    1,
-                    &cinfo,
-                    std::ptr::null(),
-                    pipeline.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| PipelineObject(pipeline.assume_init(), device))
+            crate::vkresolve::create_compute_pipelines(
+                device.native_ptr(),
+                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                1,
+                &cinfo,
+                std::ptr::null(),
+                pipeline.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| PipelineObject(pipeline.assume_init(), device))
         }
     }
 }

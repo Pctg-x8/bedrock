@@ -3,8 +3,8 @@
 use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
+    vkresolve::Resolver, FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage,
+    StencilFaceMask,
 };
 use crate::{ImageLayout, VkHandle};
 use std::mem::replace;
@@ -60,8 +60,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
         };
         let mut hs = vec![VkCommandBuffer::NULL; count as _];
         unsafe {
-            Resolver::get()
-                .allocate_command_buffers(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
+            crate::vkresolve::allocate_command_buffers(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| transmute(hs))
         }
@@ -86,8 +85,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
             0
         };
         unsafe {
-            Resolver::get()
-                .reset_command_pool(self.device().native_ptr(), self.native_ptr_mut(), flags)
+            crate::vkresolve::reset_command_pool(self.device().native_ptr(), self.native_ptr_mut(), flags)
                 .into_result()
                 .map(drop)
         }
@@ -101,7 +99,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        Resolver::get().free_command_buffers(
+        crate::vkresolve::free_command_buffers(
             self.device().native_ptr(),
             self.native_ptr_mut(),
             buffers.len() as _,
@@ -152,8 +150,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
             pInheritanceInfo: std::ptr::null(),
         };
 
-        Resolver::get()
-            .begin_command_buffer(self.native_ptr_mut(), &info)
+        crate::vkresolve::begin_command_buffer(self.native_ptr_mut(), &info)
             .into_result()
             .map(move |_| CmdRecord {
                 ptr: self,
@@ -182,8 +179,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
             pInheritanceInfo: std::ptr::null(),
         };
 
-        Resolver::get()
-            .begin_command_buffer(self.native_ptr_mut(), &info)
+        crate::vkresolve::begin_command_buffer(self.native_ptr_mut(), &info)
             .into_result()
             .map(move |_| CmdRecord {
                 ptr: self,
@@ -245,8 +241,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
             pInheritanceInfo: &inherit,
         };
 
-        Resolver::get()
-            .begin_command_buffer(self.native_ptr_mut(), &binfo)
+        crate::vkresolve::begin_command_buffer(self.native_ptr_mut(), &binfo)
             .into_result()
             .map(move |_| CmdRecord {
                 ptr: self,
@@ -272,8 +267,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
             0
         };
 
-        Resolver::get()
-            .reset_command_buffer(self.native_ptr_mut(), flags)
+        crate::vkresolve::reset_command_buffer(self.native_ptr_mut(), flags)
             .into_result()
             .map(drop)
     }
@@ -364,8 +358,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
     /// Finish recording a command buffer
     pub fn end(self) -> crate::Result<()> {
         unsafe {
-            Resolver::get()
-                .end_command_buffer(self.ptr.native_ptr())
+            crate::vkresolve::end_command_buffer(self.ptr.native_ptr())
                 .into_result()
                 .map(drop)
         }
