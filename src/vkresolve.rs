@@ -48,7 +48,7 @@ impl Resolver {
                     // exepath.pop();
                     // exepath.push("libvulkan.dylib");
                     // return exepath;
-                    "libvulkan.dylib"
+                    "libMoltenVK.dylib"
                 }
             } else if #[cfg(windows)] {
                 fn libname() -> &'static str {
