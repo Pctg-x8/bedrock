@@ -169,6 +169,7 @@ macro_rules! WrapAPI2 {
     {} => {}
 }
 
+// Vulkan 1.0 Baseline APIs
 WrapAPI2!(
     #[org = vkCreateInstance]
     pub fn create_instance(
@@ -695,308 +696,369 @@ WrapAPI2!(
     pub fn reset_command_buffer(command_buffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResultBox;
 );
 
+// Vulkan 1.0 Commands
+WrapAPI2!(
+    #[org = vkCmdBindPipeline]
+    pub fn cmd_bind_pipeline(
+        commandBuffer: VkCommandBuffer,
+        pipeline_bind_point: VkPipelineBindPoint,
+        pipeline: VkPipeline,
+    );
+
+    #[org = vkCmdSetViewport]
+    pub fn cmd_set_viewport(
+        command_buffer: VkCommandBuffer,
+        first_viewport: u32,
+        viewport_count: u32,
+        viewports: *const VkViewport,
+    );
+    #[org = vkCmdSetScissor]
+    pub fn cmd_set_scissor(
+        command_buffer: VkCommandBuffer,
+        first_scissor: u32,
+        scissor_count: u32,
+        scissors: *const VkRect2D,
+    );
+    #[org = vkCmdSetLineWidth]
+    pub fn cmd_set_line_width(command_buffer: VkCommandBuffer, line_width: c_float);
+    #[org = vkCmdSetDepthBias]
+    pub fn cmd_set_depth_bias(
+        command_buffer: VkCommandBuffer,
+        depth_bias_constant_factor: c_float,
+        depth_bias_clamp: c_float,
+        depth_bias_slope_factor: c_float,
+    );
+    #[org = vkCmdSetBlendConstants]
+    pub fn cmd_set_blend_constants(command_buffer: VkCommandBuffer, blend_constants: *const c_float);
+    #[org = vkCmdSetDepthBounds]
+    pub fn cmd_set_depth_bounds(command_buffer: VkCommandBuffer, min_depth_bounds: c_float, max_depth_bounds: c_float);
+    #[org = vkCmdSetStencilCompareMask]
+    pub fn cmd_set_stencil_compare_mask(
+        command_buffer: VkCommandBuffer,
+        face_mask: VkStencilFaceFlags,
+        compare_mask: u32,
+    );
+    #[org = vkCmdSetStencilWriteMask]
+    pub fn cmd_set_stencil_write_mask(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, write_mask: u32);
+    #[org = vkCmdSetStencilReference]
+    pub fn cmd_set_stencil_reference(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, reference: u32);
+
+    #[org = vkCmdBindDescriptorSets]
+    pub fn cmd_bind_descriptor_sets(
+        command_buffer: VkCommandBuffer,
+        pipeline_bind_point: VkPipelineBindPoint,
+        layout: VkPipelineLayout,
+        first_set: u32,
+        descriptor_set_count: u32,
+        descriptor_sets: *const VkDescriptorSet,
+        dynamic_offset_count: u32,
+        dynamic_offsets: *const u32,
+    );
+    #[org = vkCmdBindIndexBuffer]
+    pub fn cmd_bind_index_buffer(
+        command_buffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        index_type: VkIndexType,
+    );
+    #[org = vkCmdBindVertexBuffer]
+    pub fn cmd_bind_vertex_buffers(
+        command_buffer: VkCommandBuffer,
+        first_binding: u32,
+        binding_count: u32,
+        buffers: *const VkBuffer,
+        offsets: *const VkDeviceSize,
+    );
+
+    #[org = vkCmdDraw]
+    pub fn cmd_draw(
+        command_buffer: VkCommandBuffer,
+        vertex_count: u32,
+        instance_count: u32,
+        first_vertex: u32,
+        first_index: u32,
+    );
+    #[org = vkCmdDrawIndexed]
+    pub fn cmd_draw_indexed(
+        command_buffer: VkCommandBuffer,
+        index_count: u32,
+        instance_count: u32,
+        first_index: u32,
+        vertex_offset: i32,
+        first_instance: u32,
+    );
+    #[org = vkCmdDrawIndirect]
+    pub fn cmd_draw_indirect(
+        command_buffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        draw_count: u32,
+        stride: u32,
+    );
+    #[org = vkCmdDrawIndexedIndirect]
+    pub fn cmd_draw_indexed_indirect(
+        command_buffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        drawCount: u32,
+        stride: u32,
+    );
+
+    #[org = vkCmdDispatch]
+    pub fn cmd_dispatch(command_buffer: VkCommandBuffer, group_count_x: u32, group_count_y: u32, group_count_z: u32);
+    #[org = vkCmdDispatchIndirect]
+    pub fn cmd_dispatch_indirect(command_buffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
+
+    #[org = vkCmdCopyBuffer]
+    pub fn cmd_copy_buffer(
+        command_buffer: VkCommandBuffer,
+        src_buffer: VkBuffer,
+        dst_buffer: VkBuffer,
+        region_count: u32,
+        regions: *const VkBufferCopy,
+    );
+    #[org = vkCmdCopyImage]
+    pub fn cmd_copy_image(
+        command_buffer: VkCommandBuffer,
+        src_image: VkImage,
+        src_image_layout: VkImageLayout,
+        dst_image: VkImage,
+        dst_image_layout: VkImageLayout,
+        region_count: u32,
+        regions: *const VkImageCopy,
+    );
+    #[org = vkCmdBlitImage]
+    pub fn cmd_blit_image(
+        command_buffer: VkCommandBuffer,
+        src_image: VkImage,
+        src_image_layout: VkImageLayout,
+        dst_image: VkImage,
+        dst_image_layout: VkImageLayout,
+        region_count: u32,
+        regions: *const VkImageBlit,
+        filter: VkFilter,
+    );
+    #[org = vkCmdCopyBufferToImage]
+    pub fn cmd_copy_buffer_to_image(
+        command_buffer: VkCommandBuffer,
+        src_buffer: VkBuffer,
+        dst_image: VkImage,
+        dst_image_layout: VkImageLayout,
+        region_count: u32,
+        regions: *const VkBufferImageCopy,
+    );
+    #[org = vkCmdCopyImageToBuffer]
+    pub fn cmd_copy_image_to_buffer(
+        command_buffer: VkCommandBuffer,
+        src_image: VkImage,
+        src_image_layout: VkImageLayout,
+        dst_buffer: VkBuffer,
+        region_count: u32,
+        regions: *const VkBufferImageCopy,
+    );
+
+    #[org = vkCmdUpdateBuffer]
+    pub fn cmd_update_buffer(
+        command_buffer: VkCommandBuffer,
+        dst_buffer: VkBuffer,
+        dst_offset: VkDeviceSize,
+        data_size: VkDeviceSize,
+        data: *const c_void,
+    );
+    #[org = vkCmdFillBuffer]
+    pub fn cmd_fill_buffer(
+        command_buffer: VkCommandBuffer,
+        dst_buffer: VkBuffer,
+        dst_offset: VkDeviceSize,
+        size: VkDEviceSize,
+        data: u32,
+    );
+
+    #[org = vkCmdClearColorImage]
+    pub fn cmd_clear_color_image(
+        command_buffer: VkCommandBuffer,
+        image: VkImage,
+        imageLayout: VkImageLayout,
+        color: *const VkClearColorValue,
+        range_count: u32,
+        ranges: *const VkImageSubresourceRange,
+    );
+    #[org = vkCmdClearDepthStencilImage]
+    pub fn cmd_clear_depth_stencil_image(
+        command_buffer: VkCommandBuffer,
+        image: VkImage,
+        image_layout: VkImageLayout,
+        depth_stencil: *const VkClearDepthStencilValue,
+        range_count: u32,
+        ranges: *const VkImageSubresourceRange,
+    );
+
+    #[org = vkCmdClearAttachments]
+    pub fn cmd_clear_attachments(
+        command_buffer: VkCommandBuffer,
+        attachment_count: u32,
+        attachments: *const VkClearAttachment,
+        rect_count: u32,
+        rects: *const VkClearRect,
+    );
+    #[org = vkCmdResolveImage]
+    pub fn cmd_resolve_image(
+        command_buffer: VkCommandBuffer,
+        src_image: VkImage,
+        src_image_layout: VkImageLayout,
+        dst_image: VkImage,
+        dst_image_layout: VkImageLayout,
+        region_count: u32,
+        regions: *const VkImageResolve,
+    );
+
+    #[org = vkCmdSetEvent]
+    pub fn cmd_set_event(command_buffer: VkCommandBuffer, event: VkEvent, stage_mask: VkPipelineStageFlags);
+    #[org = vkCmdResetEvent]
+    pub fn cmd_reset_event(command_buffer: VkCommandBuffer, event: VkEvent, stage_mask: VkPipelineStageFlags);
+    #[org = vkCmdWaitEvents]
+    pub fn cmd_wait_events(
+        command_buffer: VkCommandBuffer,
+        event_count: u32,
+        events: *const VkEvent,
+        src_stage_mask: VkPipelineStageFlags,
+        dst_stage_mask: VkPipelineStageFlags,
+        memory_barrier_count: u32,
+        memory_barriers: *const VkMemoryBarrier,
+        buffer_memory_barrier_count: u32,
+        buffer_memory_barriers: *const VkBufferMemoryBarrier,
+        image_memory_barrier_count: u32,
+        image_memory_barriers: *const VkImageMemoryBarrier,
+    );
+
+    #[org = vkCmdPipelineBarrier]
+    pub fn cmd_pipeline_barrier(
+        command_buffer: VkCommandBuffer,
+        src_stage_mask: VkPipelineStageFlags,
+        dst_stage_mask: VkPipelineStageFlags,
+        dependency_flags: VkDependencyFlags,
+        memory_barrier_count: u32,
+        memory_barriers: *const VkMemoryBarrier,
+        buffer_memory_barrier_count: u32,
+        buffer_memory_barriers: *const VkBufferMemoryBarrier,
+        image_memory_barrier_count: u32,
+        image_memory_barriers: *const VkImageMemoryBarrier,
+    );
+
+    #[org = vkCmdBeginQuery]
+    pub fn cmd_begin_query(
+        command_buffer: VkCommandBuffer,
+        query_pool: VkQueryPool,
+        query: u32,
+        flags: VkQueryControlFlags,
+    );
+    #[org = vkCmdEndQuery]
+    pub fn cmd_end_query(command_buffer: VkCommandBuffer, query_pool: VkQueryPool, query: u32);
+    #[org = vkCmdResetQueryPool]
+    pub fn cmd_reset_query_pool(
+        command_buffer: VkCommandBuffer,
+        query_pool: VkQueryPool,
+        first_query: u32,
+        query_count: u32,
+    );
+    #[org = vkCmdWriteTimestamp]
+    pub fn cmd_write_timestamp(
+        command_buffer: VkCOmmandBuffer,
+        pipeline_stage: VkPipelineStageFlags,
+        query_pool: VkQueryPool,
+        query: u32,
+    );
+    #[org = vkCmdCopyQueryPoolResults]
+    pub fn cmd_copy_query_pool_results(
+        command_buffer: VkCommandBuffer,
+        query_pool: VkQueryPool,
+        first_query: u32,
+        query_count: u32,
+        dst_buffer: VkBuffer,
+        dst_offset: VkDeviceSize,
+        stride: VkDeviceSize,
+        flags: VkQueryResultFlags,
+    );
+
+    #[org = vkCmdPushConstants]
+    pub fn cmd_push_constants(
+        command_buffer: VkCommandBuffer,
+        layout: VkPipelineLayout,
+        stage_flags: VkShaderStageFlags,
+        offset: u32,
+        size: u32,
+        values: *const c_void,
+    );
+
+    #[org = vkCmdBeginRenderPass]
+    pub fn cmd_begin_render_pass(
+        command_buffer: VkCommandBuffer,
+        render_pass_begin: *const VkRenderPassBeginInfo,
+        contents: VkSubpassContents,
+    );
+    #[org = vkCmdNextSubpass]
+    pub fn cmd_next_subpass(command_buffer: VkCommandBuffer, contents: VkSubpassContents);
+    #[org = vkCmdEndRenderPass]
+    pub fn cmd_end_render_pass(command_buffer: VkCommandBuffer);
+
+    #[org = vkCmdExecuteCommands]
+    pub fn cmd_execute_commands(
+        command_buffer: VkCommandBuffer,
+        command_buffer_count: u32,
+        command_buffers: *const VkCommandBuffer,
+    );
+);
+
 pub trait ResolverInterface2 {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
 }
 pub trait ResolverInterface {
-    unsafe fn cmd_bind_pipeline(
+    #[cfg(feature = "VK_KHR_surface")]
+    unsafe fn destroy_surface_khr(
         &self,
-        commandBuffer: VkCommandBuffer,
-        pipelineBindPoint: VkPipelineBindPoint,
-        pipeline: VkPipeline,
+        instance: VkInstance,
+        surface: VkSurfaceKHR,
+        pAllocator: *const VkAllocationCallbacks,
     );
-    unsafe fn cmd_set_viewport(
+    #[cfg(feature = "VK_KHR_surface")]
+    unsafe fn get_physical_device_surface_support_khr(
         &self,
-        commandBuffer: VkCommandBuffer,
-        firstViewport: u32,
-        viewportCount: u32,
-        pViewports: *const VkViewport,
-    );
-    unsafe fn cmd_set_scissor(
+        physicalDevice: VkPhysicalDevice,
+        queueFamilyIndex: u32,
+        surface: VkSurfaceKHR,
+        pSupported: *mut VkBool32,
+    ) -> VkResultBox;
+    #[cfg(feature = "VK_KHR_surface")]
+    unsafe fn get_physical_device_surface_capabilities_khr(
         &self,
-        commandBuffer: VkCommandBuffer,
-        firstScissor: u32,
-        scissorCount: u32,
-        pScissors: *const VkRect2D,
-    );
-    unsafe fn cmd_set_line_width(&self, commandBuffer: VkCommandBuffer, lineWidth: c_float);
-    unsafe fn cmd_set_depth_bias(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
+    ) -> VkResultBox;
+    #[cfg(feature = "VK_KHR_surface")]
+    unsafe fn get_physical_device_surface_formats_khr(
         &self,
-        commandBuffer: VkCommandBuffer,
-        depthBiasConstantFactor: c_float,
-        depthBiasClamp: c_float,
-        depthBiasSlopeFactor: c_float,
-    );
-    unsafe fn cmd_set_blend_constants(&self, commandBuffer: VkCommandBuffer, blendConstants: *const c_float);
-    unsafe fn cmd_set_depth_bounds(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pSurfaceFormatCount: *mut u32,
+        pSurfaceFormats: *mut VkSurfaceFormatKHR,
+    ) -> VkResultBox;
+    #[cfg(feature = "VK_KHR_surface")]
+    unsafe fn get_physical_device_surface_present_modes_khr(
         &self,
-        commandBuffer: VkCommandBuffer,
-        minDepthBounds: c_float,
-        maxDepthBounds: c_float,
-    );
-    unsafe fn cmd_set_stencil_compare_mask(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pPresentModeCount: *mut u32,
+        pPresentModes: *mut VkPresentModeKHR,
+    ) -> VkResultBox;
+    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+    unsafe fn get_physical_device_surface_capabilities2_khr(
         &self,
-        commandBuffer: VkCommandBuffer,
-        faceMask: VkStencilFaceFlags,
-        compareMask: u32,
-    );
-    unsafe fn cmd_set_stencil_write_mask(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        faceMask: VkStencilFaceFlags,
-        writeMask: u32,
-    );
-    unsafe fn cmd_set_stencil_reference(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        faceMask: VkStencilFaceFlags,
-        reference: u32,
-    );
-    unsafe fn cmd_bind_descriptor_sets(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        pipelineBindPoint: VkPipelineBindPoint,
-        layout: VkPipelineLayout,
-        firstSet: u32,
-        descriptorSetCount: u32,
-        pDescriptorSets: *const VkDescriptorSet,
-        dynamicOffsetCount: u32,
-        pDynamicOffsets: *const u32,
-    );
-    unsafe fn cmd_bind_index_buffer(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        buffer: VkBuffer,
-        offset: VkDeviceSize,
-        indexType: VkIndexType,
-    );
-    unsafe fn cmd_bind_vertex_buffers(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        firstBinding: u32,
-        bindingCount: u32,
-        pBuffers: *const VkBuffer,
-        pOffsets: *const VkDeviceSize,
-    );
-    unsafe fn cmd_draw(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        vertexCount: u32,
-        instanceCount: u32,
-        firstVertex: u32,
-        firstInstance: u32,
-    );
-    unsafe fn cmd_draw_indexed(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        indexCount: u32,
-        instanceCount: u32,
-        firstIndex: u32,
-        vertexOffset: i32,
-        firstInstance: u32,
-    );
-    unsafe fn cmd_draw_indirect(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        buffer: VkBuffer,
-        offset: VkDeviceSize,
-        drawCount: u32,
-        stride: u32,
-    );
-    unsafe fn cmd_draw_indexed_indirect(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        buffer: VkBuffer,
-        offset: VkDeviceSize,
-        drawCount: u32,
-        stride: u32,
-    );
-    unsafe fn cmd_dispatch(&self, commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
-    unsafe fn cmd_dispatch_indirect(&self, commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
-    unsafe fn cmd_copy_buffer(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcBuffer: VkBuffer,
-        dstBuffer: VkBuffer,
-        regionCount: u32,
-        pRegions: *const VkBufferCopy,
-    );
-    unsafe fn cmd_copy_image(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcImage: VkImage,
-        srcImageLayout: VkImageLayout,
-        dstImage: VkImage,
-        dstImageLayout: VkImageLayout,
-        regionCount: u32,
-        pRegions: *const VkImageCopy,
-    );
-    unsafe fn cmd_blit_image(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcImage: VkImage,
-        srcImageLayout: VkImageLayout,
-        dstImage: VkImage,
-        dstImageLayout: VkImageLayout,
-        regionCount: u32,
-        pRegions: *const VkImageBlit,
-        filter: VkFilter,
-    );
-    unsafe fn cmd_copy_buffer_to_image(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcBuffer: VkBuffer,
-        dstImage: VkImage,
-        dstImageLayout: VkImageLayout,
-        regionCount: u32,
-        pRegions: *const VkBufferImageCopy,
-    );
-    unsafe fn cmd_copy_image_to_buffer(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcImage: VkImage,
-        srcImageLayout: VkImageLayout,
-        dstBuffer: VkBuffer,
-        regionCount: u32,
-        pRegions: *const VkBufferImageCopy,
-    );
-    unsafe fn cmd_update_buffer(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        dstBuffer: VkBuffer,
-        dstOffset: VkDeviceSize,
-        dataSize: VkDeviceSize,
-        pData: *const c_void,
-    );
-    unsafe fn cmd_fill_buffer(
-        &self,
-        ommandBuffer: VkCommandBuffer,
-        dstBuffer: VkBuffer,
-        dstOffset: VkDeviceSize,
-        size: VkDeviceSize,
-        data: u32,
-    );
-    unsafe fn cmd_clear_color_image(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        image: VkImage,
-        imageLayout: VkImageLayout,
-        pColor: *const VkClearColorValue,
-        rangeCount: u32,
-        pRanges: *const VkImageSubresourceRange,
-    );
-    unsafe fn cmd_clear_depth_stencil_image(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        image: VkImage,
-        imageLayout: VkImageLayout,
-        pDepthStencil: *const VkClearDepthStencilValue,
-        rangeCount: u32,
-        pRanges: *const VkImageSubresourceRange,
-    );
-    unsafe fn cmd_clear_attachments(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        attachmentCount: u32,
-        pAttachments: *const VkClearAttachment,
-        rectCount: u32,
-        pRects: *const VkClearRect,
-    );
-    unsafe fn cmd_resolve_image(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcImage: VkImage,
-        srcImageLayout: VkImageLayout,
-        dstImage: VkImage,
-        dstImageLayout: VkImageLayout,
-        regionCount: u32,
-        pRegions: *const VkImageResolve,
-    );
-    unsafe fn cmd_set_event(&self, commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
-    unsafe fn cmd_reset_event(&self, commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
-    unsafe fn cmd_wait_events(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        eventCount: u32,
-        pEvents: *const VkEvent,
-        srcStageMask: VkPipelineStageFlags,
-        dstStageMask: VkPipelineStageFlags,
-        memoryBarrierCount: u32,
-        pMemoryBarriers: *const VkMemoryBarrier,
-        bufferMemoryBarrierCount: u32,
-        pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
-        imageMemoryBarrierCount: u32,
-        pImageMemoryBariers: *const VkImageMemoryBarrier,
-    );
-    unsafe fn cmd_pipeline_barrier(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        srcStageMask: VkPipelineStageFlags,
-        dstStageMask: VkPipelineStageFlags,
-        dependencyFlags: VkDependencyFlags,
-        memoryBarrierCount: u32,
-        pMemoryBarriers: *const VkMemoryBarrier,
-        bufferMemoryBarrierCount: u32,
-        pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
-        imageMemoryBarrierCount: u32,
-        pImageMemoryBarriers: *const VkImageMemoryBarrier,
-    );
-    unsafe fn cmd_begin_query(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        queryPool: VkQueryPool,
-        query: u32,
-        flags: VkQueryControlFlags,
-    );
-    unsafe fn cmd_end_query(&self, commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32);
-    unsafe fn cmd_reset_query_pool(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        queryPool: VkQueryPool,
-        firstQuery: u32,
-        queryCount: u32,
-    );
-    unsafe fn cmd_write_timestamp(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        pipelineStage: VkPipelineStageFlags,
-        queryPool: VkQueryPool,
-        query: u32,
-    );
-    unsafe fn cmd_copy_query_pool_results(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        queryPool: VkQueryPool,
-        firstQuery: u32,
-        queryCount: u32,
-        dstBuffer: VkBuffer,
-        dstOffset: VkDeviceSize,
-        stride: VkDeviceSize,
-        flags: VkQueryResultFlags,
-    );
-    unsafe fn cmd_push_constants(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        layout: VkPipelineLayout,
-        stageFlags: VkShaderStageFlags,
-        offset: u32,
-        size: u32,
-        pValues: *const c_void,
-    );
-    unsafe fn cmd_begin_render_pass(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        pRenderPassBegin: *const VkRenderPassBeginInfo,
-        contents: VkSubpassContents,
-    );
-    unsafe fn cmd_next_subpass(&self, commandBuffer: VkCommandBuffer, contents: VkSubpassContents);
-    unsafe fn cmd_end_render_pass(&self, commandBuffer: VkCommandBuffer);
-    unsafe fn cmd_execute_commands(
-        &self,
-        commandBuffer: VkCommandBuffer,
-        commandBufferCount: u32,
-        pCommandBuffers: *const VkCommandBuffer,
-    );
+        physicalDevice: VkPhysicalDevice,
+        surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR,
+        surface_capabilities: *mut VkSurfaceCapabilities2KHR,
+    ) -> VkResultBox;
+
     #[cfg(feature = "VK_KHR_push_descriptor")]
     unsafe fn cmd_push_descriptor_set_khr(
         &self,
@@ -1094,52 +1156,6 @@ pub trait ResolverInterface {
         discardRectangleCount: u32,
         pDiscardRectangles: *const VkRect2D,
     );
-
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn destroy_surface_khr(
-        &self,
-        instance: VkInstance,
-        surface: VkSurfaceKHR,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_support_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        surface: VkSurfaceKHR,
-        pSupported: *mut VkBool32,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_capabilities_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface: VkSurfaceKHR,
-        pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_formats_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface: VkSurfaceKHR,
-        pSurfaceFormatCount: *mut u32,
-        pSurfaceFormats: *mut VkSurfaceFormatKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_present_modes_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface: VkSurfaceKHR,
-        pPresentModeCount: *mut u32,
-        pPresentModes: *mut VkPresentModeKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-    unsafe fn get_physical_device_surface_capabilities2_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR,
-        surface_capabilities: *mut VkSurfaceCapabilities2KHR,
-    ) -> VkResultBox;
 
     #[cfg(feature = "VK_KHR_swapchain")]
     unsafe fn create_swapchain_khr(
