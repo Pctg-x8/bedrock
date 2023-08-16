@@ -16,27 +16,72 @@ use xcb::ffi::xcb_connection_t;
 
 use libc::*;
 
-// Replacement Formula(RegEx)
-// * NoReturn API: pub fn (\w+)\((([^\)]|[\r\n])*)\)\s*; => WrapAPI!($1 = $1($2));
-// * Return API: pub fn (\w+)\((([^\)]|[\r\n])*)\)\s*->\s*([^;\s]*)\s*; => WrapAPI!($1 = $1($2) -> $4);
+cfg_if! {
+    if #[cfg(feature = "CustomResolver")] {
+        static GLOBAL_RESOLVER: std::sync::OnceLock<Box<dyn ResolverInterface2>> = std::sync::OnceLock::new();
 
-use std::cell::RefCell;
-use std::sync::atomic::AtomicPtr;
-use std::sync::atomic::Ordering;
-thread_local!(static STATIC_RESOLVER_INITIALIZED: RefCell<bool> = RefCell::new(false));
-#[cfg(not(feature = "CustomResolver"))]
-static STATIC_RESOLVER: AtomicPtr<Resolver> = AtomicPtr::new(std::ptr::null_mut());
-#[cfg(feature = "CustomResolver")]
-static STATIC_RESOLVER: AtomicPtr<ResolverInterface> = AtomicPtr::new(0 as *mut _);
-
-#[cfg(feature = "CustomResolver")]
-pub fn set_custom_resolver(resv: Box<ResolverInterface>) {
-    STATIC_RESOLVER_INITIALIZED.with(|f| {
-        if !*f.borrow() {
-            let _ =
-                STATIC_RESOLVER.compare_exchange(0 as *mut _, Box::into_raw(resv), Ordering::SeqCst, Ordering::Relaxed);
+        pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface2>) {
+            GLOBAL_RESOLVER.set(Box::into_raw(resolver))
         }
-    });
+    } else {
+        static GLOBAL_RESOLVER: std::sync::OnceLock<Box<Resolver>> = std::sync::OnceLock::new();
+    }
+}
+
+pub trait ResolverInterface2 {
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
+}
+
+pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
+#[cfg(not(feature = "CustomResolver"))]
+impl Resolver {
+    pub fn get<'a>() -> &'a Self {
+        GLOBAL_RESOLVER.get_or_init(|| Box::new(Self::new()))
+    }
+
+    #[cfg(feature = "DynamicLoaded")]
+    fn new() -> Self {
+        cfg_if! {
+            if #[cfg(target_os = "macos")] {
+                fn libname() -> std::path::PathBuf {
+                    let mut exepath = std::env::current_exe().unwrap();
+                    exepath.pop();
+                    exepath.push("libvulkan.dylib");
+                    return exepath;
+                }
+            } else if #[cfg(windows)] {
+                fn libname() -> &'static str {
+                    "vulkan-1.dll"
+                }
+            } else {
+                // assumes unix environment
+                fn libname() -> &'static str {
+                    "libvulkan.so"
+                }
+            }
+        }
+
+        Library::new(&libname())
+            .map(Resolver)
+            .expect(&format!("Unable to open libvulkan: {:?}", libname()))
+    }
+    #[cfg(not(feature = "DynamicLoaded"))]
+    fn new() -> Self {
+        Resolver()
+    }
+}
+#[cfg(feature = "CustomRenderer")]
+impl Resolver {
+    pub fn get<'a>() -> &'a ResolverInterface {
+        unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) }
+    }
+}
+
+#[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
+impl ResolverInterface2 for Resolver {
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+        T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
+    }
 }
 
 cfg_if! {
@@ -1242,9 +1287,7 @@ WrapAPI2!(
     ) -> VkResult;
 );
 
-pub trait ResolverInterface2 {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
-}
+// TODO: translate follows
 pub trait ResolverInterface {
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(
@@ -1365,72 +1408,6 @@ pub trait ResolverInterface {
         commandBuffer: VkCommandBuffer,
         pSampleLocationsInfo: *const VkSampleLocationsInfoEXT,
     );
-
-    #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-    unsafe fn get_image_drm_format_modifier_properties_ext(
-        &self,
-        device: VkDevice,
-        image: VkImage,
-        properties: *mut VkImageDrmFormatModifierPropertiesEXT,
-    ) -> VkResultBox;
-}
-
-pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
-#[cfg(not(feature = "CustomResolver"))]
-impl Resolver {
-    pub fn get<'a>() -> &'a Self {
-        STATIC_RESOLVER_INITIALIZED.with(|f| {
-            if !*f.borrow() {
-                let _ = STATIC_RESOLVER.compare_exchange(
-                    std::ptr::null_mut(),
-                    Box::into_raw(Box::new(Self::new())),
-                    Ordering::SeqCst,
-                    Ordering::Relaxed,
-                );
-                *f.borrow_mut() = true;
-            }
-        });
-        unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) }
-    }
-
-    #[cfg(feature = "DynamicLoaded")]
-    fn new() -> Self {
-        #[cfg(target_os = "macos")]
-        fn libname() -> std::path::PathBuf {
-            let mut exepath = std::env::current_exe().unwrap();
-            exepath.pop();
-            exepath.push("libvulkan.dylib");
-            return exepath;
-        }
-        #[cfg(windows)]
-        fn libname() -> &'static str {
-            "vulkan-1.dll"
-        }
-        #[cfg(not(any(target_os = "macos", windows)))]
-        fn libname() -> &'static str {
-            "libvulkan.so"
-        }
-        Library::new(&libname())
-            .map(Resolver)
-            .expect(&format!("Unable to open libvulkan: {:?}", libname()))
-    }
-    #[cfg(not(feature = "DynamicLoaded"))]
-    fn new() -> Self {
-        Resolver()
-    }
-}
-#[cfg(feature = "CustomRenderer")]
-impl Resolver {
-    pub fn get<'a>() -> &'a ResolverInterface {
-        unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) }
-    }
-}
-
-#[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
-impl ResolverInterface2 for Resolver {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
-        T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
-    }
 }
 
 // #[cfg(not(feature = "CustomResolver"))]
