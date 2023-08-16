@@ -70,9 +70,10 @@ impl<F: PFN, R: ResolverInterface2> ResolvedFnCell<F, R> {
 }
 
 macro_rules! WrapAPI2 {
-    { #[org = $org_fn: ident] $v: vis fn $name: ident($($arg_name: ident: $arg_type: ty),* $(,)?) -> VkResult; $($rest: tt)* } => {
+    { #[org = $org_fn: ident] $(#[$attr: meta])* $v: vis fn $name: ident($($arg_name: ident: $arg_type: ty),* $(,)?) -> VkResult; $($rest: tt)* } => {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
+                $(#[$attr])*
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
                     #[repr(transparent)]
                     pub struct FT(extern "system" fn($($arg_type),*) -> VkResult);
@@ -92,6 +93,8 @@ macro_rules! WrapAPI2 {
                     VkResultBox(F.resolve().0($($arg_name),*))
                 }
             } else {
+                $(#[$attr])*
+                #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
                     log::trace!(target: "br-vkapi-call", stringify!($org_name));
 
@@ -102,9 +105,10 @@ macro_rules! WrapAPI2 {
 
         WrapAPI2!($($rest)*);
     };
-    { #[org = $org_fn: ident] $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?) -> $rt: ty; $($rest: tt)* } => {
+    { #[org = $org_fn: ident] $(#[$attr: meta])* $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?) -> $rt: ty; $($rest: tt)* } => {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
+                $(#[$attr])*
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
                     #[repr(transparent)]
                     pub struct FT(extern "system" fn($($arg_type),*) -> $rt);
@@ -124,6 +128,8 @@ macro_rules! WrapAPI2 {
                     F.resolve().0($($arg_name),*)
                 }
             } else {
+                $(#[$attr])*
+                #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
                     log::trace!(target: "br-vkapi-call", stringify!($org_name));
 
@@ -134,9 +140,10 @@ macro_rules! WrapAPI2 {
 
         WrapAPI2!($($rest)*);
     };
-    { #[org = $org_fn: ident] $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?); $($rest: tt)* } => {
+    { #[org = $org_fn: ident] $(#[$attr: meta])* $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?); $($rest: tt)* } => {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
+                $(#[$attr])*
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
                     #[repr(transparent)]
                     pub struct FT(extern "system" fn($($arg_type),*));
@@ -156,6 +163,8 @@ macro_rules! WrapAPI2 {
                     F.resolve().0($($arg_name),*)
                 }
             } else {
+                $(#[$attr])*
+                #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
                     log::trace!(target: "br-vkapi-call", stringify!($org_name));
 
@@ -278,7 +287,7 @@ WrapAPI2!(
         allocate_info: *const VkMemoryAllocateInfo,
         allocator: *const VkAllocationCallbacks,
         memory_out: *mut VkDeviceMemory,
-    ) -> VkResultBox;
+    ) -> VkResult;
     #[org = vkFreeMemory]
     pub fn free_memory(device: VkDevice, memory: VkDeviceMemory, allocator: *const VkAllocationCallbacks);
 
@@ -693,7 +702,7 @@ WrapAPI2!(
     #[org = vkEndCommandBuffer]
     pub fn end_command_buffer(command_buffer: VkCommandBuffer) -> VkResult;
     #[org = vkResetCommandBuffer]
-    pub fn reset_command_buffer(command_buffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResultBox;
+    pub fn reset_command_buffer(command_buffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult;
 );
 
 // Vulkan 1.0 Commands
@@ -1009,48 +1018,176 @@ WrapAPI2!(
     );
 );
 
+// statically provided extension functions: VK_KHR_surface
+#[cfg(feature = "VK_KHR_surface")]
+WrapAPI2!(
+    #[org = vkDestroySurfaceKHR]
+    pub fn destroy_surface_khr(instance: VkInstance, surface: VkSurfaceKHR, allocator: *const VkAllocationCallbacks);
+
+    #[org = vkGetPhysicalDeviceSurfaceSupportKHR]
+    pub fn get_physical_device_surface_support_khr(
+        physical_device: VkPhysicalDevice,
+        queue_family_index: u32,
+        surface: VkSurfaceKHR,
+        supported_out: *mut VkBool32,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceSurfaceCapabilitiesKHR]
+    pub fn get_physical_device_surface_capabilities_khr(
+        physical_device: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        surface_capabilities_out: *mut VkSurfaceCapabilitiesKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceSurfaceFormatsKHR]
+    pub fn get_physical_device_surface_formats_khr(
+        physical_device: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        surface_format_count_out: *mut u32,
+        surface_formats_out: *mut VkSurfaceFormatKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceSurfacePresentModesKHR]
+    pub fn get_physical_device_surface_present_modes_khr(
+        physical_device: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        present_mode_count_out: *mut u32,
+        present_modes_out: *mut VkPresentModeKHR,
+    ) -> VkResult;
+);
+
+// statically provided extension functions: VK_KHR_swapchain
+#[cfg(feature = "VK_KHR_swapchain")]
+WrapAPI2!(
+    #[org = vkCreateSwapchainKHR]
+    pub fn create_swapchain_khr(
+        device: VkDevice,
+        create_info: *const VkSwapchainCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        swapchain_out: *mut VkSwapchainKHR,
+    ) -> VkResult;
+    #[org = vkDestroySwapchainKHR]
+    pub fn destroy_swapchain_khr(device: VkDevice, swapchain: VkSwapchainKHR, allocator: *const VkAllocationCallbacks);
+
+    #[org = vkGetSwapchainImagesKHR]
+    pub fn get_swapchain_images_khr(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        swapchain_image_count_out: *mut u32,
+        swapchain_images_out: *mut VkImage,
+    ) -> VkResult;
+    #[org = vkAcquireNextImageKHR]
+    pub fn acquire_next_image_khr(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        timeout: u64,
+        semaphore: VkSemaphore,
+        fence: VkFence,
+        image_index_out: *mut u32,
+    ) -> VkResult;
+
+    #[org = vkQueuePresentKHR]
+    pub fn queue_present_khr(queue: VkQueue, present_info: *const VkPresentInfoKHR) -> VkResult;
+);
+
+// statically provided extension functions: VK_KHR_xlib_surface
+#[cfg(feature = "VK_KHR_xlib_surface")]
+WrapAPI2!(
+    #[org = vkCreateXlibSurfaceKHR]
+    pub fn create_xlib_surface_khr(
+        instance: VkInstance,
+        create_info: *const VkXlibSurfaceCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: *mut VkSurfaceKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceXlibPresentationSupportKHR]
+    pub fn get_physical_device_xlib_presentation_support_khr(
+        physical_device: VkPhysicalDevice,
+        queue_family_index: u32,
+        dpy: *mut Display,
+        visual_id: VisualID,
+    ) -> VkBool32;
+);
+
+// statically provided extension functions: VK_KHR_xcb_surface
+#[cfg(feature = "VK_KHR_xcb_surface")]
+WrapAPI2!(
+    #[org = vkCreateXcbSurfaceKHR]
+    pub fn create_xcb_surface_khr(
+        instance: VkInstance,
+        create_info: *const VkXcbSurfaceCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: *mut VkSurfaceKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceXcbPresentationSupportKHR]
+    pub fn get_physical_device_xcb_presentation_support_khr(
+        physical_device: VkPhysicalDevice,
+        queue_family_index: u32,
+        connection: *mut xcb_connection_t,
+        visual_id: xcb::x::Visualid,
+    ) -> VkBool32;
+);
+
+// statically provided extension functions: VK_KHR_wayland_surface
+#[cfg(feature = "VK_KHR_wayland_surface")]
+WrapAPI2!(
+    #[org = vkCreateWaylandSurfaceKHR]
+    pub fn create_wayland_surface_khr(
+        instance: VkInstance,
+        create_info: *const VkWaylandSurfaceCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: *mut VkSurfaceKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceWaylandPresentationSupportKHR]
+    pub fn get_physical_device_wayland_presentation_support_khr(
+        phyiscal_device: VkPhysicalDevice,
+        queue_family_index: u32,
+        display: *mut wayland_client::sys::wl_display,
+    ) -> VkBool32;
+);
+
+// statically provided extension functions: VK_KHR_android_surface
+#[cfg(feature = "VK_KHR_android_surface")]
+WrapAPI2!(
+    #[org = vkCreateAndroidSurfaceKHR]
+    pub fn create_android_surface_khr(
+        instance: VkInstance,
+        create_info: *const VkAndroidSurfaceCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: *mut VkSurfaceKHR,
+    ) -> VkResult;
+);
+
+// statically provided extension functions: VK_KHR_win32_surface
+#[cfg(feature = "VK_KHR_win32_surface")]
+WrapAPI2!(
+    #[org = vkCreateWin32SurfaceKHR]
+    pub fn create_win32_surface_khr(
+        instance: VkInstance,
+        create_info: *const VkWin32SurfaceCreateInfoKHR,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: VkSurfaceKHR,
+    ) -> VkResult;
+    #[org = vkGetPhysicalDeviceWin32PresentationSupportKHR]
+    pub fn get_physical_device_win32_presentation_support_khr(
+        physical_device: VkPhysicalDevice,
+        queue_family_index: u32,
+    ) -> VkBool32;
+);
+
+// statically provided extension functions: VK_MVK_macos_surface
+#[cfg(feature = "VK_MVK_macos_surface")]
+WrapAPI2!(
+    #[org = vkCreateMacosSurfaceMVK]
+    pub fn create_macos_surface_mvk(
+        instance: VkInstance,
+        create_info: *const VkMacOSSurfaceCreateInfoMVK,
+        allocator: *const VkAllocationCallbacks,
+        surface_out: *mut VkSurfaceKHR,
+    ) -> VkResult;
+);
+
 pub trait ResolverInterface2 {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
 }
 pub trait ResolverInterface {
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn destroy_surface_khr(
-        &self,
-        instance: VkInstance,
-        surface: VkSurfaceKHR,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_support_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        surface: VkSurfaceKHR,
-        pSupported: *mut VkBool32,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_capabilities_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface: VkSurfaceKHR,
-        pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_formats_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface: VkSurfaceKHR,
-        pSurfaceFormatCount: *mut u32,
-        pSurfaceFormats: *mut VkSurfaceFormatKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_surface")]
-    unsafe fn get_physical_device_surface_present_modes_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        surface: VkSurfaceKHR,
-        pPresentModeCount: *mut u32,
-        pPresentModes: *mut VkPresentModeKHR,
-    ) -> VkResultBox;
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(
         &self,
@@ -1156,125 +1293,6 @@ pub trait ResolverInterface {
         discardRectangleCount: u32,
         pDiscardRectangles: *const VkRect2D,
     );
-
-    #[cfg(feature = "VK_KHR_swapchain")]
-    unsafe fn create_swapchain_khr(
-        &self,
-        device: VkDevice,
-        pCreateInfo: *const VkSwapchainCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSwapchain: *mut VkSwapchainKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    unsafe fn destroy_swapchain_khr(
-        &self,
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-    #[cfg(feature = "VK_KHR_swapchain")]
-    unsafe fn get_swapchain_images_khr(
-        &self,
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pSwapchainImageCount: *mut u32,
-        pSwapchainImages: *mut VkImage,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    unsafe fn acquire_next_image_khr(
-        &self,
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        timeout: u64,
-        semaphore: VkSemaphore,
-        fence: VkFence,
-        pImageIndex: *mut u32,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_swapchain")]
-    unsafe fn queue_present_khr(&self, queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResultBox;
-
-    #[cfg(feature = "VK_KHR_xlib_surface")]
-    unsafe fn create_xlib_surface_khr(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_xlib_surface")]
-    unsafe fn get_physical_device_xlib_presentation_support_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        dpy: *mut Display,
-        visualID: VisualID,
-    ) -> VkBool32;
-
-    #[cfg(feature = "VK_KHR_xcb_surface")]
-    unsafe fn create_xcb_surface_khr(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkXcbSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_xcb_surface")]
-    unsafe fn get_physical_device_xcb_presentation_support_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        connection: *mut xcb_connection_t,
-        visual_id: xcb::x::Visualid,
-    ) -> VkBool32;
-
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    unsafe fn create_wayland_surface_khr(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    unsafe fn get_physical_device_wayland_presentation_support_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        display: *mut wayland_client::sys::wl_display,
-    ) -> VkBool32;
-
-    #[cfg(feature = "VK_KHR_android_surface")]
-    unsafe fn create_android_surface_khr(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
-
-    #[cfg(feature = "VK_KHR_win32_surface")]
-    unsafe fn create_win32_surface_khr(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
-    #[cfg(feature = "VK_KHR_win32_surface")]
-    unsafe fn get_physical_device_win32_presentation_support_khr(
-        &self,
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-    ) -> VkBool32;
-
-    #[cfg(feature = "VK_MVK_macos_surface")]
-    unsafe fn create_macos_surface_mvk(
-        &self,
-        instance: VkInstance,
-        pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResultBox;
 
     #[cfg(feature = "VK_KHR_display")]
     unsafe fn get_physical_device_display_properties_khr(

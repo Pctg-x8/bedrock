@@ -3,9 +3,8 @@
 use crate::VkResultBox;
 #[cfg(feature = "Implements")]
 use crate::{
-    fnconv::FnTransmute,
-    vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure, VulkanStructureProvider,
+    fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure,
+    VulkanStructureProvider,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
@@ -1433,8 +1432,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         builder.build(unsafe { &mut *structure.as_mut_ptr() });
         let structure = unsafe { structure.assume_init() };
         unsafe {
-            Resolver::get()
-                .create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     crate::SwapchainObject(
@@ -1645,8 +1643,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
             pResults: res.as_mut_ptr(),
         };
         unsafe {
-            Resolver::get()
-                .queue_present_khr(self.native_ptr_mut(), &pinfo)
+            crate::vkresolve::queue_present_khr(self.native_ptr_mut(), &pinfo)
                 .into_result()
                 .map(|_| res)
         }
