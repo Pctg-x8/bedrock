@@ -5,6 +5,7 @@
 
 use crate::vk::*;
 use crate::VkResultBox;
+use cfg_if::cfg_if;
 #[cfg(feature = "DynamicLoaded")]
 #[cfg(unix)]
 use libloading::os::unix::Symbol as RawSymbol;
@@ -13,8 +14,6 @@ use libloading::os::unix::Symbol as RawSymbol;
 use libloading::os::windows::Symbol as RawSymbol;
 #[cfg(feature = "DynamicLoaded")]
 use libloading::*;
-#[cfg(feature = "DynamicLoaded")]
-use std::sync::{Once, ONCE_INIT};
 
 #[cfg(feature = "VK_KHR_xlib_surface")]
 use x11::xlib::{Display, VisualID};
@@ -24,58 +23,64 @@ use xcb::ffi::xcb_connection_t;
 use libc::*;
 
 macro_rules! WrapAPI {
-    ($xt: ident = $n: ident ( $($an: ident : $at: ty),* )) => {
-        #[cfg(not(feature = "DynamicLoaded"))]
-        #[inline(always)]
-        #[allow(clippy::too_many_arguments)]
-        unsafe fn $xt(&self, $($an: $at),*) {
-            log::trace!(target: "br-vkapi-call", stringify!($n));
-            $n($($an),*);
-        }
-        #[cfg(feature = "DynamicLoaded")]
-        unsafe fn $xt(&self, $($an: $at),*)
-        {
-            static mut F: Option<RawSymbol<fn($($at),*)>> = None;
-            static ONCE: Once = ONCE_INIT;
-            ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*)>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
-            log::trace!(target: "br-vkapi-call", stringify!($n));
-            (F.as_ref().unwrap())($($an),*);
-        }
-    };
     ($xt: ident = $n: ident ( $($an: ident : $at: ty),* ) -> VkResult) => {
-        #[cfg(not(feature = "DynamicLoaded"))]
-        #[inline(always)]
-        #[allow(clippy::too_many_arguments)]
-        unsafe fn $xt(&self, $($an: $at),*) -> VkResultBox {
-            log::trace!(target: "br-vkapi-call", stringify!($n));
-            VkResultBox($n($($an),*))
-        }
-        #[cfg(feature = "DynamicLoaded")]
-        unsafe fn $xt(&self, $($an: $at),*) -> VkResultBox
-        {
-            static mut F: Option<RawSymbol<fn($($at),*) -> VkResult>> = None;
-            static ONCE: Once = ONCE_INIT;
-            ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*) -> VkResult>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
-            log::trace!(target: "br-vkapi-call", stringify!($n));
-            VkResultBox((F.as_ref().unwrap())($($an),*))
+        cfg_if! {
+            if #[cfg(feature = "DynamicLoaded")] {
+                unsafe fn $xt(&self, $($an: $at),*) -> VkResultBox {
+                    static FNPTR: std::sync::OnceLock<RawSymbol<fn($($at),*) -> VkResult>> = std::sync::OnceLock::new();
+                    let fnptr = FNPTR.get_or_init(|| self.0.get::<fn($($at),*) -> VkResult>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw());
+
+                    log::trace!(target: "br-vkapi-call", stringify!($n));
+                    VkResultBox(fnptr($($an),*))
+                }
+            } else {
+                #[inline(always)]
+                #[allow(clippy::too_many_arguments)]
+                unsafe fn $xt(&self, $($an: $at),*) -> VkResultBox {
+                    log::trace!(target: "br-vkapi-call", stringify!($n));
+                    VkResultBox($n($($an),*))
+                }
+            }
         }
     };
     ($xt: ident = $n: ident ( $($an: ident : $at: ty),* ) -> $rt: ty) => {
-        #[cfg(not(feature = "DynamicLoaded"))]
-        #[inline(always)]
-        #[allow(clippy::too_many_arguments)]
-        unsafe fn $xt(&self, $($an: $at),*) -> $rt {
-            log::trace!(target: "br-vkapi-call", stringify!($n));
-            $n($($an),*)
+        cfg_if! {
+            if #[cfg(feature = "DynamicLoaded")] {
+                unsafe fn $xt(&self, $($an: $at),*) -> $rt {
+                    static FNPTR: std::sync::OnceLock<RawSymbol<fn($($at),*) -> $rt>> = std::sync::OnceLock::new();
+                    let fnptr = FNPTR.get_or_init(|| self.0.get::<fn($($at),*) -> $rt>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw());
+
+                    log::trace!(target: "br-vkapi-call", stringify!($n));
+                    fnptr($($an),*)
+                }
+            } else {
+                #[inline(always)]
+                #[allow(clippy::too_many_arguments)]
+                unsafe fn $xt(&self, $($an: $at),*) -> $rt {
+                    log::trace!(target: "br-vkapi-call", stringify!($n));
+                    $n($($an),*)
+                }
+            }
         }
-        #[cfg(feature = "DynamicLoaded")]
-        unsafe fn $xt(&self, $($an: $at),*) -> $rt
-        {
-            static mut F: Option<RawSymbol<fn($($at),*) -> $rt>> = None;
-            static ONCE: Once = ONCE_INIT;
-            ONCE.call_once(|| F = Some(self.0.get::<fn($($at),*) -> $rt>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw()));
-            log::trace!(target: "br-vkapi-call", stringify!($n));
-            (F.as_ref().unwrap())($($an),*)
+    };
+    ($xt: ident = $n: ident ( $($an: ident : $at: ty),* )) => {
+        cfg_if! {
+            if #[cfg(feature = "DynamicLoaded")] {
+                unsafe fn $xt(&self, $($an: $at),*) {
+                    static FNPTR: std::sync::OnceLock<RawSymbol<fn($($at),*)>> = std::sync::OnceLock::new();
+                    let fnptr = FNPTR.get_or_init(|| self.0.get::<fn($($at),*)>(concat!(stringify!($n), "\0").as_bytes()).unwrap().into_raw());
+
+                    log::trace!(target: "br-vkapi-call", stringify!($n));
+                    fnptr($($an),*);
+                }
+            } else {
+                #[inline(always)]
+                #[allow(clippy::too_many_arguments)]
+                unsafe fn $xt(&self, $($an: $at),*) {
+                    log::trace!(target: "br-vkapi-call", stringify!($n));
+                    $n($($an),*);
+                }
+            }
         }
     };
 }
