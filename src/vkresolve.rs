@@ -28,7 +28,7 @@ cfg_if! {
     }
 }
 
-pub trait ResolverInterface2 {
+pub trait ResolverInterface {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
 }
 
@@ -78,7 +78,7 @@ impl Resolver {
 }
 
 #[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
-impl ResolverInterface2 for Resolver {
+impl ResolverInterface for Resolver {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
         T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
     }
@@ -87,7 +87,7 @@ impl ResolverInterface2 for Resolver {
 cfg_if! {
     if #[cfg(feature = "DynamicLoaded")] {
         pub struct DefaultGlobalResolver;
-        impl ResolverInterface2 for DefaultGlobalResolver {
+        impl ResolverInterface for DefaultGlobalResolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
                 Resolver::get().load_symbol_unconstrainted(name)
             }
@@ -103,7 +103,7 @@ pub unsafe trait PFN: FromPtr {
 }
 
 pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
-impl<F: PFN, R: ResolverInterface2> ResolvedFnCell<F, R> {
+impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
     pub const fn new(resolver: R) -> Self {
         Self(resolver, std::sync::OnceLock::new())
     }
@@ -1288,7 +1288,7 @@ WrapAPI2!(
 );
 
 // TODO: translate follows
-pub trait ResolverInterface {
+pub trait OldResolverInterface {
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(
         &self,
