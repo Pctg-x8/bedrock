@@ -691,6 +691,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
+    #[deprecated = "create object via builder struct(PipelineLayoutBuilder)"]
     fn new_pipeline_layout(
         self,
         layouts: &[impl VkHandle<Handle = VkDescriptorSetLayout>],

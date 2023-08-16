@@ -262,6 +262,91 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
 DerefContainerBracketImpl!(for PipelineCache {});
 GuardsImpl!(for PipelineCache {});
 
+/// Builder struct for PipelineLayout object
+pub struct PipelineLayoutBuilder<'l, D: crate::Device> {
+    descriptor_set_layouts: Vec<&'l dyn crate::DescriptorSetLayout<ConcreteDevice = D>>,
+    push_constant_ranges: Vec<(ShaderStage, std::ops::Range<u32>)>,
+}
+impl<'l, D: crate::Device> PipelineLayoutBuilder<'l, D> {
+    /// Creates a new builder struct and initialize it with given parameters
+    pub const fn new(
+        descriptor_set_layouts: Vec<&'l dyn crate::DescriptorSetLayout<ConcreteDevice = D>>,
+        push_constant_ranges: Vec<(ShaderStage, std::ops::Range<u32>)>,
+    ) -> Self {
+        Self {
+            descriptor_set_layouts,
+            push_constant_ranges,
+        }
+    }
+
+    /// Creates a new empty builder struct
+    pub const fn empty() -> Self {
+        Self::new(Vec::new(), Vec::new())
+    }
+
+    /// Appends new descriptor set layout
+    pub fn append_descriptor_set_layout(
+        mut self,
+        layout: &'l impl crate::DescriptorSetLayout<ConcreteDevice = D>,
+    ) -> Self {
+        self.descriptor_set_layouts.push(layout as _);
+        self
+    }
+
+    /// Appends new push constant range data
+    pub fn append_push_constant_range(mut self, shader_stage: ShaderStage, range: std::ops::Range<u32>) -> Self {
+        self.push_constant_ranges.push((shader_stage, range));
+        self
+    }
+
+    /// Creates a new pipeline layout object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
+    pub fn create(&self, device: D) -> crate::Result<PipelineLayoutObject<D>> {
+        let layout_handles = self
+            .descriptor_set_layouts
+            .iter()
+            .map(VkHandle::native_ptr)
+            .collect::<Vec<_>>();
+        let push_constant_ranges = self
+            .push_constant_ranges
+            .iter()
+            .map(|(s, r)| VkPushConstantRange {
+                stageFlags: s.0,
+                offset: r.start,
+                size: r.end - r.start,
+            })
+            .collect::<Vec<_>>();
+
+        let create_info = VkPipelineLayoutCreateInfo {
+            sType: VkPipelineLayoutCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            setLayoutCount: layout_handles.len() as _,
+            pSetLayouts: layout_handles.as_ptr(),
+            pushConstantRangeCount: push_constant_ranges.len() as _,
+            pPushConstantRanges: push_constant_ranges.as_ptr(),
+        };
+
+        let mut handle = core::mem::MaybeUninit::uninit();
+        unsafe {
+            Resolver::get()
+                .create_pipeline_layout(
+                    device.native_ptr(),
+                    &create_info,
+                    core::ptr::null(),
+                    handle.as_mut_ptr(),
+                )
+                .into_result()
+                .map(move |_| PipelineLayoutObject(handle.assume_init(), device))
+        }
+    }
+}
+
 pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
 DerefContainerBracketImpl!(for PipelineLayout {});
 GuardsImpl!(for PipelineLayout {});
