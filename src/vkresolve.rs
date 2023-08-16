@@ -108,7 +108,28 @@ pub fn set_custom_resolver(resv: Box<ResolverInterface>) {
     });
 }
 
+cfg_if! {
+    if #[cfg(feature = "DynamicLoaded")] {
+        pub unsafe fn create_instance(create_info: *const VkInstanceCreateInfo, allocator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResultBox {
+            static FNPTR: std::sync::OnceLock<RawSymbol<PFN_vkCreateInstance>> = std::sync::OnceLock::new();
+            let fnptr = FNPTR.get_or_init(|| Resolver::get().load_symbol_unconstrainted::<PFN_vkCreateInstance>(b"vkCreateInstance\0"));
+
+            log::trace!(target: "br-vkapi-call", "vkCreateInstance");
+
+            VkResultBox(fnptr(create_info, allocator, instance))
+        }
+    } else {
+        pub unsafe fn create_instance(create_info: *const VkInstanceCreteInfo, allocator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResultBox {
+            log::trace!(target: "br-vkapi-call", "vkCreateInstance");
+
+            VkResultBox(vkCreateInstance(create_info, allocator, instance))
+        }
+    }
+}
+
 pub trait ResolverInterface {
+    unsafe fn load_symbol_unconstrainted<T>(&self, name: &[u8]) -> RawSymbol<T>;
+
     unsafe fn create_instance(
         &self,
         create_info: *const VkInstanceCreateInfo,
@@ -1307,6 +1328,11 @@ impl Resolver {
 
 #[cfg(not(feature = "CustomResolver"))]
 impl ResolverInterface for Resolver {
+    #[cfg(feature = "DynamicLoaded")]
+    unsafe fn load_symbol_unconstrainted<T>(&self, name: &[u8]) -> RawSymbol<T> {
+        self.0.get::<T>(name).unwrap().into_raw()
+    }
+
     WrapAPI!(create_instance = vkCreateInstance(create_info: *const VkInstanceCreateInfo, alloator: *const VkAllocationCallbacks, instance: *mut VkInstance) -> VkResult);
     WrapAPI!(destroy_instance = vkDestroyInstance(instance: VkInstance, allocator: *const VkAllocationCallbacks));
     WrapAPI!(enumerate_physical_devices = vkEnumeratePhysicalDevices(instance: VkInstance, phyical_device_count: *mut u32, physical_devices: *mut VkPhysicalDevice) -> VkResult);

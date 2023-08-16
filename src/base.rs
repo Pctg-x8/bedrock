@@ -197,6 +197,8 @@ impl InstanceBuilder {
     #[cfg(feature = "Implements")]
     pub fn create(mut self) -> crate::Result<InstanceObject> {
         // construct ext chains
+
+        use crate::vkresolve;
         if !self.ext_structures.is_empty() {
             for n in 0..self.ext_structures.len() - 1 {
                 let next_ptr = self.ext_structures[n + 1].as_ref() as *const _ as _;
@@ -232,8 +234,7 @@ impl InstanceBuilder {
         self.cinfo.pApplicationInfo = &self.appinfo;
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
+            vkresolve::create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| InstanceObject(h.assume_init()))
         }
