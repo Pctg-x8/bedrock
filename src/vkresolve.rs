@@ -23,7 +23,7 @@ cfg_if! {
         pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface>) {
             GLOBAL_RESOLVER.set(Box::into_raw(resolver))
         }
-        pub fn get_resolver() -> &dyn ResolverInterface {
+        pub fn get_resolver() -> &'static dyn ResolverInterface {
             GLOBAL_RESOLVER.get().expect("no global resolver set")
         }
     } else if #[cfg(feature = "DynamicLoaded")] {
@@ -64,7 +64,7 @@ cfg_if! {
             }
         }
 
-        pub fn get_resolver() -> &Resolver {
+        pub fn get_resolver() -> &'static Resolver {
             GLOBAL_RESOLVER.get_or_init(|| Box::new(Resolver::new()))
         }
     }
