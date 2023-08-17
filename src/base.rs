@@ -613,9 +613,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "VK_EXT_sample_locations")]
     #[cfg(feature = "Implements")]
     fn multisample_properties(&self, samples: VkSampleCountFlags) -> VkMultisamplePropertiesEXT {
+        use crate::vkresolve::get_resolver;
+
         let mut r = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_physical_device_multisample_properties_ext(self.native_ptr(), samples, r.as_mut_ptr());
+            get_resolver().get_physical_device_multisample_properties_ext(self.native_ptr(), samples, r.as_mut_ptr());
 
             r.assume_init()
         }
@@ -1302,7 +1304,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
         }
         unsafe {
-            crate::Resolver::get()
+            crate::vkresolve::get_resolver()
                 .get_physical_device_surface_capabilities2_khr(self.native_ptr(), surface_info, p.as_mut_ptr())
                 .into_result()
                 .map(move |_| p.assume_init())

@@ -23,8 +23,50 @@ cfg_if! {
         pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface2>) {
             GLOBAL_RESOLVER.set(Box::into_raw(resolver))
         }
-    } else {
+        pub fn get_resolver() -> &dyn ResolverInterface2 {
+            GLOBAL_RESOLVER.get().expect("no global resolver set")
+        }
+    } else if #[cfg(feature = "DynamicLoaded")] {
         static GLOBAL_RESOLVER: std::sync::OnceLock<Box<Resolver>> = std::sync::OnceLock::new();
+
+        pub struct Resolver(Library);
+        impl Resolver {
+            fn new() -> Self {
+                cfg_if! {
+                    if #[cfg(target_os = "macos")] {
+                        fn libname() -> std::path::PathBuf {
+                            let mut exepath = std::env::current_exe().unwrap();
+                            exepath.pop();
+                            exepath.push("libvulkan.dylib");
+                            return exepath;
+                        }
+                    } else if #[cfg(windows)] {
+                        fn libname() -> &'static str {
+                            "vulkan-1.dll"
+                        }
+                    } else {
+                        // assumes unix environment
+                        fn libname() -> &'static str {
+                            "libvulkan.so"
+                        }
+                    }
+                }
+
+                Library::new(&libname())
+                    .map(Self)
+                    .expect(&format!("Unable to open libvulkan: {:?}", libname()))
+            }
+        }
+        #[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
+        impl ResolverInterface2 for Resolver {
+            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+                T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
+            }
+        }
+
+        pub fn get_resolver() -> &Resolver {
+            GLOBAL_RESOLVER.get_or_init(|| Box::new(Resolver::new()))
+        }
     }
 }
 
@@ -32,64 +74,12 @@ pub trait ResolverInterface2 {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
 }
 
-pub struct Resolver(#[cfg(feature = "DynamicLoaded")] Library);
-#[cfg(not(feature = "CustomResolver"))]
-impl Resolver {
-    pub fn get<'a>() -> &'a Self {
-        GLOBAL_RESOLVER.get_or_init(|| Box::new(Self::new()))
-    }
-
-    #[cfg(feature = "DynamicLoaded")]
-    fn new() -> Self {
-        cfg_if! {
-            if #[cfg(target_os = "macos")] {
-                fn libname() -> std::path::PathBuf {
-                    let mut exepath = std::env::current_exe().unwrap();
-                    exepath.pop();
-                    exepath.push("libvulkan.dylib");
-                    return exepath;
-                }
-            } else if #[cfg(windows)] {
-                fn libname() -> &'static str {
-                    "vulkan-1.dll"
-                }
-            } else {
-                // assumes unix environment
-                fn libname() -> &'static str {
-                    "libvulkan.so"
-                }
-            }
-        }
-
-        Library::new(&libname())
-            .map(Resolver)
-            .expect(&format!("Unable to open libvulkan: {:?}", libname()))
-    }
-    #[cfg(not(feature = "DynamicLoaded"))]
-    fn new() -> Self {
-        Resolver()
-    }
-}
-#[cfg(feature = "CustomRenderer")]
-impl Resolver {
-    pub fn get<'a>() -> &'a ResolverInterface {
-        unsafe { &*STATIC_RESOLVER.load(Ordering::Relaxed) }
-    }
-}
-
-#[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
-impl ResolverInterface2 for Resolver {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
-        T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
-    }
-}
-
 cfg_if! {
     if #[cfg(feature = "DynamicLoaded")] {
         pub struct DefaultGlobalResolver;
         impl ResolverInterface2 for DefaultGlobalResolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
-                Resolver::get().load_symbol_unconstrainted(name)
+                get_resolver().load_symbol_unconstrainted(name)
             }
         }
     }
