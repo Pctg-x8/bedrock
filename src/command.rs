@@ -113,15 +113,9 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        // TODO: optimize extra procedures cache
-
         use crate::Device;
-        let f: PFN_vkTrimCommandPoolKHR = self
-            .device()
-            .extra_procedure("vkTrimCommandPoolKHR")
-            .expect("no vkTrimCommandPoolKHR");
 
-        (f)(self.device().native_ptr(), self.native_ptr_mut(), 0);
+        self.device().get_trim_command_pool_khr_fn()(self.device().native_ptr(), self.native_ptr_mut(), 0);
     }
 }
 DerefContainerBracketImpl!(for CommandPool {});

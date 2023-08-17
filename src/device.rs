@@ -1,37 +1,91 @@
 //! Vulkan Device and Queues
 
-use crate::VkResultBox;
+use cfg_if::cfg_if;
+
+use crate::vkresolve::{FromPtr, ResolvedFnCell, PFN};
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure,
     VulkanStructureProvider,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
+use crate::{ResolverInterface, VkResultBox};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
+
+cfg_if! {
+    if #[cfg(feature = "VK_KHR_maintenance1")] {
+        #[repr(transparent)]
+        pub struct PFNTrimCommandPoolKHR(PFN_vkTrimCommandPoolKHR);
+        unsafe impl FromPtr for PFNTrimCommandPoolKHR {
+            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                core::mem::transmute(p)
+            }
+        }
+        unsafe impl PFN for PFNTrimCommandPoolKHR {
+            const NAME_NUL: &'static [u8] = b"vkTrimCommandPoolKHR\0";
+        }
+    }
+}
 
 /// Opaque handle to a device object
 #[derive(VkHandle, VkObject, InstanceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_DEVICE)]
-pub struct DeviceObject<Instance: crate::Instance>(VkDevice, #[parent] Instance);
+pub struct DeviceObject<Instance: crate::Instance> {
+    #[handle]
+    handle: VkDevice,
+    #[parent]
+    parent: Instance,
+    #[cfg(feature = "VK_KHR_maintenance1")]
+    trim_command_pool_khr: ResolvedFnCell<PFNTrimCommandPoolKHR, VkDevice>,
+}
+impl<Instance: crate::Instance> DeviceObject<Instance> {
+    pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
+        Self {
+            handle,
+            parent,
+            #[cfg(feature = "VK_KHR_maintenance1")]
+            trim_command_pool_khr: ResolvedFnCell::new(handle),
+        }
+    }
+}
 unsafe impl<Instance: crate::Instance + Sync> Sync for DeviceObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for DeviceObject<Instance> {}
 #[cfg(feature = "Implements")]
 impl<Instance: crate::Instance> Drop for DeviceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_device(self.0, std::ptr::null());
+            crate::vkresolve::destroy_device(self.handle, std::ptr::null());
         }
     }
 }
-impl<Instance: crate::Instance> Device for DeviceObject<Instance> {}
+impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
+    #[cfg(feature = "VK_KHR_maintenance1")]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
+        self.trim_command_pool_khr.resolve().0
+    }
+}
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
     #[inline]
     pub fn clone_parent(self) -> DeviceObject<Instance> {
-        let r = DeviceObject(self.0, self.1.clone());
+        let r = DeviceObject {
+            handle: self.handle,
+            parent: self.parent.clone(),
+            #[cfg(feature = "VK_KHR_maintenance1")]
+            trim_command_pool_khr: self.trim_command_pool_khr,
+        };
         // disable dropping self.0
         std::mem::forget(self);
         r
+    }
+}
+
+impl ResolverInterface for VkDevice {
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+        T::from_ptr(core::mem::transmute(crate::vkresolve::get_device_proc_addr(
+            *self,
+            name.as_ptr() as _,
+        )))
     }
 }
 
@@ -147,7 +201,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
         unsafe {
             crate::vkresolve::create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| DeviceObject(h.assume_init(), self.pdev_ref.transfer_instance()))
+                .map(|_| DeviceObject::wrap_handle(h.assume_init(), self.pdev_ref.transfer_instance()))
         }
     }
 }
@@ -1445,6 +1499,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 })
         }
     }
+
+    // Extension Function Providers
+
+    #[cfg(feature = "VK_KHR_maintenance1")]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR;
 }
 DerefContainerBracketImpl!(for Device {});
 GuardsImpl!(for Device {});

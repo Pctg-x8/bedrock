@@ -2,43 +2,72 @@ use proc_macro::TokenStream;
 use quote::*;
 use syn::{parse_macro_input, Expr};
 
-#[proc_macro_derive(VkHandle)]
-pub fn derive_handle(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing Failed");
+fn find_vkhandle_source(fields: &syn::Fields) -> Option<(proc_macro2::TokenStream, &syn::Type)> {
+    // try finding vk_handle attributed field first
+    let preferred = match fields {
+        syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }) => unnamed
+            .iter()
+            .position(|f| {
+                f.attrs
+                    .iter()
+                    .any(|a| a.meta.require_path_only().is_ok_and(|ap| ap.is_ident("handle")))
+            })
+            .map(|x| (quote! { self.#x }, &unnamed[x].ty)),
+        syn::Fields::Named(syn::FieldsNamed { named, .. }) => named
+            .iter()
+            .find(|f| {
+                f.attrs
+                    .iter()
+                    .any(|a| a.meta.require_path_only().is_ok_and(|ap| ap.is_ident("handle")))
+            })
+            .map(|f| {
+                let n = f.ident.as_ref().unwrap();
+                (quote! { self.#n }, &f.ty)
+            }),
+        syn::Fields::Unit => None,
+    };
 
+    preferred.or_else(|| match fields {
+        syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }) => unnamed.first().map(|f| (quote! { self.0 }, &f.ty)),
+        syn::Fields::Unit => panic!("Unit struct cannot auto-derive VkHandle"),
+        syn::Fields::Named(_) => panic!("Named fields struct must has one field that marked by #[handle]"),
+    })
+}
+
+#[proc_macro_derive(VkHandle, attributes(handle))]
+pub fn derive_handle(tok: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
-        fields
+    let (handle_field_ref, handle_ty) = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
+        find_vkhandle_source(fields).expect("No suitable field representing handle source")
     } else {
         panic!("AutoDerive VkHandle can only be applied for structs");
     };
-    let implement = match fields {
-        syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }) => {
-            let target_ty = &unnamed.first().expect("Empty Struct?").ty;
 
-            quote! {
-                impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
-                    type Handle = #target_ty;
+    let implement = quote! {
+        impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
+            type Handle = #handle_ty;
 
-                    #[inline]
-                    fn native_ptr(&self) -> Self::Handle { self.0 }
-                }
-                impl #impl_generics crate::VkHandleMut for #name #ty_generics #where_clause {
-                    #[inline]
-                    fn native_ptr_mut(&mut self) -> Self::Handle { self.0 }
-                }
+            #[inline]
+            fn native_ptr(&self) -> Self::Handle {
+                #handle_field_ref
             }
         }
-        _ => unimplemented!("Named Fields"),
+        impl #impl_generics crate::VkHandleMut for #name #ty_generics #where_clause {
+            #[inline]
+            fn native_ptr_mut(&mut self) -> Self::Handle {
+                #handle_field_ref
+            }
+        }
     };
 
-    TokenStream::from(implement)
+    implement.into()
 }
 
 #[proc_macro_derive(VkObject, attributes(VkObject))]
 pub fn derive_object(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let object_attrs = input
         .attrs

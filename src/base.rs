@@ -1,6 +1,12 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
+use cfg_if::cfg_if;
+
 use crate::vk::*;
+use crate::vkresolve::FromPtr;
+use crate::vkresolve::ResolvedFnCell;
+use crate::vkresolve::PFN;
+use crate::ResolverInterface;
 use crate::VkHandle;
 use crate::VkObject;
 use crate::VulkanStructure;
@@ -20,22 +26,84 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     }
 }
 
+cfg_if! {
+    if #[cfg(feature = "VK_KHR_get_physical_device_properties2")] {
+        #[repr(transparent)]
+        pub struct PFNGetPhysicalDeviceProperties2KHR(PFN_vkGetPhysicalDeviceProperties2KHR);
+        unsafe impl FromPtr for PFNGetPhysicalDeviceProperties2KHR {
+            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                core::mem::transmute(p)
+            }
+        }
+        unsafe impl PFN for PFNGetPhysicalDeviceProperties2KHR {
+            const NAME_NUL: &'static [u8] = b"vkGetPhysicalDeviceProeprties2KHR\0";
+        }
+
+        #[repr(transparent)]
+        pub struct PFNGetPhysicalDeviceFormatProperties2KHR(PFN_vkGetPhysicalDeviceFormatProperties2KHR);
+        unsafe impl FromPtr for PFNGetPhysicalDeviceFormatProperties2KHR {
+            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                core::mem::transmute(p)
+            }
+        }
+        unsafe impl PFN for PFNGetPhysicalDeviceFormatProperties2KHR {
+            const NAME_NUL: &'static [u8] = b"vkGetPhysicalDeviceFormatProperties2KHR\0";
+        }
+    }
+}
+
 /// Opaque handle to a instance object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_INSTANCE)]
-#[repr(transparent)]
-pub struct InstanceObject(VkInstance);
+pub struct InstanceObject {
+    #[handle]
+    handle: VkInstance,
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_properties2_khr: ResolvedFnCell<PFNGetPhysicalDeviceProperties2KHR, VkInstance>,
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_format_properties2_khr: ResolvedFnCell<PFNGetPhysicalDeviceFormatProperties2KHR, VkInstance>,
+}
+impl From<VkInstance> for InstanceObject {
+    fn from(value: VkInstance) -> Self {
+        Self {
+            handle: value,
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_properties2_khr: ResolvedFnCell::new(value),
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_format_properties2_khr: ResolvedFnCell::new(value),
+        }
+    }
+}
 unsafe impl Sync for InstanceObject {}
 unsafe impl Send for InstanceObject {}
 #[cfg(feature = "Implements")]
 impl Drop for InstanceObject {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_instance(self.0, std::ptr::null());
+            crate::vkresolve::destroy_instance(self.handle, std::ptr::null());
         }
     }
 }
-impl Instance for InstanceObject {}
+impl Instance for InstanceObject {
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+        self.get_physical_device_properties2_khr.resolve().0
+    }
+
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+        self.get_physical_device_format_properties2_khr.resolve().0
+    }
+}
+
+impl ResolverInterface for VkInstance {
+    unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
+        T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
+            *self,
+            name.as_ptr() as _,
+        )))
+    }
+}
 
 /// Opaque handle to a physical device object
 ///
@@ -230,7 +298,7 @@ impl InstanceBuilder {
         unsafe {
             crate::vkresolve::create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| InstanceObject(h.assume_init()))
+                .map(|_| InstanceObject::from(h.assume_init()))
         }
     }
 }
@@ -405,6 +473,13 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             msg.as_ptr(),
         );
     }
+
+    // Extension Function Providers
+
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
 }
 DerefContainerBracketImpl!(for Instance {});
 GuardsImpl!(for Instance {});
@@ -490,13 +565,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `out` are safe.
     #[cfg(all(feature = "Implements", feature = "VK_KHR_get_physical_device_properties2"))]
     unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR) {
-        // TODO: optimize extra procedure caching
-        let f: PFN_vkGetPhysicalDeviceFormatProperties2KHR = self
-            .instance()
-            .extra_procedure("vkGetPhysicalDeviceFormatProperties2KHR")
-            .expect("no vkGetPhysicalDeviceFormatProperties2KHR");
-
-        (f)(self.native_ptr(), format, out)
+        self.instance().get_physical_device_format_properties2_khr_fn()(self.native_ptr(), format, out)
     }
 
     /// Lists physical device's image format capabilities
@@ -1313,13 +1382,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Returns properties of a physical device
     fn properties2(&self) -> VkPhysicalDeviceProperties2KHR {
         let mut p = std::mem::MaybeUninit::uninit();
-        // TODO: optimize extra procedure
-        let f: PFN_vkGetPhysicalDeviceProperties2KHR = self
-            .instance()
-            .extra_procedure("vkGetPhysicalDeviceProperties2KHR")
-            .expect("no vkGetPhysicalDeviceProperties2KHR");
         unsafe {
-            (f)(self.native_ptr(), p.as_mut_ptr());
+            self.instance().get_physical_device_properties2_khr_fn()(self.native_ptr(), p.as_mut_ptr());
             p.assume_init()
         }
     }
