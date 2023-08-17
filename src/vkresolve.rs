@@ -18,12 +18,12 @@ use libc::*;
 
 cfg_if! {
     if #[cfg(feature = "CustomResolver")] {
-        static GLOBAL_RESOLVER: std::sync::OnceLock<Box<dyn ResolverInterface2>> = std::sync::OnceLock::new();
+        static GLOBAL_RESOLVER: std::sync::OnceLock<Box<dyn ResolverInterface>> = std::sync::OnceLock::new();
 
-        pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface2>) {
+        pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface>) {
             GLOBAL_RESOLVER.set(Box::into_raw(resolver))
         }
-        pub fn get_resolver() -> &dyn ResolverInterface2 {
+        pub fn get_resolver() -> &dyn ResolverInterface {
             GLOBAL_RESOLVER.get().expect("no global resolver set")
         }
     } else if #[cfg(feature = "DynamicLoaded")] {
@@ -34,11 +34,12 @@ cfg_if! {
             fn new() -> Self {
                 cfg_if! {
                     if #[cfg(target_os = "macos")] {
-                        fn libname() -> std::path::PathBuf {
-                            let mut exepath = std::env::current_exe().unwrap();
-                            exepath.pop();
-                            exepath.push("libvulkan.dylib");
-                            return exepath;
+                        fn libname() -> &'static str {
+                            // let mut exepath = std::env::current_exe().unwrap();
+                            // exepath.pop();
+                            // exepath.push("libvulkan.dylib");
+                            // return exepath;
+                            "libvulkan.dylib"
                         }
                     } else if #[cfg(windows)] {
                         fn libname() -> &'static str {
@@ -57,8 +58,7 @@ cfg_if! {
                     .expect(&format!("Unable to open libvulkan: {:?}", libname()))
             }
         }
-        #[cfg(all(not(feature = "CustomResolver"), feature = "DynamicLoaded"))]
-        impl ResolverInterface2 for Resolver {
+        impl ResolverInterface for Resolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
                 T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
             }
@@ -70,14 +70,14 @@ cfg_if! {
     }
 }
 
-pub trait ResolverInterface2 {
+pub trait ResolverInterface {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
 }
 
 cfg_if! {
     if #[cfg(feature = "DynamicLoaded")] {
         pub struct DefaultGlobalResolver;
-        impl ResolverInterface2 for DefaultGlobalResolver {
+        impl ResolverInterface for DefaultGlobalResolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
                 get_resolver().load_symbol_unconstrainted(name)
             }
@@ -93,7 +93,7 @@ pub unsafe trait PFN: FromPtr {
 }
 
 pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
-impl<F: PFN, R: ResolverInterface2> ResolvedFnCell<F, R> {
+impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
     pub const fn new(resolver: R) -> Self {
         Self(resolver, std::sync::OnceLock::new())
     }
@@ -118,12 +118,12 @@ macro_rules! WrapAPI2 {
                         }
                     }
                     unsafe impl PFN for FT {
-                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_name), "\0").as_bytes();
+                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_fn), "\0").as_bytes();
                     }
 
                     static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
-                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
                     VkResultBox(F.resolve().0($($arg_name),*))
                 }
@@ -131,7 +131,7 @@ macro_rules! WrapAPI2 {
                 $(#[$attr])*
                 #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
-                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
                     VkResultBox($org_fn($($arg_name),*))
                 }
@@ -153,12 +153,12 @@ macro_rules! WrapAPI2 {
                         }
                     }
                     unsafe impl PFN for FT {
-                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_name), "\0").as_bytes();
+                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_fn), "\0").as_bytes();
                     }
 
                     static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
-                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
                     F.resolve().0($($arg_name),*)
                 }
@@ -166,7 +166,7 @@ macro_rules! WrapAPI2 {
                 $(#[$attr])*
                 #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
-                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
                     $org_fn($($arg_name),*)
                 }
@@ -188,12 +188,12 @@ macro_rules! WrapAPI2 {
                         }
                     }
                     unsafe impl PFN for FT {
-                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_name), "\0").as_bytes();
+                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_fn), "\0").as_bytes();
                     }
 
                     static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
-                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
                     F.resolve().0($($arg_name),*)
                 }
@@ -201,7 +201,7 @@ macro_rules! WrapAPI2 {
                 $(#[$attr])*
                 #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
-                    log::trace!(target: "br-vkapi-call", stringify!($org_name));
+                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
                     $org_fn($($arg_name),*)
                 }
@@ -1210,7 +1210,7 @@ WrapAPI2!(
 // statically provided extension functions: VK_MVK_macos_surface
 #[cfg(feature = "VK_MVK_macos_surface")]
 WrapAPI2!(
-    #[org = vkCreateMacosSurfaceMVK]
+    #[org = vkCreateMacOSSurfaceMVK]
     pub fn create_macos_surface_mvk(
         instance: VkInstance,
         create_info: *const VkMacOSSurfaceCreateInfoMVK,
@@ -1278,7 +1278,7 @@ WrapAPI2!(
 );
 
 // TODO: translate follows
-pub trait ResolverInterface {
+pub trait OldResolverInterface {
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(
         &self,
