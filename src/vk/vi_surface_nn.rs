@@ -17,12 +17,17 @@ pub struct VkViSurfaceCreateInfoNN {
     pub window: *mut c_void,
 }
 
-pub type PFN_vkCreateViSurfaceNN = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkViSurfaceCreateInfoNN,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateViSurfaceNN"]
+pub struct PFN_vkCreateViSurfaceNN(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkViSurfaceCreateInfoNN,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

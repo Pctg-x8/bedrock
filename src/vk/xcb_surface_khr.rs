@@ -19,18 +19,28 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub window: xcb::x::Window,
 }
 
-pub type PFN_vkCreateXcbSurfaceKHR = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkXcbSurfaceCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    queueFamilyIndex: u32,
-    connection: *mut xcb_connection_t,
-    visual_id: xcb::x::Visualid,
-) -> VkBool32;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateXcbSurfaceKHR"]
+pub struct PFN_vkCreateXcbSurfaceKHR(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkXcbSurfaceCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceXcbPresentationSupportKHR"]
+pub struct PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        queueFamilyIndex: u32,
+        connection: *mut xcb_connection_t,
+        visual_id: xcb::x::Visualid,
+    ) -> VkBool32,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

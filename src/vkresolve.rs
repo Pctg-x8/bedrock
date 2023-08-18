@@ -62,6 +62,10 @@ cfg_if! {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
                 T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
             }
+
+            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
+                F::from_ptr(self.0.get::<F>(name).unwrap().into_raw().into_raw())
+            }
         }
 
         pub fn get_resolver() -> &'static Resolver {
@@ -72,6 +76,7 @@ cfg_if! {
 
 pub trait ResolverInterface {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
+    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F;
 }
 
 cfg_if! {
@@ -81,6 +86,10 @@ cfg_if! {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
                 get_resolver().load_symbol_unconstrainted(name)
             }
+
+            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
+                get_resolver().load_function_unconstrainted(name)
+            }
         }
     }
 }
@@ -88,8 +97,11 @@ cfg_if! {
 pub unsafe trait FromPtr {
     unsafe fn from_ptr(p: *const c_void) -> Self;
 }
-pub unsafe trait PFN: FromPtr {
+pub unsafe trait PFN {
     const NAME_NUL: &'static [u8];
+
+    unsafe fn from_ptr(p: *const c_void) -> Self;
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self;
 }
 
 pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
@@ -100,28 +112,17 @@ impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
 
     pub fn resolve(&self) -> &F {
         self.1
-            .get_or_init(|| unsafe { self.0.load_symbol_unconstrainted::<F>(F::NAME_NUL) })
+            .get_or_init(|| unsafe { self.0.load_function_unconstrainted::<F>(F::NAME_NUL) })
     }
 }
 
 macro_rules! WrapAPI2 {
-    { #[org = $org_fn: ident] $(#[$attr: meta])* $v: vis fn $name: ident($($arg_name: ident: $arg_type: ty),* $(,)?) -> VkResult; $($rest: tt)* } => {
+    { #[org = $org_fn_type: ty] $(#[$attr: meta])* $v: vis fn $name: ident($($arg_name: ident: $arg_type: ty),* $(,)?) -> VkResult; $($rest: tt)* } => {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
                 $(#[$attr])*
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
-                    #[repr(transparent)]
-                    pub struct FT(extern "system" fn($($arg_type),*) -> VkResult);
-                    unsafe impl FromPtr for FT {
-                        unsafe fn from_ptr(p: *const c_void) -> Self {
-                            core::mem::transmute(p)
-                        }
-                    }
-                    unsafe impl PFN for FT {
-                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_fn), "\0").as_bytes();
-                    }
-
-                    static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
+                    static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
@@ -140,23 +141,12 @@ macro_rules! WrapAPI2 {
 
         WrapAPI2!($($rest)*);
     };
-    { #[org = $org_fn: ident] $(#[$attr: meta])* $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?) -> $rt: ty; $($rest: tt)* } => {
+    { #[org = $org_fn_type: ty] $(#[$attr: meta])* $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?) -> $rt: ty; $($rest: tt)* } => {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
                 $(#[$attr])*
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
-                    #[repr(transparent)]
-                    pub struct FT(extern "system" fn($($arg_type),*) -> $rt);
-                    unsafe impl FromPtr for FT {
-                        unsafe fn from_ptr(p: *const c_void) -> Self {
-                            core::mem::transmute(p)
-                        }
-                    }
-                    unsafe impl PFN for FT {
-                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_fn), "\0").as_bytes();
-                    }
-
-                    static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
+                    static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
@@ -175,23 +165,12 @@ macro_rules! WrapAPI2 {
 
         WrapAPI2!($($rest)*);
     };
-    { #[org = $org_fn: ident] $(#[$attr: meta])* $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?); $($rest: tt)* } => {
+    { #[org = $org_fn_type: ty] $(#[$attr: meta])* $v: vis fn $name: ident ($($arg_name: ident: $arg_type: ty),* $(,)?); $($rest: tt)* } => {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
                 $(#[$attr])*
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
-                    #[repr(transparent)]
-                    pub struct FT(extern "system" fn($($arg_type),*));
-                    unsafe impl FromPtr for FT {
-                        unsafe fn from_ptr(p: *const c_void) -> Self {
-                            core::mem::transmute(p)
-                        }
-                    }
-                    unsafe impl PFN for FT {
-                        const NAME_NUL: &'static [u8] = concat!(stringify!($org_fn), "\0").as_bytes();
-                    }
-
-                    static F: ResolvedFnCell<FT, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
+                    static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
@@ -215,31 +194,31 @@ macro_rules! WrapAPI2 {
 
 // Vulkan 1.0 Baseline APIs
 WrapAPI2!(
-    #[org = vkCreateInstance]
+    #[org = PFN_vkCreateInstance]
     pub fn create_instance(
         create_info: *const VkInstanceCreateInfo,
         allocator: *const VkAllocationCallbacks,
         instance_out: *mut VkInstance,
     ) -> VkResult;
-    #[org = vkDestroyInstance]
+    #[org = PFN_vkDestroyInstance]
     pub fn destroy_instance(instance: VkInstance, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkEnumeratePhysicalDevices]
+    #[org = PFN_vkEnumeratePhysicalDevices]
     pub fn enumerate_physical_devices(
         instance: VkInstance,
         physical_devices_count_out: *mut u32,
         physical_devices_out: *mut VkPhysicalDevice,
     ) -> VkResult;
 
-    #[org = vkGetPhysicalDeviceFeatures]
+    #[org = PFN_vkGetPhysicalDeviceFeatures]
     pub fn get_physical_device_features(physical_device: VkPhysicalDevice, features_out: *mut VkPhysicalDeviceFeatures);
-    #[org = vkGetPhysicalDeviceFormatProperties]
+    #[org = PFN_vkGetPhysicalDeviceFormatProperties]
     pub fn get_physical_device_format_properties(
         physical_device: VkPhysicalDevice,
         format: VkFormat,
         format_properties_out: *mut VkFormatProperties,
     );
-    #[org = vkGetPhysicalDeviceImageFormatProperties]
+    #[org = PFN_vkGetPhysicalDeviceImageFormatProperties]
     pub fn get_physical_device_image_format_properties(
         physical_device: VkPhysicalDevice,
         format: VkFormat,
@@ -249,45 +228,45 @@ WrapAPI2!(
         flags: VkImageCreateFlags,
         image_format_properties_out: *mut VkImageFormatProperties,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceProperties]
+    #[org = PFN_vkGetPhysicalDeviceProperties]
     pub fn get_physical_device_properties(
         physical_device: VkPhysicalDevice,
         properties_out: *mut VkPhysicalDeviceProperties,
     );
-    #[org = vkGetPhysicalDeviceQueueFamilyProperties]
+    #[org = PFN_vkGetPhysicalDeviceQueueFamilyProperties]
     pub fn get_physical_device_queue_family_properties(
         physical_device: VkPhysicalDevice,
         queue_family_properties_count_out: *mut u32,
         queue_family_properties_out: *mut VkQueueFamilyProperties,
     );
-    #[org = vkGetPhysicalDeviceMemoryProperties]
+    #[org = PFN_vkGetPhysicalDeviceMemoryProperties]
     pub fn get_physical_device_memory_properties(
         physical_device: VkPhysicalDevice,
         memory_properties_out: *mut VkPhysicalDeviceMemoryProperties,
     );
 
-    #[org = vkGetInstanceProcAddr]
+    #[org = PFN_vkGetInstanceProcAddr]
     pub fn get_instance_proc_addr(instance: VkInstance, name: *const c_char) -> Option<PFN_vkVoidFunction>;
-    #[org = vkGetDeviceProcAddr]
+    #[org = PFN_vkGetDeviceProcAddr]
     pub fn get_device_proc_addr(device: VkDevice, name: *const c_char) -> Option<PFN_vkVoidFunction>;
 
-    #[org = vkCreateDevice]
+    #[org = PFN_vkCreateDevice]
     pub fn create_device(
         physical_device: VkPhysicalDevice,
         create_info: *const VkDeviceCreateInfo,
         allocator: *const VkAllocationCallbacks,
         device_out: *mut VkDevice,
     ) -> VkResult;
-    #[org = vkDestroyDevice]
+    #[org = PFN_vkDestroyDevice]
     pub fn destroy_device(device: VkDevice, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkEnumerateInstanceExtensionProperties]
+    #[org = PFN_vkEnumerateInstanceExtensionProperties]
     pub fn enumerate_instance_extension_properties(
         layer_name: *const c_char,
         property_count_out: *mut u32,
         properties_out: *mut VkExtensionProperties,
     ) -> VkResult;
-    #[org = vkEnumerateDeviceExtensionProperties]
+    #[org = PFN_vkEnumerateDeviceExtensionProperties]
     pub fn enumerate_device_extension_properties(
         physical_device: VkPhysicalDevice,
         layer_name: *const c_char,
@@ -295,38 +274,38 @@ WrapAPI2!(
         properties_out: *mut VkExtensionProperties,
     ) -> VkResult;
 
-    #[org = vkEnumerateInstanceLayerProperties]
+    #[org = PFN_vkEnumerateInstanceLayerProperties]
     pub fn enumerate_instance_layer_properties(
         property_count_out: *mut u32,
         properties_out: *mut VkLayerProperties,
     ) -> VkResult;
-    #[org = vkEnumerateDeviceLayerProperties]
+    #[org = PFN_vkEnumerateDeviceLayerProperties]
     pub fn enumerate_device_layer_properties(
         physical_device: VkPhysicalDevice,
         property_count_out: *mut u32,
         properties_out: *mut VkLayerProperties,
     ) -> VkResult;
 
-    #[org = vkGetDeviceQueue]
+    #[org = PFN_vkGetDeviceQueue]
     pub fn get_device_queue(device: VkDevice, queue_family_index: u32, queue_index: u32, queue_out: *mut VkQueue);
-    #[org = vkQueueSubmit]
+    #[org = PFN_vkQueueSubmit]
     pub fn queue_submit(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo, fence: VkFence) -> VkResult;
-    #[org = vkQueueWaitIdle]
+    #[org = PFN_vkQueueWaitIdle]
     pub fn queue_wait_idle(queue: VkQueue) -> VkResult;
-    #[org = vkDeviceWaitIdle]
+    #[org = PFN_vkDeviceWaitIdle]
     pub fn device_wait_idle(device: VkDevice) -> VkResult;
 
-    #[org = vkAllocateMemory]
+    #[org = PFN_vkAllocateMemory]
     pub fn allocate_memory(
         device: VkDevice,
         allocate_info: *const VkMemoryAllocateInfo,
         allocator: *const VkAllocationCallbacks,
         memory_out: *mut VkDeviceMemory,
     ) -> VkResult;
-    #[org = vkFreeMemory]
+    #[org = PFN_vkFreeMemory]
     pub fn free_memory(device: VkDevice, memory: VkDeviceMemory, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkMapMemory]
+    #[org = PFN_vkMapMemory]
     pub fn map_memory(
         device: VkDevice,
         memory: VkDeviceMemory,
@@ -335,37 +314,37 @@ WrapAPI2!(
         flags: VkMemoryMapFlags,
         data_ptr_out: *mut *mut c_void,
     ) -> VkResult;
-    #[org = vkUnmapMemory]
+    #[org = PFN_vkUnmapMemory]
     pub fn unmap_memory(device: VkDevice, memory: VkDeviceMemory);
 
-    #[org = vkFlushMappedMemoryRanges]
+    #[org = PFN_vkFlushMappedMemoryRanges]
     pub fn flush_mapped_memory_ranges(
         device: VkDevice,
         memory_range_count: u32,
         memory_ranges: *const VkMappedMemoryRange,
     ) -> VkResult;
-    #[org = vkInvalidateMappedMemoryRanges]
+    #[org = PFN_vkInvalidateMappedMemoryRanges]
     pub fn invalidate_mapped_memory_ranges(
         device: VkDevice,
         memory_range_count: u32,
         memory_ranges: *const VkMappedMemoryRange,
     ) -> VkResult;
 
-    #[org = vkGetDeviceMemoryCommitment]
+    #[org = PFN_vkGetDeviceMemoryCommitment]
     pub fn get_device_memory_commitment(
         device: VkDevice,
         memory: VkDeviceMemory,
         committed_memory_bytes_out: *mut VkDeviceSize,
     );
 
-    #[org = vkBindBufferMemory]
+    #[org = PFN_vkBindBufferMemory]
     pub fn bind_buffer_memory(
         device: VkDevice,
         buffer: VkBuffer,
         memory: VkDeviceMemory,
         memory_offset: VkDeviceSize,
     ) -> VkResult;
-    #[org = vkBindImageMemory]
+    #[org = PFN_vkBindImageMemory]
     pub fn bind_image_memory(
         device: VkDevice,
         image: VkImage,
@@ -373,27 +352,27 @@ WrapAPI2!(
         memoryOffset: VkDeviceSize,
     ) -> VkResult;
 
-    #[org = vkGetBufferMemoryRequirements]
+    #[org = PFN_vkGetBufferMemoryRequirements]
     pub fn get_buffer_memory_requirements(
         device: VkDevice,
         buffer: VkBuffer,
         memory_requirements_out: *mut VkMemoryRequirements,
     );
-    #[org = vkGetImageMemoryRequirements]
+    #[org = PFN_vkGetImageMemoryRequirements]
     pub fn get_image_memory_requirements(
         device: VkDevice,
         image: VkImage,
         memory_requirements_out: *mut VkMemoryRequirements,
     );
 
-    #[org = vkGetImageSparseMemoryRequirements]
+    #[org = PFN_vkGetImageSparseMemoryRequirements]
     pub fn get_image_sparse_memory_requirements(
         device: VkDevice,
         image: VkImage,
         sparse_memory_requirement_count_out: *mut u32,
         sparse_memory_requirements_out: *mut VkSparseImageMemoryRequirements,
     );
-    #[org = vkGetPhysicalDeviceSparseImageFormatProperties]
+    #[org = PFN_vkGetPhysicalDeviceSparseImageFormatProperties]
     pub fn get_physical_device_sparse_image_format_properties(
         physical_device: VkPhysicalDevice,
         format: VkFormat,
@@ -404,7 +383,7 @@ WrapAPI2!(
         property_count_out: *mut u32,
         properites_out: *mut VkSparseImageFormatProperties,
     );
-    #[org = vkQueueBindSparse]
+    #[org = PFN_vkQueueBindSparse]
     pub fn queue_bind_sparse(
         queue: VkQueue,
         bind_info_count: u32,
@@ -412,21 +391,21 @@ WrapAPI2!(
         fence: VkFence,
     ) -> VkResult;
 
-    #[org = vkCreateFence]
+    #[org = PFN_vkCreateFence]
     pub fn create_fence(
         device: VkDevice,
         create_info: *const VkFenceCreateInfo,
         allocator: *const VkAllocationCallbacks,
         fence_out: *mut VkFence,
     ) -> VkResult;
-    #[org = vkDestroyFence]
+    #[org = PFN_vkDestroyFence]
     pub fn destroy_fence(device: VkDevice, fence: VkFence, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkResetFences]
+    #[org = PFN_vkResetFences]
     pub fn reset_fences(device: VkDevice, fence_count: u32, fences: *const VkFence) -> VkResult;
-    #[org = vkGetFenceStatus]
+    #[org = PFN_vkGetFenceStatus]
     pub fn get_fence_status(device: VkDevice, fence: VkFence) -> VkResult;
-    #[org = vkWaitForFences]
+    #[org = PFN_vkWaitForFences]
     pub fn wait_for_fences(
         device: VkDevice,
         fence_count: u32,
@@ -435,44 +414,44 @@ WrapAPI2!(
         timeout: u64,
     ) -> VkResult;
 
-    #[org = vkCreateSemaphore]
+    #[org = PFN_vkCreateSemaphore]
     pub fn create_semaphore(
         device: VkDevice,
         create_info: *const VkSemaphoreCreateInfo,
         allocator: *const VkAllocationCallbacks,
         semaphore_out: *mut VkSemaphore,
     ) -> VkResult;
-    #[org = vkDestroySemaphore]
+    #[org = PFN_vkDestroySemaphore]
     pub fn destroy_semaphore(device: VkDevice, semaphore: VkSemaphore, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreateEvent]
+    #[org = PFN_vkCreateEvent]
     pub fn create_event(
         device: VkDevice,
         create_info: *const VkEventCreateInfo,
         allocator: *const VkAllocationCallbacks,
         event_out: *mut VkEvent,
     ) -> VkResult;
-    #[org = vkDestroyEvent]
+    #[org = PFN_vkDestroyEvent]
     pub fn destroy_event(device: VkDevice, event: VkEvent, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkGetEventStatus]
+    #[org = PFN_vkGetEventStatus]
     pub fn get_event_status(device: VkDevice, event: VkEvent) -> VkResult;
-    #[org = vkSetEvent]
+    #[org = PFN_vkSetEvent]
     pub fn set_event(device: VkDevice, event: VkEvent) -> VkResult;
-    #[org = vkResetEvent]
+    #[org = PFN_vkResetEvent]
     pub fn reset_event(device: VkDevice, event: VkEvent) -> VkResult;
 
-    #[org = vkCreateQueryPool]
+    #[org = PFN_vkCreateQueryPool]
     pub fn create_query_pool(
         device: VkDevice,
         create_info: *const VkQueryPoolCreateInfo,
         allocator: *const VkAllocationCallbacks,
         query_pool_out: *mut VkQueryPool,
     ) -> VkResult;
-    #[org = vkDestroyQueryPool]
+    #[org = PFN_vkDestroyQueryPool]
     pub fn destroy_query_pool(device: VkDevice, query_pool: VkQueryPool, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkGetQueryPoolResults]
+    #[org = PFN_vkGetQueryPoolResults]
     pub fn get_query_pool_results(
         device: VkDevice,
         query_pool: VkQueryPool,
@@ -484,37 +463,37 @@ WrapAPI2!(
         flags: VkQueryResultFlags,
     ) -> VkResult;
 
-    #[org = vkCreateBuffer]
+    #[org = PFN_vkCreateBuffer]
     pub fn create_buffer(
         device: VkDevice,
         create_info: *const VkBufferCreateInfo,
         allocator: *const VkAllocationCallbacks,
         buffer_out: *mut VkBuffer,
     ) -> VkResult;
-    #[org = vkDestroyBuffer]
+    #[org = PFN_vkDestroyBuffer]
     pub fn destroy_buffer(device: VkDevice, buffer: VkBuffer, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreateBufferView]
+    #[org = PFN_vkCreateBufferView]
     pub fn create_buffer_view(
         device: VkDevice,
         create_info: *const VkBufferViewCreateInfo,
         allocator: *const VkAllocationCallbacks,
         view_out: *mut VkBufferView,
     ) -> VkResult;
-    #[org = vkDestroyBufferView]
+    #[org = PFN_vkDestroyBufferView]
     pub fn destroy_buffer_view(device: VkDevice, buffer_view: VkBufferView, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreateImage]
+    #[org = PFN_vkCreateImage]
     pub fn create_image(
         device: VkDevice,
         create_info: *const VkImageCreateInfo,
         allocator: *const VkAllocationCallbacks,
         image_out: *mut VkImage,
     ) -> VkResult;
-    #[org = vkDestroyImage]
+    #[org = PFN_vkDestroyImage]
     pub fn destroy_image(device: VkDevice, image: VkImage, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkGetImageSubresourceLayout]
+    #[org = PFN_vkGetImageSubresourceLayout]
     pub fn get_image_subresource_layout(
         device: VkDevice,
         image: VkImage,
@@ -522,52 +501,52 @@ WrapAPI2!(
         layout_out: *mut VkSubresourceLayout,
     );
 
-    #[org = vkCreateImageView]
+    #[org = PFN_vkCreateImageView]
     pub fn create_image_view(
         device: VkDevice,
         create_info: *const VkImageViewCreateInfo,
         allocator: *const VkAllocationCallbacks,
         view_out: *mut VkImageView,
     ) -> VkResult;
-    #[org = vkDestroyImageView]
+    #[org = PFN_vkDestroyImageView]
     pub fn destroy_image_view(device: VkDevice, image_view: VkImageView, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreateShaderModule]
+    #[org = PFN_vkCreateShaderModule]
     pub fn create_shader_module(
         device: VkDevice,
         create_info: *const VkShaderModuleCreateInfo,
         allocator: *const VkAllocationCallbacks,
         shader_module_out: *mut VkShaderModule,
     ) -> VkResult;
-    #[org = vkDestroyShaderModule]
+    #[org = PFN_vkDestroyShaderModule]
     pub fn destroy_shader_module(
         device: VkDevice,
         shader_module: VkShaderModule,
         allocator: *const VkAllocationCallbacks,
     );
 
-    #[org = vkCreatePipelineCache]
+    #[org = PFN_vkCreatePipelineCache]
     pub fn create_pipeline_cache(
         device: VkDevice,
         create_info: *const VkPipelineCacheCreateInfo,
         allocator: *const VkAllocationCallbacks,
         pipeline_cache_out: *mut VkPipelineCache,
     ) -> VkResult;
-    #[org = vkDestroyPipelineCache]
+    #[org = PFN_vkDestroyPipelineCache]
     pub fn destroy_pipeline_cache(
         device: VkDevice,
         pipeline_cache: VkPipelineCache,
         allocator: *const VkAllocationCallbacks,
     );
 
-    #[org = vkGetPipelineCacheData]
+    #[org = PFN_vkGetPipelineCacheData]
     pub fn get_pipeline_cache_data(
         device: VkDevice,
         pipeline_cache: VkPipelineCache,
         data_size_out: *mut size_t,
         data_out: *mut c_void,
     ) -> VkResult;
-    #[org = vkMergePipelineCaches]
+    #[org = PFN_vkMergePipelineCaches]
     pub fn merge_pipeline_caches(
         device: VkDevice,
         dst_cache: VkPipelineCache,
@@ -575,7 +554,7 @@ WrapAPI2!(
         src_caches: *const VkPipelineCache,
     ) -> VkResult;
 
-    #[org = vkCreateGraphicsPipelines]
+    #[org = PFN_vkCreateGraphicsPipelines]
     pub fn create_graphics_pipelines(
         device: VkDevice,
         pipeline_cache: VkPipelineCache,
@@ -584,7 +563,7 @@ WrapAPI2!(
         allocator: *const VkAllocationCallbacks,
         pipelines_out: *mut VkPipeline,
     ) -> VkResult;
-    #[org = vkCreateComputePipelines]
+    #[org = PFN_vkCreateComputePipelines]
     pub fn create_compute_pipelines(
         device: VkDevice,
         pipeline_cache: VkPipelineCache,
@@ -593,81 +572,81 @@ WrapAPI2!(
         allocator: *const VkAllocationCallbacks,
         pipelines_out: *mut VkPipeline,
     ) -> VkResult;
-    #[org = vkDestroyPipeline]
+    #[org = PFN_vkDestroyPipeline]
     pub fn destroy_pipeline(device: VkDevice, pipeline: VkPipeline, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreatePipelineLayout]
+    #[org = PFN_vkCreatePipelineLayout]
     pub fn create_pipeline_layout(
         device: VkDevice,
         create_info: *const VkPipelineLayoutCreateInfo,
         allocator: *const VkAllocationCallbacks,
         pipeline_layout_out: *mut VkPipelineLayout,
     ) -> VkResult;
-    #[org = vkDestroyPipelineLayout]
+    #[org = PFN_vkDestroyPipelineLayout]
     pub fn destroy_pipeline_layout(
         device: VkDevice,
         pipeline_layout: VkPipelineLayout,
         allocator: *const VkAllocationCallbacks,
     );
 
-    #[org = vkCreateSampler]
+    #[org = PFN_vkCreateSampler]
     pub fn create_sampler(
         device: VkDevice,
         create_info: *const VkSamplerCreateInfo,
         allocator: *const VkAllocationCallbacks,
         sampler_out: *mut VkSampler,
     ) -> VkResult;
-    #[org = vkDestroySampler]
+    #[org = PFN_vkDestroySampler]
     pub fn destroy_sampler(device: VkDevice, sampler: VkSampler, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreateDescriptorSetLayout]
+    #[org = PFN_vkCreateDescriptorSetLayout]
     pub fn create_descriptor_set_layout(
         device: VkDevice,
         create_info: *const VkDescriptorSetLayoutCreateInfo,
         allocator: *const VkAllocationCallbacks,
         set_layout_out: *mut VkDescriptorSetLayout,
     ) -> VkResult;
-    #[org = vkDestroyDescriptorSetLayout]
+    #[org = PFN_vkDestroyDescriptorSetLayout]
     pub fn destroy_descriptor_set_layout(
         device: VkDevice,
         descriptor_set_layout: VkDescriptorSetLayout,
         allocator: *const VkAllocationCallbacks,
     );
 
-    #[org = vkCreateDescriptorPool]
+    #[org = PFN_vkCreateDescriptorPool]
     pub fn create_descriptor_pool(
         device: VkDevice,
         create_info: *const VkDescriptorPoolCreateInfo,
         allocator: *const VkAllocationCallbacks,
         descriptor_pool_out: *mut VkDescriptorPool,
     ) -> VkResult;
-    #[org = vkDestroyDescriptorPool]
+    #[org = PFN_vkDestroyDescriptorPool]
     pub fn destroy_descriptor_pool(
         device: VkDevice,
         descriptor_pool: VkDescriptorPool,
         allocator: *const VkAllocationCallbacks,
     );
 
-    #[org = vkResetDescriptorPool]
+    #[org = PFN_vkResetDescriptorPool]
     pub fn reset_descriptor_pool(
         device: VkDevice,
         descriptor_pool: VkDescriptorPool,
         flags: VkDescriptorPoolResetFlags,
     ) -> VkResult;
-    #[org = vkAllocateDescriptorSets]
+    #[org = PFN_vkAllocateDescriptorSets]
     pub fn allocate_descriptor_sets(
         device: VkDevice,
         allocate_info: *const VkDescriptorSetAllocateInfo,
         descriptor_sets_out: *mut VkDescriptorSet,
     ) -> VkResult;
-    #[org = vkFreeDescriptorSets]
+    #[org = PFN_vkFreeDescriptorSets]
     pub fn free_descriptor_sets(
         device: VkDevice,
         descriptor_pool: VkDescriptorPool,
         descriptor_set_count: u32,
         descriptor_sets: *const VkDescriptorSet,
     ) -> VkResult;
-    #[org = vkUpdateDescriptorSets]
+    #[org = PFN_vkUpdateDescriptorSets]
     pub fn update_descriptor_sets(
         device: VkDevice,
         descriptor_write_count: u32,
@@ -676,52 +655,52 @@ WrapAPI2!(
         descriptor_copies: *const VkCopyDescriptorSet,
     );
 
-    #[org = vkCreateFramebuffer]
+    #[org = PFN_vkCreateFramebuffer]
     pub fn create_framebuffer(
         device: VkDevice,
         create_info: *const VkFramebufferCreateInfo,
         allocator: *const VkAllocationCallbacks,
         framebuffer_out: *mut VkFramebuffer,
     ) -> VkResult;
-    #[org = vkDestroyFramebuffer]
+    #[org = PFN_vkDestroyFramebuffer]
     pub fn destroy_framebuffer(device: VkDevice, framebuffer: VkFramebuffer, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkCreateRenderPass]
+    #[org = PFN_vkCreateRenderPass]
     pub fn create_render_pass(
         device: VkDevice,
         create_info: *const VkRenderPassCreateInfo,
         allocator: *const VkAllocationCallbacks,
         render_pass_out: *mut VkRenderPass,
     ) -> VkResult;
-    #[org = vkDestroyRenderPass]
+    #[org = PFN_vkDestroyRenderPass]
     pub fn destroy_render_pass(device: VkDevice, render_pass: VkRenderPass, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkGetRenderAreaGranularity]
+    #[org = PFN_vkGetRenderAreaGranularity]
     pub fn get_render_area_granularity(device: VkDevice, render_pass: VkRenderPass, granularity_out: *mut VkExtent2D);
 
-    #[org = vkCreateCommandPool]
+    #[org = PFN_vkCreateCommandPool]
     pub fn create_command_pool(
         device: VkDevice,
         create_info: *const VkCommandPoolCreateInfo,
         allocator: *const VkAllocationCallbacks,
         command_pool_out: *mut VkCommandPool,
     ) -> VkResult;
-    #[org = vkDestroyCommandPool]
+    #[org = PFN_vkDestroyCommandPool]
     pub fn destroy_command_pool(device: VkDevice, command_pool: VkCommandPool, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkResetCommandPool]
+    #[org = PFN_vkResetCommandPool]
     pub fn reset_command_pool(
         device: VkDevice,
         command_pool: VkCommandPool,
         flags: VkCommandPoolResetFlags,
     ) -> VkResult;
-    #[org = vkAllocateCommandBuffers]
+    #[org = PFN_vkAllocateCommandBuffers]
     pub fn allocate_command_buffers(
         device: VkDevice,
         allocate_info: *const VkCommandBufferAllocateInfo,
         command_buffers_out: *mut VkCommandBuffer,
     ) -> VkResult;
-    #[org = vkFreeCommandBuffers]
+    #[org = PFN_vkFreeCommandBuffers]
     pub fn free_command_buffers(
         device: VkDevice,
         command_pool: VkCommandPool,
@@ -729,65 +708,65 @@ WrapAPI2!(
         command_buffers: *const VkCommandBuffer,
     );
 
-    #[org = vkBeginCommandBuffer]
+    #[org = PFN_vkBeginCommandBuffer]
     pub fn begin_command_buffer(
         command_buffer: VkCommandBuffer,
         begin_info: *const VkCommandBufferBeginInfo,
     ) -> VkResult;
-    #[org = vkEndCommandBuffer]
+    #[org = PFN_vkEndCommandBuffer]
     pub fn end_command_buffer(command_buffer: VkCommandBuffer) -> VkResult;
-    #[org = vkResetCommandBuffer]
+    #[org = PFN_vkResetCommandBuffer]
     pub fn reset_command_buffer(command_buffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult;
 );
 
 // Vulkan 1.0 Commands
 WrapAPI2!(
-    #[org = vkCmdBindPipeline]
+    #[org = PFN_vkCmdBindPipeline]
     pub fn cmd_bind_pipeline(
         commandBuffer: VkCommandBuffer,
         pipeline_bind_point: VkPipelineBindPoint,
         pipeline: VkPipeline,
     );
 
-    #[org = vkCmdSetViewport]
+    #[org = PFN_vkCmdSetViewport]
     pub fn cmd_set_viewport(
         command_buffer: VkCommandBuffer,
         first_viewport: u32,
         viewport_count: u32,
         viewports: *const VkViewport,
     );
-    #[org = vkCmdSetScissor]
+    #[org = PFN_vkCmdSetScissor]
     pub fn cmd_set_scissor(
         command_buffer: VkCommandBuffer,
         first_scissor: u32,
         scissor_count: u32,
         scissors: *const VkRect2D,
     );
-    #[org = vkCmdSetLineWidth]
+    #[org = PFN_vkCmdSetLineWidth]
     pub fn cmd_set_line_width(command_buffer: VkCommandBuffer, line_width: c_float);
-    #[org = vkCmdSetDepthBias]
+    #[org = PFN_vkCmdSetDepthBias]
     pub fn cmd_set_depth_bias(
         command_buffer: VkCommandBuffer,
         depth_bias_constant_factor: c_float,
         depth_bias_clamp: c_float,
         depth_bias_slope_factor: c_float,
     );
-    #[org = vkCmdSetBlendConstants]
+    #[org = PFN_vkCmdSetBlendConstants]
     pub fn cmd_set_blend_constants(command_buffer: VkCommandBuffer, blend_constants: *const c_float);
-    #[org = vkCmdSetDepthBounds]
+    #[org = PFN_vkCmdSetDepthBounds]
     pub fn cmd_set_depth_bounds(command_buffer: VkCommandBuffer, min_depth_bounds: c_float, max_depth_bounds: c_float);
-    #[org = vkCmdSetStencilCompareMask]
+    #[org = PFN_vkCmdSetStencilCompareMask]
     pub fn cmd_set_stencil_compare_mask(
         command_buffer: VkCommandBuffer,
         face_mask: VkStencilFaceFlags,
         compare_mask: u32,
     );
-    #[org = vkCmdSetStencilWriteMask]
+    #[org = PFN_vkCmdSetStencilWriteMask]
     pub fn cmd_set_stencil_write_mask(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, write_mask: u32);
-    #[org = vkCmdSetStencilReference]
+    #[org = PFN_vkCmdSetStencilReference]
     pub fn cmd_set_stencil_reference(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, reference: u32);
 
-    #[org = vkCmdBindDescriptorSets]
+    #[org = PFN_vkCmdBindDescriptorSets]
     pub fn cmd_bind_descriptor_sets(
         command_buffer: VkCommandBuffer,
         pipeline_bind_point: VkPipelineBindPoint,
@@ -798,14 +777,14 @@ WrapAPI2!(
         dynamic_offset_count: u32,
         dynamic_offsets: *const u32,
     );
-    #[org = vkCmdBindIndexBuffer]
+    #[org = PFN_vkCmdBindIndexBuffer]
     pub fn cmd_bind_index_buffer(
         command_buffer: VkCommandBuffer,
         buffer: VkBuffer,
         offset: VkDeviceSize,
         index_type: VkIndexType,
     );
-    #[org = vkCmdBindVertexBuffers]
+    #[org = PFN_vkCmdBindVertexBuffers]
     pub fn cmd_bind_vertex_buffers(
         command_buffer: VkCommandBuffer,
         first_binding: u32,
@@ -814,7 +793,7 @@ WrapAPI2!(
         offsets: *const VkDeviceSize,
     );
 
-    #[org = vkCmdDraw]
+    #[org = PFN_vkCmdDraw]
     pub fn cmd_draw(
         command_buffer: VkCommandBuffer,
         vertex_count: u32,
@@ -822,7 +801,7 @@ WrapAPI2!(
         first_vertex: u32,
         first_index: u32,
     );
-    #[org = vkCmdDrawIndexed]
+    #[org = PFN_vkCmdDrawIndexed]
     pub fn cmd_draw_indexed(
         command_buffer: VkCommandBuffer,
         index_count: u32,
@@ -831,7 +810,7 @@ WrapAPI2!(
         vertex_offset: i32,
         first_instance: u32,
     );
-    #[org = vkCmdDrawIndirect]
+    #[org = PFN_vkCmdDrawIndirect]
     pub fn cmd_draw_indirect(
         command_buffer: VkCommandBuffer,
         buffer: VkBuffer,
@@ -839,7 +818,7 @@ WrapAPI2!(
         draw_count: u32,
         stride: u32,
     );
-    #[org = vkCmdDrawIndexedIndirect]
+    #[org = PFN_vkCmdDrawIndexedIndirect]
     pub fn cmd_draw_indexed_indirect(
         command_buffer: VkCommandBuffer,
         buffer: VkBuffer,
@@ -848,12 +827,12 @@ WrapAPI2!(
         stride: u32,
     );
 
-    #[org = vkCmdDispatch]
+    #[org = PFN_vkCmdDispatch]
     pub fn cmd_dispatch(command_buffer: VkCommandBuffer, group_count_x: u32, group_count_y: u32, group_count_z: u32);
-    #[org = vkCmdDispatchIndirect]
+    #[org = PFN_vkCmdDispatchIndirect]
     pub fn cmd_dispatch_indirect(command_buffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
 
-    #[org = vkCmdCopyBuffer]
+    #[org = PFN_vkCmdCopyBuffer]
     pub fn cmd_copy_buffer(
         command_buffer: VkCommandBuffer,
         src_buffer: VkBuffer,
@@ -861,7 +840,7 @@ WrapAPI2!(
         region_count: u32,
         regions: *const VkBufferCopy,
     );
-    #[org = vkCmdCopyImage]
+    #[org = PFN_vkCmdCopyImage]
     pub fn cmd_copy_image(
         command_buffer: VkCommandBuffer,
         src_image: VkImage,
@@ -871,7 +850,7 @@ WrapAPI2!(
         region_count: u32,
         regions: *const VkImageCopy,
     );
-    #[org = vkCmdBlitImage]
+    #[org = PFN_vkCmdBlitImage]
     pub fn cmd_blit_image(
         command_buffer: VkCommandBuffer,
         src_image: VkImage,
@@ -882,7 +861,7 @@ WrapAPI2!(
         regions: *const VkImageBlit,
         filter: VkFilter,
     );
-    #[org = vkCmdCopyBufferToImage]
+    #[org = PFN_vkCmdCopyBufferToImage]
     pub fn cmd_copy_buffer_to_image(
         command_buffer: VkCommandBuffer,
         src_buffer: VkBuffer,
@@ -891,7 +870,7 @@ WrapAPI2!(
         region_count: u32,
         regions: *const VkBufferImageCopy,
     );
-    #[org = vkCmdCopyImageToBuffer]
+    #[org = PFN_vkCmdCopyImageToBuffer]
     pub fn cmd_copy_image_to_buffer(
         command_buffer: VkCommandBuffer,
         src_image: VkImage,
@@ -901,7 +880,7 @@ WrapAPI2!(
         regions: *const VkBufferImageCopy,
     );
 
-    #[org = vkCmdUpdateBuffer]
+    #[org = PFN_vkCmdUpdateBuffer]
     pub fn cmd_update_buffer(
         command_buffer: VkCommandBuffer,
         dst_buffer: VkBuffer,
@@ -909,7 +888,7 @@ WrapAPI2!(
         data_size: VkDeviceSize,
         data: *const c_void,
     );
-    #[org = vkCmdFillBuffer]
+    #[org = PFN_vkCmdFillBuffer]
     pub fn cmd_fill_buffer(
         command_buffer: VkCommandBuffer,
         dst_buffer: VkBuffer,
@@ -918,7 +897,7 @@ WrapAPI2!(
         data: u32,
     );
 
-    #[org = vkCmdClearColorImage]
+    #[org = PFN_vkCmdClearColorImage]
     pub fn cmd_clear_color_image(
         command_buffer: VkCommandBuffer,
         image: VkImage,
@@ -927,7 +906,7 @@ WrapAPI2!(
         range_count: u32,
         ranges: *const VkImageSubresourceRange,
     );
-    #[org = vkCmdClearDepthStencilImage]
+    #[org = PFN_vkCmdClearDepthStencilImage]
     pub fn cmd_clear_depth_stencil_image(
         command_buffer: VkCommandBuffer,
         image: VkImage,
@@ -937,7 +916,7 @@ WrapAPI2!(
         ranges: *const VkImageSubresourceRange,
     );
 
-    #[org = vkCmdClearAttachments]
+    #[org = PFN_vkCmdClearAttachments]
     pub fn cmd_clear_attachments(
         command_buffer: VkCommandBuffer,
         attachment_count: u32,
@@ -945,7 +924,7 @@ WrapAPI2!(
         rect_count: u32,
         rects: *const VkClearRect,
     );
-    #[org = vkCmdResolveImage]
+    #[org = PFN_vkCmdResolveImage]
     pub fn cmd_resolve_image(
         command_buffer: VkCommandBuffer,
         src_image: VkImage,
@@ -956,11 +935,11 @@ WrapAPI2!(
         regions: *const VkImageResolve,
     );
 
-    #[org = vkCmdSetEvent]
+    #[org = PFN_vkCmdSetEvent]
     pub fn cmd_set_event(command_buffer: VkCommandBuffer, event: VkEvent, stage_mask: VkPipelineStageFlags);
-    #[org = vkCmdResetEvent]
+    #[org = PFN_vkCmdResetEvent]
     pub fn cmd_reset_event(command_buffer: VkCommandBuffer, event: VkEvent, stage_mask: VkPipelineStageFlags);
-    #[org = vkCmdWaitEvents]
+    #[org = PFN_vkCmdWaitEvents]
     pub fn cmd_wait_events(
         command_buffer: VkCommandBuffer,
         event_count: u32,
@@ -975,7 +954,7 @@ WrapAPI2!(
         image_memory_barriers: *const VkImageMemoryBarrier,
     );
 
-    #[org = vkCmdPipelineBarrier]
+    #[org = PFN_vkCmdPipelineBarrier]
     pub fn cmd_pipeline_barrier(
         command_buffer: VkCommandBuffer,
         src_stage_mask: VkPipelineStageFlags,
@@ -989,30 +968,30 @@ WrapAPI2!(
         image_memory_barriers: *const VkImageMemoryBarrier,
     );
 
-    #[org = vkCmdBeginQuery]
+    #[org = PFN_vkCmdBeginQuery]
     pub fn cmd_begin_query(
         command_buffer: VkCommandBuffer,
         query_pool: VkQueryPool,
         query: u32,
         flags: VkQueryControlFlags,
     );
-    #[org = vkCmdEndQuery]
+    #[org = PFN_vkCmdEndQuery]
     pub fn cmd_end_query(command_buffer: VkCommandBuffer, query_pool: VkQueryPool, query: u32);
-    #[org = vkCmdResetQueryPool]
+    #[org = PFN_vkCmdResetQueryPool]
     pub fn cmd_reset_query_pool(
         command_buffer: VkCommandBuffer,
         query_pool: VkQueryPool,
         first_query: u32,
         query_count: u32,
     );
-    #[org = vkCmdWriteTimestamp]
+    #[org = PFN_vkCmdWriteTimestamp]
     pub fn cmd_write_timestamp(
         command_buffer: VkCommandBuffer,
         pipeline_stage: VkPipelineStageFlags,
         query_pool: VkQueryPool,
         query: u32,
     );
-    #[org = vkCmdCopyQueryPoolResults]
+    #[org = PFN_vkCmdCopyQueryPoolResults]
     pub fn cmd_copy_query_pool_results(
         command_buffer: VkCommandBuffer,
         query_pool: VkQueryPool,
@@ -1024,7 +1003,7 @@ WrapAPI2!(
         flags: VkQueryResultFlags,
     );
 
-    #[org = vkCmdPushConstants]
+    #[org = PFN_vkCmdPushConstants]
     pub fn cmd_push_constants(
         command_buffer: VkCommandBuffer,
         layout: VkPipelineLayout,
@@ -1034,18 +1013,18 @@ WrapAPI2!(
         values: *const c_void,
     );
 
-    #[org = vkCmdBeginRenderPass]
+    #[org = PFN_vkCmdBeginRenderPass]
     pub fn cmd_begin_render_pass(
         command_buffer: VkCommandBuffer,
         render_pass_begin: *const VkRenderPassBeginInfo,
         contents: VkSubpassContents,
     );
-    #[org = vkCmdNextSubpass]
+    #[org = PFN_vkCmdNextSubpass]
     pub fn cmd_next_subpass(command_buffer: VkCommandBuffer, contents: VkSubpassContents);
-    #[org = vkCmdEndRenderPass]
+    #[org = PFN_vkCmdEndRenderPass]
     pub fn cmd_end_render_pass(command_buffer: VkCommandBuffer);
 
-    #[org = vkCmdExecuteCommands]
+    #[org = PFN_vkCmdExecuteCommands]
     pub fn cmd_execute_commands(
         command_buffer: VkCommandBuffer,
         command_buffer_count: u32,
@@ -1056,30 +1035,30 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_surface
 #[cfg(feature = "VK_KHR_surface")]
 WrapAPI2!(
-    #[org = vkDestroySurfaceKHR]
+    #[org = PFN_vkDestroySurfaceKHR]
     pub fn destroy_surface_khr(instance: VkInstance, surface: VkSurfaceKHR, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkGetPhysicalDeviceSurfaceSupportKHR]
+    #[org = PFN_vkGetPhysicalDeviceSurfaceSupportKHR]
     pub fn get_physical_device_surface_support_khr(
         physical_device: VkPhysicalDevice,
         queue_family_index: u32,
         surface: VkSurfaceKHR,
         supported_out: *mut VkBool32,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceSurfaceCapabilitiesKHR]
+    #[org = PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR]
     pub fn get_physical_device_surface_capabilities_khr(
         physical_device: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         surface_capabilities_out: *mut VkSurfaceCapabilitiesKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceSurfaceFormatsKHR]
+    #[org = PFN_vkGetPhysicalDeviceSurfaceFormatsKHR]
     pub fn get_physical_device_surface_formats_khr(
         physical_device: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         surface_format_count_out: *mut u32,
         surface_formats_out: *mut VkSurfaceFormatKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceSurfacePresentModesKHR]
+    #[org = PFN_vkGetPhysicalDeviceSurfacePresentModesKHR]
     pub fn get_physical_device_surface_present_modes_khr(
         physical_device: VkPhysicalDevice,
         surface: VkSurfaceKHR,
@@ -1091,24 +1070,24 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_swapchain
 #[cfg(feature = "VK_KHR_swapchain")]
 WrapAPI2!(
-    #[org = vkCreateSwapchainKHR]
+    #[org = PFN_vkCreateSwapchainKHR]
     pub fn create_swapchain_khr(
         device: VkDevice,
         create_info: *const VkSwapchainCreateInfoKHR,
         allocator: *const VkAllocationCallbacks,
         swapchain_out: *mut VkSwapchainKHR,
     ) -> VkResult;
-    #[org = vkDestroySwapchainKHR]
+    #[org = PFN_vkDestroySwapchainKHR]
     pub fn destroy_swapchain_khr(device: VkDevice, swapchain: VkSwapchainKHR, allocator: *const VkAllocationCallbacks);
 
-    #[org = vkGetSwapchainImagesKHR]
+    #[org = PFN_vkGetSwapchainImagesKHR]
     pub fn get_swapchain_images_khr(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         swapchain_image_count_out: *mut u32,
         swapchain_images_out: *mut VkImage,
     ) -> VkResult;
-    #[org = vkAcquireNextImageKHR]
+    #[org = PFN_vkAcquireNextImageKHR]
     pub fn acquire_next_image_khr(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
@@ -1118,21 +1097,21 @@ WrapAPI2!(
         image_index_out: *mut u32,
     ) -> VkResult;
 
-    #[org = vkQueuePresentKHR]
+    #[org = PFN_vkQueuePresentKHR]
     pub fn queue_present_khr(queue: VkQueue, present_info: *const VkPresentInfoKHR) -> VkResult;
 );
 
 // statically provided extension functions: VK_KHR_xlib_surface
 #[cfg(feature = "VK_KHR_xlib_surface")]
 WrapAPI2!(
-    #[org = vkCreateXlibSurfaceKHR]
+    #[org = PFN_vkCreateXlibSurfaceKHR]
     pub fn create_xlib_surface_khr(
         instance: VkInstance,
         create_info: *const VkXlibSurfaceCreateInfoKHR,
         allocator: *const VkAllocationCallbacks,
         surface_out: *mut VkSurfaceKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceXlibPresentationSupportKHR]
+    #[org = PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR]
     pub fn get_physical_device_xlib_presentation_support_khr(
         physical_device: VkPhysicalDevice,
         queue_family_index: u32,
@@ -1144,14 +1123,14 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_xcb_surface
 #[cfg(feature = "VK_KHR_xcb_surface")]
 WrapAPI2!(
-    #[org = vkCreateXcbSurfaceKHR]
+    #[org = PFN_vkCreateXcbSurfaceKHR]
     pub fn create_xcb_surface_khr(
         instance: VkInstance,
         create_info: *const VkXcbSurfaceCreateInfoKHR,
         allocator: *const VkAllocationCallbacks,
         surface_out: *mut VkSurfaceKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceXcbPresentationSupportKHR]
+    #[org = PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR]
     pub fn get_physical_device_xcb_presentation_support_khr(
         physical_device: VkPhysicalDevice,
         queue_family_index: u32,
@@ -1163,14 +1142,14 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_wayland_surface
 #[cfg(feature = "VK_KHR_wayland_surface")]
 WrapAPI2!(
-    #[org = vkCreateWaylandSurfaceKHR]
+    #[org = PFN_vkCreateWaylandSurfaceKHR]
     pub fn create_wayland_surface_khr(
         instance: VkInstance,
         create_info: *const VkWaylandSurfaceCreateInfoKHR,
         allocator: *const VkAllocationCallbacks,
         surface_out: *mut VkSurfaceKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceWaylandPresentationSupportKHR]
+    #[org = PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR]
     pub fn get_physical_device_wayland_presentation_support_khr(
         phyiscal_device: VkPhysicalDevice,
         queue_family_index: u32,
@@ -1181,7 +1160,7 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_android_surface
 #[cfg(feature = "VK_KHR_android_surface")]
 WrapAPI2!(
-    #[org = vkCreateAndroidSurfaceKHR]
+    #[org = PFN_vkCreateAndroidSurfaceKHR]
     pub fn create_android_surface_khr(
         instance: VkInstance,
         create_info: *const VkAndroidSurfaceCreateInfoKHR,
@@ -1193,14 +1172,14 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_win32_surface
 #[cfg(feature = "VK_KHR_win32_surface")]
 WrapAPI2!(
-    #[org = vkCreateWin32SurfaceKHR]
+    #[org = PFN_vkCreateWin32SurfaceKHR]
     pub fn create_win32_surface_khr(
         instance: VkInstance,
         create_info: *const VkWin32SurfaceCreateInfoKHR,
         allocator: *const VkAllocationCallbacks,
         surface_out: VkSurfaceKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceWin32PresentationSupportKHR]
+    #[org = PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR]
     pub fn get_physical_device_win32_presentation_support_khr(
         physical_device: VkPhysicalDevice,
         queue_family_index: u32,
@@ -1210,7 +1189,7 @@ WrapAPI2!(
 // statically provided extension functions: VK_MVK_macos_surface
 #[cfg(feature = "VK_MVK_macos_surface")]
 WrapAPI2!(
-    #[org = vkCreateMacOSSurfaceMVK]
+    #[org = PFN_vkCreateMacOSSurfaceMVK]
     pub fn create_macos_surface_mvk(
         instance: VkInstance,
         create_info: *const VkMacOSSurfaceCreateInfoMVK,
@@ -1222,20 +1201,20 @@ WrapAPI2!(
 // statically provided extension functions: VK_KHR_display
 #[cfg(feature = "VK_KHR_display")]
 WrapAPI2!(
-    #[org = vkGetPhysicalDeviceDisplayPropertiesKHR]
+    #[org = PFN_vkGetPhysicalDeviceDisplayPropertiesKHR]
     pub fn get_physical_device_display_properties_khr(
         physical_device: VkPhysicalDevice,
         property_count_out: *mut u32,
         properties_out: *mut VkDisplayPropertiesKHR,
     ) -> VkResult;
-    #[org = vkGetPhysicalDeviceDisplayPlanePropertiesKHR]
+    #[org = PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR]
     pub fn get_physical_device_display_plane_properties_khr(
         physical_device: VkPhysicalDevice,
         property_count_out: *mut u32,
         properties_out: *mut VkDisplayPlanePropertiesKHR,
     ) -> VkResult;
 
-    #[org = vkGetDisplayPlaneSupportedDisplaysKHR]
+    #[org = PFN_vkGetDisplayPlaneSupportedDisplaysKHR]
     pub fn get_display_plane_supported_displays_khr(
         physical_device: VkPhysicalDevice,
         plane_index: u32,
@@ -1243,7 +1222,7 @@ WrapAPI2!(
         displays_out: *mut VkDisplayKHR,
     ) -> VkResult;
 
-    #[org = vkGetDisplayModePropertiesKHR]
+    #[org = PFN_vkGetDisplayModePropertiesKHR]
     pub fn get_display_mode_properties_khr(
         physical_device: VkPhysicalDevice,
         display: VkDisplayKHR,
@@ -1251,7 +1230,7 @@ WrapAPI2!(
         properties_out: *mut VkDisplayModePropertiesKHR,
     ) -> VkResult;
 
-    #[org = vkCreateDisplayModeKHR]
+    #[org = PFN_vkCreateDisplayModeKHR]
     pub fn create_display_mode_khr(
         physical_device: VkPhysicalDevice,
         display: VkDisplayKHR,
@@ -1260,7 +1239,7 @@ WrapAPI2!(
         mode_out: *mut VkDisplayModeKHR,
     ) -> VkResult;
 
-    #[org = vkGetDisplayModeCapabilitiesKHR]
+    #[org = PFN_vkGetDisplayPlaneCapabilitiesKHR]
     pub fn get_display_plane_capabilities_khr(
         physicalDevice: VkPhysicalDevice,
         mode: VkDisplayModeKHR,
@@ -1268,7 +1247,7 @@ WrapAPI2!(
         pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
     ) -> VkResult;
 
-    #[org = vkCreateDisplayPlaneSurfaceKHR]
+    #[org = PFN_vkCreateDisplayPlaneSurfaceKHR]
     pub fn create_display_plane_surface_khr(
         instance: VkInstance,
         create_info: *const VkDisplaySurfaceCreateInfoKHR,

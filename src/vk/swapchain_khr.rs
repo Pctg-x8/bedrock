@@ -59,29 +59,53 @@ pub struct VkPresentInfoKHR {
     pub pResults: *mut VkResult,
 }
 
-pub type PFN_vkCreateSwapchainKHR = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkSwapchainCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSwapchain: *mut VkSwapchainKHR,
-) -> VkResult;
-pub type PFN_vkDestroySwapchainKHR =
-    extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetSwapchainImagesKHR = extern "system" fn(
-    device: VkDevice,
-    swapchain: VkSwapchainKHR,
-    pSwapchainImageCount: *mut u32,
-    pSwapchainImages: *mut VkImage,
-) -> VkResult;
-pub type PFN_vkAcquireNextImageKHR = extern "system" fn(
-    device: VkDevice,
-    swapchain: VkSwapchainKHR,
-    timeout: u64,
-    semaphore: VkSemaphore,
-    fence: VkFence,
-    pImageIndex: *mut u32,
-) -> VkResult;
-pub type PFN_vkQueuePresentKHR = extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateSwapchainKHR"]
+pub struct PFN_vkCreateSwapchainKHR(
+    pub  extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkSwapchainCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSwapchain: *mut VkSwapchainKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkDestroySwapchainKHR"]
+pub struct PFN_vkDestroySwapchainKHR(
+    pub extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetSwapchainImagesKHR"]
+pub struct PFN_vkGetSwapchainImagesKHR(
+    pub  extern "system" fn(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        pSwapchainImageCount: *mut u32,
+        pSwapchainImages: *mut VkImage,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkAcquireNextImageKHR"]
+pub struct PFN_vkAcquireNextImageKHR(
+    pub  extern "system" fn(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        timeout: u64,
+        semaphore: VkSemaphore,
+        fence: VkFence,
+        pImageIndex: *mut u32,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkQueuePresentKHR"]
+pub struct PFN_vkQueuePresentKHR(
+    pub extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

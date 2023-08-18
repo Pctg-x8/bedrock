@@ -18,14 +18,23 @@ pub struct VkWin32SurfaceCreateInfoKHR {
     pub hwnd: windows::Win32::Foundation::HWND,
 }
 
-pub type PFN_vkCreateWin32SurfaceKHR = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateWin32SurfaceKHR"]
+pub struct PFN_vkCreateWin32SurfaceKHR(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceWin32PresentationSupportKHR"]
+pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(
+    pub extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

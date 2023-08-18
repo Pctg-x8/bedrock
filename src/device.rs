@@ -22,6 +22,13 @@ cfg_if! {
                     name.as_ptr() as _,
                 )))
             }
+
+            unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &[u8]) -> F {
+                F::from_void_fn(
+                    crate::vkresolve::get_device_proc_addr(*self, name.as_ptr() as _)
+                        .unwrap_or_else(|| panic!("function {:?} not found", name))
+                )
+            }
         }
     }
 }

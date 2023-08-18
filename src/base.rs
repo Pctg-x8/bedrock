@@ -154,6 +154,13 @@ impl ResolverInterface for VkInstance {
             name.as_ptr() as _,
         )))
     }
+
+    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
+        F::from_void_fn(
+            crate::vkresolve::get_instance_proc_addr(*self, name.as_ptr() as _)
+                .unwrap_or_else(|| panic!("function {:?} not found", name)),
+        )
+    }
 }
 
 /// Opaque handle to a physical device object

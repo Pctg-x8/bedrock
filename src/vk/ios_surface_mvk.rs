@@ -17,12 +17,17 @@ pub struct VkIOSSurfaceCreateInfoMVK {
     pub pView: *const c_void,
 }
 
-pub type PFN_vkCreateIOSSurfaceMVK = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkIOSSurfaceCreateInfoMVK,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateIOSSurfaceMVK"]
+pub struct PFN_vkCreateIOSSurfaceMVK(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkIOSSurfaceCreateInfoMVK,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
