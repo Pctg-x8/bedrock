@@ -55,6 +55,20 @@ pub struct DeviceObject<Instance: crate::Instance> {
     bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
     #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
     get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+    get_fence_fd_khr: DeviceResolvedFn<PFN_vkGetFenceFdKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+    import_fence_fd_khr: DeviceResolvedFn<PFN_vkImportFenceFdKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+    acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkAcquireFullScreenExclusiveModeEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+    release_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkReleaseFullScreenExclusiveModeEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+    get_memory_fd_khr: DeviceResolvedFn<PFN_vkGetMemoryFdKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+    get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
+    get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
@@ -75,6 +89,20 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
             bind_image_memory2_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
             get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+            get_fence_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+            import_fence_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
+            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -126,6 +154,47 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
+            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
+                *self.get_fence_fd_khr.resolve()
+            }
+            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
+                *self.import_fence_fd_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
+                *self.acquire_full_screen_exclusive_mode_ext.resolve()
+            }
+            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
+                *self.release_full_screen_exclusive_mode_ext.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
+            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
+                *self.get_memory_fd_khr.resolve()
+            }
+            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
+                *self.get_memory_fd_properties_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
+            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
+                *self.get_memory_host_pointer_properties_ext.resolve()
+            }
+        }
+    }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
@@ -155,6 +224,26 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
             #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
             get_image_drm_format_modifier_properties_ext: unsafe {
                 core::ptr::read(&self.get_image_drm_format_modifier_properties_ext)
+            },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+            get_fence_fd_khr: unsafe { core::ptr::read(&self.get_fence_fd_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
+            import_fence_fd_khr: unsafe { core::ptr::read(&self.import_fence_fd_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+            acquire_full_screen_exclusive_mode_ext: unsafe {
+                core::ptr::read(&self.acquire_full_screen_exclusive_mode_ext)
+            },
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+            release_full_screen_exclusive_mode_ext: unsafe {
+                core::ptr::read(&self.release_full_screen_exclusive_mode_ext)
+            },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_khr: unsafe { core::ptr::read(&self.get_memory_fd_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_properties_khr: unsafe { core::ptr::read(&self.get_memory_fd_properties_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
+            get_memory_host_pointer_properties_ext: unsafe {
+                core::ptr::read(&self.get_memory_host_pointer_properties_ext)
             },
         };
         // disable running VkDevice destruction
@@ -540,12 +629,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut fd = 0;
 
-        let f = self
-            .extra_procedure::<PFN_vkGetMemoryFdKHR>("vkGetMemoryFdKHR")
-            .expect("No vkGetMemoryFdKHR exported");
-        VkResultBox((f)(self.native_ptr(), &info, &mut fd))
-            .into_result()
-            .map(move |_| fd)
+        unsafe {
+            VkResultBox(self.get_memory_fd_khr_fn().0(self.native_ptr(), &info, &mut fd))
+                .into_result()
+                .map(move |_| fd)
+        }
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
@@ -585,17 +673,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeFd,
         fd: libc::c_int,
     ) -> crate::Result<VkMemoryFdPropertiesKHR> {
-        let mut info = std::mem::MaybeUninit::<VkMemoryFdPropertiesKHR>::uninit();
+        let mut info = core::mem::MaybeUninit::<VkMemoryFdPropertiesKHR>::uninit();
         unsafe {
             (*info.as_mut_ptr()).sType = VkMemoryFdPropertiesKHR::TYPE;
+            (*info.as_mut_ptr()).pNext = core::ptr::null_mut();
         }
 
-        let f = self
-            .extra_procedure::<PFN_vkGetMemoryFdPropertiesKHR>("vkGetMemoryFdPropertiesKHR")
-            .expect("No vkGetMemoryFdPropertiesKHR exported");
-        VkResultBox((f)(self.native_ptr(), handle_type as _, fd, info.as_mut_ptr()))
+        unsafe {
+            VkResultBox(self.get_memory_fd_properties_khr_fn().0(
+                self.native_ptr(),
+                handle_type as _,
+                fd,
+                info.as_mut_ptr(),
+            ))
             .into_result()
-            .map(move |_| unsafe { info.assume_init() })
+            .map(move |_| info.assume_init())
+        }
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
@@ -610,22 +703,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleType,
         host_pointer: *const (),
     ) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
-        let mut info = std::mem::MaybeUninit::<VkMemoryHostPointerPropertiesEXT>::uninit();
+        let mut info = core::mem::MaybeUninit::<VkMemoryHostPointerPropertiesEXT>::uninit();
         unsafe {
             (*info.as_mut_ptr()).sType = VkMemoryHostPointerPropertiesEXT::TYPE;
+            (*info.as_mut_ptr()).pNext = core::ptr::null_mut();
         }
 
-        let f = self
-            .extra_procedure::<PFN_vkGetMemoryHostPointerPropertiesEXT>("vkGetMemoryHostPointerPropertiesEXT")
-            .expect("No vkGetMemoryHostPointerPropertiesEXT exported");
-        VkResultBox((f)(
-            self.native_ptr(),
-            handle_type as _,
-            host_pointer as _,
-            info.as_mut_ptr(),
-        ))
-        .into_result()
-        .map(move |_| unsafe { info.assume_init() })
+        unsafe {
+            VkResultBox(self.get_memory_host_pointer_properties_ext_fn().0(
+                self.native_ptr(),
+                handle_type as _,
+                host_pointer as _,
+                info.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(move |_| info.assume_init())
+        }
     }
 
     /// Create a new buffer object
@@ -1602,6 +1695,33 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
+            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR;
+            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
+            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
+            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR;
+            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
+            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1641,6 +1761,47 @@ DerefContainerBracketImpl!(for Device {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
+            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
+                (**self).get_fence_fd_khr_fn()
+            }
+            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
+                (**self).import_fence_fd_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
+                (**self).acquire_full_screen_exclusive_mode_ext_fn()
+            }
+            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
+                (**self).release_full_screen_exclusive_mode_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
+            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
+                (**self).get_memory_fd_khr_fn()
+            }
+            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
+                (**self).get_memory_fd_properties_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
+            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
+                (**self).get_memory_host_pointer_properties_ext_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1677,6 +1838,47 @@ GuardsImpl!(for Device {
         if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
             fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
                 (**self).get_image_drm_format_modifier_properties_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
+            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
+                (**self).get_fence_fd_khr_fn()
+            }
+            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
+                (**self).import_fence_fd_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
+                (**self).acquire_full_screen_exclusive_mode_ext_fn()
+            }
+            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
+                (**self).release_full_screen_exclusive_mode_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
+            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
+                (**self).get_memory_fd_khr_fn()
+            }
+            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
+                (**self).get_memory_fd_properties_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
+            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
+                (**self).get_memory_host_pointer_properties_ext_fn()
             }
         }
     }

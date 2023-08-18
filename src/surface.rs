@@ -332,25 +332,27 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
     fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        let fp: PFN_vkAcquireFullScreenExclusiveModeEXT = self
-            .device()
-            .extra_procedure("vkAcquireFullScreenExclusiveModeEXT")
-            .expect("No full screen exclusive extension procedure found");
-        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr()))
+        unsafe {
+            VkResultBox(self.device().acquire_full_screen_exclusive_mode_ext_fn().0(
+                self.device().native_ptr(),
+                self.native_ptr(),
+            ))
             .into_result()
             .map(drop)
+        }
     }
 
     /// Release full-screen exclusive mode from a swapchain.
     #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
     fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        let fp: PFN_vkReleaseFullScreenExclusiveModeEXT = self
-            .device()
-            .extra_procedure("vkReleaseFullScreenExclusiveModeEXT")
-            .expect("No full screen exclusive extension procedure found");
-        VkResultBox((fp)(self.device().native_ptr(), self.native_ptr()))
+        unsafe {
+            VkResultBox(self.device().release_full_screen_exclusive_mode_ext_fn().0(
+                self.device().native_ptr(),
+                self.native_ptr(),
+            ))
             .into_result()
             .map(drop)
+        }
     }
 
     /// Obtain the array of presentable images associated with a swapchain

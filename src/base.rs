@@ -62,6 +62,19 @@ pub struct InstanceObject {
     destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkDestroyDebugUtilsMessengerEXT>,
     #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
     set_debug_utils_object_name_ext: InstanceResolvedFn<PFN_vkSetDebugUtilsObjectNameEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))]
+    get_physical_device_external_fence_properties_khr:
+        InstanceResolvedFn<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
+    get_randr_output_display_ext: InstanceResolvedFn<PFN_vkGetRandROutputDisplayEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
+    acquire_xlib_display_ext: InstanceResolvedFn<PFN_vkAcquireXlibDisplayEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+    get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))]
+    get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
+    release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
 }
 impl From<VkInstance> for InstanceObject {
     fn from(value: VkInstance) -> Self {
@@ -83,6 +96,18 @@ impl From<VkInstance> for InstanceObject {
             destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(value),
             #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
             set_debug_utils_object_name_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))]
+            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
+            get_randr_output_display_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
+            acquire_xlib_display_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
+            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))]
+            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
+            release_display_ext: InstanceResolvedFn::new(value),
         }
     }
 }
@@ -132,6 +157,49 @@ impl Instance for InstanceObject {
             }
             fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
                 *self.set_debug_utils_object_name_ext.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))] {
+            fn get_physical_device_external_fence_properties_khr_fn(&self) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+                *self.get_physical_device_external_fence_properties_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))] {
+            fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
+                *self.get_randr_output_display_ext.resolve()
+            }
+            fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
+                *self.acquire_xlib_display_ext.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
+                *self.get_physical_device_surface_present_modes_2_ext.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))] {
+            fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+                *self.get_physical_device_surface_capabilities_2_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
+            fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
+                *self.release_display_ext.resolve()
             }
         }
     }
@@ -493,6 +561,37 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))] {
+            fn get_physical_device_external_fence_properties_khr_fn(&self) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))] {
+            fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
+            fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))] {
+            fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
+            fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Instance {
     cfg_if! {
@@ -533,6 +632,49 @@ DerefContainerBracketImpl!(for Instance {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))] {
+            fn get_physical_device_external_fence_properties_khr_fn(&self) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+                (**self).get_physical_device_external_fence_properties_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))] {
+            fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
+                (**self).get_randr_output_display_ext_fn()
+            }
+            fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
+                (**self).acquire_xlib_display_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
+                (**self).get_physical_device_surface_present_modes_2_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))] {
+            fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+                (**self).get_physical_device_surface_capabilities_2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
+            fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
+                (**self).release_display_ext_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Instance {
     cfg_if! {
@@ -570,6 +712,49 @@ GuardsImpl!(for Instance {
             }
             fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
                 (**self).set_debug_utils_object_name_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))] {
+            fn get_physical_device_external_fence_properties_khr_fn(&self) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+                (**self).get_physical_device_external_fence_properties_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))] {
+            fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
+                (**self).get_randr_output_display_ext_fn()
+            }
+            fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
+                (**self).acquire_xlib_display_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
+            fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
+                (**self).get_physical_device_surface_present_modes_2_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))] {
+            fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+                (**self).get_physical_device_surface_capabilities_2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
+            fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
+                (**self).release_display_ext_fn()
             }
         }
     }
@@ -793,20 +978,20 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             (*r.as_mut_ptr()).sType = VkExternalFencePropertiesKHR::TYPE;
             (*r.as_mut_ptr()).pNext = std::ptr::null_mut();
         }
-        let f: PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR = self
-            .instance()
-            .extra_procedure("vkGetPhysicalDeviceExternalFencePropertiesKHR")
-            .expect("no vkGetPhysicalDeviceExternalFenceProperties exported?");
-        (f)(
-            self.native_ptr(),
-            &VkPhysicalDeviceExternalFenceInfoKHR {
-                sType: VkPhysicalDeviceExternalFenceInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                handleType: handle_type as _,
-            },
-            r.as_mut_ptr(),
-        );
-        unsafe { From::from(r.assume_init()) }
+
+        unsafe {
+            self.instance().get_physical_device_external_fence_properties_khr_fn().0(
+                self.native_ptr(),
+                &VkPhysicalDeviceExternalFenceInfoKHR {
+                    sType: VkPhysicalDeviceExternalFenceInfoKHR::TYPE,
+                    pNext: std::ptr::null(),
+                    handleType: handle_type as _,
+                },
+                r.as_mut_ptr(),
+            );
+
+            r.assume_init().into()
+        }
     }
 
     /// Query if presentation is supported
@@ -1370,14 +1555,17 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let fp: PFN_vkGetRandROutputDisplayEXT = self
-            .instance()
-            .extra_procedure("vkGetRandROutputDisplayEXT")
-            .expect("no vkGetRandROutputDisplayEXT exported?");
         let mut d = std::mem::MaybeUninit::uninit();
-        crate::VkResultBox(fp(self.native_ptr(), dpy, rr_output, d.as_mut_ptr()))
+        unsafe {
+            crate::VkResultBox(self.instance().get_randr_output_display_ext_fn().0(
+                self.native_ptr(),
+                dpy,
+                rr_output,
+                d.as_mut_ptr(),
+            ))
             .into_result()
-            .map(move |_| unsafe { Display(d.assume_init(), self) })
+            .map(move |_| Display(d.assume_init(), self))
+        }
     }
 
     /// Create a `Surface` object representing a display plane and mode
@@ -1445,10 +1633,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         sink: &mut VkSurfaceCapabilities2KHR,
     ) -> crate::Result<()> {
         unsafe {
-            crate::Resolver::get()
-                .get_physical_device_surface_capabilities2_khr(self.native_ptr(), surface_info, sink)
-                .into_result()
-                .map(drop)
+            crate::VkResultBox(self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
+                self.native_ptr(),
+                surface_info,
+                sink,
+            ))
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1464,10 +1655,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
         }
         unsafe {
-            crate::vkresolve::get_resolver()
-                .get_physical_device_surface_capabilities2_khr(self.native_ptr(), surface_info, p.as_mut_ptr())
-                .into_result()
-                .map(move |_| p.assume_init())
+            crate::VkResultBox(self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
+                self.native_ptr(),
+                surface_info,
+                p.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(move |_| p.assume_init())
         }
     }
 
@@ -1495,20 +1689,28 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<Vec<VkPresentModeKHR>> {
-        let f: PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT = self
-            .instance()
-            .extra_procedure("vkGetPhysicalDeviceSurfacePresentModes2EXT")
-            .expect("no extra procedures loaded");
-
         let mut n = 0;
-        VkResultBox(f(self.native_ptr(), surface_info, &mut n, std::ptr::null_mut())).into_result()?;
+        unsafe {
+            crate::VkResultBox(self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
+                self.native_ptr(),
+                surface_info,
+                &mut n,
+                std::ptr::null_mut(),
+            ))
+            .into_result()?;
+        }
         let mut x = Vec::with_capacity(n as _);
         unsafe {
             x.set_len(n as _);
-        }
-        VkResultBox(f(self.native_ptr(), surface_info, &mut n, x.as_mut_ptr()))
+            crate::VkResultBox(self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
+                self.native_ptr(),
+                surface_info,
+                &mut n,
+                x.as_mut_ptr(),
+            ))
             .into_result()
             .map(move |_| x)
+        }
     }
 }
 DerefContainerBracketImpl!(for PhysicalDevice {});

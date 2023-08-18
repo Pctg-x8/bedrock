@@ -53,12 +53,9 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn release(&self) {
         use crate::Instance;
 
-        let fp: PFN_vkReleaseDisplayEXT = self
-            .1
-            .instance()
-            .extra_procedure("vkReleaseDisplayEXT")
-            .expect("no vkReleaseDisplayEXT exported?");
-        fp(self.1.native_ptr(), self.native_ptr());
+        unsafe {
+            self.1.instance().release_display_ext_fn().0(self.1.native_ptr(), self.native_ptr());
+        }
     }
 
     /// Acquire access to a VkDisplayKHR using Xlib
@@ -71,14 +68,15 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
         use crate::Instance;
 
-        let fp: PFN_vkAcquireXlibDisplayEXT = self
-            .1
-            .instance()
-            .extra_procedure("vkAcquireXlibDisplayEXT")
-            .expect("no vkAcquireXlibDisplayEXT exported?");
-        crate::VkResultBox(fp(self.1.native_ptr(), dpy, self.native_ptr()))
+        unsafe {
+            crate::VkResultBox(self.1.instance().acquire_xlib_display_ext_fn().0(
+                self.1.native_ptr(),
+                dpy,
+                self.native_ptr(),
+            ))
             .into_result()
             .map(drop)
+        }
     }
 
     /// Create a display mode

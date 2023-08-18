@@ -111,13 +111,15 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             handleType: ty as _,
         };
         let mut fd = 0;
-        let f = self
-            .device()
-            .extra_procedure::<PFN_vkGetFenceFdKHR>("vkGetFenceFdKHR")
-            .expect("No vkGetFenceFdKHR exported");
-        VkResultBox((f)(self.device().native_ptr(), &info, &mut fd))
+        unsafe {
+            VkResultBox(self.device().get_fence_fd_khr_fn().0(
+                self.device().native_ptr(),
+                &info,
+                &mut fd,
+            ))
             .into_result()
             .map(move |_| fd)
+        }
     }
 
     /// Import a fence from a POSIX file descriptor
@@ -148,13 +150,15 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             handleType: ty as _,
             fd,
         };
-        let f = self
-            .device()
-            .extra_procedure::<PFN_vkImportFenceFdKHR>("vkImportFenceFdKHR")
-            .expect("No vkImportFenceFdKHR exported");
-        VkResultBox((f)(self.device().native_ptr(), &info))
+
+        unsafe {
+            VkResultBox(self.device().import_fence_fd_khr_fn().0(
+                self.device().native_ptr(),
+                &info,
+            ))
             .into_result()
             .map(drop)
+        }
     }
 }
 DerefContainerBracketImpl!(for Fence {});
