@@ -466,3 +466,95 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
     }
     .into()
 }
+
+struct NewtypePFNInput {
+    pub attrs: Vec<syn::Attribute>,
+    pub vis: syn::Visibility,
+    pub _type_token: syn::Token![type],
+    pub newtype_name: syn::Ident,
+    pub _eq_token: syn::Token![=],
+    pub org_type: syn::Type,
+}
+impl syn::parse::Parse for NewtypePFNInput {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(Self {
+            attrs: syn::Attribute::parse_outer(input)?,
+            vis: input.parse()?,
+            _type_token: input.parse()?,
+            newtype_name: input.parse()?,
+            _eq_token: input.parse()?,
+            org_type: input.parse()?,
+        })
+    }
+}
+impl NewtypePFNInput {
+    pub fn quote_base_define(&self) -> proc_macro2::TokenStream {
+        let Self {
+            attrs,
+            vis,
+            newtype_name,
+            org_type,
+            ..
+        } = self;
+
+        quote! { #(#attrs)* #[repr(transparent)] #vis struct #newtype_name(#org_type); }
+    }
+
+    pub fn quote_from_ptr_impl(&self) -> proc_macro2::TokenStream {
+        let Self { newtype_name, .. } = self;
+
+        quote! {
+            unsafe impl crate::vkresolve::FromPtr for #newtype_name {
+                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                    core::mem::transmute(p)
+                }
+            }
+        }
+    }
+
+    pub fn quote_pfn_impl(&self) -> proc_macro2::TokenStream {
+        let Self { newtype_name, .. } = self;
+        let fname = self.original_function_name_nulbytes();
+
+        quote! {
+            unsafe impl crate::vkresolve::PFN for #newtype_name {
+                const NAME_NUL: &'static [u8] = #fname;
+            }
+        }
+    }
+
+    pub fn original_function_name_nulbytes(&self) -> syn::LitByteStr {
+        let tyname_ident = match self.org_type {
+            syn::Type::Path(ref p) => p
+                .path
+                .get_ident()
+                .or_else(|| p.path.segments.last().map(|l| &l.ident))
+                .expect("org tyname is not an ident?"),
+            _ => panic!("unknown org type"),
+        };
+        let tyname_str = tyname_ident.to_string();
+        let mut fname = tyname_str
+            .strip_prefix("PFN_")
+            .expect("TypeName must be prefixed by \"PFN_\"")
+            .as_bytes()
+            .to_vec();
+        fname.push(0);
+
+        syn::LitByteStr::new(&fname, tyname_ident.span())
+    }
+}
+#[proc_macro]
+pub fn newtype_pfn(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as NewtypePFNInput);
+
+    let base_def = input.quote_base_define();
+    let from_ptr_impl = input.quote_from_ptr_impl();
+    let pfn_impl = input.quote_pfn_impl();
+
+    quote! {
+        #base_def
+        #from_ptr_impl
+        #pfn_impl
+    }
+    .into()
+}
