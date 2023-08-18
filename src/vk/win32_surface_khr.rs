@@ -1,7 +1,7 @@
 //! VK_KHR_win32_surface extensions
 
 use super::*;
-use crate::PFN;
+use crate::{StaticCallable, PFN};
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
 pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
@@ -21,8 +21,8 @@ pub struct VkWin32SurfaceCreateInfoKHR {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateWin32SurfaceKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateWin32SurfaceKHR)]
 pub struct PFN_vkCreateWin32SurfaceKHR(
     pub  unsafe extern "system" fn(
         instance: VkInstance,
@@ -33,8 +33,8 @@ pub struct PFN_vkCreateWin32SurfaceKHR(
 );
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceWin32PresentationSupportKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceWin32PresentationSupportKHR)]
 pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(
     pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32,
 );
