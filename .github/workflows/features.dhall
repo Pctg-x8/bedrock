@@ -1,3 +1,5 @@
+let List/concat = https://prelude.dhall-lang.org/List/concat
+
 let PlatformIndependent =
       [ "VK_EXT_blend_operation_advanced"
       , "VK_AMD_buffer_marker"
@@ -117,4 +119,14 @@ let MacSpecific =
       , "Implements"
       ]
 
-in  { PlatformIndependent, Win32Specific, UnixSpecific, MacSpecific }
+let ForDocumentation =
+      List/concat
+        Text
+        [ PlatformIndependent, UnixSpecific, MacSpecific, [ "Implements" ] ]
+
+in  { PlatformIndependent
+    , Win32Specific
+    , UnixSpecific
+    , MacSpecific
+    , ForDocumentation
+    }

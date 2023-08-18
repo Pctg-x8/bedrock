@@ -11,11 +11,8 @@ jobs:
       uses: "actions-rs/toolchain@v1"
       with:
         toolchain: stable
-    - name: Run Cargo
-      uses: "actions-rs/cargo@v1"
-      with:
-        args: "-- --check"
-        command: fmt
+    - name: check fmt
+      run: "cargo fmt -- --check"
     - if: "failure()"
       name: Configure AWS Credentials
       uses: "aws-actions/configure-aws-credentials@v1"
@@ -34,12 +31,12 @@ jobs:
   "document-deploy":
     name: Deploy Latest Document
     needs:
-    - preconditions
-    - test
     - "check-format"
     - "test-win32"
     - "test-unix"
     - "test-mac"
+    - test
+    - preconditions
     permissions:
       "id-token": write
     "runs-on": "ubuntu-latest"
@@ -91,13 +88,13 @@ jobs:
   "report-success":
     name: Report as Success
     needs:
-    - preconditions
-    - test
-    - "check-format"
     - "document-deploy"
+    - "check-format"
     - "test-win32"
     - "test-unix"
     - "test-mac"
+    - test
+    - preconditions
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
@@ -142,15 +139,15 @@ jobs:
       uses: "Pctg-x8/ci-notifications-post-invoker@master"
       with:
         begintime: "${{ needs.preconditions.outputs.begintime }}"
-        failure_step: Run Tests
+        failure_step: "Run Tests (Platform Independent)"
         mode: branch
         report_name: Integrity Check
         status: failure
   "test-mac":
     name: "Run Tests (Mac Specific)"
     needs:
-    - preconditions
     - test
+    - preconditions
     "runs-on": "macos-latest"
     steps:
     - name: Checking out
@@ -182,8 +179,8 @@ jobs:
   "test-unix":
     name: "Run Tests (Unix Specific)"
     needs:
-    - preconditions
     - test
+    - preconditions
     "runs-on": "ubuntu-latest"
     steps:
     - name: Checking out
@@ -215,8 +212,8 @@ jobs:
   "test-win32":
     name: "Run Tests (Win32 Specific)"
     needs:
-    - preconditions
     - test
+    - preconditions
     "runs-on": "windows-latest"
     steps:
     - name: Checking out
