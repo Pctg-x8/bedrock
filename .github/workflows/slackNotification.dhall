@@ -36,14 +36,14 @@ let notifySuccessStep =
         , mode = SlackNotifierAction.Mode.Branch
         }
 
-let notifyFailureSteps =
+let failureSteps =
       λ(stepName : Text) → [ configureStep, notifyFailureStep stepName ]
 
-let notifySuccessSteps = [ configureStep, notifySuccessStep ]
+let successSteps = [ configureStep, notifySuccessStep ]
 
 in  { configureStep
     , notifyFailureStep
     , notifySuccessStep
-    , notifyFailureSteps
-    , notifySuccessSteps
+    , failureSteps
+    , successSteps
     }

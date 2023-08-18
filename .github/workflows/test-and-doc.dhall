@@ -26,12 +26,10 @@ let faultableJob =
       λ(job : GithubActions.Job.Type) →
         let jobName = Optional/default Text "<unknown job>" job.name
 
-        in    job
-            ⫽ { steps =
-                    job.steps
-                  # helper.runStepsOnFailure
-                      (SlackNotification.notifyFailureSteps jobName)
-              }
+        let steps =
+              helper.runStepsOnFailure (SlackNotification.failureSteps jobName)
+
+        in  job ⫽ { steps = job.steps # steps }
 
 let useRust =
       λ(toolchain : Text) →
@@ -169,7 +167,7 @@ let documentDeploymentStep =
 let reportSuccessJob =
       JobBuilder.buildJob
         [ JobBuilder.useRepositoryContent, JobBuilder.name "Report as Success" ]
-        SlackNotification.notifySuccessSteps
+        SlackNotification.successSteps
 
 let checkJobs =
         JobBuilder.requireJobBefore
