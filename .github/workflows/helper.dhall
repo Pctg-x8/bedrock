@@ -7,14 +7,7 @@ let List/map = https://prelude.dhall-lang.org/List/map
 
 let Text/concatSep = https://prelude.dhall-lang.org/Text/concatSep
 
-let flattenSteps =
-      λ(steps : List (List GithubActions.Step.Type)) →
-        List/concat GithubActions.Step.Type steps
-
-let prependStep =
-      λ(step : GithubActions.Step.Type) →
-      λ(steps : List GithubActions.Step.Type) →
-        flattenSteps [ [ step ], steps ]
+let flattenSteps = List/concat GithubActions.Step.Type
 
 let serializeFeatures = Text/concatSep ","
 
@@ -34,7 +27,6 @@ let runStepsOnFailure =
           steps
 
 in  { flattenSteps
-    , prependStep
     , serializeFeatures
     , withConditionStep
     , runStepOnFailure

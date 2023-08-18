@@ -28,11 +28,9 @@ let faultableJob =
 
         in    job
             ⫽ { steps =
-                  helper.flattenSteps
-                    [ job.steps
-                    , helper.runStepsOnFailure
-                        (SlackNotification.notifyFailureSteps jobName)
-                    ]
+                    job.steps
+                  # helper.runStepsOnFailure
+                      (SlackNotification.notifyFailureSteps jobName)
               }
 
 let useRust =
@@ -40,11 +38,10 @@ let useRust =
       λ(job : GithubActions.Job.Type) →
           job
         ⫽ { steps =
-              helper.prependStep
-                ( InstallRust.step
+                [ InstallRust.step
                     InstallRust.Params::{ toolchain = Some toolchain }
-                )
-                job.steps
+                ]
+              # job.steps
           }
 
 let cargo =
@@ -167,7 +164,7 @@ let documentDeploymentStep =
             , JobBuilder.requestIDTokenWritePermission
             , JobBuilder.name "Deploy Latest Document"
             ]
-            (helper.prependStep buildDocument deploymentSteps)
+            ([ buildDocument ] # deploymentSteps)
 
 let reportSuccessJob =
       JobBuilder.buildJob

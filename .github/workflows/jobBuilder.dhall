@@ -6,31 +6,29 @@ let Checkout =
 
 let Map = https://prelude.dhall-lang.org/Map/Type
 
+let Map/keyValue = https://prelude.dhall-lang.org/Map/keyValue
+
 let Map/keys = https://prelude.dhall-lang.org/Map/keys
 
 let Map/mapValue = https://prelude.dhall-lang.org/Map/map
 
 let Optional/default = https://prelude.dhall-lang.org/Optional/default
 
-let Optional/fold = https://prelude.dhall-lang.org/Optional/fold
-
 let List/map = https://prelude.dhall-lang.org/List/map
-
-let List/concat = https://prelude.dhall-lang.org/List/concat
-
-let helper = ./helper.dhall
 
 let DefaultRunnerPlatform = GithubActions.RunnerPlatform.ubuntu-latest
 
 let JobMap = Map Text GithubActions.Job.Type
+
+let JobOutputMap = Map Text Text
+
+let JobOutputMap/entry = Map/keyValue Text
 
 let JobModifier = GithubActions.Job.Type → GithubActions.Job.Type
 
 let stdJob =
       λ(steps : List GithubActions.Step.Type) →
         GithubActions.Job::{ runs-on = DefaultRunnerPlatform, steps }
-
-let singleStepJob = λ(step : GithubActions.Step.Type) → stdJob [ step ]
 
 let name =
       λ(name : Text) →
@@ -46,53 +44,34 @@ let output =
       λ(name : Text) →
       λ(value : Text) →
       λ(job : GithubActions.Job.Type) →
-          job
-        ⫽ { outputs = Some
-              (   Optional/default
-                    (Map Text Text)
-                    ([] : Map Text Text)
-                    job.outputs
-                # [ { mapKey = name, mapValue = value } ]
-              )
-          }
+        let outputs =
+              Optional/default JobOutputMap ([] : JobOutputMap) job.outputs
+
+        in    job
+            ⫽ { outputs = Some (outputs # [ JobOutputMap/entry name value ]) }
 
 let depends =
       λ(dep : Text) →
       λ(job : GithubActions.Job.Type) →
-          job
-        ⫽ { needs = Some
-              ( Optional/fold
-                  (List Text)
-                  job.needs
-                  (List Text)
-                  (λ(current : List Text) → current # [ dep ])
-                  [ dep ]
-              )
-          }
+        let needs = Optional/default (List Text) ([] : List Text) job.needs
+
+        in  job ⫽ { needs = Some (needs # [ dep ]) }
 
 let useRepositoryContent =
       λ(job : GithubActions.Job.Type) →
-          job
-        ⫽ { steps =
-              helper.prependStep
-                (Checkout.stepv3 Checkout.Params::{=})
-                job.steps
-          }
+        job ⫽ { steps = [ Checkout.stepv3 Checkout.Params::{=} ] # job.steps }
 
 let requestIDTokenWritePermission =
       λ(job : GithubActions.Job.Type) →
-          job
-        ⫽ { permissions = Some
-              ( Optional/fold
-                  (Map Text Text)
-                  job.permissions
-                  (Map Text Text)
-                  ( λ(perms : Map Text Text) →
-                      perms # toMap { id-token = "write" }
-                  )
-                  (toMap { id-token = "write" })
-              )
-          }
+        let permissions =
+              Optional/default
+                (Map Text Text)
+                ([] : Map Text Text)
+                job.permissions
+
+        in    job
+            ⫽ { permissions = Some (permissions # toMap { id-token = "write" })
+              }
 
 let applyJobModifiers =
       λ(modifiers : List JobModifier) →
@@ -112,20 +91,17 @@ let buildJob =
 let requireJobBefore =
       λ(prejobs : JobMap) →
       λ(afterJobs : JobMap) →
-          prejobs
-        # Map/mapValue
-            Text
-            GithubActions.Job.Type
-            GithubActions.Job.Type
-            ( applyJobModifiers
-                ( List/map
-                    Text
-                    JobModifier
-                    depends
-                    (Map/keys Text GithubActions.Job.Type prejobs)
+        let requiredJobNames = Map/keys Text GithubActions.Job.Type prejobs
+
+        in    prejobs
+            # Map/mapValue
+                Text
+                GithubActions.Job.Type
+                GithubActions.Job.Type
+                ( applyJobModifiers
+                    (List/map Text JobModifier depends requiredJobNames)
                 )
-            )
-            afterJobs
+                afterJobs
 
 in  { JobModifier
     , JobMap
