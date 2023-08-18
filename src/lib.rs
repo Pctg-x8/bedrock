@@ -37,7 +37,7 @@ pub use self::error::*;
 cfg_if! {
     if #[cfg(feature = "Implements")] {
         mod vkresolve;
-        pub use self::vkresolve::{ResolverInterface, PFN};
+        pub use self::vkresolve::{ResolverInterface, PFN, StaticCallable};
     }
 }
 

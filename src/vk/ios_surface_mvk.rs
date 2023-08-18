@@ -4,7 +4,7 @@ pub const VK_MVK_IOS_SURFACE_SPEC_VERSION: usize = 2;
 pub static VK_MVK_IOS_SURFACE_EXTENSION_NAME: &'static str = "VK_MVK_ios_surface";
 
 use super::*;
-use crate::PFN;
+use crate::{StaticCallable, PFN};
 
 pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
 
@@ -20,7 +20,7 @@ pub struct VkIOSSurfaceCreateInfoMVK {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateIOSSurfaceMVK)]
 pub struct PFN_vkCreateIOSSurfaceMVK(
     pub  unsafe extern "system" fn(
