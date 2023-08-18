@@ -25,16 +25,21 @@ pub struct VkExternalImageFormatPropertiesNV {
     pub compatibleHandleTypes: VkExternalMemoryHandleTypeFlagsNV,
 }
 
-pub type PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    format: VkFormat,
-    itype: VkImageType,
-    tiling: VkImageTiling,
-    usage: VkImageUsageFlags,
-    flags: VkImageCreateFlags,
-    externalHandleType: VkExternalMemoryHandleTypeFlagsNV,
-    pExternalImageFormatProperties: *mut VkExternalImageFormatPropertiesNV,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceExternalImageFormatPropertiesNV)]
+pub struct PFN_vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        itype: VkImageType,
+        tiling: VkImageTiling,
+        usage: VkImageUsageFlags,
+        flags: VkImageCreateFlags,
+        externalHandleType: VkExternalMemoryHandleTypeFlagsNV,
+        pExternalImageFormatProperties: *mut VkExternalImageFormatPropertiesNV,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

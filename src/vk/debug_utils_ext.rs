@@ -123,51 +123,51 @@ pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkSetDebugUtilsObjectNameEXT)]
 pub struct PFN_vkSetDebugUtilsObjectNameEXT(
-    pub extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult,
+    pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult,
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkSetDebugUtilsObjectTagEXT)]
 pub struct PFN_vkSetDebugUtilsObjectTagEXT(
-    pub extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult,
+    pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult,
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueBeginDebugUtilsLabelEXT)]
 pub struct PFN_vkQueueBeginDebugUtilsLabelEXT(
-    pub extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
+    pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueEndDebugUtilsLabelEXT)]
-pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub extern "system" fn(queue: VkQueue));
+pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue));
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueInsertDebugUtilsLabelEXT)]
 pub struct PFN_vkQueueInsertDebugUtilsLabelEXT(
-    pub extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
+    pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdBeginDebugUtilsLabelEXT)]
 pub struct PFN_vkCmdBeginDebugUtilsLabelEXT(
-    pub extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdEndDebugUtilsLabelEXT)]
-pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub extern "system" fn(commandBuffer: VkCommandBuffer));
+pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdInsertDebugUtilsLabelEXT)]
 pub struct PFN_vkCmdInsertDebugUtilsLabelEXT(
-    pub extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDebugUtilsMessengerEXT)]
 pub struct PFN_vkCreateDebugUtilsMessengerEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkDebugUtilsMessengerCreateInfoEXT,
         pAllocator: *const VkAllocationCallbacks,
@@ -178,7 +178,7 @@ pub struct PFN_vkCreateDebugUtilsMessengerEXT(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyDebugUtilsMessengerEXT)]
 pub struct PFN_vkDestroyDebugUtilsMessengerEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         messenger: VkDebugUtilsMessengerEXT,
         pAllocator: *const VkAllocationCallbacks,
@@ -188,7 +188,7 @@ pub struct PFN_vkDestroyDebugUtilsMessengerEXT(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkSubmitDebugUtilsMessageEXT)]
 pub struct PFN_vkSubmitDebugUtilsMessageEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT,
         messageTypes: VkDebugUtilsMessageTypeFlagsEXT,

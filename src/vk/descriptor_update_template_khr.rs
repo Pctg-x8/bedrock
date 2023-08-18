@@ -74,7 +74,7 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDescriptorUpdateTemplateKHR)]
 pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
@@ -86,7 +86,7 @@ pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyDescriptorUpdateTemplateKHR)]
 pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
         pAllocator: *const VkAllocationCallbacks,
@@ -97,7 +97,7 @@ pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkUpdateDescriptorSetWithTemplateKHR)]
 pub struct PFN_vkUpdateDescriptorSetWithTemplateKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         descriptorSet: VkDescriptorSet,
         descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,

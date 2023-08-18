@@ -85,7 +85,7 @@ pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDebugReportCallbackEXT)]
 pub struct PFN_vkCreateDebugReportCallbackEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
         pAllocator: *const VkAllocationCallbacks,
@@ -96,7 +96,7 @@ pub struct PFN_vkCreateDebugReportCallbackEXT(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyDebugReportCallbackEXT)]
 pub struct PFN_vkDestroyDebugReportCallbackEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         callback: VkDebugReportCallbackEXT,
         pAllocator: *const VkAllocationCallbacks,
@@ -106,7 +106,7 @@ pub struct PFN_vkDestroyDebugReportCallbackEXT(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDebugReportMessageEXT)]
 pub struct PFN_vkDebugReportMessageEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         flags: VkDebugReportFlagsEXT,
         objectType: VkDebugReportObjectTypeEXT,

@@ -66,23 +66,38 @@ pub struct VkSparseImageMemoryRequirements2KHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetImageMemoryRequirements2KHR = extern "system" fn(
-    device: VkDevice,
-    pInfo: *const VkImageMemoryRequirementsInfo2,
-    pMemoryRequirements: *mut VkMemoryRequirements2,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetImageMemoryRequirements2KHR)]
+pub struct PFN_vkGetImageMemoryRequirements2KHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pInfo: *const VkImageMemoryRequirementsInfo2,
+        pMemoryRequirements: *mut VkMemoryRequirements2,
+    ),
 );
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetBufferMemoryRequirements2KHR = extern "system" fn(
-    device: VkDevice,
-    pInfo: *const VkBufferMemoryRequirementsInfo2,
-    pMemoryRequirements: *mut VkMemoryRequirements2,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetBufferMemoryRequirements2KHR)]
+pub struct PFN_vkGetBufferMemoryRequirements2KHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pInfo: *const VkBufferMemoryRequirementsInfo2,
+        pMemoryRequirements: *mut VkMemoryRequirements2,
+    ),
 );
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetImageSparseMemoryRequirements2KHR = extern "system" fn(
-    device: VkDevice,
-    pInfo: *const VkImageSparseMemoryRequirementsInfo2,
-    pSparseMemoryRequirementCount: *mut u32,
-    pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetImageSparseMemoryRequirements2KHR)]
+pub struct PFN_vkGetImageSparseMemoryRequirements2KHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pInfo: *const VkImageSparseMemoryRequirementsInfo2,
+        pSparseMemoryRequirementCount: *mut u32,
+        pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2,
+    ),
 );
 
 #[cfg(feature = "Implements")]

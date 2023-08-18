@@ -122,10 +122,15 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR,
-    pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceExternalBufferPropertiesKHR)]
+pub struct PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR,
+        pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR,
+    ),
 );
 
 #[cfg(feature = "Implements")]

@@ -912,13 +912,15 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             pNext: std::ptr::null_mut(),
             drmFormatModifier: 0,
         };
-        crate::VkResultBox(self.device().get_image_drm_format_modifier_properties_ext_fn().0(
-            self.device().native_ptr(),
-            self.native_ptr(),
-            &mut properties,
-        ))
-        .into_result()
-        .map(move |_| properties)
+        unsafe {
+            crate::VkResultBox(self.device().get_image_drm_format_modifier_properties_ext_fn().0(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut properties,
+            ))
+            .into_result()
+            .map(move |_| properties)
+        }
     }
 }
 DerefContainerBracketImpl!(for Image {

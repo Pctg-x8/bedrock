@@ -27,11 +27,16 @@ pub struct VkSurfaceCapabilities2EXT {
     pub supportedSurfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 
-pub type PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    surface: VkSurfaceKHR,
-    pSurfaceCapabilities: *mut VkSurfaceCapabilities2EXT,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfaceCapabilities2EXT)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR,
+        pSurfaceCapabilities: *mut VkSurfaceCapabilities2EXT,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

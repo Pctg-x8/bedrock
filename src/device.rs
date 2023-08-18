@@ -675,13 +675,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             })
             .collect();
 
-        VkResultBox(self.bind_buffer_memory2_khr_fn().0(
-            self.native_ptr(),
-            infos.len() as _,
-            infos.as_ptr(),
-        ))
-        .into_result()
-        .map(drop)
+        unsafe {
+            VkResultBox(self.bind_buffer_memory2_khr_fn().0(
+                self.native_ptr(),
+                infos.len() as _,
+                infos.as_ptr(),
+            ))
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Multiple Binding for Images
@@ -706,13 +708,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             })
             .collect();
 
-        VkResultBox(self.bind_image_memory2_khr_fn().0(
-            self.native_ptr(),
-            infos.len() as _,
-            infos.as_ptr(),
-        ))
-        .into_result()
-        .map(drop)
+        unsafe {
+            VkResultBox(self.bind_image_memory2_khr_fn().0(
+                self.native_ptr(),
+                infos.len() as _,
+                infos.as_ptr(),
+            ))
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Multiple Binding for both resources

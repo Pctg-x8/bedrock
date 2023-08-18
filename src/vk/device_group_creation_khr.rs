@@ -31,11 +31,16 @@ pub struct VkDeviceGroupDeviceCreateInfoKHR {
     pub pPhysicalDevices: *const VkPhysicalDevice,
 }
 
-pub type PFN_vkEnumeratePhysicalDeviceGroupsKHR = extern "system" fn(
-    instance: VkInstance,
-    pPhysicalDeviceGroupCount: *mut u32,
-    pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumeratePhysicalDeviceGroupsKHR)]
+pub struct PFN_vkEnumeratePhysicalDeviceGroupsKHR(
+    pub  unsafe extern "system" fn(
+        instance: VkInstance,
+        pPhysicalDeviceGroupCount: *mut u32,
+        pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

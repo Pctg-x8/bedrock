@@ -38,11 +38,24 @@ pub struct VkMemoryGetFdInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
-pub type PFN_vkGetMemoryFdKHR =
-    extern "system" fn(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
-pub type PFN_vkGetMemoryFdPropertiesKHR = extern "system" fn(
-    device: VkDevice,
-    handleType: VkExternalMemoryHandleTypeFlagsKHR,
-    fd: c_int,
-    pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetMemoryFdKHR)]
+pub struct PFN_vkGetMemoryFdKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pGetFdInfo: *const VkMemoryGetFdInfoKHR,
+        pFd: *mut c_int,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetMemoryFdPropertiesKHR)]
+pub struct PFN_vkGetMemoryFdPropertiesKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        handleType: VkExternalMemoryHandleTypeFlagsKHR,
+        fd: c_int,
+        pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR,
+    ) -> VkResult,
+);

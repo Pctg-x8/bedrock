@@ -28,11 +28,16 @@ pub struct VkHdrMetadataEXT {
     pub maxFrameAverageLightLevel: c_float,
 }
 
-pub type PFN_vkSetHdrMetadataEXT = extern "system" fn(
-    device: VkDevice,
-    swapchainCount: u32,
-    pSwapchains: *const VkSwapchainKHR,
-    pMetadata: *const VkHdrMetadataEXT,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkSetHdrMetadataEXT)]
+pub struct PFN_vkSetHdrMetadataEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        swapchainCount: u32,
+        pSwapchains: *const VkSwapchainKHR,
+        pMetadata: *const VkHdrMetadataEXT,
+    ),
 );
 
 #[cfg(feature = "Implements")]

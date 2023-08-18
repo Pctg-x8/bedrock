@@ -60,8 +60,13 @@ pub struct VkExternalFencePropertiesKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR,
-    pExternalFenceProperties: *mut VkExternalFencePropertiesKHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceExternalFencePropertiesKHR)]
+pub struct PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR,
+        pExternalFenceProperties: *mut VkExternalFencePropertiesKHR,
+    ),
 );

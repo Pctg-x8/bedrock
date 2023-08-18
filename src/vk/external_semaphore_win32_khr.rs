@@ -56,12 +56,22 @@ pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 
-pub type PFN_vkImportSemaphoreWin32HandleKHR = extern "system" fn(
-    device: VkDevice,
-    pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR,
-) -> VkResult;
-pub type PFN_vkGetSemaphoreWin32HandleKHR = extern "system" fn(
-    device: VkDevice,
-    pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR,
-    pHandle: *mut windows::Win32::Foundation::HANDLE,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkImportSemaphoreWin32HandleKHR)]
+pub struct PFN_vkImportSemaphoreWin32HandleKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetSemaphoreWin32HandleKHR)]
+pub struct PFN_vkGetSemaphoreWin32HandleKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
+    ) -> VkResult,
+);

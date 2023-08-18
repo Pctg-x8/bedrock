@@ -81,12 +81,21 @@ pub struct VkMultisamplePropertiesEXT {
     pub maxSampleLocationGridSize: VkExtent2D,
 }
 
-pub type PFN_vkCmdSetSampleLocationsEXT =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT);
-pub type PFN_vkGetPhysicalDeviceMultisampleProeprtiesEXT = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    samples: VkSampleCountFlags,
-    pMultisampleProperties: *mut VkMultisamplePropertiesEXT,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetSampleLocationsEXT)]
+pub struct PFN_vkCmdSetSampleLocationsEXT(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceMultisampleProeprtiesEXT)]
+pub struct PFN_vkGetPhysicalDeviceMultisampleProeprtiesEXT(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        samples: VkSampleCountFlags,
+        pMultisampleProperties: *mut VkMultisamplePropertiesEXT,
+    ),
 );
 
 #[cfg(feature = "Implements")]

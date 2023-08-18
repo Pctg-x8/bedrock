@@ -126,7 +126,7 @@ pub struct VkDrmFormatModifierPropertiesList2EXT {
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetImageDrmFormatModifierPropertiesEXT)]
 pub struct PFN_vkGetImageDrmFormatModifierPropertiesEXT(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         image: VkImage,
         pProperties: *mut VkImageDrmFormatModifierPropertiesEXT,

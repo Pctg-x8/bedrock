@@ -35,7 +35,7 @@ pub type VkCommandPoolTrimFlagsKHR = VkFlags;
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkTrimCommandPoolKHR)]
 pub struct PFN_vkTrimCommandPoolKHR(
-    pub extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR),
+    pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR),
 );
 
 #[cfg(feature = "Implements")]

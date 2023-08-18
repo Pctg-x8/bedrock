@@ -9,7 +9,7 @@ use derives::promote_1_1;
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkBindBufferMemory2KHR)]
 pub struct PFN_vkBindBufferMemory2KHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         bindInfoCount: u32,
         pBindInfos: *const VkBindBufferMemoryInfoKHR,
@@ -20,7 +20,7 @@ pub struct PFN_vkBindBufferMemory2KHR(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkBindImageMemory2KHR)]
 pub struct PFN_vkBindImageMemory2KHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         bindInfoCount: u32,
         pBindInfos: *const VkBindImageMemoryInfoKHR,

@@ -32,14 +32,19 @@ pub struct VkShaderStatisticsInfoAMD {
     pub computeWorkGroupSize: [u32; 3],
 }
 
-pub type PFN_vkGetShaderInfoKHR = extern "system" fn(
-    device: VkDevice,
-    pipeline: VkPipeline,
-    shaderStage: VkShaderStageFlags,
-    infoType: VkShaderInfoTypeAMD,
-    pInfoSize: *mut size_t,
-    pInfo: *mut c_void,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetShaderInfoKHR)]
+pub struct PFN_vkGetShaderInfoKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pipeline: VkPipeline,
+        shaderStage: VkShaderStageFlags,
+        infoType: VkShaderInfoTypeAMD,
+        pInfoSize: *mut size_t,
+        pInfo: *mut c_void,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

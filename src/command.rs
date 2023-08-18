@@ -115,7 +115,9 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
     {
         use crate::Device;
 
-        self.device().get_trim_command_pool_khr_fn().0(self.device().native_ptr(), self.native_ptr_mut(), 0);
+        unsafe {
+            self.device().get_trim_command_pool_khr_fn().0(self.device().native_ptr(), self.native_ptr_mut(), 0);
+        }
     }
 }
 DerefContainerBracketImpl!(for CommandPool {});

@@ -14,25 +14,35 @@ pub struct VkPhysicalDevicePushDescriptorPropertiesKHR {
     pub maxPushDescriptors: u32,
 }
 
-pub type PFN_vkCmdPushDescriptorSetKHR = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    pipelineBindPoint: VkPipelineBindPoint,
-    layout: VkPipelineLayout,
-    set: u32,
-    descriptorWriteCount: u32,
-    pDescriptorWrites: *const VkWriteDescriptorSet,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdPushDescriptorSetKHR)]
+pub struct PFN_vkCmdPushDescriptorSetKHR(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pipelineBindPoint: VkPipelineBindPoint,
+        layout: VkPipelineLayout,
+        set: u32,
+        descriptorWriteCount: u32,
+        pDescriptorWrites: *const VkWriteDescriptorSet,
+    ),
 );
 
 cfg_if! {
     if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
         pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
 
-        pub type PFN_vkCmdPushDescriptorSetWithTemplateKHR = extern "system" fn(
-            commandBuffer: VkCommandBuffer,
-            descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-            layout: VkPipelineLayout,
-            set: u32,
-            pData: *const c_void
+        #[repr(transparent)]
+        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdPushDescriptorSetWithTemplateKHR)]
+        pub struct PFN_vkCmdPushDescriptorSetWithTemplateKHR(
+            pub unsafe extern "system" fn(
+                commandBuffer: VkCommandBuffer,
+                descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
+                layout: VkPipelineLayout,
+                set: u32,
+                pData: *const c_void
+            ),
         );
     }
 }

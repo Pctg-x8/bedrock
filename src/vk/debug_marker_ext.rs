@@ -37,15 +37,34 @@ pub struct VkDebugMarkerMarkerInfoEXT {
     pub color: [c_float; 4],
 }
 
-pub type PFN_vkDebugMarkerSetObjectTagEXT =
-    extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugMarkerObjectTagInfoEXT) -> VkResult;
-pub type PFN_vkDebugMarkerSetObjectNameEXT =
-    extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugMarkerObjectNameInfoEXT) -> VkResult;
-pub type PFN_vkCmdDebugMarkerBeginEXT =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT);
-pub type PFN_vkCmdDebugMarkerEndEXT = extern "system" fn(commandBuffer: VkCommandBuffer);
-pub type PFN_vkCmdDebugMarkerInsertEXT =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDebugMarkerSetObjectTagEXT)]
+pub struct PFN_vkDebugMarkerSetObjectTagEXT(
+    pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugMarkerObjectTagInfoEXT) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDebugMarkerSetObjectNameEXT)]
+pub struct PFN_vkDebugMarkerSetObjectNameEXT(
+    pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugMarkerObjectNameInfoEXT) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDebugMarkerBeginEXT)]
+pub struct PFN_vkCmdDebugMarkerBeginEXT(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDebugMarkerEndEXT)]
+pub struct PFN_vkCmdDebugMarkerEndEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDebugMarkerInsertEXT)]
+pub struct PFN_vkCmdDebugMarkerInsertEXT(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT),
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

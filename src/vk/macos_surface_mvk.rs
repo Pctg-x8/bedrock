@@ -21,7 +21,7 @@ pub struct VkMacOSSurfaceCreateInfoMVK {
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkCreateMacOSSurfaceMVK"]
 pub struct PFN_vkCreateMacOSSurfaceMVK(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
         pAllocator: *const VkAllocationCallbacks,

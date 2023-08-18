@@ -192,47 +192,99 @@ pub struct VkObjectTablePushConstantEntryNVX {
     pub stageFlags: VkShaderStageFlags,
 }
 
-pub type PFN_vkCmdProcessCommandsNVX =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pProcessCommandsInfo: *const VkCmdProcessCommandsInfoNVX);
-pub type PFN_vkCmdReserveSpaceForCommandsNVX =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pReserveSpaceInfo: *const VkCmdReserveSpaceForCommandsInfoNVX);
-pub type PFN_vkCreateIndirectCommandsLayoutNVX = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkIndirectCommandsLayoutCreateInfoNVX,
-    pAllocator: *const VkAllocationCallbacks,
-    pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX,
-) -> VkResult;
-pub type PFN_vkDestroyIndirectCommandsLayoutNVX = extern "system" fn(
-    device: VkDevice,
-    indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
-    pAllocator: *const VkAllocationCallbacks,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdProcessCommandsNVX)]
+pub struct PFN_vkCmdProcessCommandsNVX(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pProcessCommandsInfo: *const VkCmdProcessCommandsInfoNVX,
+    ),
 );
-pub type PFN_vkCreateObjectTableNVX = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkObjectTableCreateInfoNVX,
-    pAllocator: *const VkAllocationCallbacks,
-    pObjectTable: *mut VkObjectTableNVX,
-) -> VkResult;
-pub type PFN_vkDestroyObjectTableNVX =
-    extern "system" fn(device: VkDevice, objectTable: VkObjectTableNVX, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkRegisterObjectsNVX = extern "system" fn(
-    device: VkDevice,
-    objectTable: VkObjectTableNVX,
-    objectCount: u32,
-    ppObjectTableEntries: *const *const VkObjectTableEntryNVX,
-    pObjectIndices: *const u32,
-) -> VkResult;
-pub type PFN_vkUnregisterObjectsNVX = extern "system" fn(
-    device: VkDevice,
-    objectTable: VkObjectTableNVX,
-    objectCount: u32,
-    pObjectEntryTypes: *const VkObjectEntryTypeNVX,
-    pObjectIndices: *const u32,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pFeatures: *mut VkDeviceGeneratedCommandsFeaturesNVX,
-    pLimits: *mut VkDeviceGeneratedCommandsLimitsNVX,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdReserveSpaceForCommandsNVX)]
+pub struct PFN_vkCmdReserveSpaceForCommandsNVX(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pReserveSpaceInfo: *const VkCmdReserveSpaceForCommandsInfoNVX,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateIndirectCommandsLayoutNVX)]
+pub struct PFN_vkCreateIndirectCommandsLayoutNVX(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkIndirectCommandsLayoutCreateInfoNVX,
+        pAllocator: *const VkAllocationCallbacks,
+        pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyIndirectCommandsLayoutNVX)]
+pub struct PFN_vkDestroyIndirectCommandsLayoutNVX(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateObjectTableNVX)]
+pub struct PFN_vkCreateObjectTableNVX(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkObjectTableCreateInfoNVX,
+        pAllocator: *const VkAllocationCallbacks,
+        pObjectTable: *mut VkObjectTableNVX,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyObjectTableNVX)]
+pub struct PFN_vkDestroyObjectTableNVX(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        objectTable: VkObjectTableNVX,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkRegisterObjectsNVX)]
+pub struct PFN_vkRegisterObjectsNVX(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        objectTable: VkObjectTableNVX,
+        objectCount: u32,
+        ppObjectTableEntries: *const *const VkObjectTableEntryNVX,
+        pObjectIndices: *const u32,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkUnregisterObjectsNVX)]
+pub struct PFN_vkUnregisterObjectsNVX(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        objectTable: VkObjectTableNVX,
+        objectCount: u32,
+        pObjectEntryTypes: *const VkObjectEntryTypeNVX,
+        pObjectIndices: *const u32,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX)]
+pub struct PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pFeatures: *mut VkDeviceGeneratedCommandsFeaturesNVX,
+        pLimits: *mut VkDeviceGeneratedCommandsLimitsNVX,
+    ),
 );
 
 #[cfg(feature = "Implements")]

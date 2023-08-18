@@ -13,13 +13,18 @@ pub struct VkDisplayPresentInfoKHR {
     pub persistent: VkBool32,
 }
 
-pub type PFN_vkCreateSharedSwapchainsKHR = extern "system" fn(
-    device: VkDevice,
-    swapchainCount: u32,
-    pCreateInfos: *const VkSwapchainCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSwapchains: *mut VkSwapchainKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateSharedSwapchainsKHR)]
+pub struct PFN_vkCreateSharedSwapchainsKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        swapchainCount: u32,
+        pCreateInfos: *const VkSwapchainCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSwapchains: *mut VkSwapchainKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

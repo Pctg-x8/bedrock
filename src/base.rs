@@ -458,16 +458,18 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             std::ffi::CString::new(message).unwrap(),
         );
 
-        self.debug_report_message_ext_fn().0(
-            self.native_ptr(),
-            flags,
-            object_type as _,
-            object,
-            location,
-            message_count,
-            lp.as_ptr(),
-            msg.as_ptr(),
-        );
+        unsafe {
+            self.debug_report_message_ext_fn().0(
+                self.native_ptr(),
+                flags,
+                object_type as _,
+                object,
+                location,
+                message_count,
+                lp.as_ptr(),
+                msg.as_ptr(),
+            );
+        }
     }
 
     // Extension Function Providers

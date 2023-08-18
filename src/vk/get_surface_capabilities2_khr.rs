@@ -34,17 +34,27 @@ pub struct VkSurfaceFormat2KHR {
     pub surfaceFormat: VkSurfaceFormatKHR,
 }
 
-pub type PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
-    pSurfaceCapabilities: *mut VkSurfaceCapabilities2KHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceSurfaceFormats2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
-    pSurfaceFormatCount: *mut u32,
-    pSurfaceFormats: *mut VkSurfaceFormat2KHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfaceCapabilities2KHR)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
+        pSurfaceCapabilities: *mut VkSurfaceCapabilities2KHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfaceFormats2KHR)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceFormats2KHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
+        pSurfaceFormatCount: *mut u32,
+        pSurfaceFormats: *mut VkSurfaceFormat2KHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

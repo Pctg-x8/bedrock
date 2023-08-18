@@ -25,12 +25,17 @@ pub struct VkExportMemoryWin32HandleInfoNV {
     pub dwAccess: u32,
 }
 
-pub type PFN_vkGetMemoryWin32HandleNV = extern "system" fn(
-    device: VkDevice,
-    memory: VkDeviceMemory,
-    handleType: VkExternalMemoryHandleTypeFlagsNV,
-    pHandle: *mut windows::Win32::Foundation::HANDLE,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetMemoryWin32HandleNV)]
+pub struct PFN_vkGetMemoryWin32HandleNV(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        memory: VkDeviceMemory,
+        handleType: VkExternalMemoryHandleTypeFlagsNV,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
