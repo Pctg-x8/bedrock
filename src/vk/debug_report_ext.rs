@@ -82,6 +82,7 @@ pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(
     pUserData: *mut c_void,
 ) -> VkBool32;
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDebugReportCallbackEXT)]
@@ -93,6 +94,7 @@ pub struct PFN_vkCreateDebugReportCallbackEXT(
         pCallback: *mut VkDebugReportCallbackEXT,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyDebugReportCallbackEXT)]
@@ -103,6 +105,7 @@ pub struct PFN_vkDestroyDebugReportCallbackEXT(
         pAllocator: *const VkAllocationCallbacks,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDebugReportMessageEXT)]

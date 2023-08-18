@@ -31,6 +31,7 @@ pub struct VkSemaphoreGetFdInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkImportSemaphoreFdKHR)]
@@ -40,6 +41,7 @@ pub struct PFN_vkImportSemaphoreFdKHR(
         pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetSemaphoreFdKHR)]

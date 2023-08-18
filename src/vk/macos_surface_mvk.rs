@@ -18,6 +18,7 @@ pub struct VkMacOSSurfaceCreateInfoMVK {
     pub pView: *const c_void,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkCreateMacOSSurfaceMVK"]

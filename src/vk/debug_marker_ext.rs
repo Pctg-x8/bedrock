@@ -38,28 +38,33 @@ pub struct VkDebugMarkerMarkerInfoEXT {
     pub color: [c_float; 4],
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDebugMarkerSetObjectTagEXT)]
 pub struct PFN_vkDebugMarkerSetObjectTagEXT(
     pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugMarkerObjectTagInfoEXT) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDebugMarkerSetObjectNameEXT)]
 pub struct PFN_vkDebugMarkerSetObjectNameEXT(
     pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugMarkerObjectNameInfoEXT) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdDebugMarkerBeginEXT)]
 pub struct PFN_vkCmdDebugMarkerBeginEXT(
     pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pMarkerInfo: *const VkDebugMarkerMarkerInfoEXT),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdDebugMarkerEndEXT)]
 pub struct PFN_vkCmdDebugMarkerEndEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdDebugMarkerInsertEXT)]

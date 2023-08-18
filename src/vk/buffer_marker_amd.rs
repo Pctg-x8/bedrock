@@ -6,6 +6,7 @@ pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME: &str = "VK_AMD_buffer_marker";
 use super::*;
 use crate::PFN;
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdWriteBufferMarkerAMD)]

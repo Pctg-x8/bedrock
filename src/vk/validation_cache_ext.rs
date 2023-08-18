@@ -40,6 +40,7 @@ pub struct VkShaderModuleValidationCacheCreateInfoEXT {
     pub validationCache: VkValidationCacheEXT,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateValidationCacheEXT)]
@@ -51,6 +52,7 @@ pub struct PFN_vkCreateValidationCacheEXT(
         pValidationCache: *mut VkValidationCacheEXT,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyValidationCacheEXT)]
@@ -61,6 +63,7 @@ pub struct PFN_vkDestroyValidationCacheEXT(
         pAllocator: *const VkAllocationCallbacks,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkMergeValidationCachesEXT)]
@@ -72,6 +75,7 @@ pub struct PFN_vkMergeValidationCachesEXT(
         pSrcCaches: *const VkValidationCacheEXT,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetValidationCacheDataEXT)]

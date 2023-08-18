@@ -6,6 +6,7 @@ pub static VK_EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME: &'static str = "VK_EXT_dir
 use super::*;
 use crate::PFN;
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkReleaseDisplayEXT)]

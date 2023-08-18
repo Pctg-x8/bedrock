@@ -20,6 +20,7 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub window: xcb::x::Window,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateXcbSurfaceKHR)]
@@ -31,6 +32,7 @@ pub struct PFN_vkCreateXcbSurfaceKHR(
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceXcbPresentationSupportKHR)]

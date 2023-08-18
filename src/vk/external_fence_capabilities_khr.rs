@@ -60,6 +60,7 @@ pub struct VkExternalFencePropertiesKHR {
     pub externalFenceFeatures: VkExternalFenceFeatureFlagsKHR,
 }
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]

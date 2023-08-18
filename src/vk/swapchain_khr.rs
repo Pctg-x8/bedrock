@@ -60,6 +60,7 @@ pub struct VkPresentInfoKHR {
     pub pResults: *mut VkResult,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateSwapchainKHR)]
@@ -71,12 +72,14 @@ pub struct PFN_vkCreateSwapchainKHR(
         pSwapchain: *mut VkSwapchainKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroySwapchainKHR)]
 pub struct PFN_vkDestroySwapchainKHR(
     pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetSwapchainImagesKHR)]
@@ -88,6 +91,7 @@ pub struct PFN_vkGetSwapchainImagesKHR(
         pSwapchainImages: *mut VkImage,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkAcquireNextImageKHR)]
@@ -101,6 +105,7 @@ pub struct PFN_vkAcquireNextImageKHR(
         pImageIndex: *mut u32,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueuePresentKHR)]

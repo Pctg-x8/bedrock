@@ -20,6 +20,7 @@ pub struct VkAndroidSurfaceCreateInfoKHR {
     pub window: *mut ANativeWindow,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateAndroidSurfaceKHR)]

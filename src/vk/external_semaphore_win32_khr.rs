@@ -57,6 +57,7 @@ pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkImportSemaphoreWin32HandleKHR)]
@@ -66,6 +67,7 @@ pub struct PFN_vkImportSemaphoreWin32HandleKHR(
         pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetSemaphoreWin32HandleKHR)]

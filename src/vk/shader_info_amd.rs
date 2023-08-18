@@ -33,6 +33,7 @@ pub struct VkShaderStatisticsInfoAMD {
     pub computeWorkGroupSize: [u32; 3],
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetShaderInfoKHR)]

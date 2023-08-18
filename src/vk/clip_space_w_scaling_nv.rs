@@ -24,6 +24,7 @@ pub struct VkPipelineViewportWScalingStateCreateInfoNV {
     pub pViewportWScalings: *const VkViewportWScalingNV,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdSetViewportWScalingNV)]

@@ -31,6 +31,7 @@ vk_bitmask! {
 #[promote_1_1(suffix = "KHR")]
 pub type VkCommandPoolTrimFlagsKHR = VkFlags;
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]

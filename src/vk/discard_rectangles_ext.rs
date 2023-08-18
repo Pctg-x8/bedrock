@@ -33,6 +33,7 @@ pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub pDiscardRectangles: *const VkRect2D,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdSetDiscardRectangleEXT)]

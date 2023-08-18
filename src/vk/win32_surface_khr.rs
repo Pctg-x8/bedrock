@@ -19,6 +19,7 @@ pub struct VkWin32SurfaceCreateInfoKHR {
     pub hwnd: windows::Win32::Foundation::HWND,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkCreateWin32SurfaceKHR"]
@@ -30,6 +31,7 @@ pub struct PFN_vkCreateWin32SurfaceKHR(
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkGetPhysicalDeviceWin32PresentationSupportKHR"]

@@ -20,6 +20,7 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
     pub surface: *mut wl_proxy, /*wl_surface*/
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateWaylandSurfaceKHR)]
@@ -31,6 +32,7 @@ pub struct PFN_vkCreateWaylandSurfaceKHR(
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceWaylandPresentationSupportKHR)]

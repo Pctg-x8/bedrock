@@ -5,6 +5,7 @@ use super::*;
 use crate::PFN;
 use derives::promote_1_1;
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -16,6 +17,7 @@ pub struct PFN_vkBindBufferMemory2KHR(
         pBindInfos: *const VkBindBufferMemoryInfoKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]

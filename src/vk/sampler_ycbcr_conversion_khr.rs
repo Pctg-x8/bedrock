@@ -197,6 +197,7 @@ pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     pub combinedImageSamplerDescriptorCount: u32,
 }
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -209,6 +210,7 @@ pub struct PFN_vkCreateSamplerYcbcrConversionKHR(
         pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]

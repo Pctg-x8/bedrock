@@ -20,6 +20,7 @@ pub struct VkXlibSurfaceCreateInfoKHR {
     pub window: Window,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateXlibSurfaceKHR)]
@@ -31,6 +32,7 @@ pub struct PFN_vkCreateXlibSurfaceKHR(
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceXlibPresentationSupportKHR)]

@@ -104,6 +104,7 @@ pub struct VkDeviceGroupBindSparseInfoKHR {
     pub memoryDeviceIndex: u32,
 }
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -118,11 +119,13 @@ pub struct PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR(
     ),
 );
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdSetDeviceMaskKHR)]
 pub struct PFN_vkCmdSetDeviceMaskKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, deviceMask: u32));
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -222,9 +225,39 @@ cfg_if! {
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
-        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkGetDeviceGroupPresentCapabilitiesKHR)] pub struct PFN_vkGetDeviceGroupPresentCapabilitiesKHR(pub unsafe extern "system" fn(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult);
-        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkGetDeviceGroupSurfacePresentModesKHR)] pub struct PFN_vkGetDeviceGroupSurfacePresentModesKHR(pub unsafe extern "system" fn(device: VkDevice, surface: VkSurfaceKHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult);
-        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkGetPhysicalDevicePresentRectanglesKHR)] pub struct PFN_vkGetPhysicalDevicePresentRectanglesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult);
+        #[cfg(feature = "Implements")]
+        #[repr(transparent)]
+        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkGetDeviceGroupPresentCapabilitiesKHR)]
+        pub struct PFN_vkGetDeviceGroupPresentCapabilitiesKHR(
+            pub unsafe extern "system" fn(
+                device: VkDevice,
+                pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR
+            ) -> VkResult
+        );
+        #[cfg(feature = "Implements")]
+        #[repr(transparent)]
+        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkGetDeviceGroupSurfacePresentModesKHR)]
+        pub struct PFN_vkGetDeviceGroupSurfacePresentModesKHR(
+            pub unsafe extern "system" fn(
+                device: VkDevice,
+                surface: VkSurfaceKHR,
+                pModes: *mut VkDeviceGroupPresentModeFlagsKHR
+            ) -> VkResult
+        );
+        #[cfg(feature = "Implements")]
+        #[repr(transparent)]
+        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkGetPhysicalDevicePresentRectanglesKHR)]
+        pub struct PFN_vkGetPhysicalDevicePresentRectanglesKHR(
+            pub unsafe extern "system" fn(
+                physicalDevice: VkPhysicalDevice,
+                surface: VkSurfaceKHR,
+                pRectCount: *mut u32,
+                pRects: *mut VkRect2D
+            ) -> VkResult
+        );
 
         #[cfg(feature = "Implements")]
         #[cfg(not(feature = "DynamicLoaded"))]
@@ -302,7 +335,17 @@ cfg_if! {
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
-        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkAcquireNextImage2KHR)] pub struct PFN_vkAcquireNextImage2KHR(pub unsafe extern "system" fn(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHR, pImageIndex: *mut u32) -> VkResult);
+        #[cfg(feature = "Implements")]
+        #[repr(transparent)]
+        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkAcquireNextImage2KHR)]
+        pub struct PFN_vkAcquireNextImage2KHR(
+            pub unsafe extern "system" fn(
+                device: VkDevice,
+                pAcquireInfo: *const VkAcquireNextImageInfoKHR,
+                pImageIndex: *mut u32
+            ) -> VkResult
+        );
 
         #[cfg(feature = "Implements")]
         #[cfg(not(feature = "DynamicLoaded"))]

@@ -28,6 +28,7 @@ pub struct VkSurfaceCapabilities2EXT {
     pub supportedSurfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceCapabilities2EXT)]

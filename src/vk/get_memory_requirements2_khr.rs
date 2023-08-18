@@ -66,6 +66,7 @@ pub struct VkSparseImageMemoryRequirements2KHR {
     pub memoryRequirements: VkSparseImageMemoryRequirements,
 }
 
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -77,6 +78,7 @@ pub struct PFN_vkGetImageMemoryRequirements2KHR(
         pMemoryRequirements: *mut VkMemoryRequirements2,
     ),
 );
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -88,6 +90,7 @@ pub struct PFN_vkGetBufferMemoryRequirements2KHR(
         pMemoryRequirements: *mut VkMemoryRequirements2,
     ),
 );
+#[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]

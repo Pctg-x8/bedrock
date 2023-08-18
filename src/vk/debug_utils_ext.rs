@@ -120,50 +120,59 @@ pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(
     pUserData: *mut c_void,
 ) -> VkBool32;
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkSetDebugUtilsObjectNameEXT)]
 pub struct PFN_vkSetDebugUtilsObjectNameEXT(
     pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkSetDebugUtilsObjectTagEXT)]
 pub struct PFN_vkSetDebugUtilsObjectTagEXT(
     pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueBeginDebugUtilsLabelEXT)]
 pub struct PFN_vkQueueBeginDebugUtilsLabelEXT(
     pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueEndDebugUtilsLabelEXT)]
 pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue));
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueInsertDebugUtilsLabelEXT)]
 pub struct PFN_vkQueueInsertDebugUtilsLabelEXT(
     pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdBeginDebugUtilsLabelEXT)]
 pub struct PFN_vkCmdBeginDebugUtilsLabelEXT(
     pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdEndDebugUtilsLabelEXT)]
 pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdInsertDebugUtilsLabelEXT)]
 pub struct PFN_vkCmdInsertDebugUtilsLabelEXT(
     pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDebugUtilsMessengerEXT)]
@@ -175,6 +184,7 @@ pub struct PFN_vkCreateDebugUtilsMessengerEXT(
         pMessenger: *mut VkDebugUtilsMessengerEXT,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyDebugUtilsMessengerEXT)]
@@ -185,6 +195,7 @@ pub struct PFN_vkDestroyDebugUtilsMessengerEXT(
         pAllocator: *const VkAllocationCallbacks,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkSubmitDebugUtilsMessageEXT)]

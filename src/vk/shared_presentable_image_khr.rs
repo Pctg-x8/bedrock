@@ -15,6 +15,7 @@ pub struct VkSharedPresentSurfaceCapabilitiesKHR {
     pub sharedPresentSupportedUsageFlags: VkImageUsageFlags,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetSwapchainStatusKHR)]

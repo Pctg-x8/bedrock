@@ -31,12 +31,14 @@ pub struct VkFenceGetFdInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkImportFenceFdKHR)]
 pub struct PFN_vkImportFenceFdKHR(
     pub unsafe extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetFenceFdKHR)]

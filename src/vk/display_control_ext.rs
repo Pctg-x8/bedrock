@@ -53,6 +53,7 @@ pub struct VkSwapchainCounterCreateInfoEXT {
     pub surfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDisplayPowerControlEXT)]
@@ -63,6 +64,7 @@ pub struct PFN_vkDisplayPowerControlEXT(
         pDisplayPowerInfo: *const VkDisplayPowerInfoEXT,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkRegisterDeviceEventEXT)]
@@ -74,6 +76,7 @@ pub struct PFN_vkRegisterDeviceEventEXT(
         pFence: *mut VkFence,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkRegisterDisplayEventEXT)]
@@ -86,6 +89,7 @@ pub struct PFN_vkRegisterDisplayEventEXT(
         pFence: *mut VkFence,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetSwapchainCounterEXT)]

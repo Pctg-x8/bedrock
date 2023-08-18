@@ -44,6 +44,7 @@ pub struct VkFenceGetWin32HandleInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkImportFenceWin32HandleKHR)]
@@ -53,6 +54,7 @@ pub struct PFN_vkImportFenceWin32HandleKHR(
         pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetFenceWin32HandleKHR)]

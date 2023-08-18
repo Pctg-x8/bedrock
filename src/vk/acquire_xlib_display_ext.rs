@@ -8,6 +8,7 @@ use crate::PFN;
 use x11::xlib::Display;
 use x11::xrandr::RROutput;
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkAcquireXlibDisplayEXT)]
@@ -18,6 +19,7 @@ pub struct PFN_vkAcquireXlibDisplayEXT(
         display: VkDisplayKHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetRandROutputDisplayEXT)]

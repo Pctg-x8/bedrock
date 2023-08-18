@@ -106,18 +106,21 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
     pub tiling: VkImageTiling,
 }
 
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceFeatures2KHR)]
 pub struct PFN_vkGetPhysicalDeviceFeatures2KHR(
     pub extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceProperties2KHR(
     pub extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceFormatProperties2KHR)]
@@ -128,6 +131,7 @@ pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(
         pFormatProperties: *mut VkFormatProperties2KHR,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceImageFormatProperties2KHR)]
@@ -138,6 +142,7 @@ pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(
         pImageFormatProperties: *mut VkImageFormatProperties2KHR,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceQueueFamilyProperties2KHR)]
@@ -148,6 +153,7 @@ pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(
         pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceMemoryProperties2KHR)]
@@ -157,6 +163,7 @@ pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(
         pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSparseImageFormatProperties2KHR)]
