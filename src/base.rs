@@ -3,10 +3,8 @@
 use cfg_if::cfg_if;
 
 use crate::vk::*;
-use crate::vkresolve::FromPtr;
-use crate::vkresolve::ResolvedFnCell;
-use crate::vkresolve::PFN;
-use crate::ResolverInterface;
+#[allow(unused_imports)]
+use crate::vkresolve::{FromPtr, ResolvedFnCell, ResolverInterface, PFN};
 use crate::VkHandle;
 use crate::VkObject;
 use crate::VulkanStructure;
@@ -26,29 +24,29 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     }
 }
 
-cfg_if! {
-    if #[cfg(feature = "VK_KHR_get_physical_device_properties2")] {
-        #[repr(transparent)]
-        pub struct PFNGetPhysicalDeviceProperties2KHR(PFN_vkGetPhysicalDeviceProperties2KHR);
-        unsafe impl FromPtr for PFNGetPhysicalDeviceProperties2KHR {
-            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
-                core::mem::transmute(p)
-            }
-        }
-        unsafe impl PFN for PFNGetPhysicalDeviceProperties2KHR {
-            const NAME_NUL: &'static [u8] = b"vkGetPhysicalDeviceProeprties2KHR\0";
-        }
+#[cfg(feature = "Implements")]
+type InstanceResolvedFn<F> = ResolvedFnCell<F, VkInstance>;
 
-        #[repr(transparent)]
-        pub struct PFNGetPhysicalDeviceFormatProperties2KHR(PFN_vkGetPhysicalDeviceFormatProperties2KHR);
-        unsafe impl FromPtr for PFNGetPhysicalDeviceFormatProperties2KHR {
-            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
-                core::mem::transmute(p)
-            }
-        }
-        unsafe impl PFN for PFNGetPhysicalDeviceFormatProperties2KHR {
-            const NAME_NUL: &'static [u8] = b"vkGetPhysicalDeviceFormatProperties2KHR\0";
-        }
+cfg_if! {
+    if #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNGetPhysicalDeviceProperties2KHR = PFN_vkGetPhysicalDeviceProperties2KHR);
+        derives::newtype_pfn!(pub type PFNGetPhysicalDeviceFormatProperties2KHR = PFN_vkGetPhysicalDeviceFormatProperties2KHR);
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNCreateDebugReportCallbackEXT = PFN_vkCreateDebugReportCallbackEXT);
+        derives::newtype_pfn!(pub type PFNDestroyDebugReportCallbackEXT = PFN_vkDestroyDebugReportCallbackEXT);
+        derives::newtype_pfn!(pub type PFNDebugReportMessageEXT = PFN_vkDebugReportMessageEXT);
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNCreateDebugUtilsMessengerEXT = PFN_vkCreateDebugUtilsMessengerEXT);
+        derives::newtype_pfn!(pub type PFNDestroyDebugUtilsMessengerEXT = PFN_vkDestroyDebugUtilsMessengerEXT);
+        derives::newtype_pfn!(pub type PFNSetDebugUtilsObjectNameEXT = PFN_vkSetDebugUtilsObjectNameEXT);
     }
 }
 
@@ -58,19 +56,43 @@ cfg_if! {
 pub struct InstanceObject {
     #[handle]
     handle: VkInstance,
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_properties2_khr: ResolvedFnCell<PFNGetPhysicalDeviceProperties2KHR, VkInstance>,
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_format_properties2_khr: ResolvedFnCell<PFNGetPhysicalDeviceFormatProperties2KHR, VkInstance>,
+    #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
+    get_physical_device_properties2_khr: InstanceResolvedFn<PFNGetPhysicalDeviceProperties2KHR>,
+    #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
+    get_physical_device_format_properties2_khr: InstanceResolvedFn<PFNGetPhysicalDeviceFormatProperties2KHR>,
+    #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
+    create_debug_report_callback_ext: InstanceResolvedFn<PFNCreateDebugReportCallbackEXT>,
+    #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
+    destroy_debug_report_callback_ext: InstanceResolvedFn<PFNDestroyDebugReportCallbackEXT>,
+    #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
+    debug_report_message_ext: InstanceResolvedFn<PFNDebugReportMessageEXT>,
+    #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+    create_debug_utils_messenger_ext: InstanceResolvedFn<PFNCreateDebugUtilsMessengerEXT>,
+    #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+    destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFNDestroyDebugUtilsMessengerEXT>,
+    #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+    set_debug_utils_object_name_ext: InstanceResolvedFn<PFNSetDebugUtilsObjectNameEXT>,
 }
 impl From<VkInstance> for InstanceObject {
     fn from(value: VkInstance) -> Self {
         Self {
             handle: value,
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_properties2_khr: ResolvedFnCell::new(value),
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_format_properties2_khr: ResolvedFnCell::new(value),
+            #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
+            get_physical_device_properties2_khr: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
+            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
+            create_debug_report_callback_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
+            destroy_debug_report_callback_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
+            debug_report_message_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+            create_debug_utils_messenger_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
+            set_debug_utils_object_name_ext: InstanceResolvedFn::new(value),
         }
     }
 }
@@ -94,8 +116,37 @@ impl Instance for InstanceObject {
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
         self.get_physical_device_format_properties2_khr.resolve().0
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
+            fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
+                self.create_debug_report_callback_ext.resolve().0
+            }
+            fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
+                self.destroy_debug_report_callback_ext.resolve().0
+            }
+            fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
+                self.debug_report_message_ext.resolve().0
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))] {
+            fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
+                self.create_debug_utils_messenger_ext.resolve().0
+            }
+            fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
+               self.destroy_debug_utils_messenger_ext.resolve().0
+            }
+            fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
+                self.set_debug_utils_object_name_ext.resolve().0
+            }
+        }
+    }
 }
 
+#[cfg(feature = "Implements")]
 impl ResolverInterface for VkInstance {
     unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
         T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
@@ -271,7 +322,7 @@ impl InstanceBuilder {
                 current.pNext = next_ptr;
             }
             unsafe {
-                let mut last_ptr = &mut *(self.ext_structures.last_mut().unwrap().as_mut() as *mut _
+                let last_ptr = &mut *(self.ext_structures.last_mut().unwrap().as_mut() as *mut _
                     as *mut crate::ext::GenericVulkanStructure);
                 last_ptr.pNext = std::ptr::null();
             }
@@ -405,43 +456,6 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         }
     }
 
-    /// Register a debug report callback
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    #[cfg(feature = "VK_EXT_debug_report")]
-    #[cfg(feature = "Implements")]
-    fn new_debug_report_callback<T>(
-        self,
-        flags: VkDebugReportFlagsEXT,
-        callback: PFN_vkDebugReportCallbackEXT,
-        userdata: Option<&mut T>,
-    ) -> crate::Result<crate::DebugReportCallbackObject<Self>>
-    where
-        Self: Sized,
-    {
-        let ctor: PFN_vkCreateDebugReportCallbackEXT = self
-            .extra_procedure("vkCreateDebugReportCallbackEXT")
-            .expect("Requiring vkCreateDebugReportCallbackEXT function");
-        let dtor: PFN_vkDestroyDebugReportCallbackEXT = self
-            .extra_procedure("vkDestroyDebugReportCallbackEXT")
-            .expect("Requiring vkDestroyDebugReportCallbackEXT function");
-        let s = VkDebugReportCallbackCreateInfoEXT {
-            sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
-            pNext: std::ptr::null(),
-            flags,
-            pfnCallback: callback,
-            pUserData: userdata.map_or_else(std::ptr::null_mut, |x| x as *mut _ as _),
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            VkResultBox(ctor(self.native_ptr(), &s, std::ptr::null(), h.as_mut_ptr()))
-                .into_result()
-                .map(|_| crate::DebugReportCallbackObject(h.assume_init(), self, dtor))
-        }
-    }
-
     /// Inject its own messages into the debug stream
     #[cfg(feature = "VK_EXT_debug_report")]
     #[cfg(feature = "Implements")]
@@ -459,10 +473,8 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             std::ffi::CString::new(layer_prefix).unwrap(),
             std::ffi::CString::new(message).unwrap(),
         );
-        let msgf: PFN_vkDebugReportMessageEXT = self
-            .extra_procedure("vkDebugReportMessageEXT")
-            .expect("Requiring vkDebugReportMessageEXT function");
-        msgf(
+
+        self.debug_report_message_ext_fn()(
             self.native_ptr(),
             flags,
             object_type as _,
@@ -480,9 +492,101 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
+            fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT;
+            fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT;
+            fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))] {
+            fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT;
+            fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT;
+            fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT;
+        }
+    }
 }
-DerefContainerBracketImpl!(for Instance {});
-GuardsImpl!(for Instance {});
+DerefContainerBracketImpl!(for Instance {
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+        (**self).get_physical_device_properties2_khr_fn()
+    }
+
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+        (**self).get_physical_device_format_properties2_khr_fn()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
+            fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
+                (**self).create_debug_report_callback_ext_fn()
+            }
+            fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
+                (**self).destroy_debug_report_callback_ext_fn()
+            }
+            fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
+                (**self).debug_report_message_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))] {
+            fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
+                (**self).create_debug_utils_messenger_ext_fn()
+            }
+            fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
+                (**self).destroy_debug_utils_messenger_ext_fn()
+            }
+            fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
+                (**self).set_debug_utils_object_name_ext_fn()
+            }
+        }
+    }
+});
+GuardsImpl!(for Instance {
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+        (**self).get_physical_device_properties2_khr_fn()
+    }
+
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+        (**self).get_physical_device_format_properties2_khr_fn()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
+            fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
+                (**self).create_debug_report_callback_ext_fn()
+            }
+            fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
+                (**self).destroy_debug_report_callback_ext_fn()
+            }
+            fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
+                (**self).debug_report_message_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))] {
+            fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
+                (**self).create_debug_utils_messenger_ext_fn()
+            }
+            fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
+                (**self).destroy_debug_utils_messenger_ext_fn()
+            }
+            fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
+                (**self).set_debug_utils_object_name_ext_fn()
+            }
+        }
+    }
+});
 
 /// A PhysicalDevice interface
 pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {

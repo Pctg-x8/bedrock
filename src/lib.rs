@@ -35,7 +35,7 @@ pub use self::error::*;
 #[cfg(feature = "Implements")]
 mod vkresolve;
 #[cfg(feature = "Implements")]
-pub use vkresolve::{Resolver, ResolverInterface};
+pub use vkresolve::ResolverInterface;
 
 #[cfg(feature = "Implements")]
 mod fnconv;

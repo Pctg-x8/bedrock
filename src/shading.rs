@@ -855,7 +855,7 @@ impl RasterizationState {
                 extraPrimitiveOverestimationSize: 0.0,
             });
         }
-        let mut r = self.conservative.as_mut().unwrap();
+        let r = self.conservative.as_mut().unwrap();
         r.conservativeRasterizationMode = mode as _;
         if let Some(x) = extra {
             r.extraPrimitiveOverestimationSize = x;

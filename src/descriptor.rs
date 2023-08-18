@@ -342,14 +342,13 @@ cfg_if! {
         pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
             pub(crate) VkDescriptorUpdateTemplateKHR,
             #[parent] pub(crate) Device,
-            pub(crate) PFN_vkDestroyDescriptorUpdateTemplateKHR,
         );
         unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
         unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
         #[cfg(feature = "Implements")]
         impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
             fn drop(&mut self) {
-                (self.2)(self.1.native_ptr(), self.0, std::ptr::null());
+                self.1.destroy_descriptor_update_template_khr_fn()(self.1.native_ptr(), self.0, std::ptr::null());
             }
         }
         impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
@@ -357,15 +356,9 @@ cfg_if! {
         pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplateKHR> + DeviceChild {
             #[cfg(feature = "Implements")]
             fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
-                // TODO: needs optimize
-
                 use crate::Device;
-                let f: PFN_vkUpdateDescriptorSetWithTemplateKHR = self
-                    .device()
-                    .extra_procedure("vkUpdateDescriptorSetWithTemplateKHR")
-                    .expect("no vkUpdateDescriptorSetWithTemplateKHR");
 
-                (f)(
+                self.device().update_descriptor_set_with_template_khr_fn()(
                     self.device().native_ptr(),
                     set,
                     self.native_ptr(),

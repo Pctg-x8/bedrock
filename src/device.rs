@@ -2,7 +2,7 @@
 
 use cfg_if::cfg_if;
 
-use crate::vkresolve::{FromPtr, ResolvedFnCell, PFN};
+use crate::vkresolve::{FromPtr, ResolvedFnCell};
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure,
@@ -13,17 +13,43 @@ use crate::{ResolverInterface, VkResultBox};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
 
 cfg_if! {
-    if #[cfg(feature = "VK_KHR_maintenance1")] {
-        #[repr(transparent)]
-        pub struct PFNTrimCommandPoolKHR(PFN_vkTrimCommandPoolKHR);
-        unsafe impl FromPtr for PFNTrimCommandPoolKHR {
-            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
-                core::mem::transmute(p)
+    if #[cfg(feature = "Implements")] {
+        type DeviceResolvedFn<F> = ResolvedFnCell<F, VkDevice>;
+        impl ResolverInterface for VkDevice {
+            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+                T::from_ptr(core::mem::transmute(crate::vkresolve::get_device_proc_addr(
+                    *self,
+                    name.as_ptr() as _,
+                )))
             }
         }
-        unsafe impl PFN for PFNTrimCommandPoolKHR {
-            const NAME_NUL: &'static [u8] = b"vkTrimCommandPoolKHR\0";
-        }
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNTrimCommandPoolKHR = PFN_vkTrimCommandPoolKHR);
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNCreateDescriptorUpdateTemplateKHR = PFN_vkCreateDescriptorUpdateTemplateKHR);
+        derives::newtype_pfn!(pub type PFNDestroyDescriptorUpdateTemplateKHR = PFN_vkDestroyDescriptorUpdateTemplateKHR);
+        derives::newtype_pfn!(pub type PFNUpdateDescriptorSetWithTemplateKHR = PFN_vkUpdateDescriptorSetWithTemplateKHR);
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNBindBufferMemory2KHR = PFN_vkBindBufferMemory2KHR);
+        derives::newtype_pfn!(pub type PFNBindImageMemory2KHR = PFN_vkBindImageMemory2KHR);
+    }
+}
+
+cfg_if! {
+    if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+        derives::newtype_pfn!(pub type PFNGetImageDrmFormatModifierPropertiesEXT = PFN_vkGetImageDrmFormatModifierPropertiesEXT);
     }
 }
 
@@ -35,16 +61,40 @@ pub struct DeviceObject<Instance: crate::Instance> {
     handle: VkDevice,
     #[parent]
     parent: Instance,
-    #[cfg(feature = "VK_KHR_maintenance1")]
-    trim_command_pool_khr: ResolvedFnCell<PFNTrimCommandPoolKHR, VkDevice>,
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    trim_command_pool_khr: DeviceResolvedFn<PFNTrimCommandPoolKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+    create_descriptor_update_template_khr: DeviceResolvedFn<PFNCreateDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+    destroy_descriptor_update_template_khr: DeviceResolvedFn<PFNDestroyDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+    update_descriptor_set_with_template_khr: DeviceResolvedFn<PFNUpdateDescriptorSetWithTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+    bind_buffer_memory2_khr: DeviceResolvedFn<PFNBindBufferMemory2KHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+    bind_image_memory2_khr: DeviceResolvedFn<PFNBindImageMemory2KHR>,
+    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
+    get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFNGetImageDrmFormatModifierPropertiesEXT>,
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
         Self {
             handle,
             parent,
-            #[cfg(feature = "VK_KHR_maintenance1")]
-            trim_command_pool_khr: ResolvedFnCell::new(handle),
+            #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+            trim_command_pool_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
+            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -59,9 +109,42 @@ impl<Instance: crate::Instance> Drop for DeviceObject<Instance> {
     }
 }
 impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
-    #[cfg(feature = "VK_KHR_maintenance1")]
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
     fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
         self.trim_command_pool_khr.resolve().0
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
+                self.create_descriptor_update_template_khr.resolve().0
+            }
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
+                self.destroy_descriptor_update_template_khr.resolve().0
+            }
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
+                self.update_descriptor_set_with_template_khr.resolve().0
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
+                self.bind_buffer_memory2_khr.resolve().0
+            }
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
+                self.bind_image_memory2_khr.resolve().0
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+                self.get_image_drm_format_modifier_properties_ext.resolve().0
+            }
+        }
     }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
@@ -71,21 +154,33 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
         let r = DeviceObject {
             handle: self.handle,
             parent: self.parent.clone(),
-            #[cfg(feature = "VK_KHR_maintenance1")]
-            trim_command_pool_khr: self.trim_command_pool_khr,
+            #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+            trim_command_pool_khr: unsafe { core::ptr::read(&self.trim_command_pool_khr) },
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            create_descriptor_update_template_khr: unsafe {
+                core::ptr::read(&self.create_descriptor_update_template_khr)
+            },
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            destroy_descriptor_update_template_khr: unsafe {
+                core::ptr::read(&self.destroy_descriptor_update_template_khr)
+            },
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            update_descriptor_set_with_template_khr: unsafe {
+                core::ptr::read(&self.update_descriptor_set_with_template_khr)
+            },
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_buffer_memory2_khr: unsafe { core::ptr::read(&self.bind_buffer_memory2_khr) },
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_image_memory2_khr: unsafe { core::ptr::read(&self.bind_image_memory2_khr) },
+            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
+            get_image_drm_format_modifier_properties_ext: unsafe {
+                core::ptr::read(&self.get_image_drm_format_modifier_properties_ext)
+            },
         };
-        // disable dropping self.0
+        // disable running VkDevice destruction
         std::mem::forget(self);
-        r
-    }
-}
 
-impl ResolverInterface for VkDevice {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
-        T::from_ptr(core::mem::transmute(crate::vkresolve::get_device_proc_addr(
-            *self,
-            name.as_ptr() as _,
-        )))
+        r
     }
 }
 
@@ -599,14 +694,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 memoryOffset: offs,
             })
             .collect();
-        // TODO: optimize extra procedure
-        let f: PFN_vkBindBufferMemory2KHR = self
-            .extra_procedure("vkBindBufferMemory2KHR")
-            .expect("no vkBindBufferMemory2KHR");
 
-        VkResultBox((f)(self.native_ptr(), infos.len() as _, infos.as_ptr()))
-            .into_result()
-            .map(drop)
+        VkResultBox(self.bind_buffer_memory2_khr_fn()(
+            self.native_ptr(),
+            infos.len() as _,
+            infos.as_ptr(),
+        ))
+        .into_result()
+        .map(drop)
     }
 
     /// Multiple Binding for Images
@@ -630,14 +725,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 memoryOffset: offs,
             })
             .collect();
-        // TODO: optimize extra procedure
-        let f: PFN_vkBindImageMemory2KHR = self
-            .extra_procedure("vkBindImageMemory2KHR")
-            .expect("no vkBindImageMemory2KHR");
 
-        VkResultBox((f)(self.native_ptr(), infos.len() as _, infos.as_ptr()))
-            .into_result()
-            .map(drop)
+        VkResultBox(self.bind_image_memory2_khr_fn()(
+            self.native_ptr(),
+            infos.len() as _,
+            infos.as_ptr(),
+        ))
+        .into_result()
+        .map(drop)
     }
 
     /// Multiple Binding for both resources
@@ -1362,13 +1457,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized + InstanceChild,
     {
-        let f: PFN_vkCreateDescriptorUpdateTemplateKHR = self
-            .extra_procedure("vkCreateDescriptorUpdateTemplateKHR")
-            .expect("no vkCreateDescriptorUpdateTemplateKHR");
-        let destroy_fn: PFN_vkDestroyDescriptorUpdateTemplateKHR = self
-            .extra_procedure("vkDestroyDescriptorUpdateTemplateKHR")
-            .expect("no vkDestroyDescriptorUpdateTemplateKHR");
-
         let cinfo = VkDescriptorUpdateTemplateCreateInfoKHR {
             sType: VkDescriptorUpdateTemplateCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -1383,9 +1471,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut handle = std::mem::MaybeUninit::uninit();
         unsafe {
-            VkResultBox((f)(self.native_ptr(), &cinfo, std::ptr::null(), handle.as_mut_ptr()))
-                .into_result()
-                .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self, destroy_fn))
+            VkResultBox(self.create_descriptor_update_template_khr_fn()(
+                self.native_ptr(),
+                &cinfo,
+                std::ptr::null(),
+                handle.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self))
         }
     }
 
@@ -1502,11 +1595,108 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     // Extension Function Providers
 
-    #[cfg(feature = "VK_KHR_maintenance1")]
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
     fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR;
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR;
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR;
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR;
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
+        }
+    }
 }
-DerefContainerBracketImpl!(for Device {});
-GuardsImpl!(for Device {});
+DerefContainerBracketImpl!(for Device {
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
+        (**self).get_trim_command_pool_khr_fn()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
+                (**self).create_descriptor_update_template_khr_fn()
+            }
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
+                (**self).destroy_descriptor_update_template_khr_fn()
+            }
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
+                (**self).update_descriptor_set_with_template_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
+                (**self).bind_buffer_memory2_khr_fn()
+            }
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
+                (**self).bind_image_memory2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+                (**self).get_image_drm_format_modifier_properties_ext_fn()
+            }
+        }
+    }
+});
+GuardsImpl!(for Device {
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
+        (**self).get_trim_command_pool_khr_fn()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
+                (**self).create_descriptor_update_template_khr_fn()
+            }
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
+                (**self).destroy_descriptor_update_template_khr_fn()
+            }
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
+                (**self).update_descriptor_set_with_template_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
+                (**self).bind_buffer_memory2_khr_fn()
+            }
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
+                (**self).bind_image_memory2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+                (**self).get_image_drm_format_modifier_properties_ext_fn()
+            }
+        }
+    }
+});
 
 /// Child of a device object
 pub trait DeviceChild {

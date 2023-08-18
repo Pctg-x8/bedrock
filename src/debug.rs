@@ -18,32 +18,34 @@ cfg_if::cfg_if! {
         pub struct DebugReportCallbackObject<Instance: crate::Instance>(
             pub(crate) VkDebugReportCallbackEXT,
             #[parent] pub(crate) Instance,
-            pub(crate) PFN_vkDestroyDebugReportCallbackEXT,
         );
         unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
         unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
         #[cfg(feature = "Implements")]
         impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
             fn drop(&mut self) {
-                (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
+                self.1.destroy_debug_report_callback_ext_fn()(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
             }
         }
         impl<Instance: crate::Instance> DebugReportCallback for DebugReportCallbackObject<Instance> {}
 
-        pub struct DebugReportCallbackBuilder<Instance: crate::Instance> {
+        pub struct DebugReportCallbackBuilder<'d, Instance: crate::Instance> {
             #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
             instance: Instance,
             flags: VkDebugReportFlagsEXT,
             #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
             callback: PFN_vkDebugReportCallbackEXT,
+            #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+            user_data: Option<&'d mut dyn core::any::Any>
         }
-        impl<Instance: crate::Instance> DebugReportCallbackBuilder<Instance> {
+        impl<'d, Instance: crate::Instance> DebugReportCallbackBuilder<'d, Instance> {
             /// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
             pub fn new(instance: Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
                 Self {
                     instance,
                     flags: 0,
                     callback,
+                    user_data: None
                 }
             }
             /// Reports an error that may cause undefined results, including an application crash
@@ -73,6 +75,12 @@ cfg_if::cfg_if! {
                 self
             }
 
+            /// Sets user data that passed in callback
+            pub fn user_data(&mut self, ptr: &'d mut impl core::any::Any) -> &mut Self {
+                self.user_data = Some(ptr);
+                self
+            }
+
             /// Register a debug report callback
             /// # Failures
             /// On failure, this command returns
@@ -80,8 +88,22 @@ cfg_if::cfg_if! {
             /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
             #[cfg(feature = "Implements")]
             pub fn create(self) -> crate::Result<DebugReportCallbackObject<Instance>> {
-                self.instance
-                    .new_debug_report_callback(self.flags, self.callback, None::<&mut ()>)
+                let Self { flags, callback, user_data, instance } = self;
+
+                let s = VkDebugReportCallbackCreateInfoEXT {
+                    sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
+                    pNext: core::ptr::null(),
+                    flags,
+                    pfnCallback: callback,
+                    pUserData: user_data.map_or(core::ptr::null_mut(), |p| p as *mut _ as  _)
+                };
+
+                let mut h = core::mem::MaybeUninit::uninit();
+                unsafe {
+                    VkResultBox(instance.create_debug_report_callback_ext_fn()(instance.native_ptr(), &s, core::ptr::null(), h.as_mut_ptr()))
+                        .into_result()
+                        .map(move |_| DebugReportCallbackObject(h.assume_init(), instance))
+                }
             }
         }
 
@@ -97,17 +119,13 @@ cfg_if::cfg_if! {
 
         #[derive(VkHandle, VkObject, InstanceChild)]
         #[VkObject(type = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT)]
-        pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(
-            VkDebugUtilsMessengerEXT,
-            #[parent] Instance,
-            PFN_vkDestroyDebugUtilsMessengerEXT,
-        );
+        pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(VkDebugUtilsMessengerEXT, #[parent] Instance);
         unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
         unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
         #[cfg(feature = "Implements")]
         impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
             fn drop(&mut self) {
-                (self.2)(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
+                self.1.destroy_debug_utils_messenger_ext_fn()(self.1.native_ptr(), self.native_ptr(), std::ptr::null());
             }
         }
         impl<Instance: crate::Instance> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
@@ -257,18 +275,11 @@ cfg_if::cfg_if! {
                 &self,
                 instance: Instance,
             ) -> super::Result<DebugUtilsMessengerObject<Instance>> {
-                let create_fn: PFN_vkCreateDebugUtilsMessengerEXT = instance
-                    .extra_procedure("vkCreateDebugUtilsMessengerEXT")
-                    .expect("Requiring vkCreateDebugUtilsMessengerEXT function");
-                let destroy_fn: PFN_vkDestroyDebugUtilsMessengerEXT = instance
-                    .extra_procedure("vkDestroyDebugUtilsMessengerEXT")
-                    .expect("Requiring vkDestroyDebugUtilsMessengerEXT function");
-
                 let mut h = std::mem::MaybeUninit::uninit();
                 unsafe {
-                    VkResultBox(create_fn(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr()))
+                    VkResultBox(instance.create_debug_utils_messenger_ext_fn()(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr()))
                         .into_result()
-                        .map(|_| DebugUtilsMessengerObject(h.assume_init(), instance, destroy_fn))
+                        .map(|_| DebugUtilsMessengerObject(h.assume_init(), instance))
                 }
             }
         }
@@ -309,11 +320,7 @@ cfg_if::cfg_if! {
             /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
             /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
             pub fn apply(&self, device: &(impl crate::Device + crate::InstanceChild)) -> crate::Result<()> {
-                let name_setter: PFN_vkSetDebugUtilsObjectNameEXT = device
-                    .instance()
-                    .extra_procedure("vkSetDebugUtilsObjectNameEXT")
-                    .expect("no vkSetDebugUtilsObjectNameEXT found");
-                VkResultBox(name_setter(device.native_ptr(), &self.0))
+                VkResultBox(device.instance().set_debug_utils_object_name_ext_fn()(device.native_ptr(), &self.0))
                     .into_result()
                     .map(drop)
             }
