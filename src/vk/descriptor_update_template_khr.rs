@@ -6,6 +6,7 @@ pub static VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME: &str = "VK_KHR_desc
 use derives::promote_1_1;
 
 use super::*;
+use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(86, 0) as _;

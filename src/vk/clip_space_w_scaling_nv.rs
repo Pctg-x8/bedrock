@@ -4,6 +4,7 @@ pub const VK_NV_CLIP_SPACE_W_SCALING_SPEC_VERSION: usize = 1;
 pub static VK_NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME: &'static str = "VK_NV_clip_space_w_scaling";
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq)]

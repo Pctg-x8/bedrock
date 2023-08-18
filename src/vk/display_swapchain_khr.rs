@@ -1,6 +1,7 @@
 //! VK_KHR_display_swapchain extensions
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

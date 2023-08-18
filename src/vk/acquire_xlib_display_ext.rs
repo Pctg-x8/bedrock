@@ -4,6 +4,7 @@ pub const VK_EXT_ACQUIRE_XLIB_DISPLAY_SPEC_VERSION: usize = 1;
 pub static VK_EXT_ACQUIRE_XLIB_DISPLAY_EXTENSION_NAME: &'static str = "VK_EXT_acquire_xlib_display";
 
 use super::*;
+use crate::PFN;
 use x11::xlib::Display;
 use x11::xrandr::RROutput;
 

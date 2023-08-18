@@ -1,6 +1,7 @@
 //! VK_KHR_win32_surface extensions
 
 use super::*;
+use crate::PFN;
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
 pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";

@@ -4,6 +4,7 @@ pub const VK_EXT_DEBUG_MARKER_SPEC_VERSION: usize = 4;
 pub static VK_EXT_DEBUG_MARKER_EXTENSION_NAME: &'static str = "VK_EXT_debug_marker";
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

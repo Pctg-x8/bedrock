@@ -6,6 +6,7 @@ pub static VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME: &'static str = "VK_
 use crate::VulkanStructure;
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

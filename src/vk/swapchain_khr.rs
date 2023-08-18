@@ -4,6 +4,7 @@ pub const VK_KHR_SWAPCHAIN_SPEC_VERSION: usize = 68;
 pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
 
 use super::*;
+use crate::PFN;
 #[allow(unused_imports)]
 use libc::*;
 

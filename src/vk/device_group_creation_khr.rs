@@ -4,6 +4,7 @@ pub const VK_KHR_DEVICE_GROUP_CREATION_SPEC_VERSION: usize = 1;
 pub static VK_KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME: &'static str = "VK_KHR_device_group_creation";
 
 use super::*;
+use crate::PFN;
 
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHR: VkStructureType = ext_enum_value(71, 0) as _;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_DEVICE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(71, 1) as _;

@@ -4,6 +4,7 @@ pub const VK_NV_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION: usize = 1;
 pub static VK_NV_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME: &'static str = "VK_NV_external_memory_capabilities";
 
 use super::*;
+use crate::PFN;
 
 pub type VkExternalMemoryHandleTypeFlagsNV = VkFlags;
 pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV: VkExternalMemoryHandleTypeFlagsNV = 0x01;

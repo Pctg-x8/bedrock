@@ -2,6 +2,7 @@ pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_SPEC_VERSION: usize = 1;
 pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_external_fence_capabilities";
 
 use super::*;
+use crate::PFN;
 use derives::promote_1_1;
 
 #[promote_1_1]

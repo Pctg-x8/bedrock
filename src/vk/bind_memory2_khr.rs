@@ -2,6 +2,7 @@ pub const VK_KHR_BIND_MEMORY_2_SPEC_VERSION: usize = 1;
 pub const VK_KHR_BIND_MEMORY_2_EXTENSION_NAME: &str = "VK_KHR_bind_memory2";
 
 use super::*;
+use crate::PFN;
 use derives::promote_1_1;
 
 #[promote_1_1(suffix = "KHR")]

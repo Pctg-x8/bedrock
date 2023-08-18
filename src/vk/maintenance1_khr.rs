@@ -6,6 +6,7 @@ pub static VK_KHR_MAINTENANCE1_EXTENSION_NAME: &'static str = "VK_KHR_maintenanc
 use derives::promote_1_1;
 
 use super::*;
+use crate::PFN;
 
 #[promote_1_1]
 pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult =

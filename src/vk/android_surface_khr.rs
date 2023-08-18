@@ -1,6 +1,7 @@
 //! VK_KHR_android_surface extensions
 
 use super::*;
+use crate::PFN;
 use android::*;
 use libc::*;
 

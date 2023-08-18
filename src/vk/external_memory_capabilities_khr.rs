@@ -4,6 +4,7 @@ pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_ext
 use derives::promote_1_1;
 
 use super::*;
+use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR: VkStructureType =

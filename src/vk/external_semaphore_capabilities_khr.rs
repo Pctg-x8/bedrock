@@ -4,6 +4,7 @@ pub const VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_
 use derives::promote_1_1;
 
 use super::*;
+use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR: VkStructureType = ext_enum_value(77, 0) as _;

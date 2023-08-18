@@ -2,6 +2,7 @@ pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION: usize = 14;
 pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME: &str = "VK_KHR_sampler_ycbcr_conversion";
 
 use super::*;
+use crate::PFN;
 use derives::promote_1_1;
 
 #[promote_1_1]

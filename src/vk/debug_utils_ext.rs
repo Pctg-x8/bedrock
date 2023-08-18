@@ -4,6 +4,7 @@ pub const VK_EXT_DEBUG_UTILS_SPEC_VERSION: usize = 2;
 pub static VK_EXT_DEBUG_UTILS_EXTENSION_NAME: &'static str = "VK_EXT_debug_utils";
 
 use super::*;
+use crate::PFN;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

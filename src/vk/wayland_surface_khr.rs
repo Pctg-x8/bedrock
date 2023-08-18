@@ -1,6 +1,7 @@
 //! VK_KHR_wayland_surface extensions
 
 use super::*;
+use crate::PFN;
 use wayland_client::sys::*;
 
 pub const VK_KHR_WAYLAND_SURFACE_SPEC_VERSION: usize = 6;

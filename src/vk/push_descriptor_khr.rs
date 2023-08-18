@@ -4,6 +4,7 @@ pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION: usize = 1;
 pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &'static str = "VK_KHR_push_descriptor";
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

@@ -1,6 +1,7 @@
 //! VK_KHR_xcb_surface extensions
 
 use super::*;
+use crate::PFN;
 use xcb::ffi::*;
 
 pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;

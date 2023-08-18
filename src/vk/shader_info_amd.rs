@@ -4,6 +4,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 pub const VK_AMD_SHADER_INFO_EXTENSION_NAME: &str = "VK_AMD_shader_info";
 
 use super::*;
+use crate::PFN;
 
 pub type VkShaderInfoTypeAMD = i32;
 pub const VK_SHADER_INFO_TYPE_STATISTICS_AMD: VkShaderInfoTypeAMD = 0;

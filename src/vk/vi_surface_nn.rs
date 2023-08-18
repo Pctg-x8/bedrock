@@ -4,6 +4,7 @@ pub const VK_NN_VI_SURFACE_SPEC_VERSION: usize = 1;
 pub static VK_NN_VI_SURFACE_EXTENSION_NAME: &'static str = "VK_NN_vi_surface";
 
 use super::*;
+use crate::PFN;
 
 pub type VkViSurfaceCreateFlagsNN = VkFlags;
 

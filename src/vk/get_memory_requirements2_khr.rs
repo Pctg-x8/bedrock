@@ -2,6 +2,7 @@ pub const VK_KHR_GET_MEMORY_REQUIREMENTS_2_SPEC_VERSION: usize = 1;
 pub const VK_KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME: &str = "VK_KHR_get_memory_requirements2";
 
 use super::*;
+use crate::PFN;
 use derives::promote_1_1;
 
 #[promote_1_1]

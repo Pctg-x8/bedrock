@@ -4,6 +4,7 @@ pub const VK_EXT_DISCARD_RECTANGLES_SPEC_VERSION: usize = 1;
 pub static VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &'static str = "VK_EXT_discard_rectangles";
 
 use super::*;
+use crate::PFN;
 
 pub type VkDiscardRectangleModeEXT = i32;
 pub const VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT: VkDiscardRectangleModeEXT = 0;

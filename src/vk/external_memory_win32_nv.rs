@@ -4,6 +4,7 @@ pub const VK_NV_EXTERNAL_MEMORY_WIN32_SPEC_VERSION: usize = 1;
 pub static VK_NV_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &'static str = "VK_NV_external_memory_win32";
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

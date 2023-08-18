@@ -4,6 +4,7 @@ pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME: &str = "VK_KHR_device_group";
 use derives::promote_1_1;
 
 use super::*;
+use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR: VkStructureType = ext_enum_value(61, 0) as _;

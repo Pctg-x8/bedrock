@@ -4,6 +4,7 @@ pub const VK_EXT_SAMPLE_LOCATIONS_SPEC_VERSION: usize = 1;
 pub const VK_EXT_SAMPLE_LOCATIONS_EXTENSION_NAME: &str = "VK_EXT_sample_locations";
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 #[derive(Clone, PartialEq, Debug)]

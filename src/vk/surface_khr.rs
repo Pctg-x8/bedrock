@@ -4,6 +4,7 @@ pub const VK_KHR_SURFACE_SPEC_VERSION: usize = 25;
 pub const VK_KHR_SURFACE_EXTENSION_NAME: &str = "VK_KHR_surface";
 
 use super::*;
+use crate::PFN;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

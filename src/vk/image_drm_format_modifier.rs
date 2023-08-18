@@ -4,6 +4,7 @@ pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION: usize = 1;
 pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &'static str = "VK_EXT_image_drm_format_modifier";
 
 use super::*;
+use crate::PFN;
 
 #[repr(C)]
 pub struct VkDrmFormatModifierPropertiesEXT {
