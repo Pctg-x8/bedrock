@@ -2,14 +2,9 @@
 
 use cfg_if::cfg_if;
 
-use crate::vk::*;
-#[allow(unused_imports)]
-use crate::vkresolve::{FromPtr, ResolvedFnCell, ResolverInterface, PFN};
-use crate::VkHandle;
-use crate::VkObject;
-use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 use crate::{fnconv::FnTransmute, ImageFlags, ImageUsage};
+use crate::{vk::*, VkHandle, VkObject, VulkanStructure};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
 use std::ops::*;
@@ -24,8 +19,26 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     }
 }
 
-#[cfg(feature = "Implements")]
-type InstanceResolvedFn<F> = ResolvedFnCell<F, VkInstance>;
+cfg_if! {
+    if #[cfg(feature = "Implements")] {
+        type InstanceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkInstance>;
+        impl crate::vkresolve::ResolverInterface for VkInstance {
+            unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
+                T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
+                    *self,
+                    name.as_ptr() as _,
+                )))
+            }
+
+            unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &[u8]) -> F {
+                F::from_void_fn(
+                    crate::vkresolve::get_instance_proc_addr(*self, name.as_ptr() as _)
+                        .unwrap_or_else(|| panic!("function {:?} not found", name)),
+                )
+            }
+        }
+    }
+}
 
 /// Opaque handle to a instance object
 #[derive(VkHandle, VkObject)]
@@ -120,23 +133,6 @@ impl Instance for InstanceObject {
                 *self.set_debug_utils_object_name_ext.resolve()
             }
         }
-    }
-}
-
-#[cfg(feature = "Implements")]
-impl ResolverInterface for VkInstance {
-    unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
-        T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
-            *self,
-            name.as_ptr() as _,
-        )))
-    }
-
-    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
-        F::from_void_fn(
-            crate::vkresolve::get_instance_proc_addr(*self, name.as_ptr() as _)
-                .unwrap_or_else(|| panic!("function {:?} not found", name)),
-        )
     }
 }
 

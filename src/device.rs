@@ -2,21 +2,21 @@
 
 use cfg_if::cfg_if;
 
-use crate::vkresolve::{FromPtr, ResolvedFnCell};
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure,
     VulkanStructureProvider,
 };
-use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
-use crate::{ResolverInterface, VkResultBox};
-use crate::{TemporalSubmissionBatchResources, VkHandle};
+use crate::{
+    vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, TemporalSubmissionBatchResources, VkHandle, VkObject,
+    VkResultBox,
+};
 
 cfg_if! {
     if #[cfg(feature = "Implements")] {
-        type DeviceResolvedFn<F> = ResolvedFnCell<F, VkDevice>;
-        impl ResolverInterface for VkDevice {
-            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+        type DeviceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkDevice>;
+        impl crate::vkresolve::ResolverInterface for VkDevice {
+            unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
                 T::from_ptr(core::mem::transmute(crate::vkresolve::get_device_proc_addr(
                     *self,
                     name.as_ptr() as _,

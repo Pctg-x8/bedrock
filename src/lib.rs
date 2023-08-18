@@ -25,6 +25,7 @@ extern crate x11;
 #[cfg(feature = "VK_KHR_xcb_surface")]
 extern crate xcb;
 
+use cfg_if::cfg_if;
 use derives::*;
 
 #[macro_use]
@@ -32,10 +33,13 @@ pub mod vk;
 use vk::*;
 pub mod error;
 pub use self::error::*;
-#[cfg(feature = "Implements")]
-mod vkresolve;
-#[cfg(feature = "Implements")]
-pub use vkresolve::ResolverInterface;
+
+cfg_if! {
+    if #[cfg(feature = "Implements")] {
+        mod vkresolve;
+        pub use self::vkresolve::{ResolverInterface, PFN};
+    }
+}
 
 #[cfg(feature = "Implements")]
 mod fnconv;
