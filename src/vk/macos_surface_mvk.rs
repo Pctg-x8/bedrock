@@ -21,7 +21,7 @@ pub struct VkMacOSSurfaceCreateInfoMVK {
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateMacOSSurfaceMVK"]
+#[pfn_of(vkCreateMacOSSurfaceMVK)]
 pub struct PFN_vkCreateMacOSSurfaceMVK(
     pub  unsafe extern "system" fn(
         instance: VkInstance,

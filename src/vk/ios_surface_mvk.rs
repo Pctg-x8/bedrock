@@ -21,7 +21,7 @@ pub struct VkIOSSurfaceCreateInfoMVK {
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateIOSSurfaceMVK"]
+#[pfn_of(vkCreateIOSSurfaceMVK)]
 pub struct PFN_vkCreateIOSSurfaceMVK(
     pub  unsafe extern "system" fn(
         instance: VkInstance,
