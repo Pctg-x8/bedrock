@@ -33,8 +33,20 @@ pub struct VkImportMemoryHostPointerInfoEXT {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT)]
 pub struct VkMemoryHostPointerPropertiesEXT {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *mut c_void,
     pub memoryTypeBits: u32,
+}
+impl VkMemoryHostPointerPropertiesEXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[repr(C)]
@@ -44,6 +56,18 @@ pub struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub minImportedHostPointerAlignment: VkDeviceSize,
+}
+impl VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]

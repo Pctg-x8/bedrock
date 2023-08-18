@@ -28,3 +28,15 @@ pub struct VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     pub filterMinmaxSingleComponentFormats: VkBool32,
     pub filterMinmaxImageComponentMapping: VkBool32,
 }
+impl VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}

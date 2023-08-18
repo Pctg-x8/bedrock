@@ -648,10 +648,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeWin32,
         handle: windows::Win32::Foundation::HANDLE,
     ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        let mut info = std::mem::MaybeUninit::<VkMemoryWin32HandlePropertiesKHR>::uninit();
-        unsafe {
-            (*info.as_mut_ptr()).sType = VkMemoryWin32HandlePropertiesKHR::TYPE;
-        }
+        let mut info = VkMemoryWin32HandlePropertiesKHR::uninit_sink();
 
         let f = self
             .extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
@@ -673,11 +670,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleTypeFd,
         fd: libc::c_int,
     ) -> crate::Result<VkMemoryFdPropertiesKHR> {
-        let mut info = core::mem::MaybeUninit::<VkMemoryFdPropertiesKHR>::uninit();
-        unsafe {
-            (*info.as_mut_ptr()).sType = VkMemoryFdPropertiesKHR::TYPE;
-            (*info.as_mut_ptr()).pNext = core::ptr::null_mut();
-        }
+        let mut info = VkMemoryFdPropertiesKHR::uninit_sink();
 
         unsafe {
             VkResultBox(self.get_memory_fd_properties_khr_fn().0(
@@ -703,11 +696,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle_type: crate::ExternalMemoryHandleType,
         host_pointer: *const (),
     ) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
-        let mut info = core::mem::MaybeUninit::<VkMemoryHostPointerPropertiesEXT>::uninit();
-        unsafe {
-            (*info.as_mut_ptr()).sType = VkMemoryHostPointerPropertiesEXT::TYPE;
-            (*info.as_mut_ptr()).pNext = core::ptr::null_mut();
-        }
+        let mut info = VkMemoryHostPointerPropertiesEXT::uninit_sink();
 
         unsafe {
             VkResultBox(self.get_memory_host_pointer_properties_ext_fn().0(

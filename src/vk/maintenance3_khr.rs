@@ -20,6 +20,18 @@ pub struct VkPhysicalDeviceMaintenance3PropertiesKHR {
     pub maxPerSetDescriptors: u32,
     pub maxMemoryAllocationSize: VkDeviceSize,
 }
+impl VkPhysicalDeviceMaintenance3PropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -29,6 +41,18 @@ pub struct VkDescriptorSetLayoutSupportKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub supported: VkBool32,
+}
+impl VkDescriptorSetLayoutSupportKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]

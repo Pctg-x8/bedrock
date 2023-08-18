@@ -40,6 +40,18 @@ pub struct VkPhysicalDeviceMultiviewFeaturesKHR {
     /// Multiple views in a renderpass w/ tessellation shader
     pub multiviewTessellationShader: VkBool32,
 }
+impl VkPhysicalDeviceMultiviewFeaturesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -51,6 +63,18 @@ pub struct VkPhysicalDeviceMultiviewPropertiesKHR {
     pub maxMultiviewViewCount: u32,
     /// max instance index for a draw in a multiview subpass
     pub maxMultiviewInstanceIndex: u32,
+}
+impl VkPhysicalDeviceMultiviewPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 cfg_if! {

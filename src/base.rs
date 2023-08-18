@@ -973,11 +973,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "VK_KHR_external_fence_fd")]
     #[cfg(feature = "Implements")]
     fn external_fence_properties(&self, handle_type: crate::ExternalFenceFdType) -> ExternalFenceProperties {
-        let mut r = std::mem::MaybeUninit::<VkExternalFencePropertiesKHR>::uninit();
-        unsafe {
-            (*r.as_mut_ptr()).sType = VkExternalFencePropertiesKHR::TYPE;
-            (*r.as_mut_ptr()).pNext = std::ptr::null_mut();
-        }
+        let mut r = VkExternalFencePropertiesKHR::uninit_sink();
 
         unsafe {
             self.instance().get_physical_device_external_fence_properties_khr_fn().0(
@@ -1649,11 +1645,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<VkSurfaceCapabilities2KHR> {
-        let mut p = std::mem::MaybeUninit::<VkSurfaceCapabilities2KHR>::uninit();
-        unsafe {
-            (*p.as_mut_ptr()).sType = VkSurfaceCapabilities2KHR::TYPE;
-            (*p.as_mut_ptr()).pNext = std::ptr::null_mut();
-        }
+        let mut p = VkSurfaceCapabilities2KHR::uninit_sink();
+
         unsafe {
             crate::VkResultBox(self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
                 self.native_ptr(),

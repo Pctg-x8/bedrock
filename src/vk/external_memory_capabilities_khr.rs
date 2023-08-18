@@ -85,6 +85,18 @@ pub struct VkExternalImageFormatPropertiesKHR {
     pub pNext: *mut c_void,
     pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
 }
+impl VkExternalImageFormatPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -107,6 +119,18 @@ pub struct VkExternalBufferPropertiesKHR {
     pub pNext: *mut c_void,
     pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
 }
+impl VkExternalBufferPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -120,6 +144,18 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub deviceLUID: [u8; VK_LUID_SIZE_KHR],
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,
+}
+impl VkPhysicalDeviceIDPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]

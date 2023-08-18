@@ -186,6 +186,18 @@ pub struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
     /// Sampler color conversion supported
     pub samplerYcbcrConversion: VkBool32,
 }
+impl VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -195,6 +207,18 @@ pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub combinedImageSamplerDescriptorCount: u32,
+}
+impl VkSamplerYcbcrConversionImageFormatPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]

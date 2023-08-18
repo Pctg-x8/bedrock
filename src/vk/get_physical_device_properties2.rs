@@ -25,6 +25,18 @@ pub struct VkFormatProperties2KHR {
     pub pNext: *mut c_void,
     pub formatProperties: VkFormatProperties,
 }
+impl VkFormatProperties2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -33,6 +45,18 @@ pub struct VkPhysicalDeviceFeatures2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub features: VkPhysicalDeviceFeatures,
+}
+impl VkPhysicalDeviceFeatures2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[repr(C)]
@@ -43,6 +67,18 @@ pub struct VkPhysicalDeviceProperties2KHR {
     pub pNext: *mut c_void,
     pub properties: VkPhysicalDeviceProperties,
 }
+impl VkPhysicalDeviceProperties2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -51,6 +87,18 @@ pub struct VkImageFormatProperties2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub imageFormatProperties: VkImageFormatProperties,
+}
+impl VkImageFormatProperties2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[repr(C)]
@@ -74,6 +122,18 @@ pub struct VkQueueFamilyProperties2KHR {
     pub pNext: *mut c_void,
     pub queueFamilyProperties: VkQueueFamilyProperties,
 }
+impl VkQueueFamilyProperties2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -83,6 +143,18 @@ pub struct VkPhysicalDeviceMemoryProperties2KHR {
     pub pNext: *mut c_void,
     pub memoryProperties: VkPhysicalDeviceMemoryProperties,
 }
+impl VkPhysicalDeviceMemoryProperties2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -91,6 +163,18 @@ pub struct VkSparseImageFormatProperties2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub properties: VkSparseImageFormatProperties,
+}
+impl VkSparseImageFormatProperties2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[repr(C)]

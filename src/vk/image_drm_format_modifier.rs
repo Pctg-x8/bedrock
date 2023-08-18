@@ -103,6 +103,18 @@ pub struct VkImageDrmFormatModifierPropertiesEXT {
     pub pNext: *mut c_void,
     pub drmFormatModifier: u64,
 }
+impl VkImageDrmFormatModifierPropertiesEXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[repr(C)]

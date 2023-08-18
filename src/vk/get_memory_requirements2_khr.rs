@@ -55,6 +55,18 @@ pub struct VkMemoryRequirements2KHR {
     pub pNext: *mut c_void,
     pub memoryRequirements: VkMemoryRequirements,
 }
+impl VkMemoryRequirements2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -64,6 +76,18 @@ pub struct VkSparseImageMemoryRequirements2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryRequirements: VkSparseImageMemoryRequirements,
+}
+impl VkSparseImageMemoryRequirements2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]

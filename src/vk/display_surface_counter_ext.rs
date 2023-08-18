@@ -27,6 +27,18 @@ pub struct VkSurfaceCapabilities2EXT {
     pub supportedUsageFlags: VkImageUsageFlags,
     pub supportedSurfaceCounters: VkSurfaceCounterFlagsEXT,
 }
+impl VkSurfaceCapabilities2EXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]

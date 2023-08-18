@@ -19,6 +19,17 @@ pub struct VkMemoryDedicatedRequirementsKHR {
     pub prefersDedicatedAllocation: VkBool32,
     pub requiresDedicatedAllocation: VkBool32,
 }
+impl VkMemoryDedicatedRequirementsKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            (*p.as_mut_ptr()).sType = Self::TYPE;
+            (*p.as_mut_ptr()).pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]

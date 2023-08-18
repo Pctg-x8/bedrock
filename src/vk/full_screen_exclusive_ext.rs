@@ -27,6 +27,18 @@ pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub pNext: *mut c_void,
     pub fullScreenExclusive: VkFullScreenExclusiveEXT,
 }
+impl VkSurfaceFullScreenExclusiveInfoEXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -35,6 +47,18 @@ pub struct VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub fullScreenExclusiveSupported: VkBool32,
+}
+impl VkSurfaceCapabilitiesFullScreenExclusiveEXT {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]

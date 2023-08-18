@@ -39,6 +39,18 @@ pub struct VkPhysicalDevicePointClippingPropertiesKHR {
     pub pNext: *mut c_void,
     pub pointClippingBehavior: VkPointClippingBehaviorKHR,
 }
+impl VkPhysicalDevicePointClippingPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[promote_1_1(suffix = "KHR")]
 pub type VkPointClippingBehaviorKHR = i32;

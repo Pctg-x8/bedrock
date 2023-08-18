@@ -25,6 +25,18 @@ pub struct VkSurfaceCapabilities2KHR {
     pub pNext: *mut c_void,
     pub surfaceCapabilities: VkSurfaceCapabilitiesKHR,
 }
+impl VkSurfaceCapabilities2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
@@ -33,6 +45,18 @@ pub struct VkSurfaceFormat2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub surfaceFormat: VkSurfaceFormatKHR,
+}
+impl VkSurfaceFormat2KHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = &mut *p.as_mut_ptr();
+            x.sType = Self::TYPE;
+            x.pNext = core::ptr::null_mut();
+        }
+
+        p
+    }
 }
 
 #[cfg(feature = "Implements")]
