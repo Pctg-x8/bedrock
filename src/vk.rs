@@ -3557,6 +3557,7 @@ pub struct PFN_vkCreateSampler(
 pub struct PFN_vkDestroySampler(
     pub unsafe extern "system" fn(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDescriptorSetLayout)]
@@ -3732,6 +3733,7 @@ pub struct PFN_vkResetCommandPool(
         flags: VkCommandPoolResetFlags,
     ) -> VkResult,
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkAllocateCommandBuffers)]
@@ -4125,6 +4127,7 @@ pub struct PFN_vkCmdResolveImage(
         pRegions: *const VkImageResolve,
     ),
 );
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdSetEvent)]

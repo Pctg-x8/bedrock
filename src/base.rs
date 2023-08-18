@@ -97,14 +97,15 @@ impl Drop for InstanceObject {
     }
 }
 impl Instance for InstanceObject {
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
-        *self.get_physical_device_properties2_khr.resolve()
-    }
-
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
-        *self.get_physical_device_format_properties2_khr.resolve()
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))] {
+            fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+                *self.get_physical_device_properties2_khr.resolve()
+            }
+            fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+                *self.get_physical_device_format_properties2_khr.resolve()
+            }
+        }
     }
 
     cfg_if! {
@@ -470,10 +471,12 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 
     // Extension Function Providers
 
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))] {
+            fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
+            fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
+        }
+    }
 
     cfg_if! {
         if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
@@ -492,14 +495,15 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     }
 }
 DerefContainerBracketImpl!(for Instance {
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
-        (**self).get_physical_device_properties2_khr_fn()
-    }
-
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
-        (**self).get_physical_device_format_properties2_khr_fn()
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))] {
+            fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+                (**self).get_physical_device_properties2_khr_fn()
+            }
+            fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+                (**self).get_physical_device_format_properties2_khr_fn()
+            }
+        }
     }
 
     cfg_if! {
@@ -531,14 +535,15 @@ DerefContainerBracketImpl!(for Instance {
     }
 });
 GuardsImpl!(for Instance {
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
-        (**self).get_physical_device_properties2_khr_fn()
-    }
-
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
-        (**self).get_physical_device_format_properties2_khr_fn()
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))] {
+            fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+                (**self).get_physical_device_properties2_khr_fn()
+            }
+            fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+                (**self).get_physical_device_format_properties2_khr_fn()
+            }
+        }
     }
 
     cfg_if! {
