@@ -20,10 +20,10 @@ pub struct VkAndroidSurfaceCreateInfoKHR {
 }
 
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateAndroidSurfaceKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateAndroidSurfaceKHR)]
 pub struct PFN_vkCreateAndroidSurfaceKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,

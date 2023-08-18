@@ -23,7 +23,7 @@ pub struct VkXlibSurfaceCreateInfoKHR {
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateXlibSurfaceKHR)]
 pub struct PFN_vkCreateXlibSurfaceKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
@@ -34,7 +34,7 @@ pub struct PFN_vkCreateXlibSurfaceKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceXlibPresentationSupportKHR)]
 pub struct PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         dpy: *mut Display,

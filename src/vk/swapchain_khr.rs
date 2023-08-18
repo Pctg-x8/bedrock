@@ -63,7 +63,7 @@ pub struct VkPresentInfoKHR {
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateSwapchainKHR)]
 pub struct PFN_vkCreateSwapchainKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         pCreateInfo: *const VkSwapchainCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
@@ -74,13 +74,13 @@ pub struct PFN_vkCreateSwapchainKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroySwapchainKHR)]
 pub struct PFN_vkDestroySwapchainKHR(
-    pub extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks),
+    pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks),
 );
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetSwapchainImagesKHR)]
 pub struct PFN_vkGetSwapchainImagesKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         pSwapchainImageCount: *mut u32,
@@ -91,7 +91,7 @@ pub struct PFN_vkGetSwapchainImagesKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkAcquireNextImageKHR)]
 pub struct PFN_vkAcquireNextImageKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         timeout: u64,
@@ -104,7 +104,7 @@ pub struct PFN_vkAcquireNextImageKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueuePresentKHR)]
 pub struct PFN_vkQueuePresentKHR(
-    pub extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult,
+    pub unsafe extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult,
 );
 
 #[cfg(feature = "Implements")]

@@ -23,7 +23,7 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateWaylandSurfaceKHR)]
 pub struct PFN_vkCreateWaylandSurfaceKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
@@ -34,7 +34,7 @@ pub struct PFN_vkCreateWaylandSurfaceKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceWaylandPresentationSupportKHR)]
 pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         display: *mut wl_display,

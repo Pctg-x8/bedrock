@@ -22,7 +22,7 @@ pub struct VkWin32SurfaceCreateInfoKHR {
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkCreateWin32SurfaceKHR"]
 pub struct PFN_vkCreateWin32SurfaceKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
@@ -33,7 +33,7 @@ pub struct PFN_vkCreateWin32SurfaceKHR(
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkGetPhysicalDeviceWin32PresentationSupportKHR"]
 pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(
-    pub extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32,
+    pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32,
 );
 
 #[cfg(feature = "Implements")]

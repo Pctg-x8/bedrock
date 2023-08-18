@@ -87,13 +87,13 @@ pub struct VkSurfaceFormatKHR {
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroySurfaceKHR)]
 pub struct PFN_vkDestroySurfaceKHR(
-    pub extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks),
+    pub unsafe extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks),
 );
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceSupportKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         surface: VkSurfaceKHR,
@@ -104,7 +104,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceCapabilitiesKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
@@ -114,7 +114,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceFormatsKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceFormatCount: *mut u32,
@@ -125,7 +125,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfacePresentModesKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pPresentModeCount: *mut u32,

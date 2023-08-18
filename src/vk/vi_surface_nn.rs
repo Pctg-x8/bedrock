@@ -21,7 +21,7 @@ pub struct VkViSurfaceCreateInfoNN {
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[org_name = "vkCreateViSurfaceNN"]
 pub struct PFN_vkCreateViSurfaceNN(
-    pub  extern "system" fn(
+    pub  unsafe extern "system" fn(
         instance: VkInstance,
         pCreateInfo: *const VkViSurfaceCreateInfoNN,
         pAllocator: *const VkAllocationCallbacks,
