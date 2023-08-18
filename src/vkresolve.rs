@@ -103,6 +103,9 @@ pub unsafe trait PFN {
     unsafe fn from_ptr(p: *const c_void) -> Self;
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self;
 }
+pub trait StaticCallable: PFN {
+    const STATIC: Self;
+}
 
 pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
 impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
@@ -134,7 +137,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
-                    VkResultBox($org_fn($($arg_name),*))
+                    VkResultBox($org_fn_type::STATIC.0($($arg_name),*))
                 }
             }
         }
@@ -158,7 +161,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
-                    $org_fn($($arg_name),*)
+                    $org_fn_type::STATIC.0($($arg_name),*)
                 }
             }
         }
@@ -182,7 +185,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
-                    $org_fn($($arg_name),*)
+                    $org_fn_type::STATIC.0($($arg_name),*)
                 }
             }
         }

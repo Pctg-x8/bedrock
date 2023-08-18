@@ -97,8 +97,8 @@ pub struct VkDisplaySurfaceCreateInfoKHR {
 }
 
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceDisplayPropertiesKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceDisplayPropertiesKHR)]
 pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -107,8 +107,8 @@ pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceDisplayPlanePropertiesKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceDisplayPlanePropertiesKHR)]
 pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -117,8 +117,8 @@ pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetDisplayPlaneSupportedDisplaysKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDisplayPlaneSupportedDisplaysKHR)]
 pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -128,8 +128,8 @@ pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetDisplayModePropertiesKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDisplayModePropertiesKHR)]
 pub struct PFN_vkGetDisplayModePropertiesKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -139,8 +139,8 @@ pub struct PFN_vkGetDisplayModePropertiesKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateDisplayModeKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateDisplayModeKHR)]
 pub struct PFN_vkCreateDisplayModeKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -151,8 +151,8 @@ pub struct PFN_vkCreateDisplayModeKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetDisplayPlaneCapabilitiesKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDisplayPlaneCapabilitiesKHR)]
 pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -162,8 +162,8 @@ pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateDisplayPlaneSurfaceKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateDisplayPlaneSurfaceKHR)]
 pub struct PFN_vkCreateDisplayPlaneSurfaceKHR(
     pub  extern "system" fn(
         instance: VkInstance,

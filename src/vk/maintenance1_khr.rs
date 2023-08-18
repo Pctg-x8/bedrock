@@ -33,7 +33,7 @@ pub type VkCommandPoolTrimFlagsKHR = VkFlags;
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkTrimCommandPoolKHR"]
+#[pfn_of(vkTrimCommandPoolKHR)]
 pub struct PFN_vkTrimCommandPoolKHR(
     pub extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR),
 );

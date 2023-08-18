@@ -72,7 +72,7 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateDescriptorUpdateTemplateKHR"]
+#[pfn_of(vkCreateDescriptorUpdateTemplateKHR)]
 pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(
     pub  extern "system" fn(
         device: VkDevice,
@@ -84,7 +84,7 @@ pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkDestroyDescriptorUpdateTemplateKHR"]
+#[pfn_of(vkDestroyDescriptorUpdateTemplateKHR)]
 pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(
     pub  extern "system" fn(
         device: VkDevice,
@@ -95,7 +95,7 @@ pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkUpdateDescriptorSetWithTemplateKHR"]
+#[pfn_of(vkUpdateDescriptorSetWithTemplateKHR)]
 pub struct PFN_vkUpdateDescriptorSetWithTemplateKHR(
     pub  extern "system" fn(
         device: VkDevice,

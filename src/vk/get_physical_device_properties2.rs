@@ -107,19 +107,19 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
 
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceFeatures2KHR"]
+#[pfn_of(vkGetPhysicalDeviceFeatures2KHR)]
 pub struct PFN_vkGetPhysicalDeviceFeatures2KHR(
     pub extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR),
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceProperties2KHR"]
+#[pfn_of(vkGetPhysicalDeviceProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceProperties2KHR(
     pub extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR),
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceFormatProperties2KHR"]
+#[pfn_of(vkGetPhysicalDeviceFormatProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -129,7 +129,7 @@ pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceImageFormatProperties2KHR"]
+#[pfn_of(vkGetPhysicalDeviceImageFormatProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -139,7 +139,7 @@ pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceQueueFamilyProperties2KHR"]
+#[pfn_of(vkGetPhysicalDeviceQueueFamilyProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -149,7 +149,7 @@ pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceMemoryProperties2KHR"]
+#[pfn_of(vkGetPhysicalDeviceMemoryProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -158,7 +158,7 @@ pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"]
+#[pfn_of(vkGetPhysicalDeviceSparseImageFormatProperties2KHR)]
 pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,

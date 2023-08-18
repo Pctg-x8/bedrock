@@ -83,7 +83,7 @@ pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(
 
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateDebugReportCallbackEXT"]
+#[pfn_of(vkCreateDebugReportCallbackEXT)]
 pub struct PFN_vkCreateDebugReportCallbackEXT(
     pub  extern "system" fn(
         instance: VkInstance,
@@ -94,7 +94,7 @@ pub struct PFN_vkCreateDebugReportCallbackEXT(
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkDestroyDebugReportCallbackEXT"]
+#[pfn_of(vkDestroyDebugReportCallbackEXT)]
 pub struct PFN_vkDestroyDebugReportCallbackEXT(
     pub  extern "system" fn(
         instance: VkInstance,
@@ -104,7 +104,7 @@ pub struct PFN_vkDestroyDebugReportCallbackEXT(
 );
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkDebugReportMessageEXT"]
+#[pfn_of(vkDebugReportMessageEXT)]
 pub struct PFN_vkDebugReportMessageEXT(
     pub  extern "system" fn(
         instance: VkInstance,

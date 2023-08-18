@@ -20,8 +20,8 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
 }
 
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateWaylandSurfaceKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateWaylandSurfaceKHR)]
 pub struct PFN_vkCreateWaylandSurfaceKHR(
     pub  extern "system" fn(
         instance: VkInstance,
@@ -31,8 +31,8 @@ pub struct PFN_vkCreateWaylandSurfaceKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceWaylandPresentationSupportKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceWaylandPresentationSupportKHR)]
 pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,

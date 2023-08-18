@@ -566,33 +566,29 @@ pub fn newtype_pfn(input: TokenStream) -> TokenStream {
     .into()
 }
 
-#[proc_macro_derive(PFN, attributes(org_name))]
+#[proc_macro_derive(PFN, attributes(pfn_of))]
 pub fn derive_pfn(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as syn::DeriveInput);
     let impl_name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let org_name_expr = &input
+    let org_attr = &input
         .attrs
         .iter()
-        .filter_map(|a| a.meta.require_name_value().ok())
-        .find(|a| a.path.is_ident("org_name"))
-        .expect("specify original function name by #[org_name = \"...\"] for deriving PFN")
-        .value;
-    let org_name = match org_name_expr {
-        syn::Expr::Lit(syn::ExprLit {
-            lit: syn::Lit::Str(ref s),
-            ..
-        }) => {
-            let mut bytes = s.value().into_bytes();
-            bytes.push(0);
-            syn::LitByteStr::new(&bytes, s.span())
-        }
-        _ => unreachable!("invalid org_name"),
-    };
+        .filter_map(|a| a.meta.require_list().ok())
+        .find(|a| a.path.is_ident("pfn_of"))
+        .expect("no #[pfn_of] found");
+    let org_fn: syn::Path = org_attr.parse_args().expect("invalid arg for pfn_of");
+    let org_fn_name = org_fn
+        .get_ident()
+        .or_else(|| org_fn.segments.last().map(|l| &l.ident))
+        .expect("invalid pfn_of fn path");
+    let mut org_fn_nulbytes = org_fn_name.to_string().into_bytes();
+    org_fn_nulbytes.push(0);
+    let org_fn_nulbytes = syn::LitByteStr::new(&org_fn_nulbytes, proc_macro2::Span::call_site().into());
 
     quote! {
         unsafe impl #impl_generics crate::vkresolve::PFN for #impl_name #ty_generics #where_clause {
-            const NAME_NUL: &'static [u8] = #org_name;
+            const NAME_NUL: &'static [u8] = #org_fn_nulbytes;
 
             unsafe fn from_ptr(p: *const libc::c_void) -> Self {
                 core::mem::transmute(p)
@@ -600,6 +596,28 @@ pub fn derive_pfn(input: TokenStream) -> TokenStream {
             unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
                 core::mem::transmute(p)
             }
+        }
+    }
+    .into()
+}
+
+#[proc_macro_derive(StaticCallable, attributes(static_fn))]
+pub fn derive_static_callable(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as syn::DeriveInput);
+    let impl_name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let org_attr = &input
+        .attrs
+        .iter()
+        .filter_map(|a| a.meta.require_list().ok())
+        .find(|a| a.path.is_ident("pfn_of"))
+        .expect("no #[pfn_of] found");
+    let org_fn: syn::Path = org_attr.parse_args().expect("invalid arg for pfn_of");
+
+    quote! {
+        #[cfg(all(not(feature = "DynamicLoaded"), feature = "Implements"))]
+        impl #impl_generics crate::vkresolve::StaticCallable for #impl_name #ty_generics #where_clause {
+            const STATIC: Self = Self(#org_fn);
         }
     }
     .into()

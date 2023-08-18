@@ -84,14 +84,14 @@ pub struct VkSurfaceFormatKHR {
 }
 
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkDestroySurfaceKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroySurfaceKHR)]
 pub struct PFN_vkDestroySurfaceKHR(
     pub extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks),
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceSurfaceSupportKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfaceSupportKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -101,8 +101,8 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceSurfaceCapabilitiesKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfaceCapabilitiesKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -111,8 +111,8 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceSurfaceFormatsKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfaceFormatsKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
@@ -122,8 +122,8 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(
     ) -> VkResult,
 );
 #[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkGetPhysicalDeviceSurfacePresentModesKHR"]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSurfacePresentModesKHR)]
 pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(
     pub  extern "system" fn(
         physicalDevice: VkPhysicalDevice,
