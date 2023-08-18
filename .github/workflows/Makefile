@@ -12,7 +12,7 @@ all: $(addsuffix .yml,$(TARGET_WORKFLOWS))
 
 test-sync: $(addsuffix .ymls,$(TARGET_WORKFLOWS))
 
-test-and-doc.yml: test-and-doc.dhall features.dhall
+test-and-doc.yml: test-and-doc.dhall features.dhall helper.dhall jobBuilder.dhall
 	$(CONVERTER) --file test-and-doc.dhall > test-and-doc.yml
 
 .dhall.yml:
