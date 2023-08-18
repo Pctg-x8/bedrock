@@ -20,7 +20,7 @@ pub struct VkViSurfaceCreateInfoNN {
 
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[org_name = "vkCreateViSurfaceNN"]
+#[pfn_of(vkCreateViSurfaceNN)]
 pub struct PFN_vkCreateViSurfaceNN(
     pub  unsafe extern "system" fn(
         instance: VkInstance,
