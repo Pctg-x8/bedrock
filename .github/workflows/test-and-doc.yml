@@ -1,5 +1,5 @@
 jobs:
-  "check-format":
+  checkFormat:
     name: Check Format
     needs:
     - preconditions
@@ -28,14 +28,14 @@ jobs:
         mode: branch
         report_name: Integrity Check
         status: failure
-  "document-deploy":
+  documentDeploymentStep:
     name: Deploy Latest Document
     needs:
-    - "check-format"
+    - checkFormat
     - "test-win32"
     - "test-unix"
     - "test-mac"
-    - test
+    - platformIndependentTest
     - preconditions
     permissions:
       "id-token": write
@@ -76,42 +76,7 @@ jobs:
         mode: branch
         report_name: Integrity Check
         status: failure
-  preconditions:
-    name: Preconditions
-    outputs:
-      begintime: "${{ steps.begintime.outputs.begintime }}"
-    "runs-on": "ubuntu-latest"
-    steps:
-    - id: begintime
-      name: Getting begintime
-      run: "echo \"begintime=$(date +%s)\" >> $GITHUB_OUTPUT"
-  "report-success":
-    name: Report as Success
-    needs:
-    - "document-deploy"
-    - "check-format"
-    - "test-win32"
-    - "test-unix"
-    - "test-mac"
-    - test
-    - preconditions
-    "runs-on": "ubuntu-latest"
-    steps:
-    - name: Checking out
-      uses: "actions/checkout@v3"
-    - name: Configure AWS Credentials
-      uses: "aws-actions/configure-aws-credentials@v1"
-      with:
-        "aws-region": "ap-northeast-1"
-        "role-to-assume": "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
-    - name: Notify
-      uses: "Pctg-x8/ci-notifications-post-invoker@master"
-      with:
-        begintime: "${{ needs.preconditions.outputs.begintime }}"
-        mode: branch
-        report_name: Integrity Check
-        status: success
-  test:
+  platformIndependentTest:
     name: "Run Tests (Platform Independent)"
     needs:
     - preconditions
@@ -143,10 +108,45 @@ jobs:
         mode: branch
         report_name: Integrity Check
         status: failure
+  preconditions:
+    name: Preconditions
+    outputs:
+      begintime: "${{ steps.begintime.outputs.begintime }}"
+    "runs-on": "ubuntu-latest"
+    steps:
+    - id: begintime
+      name: Getting begintime
+      run: "echo \"begintime=$(date +%s)\" >> $GITHUB_OUTPUT"
+  reportSuccessJob:
+    name: Report as Success
+    needs:
+    - documentDeploymentStep
+    - checkFormat
+    - "test-win32"
+    - "test-unix"
+    - "test-mac"
+    - platformIndependentTest
+    - preconditions
+    "runs-on": "ubuntu-latest"
+    steps:
+    - name: Checking out
+      uses: "actions/checkout@v3"
+    - name: Configure AWS Credentials
+      uses: "aws-actions/configure-aws-credentials@v1"
+      with:
+        "aws-region": "ap-northeast-1"
+        "role-to-assume": "arn:aws:iam::208140986057:role/GHALambdaInvoker-Bedrock"
+    - name: Notify
+      uses: "Pctg-x8/ci-notifications-post-invoker@master"
+      with:
+        begintime: "${{ needs.preconditions.outputs.begintime }}"
+        mode: branch
+        report_name: Integrity Check
+        status: success
   "test-mac":
     name: "Run Tests (Mac Specific)"
     needs:
-    - test
+    - platformIndependentTest
     - preconditions
     "runs-on": "macos-latest"
     steps:
@@ -179,7 +179,7 @@ jobs:
   "test-unix":
     name: "Run Tests (Unix Specific)"
     needs:
-    - test
+    - platformIndependentTest
     - preconditions
     "runs-on": "ubuntu-latest"
     steps:
@@ -212,7 +212,7 @@ jobs:
   "test-win32":
     name: "Run Tests (Win32 Specific)"
     needs:
-    - test
+    - platformIndependentTest
     - preconditions
     "runs-on": "windows-latest"
     steps:

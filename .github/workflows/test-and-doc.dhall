@@ -173,29 +173,26 @@ let reportSuccessJob =
 
 let checkJobs =
         JobBuilder.requireJobBefore
-          (toMap { test = platformIndependentTest })
+          (toMap { platformIndependentTest })
           ( toMap
               { test-win32 = platformDependentTests.win32
               , test-unix = platformDependentTests.unix
               , test-mac = platformDependentTests.mac
               }
           )
-      # toMap { check-format = checkFormat }
+      # toMap { checkFormat }
 
 let allJobs =
       JobBuilder.requireJobBefore
         (toMap { preconditions })
         ( JobBuilder.requireJobBefore
             checkJobs
-            (toMap { document-deploy = documentDeploymentStep })
+            (toMap { documentDeploymentStep })
         )
 
 in  GithubActions.Workflow::{
     , name = Some "Integrity Check"
     , on = GithubActions.On.Single GithubActions.UnparameterizedTrigger.push
     , permissions = Some (toMap { id-token = "write", contents = "read" })
-    , jobs =
-        JobBuilder.requireJobBefore
-          allJobs
-          (toMap { report-success = reportSuccessJob })
+    , jobs = JobBuilder.requireJobBefore allJobs (toMap { reportSuccessJob })
     }
