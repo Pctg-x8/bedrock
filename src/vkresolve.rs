@@ -137,7 +137,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
-                    VkResultBox($org_fn_type::STATIC.0($($arg_name),*))
+                    VkResultBox(<$org_fn_type>::STATIC.0($($arg_name),*))
                 }
             }
         }
@@ -161,7 +161,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
-                    $org_fn_type::STATIC.0($($arg_name),*)
+                    <$org_fn_type>::STATIC.0($($arg_name),*)
                 }
             }
         }
@@ -185,7 +185,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
                     log::trace!(target: "br-vkapi-call", stringify!($org_fn));
 
-                    $org_fn_type::STATIC.0($($arg_name),*)
+                    <$org_fn_type>::STATIC.0($($arg_name),*)
                 }
             }
         }
