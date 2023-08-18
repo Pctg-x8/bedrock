@@ -47,44 +47,56 @@ let useRust =
                 job.steps
           }
 
-let simpleTestRustWithFeatures =
-      λ(features : List Text) →
+let cargo =
+      λ(subcommand : Text) →
+      λ(args : Text) →
+        RunCargo.step
+          RunCargo.Params::{ command = subcommand, args = Some args }
+
+let cargoNight =
+      λ(subcommand : Text) →
+      λ(args : Text) →
         RunCargo.step
           RunCargo.Params::{
-          , command = "test"
-          , args = Some "--features ${helper.serializeFeatures features}"
+          , command = subcommand
+          , args = Some args
+          , toolchain = Some "nightly"
           }
 
-let simpleCheckRustWithFeatures =
-      λ(features : List Text) →
-        RunCargo.step
-          RunCargo.Params::{
-          , command = "check"
-          , args = Some "--features ${helper.serializeFeatures features}"
-          }
-
-let preconditionRecordBeginTimeStep =
-      GithubActions.Step::{
-      , name = "Getting begintime"
-      , id = Some "begintime"
-      , run = Some "echo \"begintime=\$(date +%s)\" >> \$GITHUB_OUTPUT"
+let steps =
+      { simpleTestRustWithFeatures =
+          λ(features : List Text) →
+            cargo "test" "--features ${helper.serializeFeatures features}"
+      , simpleCheckRustWithFeatures =
+          λ(features : List Text) →
+            cargo "check" "--features ${helper.serializeFeatures features}"
       }
 
 let preconditions =
-      JobBuilder.buildJob
-        [ JobBuilder.jobOutput
-            "begintime"
-            (GithubActions.mkRefStepOutputExpression "begintime" "begintime")
-        , JobBuilder.jobName "Preconditions"
-        ]
-        [ preconditionRecordBeginTimeStep ]
+      let recordBeginTime =
+            GithubActions.Step::{
+            , name = "Getting begintime"
+            , id = Some "begintime"
+            , run = Some "echo \"begintime=\$(date +%s)\" >> \$GITHUB_OUTPUT"
+            }
+
+      in  JobBuilder.buildJob
+            [ JobBuilder.output
+                "begintime"
+                ( GithubActions.mkRefStepOutputExpression
+                    "begintime"
+                    "begintime"
+                )
+            , JobBuilder.name "Preconditions"
+            ]
+            [ recordBeginTime ]
 
 let checkFormat =
       JobBuilder.buildJob
         [ faultableJob
         , JobBuilder.useRepositoryContent
         , useRust "stable"
-        , JobBuilder.jobName "Check Format"
+        , JobBuilder.name "Check Format"
         ]
         [ GithubActions.Step::{
           , name = "check fmt"
@@ -97,9 +109,9 @@ let platformIndependentTest =
         [ faultableJob
         , JobBuilder.useRepositoryContent
         , useRust "stable"
-        , JobBuilder.jobName "Run Tests (Platform Independent)"
+        , JobBuilder.name "Run Tests (Platform Independent)"
         ]
-        [ simpleTestRustWithFeatures Features.PlatformIndependent ]
+        [ steps.simpleTestRustWithFeatures Features.PlatformIndependent ]
 
 let platformDependentTests =
       { win32 =
@@ -107,39 +119,34 @@ let platformDependentTests =
             [ faultableJob
             , JobBuilder.useRepositoryContent
             , useRust "stable"
-            , JobBuilder.jobRunner GithubActions.RunnerPlatform.windows-latest
-            , JobBuilder.jobName "Run Tests (Win32 Specific)"
+            , JobBuilder.runner GithubActions.RunnerPlatform.windows-latest
+            , JobBuilder.name "Run Tests (Win32 Specific)"
             ]
-            [ simpleCheckRustWithFeatures Features.Win32Specific ]
+            [ steps.simpleCheckRustWithFeatures Features.Win32Specific ]
       , unix =
           JobBuilder.buildJob
             [ faultableJob
             , JobBuilder.useRepositoryContent
             , useRust "stable"
-            , JobBuilder.jobName "Run Tests (Unix Specific)"
+            , JobBuilder.name "Run Tests (Unix Specific)"
             ]
-            [ simpleCheckRustWithFeatures Features.UnixSpecific ]
+            [ steps.simpleCheckRustWithFeatures Features.UnixSpecific ]
       , mac =
           JobBuilder.buildJob
             [ faultableJob
             , JobBuilder.useRepositoryContent
             , useRust "stable"
-            , JobBuilder.jobRunner GithubActions.RunnerPlatform.macos-latest
-            , JobBuilder.jobName "Run Tests (Mac Specific)"
+            , JobBuilder.runner GithubActions.RunnerPlatform.macos-latest
+            , JobBuilder.name "Run Tests (Mac Specific)"
             ]
-            [ simpleCheckRustWithFeatures Features.MacSpecific ]
+            [ steps.simpleCheckRustWithFeatures Features.MacSpecific ]
       }
 
 let documentDeploymentStep =
       let docFeatures = helper.serializeFeatures Features.ForDocumentation
 
       let buildDocument =
-            RunCargo.step
-              RunCargo.Params::{
-              , command = "rustdoc"
-              , args = Some "--features ${docFeatures} -- --cfg docsrs"
-              , toolchain = Some "nightly"
-              }
+            cargoNight "rustdoc" "--features ${docFeatures} -- --cfg docsrs"
 
       let deploymentSteps =
             [ GoogleAuth.step
@@ -158,15 +165,13 @@ let documentDeploymentStep =
             , JobBuilder.useRepositoryContent
             , useRust "nightly"
             , JobBuilder.requestIDTokenWritePermission
-            , JobBuilder.jobName "Deploy Latest Document"
+            , JobBuilder.name "Deploy Latest Document"
             ]
             (helper.prependStep buildDocument deploymentSteps)
 
 let reportSuccessJob =
       JobBuilder.buildJob
-        [ JobBuilder.useRepositoryContent
-        , JobBuilder.jobName "Report as Success"
-        ]
+        [ JobBuilder.useRepositoryContent, JobBuilder.name "Report as Success" ]
         SlackNotification.notifySuccessSteps
 
 let checkJobs =

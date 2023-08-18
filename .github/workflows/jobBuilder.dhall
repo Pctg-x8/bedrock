@@ -32,17 +32,17 @@ let stdJob =
 
 let singleStepJob = λ(step : GithubActions.Step.Type) → stdJob [ step ]
 
-let jobName =
+let name =
       λ(name : Text) →
       λ(job : GithubActions.Job.Type) →
         job ⫽ { name = Some name }
 
-let jobRunner =
+let runner =
       λ(platform : GithubActions.RunnerPlatform) →
       λ(job : GithubActions.Job.Type) →
         job ⫽ { runs-on = platform }
 
-let jobOutput =
+let output =
       λ(name : Text) →
       λ(value : Text) →
       λ(job : GithubActions.Job.Type) →
@@ -129,9 +129,9 @@ let requireJobBefore =
 
 in  { JobModifier
     , JobMap
-    , jobName
-    , jobRunner
-    , jobOutput
+    , name
+    , runner
+    , output
     , depends
     , applyJobModifiers
     , buildJob
