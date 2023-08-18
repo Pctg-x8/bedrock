@@ -51,14 +51,24 @@ pub struct VkMemoryGetWin32HandleInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
-pub type PFN_vkGetMemoryWin32HandleKHR = extern "system" fn(
-    device: VkDevice,
-    pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR,
-    pHandle: *mut windows::Win32::Foundation::HANDLE,
-) -> VkResult;
-pub type PFN_vkGetMemoryWin32HandlePropertiesKHR = extern "system" fn(
-    device: VkDevice,
-    handleType: VkExternalMemoryHandleTypeFlagsKHR,
-    handle: windows::Win32::Foundation::HANDLE,
-    pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetMemoryWin32HandleKHR)]
+pub struct PFN_vkGetMemoryWin32HandleKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetMemoryWin32HandlePropertiesKHR)]
+pub struct PFN_vkGetMemoryWin32HandlePropertiesKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        handleType: VkExternalMemoryHandleTypeFlagsKHR,
+        handle: windows::Win32::Foundation::HANDLE,
+        pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
+    ) -> VkResult,
+);

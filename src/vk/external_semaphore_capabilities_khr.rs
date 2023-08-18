@@ -68,8 +68,13 @@ pub struct VkExternalSemaphorePropertiesKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR,
-    pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceExternalSemaphorePropertiesKHR)]
+pub struct PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR,
+        pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR,
+    ),
 );

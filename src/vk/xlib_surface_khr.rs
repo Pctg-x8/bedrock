@@ -19,18 +19,28 @@ pub struct VkXlibSurfaceCreateInfoKHR {
     pub window: Window,
 }
 
-pub type PFN_vkCreateXlibSurfaceKHR = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    queueFamilyIndex: u32,
-    dpy: *mut Display,
-    visualID: VisualID,
-) -> VkBool32;
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateXlibSurfaceKHR)]
+pub struct PFN_vkCreateXlibSurfaceKHR(
+    pub  unsafe extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceXlibPresentationSupportKHR)]
+pub struct PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        queueFamilyIndex: u32,
+        dpy: *mut Display,
+        visualID: VisualID,
+    ) -> VkBool32,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

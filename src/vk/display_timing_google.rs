@@ -38,17 +38,27 @@ pub struct VkPresentTimesInfoGOOGLE {
     pTimes: *const VkPresentTimeGOOGLE,
 }
 
-pub type PFN_vkGetRefreshCycleDurationGOOGLE = extern "system" fn(
-    device: VkDevice,
-    swapchain: VkSwapchainKHR,
-    pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE,
-) -> VkResult;
-pub type PFN_vkGetPastPresentationTimingGOOGLE = extern "system" fn(
-    device: VkDevice,
-    swapchain: VkSwapchainKHR,
-    pPresentationTimingCount: *mut u32,
-    pPresentationTimings: *mut VkPastPresentationTimingGOOGLE,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetRefreshCycleDurationGOOGLE)]
+pub struct PFN_vkGetRefreshCycleDurationGOOGLE(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPastPresentationTimingGOOGLE)]
+pub struct PFN_vkGetPastPresentationTimingGOOGLE(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        pPresentationTimingCount: *mut u32,
+        pPresentationTimings: *mut VkPastPresentationTimingGOOGLE,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

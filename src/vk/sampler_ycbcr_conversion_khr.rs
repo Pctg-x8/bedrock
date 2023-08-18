@@ -197,17 +197,27 @@ pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkCreateSamplerYcbcrConversionKHR = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkSamplerYcbcrConversionCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateSamplerYcbcrConversionKHR)]
+pub struct PFN_vkCreateSamplerYcbcrConversionKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkSamplerYcbcrConversionCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR,
+    ) -> VkResult,
+);
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkDestroySamplerYcbcrConversionKHR = extern "system" fn(
-    device: VkDevice,
-    ycbcrConversion: VkSamplerYcbcrConversion,
-    pAllocator: *const VkAllocationCallbacks,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroySamplerYcbcrConversionKHR)]
+pub struct PFN_vkDestroySamplerYcbcrConversionKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        ycbcrConversion: VkSamplerYcbcrConversion,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
 );
 
 #[cfg(feature = "Implements")]

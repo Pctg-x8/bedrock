@@ -43,12 +43,22 @@ pub struct VkFenceGetWin32HandleInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 
-pub type PFN_vkImportFenceWin32HandleKHR = extern "system" fn(
-    device: VkDevice,
-    pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR,
-) -> VkResult;
-pub type PFN_vkGetFenceWin32HandleKHR = extern "system" fn(
-    device: VkDevice,
-    pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-    pHandle: *mut windows::Win32::Foundation::HANDLE,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkImportFenceWin32HandleKHR)]
+pub struct PFN_vkImportFenceWin32HandleKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetFenceWin32HandleKHR)]
+pub struct PFN_vkGetFenceWin32HandleKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
+        pHandle: *mut windows::Win32::Foundation::HANDLE,
+    ) -> VkResult,
+);

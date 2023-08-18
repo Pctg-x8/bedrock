@@ -30,7 +30,15 @@ pub struct VkFenceGetFdInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 
-pub type PFN_vkImportFenceFdKHR =
-    extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult;
-pub type PFN_vkGetFenceFdKHR =
-    extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkImportFenceFdKHR)]
+pub struct PFN_vkImportFenceFdKHR(
+    pub unsafe extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetFenceFdKHR)]
+pub struct PFN_vkGetFenceFdKHR(
+    pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut c_int) -> VkResult,
+);

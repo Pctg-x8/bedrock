@@ -23,9 +23,14 @@ pub struct VkPipelineViewportWScalingStateCreateInfoNV {
     pub pViewportWScalings: *const VkViewportWScalingNV,
 }
 
-pub type PFN_vkCmdSetViewportWScalingNV = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    firstViewprt: u32,
-    viewportCount: u32,
-    pViewportWScalings: *const VkViewportWScalingNV,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetViewportWScalingNV)]
+pub struct PFN_vkCmdSetViewportWScalingNV(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        firstViewprt: u32,
+        viewportCount: u32,
+        pViewportWScalings: *const VkViewportWScalingNV,
+    ),
 );

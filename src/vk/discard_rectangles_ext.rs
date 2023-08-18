@@ -32,9 +32,14 @@ pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub pDiscardRectangles: *const VkRect2D,
 }
 
-pub type PFN_vkCmdSetDiscardRectangleEXT = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    firstDiscardRectangle: u32,
-    discardRectangleCount: u32,
-    pDiscardRectangles: *const VkRect2D,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetDiscardRectangleEXT)]
+pub struct PFN_vkCmdSetDiscardRectangleEXT(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        firstDiscardRectangle: u32,
+        discardRectangleCount: u32,
+        pDiscardRectangles: *const VkRect2D,
+    ),
 );

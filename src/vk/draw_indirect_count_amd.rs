@@ -5,5 +5,31 @@ pub static VK_AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME: &'static str = "VK_AMD_dra
 
 use super::*;
 
-pub type PFN_vkCmdDrawIndirectCountAMD = extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, countBuffer: VkBuffer, countBufferOffset: VkDeviceSize, maxDrawCount: u32, stride: u32);
-pub type PFN_vkCmdDrawIndexedIndirectCountAMD = extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, countBuffer: VkBuffer, countBufferOffset: VkDeviceSize, maxDrawCount: u32, stride: u32);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDrawIndirectCountAMD)]
+pub struct PFN_vkCmdDrawIndirectCountAMD(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        countBuffer: VkBuffer,
+        countBufferOffset: VkDeviceSize,
+        maxDrawCount: u32,
+        stride: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDrawIndexedIndirectCountAMD)]
+pub struct PFN_vkCmdDrawIndexedIndirectCountAMD(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        countBuffer: VkBuffer,
+        countBufferOffset: VkDeviceSize,
+        maxDrawCount: u32,
+        stride: u32,
+    ),
+);

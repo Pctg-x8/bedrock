@@ -2,43 +2,72 @@ use proc_macro::TokenStream;
 use quote::*;
 use syn::{parse_macro_input, Expr};
 
-#[proc_macro_derive(VkHandle)]
-pub fn derive_handle(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing Failed");
+fn find_vkhandle_source(fields: &syn::Fields) -> Option<(proc_macro2::TokenStream, &syn::Type)> {
+    // try finding vk_handle attributed field first
+    let preferred = match fields {
+        syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }) => unnamed
+            .iter()
+            .position(|f| {
+                f.attrs
+                    .iter()
+                    .any(|a| a.meta.require_path_only().is_ok_and(|ap| ap.is_ident("handle")))
+            })
+            .map(|x| (quote! { self.#x }, &unnamed[x].ty)),
+        syn::Fields::Named(syn::FieldsNamed { named, .. }) => named
+            .iter()
+            .find(|f| {
+                f.attrs
+                    .iter()
+                    .any(|a| a.meta.require_path_only().is_ok_and(|ap| ap.is_ident("handle")))
+            })
+            .map(|f| {
+                let n = f.ident.as_ref().unwrap();
+                (quote! { self.#n }, &f.ty)
+            }),
+        syn::Fields::Unit => None,
+    };
 
+    preferred.or_else(|| match fields {
+        syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }) => unnamed.first().map(|f| (quote! { self.0 }, &f.ty)),
+        syn::Fields::Unit => panic!("Unit struct cannot auto-derive VkHandle"),
+        syn::Fields::Named(_) => panic!("Named fields struct must has one field that marked by #[handle]"),
+    })
+}
+
+#[proc_macro_derive(VkHandle, attributes(handle))]
+pub fn derive_handle(tok: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let fields = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
-        fields
+    let (handle_field_ref, handle_ty) = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
+        find_vkhandle_source(fields).expect("No suitable field representing handle source")
     } else {
         panic!("AutoDerive VkHandle can only be applied for structs");
     };
-    let implement = match fields {
-        syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }) => {
-            let target_ty = &unnamed.first().expect("Empty Struct?").ty;
 
-            quote! {
-                impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
-                    type Handle = #target_ty;
+    let implement = quote! {
+        impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
+            type Handle = #handle_ty;
 
-                    #[inline]
-                    fn native_ptr(&self) -> Self::Handle { self.0 }
-                }
-                impl #impl_generics crate::VkHandleMut for #name #ty_generics #where_clause {
-                    #[inline]
-                    fn native_ptr_mut(&mut self) -> Self::Handle { self.0 }
-                }
+            #[inline]
+            fn native_ptr(&self) -> Self::Handle {
+                #handle_field_ref
             }
         }
-        _ => unimplemented!("Named Fields"),
+        impl #impl_generics crate::VkHandleMut for #name #ty_generics #where_clause {
+            #[inline]
+            fn native_ptr_mut(&mut self) -> Self::Handle {
+                #handle_field_ref
+            }
+        }
     };
 
-    TokenStream::from(implement)
+    implement.into()
 }
 
 #[proc_macro_derive(VkObject, attributes(VkObject))]
 pub fn derive_object(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let object_attrs = input
         .attrs
@@ -433,6 +462,162 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
             fn raw_handle_value(&self) -> u64 {
                 #raw_handle_conversion
             }
+        }
+    }
+    .into()
+}
+
+struct NewtypePFNInput {
+    pub attrs: Vec<syn::Attribute>,
+    pub vis: syn::Visibility,
+    pub _type_token: syn::Token![type],
+    pub newtype_name: syn::Ident,
+    pub _eq_token: syn::Token![=],
+    pub org_type: syn::Type,
+}
+impl syn::parse::Parse for NewtypePFNInput {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        Ok(Self {
+            attrs: syn::Attribute::parse_outer(input)?,
+            vis: input.parse()?,
+            _type_token: input.parse()?,
+            newtype_name: input.parse()?,
+            _eq_token: input.parse()?,
+            org_type: input.parse()?,
+        })
+    }
+}
+impl NewtypePFNInput {
+    pub fn quote_base_define(&self) -> proc_macro2::TokenStream {
+        let Self {
+            attrs,
+            vis,
+            newtype_name,
+            org_type,
+            ..
+        } = self;
+
+        quote! { #(#attrs)* #[repr(transparent)] #vis struct #newtype_name(#org_type); }
+    }
+
+    pub fn quote_from_ptr_impl(&self) -> proc_macro2::TokenStream {
+        let Self { newtype_name, .. } = self;
+
+        quote! {
+            unsafe impl crate::vkresolve::FromPtr for #newtype_name {
+                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                    core::mem::transmute(p)
+                }
+            }
+        }
+    }
+
+    pub fn quote_pfn_impl(&self) -> proc_macro2::TokenStream {
+        let Self { newtype_name, .. } = self;
+        let fname = self.original_function_name_nulbytes();
+
+        quote! {
+            unsafe impl crate::vkresolve::PFN for #newtype_name {
+                const NAME_NUL: &'static [u8] = #fname;
+
+                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                    core::mem::transmute(p)
+                }
+                unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
+                    core::mem::transmute(p)
+                }
+            }
+        }
+    }
+
+    pub fn original_function_name_nulbytes(&self) -> syn::LitByteStr {
+        let tyname_ident = match self.org_type {
+            syn::Type::Path(ref p) => p
+                .path
+                .get_ident()
+                .or_else(|| p.path.segments.last().map(|l| &l.ident))
+                .expect("org tyname is not an ident?"),
+            _ => panic!("unknown org type"),
+        };
+        let tyname_str = tyname_ident.to_string();
+        let mut fname = tyname_str
+            .strip_prefix("PFN_")
+            .expect("TypeName must be prefixed by \"PFN_\"")
+            .as_bytes()
+            .to_vec();
+        fname.push(0);
+
+        syn::LitByteStr::new(&fname, tyname_ident.span())
+    }
+}
+#[proc_macro]
+pub fn newtype_pfn(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as NewtypePFNInput);
+
+    let base_def = input.quote_base_define();
+    let from_ptr_impl = input.quote_from_ptr_impl();
+    let pfn_impl = input.quote_pfn_impl();
+
+    quote! {
+        #base_def
+        #from_ptr_impl
+        #pfn_impl
+    }
+    .into()
+}
+
+#[proc_macro_derive(PFN, attributes(pfn_of))]
+pub fn derive_pfn(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as syn::DeriveInput);
+    let impl_name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let org_attr = &input
+        .attrs
+        .iter()
+        .filter_map(|a| a.meta.require_list().ok())
+        .find(|a| a.path.is_ident("pfn_of"))
+        .expect("no #[pfn_of] found");
+    let org_fn: syn::Path = org_attr.parse_args().expect("invalid arg for pfn_of");
+    let org_fn_name = org_fn
+        .get_ident()
+        .or_else(|| org_fn.segments.last().map(|l| &l.ident))
+        .expect("invalid pfn_of fn path");
+    let mut org_fn_nulbytes = org_fn_name.to_string().into_bytes();
+    org_fn_nulbytes.push(0);
+    let org_fn_nulbytes = syn::LitByteStr::new(&org_fn_nulbytes, proc_macro2::Span::call_site().into());
+
+    quote! {
+        unsafe impl #impl_generics crate::vkresolve::PFN for #impl_name #ty_generics #where_clause {
+            const NAME_NUL: &'static [u8] = #org_fn_nulbytes;
+
+            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                core::mem::transmute(p)
+            }
+            unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
+                core::mem::transmute(p)
+            }
+        }
+    }
+    .into()
+}
+
+#[proc_macro_derive(StaticCallable, attributes(static_fn))]
+pub fn derive_static_callable(input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as syn::DeriveInput);
+    let impl_name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let org_attr = &input
+        .attrs
+        .iter()
+        .filter_map(|a| a.meta.require_list().ok())
+        .find(|a| a.path.is_ident("pfn_of"))
+        .expect("no #[pfn_of] found");
+    let org_fn: syn::Path = org_attr.parse_args().expect("invalid arg for pfn_of");
+
+    quote! {
+        #[cfg(all(not(feature = "DynamicLoaded"), feature = "Implements"))]
+        impl #impl_generics crate::vkresolve::StaticCallable for #impl_name #ty_generics #where_clause {
+            const STATIC: Self = Self(#org_fn);
         }
     }
     .into()

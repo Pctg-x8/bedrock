@@ -19,14 +19,27 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
     pub surface: *mut wl_proxy, /*wl_surface*/
 }
 
-pub type PFN_vkCreateWaylandSurfaceKHR = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut wl_display) -> VkBool32;
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateWaylandSurfaceKHR)]
+pub struct PFN_vkCreateWaylandSurfaceKHR(
+    pub  unsafe extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceWaylandPresentationSupportKHR)]
+pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        queueFamilyIndex: u32,
+        display: *mut wl_display,
+    ) -> VkBool32,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

@@ -27,7 +27,7 @@ impl<Instance: crate::Instance> InstanceChild for SurfaceObject<Instance> {
 impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -83,7 +83,7 @@ where
 {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -115,7 +115,7 @@ where
         let d = unsafe { std::ptr::read(&self.1) };
         let s = unsafe { std::ptr::read(&self.2) };
         unsafe {
-            Resolver::get().destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
         std::mem::forget(self);
 
@@ -274,17 +274,16 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         };
         let mut n = 0;
         unsafe {
-            Resolver::get()
-                .acquire_next_image_khr(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    timeout.unwrap_or(std::u64::MAX),
-                    semaphore,
-                    fence,
-                    &mut n,
-                )
-                .into_result()
-                .map(|_| n)
+            crate::vkresolve::acquire_next_image_khr(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                timeout.unwrap_or(std::u64::MAX),
+                semaphore,
+                fence,
+                &mut n,
+            )
+            .into_result()
+            .map(|_| n)
         }
     }
 
@@ -317,8 +316,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             pResults: &mut res,
         };
         unsafe {
-            Resolver::get()
-                .queue_present_khr(queue.native_ptr(), &pinfo)
+            crate::vkresolve::queue_present_khr(queue.native_ptr(), &pinfo)
                 .into_result()
                 .and_then(|x| if x.0 == VK_SUCCESS { Ok(()) } else { Err(x) })
         }
@@ -368,26 +366,29 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     {
         let mut n = 0;
         unsafe {
-            Resolver::get()
-                .get_swapchain_images_khr(
-                    self.device().native_ptr(),
-                    self.native_ptr(),
-                    &mut n,
-                    std::ptr::null_mut(),
-                )
-                .into_result()?;
+            crate::vkresolve::get_swapchain_images_khr(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut n,
+                std::ptr::null_mut(),
+            )
+            .into_result()?;
         }
         let mut v = Vec::with_capacity(n as _);
         unsafe {
             v.set_len(n as _);
-            Resolver::get()
-                .get_swapchain_images_khr(self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr())
-                .into_result()
-                .map(|_| {
-                    v.into_iter()
-                        .map(|r| crate::SwapchainImage(r, self, self.format()))
-                        .collect()
-                })
+            crate::vkresolve::get_swapchain_images_khr(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                &mut n,
+                v.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| {
+                v.into_iter()
+                    .map(|r| crate::SwapchainImage(r, self, self.format()))
+                    .collect()
+            })
         }
     }
 }

@@ -1,37 +1,165 @@
 //! Vulkan Device and Queues
 
-use crate::VkResultBox;
+use cfg_if::cfg_if;
+
+use crate::vkresolve::{FromPtr, ResolvedFnCell};
 #[cfg(feature = "Implements")]
 use crate::{
-    fnconv::FnTransmute,
-    vkresolve::{Resolver, ResolverInterface},
-    DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure, VulkanStructureProvider,
+    fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure,
+    VulkanStructureProvider,
 };
 use crate::{vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, VkObject};
+use crate::{ResolverInterface, VkResultBox};
 use crate::{TemporalSubmissionBatchResources, VkHandle};
+
+cfg_if! {
+    if #[cfg(feature = "Implements")] {
+        type DeviceResolvedFn<F> = ResolvedFnCell<F, VkDevice>;
+        impl ResolverInterface for VkDevice {
+            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+                T::from_ptr(core::mem::transmute(crate::vkresolve::get_device_proc_addr(
+                    *self,
+                    name.as_ptr() as _,
+                )))
+            }
+
+            unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &[u8]) -> F {
+                F::from_void_fn(
+                    crate::vkresolve::get_device_proc_addr(*self, name.as_ptr() as _)
+                        .unwrap_or_else(|| panic!("function {:?} not found", name))
+                )
+            }
+        }
+    }
+}
 
 /// Opaque handle to a device object
 #[derive(VkHandle, VkObject, InstanceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_DEVICE)]
-pub struct DeviceObject<Instance: crate::Instance>(VkDevice, #[parent] Instance);
+pub struct DeviceObject<Instance: crate::Instance> {
+    #[handle]
+    handle: VkDevice,
+    #[parent]
+    parent: Instance,
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    trim_command_pool_khr: DeviceResolvedFn<PFN_vkTrimCommandPoolKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+    create_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkCreateDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+    destroy_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkDestroyDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+    update_descriptor_set_with_template_khr: DeviceResolvedFn<PFN_vkUpdateDescriptorSetWithTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+    bind_buffer_memory2_khr: DeviceResolvedFn<PFN_vkBindBufferMemory2KHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+    bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
+    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
+    get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
+}
+impl<Instance: crate::Instance> DeviceObject<Instance> {
+    pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
+        Self {
+            handle,
+            parent,
+            #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+            trim_command_pool_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
+            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
+        }
+    }
+}
 unsafe impl<Instance: crate::Instance + Sync> Sync for DeviceObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for DeviceObject<Instance> {}
 #[cfg(feature = "Implements")]
 impl<Instance: crate::Instance> Drop for DeviceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_device(self.0, std::ptr::null());
+            crate::vkresolve::destroy_device(self.handle, std::ptr::null());
         }
     }
 }
-impl<Instance: crate::Instance> Device for DeviceObject<Instance> {}
+impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
+        *self.trim_command_pool_khr.resolve()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
+                *self.create_descriptor_update_template_khr.resolve()
+            }
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
+                *self.destroy_descriptor_update_template_khr.resolve()
+            }
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
+                *self.update_descriptor_set_with_template_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
+                *self.bind_buffer_memory2_khr.resolve()
+            }
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
+                *self.bind_image_memory2_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+                *self.get_image_drm_format_modifier_properties_ext.resolve()
+            }
+        }
+    }
+}
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
     #[inline]
     pub fn clone_parent(self) -> DeviceObject<Instance> {
-        let r = DeviceObject(self.0, self.1.clone());
-        // disable dropping self.0
+        let r = DeviceObject {
+            handle: self.handle,
+            parent: self.parent.clone(),
+            #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+            trim_command_pool_khr: unsafe { core::ptr::read(&self.trim_command_pool_khr) },
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            create_descriptor_update_template_khr: unsafe {
+                core::ptr::read(&self.create_descriptor_update_template_khr)
+            },
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            destroy_descriptor_update_template_khr: unsafe {
+                core::ptr::read(&self.destroy_descriptor_update_template_khr)
+            },
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))]
+            update_descriptor_set_with_template_khr: unsafe {
+                core::ptr::read(&self.update_descriptor_set_with_template_khr)
+            },
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_buffer_memory2_khr: unsafe { core::ptr::read(&self.bind_buffer_memory2_khr) },
+            #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))]
+            bind_image_memory2_khr: unsafe { core::ptr::read(&self.bind_image_memory2_khr) },
+            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
+            get_image_drm_format_modifier_properties_ext: unsafe {
+                core::ptr::read(&self.get_image_drm_format_modifier_properties_ext)
+            },
+        };
+        // disable running VkDevice destruction
         std::mem::forget(self);
+
         r
     }
 }
@@ -146,10 +274,9 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| DeviceObject(h.assume_init(), self.pdev_ref.transfer_instance()))
+                .map(|_| DeviceObject::wrap_handle(h.assume_init(), self.pdev_ref.transfer_instance()))
         }
     }
 }
@@ -190,9 +317,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         unsafe {
             let fn_cstr = std::ffi::CString::new(name).unwrap();
-            Resolver::get()
-                .get_device_proc_addr(self.native_ptr(), fn_cstr.as_ptr())
-                .map(|f| FnTransmute::from_fn(f))
+            crate::vkresolve::get_device_proc_addr(self.native_ptr(), fn_cstr.as_ptr()).map(|f| FnTransmute::from_fn(f))
         }
     }
 
@@ -204,7 +329,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
+            crate::vkresolve::get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
             QueueObject(h.assume_init(), self)
         }
     }
@@ -217,8 +342,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[cfg(feature = "Implements")]
     unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        Resolver::get()
-            .invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
+        crate::vkresolve::invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
             .into_result()
             .map(drop)
     }
@@ -287,7 +411,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             })
             .collect::<Vec<_>>();
         unsafe {
-            Resolver::get().update_descriptor_sets(
+            crate::vkresolve::update_descriptor_sets(
                 self.native_ptr(),
                 w.len() as _,
                 w.as_ptr(),
@@ -302,8 +426,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// All VkQueue objects created from this device must be externally synchronized.
     #[cfg(feature = "Implements")]
     unsafe fn wait(&self) -> crate::Result<()> {
-        Resolver::get()
-            .device_wait_idle(self.native_ptr())
+        crate::vkresolve::device_wait_idle(self.native_ptr())
             .into_result()
             .map(drop)
     }
@@ -524,8 +647,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         create_info.build(unsafe { &mut *s.as_mut_ptr() });
         let s = unsafe { s.assume_init_ref() };
         unsafe {
-            Resolver::get()
-                .create_buffer(self.native_ptr(), s, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_buffer(self.native_ptr(), s, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::BufferObject(h.assume_init(), self))
         }
@@ -552,14 +674,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 memoryOffset: offs,
             })
             .collect();
-        // TODO: optimize extra procedure
-        let f: PFN_vkBindBufferMemory2KHR = self
-            .extra_procedure("vkBindBufferMemory2KHR")
-            .expect("no vkBindBufferMemory2KHR");
 
-        VkResultBox((f)(self.native_ptr(), infos.len() as _, infos.as_ptr()))
+        unsafe {
+            VkResultBox(self.bind_buffer_memory2_khr_fn().0(
+                self.native_ptr(),
+                infos.len() as _,
+                infos.as_ptr(),
+            ))
             .into_result()
             .map(drop)
+        }
     }
 
     /// Multiple Binding for Images
@@ -583,14 +707,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 memoryOffset: offs,
             })
             .collect();
-        // TODO: optimize extra procedure
-        let f: PFN_vkBindImageMemory2KHR = self
-            .extra_procedure("vkBindImageMemory2KHR")
-            .expect("no vkBindImageMemory2KHR");
 
-        VkResultBox((f)(self.native_ptr(), infos.len() as _, infos.as_ptr()))
+        unsafe {
+            VkResultBox(self.bind_image_memory2_khr_fn().0(
+                self.native_ptr(),
+                infos.len() as _,
+                infos.as_ptr(),
+            ))
             .into_result()
             .map(drop)
+        }
     }
 
     /// Multiple Binding for both resources
@@ -620,8 +746,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[cfg(feature = "Implements")]
     unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        Resolver::get()
-            .flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
+        crate::vkresolve::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
             .into_result()
             .map(drop)
     }
@@ -647,8 +772,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
         }
@@ -677,8 +801,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::PipelineCacheObject(h.assume_init(), self))
         }
@@ -720,8 +843,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::PipelineLayoutObject(h.assume_init(), self))
         }
@@ -744,7 +866,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut hs = vec![VkPipeline::NULL; infos.len()];
         let r = unsafe {
-            Resolver::get().create_graphics_pipelines(
+            crate::vkresolve::create_graphics_pipelines(
                 self.native_ptr(),
                 cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                 infos.len() as _,
@@ -793,22 +915,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut pipelines = vec![VkPipeline::NULL; builders.len()];
         unsafe {
-            Resolver::get()
-                .create_compute_pipelines(
-                    self.native_ptr(),
-                    cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                    cinfos.len() as _,
-                    cinfos.as_ptr(),
-                    std::ptr::null(),
-                    pipelines.as_mut_ptr(),
-                )
-                .into_result()
-                .map(move |_| {
-                    pipelines
-                        .into_iter()
-                        .map(|h| crate::PipelineObject(h, self.clone()))
-                        .collect()
-                })
+            crate::vkresolve::create_compute_pipelines(
+                self.native_ptr(),
+                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                cinfos.len() as _,
+                cinfos.as_ptr(),
+                std::ptr::null(),
+                pipelines.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| {
+                pipelines
+                    .into_iter()
+                    .map(|h| crate::PipelineObject(h, self.clone()))
+                    .collect()
+            })
         }
     }
 
@@ -832,8 +953,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             memoryTypeIndex: type_index,
         };
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -875,8 +995,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -918,8 +1037,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -959,8 +1077,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -1000,8 +1117,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
@@ -1021,19 +1137,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut h = std::mem::MaybeUninit::uninit();
         let flags = if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
         unsafe {
-            Resolver::get()
-                .create_fence(
-                    self.native_ptr(),
-                    &VkFenceCreateInfo {
-                        sType: VkFenceCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags,
-                    },
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| crate::FenceObject(h.assume_init(), self))
+            crate::vkresolve::create_fence(
+                self.native_ptr(),
+                &VkFenceCreateInfo {
+                    sType: VkFenceCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags,
+                },
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::FenceObject(h.assume_init(), self))
         }
     }
 
@@ -1065,8 +1180,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: &exp_info as *const _ as _,
         };
         unsafe {
-            Resolver::get()
-                .create_fence(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_fence(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::FenceObject(h.assume_init(), self))
         }
@@ -1085,19 +1199,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_semaphore(
-                    self.native_ptr(),
-                    &VkSemaphoreCreateInfo {
-                        sType: VkSemaphoreCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags: 0,
-                    },
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| crate::SemaphoreObject(h.assume_init(), self))
+            crate::vkresolve::create_semaphore(
+                self.native_ptr(),
+                &VkSemaphoreCreateInfo {
+                    sType: VkSemaphoreCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags: 0,
+                },
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::SemaphoreObject(h.assume_init(), self))
         }
     }
 
@@ -1129,8 +1242,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_semaphore(self.native_ptr(), &info, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_semaphore(self.native_ptr(), &info, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::SemaphoreObject(h.assume_init(), self))
         }
@@ -1149,19 +1261,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_event(
-                    self.native_ptr(),
-                    &VkEventCreateInfo {
-                        sType: VkEventCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags: 0,
-                    },
-                    std::ptr::null(),
-                    h.as_mut_ptr(),
-                )
-                .into_result()
-                .map(|_| crate::EventObject(h.assume_init(), self))
+            crate::vkresolve::create_event(
+                self.native_ptr(),
+                &VkEventCreateInfo {
+                    sType: VkEventCreateInfo::TYPE,
+                    pNext: std::ptr::null(),
+                    flags: 0,
+                },
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::EventObject(h.assume_init(), self))
         }
     }
 
@@ -1181,7 +1292,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<bool> {
         let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let vr = unsafe {
-            Resolver::get().wait_for_fences(
+            crate::vkresolve::wait_for_fences(
                 self.native_ptr(),
                 objects_ptr.len() as _,
                 objects_ptr.as_ptr(),
@@ -1206,8 +1317,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn reset_multiple_fences(&self, objects: &[&mut impl crate::Fence]) -> crate::Result<()> {
         let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         unsafe {
-            Resolver::get()
-                .reset_fences(self.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr())
+            crate::vkresolve::reset_fences(self.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr())
                 .into_result()
                 .map(drop)
         }
@@ -1245,8 +1355,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::CommandPoolObject(h.assume_init(), self))
         }
@@ -1280,8 +1389,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_descriptor_set_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_descriptor_set_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| crate::DescriptorSetLayoutObject(h.assume_init(), self))
         }
@@ -1316,8 +1424,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pPoolSizes: pool_sizes.as_ptr() as *const _,
         };
         unsafe {
-            Resolver::get()
-                .create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::DescriptorPoolObject(h.assume_init(), self))
         }
@@ -1334,13 +1441,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized + InstanceChild,
     {
-        let f: PFN_vkCreateDescriptorUpdateTemplateKHR = self
-            .extra_procedure("vkCreateDescriptorUpdateTemplateKHR")
-            .expect("no vkCreateDescriptorUpdateTemplateKHR");
-        let destroy_fn: PFN_vkDestroyDescriptorUpdateTemplateKHR = self
-            .extra_procedure("vkDestroyDescriptorUpdateTemplateKHR")
-            .expect("no vkDestroyDescriptorUpdateTemplateKHR");
-
         let cinfo = VkDescriptorUpdateTemplateCreateInfoKHR {
             sType: VkDescriptorUpdateTemplateCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -1355,9 +1455,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut handle = std::mem::MaybeUninit::uninit();
         unsafe {
-            VkResultBox((f)(self.native_ptr(), &cinfo, std::ptr::null(), handle.as_mut_ptr()))
-                .into_result()
-                .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self, destroy_fn))
+            VkResultBox(self.create_descriptor_update_template_khr_fn().0(
+                self.native_ptr(),
+                &cinfo,
+                std::ptr::null(),
+                handle.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self))
         }
     }
 
@@ -1431,8 +1536,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::FramebufferObject(h.assume_init(), self, attachment_objects, size.as_ref().clone()))
         }
@@ -1459,8 +1563,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         builder.build(unsafe { &mut *structure.as_mut_ptr() });
         let structure = unsafe { structure.assume_init() };
         unsafe {
-            Resolver::get()
-                .create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     crate::SwapchainObject(
@@ -1473,9 +1576,111 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 })
         }
     }
+
+    // Extension Function Providers
+
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR;
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR;
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR;
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR;
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
+        }
+    }
 }
-DerefContainerBracketImpl!(for Device {});
-GuardsImpl!(for Device {});
+DerefContainerBracketImpl!(for Device {
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
+        (**self).get_trim_command_pool_khr_fn()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
+                (**self).create_descriptor_update_template_khr_fn()
+            }
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
+                (**self).destroy_descriptor_update_template_khr_fn()
+            }
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
+                (**self).update_descriptor_set_with_template_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
+                (**self).bind_buffer_memory2_khr_fn()
+            }
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
+                (**self).bind_image_memory2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+                (**self).get_image_drm_format_modifier_properties_ext_fn()
+            }
+        }
+    }
+});
+GuardsImpl!(for Device {
+    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
+        (**self).get_trim_command_pool_khr_fn()
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
+            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
+                (**self).create_descriptor_update_template_khr_fn()
+            }
+            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
+                (**self).destroy_descriptor_update_template_khr_fn()
+            }
+            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
+                (**self).update_descriptor_set_with_template_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
+            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
+                (**self).bind_buffer_memory2_khr_fn()
+            }
+            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
+                (**self).bind_image_memory2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
+            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
+                (**self).get_image_drm_format_modifier_properties_ext_fn()
+            }
+        }
+    }
+});
 
 /// Child of a device object
 pub trait DeviceChild {
@@ -1517,8 +1722,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .queue_wait_idle(self.native_ptr_mut())
+            crate::vkresolve::queue_wait_idle(self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -1562,15 +1766,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .queue_bind_sparse(
-                    self.native_ptr_mut(),
-                    batches.len() as _,
-                    batches.as_ptr(),
-                    fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::queue_bind_sparse(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr(),
+                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1623,15 +1826,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .queue_submit(
-                    self.native_ptr_mut(),
-                    batches.len() as _,
-                    batches.as_ptr(),
-                    fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
-                )
-                .into_result()
-                .map(drop)
+            crate::vkresolve::queue_submit(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr(),
+                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1674,8 +1876,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
             pResults: res.as_mut_ptr(),
         };
         unsafe {
-            Resolver::get()
-                .queue_present_khr(self.native_ptr_mut(), &pinfo)
+            crate::vkresolve::queue_present_khr(self.native_ptr_mut(), &pinfo)
                 .into_result()
                 .map(|_| res)
         }

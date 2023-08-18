@@ -4,10 +4,7 @@ use crate::vk::*;
 use crate::DeviceChild;
 use crate::VkHandle;
 #[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VkHandleMut,
-};
+use crate::VkHandleMut;
 
 DefineStdDeviceChildObject! {
     /// Opaque Handle to a fence object
@@ -16,7 +13,7 @@ DefineStdDeviceChildObject! {
 impl<Device: crate::Device> Status for FenceObject<Device> {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { Resolver::get().get_fence_status(self.device().native_ptr(), self.native_ptr()) };
+        let vr = unsafe { crate::vkresolve::get_fence_status(self.device().native_ptr(), self.native_ptr()) };
         match vr.0 {
             VK_SUCCESS => Ok(true),
             VK_NOT_READY => Ok(false),
@@ -37,7 +34,7 @@ DefineStdDeviceChildObject! {
 impl<Device: crate::Device> Status for EventObject<Device> {
     #[cfg(feature = "Implements")]
     fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { Resolver::get().get_event_status(self.device().native_ptr(), self.native_ptr()) };
+        let vr = unsafe { crate::vkresolve::get_event_status(self.device().native_ptr(), self.native_ptr()) };
         match vr.0 {
             VK_EVENT_SET => Ok(true),
             VK_EVENT_RESET => Ok(false),
@@ -57,7 +54,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     #[cfg(feature = "Implements")]
     fn wait_timeout(&self, timeout: u64) -> crate::Result<bool> {
         let vr = unsafe {
-            Resolver::get().wait_for_fences(self.device().native_ptr(), 1, &self.native_ptr(), false as _, timeout)
+            crate::vkresolve::wait_for_fences(self.device().native_ptr(), 1, &self.native_ptr(), false as _, timeout)
         };
         match vr.0 {
             VK_SUCCESS => Ok(false),
@@ -90,8 +87,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .reset_fences(self.device().native_ptr(), 1, &self.native_ptr_mut())
+            crate::vkresolve::reset_fences(self.device().native_ptr(), 1, &self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -181,8 +177,7 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .set_event(self.device().native_ptr(), self.native_ptr_mut())
+            crate::vkresolve::set_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -200,8 +195,7 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
         Self: VkHandleMut,
     {
         unsafe {
-            Resolver::get()
-                .reset_event(self.device().native_ptr(), self.native_ptr_mut())
+            crate::vkresolve::reset_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }

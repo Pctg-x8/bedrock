@@ -35,7 +35,7 @@ pub use self::error::*;
 #[cfg(feature = "Implements")]
 mod vkresolve;
 #[cfg(feature = "Implements")]
-pub use vkresolve::{Resolver, ResolverInterface};
+pub use vkresolve::ResolverInterface;
 
 #[cfg(feature = "Implements")]
 mod fnconv;
@@ -54,7 +54,7 @@ macro_rules! DefineStdDeviceChildObject {
         impl<Device: $crate::Device> Drop for $name<Device> {
             fn drop(&mut self) {
                 unsafe {
-                    $crate::Resolver::get().$dropper(self.1.native_ptr(), self.0, std::ptr::null());
+                    $crate::vkresolve::$dropper(self.1.native_ptr(), self.0, std::ptr::null());
                 }
             }
         }
@@ -534,8 +534,7 @@ impl<Device: crate::Device> QueryPool<Device> {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            vkresolve::create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| Self(h.assume_init(), device))
         }
@@ -552,7 +551,7 @@ impl<Device: crate::Device> QueryPool<Device> {
         let mut v = Vec::with_capacity(query_range.len());
         unsafe { v.set_len(query_range.len()) };
         unsafe {
-            Resolver::get().get_query_pool_results(
+            vkresolve::get_query_pool_results(
                 self.1.native_ptr(),
                 self.0,
                 query_range.start,
@@ -578,7 +577,7 @@ impl<Device: crate::Device> QueryPool<Device> {
         let mut v = Vec::with_capacity(query_range.len());
         unsafe { v.set_len(query_range.len()) };
         unsafe {
-            Resolver::get().get_query_pool_results(
+            vkresolve::get_query_pool_results(
                 self.1.native_ptr(),
                 self.0,
                 query_range.start,
@@ -597,7 +596,7 @@ impl<Device: crate::Device> QueryPool<Device> {
 impl<Device: crate::Device> Drop for QueryPool<Device> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_query_pool(self.1.native_ptr(), self.0, std::ptr::null());
+            vkresolve::destroy_query_pool(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }

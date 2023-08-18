@@ -52,30 +52,50 @@ pub struct VkSwapchainCounterCreateInfoEXT {
     pub surfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 
-pub type PFN_vkDisplayPowerControlEXT = extern "system" fn(
-    device: VkDevice,
-    display: VkDisplayKHR,
-    pDisplayPowerInfo: *const VkDisplayPowerInfoEXT,
-) -> VkResult;
-pub type PFN_vkRegisterDeviceEventEXT = extern "system" fn(
-    device: VkDevice,
-    pDeviceEventInfo: *const VkDeviceEventInfoEXT,
-    pAllocator: *const VkAllocationCallbacks,
-    pFence: *mut VkFence,
-) -> VkResult;
-pub type PFN_vkRegisterDisplayEventEXT = extern "system" fn(
-    device: VkDevice,
-    display: VkDisplayKHR,
-    pDisplayEventInfo: *const VkDisplayEventInfoEXT,
-    pAllocator: *const VkAllocationCallbacks,
-    pFence: *mut VkFence,
-) -> VkResult;
-pub type PFN_vkGetSwapchainCounterEXT = extern "system" fn(
-    device: VkDevice,
-    swapchain: VkSwapchainKHR,
-    counter: VkSurfaceCounterFlagsEXT,
-    pCounterValue: *mut u64,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDisplayPowerControlEXT)]
+pub struct PFN_vkDisplayPowerControlEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        display: VkDisplayKHR,
+        pDisplayPowerInfo: *const VkDisplayPowerInfoEXT,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkRegisterDeviceEventEXT)]
+pub struct PFN_vkRegisterDeviceEventEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pDeviceEventInfo: *const VkDeviceEventInfoEXT,
+        pAllocator: *const VkAllocationCallbacks,
+        pFence: *mut VkFence,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkRegisterDisplayEventEXT)]
+pub struct PFN_vkRegisterDisplayEventEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        display: VkDisplayKHR,
+        pDisplayEventInfo: *const VkDisplayEventInfoEXT,
+        pAllocator: *const VkAllocationCallbacks,
+        pFence: *mut VkFence,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetSwapchainCounterEXT)]
+pub struct PFN_vkGetSwapchainCounterEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        counter: VkSurfaceCounterFlagsEXT,
+        pCounterValue: *mut u64,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

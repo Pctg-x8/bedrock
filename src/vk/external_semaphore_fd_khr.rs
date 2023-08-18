@@ -30,7 +30,22 @@ pub struct VkSemaphoreGetFdInfoKHR {
     pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 
-pub type PFN_vkImportSemaphoreFdKHR =
-    extern "system" fn(device: VkDevice, pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR) -> VkResult;
-pub type PFN_vkGetSemaphoreFdKHR =
-    extern "system" fn(device: VkDevice, pGetFdInfo: *const VkSemaphoreGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkImportSemaphoreFdKHR)]
+pub struct PFN_vkImportSemaphoreFdKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetSemaphoreFdKHR)]
+pub struct PFN_vkGetSemaphoreFdKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pGetFdInfo: *const VkSemaphoreGetFdInfoKHR,
+        pFd: *mut c_int,
+    ) -> VkResult,
+);

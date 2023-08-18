@@ -17,12 +17,17 @@ pub struct VkMacOSSurfaceCreateInfoMVK {
     pub pView: *const c_void,
 }
 
-pub type PFN_vkCreateMacOSSurfaceMVK = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateMacOSSurfaceMVK"]
+pub struct PFN_vkCreateMacOSSurfaceMVK(
+    pub  unsafe extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

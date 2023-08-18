@@ -104,25 +104,38 @@ pub struct VkDeviceGroupBindSparseInfoKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR = extern "system" fn(
-    device: VkDevice,
-    heapIndex: u32,
-    localDeviceIndex: u32,
-    remoteDeviceIndex: u32,
-    pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlagsKHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDeviceGroupPeerMemoryFeaturesKHR)]
+pub struct PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        heapIndex: u32,
+        localDeviceIndex: u32,
+        remoteDeviceIndex: u32,
+        pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlagsKHR,
+    ),
 );
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkCmdSetDeviceMaskKHR = extern "system" fn(commandBuffer: VkCommandBuffer, deviceMask: u32);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetDeviceMaskKHR)]
+pub struct PFN_vkCmdSetDeviceMaskKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, deviceMask: u32));
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkCmdDispatchBaseKHR = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    baseGroupX: u32,
-    baseGroupY: u32,
-    baseGroupZ: u32,
-    groupCountX: u32,
-    groupCountY: u32,
-    groupCountZ: u32,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDispatchBaseKHR)]
+pub struct PFN_vkCmdDispatchBaseKHR(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        baseGroupX: u32,
+        baseGroupY: u32,
+        baseGroupZ: u32,
+        groupCountX: u32,
+        groupCountY: u32,
+        groupCountZ: u32,
+    ),
 );
 
 #[cfg(feature = "Implements")]
@@ -208,9 +221,9 @@ cfg_if! {
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
-        pub type PFN_vkGetDeviceGroupPresentCapabilitiesKHR = extern "system" fn(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult;
-        pub type PFN_vkGetDeviceGroupSurfacePresentModesKHR = extern "system" fn(device: VkDevice, surface: VkSurfaceKHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult;
-        pub type PFN_vkGetPhysicalDevicePresentRectanglesKHR = extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult;
+        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkGetDeviceGroupPresentCapabilitiesKHR)] pub struct PFN_vkGetDeviceGroupPresentCapabilitiesKHR(pub unsafe extern "system" fn(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult);
+        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkGetDeviceGroupSurfacePresentModesKHR)] pub struct PFN_vkGetDeviceGroupSurfacePresentModesKHR(pub unsafe extern "system" fn(device: VkDevice, surface: VkSurfaceKHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult);
+        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkGetPhysicalDevicePresentRectanglesKHR)] pub struct PFN_vkGetPhysicalDevicePresentRectanglesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult);
 
         #[cfg(feature = "Implements")]
         #[cfg(not(feature = "DynamicLoaded"))]
@@ -288,7 +301,7 @@ cfg_if! {
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
-        pub type PFN_vkAcquireNextImage2KHR = extern "system" fn(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHR, pImageIndex: *mut u32) -> VkResult;
+        #[repr(transparent)] #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)] #[pfn_of(vkAcquireNextImage2KHR)] pub struct PFN_vkAcquireNextImage2KHR(pub unsafe extern "system" fn(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHR, pImageIndex: *mut u32) -> VkResult);
 
         #[cfg(feature = "Implements")]
         #[cfg(not(feature = "DynamicLoaded"))]

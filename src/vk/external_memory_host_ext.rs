@@ -45,9 +45,14 @@ pub struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
     pub minImportedHostPointerAlignment: VkDeviceSize,
 }
 
-pub type PFN_vkGetMemoryHostPointerPropertiesEXT = extern "system" fn(
-    device: VkDevice,
-    handleType: VkExternalMemoryHandleTypeFlagsKHR,
-    pHostPointer: *const c_void,
-    pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetMemoryHostPointerPropertiesEXT)]
+pub struct PFN_vkGetMemoryHostPointerPropertiesEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        handleType: VkExternalMemoryHandleTypeFlagsKHR,
+        pHostPointer: *const c_void,
+        pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT,
+    ) -> VkResult,
+);

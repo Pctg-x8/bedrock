@@ -105,32 +105,67 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
     pub tiling: VkImageTiling,
 }
 
-pub type PFN_vkGetPhysicalDeviceFeatures2KHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR);
-pub type PFN_vkGetPhysicalDeviceProperties2KHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR);
-pub type PFN_vkGetPhysicalDeviceFormatProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    format: VkFormat,
-    pFormatProperties: *mut VkFormatProperties2KHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceFeatures2KHR)]
+pub struct PFN_vkGetPhysicalDeviceFeatures2KHR(
+    pub extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR),
 );
-pub type PFN_vkGetPhysicalDeviceImageFormatProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR,
-    pImageFormatProperties: *mut VkImageFormatProperties2KHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pQueueFamilyPropertyCount: *mut u32,
-    pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceProperties2KHR)]
+pub struct PFN_vkGetPhysicalDeviceProperties2KHR(
+    pub extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR),
 );
-pub type PFN_vkGetPhysicalDeviceMemoryProperties2KHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR);
-pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR,
-    pPropertyCount: *mut u32,
-    pProperties: *mut VkSparseImageFormatProperties2KHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceFormatProperties2KHR)]
+pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        pFormatProperties: *mut VkFormatProperties2KHR,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceImageFormatProperties2KHR)]
+pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR,
+        pImageFormatProperties: *mut VkImageFormatProperties2KHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceQueueFamilyProperties2KHR)]
+pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pQueueFamilyPropertyCount: *mut u32,
+        pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceMemoryProperties2KHR)]
+pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSparseImageFormatProperties2KHR)]
+pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkSparseImageFormatProperties2KHR,
+    ),
 );
 
 cfg_if! {

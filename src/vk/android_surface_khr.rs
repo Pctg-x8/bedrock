@@ -19,12 +19,17 @@ pub struct VkAndroidSurfaceCreateInfoKHR {
     pub window: *mut ANativeWindow,
 }
 
-pub type PFN_vkCreateAndroidSurfaceKHR = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pSurface: *mut VkSurfaceKHR,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateAndroidSurfaceKHR)]
+pub struct PFN_vkCreateAndroidSurfaceKHR(
+    pub  unsafe extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pSurface: *mut VkSurfaceKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

@@ -1,11 +1,8 @@
 //! Vulkan RenderPass/Framebuffer
 
-use crate::{vk::*, DeviceChild, DeviceChildTransferrable, VkObject};
 #[cfg(feature = "Implements")]
-use crate::{
-    vkresolve::{Resolver, ResolverInterface},
-    VulkanStructure,
-};
+use crate::VulkanStructure;
+use crate::{vk::*, DeviceChild, DeviceChildTransferrable, VkObject};
 use crate::{ImageLayout, VkHandle};
 use std::ops::*;
 
@@ -39,7 +36,7 @@ where
 impl<Device: crate::Device, ImageView: crate::ImageView> Drop for FramebufferObject<Device, ImageView> {
     fn drop(&mut self) {
         unsafe {
-            Resolver::get().destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }
@@ -444,8 +441,7 @@ impl RenderPassBuilder {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| RenderPassObject(h.assume_init(), device))
         }
@@ -483,8 +479,7 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get()
-                .create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     FramebufferObject(
@@ -502,7 +497,11 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     fn optimal_granularity(&self) -> VkExtent2D {
         let mut e = std::mem::MaybeUninit::uninit();
         unsafe {
-            Resolver::get().get_render_area_granularity(self.device().native_ptr(), self.native_ptr(), e.as_mut_ptr());
+            crate::vkresolve::get_render_area_granularity(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                e.as_mut_ptr(),
+            );
 
             e.assume_init()
         }

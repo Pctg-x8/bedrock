@@ -39,29 +39,49 @@ pub struct VkShaderModuleValidationCacheCreateInfoEXT {
     pub validationCache: VkValidationCacheEXT,
 }
 
-pub type PFN_vkCreateValidationCacheEXT = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkValidationCacheCreateInfoEXT,
-    pAllocator: *const VkAllocationCallbacks,
-    pValidationCache: *mut VkValidationCacheEXT,
-) -> VkResult;
-pub type PFN_vkDestroyValidationCacheEXT = extern "system" fn(
-    device: VkDevice,
-    validationCache: VkValidationCacheEXT,
-    pAllocator: *const VkAllocationCallbacks,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateValidationCacheEXT)]
+pub struct PFN_vkCreateValidationCacheEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkValidationCacheCreateInfoEXT,
+        pAllocator: *const VkAllocationCallbacks,
+        pValidationCache: *mut VkValidationCacheEXT,
+    ) -> VkResult,
 );
-pub type PFN_vkMergeValidationCachesEXT = extern "system" fn(
-    device: VkDevice,
-    dstCache: VkValidationCacheEXT,
-    srcCacheCount: u32,
-    pSrcCaches: *const VkValidationCacheEXT,
-) -> VkResult;
-pub type PFN_vkGetValidationCacheDataEXT = extern "system" fn(
-    device: VkDevice,
-    validationCache: VkValidationCacheEXT,
-    pDataSize: *mut size_t,
-    pData: *mut c_void,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyValidationCacheEXT)]
+pub struct PFN_vkDestroyValidationCacheEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        validationCache: VkValidationCacheEXT,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkMergeValidationCachesEXT)]
+pub struct PFN_vkMergeValidationCachesEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        dstCache: VkValidationCacheEXT,
+        srcCacheCount: u32,
+        pSrcCaches: *const VkValidationCacheEXT,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetValidationCacheDataEXT)]
+pub struct PFN_vkGetValidationCacheDataEXT(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        validationCache: VkValidationCacheEXT,
+        pDataSize: *mut size_t,
+        pData: *mut c_void,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

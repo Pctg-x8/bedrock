@@ -70,24 +70,39 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkCreateDescriptorUpdateTemplateKHR = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR,
-    pAllocator: *const VkAllocationCallbacks,
-    pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR,
-) -> VkResult;
-#[promote_1_1(suffix = "KHR")]
-pub type PFN_vkDestroyDescriptorUpdateTemplateKHR = extern "system" fn(
-    device: VkDevice,
-    descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-    pAllocator: *const VkAllocationCallbacks,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateDescriptorUpdateTemplateKHR)]
+pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR,
+        pAllocator: *const VkAllocationCallbacks,
+        pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR,
+    ) -> VkResult,
 );
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkUpdateDescriptorSetWithTemplateKHR = extern "system" fn(
-    device: VkDevice,
-    descriptorSet: VkDescriptorSet,
-    descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-    pData: *const c_void,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyDescriptorUpdateTemplateKHR)]
+pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[promote_1_1(suffix = "KHR")]
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkUpdateDescriptorSetWithTemplateKHR)]
+pub struct PFN_vkUpdateDescriptorSetWithTemplateKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorSet: VkDescriptorSet,
+        descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
+        pData: *const c_void,
+    ),
 );
 
 cfg_if! {

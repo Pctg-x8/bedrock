@@ -31,10 +31,15 @@ pub struct VkDescriptorSetLayoutSupportKHR {
 }
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkGetDescriptorSetLayoutSupportKHR = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkDescriptorSetLayoutCreateInfo,
-    pSupport: *mut VkDescriptorSetLayoutSupportKHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDescriptorSetLayoutSupportKHR)]
+pub struct PFN_vkGetDescriptorSetLayoutSupportKHR(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkDescriptorSetLayoutCreateInfo,
+        pSupport: *mut VkDescriptorSetLayoutSupportKHR,
+    ),
 );
 
 #[cfg(feature = "Implements")]

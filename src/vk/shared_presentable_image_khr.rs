@@ -14,7 +14,12 @@ pub struct VkSharedPresentSurfaceCapabilitiesKHR {
     pub sharedPresentSupportedUsageFlags: VkImageUsageFlags,
 }
 
-pub type PFN_vkGetSwapchainStatusKHR = extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetSwapchainStatusKHR)]
+pub struct PFN_vkGetSwapchainStatusKHR(
+    pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

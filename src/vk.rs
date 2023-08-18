@@ -19,7 +19,7 @@
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
-use crate::{ffi_helper::FixedCStrBuffer, VulkanStructure};
+use crate::{ffi_helper::FixedCStrBuffer, StaticCallable, VulkanStructure, PFN};
 use cfg_if::cfg_if;
 use derives::vk_raw_handle;
 use libc::*;
@@ -2852,614 +2852,1301 @@ pub struct VkDrawIndirectCommand {
     pub firstInstance: u32,
 }
 
-pub type PFN_vkCreateInstance = extern "system" fn(
-    pCreateInfo: *const VkInstanceCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pInstance: *mut VkInstance,
-) -> VkResult;
-pub type PFN_vkDestroyInstance = extern "system" fn(instance: VkInstance, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkEnumeratePhysicalDevices = extern "system" fn(
-    instance: VkInstance,
-    pPhysicalDeviceCount: *mut u32,
-    pPhysicalDevices: *mut VkPhysicalDevice,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceFeatures =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures);
-pub type PFN_vkGetPhysicalDeviceFormatProperties =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties);
-pub type PFN_vkGetPhysicalDeviceImageFormatProperties = extern "system" fn(
-    physicalDeivce: VkPhysicalDevice,
-    format: VkFormat,
-    itype: VkImageType,
-    tiling: VkImageTiling,
-    usage: VkImageUsageFlags,
-    flags: VkImageCreateFlags,
-    pImageFormatProperties: *mut VkImageFormatProperties,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceProperties =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties);
-pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pQueueFamilyPropertyCount: *mut u32,
-    pQuueFamilProperties: *mut VkQueueFamilyProperties,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateInstance)]
+pub struct PFN_vkCreateInstance(
+    pub  unsafe extern "system" fn(
+        pCreateInfo: *const VkInstanceCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pInstance: *mut VkInstance,
+    ) -> VkResult,
 );
-pub type PFN_vkGetPhysicalDeviceMemoryProperties =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties);
-pub type PFN_vkGetInstanceProcAddr =
-    extern "system" fn(instance: VkInstance, pName: *const c_char) -> Option<PFN_vkVoidFunction>;
-pub type PFN_vkGetDeviceProcAddr =
-    extern "system" fn(device: VkDevice, pName: *const c_char) -> Option<PFN_vkVoidFunction>;
-pub type PFN_vkCreateDevice = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pCreateInfo: *const VkDeviceCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pDevice: *mut VkDevice,
-) -> VkResult;
-pub type PFN_vkDestroyDevice = extern "system" fn(device: VkDevice, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkEnumerateInstanceExtensionProperties = extern "system" fn(
-    pLayerName: *const c_char,
-    pPropertyCount: *mut u32,
-    pProperties: VkExtensionProperties,
-) -> VkResult;
-pub type PFN_vkEnumerateDeviceExtensionProperties = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pLayerName: *const c_char,
-    pPropertyCount: *mut u32,
-    pProperties: VkExtensionProperties,
-) -> VkResult;
-pub type PFN_vkEnumerateInstanceLayerProperties =
-    extern "system" fn(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
-pub type PFN_vkEnumerateDeviceLayerProperties = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pPropertyCount: *mut u32,
-    pProperties: *mut VkLayerProperties,
-) -> VkResult;
-pub type PFN_vkGetDeviceQueue =
-    extern "system" fn(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue);
-pub type PFN_vkQueueSubmit =
-    extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: VkFence) -> VkResult;
-pub type PFN_vkQueueWaitIdle = extern "system" fn(queue: VkQueue) -> VkResult;
-pub type PFN_vkDeviceWaitIdle = extern "system" fn(device: VkDevice) -> VkResult;
-pub type PFN_vkAllocateMemory = extern "system" fn(
-    device: VkDevice,
-    pAllocateInfo: *const VkMemoryAllocateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pMemory: *mut VkDeviceMemory,
-) -> VkResult;
-pub type PFN_vkFreeMemory =
-    extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkMapMemory = extern "system" fn(
-    device: VkDevice,
-    memory: VkDeviceMemory,
-    offset: VkDeviceSize,
-    size: VkDeviceSize,
-    flags: VkMemoryMapFlags,
-    ppData: *mut *mut c_void,
-) -> VkResult;
-pub type PFN_vkUnmapMemory = extern "system" fn(device: VkDevice, memory: VkDeviceMemory);
-pub type PFN_vkFlushMappedMemoryRange =
-    extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
-pub type PFN_vkInvalidateMappedMemoryRanges =
-    extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
-pub type PFN_vkGetDeviceMemoryCommitment =
-    extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pCommittedMemoryInBytes: *mut VkDeviceSize);
-pub type PFN_vkBindBufferMemory = extern "system" fn(
-    device: VkDevice,
-    buffer: VkBuffer,
-    memory: VkDeviceMemory,
-    memoryOffset: VkDeviceSize,
-) -> VkResult;
-pub type PFN_vkBindImageMemory = extern "system" fn(
-    device: VkDevice,
-    image: VkImage,
-    memory: VkDeviceMemory,
-    memoryOffset: VkDeviceSize,
-) -> VkResult;
-pub type PFN_vkGetBufferMemoryRequirements =
-    extern "system" fn(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements);
-pub type PFN_vkGetImageMemoryRequirements =
-    extern "system" fn(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements);
-pub type PFN_vkGetImageSparseMemoryRequirements = extern "system" fn(
-    device: VkDevice,
-    image: VkImage,
-    pSparseMemoryRequirementCount: *mut u32,
-    pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyInstance)]
+pub struct PFN_vkDestroyInstance(
+    pub unsafe extern "system" fn(instance: VkInstance, pAllocator: *const VkAllocationCallbacks),
 );
-pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    format: VkFormat,
-    itype: VkImageType,
-    samples: VkSampleCountFlags,
-    usage: VkImageUsageFlags,
-    tiling: VkImageTiling,
-    pPropertyCount: *mut u32,
-    pProperties: *mut VkSparseImageFormatProperties,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumeratePhysicalDevices)]
+pub struct PFN_vkEnumeratePhysicalDevices(
+    pub  unsafe extern "system" fn(
+        instance: VkInstance,
+        pPhysicalDeviceCount: *mut u32,
+        pPhysicalDevices: *mut VkPhysicalDevice,
+    ) -> VkResult,
 );
-pub type PFN_vkQueueBindSparse = extern "system" fn(
-    queue: VkQueue,
-    bindInfoCount: u32,
-    pBindInfo: *const VkBindSparseInfo,
-    fence: VkFence,
-) -> VkResult;
-pub type PFN_vkCreateFence = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkFenceCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pFence: *mut VkFence,
-) -> VkResult;
-pub type PFN_vkDestroyFence =
-    extern "system" fn(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkResetFences = extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult;
-pub type PFN_vkGetFenceStatus = extern "system" fn(device: VkDevice, fence: VkFence) -> VkResult;
-pub type PFN_vkWaitForFences = extern "system" fn(
-    device: VkDevice,
-    fenceCount: u32,
-    pFences: *const VkFence,
-    waitAll: VkBool32,
-    timeout: u64,
-) -> VkResult;
-pub type PFN_vkCreateSemaphore = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkSemaphoreCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pSemaphore: *mut VkSemaphore,
-) -> VkResult;
-pub type PFN_vkDestroySemaphore =
-    extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateEvent = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkEventCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pEvent: *mut VkEvent,
-) -> VkResult;
-pub type PFN_vkDestroyEvent =
-    extern "system" fn(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetEventStatus = extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult;
-pub type PFN_vkSetEvent = extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult;
-pub type PFN_vkResetEvent = extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult;
-pub type PFN_vkCreateQueryPool = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkQueryPoolCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pQueryPool: *mut VkQueryPool,
-) -> VkResult;
-pub type PFN_vkDestroyQueryPool =
-    extern "system" fn(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetQueryPoolResults = extern "system" fn(
-    device: VkDevice,
-    queryPool: VkQueryPool,
-    firstQuery: u32,
-    queryCount: u32,
-    dataSize: size_t,
-    pData: *mut c_void,
-    stride: VkDeviceSize,
-    flags: VkQueryResultFlags,
-) -> VkResult;
-pub type PFN_vkCreateBuffer = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkBufferCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pBuffer: *mut VkBuffer,
-) -> VkResult;
-pub type PFN_vkDestroyBuffer =
-    extern "system" fn(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateBufferView = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkBufferViewCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pView: *mut VkBufferView,
-) -> VkResult;
-pub type PFN_vkDestroyBufferView =
-    extern "system" fn(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateImage = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkImageCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pImage: *mut VkImage,
-) -> VkResult;
-pub type PFN_vkDestroyImage =
-    extern "system" fn(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetImageSubresourceLayout = extern "system" fn(
-    device: VkDevice,
-    image: VkImage,
-    pSubresource: *const VkImageSubresource,
-    pLayout: *mut VkSubresourceLayout,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceFeatures)]
+pub struct PFN_vkGetPhysicalDeviceFeatures(
+    pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures),
 );
-pub type PFN_vkCreateImageView = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkImageViewCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pView: *mut VkImageView,
-) -> VkResult;
-pub type PFN_vkDestroyImageView =
-    extern "system" fn(device: VkDevice, imageView: VkImageView, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateShaderModule = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkShaderModuleCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pShaderModule: *mut VkShaderModule,
-) -> VkResult;
-pub type PFN_vkDestroyShaderModule =
-    extern "system" fn(device: VkDevice, shaderModule: VkShaderModule, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreatePipelineCache = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkPipelineCacheCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pPipelineCache: *mut VkPipelineCache,
-) -> VkResult;
-pub type PFN_vkDestroyPipelineCache =
-    extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetPipelineCacheData = extern "system" fn(
-    device: VkDevice,
-    pipelineCache: VkPipelineCache,
-    pDataSize: *mut size_t,
-    pData: *mut c_void,
-) -> VkResult;
-pub type PFN_vkMergePipelineCaches = extern "system" fn(
-    device: VkDevice,
-    dstCache: VkPipelineCache,
-    srcCacheCount: u32,
-    pSrcCaches: *const VkPipelineCache,
-) -> VkResult;
-pub type PFN_vkCreateGraphicsPipelines = extern "system" fn(
-    device: VkDevice,
-    pipelineCache: VkPipelineCache,
-    createInfoCount: u32,
-    pCreateInfos: *const VkGraphicsPipelineCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pPipelines: *mut VkPipeline,
-) -> VkResult;
-pub type PFN_vkCreateComputePipelines = extern "system" fn(
-    device: VkDevice,
-    pipelineCache: VkPipelineCache,
-    createInfoCount: u32,
-    pCreateInfos: *const VkComputePipelineCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pPipelines: *mut VkPipeline,
-) -> VkResult;
-pub type PFN_vkDestroyPipeline =
-    extern "system" fn(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreatePipelineLayout = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkPipelineLayoutCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pPipelineLayout: *mut VkPipelineLayout,
-) -> VkResult;
-pub type PFN_vkDestroyPipelineLayout =
-    extern "system" fn(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateSampler = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkSamplerCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pSampler: *mut VkSampler,
-) -> VkResult;
-pub type PFN_vkDestroySampler =
-    extern "system" fn(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateDescriptorSetLayout = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkDescriptorSetLayoutCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pSetLayout: *mut VkDescriptorSetLayout,
-) -> VkResult;
-pub type PFN_vkDestroyDescriptorSetLayout = extern "system" fn(
-    device: VkDevice,
-    descriptorSetLayout: VkDescriptorSetLayout,
-    pAllocator: *const VkAllocationCallbacks,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceFormatProperties)]
+pub struct PFN_vkGetPhysicalDeviceFormatProperties(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        pFormatProperties: *mut VkFormatProperties,
+    ),
 );
-pub type PFN_vkCreateDescriptorPool = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkDescriptorPoolCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pDescriptorPool: *mut VkDescriptorPool,
-) -> VkResult;
-pub type PFN_vkDestroyDescriptorPool =
-    extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkResetDescriptorPool = extern "system" fn(
-    device: VkDevice,
-    descriptorPool: VkDescriptorPool,
-    flags: VkDescriptorPoolResetFlags,
-) -> VkResult;
-pub type PFN_vkAllocateDescriptorSets = extern "system" fn(
-    device: VkDevice,
-    pAllocateInfo: *const VkDescriptorSetAllocateInfo,
-    pDescriotorSet: *mut VkDescriptorSet,
-) -> VkResult;
-pub type PFN_vkFreeDescriptorSets = extern "system" fn(
-    device: VkDevice,
-    descriptorPool: VkDescriptorPool,
-    descriptorSetCount: u32,
-    pDescriptorSets: *const VkDescriptorSet,
-) -> VkResult;
-pub type PFN_vkUpdateDescriptorSets = extern "system" fn(
-    device: VkDevice,
-    descriptorWriteCount: u32,
-    pDescriptorWrites: *const VkWriteDescriptorSet,
-    descriptorCopyCount: u32,
-    pDescriptorCopies: *const VkCopyDescriptorSet,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceImageFormatProperties)]
+pub struct PFN_vkGetPhysicalDeviceImageFormatProperties(
+    pub  unsafe extern "system" fn(
+        physicalDeivce: VkPhysicalDevice,
+        format: VkFormat,
+        itype: VkImageType,
+        tiling: VkImageTiling,
+        usage: VkImageUsageFlags,
+        flags: VkImageCreateFlags,
+        pImageFormatProperties: *mut VkImageFormatProperties,
+    ) -> VkResult,
 );
-pub type PFN_vkCreateFramebuffer = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkFramebufferCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pFramebuffer: *mut VkFramebuffer,
-) -> VkResult;
-pub type PFN_vkDestroyFramebuffer =
-    extern "system" fn(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkCreateRenderPass = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkRenderPassCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pRenderPass: *mut VkRenderPass,
-) -> VkResult;
-pub type PFN_vkDestroyRenderPass =
-    extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkGetRenderAreaGranularity =
-    extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D);
-pub type PFN_vkCreateCommandPool = extern "system" fn(
-    device: VkDevice,
-    pCreateInfo: *const VkCommandPoolCreateInfo,
-    pAllocator: *const VkAllocationCallbacks,
-    pCommandPool: *mut VkCommandPool,
-) -> VkResult;
-pub type PFN_vkDestroyCommandPool =
-    extern "system" fn(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks);
-pub type PFN_vkResetCommandPool =
-    extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult;
-pub type PFN_vkAllocateCommandBuffers = extern "system" fn(
-    device: VkDevice,
-    pAllocateInfo: *const VkCommandBufferAllocateInfo,
-    pCommandBuffers: *mut VkCommandBuffer,
-) -> VkResult;
-pub type PFN_vkFreeCommandBuffers = extern "system" fn(
-    device: VkDevice,
-    commandPool: VkCommandPool,
-    commandBufferCount: u32,
-    pCommandBuffers: *const VkCommandBuffer,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceProperties)]
+pub struct PFN_vkGetPhysicalDeviceProperties(
+    pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties),
 );
-pub type PFN_vkBeginCommandBuffer =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pBeginInfo: *const VkCommandBufferBeginInfo) -> VkResult;
-pub type PFN_vkEndCommandBuffer = extern "system" fn(commandBuffer: VkCommandBuffer) -> VkResult;
-pub type PFN_vkResetCommandBuffer =
-    extern "system" fn(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult;
-pub type PFN_vkCmdBindPipeline =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
-pub type PFN_vkCmdSetViewport = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    firstViewport: u32,
-    viewportCount: u32,
-    pViewports: *const VkViewport,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceQueueFamilyProperties)]
+pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pQueueFamilyPropertyCount: *mut u32,
+        pQuueFamilProperties: *mut VkQueueFamilyProperties,
+    ),
 );
-pub type PFN_vkCmdSetScissor = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    firstScissor: u32,
-    scissorCount: u32,
-    pScissors: *const VkRect2D,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceMemoryProperties)]
+pub struct PFN_vkGetPhysicalDeviceMemoryProperties(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties,
+    ),
 );
-pub type PFN_vkCmdSetLineWidth = extern "system" fn(commandBuffer: VkCommandBuffer, lineWidth: c_float);
-pub type PFN_vkCmdSetDepthBias = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    depthBiasConstantFactor: c_float,
-    depthBiasClamp: c_float,
-    depthBiasSlopeFactor: c_float,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetInstanceProcAddr)]
+pub struct PFN_vkGetInstanceProcAddr(
+    pub unsafe extern "system" fn(instance: VkInstance, pName: *const c_char) -> Option<PFN_vkVoidFunction>,
 );
-pub type PFN_vkCmdSetBlendConstants = extern "system" fn(commandBuffer: VkCommandBuffer, blendConstants: [c_float; 4]);
-pub type PFN_vkCmdSetDepthBounds =
-    extern "system" fn(commandBuffer: VkCommandBuffer, minDepthBounds: c_float, maxDepthBounds: c_float);
-pub type PFN_vkCmdSetStencilCompareMask =
-    extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32);
-pub type PFN_vkCmdSetStencilWriteMask =
-    extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32);
-pub type PFN_vkCmdSetStencilReference =
-    extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32);
-pub type PFN_vkCmdBindDescriptorSets = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    pipelineBindPoint: VkPipelineBindPoint,
-    layout: VkPipelineLayout,
-    firstSet: u32,
-    descriptorSetCount: u32,
-    pDescriptorSets: *const VkDescriptorSet,
-    dynamicOffsetCount: u32,
-    pDynamicOffsets: *const u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDeviceProcAddr)]
+pub struct PFN_vkGetDeviceProcAddr(
+    pub unsafe extern "system" fn(device: VkDevice, pName: *const c_char) -> Option<PFN_vkVoidFunction>,
 );
-pub type PFN_vkCmdBindIndexBuffer =
-    extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, indexType: VkIndexType);
-pub type PFN_vkCmdBindVertexBuffers = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    firstBinding: u32,
-    bindingCount: u32,
-    pBuffers: *const VkBuffer,
-    pOffsets: *const VkDeviceSize,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateDevice)]
+pub struct PFN_vkCreateDevice(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pCreateInfo: *const VkDeviceCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pDevice: *mut VkDevice,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdDraw = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    vertexCount: u32,
-    instanceCount: u32,
-    firstVertex: u32,
-    firstInstance: u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyDevice)]
+pub struct PFN_vkDestroyDevice(
+    pub unsafe extern "system" fn(device: VkDevice, pAllocator: *const VkAllocationCallbacks),
 );
-pub type PFN_vkCmdDrawIndexed = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    indexCount: u32,
-    instanceCount: u32,
-    firstIndex: u32,
-    vertexOffset: u32,
-    firstInstance: u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumerateInstanceExtensionProperties)]
+pub struct PFN_vkEnumerateInstanceExtensionProperties(
+    pub  unsafe extern "system" fn(
+        pLayerName: *const c_char,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkExtensionProperties,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdDrawIndirect = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    buffer: VkBuffer,
-    offset: VkDeviceSize,
-    drawCount: u32,
-    stride: u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumerateDeviceExtensionProperties)]
+pub struct PFN_vkEnumerateDeviceExtensionProperties(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pLayerName: *const c_char,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkExtensionProperties,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdDrawIndexedIndirect = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    buffer: VkBuffer,
-    offset: VkDeviceSize,
-    drawCount: u32,
-    stride: u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumerateInstanceLayerProperties)]
+pub struct PFN_vkEnumerateInstanceLayerProperties(
+    pub unsafe extern "system" fn(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult,
 );
-pub type PFN_vkCmdDispatch =
-    extern "system" fn(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
-pub type PFN_vkCmdDispatchIndirect =
-    extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
-pub type PFN_vkCmdCopyBuffer = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcBuffer: VkBuffer,
-    dstBuffer: VkBuffer,
-    regionCount: u32,
-    pRegions: *const VkBufferCopy,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumerateDeviceLayerProperties)]
+pub struct PFN_vkEnumerateDeviceLayerProperties(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkLayerProperties,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdCopyImage = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcImage: VkImage,
-    srcImageLayout: VkImageLayout,
-    dstImage: VkImage,
-    dstImageLayout: VkImageLayout,
-    regionCount: u32,
-    pRegions: *const VkImageCopy,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDeviceQueue)]
+pub struct PFN_vkGetDeviceQueue(
+    pub unsafe extern "system" fn(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue),
 );
-pub type PFN_vkCmdBlitImage = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcImage: VkImage,
-    srcImageLayout: VkImageLayout,
-    dstImage: VkImage,
-    dstImageLayout: VkImageLayout,
-    regionCount: u32,
-    pRegions: *const VkImageBlit,
-    filter: VkFilter,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkQueueSubmit)]
+pub struct PFN_vkQueueSubmit(
+    pub  unsafe extern "system" fn(
+        queue: VkQueue,
+        submitCount: u32,
+        pSubmits: *const VkSubmitInfo,
+        fence: VkFence,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdCopyBufferToImage = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcBuffer: VkBuffer,
-    dstImage: VkImage,
-    dstImageLayout: VkImageLayout,
-    regionCount: u32,
-    pRegions: *const VkBufferImageCopy,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkQueueWaitIdle)]
+pub struct PFN_vkQueueWaitIdle(pub unsafe extern "system" fn(queue: VkQueue) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDeviceWaitIdle)]
+pub struct PFN_vkDeviceWaitIdle(pub unsafe extern "system" fn(device: VkDevice) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkAllocateMemory)]
+pub struct PFN_vkAllocateMemory(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pAllocateInfo: *const VkMemoryAllocateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pMemory: *mut VkDeviceMemory,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdCopyImageToBuffer = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcImage: VkImage,
-    srcImageLayout: VkImageLayout,
-    dstBuffer: VkBuffer,
-    regionCount: u32,
-    pRegions: *const VkBufferImageCopy,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkFreeMemory)]
+pub struct PFN_vkFreeMemory(
+    pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks),
 );
-pub type PFN_vkCmdUpdateBuffer = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    dstBuffer: VkBuffer,
-    dstOffset: VkDeviceSize,
-    dataSize: VkDeviceSize,
-    pData: *const c_void,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkMapMemory)]
+pub struct PFN_vkMapMemory(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        memory: VkDeviceMemory,
+        offset: VkDeviceSize,
+        size: VkDeviceSize,
+        flags: VkMemoryMapFlags,
+        ppData: *mut *mut c_void,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdFillBuffer = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    dstBuffer: VkBuffer,
-    dstOffset: VkDeviceSize,
-    size: VkDeviceSize,
-    data: u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkUnmapMemory)]
+pub struct PFN_vkUnmapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory));
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkFlushMappedMemoryRanges)]
+pub struct PFN_vkFlushMappedMemoryRanges(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        memoryRangeCount: u32,
+        pMemoryRanges: *const VkMappedMemoryRange,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdClearColorImage = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    image: VkImage,
-    imageLayout: VkImageLayout,
-    pColor: *const VkClearColorValue,
-    rangeCount: u32,
-    pRanges: *const VkImageSubresourceRange,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkInvalidateMappedMemoryRanges)]
+pub struct PFN_vkInvalidateMappedMemoryRanges(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        memoryRangeCount: u32,
+        pMemoryRanges: *const VkMappedMemoryRange,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdClearDepthStencilImage = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    image: VkImage,
-    imageLayout: VkImageLayout,
-    pDepthStencil: *const VkClearDepthStencilValue,
-    rangeCount: u32,
-    pRanges: *const VkImageSubresourceRange,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetDeviceMemoryCommitment)]
+pub struct PFN_vkGetDeviceMemoryCommitment(
+    pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pCommittedMemoryInBytes: *mut VkDeviceSize),
 );
-pub type PFN_vkCmdClearAttachments = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    attachmentCount: u32,
-    pAttachments: *const VkClearAttachment,
-    rectCount: u32,
-    pRects: *const VkClearRect,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkBindBufferMemory)]
+pub struct PFN_vkBindBufferMemory(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        buffer: VkBuffer,
+        memory: VkDeviceMemory,
+        memoryOffset: VkDeviceSize,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdResolveImage = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcImage: VkImage,
-    srcImageLayout: VkImageLayout,
-    dstImage: VkImage,
-    dstImageLayout: VkImageLayout,
-    regionCount: u32,
-    pRegions: *const VkImageResolve,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkBindImageMemory)]
+pub struct PFN_vkBindImageMemory(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        image: VkImage,
+        memory: VkDeviceMemory,
+        memoryOffset: VkDeviceSize,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdSetEvent =
-    extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
-pub type PFN_vkCmdResetEvent =
-    extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
-pub type PFN_vkCmdWaitEvents = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    eventCount: u32,
-    pEvents: *const VkEvent,
-    srcStageMask: VkPipelineStageFlags,
-    dstStageMask: VkPipelineStageFlags,
-    memoryBarrierCount: u32,
-    pMemoryBarriers: *const VkMemoryBarrier,
-    bufferMemoryBarrierCount: u32,
-    pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
-    imageMemoryBarrierCount: u32,
-    pImageMemoryBarriers: *const VkImageMemoryBarrier,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetBufferMemoryRequirements)]
+pub struct PFN_vkGetBufferMemoryRequirements(
+    pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements),
 );
-pub type PFN_vkCmdPipelineBarrier = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    srcStageMask: VkPipelineStageFlags,
-    dstStageMask: VkPipelineStageFlags,
-    dependencyFlags: VkDependencyFlags,
-    memoryBarrierCount: u32,
-    pMemoryBarriers: *const VkMemoryBarrier,
-    bufferMemoryBarrierCount: u32,
-    pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
-    imageMemoryBarrierCount: u32,
-    pImageMemoryBarriers: *const VkImageMemoryBarrier,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetImageMemoryRequirements)]
+pub struct PFN_vkGetImageMemoryRequirements(
+    pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements),
 );
-pub type PFN_vkCmdBeginQuery =
-    extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags);
-pub type PFN_vkCmdEndQuery = extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32);
-pub type PFN_vkCmdResetQueryPool =
-    extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32);
-pub type PFN_vkCmdWriteTimestamp = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    pipelineStage: VkPipelineStageFlags,
-    queryPool: VkQueryPool,
-    query: u32,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetImageSparseMemoryRequirements)]
+pub struct PFN_vkGetImageSparseMemoryRequirements(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        image: VkImage,
+        pSparseMemoryRequirementCount: *mut u32,
+        pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements,
+    ),
 );
-pub type PFN_vkCmdCopyQueryPoolResults = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    queryPool: VkQueryPool,
-    firstQuery: u32,
-    queryCount: u32,
-    dstBuffer: VkBuffer,
-    dstOffset: VkDeviceSize,
-    stride: VkDeviceSize,
-    flags: VkQueryResultFlags,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPhysicalDeviceSparseImageFormatProperties)]
+pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties(
+    pub  unsafe extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        itype: VkImageType,
+        samples: VkSampleCountFlags,
+        usage: VkImageUsageFlags,
+        tiling: VkImageTiling,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkSparseImageFormatProperties,
+    ),
 );
-pub type PFN_vkCmdPushConstants = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    layout: VkPipelineLayout,
-    stageFlags: VkShaderStageFlags,
-    offset: u32,
-    size: u32,
-    pValues: *const c_void,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkQueueBindSparse)]
+pub struct PFN_vkQueueBindSparse(
+    pub  unsafe extern "system" fn(
+        queue: VkQueue,
+        bindInfoCount: u32,
+        pBindInfo: *const VkBindSparseInfo,
+        fence: VkFence,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdBeginRenderPass = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    pRenderPassBegin: *const VkRenderPassBeginInfo,
-    contents: VkSubpassContents,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateFence)]
+pub struct PFN_vkCreateFence(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkFenceCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pFence: *mut VkFence,
+    ) -> VkResult,
 );
-pub type PFN_vkCmdNextSubpass = extern "system" fn(commandBuffer: VkCommandBuffer, contents: VkSubpassContents);
-pub type PFN_vkCmdEndRenderPass = extern "system" fn(commandBuffer: VkCommandBuffer);
-pub type PFN_vkCmdExecuteCommands = extern "system" fn(
-    commandBuffer: VkCommandBuffer,
-    commandBufferCount: u32,
-    pCommandBuffers: *const VkCommandBuffer,
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyFence)]
+pub struct PFN_vkDestroyFence(
+    pub unsafe extern "system" fn(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkResetFences)]
+pub struct PFN_vkResetFences(
+    pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetFenceStatus)]
+pub struct PFN_vkGetFenceStatus(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkWaitForFences)]
+pub struct PFN_vkWaitForFences(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        fenceCount: u32,
+        pFences: *const VkFence,
+        waitAll: VkBool32,
+        timeout: u64,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateSemaphore)]
+pub struct PFN_vkCreateSemaphore(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkSemaphoreCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pSemaphore: *mut VkSemaphore,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroySemaphore)]
+pub struct PFN_vkDestroySemaphore(
+    pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateEvent)]
+pub struct PFN_vkCreateEvent(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkEventCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pEvent: *mut VkEvent,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyEvent)]
+pub struct PFN_vkDestroyEvent(
+    pub unsafe extern "system" fn(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetEventStatus)]
+pub struct PFN_vkGetEventStatus(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkSetEvent)]
+pub struct PFN_vkSetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkResetEvent)]
+pub struct PFN_vkResetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateQueryPool)]
+pub struct PFN_vkCreateQueryPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkQueryPoolCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pQueryPool: *mut VkQueryPool,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyQueryPool)]
+pub struct PFN_vkDestroyQueryPool(
+    pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetQueryPoolResults)]
+pub struct PFN_vkGetQueryPoolResults(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        queryPool: VkQueryPool,
+        firstQuery: u32,
+        queryCount: u32,
+        dataSize: size_t,
+        pData: *mut c_void,
+        stride: VkDeviceSize,
+        flags: VkQueryResultFlags,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateBuffer)]
+pub struct PFN_vkCreateBuffer(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkBufferCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pBuffer: *mut VkBuffer,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyBuffer)]
+pub struct PFN_vkDestroyBuffer(
+    pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateBufferView)]
+pub struct PFN_vkCreateBufferView(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkBufferViewCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pView: *mut VkBufferView,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyBufferView)]
+pub struct PFN_vkDestroyBufferView(
+    pub unsafe extern "system" fn(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateImage)]
+pub struct PFN_vkCreateImage(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkImageCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pImage: *mut VkImage,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyImage)]
+pub struct PFN_vkDestroyImage(
+    pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetImageSubresourceLayout)]
+pub struct PFN_vkGetImageSubresourceLayout(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        image: VkImage,
+        pSubresource: *const VkImageSubresource,
+        pLayout: *mut VkSubresourceLayout,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateImageView)]
+pub struct PFN_vkCreateImageView(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkImageViewCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pView: *mut VkImageView,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyImageView)]
+pub struct PFN_vkDestroyImageView(
+    pub unsafe extern "system" fn(device: VkDevice, imageView: VkImageView, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateShaderModule)]
+pub struct PFN_vkCreateShaderModule(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkShaderModuleCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pShaderModule: *mut VkShaderModule,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyShaderModule)]
+pub struct PFN_vkDestroyShaderModule(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        shaderModule: VkShaderModule,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreatePipelineCache)]
+pub struct PFN_vkCreatePipelineCache(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkPipelineCacheCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pPipelineCache: *mut VkPipelineCache,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyPipelineCache)]
+pub struct PFN_vkDestroyPipelineCache(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pipelineCache: VkPipelineCache,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetPipelineCacheData)]
+pub struct PFN_vkGetPipelineCacheData(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pipelineCache: VkPipelineCache,
+        pDataSize: *mut size_t,
+        pData: *mut c_void,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkMergePipelineCaches)]
+pub struct PFN_vkMergePipelineCaches(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        dstCache: VkPipelineCache,
+        srcCacheCount: u32,
+        pSrcCaches: *const VkPipelineCache,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateGraphicsPipelines)]
+pub struct PFN_vkCreateGraphicsPipelines(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pipelineCache: VkPipelineCache,
+        createInfoCount: u32,
+        pCreateInfos: *const VkGraphicsPipelineCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pPipelines: *mut VkPipeline,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateComputePipelines)]
+pub struct PFN_vkCreateComputePipelines(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pipelineCache: VkPipelineCache,
+        createInfoCount: u32,
+        pCreateInfos: *const VkComputePipelineCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pPipelines: *mut VkPipeline,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyPipeline)]
+pub struct PFN_vkDestroyPipeline(
+    pub unsafe extern "system" fn(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreatePipelineLayout)]
+pub struct PFN_vkCreatePipelineLayout(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkPipelineLayoutCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pPipelineLayout: *mut VkPipelineLayout,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyPipelineLayout)]
+pub struct PFN_vkDestroyPipelineLayout(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pipelineLayout: VkPipelineLayout,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateSampler)]
+pub struct PFN_vkCreateSampler(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkSamplerCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pSampler: *mut VkSampler,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroySampler)]
+pub struct PFN_vkDestroySampler(
+    pub unsafe extern "system" fn(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateDescriptorSetLayout)]
+pub struct PFN_vkCreateDescriptorSetLayout(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkDescriptorSetLayoutCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pSetLayout: *mut VkDescriptorSetLayout,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyDescriptorSetLayout)]
+pub struct PFN_vkDestroyDescriptorSetLayout(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorSetLayout: VkDescriptorSetLayout,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateDescriptorPool)]
+pub struct PFN_vkCreateDescriptorPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkDescriptorPoolCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pDescriptorPool: *mut VkDescriptorPool,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyDescriptorPool)]
+pub struct PFN_vkDestroyDescriptorPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorPool: VkDescriptorPool,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkResetDescriptorPool)]
+pub struct PFN_vkResetDescriptorPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorPool: VkDescriptorPool,
+        flags: VkDescriptorPoolResetFlags,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkAllocateDescriptorSets)]
+pub struct PFN_vkAllocateDescriptorSets(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pAllocateInfo: *const VkDescriptorSetAllocateInfo,
+        pDescriotorSet: *mut VkDescriptorSet,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkFreeDescriptorSets)]
+pub struct PFN_vkFreeDescriptorSets(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorPool: VkDescriptorPool,
+        descriptorSetCount: u32,
+        pDescriptorSets: *const VkDescriptorSet,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkUpdateDescriptorSets)]
+pub struct PFN_vkUpdateDescriptorSets(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        descriptorWriteCount: u32,
+        pDescriptorWrites: *const VkWriteDescriptorSet,
+        descriptorCopyCount: u32,
+        pDescriptorCopies: *const VkCopyDescriptorSet,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateFramebuffer)]
+pub struct PFN_vkCreateFramebuffer(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkFramebufferCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pFramebuffer: *mut VkFramebuffer,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyFramebuffer)]
+pub struct PFN_vkDestroyFramebuffer(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        framebuffer: VkFramebuffer,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateRenderPass)]
+pub struct PFN_vkCreateRenderPass(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkRenderPassCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pRenderPass: *mut VkRenderPass,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyRenderPass)]
+pub struct PFN_vkDestroyRenderPass(
+    pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkGetRenderAreaGranularity)]
+pub struct PFN_vkGetRenderAreaGranularity(
+    pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCreateCommandPool)]
+pub struct PFN_vkCreateCommandPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pCreateInfo: *const VkCommandPoolCreateInfo,
+        pAllocator: *const VkAllocationCallbacks,
+        pCommandPool: *mut VkCommandPool,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkDestroyCommandPool)]
+pub struct PFN_vkDestroyCommandPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        commandPool: VkCommandPool,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkResetCommandPool)]
+pub struct PFN_vkResetCommandPool(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        commandPool: VkCommandPool,
+        flags: VkCommandPoolResetFlags,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkAllocateCommandBuffers)]
+pub struct PFN_vkAllocateCommandBuffers(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        pAllocateInfo: *const VkCommandBufferAllocateInfo,
+        pCommandBuffers: *mut VkCommandBuffer,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkFreeCommandBuffers)]
+pub struct PFN_vkFreeCommandBuffers(
+    pub  unsafe extern "system" fn(
+        device: VkDevice,
+        commandPool: VkCommandPool,
+        commandBufferCount: u32,
+        pCommandBuffers: *const VkCommandBuffer,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkBeginCommandBuffer)]
+pub struct PFN_vkBeginCommandBuffer(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pBeginInfo: *const VkCommandBufferBeginInfo,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEndCommandBuffer)]
+pub struct PFN_vkEndCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer) -> VkResult);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkResetCommandBuffer)]
+pub struct PFN_vkResetCommandBuffer(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBindPipeline)]
+pub struct PFN_vkCmdBindPipeline(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pipelineBindPoint: VkPipelineBindPoint,
+        pipeline: VkPipeline,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetViewport)]
+pub struct PFN_vkCmdSetViewport(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        firstViewport: u32,
+        viewportCount: u32,
+        pViewports: *const VkViewport,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetScissor)]
+pub struct PFN_vkCmdSetScissor(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        firstScissor: u32,
+        scissorCount: u32,
+        pScissors: *const VkRect2D,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetLineWidth)]
+pub struct PFN_vkCmdSetLineWidth(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, lineWidth: c_float));
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetDepthBias)]
+pub struct PFN_vkCmdSetDepthBias(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        depthBiasConstantFactor: c_float,
+        depthBiasClamp: c_float,
+        depthBiasSlopeFactor: c_float,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetBlendConstants)]
+pub struct PFN_vkCmdSetBlendConstants(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, blendConstants: *const c_float),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetDepthBounds)]
+pub struct PFN_vkCmdSetDepthBounds(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, minDepthBounds: c_float, maxDepthBounds: c_float),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetStencilCompareMask)]
+pub struct PFN_vkCmdSetStencilCompareMask(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetStencilWriteMask)]
+pub struct PFN_vkCmdSetStencilWriteMask(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetStencilReference)]
+pub struct PFN_vkCmdSetStencilReference(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBindDescriptorSets)]
+pub struct PFN_vkCmdBindDescriptorSets(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pipelineBindPoint: VkPipelineBindPoint,
+        layout: VkPipelineLayout,
+        firstSet: u32,
+        descriptorSetCount: u32,
+        pDescriptorSets: *const VkDescriptorSet,
+        dynamicOffsetCount: u32,
+        pDynamicOffsets: *const u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBindIndexBuffer)]
+pub struct PFN_vkCmdBindIndexBuffer(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        indexType: VkIndexType,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBindVertexBuffers)]
+pub struct PFN_vkCmdBindVertexBuffers(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        firstBinding: u32,
+        bindingCount: u32,
+        pBuffers: *const VkBuffer,
+        pOffsets: *const VkDeviceSize,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDraw)]
+pub struct PFN_vkCmdDraw(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        vertexCount: u32,
+        instanceCount: u32,
+        firstVertex: u32,
+        firstInstance: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDrawIndexed)]
+pub struct PFN_vkCmdDrawIndexed(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        indexCount: u32,
+        instanceCount: u32,
+        firstIndex: u32,
+        vertexOffset: i32,
+        firstInstance: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDrawIndirect)]
+pub struct PFN_vkCmdDrawIndirect(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        drawCount: u32,
+        stride: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDrawIndexedIndirect)]
+pub struct PFN_vkCmdDrawIndexedIndirect(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: VkDeviceSize,
+        drawCount: u32,
+        stride: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDispatch)]
+pub struct PFN_vkCmdDispatch(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdDispatchIndirect)]
+pub struct PFN_vkCmdDispatchIndirect(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdCopyBuffer)]
+pub struct PFN_vkCmdCopyBuffer(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcBuffer: VkBuffer,
+        dstBuffer: VkBuffer,
+        regionCount: u32,
+        pRegions: *const VkBufferCopy,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdCopyImage)]
+pub struct PFN_vkCmdCopyImage(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: VkImageLayout,
+        dstImage: VkImage,
+        dstImageLayout: VkImageLayout,
+        regionCount: u32,
+        pRegions: *const VkImageCopy,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBlitImage)]
+pub struct PFN_vkCmdBlitImage(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: VkImageLayout,
+        dstImage: VkImage,
+        dstImageLayout: VkImageLayout,
+        regionCount: u32,
+        pRegions: *const VkImageBlit,
+        filter: VkFilter,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdCopyBufferToImage)]
+pub struct PFN_vkCmdCopyBufferToImage(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcBuffer: VkBuffer,
+        dstImage: VkImage,
+        dstImageLayout: VkImageLayout,
+        regionCount: u32,
+        pRegions: *const VkBufferImageCopy,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdCopyImageToBuffer)]
+pub struct PFN_vkCmdCopyImageToBuffer(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: VkImageLayout,
+        dstBuffer: VkBuffer,
+        regionCount: u32,
+        pRegions: *const VkBufferImageCopy,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdUpdateBuffer)]
+pub struct PFN_vkCmdUpdateBuffer(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        dstBuffer: VkBuffer,
+        dstOffset: VkDeviceSize,
+        dataSize: VkDeviceSize,
+        pData: *const c_void,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdFillBuffer)]
+pub struct PFN_vkCmdFillBuffer(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        dstBuffer: VkBuffer,
+        dstOffset: VkDeviceSize,
+        size: VkDeviceSize,
+        data: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdClearColorImage)]
+pub struct PFN_vkCmdClearColorImage(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        image: VkImage,
+        imageLayout: VkImageLayout,
+        pColor: *const VkClearColorValue,
+        rangeCount: u32,
+        pRanges: *const VkImageSubresourceRange,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdClearDepthStencilImage)]
+pub struct PFN_vkCmdClearDepthStencilImage(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        image: VkImage,
+        imageLayout: VkImageLayout,
+        pDepthStencil: *const VkClearDepthStencilValue,
+        rangeCount: u32,
+        pRanges: *const VkImageSubresourceRange,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdClearAttachments)]
+pub struct PFN_vkCmdClearAttachments(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        attachmentCount: u32,
+        pAttachments: *const VkClearAttachment,
+        rectCount: u32,
+        pRects: *const VkClearRect,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdResolveImage)]
+pub struct PFN_vkCmdResolveImage(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: VkImageLayout,
+        dstImage: VkImage,
+        dstImageLayout: VkImageLayout,
+        regionCount: u32,
+        pRegions: *const VkImageResolve,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdSetEvent)]
+pub struct PFN_vkCmdSetEvent(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdResetEvent)]
+pub struct PFN_vkCmdResetEvent(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdWaitEvents)]
+pub struct PFN_vkCmdWaitEvents(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        eventCount: u32,
+        pEvents: *const VkEvent,
+        srcStageMask: VkPipelineStageFlags,
+        dstStageMask: VkPipelineStageFlags,
+        memoryBarrierCount: u32,
+        pMemoryBarriers: *const VkMemoryBarrier,
+        bufferMemoryBarrierCount: u32,
+        pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
+        imageMemoryBarrierCount: u32,
+        pImageMemoryBarriers: *const VkImageMemoryBarrier,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdPipelineBarrier)]
+pub struct PFN_vkCmdPipelineBarrier(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        srcStageMask: VkPipelineStageFlags,
+        dstStageMask: VkPipelineStageFlags,
+        dependencyFlags: VkDependencyFlags,
+        memoryBarrierCount: u32,
+        pMemoryBarriers: *const VkMemoryBarrier,
+        bufferMemoryBarrierCount: u32,
+        pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
+        imageMemoryBarrierCount: u32,
+        pImageMemoryBarriers: *const VkImageMemoryBarrier,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBeginQuery)]
+pub struct PFN_vkCmdBeginQuery(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        queryPool: VkQueryPool,
+        query: u32,
+        flags: VkQueryControlFlags,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdEndQuery)]
+pub struct PFN_vkCmdEndQuery(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdResetQueryPool)]
+pub struct PFN_vkCmdResetQueryPool(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        queryPool: VkQueryPool,
+        firstQuery: u32,
+        queryCount: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdWriteTimestamp)]
+pub struct PFN_vkCmdWriteTimestamp(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pipelineStage: VkPipelineStageFlags,
+        queryPool: VkQueryPool,
+        query: u32,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdCopyQueryPoolResults)]
+pub struct PFN_vkCmdCopyQueryPoolResults(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        queryPool: VkQueryPool,
+        firstQuery: u32,
+        queryCount: u32,
+        dstBuffer: VkBuffer,
+        dstOffset: VkDeviceSize,
+        stride: VkDeviceSize,
+        flags: VkQueryResultFlags,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdPushConstants)]
+pub struct PFN_vkCmdPushConstants(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        layout: VkPipelineLayout,
+        stageFlags: VkShaderStageFlags,
+        offset: u32,
+        size: u32,
+        pValues: *const c_void,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdBeginRenderPass)]
+pub struct PFN_vkCmdBeginRenderPass(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        pRenderPassBegin: *const VkRenderPassBeginInfo,
+        contents: VkSubpassContents,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdNextSubpass)]
+pub struct PFN_vkCmdNextSubpass(
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, contents: VkSubpassContents),
+);
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdEndRenderPass)]
+pub struct PFN_vkCmdEndRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkCmdExecuteCommands)]
+pub struct PFN_vkCmdExecuteCommands(
+    pub  unsafe extern "system" fn(
+        commandBuffer: VkCommandBuffer,
+        commandBufferCount: u32,
+        pCommandBuffers: *const VkCommandBuffer,
+    ),
 );
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
