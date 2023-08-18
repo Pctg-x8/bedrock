@@ -105,32 +105,67 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
     pub tiling: VkImageTiling,
 }
 
-pub type PFN_vkGetPhysicalDeviceFeatures2KHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR);
-pub type PFN_vkGetPhysicalDeviceProperties2KHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR);
-pub type PFN_vkGetPhysicalDeviceFormatProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    format: VkFormat,
-    pFormatProperties: *mut VkFormatProperties2KHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceFeatures2KHR"]
+pub struct PFN_vkGetPhysicalDeviceFeatures2KHR(
+    pub extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR),
 );
-pub type PFN_vkGetPhysicalDeviceImageFormatProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR,
-    pImageFormatProperties: *mut VkImageFormatProperties2KHR,
-) -> VkResult;
-pub type PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pQueueFamilyPropertyCount: *mut u32,
-    pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceProperties2KHR"]
+pub struct PFN_vkGetPhysicalDeviceProperties2KHR(
+    pub extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR),
 );
-pub type PFN_vkGetPhysicalDeviceMemoryProperties2KHR =
-    extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR);
-pub type PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR = extern "system" fn(
-    physicalDevice: VkPhysicalDevice,
-    pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR,
-    pPropertyCount: *mut u32,
-    pProperties: *mut VkSparseImageFormatProperties2KHR,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceFormatProperties2KHR"]
+pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        format: VkFormat,
+        pFormatProperties: *mut VkFormatProperties2KHR,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceImageFormatProperties2KHR"]
+pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR,
+        pImageFormatProperties: *mut VkImageFormatProperties2KHR,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceQueueFamilyProperties2KHR"]
+pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pQueueFamilyPropertyCount: *mut u32,
+        pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceMemoryProperties2KHR"]
+pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetPhysicalDeviceSparseImageFormatProperties2KHR"]
+pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
+    pub  extern "system" fn(
+        physicalDevice: VkPhysicalDevice,
+        pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR,
+        pPropertyCount: *mut u32,
+        pProperties: *mut VkSparseImageFormatProperties2KHR,
+    ),
 );
 
 cfg_if! {

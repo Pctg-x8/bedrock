@@ -119,34 +119,79 @@ pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(
     pUserData: *mut c_void,
 ) -> VkBool32;
 
-pub type PFN_vkSetDebugUtilsObjectNameEXT =
-    extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult;
-pub type PFN_vkSetDebugUtilsObjectTagEXT =
-    extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult;
-pub type PFN_vkQueueBeginDebugUtilsLabelEXT =
-    extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT);
-pub type PFN_vkQueueEndDebugUtilsLabelEXT = extern "system" fn(queue: VkQueue);
-pub type PFN_vkQueueInsertDebugUtilsLabelEXT =
-    extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT);
-pub type PFN_vkCmdBeginDebugUtilsLabelEXT =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT);
-pub type PFN_vkCmdEndDebugUtilsLabelEXT = extern "system" fn(commandBuffer: VkCommandBuffer);
-pub type PFN_vkCmdInsertDebugUtilsLabelEXT =
-    extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT);
-pub type PFN_vkCreateDebugUtilsMessengerEXT = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkDebugUtilsMessengerCreateInfoEXT,
-    pAllocator: *const VkAllocationCallbacks,
-    pMessenger: *mut VkDebugUtilsMessengerEXT,
-) -> VkResult;
-pub type PFN_vkDestroyDebugUtilsMessengerEXT = extern "system" fn(
-    instance: VkInstance,
-    messenger: VkDebugUtilsMessengerEXT,
-    pAllocator: *const VkAllocationCallbacks,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkSetDebugUtilsObjectNameEXT"]
+pub struct PFN_vkSetDebugUtilsObjectNameEXT(
+    pub extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult,
 );
-pub type PFN_vkSubmitDebugUtilsMessageEXT = extern "system" fn(
-    instance: VkInstance,
-    messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT,
-    messageTypes: VkDebugUtilsMessageTypeFlagsEXT,
-    pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkSetDebugUtilsObjectTagEXT"]
+pub struct PFN_vkSetDebugUtilsObjectTagEXT(
+    pub extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkQueueBeginDebugUtilsLabelEXT"]
+pub struct PFN_vkQueueBeginDebugUtilsLabelEXT(
+    pub extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkQueueEndDebugUtilsLabelEXT"]
+pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub extern "system" fn(queue: VkQueue));
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkQueueInsertDebugUtilsLabelEXT"]
+pub struct PFN_vkQueueInsertDebugUtilsLabelEXT(
+    pub extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCmdBeginDebugUtilsLabelEXT"]
+pub struct PFN_vkCmdBeginDebugUtilsLabelEXT(
+    pub extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCmdEndDebugUtilsLabelEXT"]
+pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub extern "system" fn(commandBuffer: VkCommandBuffer));
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCmdInsertDebugUtilsLabelEXT"]
+pub struct PFN_vkCmdInsertDebugUtilsLabelEXT(
+    pub extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateDebugUtilsMessengerEXT"]
+pub struct PFN_vkCreateDebugUtilsMessengerEXT(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkDebugUtilsMessengerCreateInfoEXT,
+        pAllocator: *const VkAllocationCallbacks,
+        pMessenger: *mut VkDebugUtilsMessengerEXT,
+    ) -> VkResult,
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkDestroyDebugUtilsMessengerEXT"]
+pub struct PFN_vkDestroyDebugUtilsMessengerEXT(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        messenger: VkDebugUtilsMessengerEXT,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkSubmitDebugUtilsMessageEXT"]
+pub struct PFN_vkSubmitDebugUtilsMessageEXT(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT,
+        messageTypes: VkDebugUtilsMessageTypeFlagsEXT,
+        pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT,
+    ),
 );

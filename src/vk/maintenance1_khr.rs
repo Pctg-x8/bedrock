@@ -29,9 +29,14 @@ vk_bitmask! {
 
 #[promote_1_1(suffix = "KHR")]
 pub type VkCommandPoolTrimFlagsKHR = VkFlags;
+
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkTrimCommandPoolKHR =
-    extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkTrimCommandPoolKHR"]
+pub struct PFN_vkTrimCommandPoolKHR(
+    pub extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR),
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

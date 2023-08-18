@@ -122,11 +122,16 @@ pub struct VkDrmFormatModifierPropertiesList2EXT {
     pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierProperties2EXT,
 }
 
-pub type PFN_vkGetImageDrmFormatModifierPropertiesEXT = extern "system" fn(
-    device: VkDevice,
-    image: VkImage,
-    pProperties: *mut VkImageDrmFormatModifierPropertiesEXT,
-) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkGetImageDrmFormatModifierPropertiesEXT"]
+pub struct PFN_vkGetImageDrmFormatModifierPropertiesEXT(
+    pub  extern "system" fn(
+        device: VkDevice,
+        image: VkImage,
+        pProperties: *mut VkImageDrmFormatModifierPropertiesEXT,
+    ) -> VkResult,
+);
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 extern "system" {

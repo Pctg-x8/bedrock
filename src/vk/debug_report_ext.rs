@@ -80,24 +80,40 @@ pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(
     pMessage: *const c_char,
     pUserData: *mut c_void,
 ) -> VkBool32;
-pub type PFN_vkCreateDebugReportCallbackEXT = extern "system" fn(
-    instance: VkInstance,
-    pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
-    pAllocator: *const VkAllocationCallbacks,
-    pCallback: *mut VkDebugReportCallbackEXT,
-) -> VkResult;
-pub type PFN_vkDestroyDebugReportCallbackEXT = extern "system" fn(
-    instance: VkInstance,
-    callback: VkDebugReportCallbackEXT,
-    pAllocator: *const VkAllocationCallbacks,
+
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkCreateDebugReportCallbackEXT"]
+pub struct PFN_vkCreateDebugReportCallbackEXT(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
+        pAllocator: *const VkAllocationCallbacks,
+        pCallback: *mut VkDebugReportCallbackEXT,
+    ) -> VkResult,
 );
-pub type PFN_vkDebugReportMessageEXT = extern "system" fn(
-    instance: VkInstance,
-    flags: VkDebugReportFlagsEXT,
-    objectType: VkDebugReportObjectTypeEXT,
-    object: u64,
-    location: size_t,
-    messageCode: i32,
-    pLayerPrefix: *const c_char,
-    pMessage: *const c_char,
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkDestroyDebugReportCallbackEXT"]
+pub struct PFN_vkDestroyDebugReportCallbackEXT(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        callback: VkDebugReportCallbackEXT,
+        pAllocator: *const VkAllocationCallbacks,
+    ),
+);
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkDebugReportMessageEXT"]
+pub struct PFN_vkDebugReportMessageEXT(
+    pub  extern "system" fn(
+        instance: VkInstance,
+        flags: VkDebugReportFlagsEXT,
+        objectType: VkDebugReportObjectTypeEXT,
+        object: u64,
+        location: size_t,
+        messageCode: i32,
+        pLayerPrefix: *const c_char,
+        pMessage: *const c_char,
+    ),
 );

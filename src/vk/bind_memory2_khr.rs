@@ -5,11 +5,27 @@ use super::*;
 use derives::promote_1_1;
 
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkBindBufferMemory2KHR =
-    extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkBindBufferMemory2KHR"]
+pub struct PFN_vkBindBufferMemory2KHR(
+    pub  extern "system" fn(
+        device: VkDevice,
+        bindInfoCount: u32,
+        pBindInfos: *const VkBindBufferMemoryInfoKHR,
+    ) -> VkResult,
+);
 #[promote_1_1(suffix = "KHR")]
-pub type PFN_vkBindImageMemory2KHR =
-    extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult;
+#[repr(transparent)]
+#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
+#[org_name = "vkBindImageMemory2KHR"]
+pub struct PFN_vkBindImageMemory2KHR(
+    pub  extern "system" fn(
+        device: VkDevice,
+        bindInfoCount: u32,
+        pBindInfos: *const VkBindImageMemoryInfoKHR,
+    ) -> VkResult,
+);
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]

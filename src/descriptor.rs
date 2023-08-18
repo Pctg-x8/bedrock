@@ -348,7 +348,7 @@ cfg_if! {
         #[cfg(feature = "Implements")]
         impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
             fn drop(&mut self) {
-                self.1.destroy_descriptor_update_template_khr_fn()(self.1.native_ptr(), self.0, std::ptr::null());
+                self.1.destroy_descriptor_update_template_khr_fn().0(self.1.native_ptr(), self.0, std::ptr::null());
             }
         }
         impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
@@ -358,7 +358,7 @@ cfg_if! {
             fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
                 use crate::Device;
 
-                self.device().update_descriptor_set_with_template_khr_fn()(
+                self.device().update_descriptor_set_with_template_khr_fn().0(
                     self.device().native_ptr(),
                     set,
                     self.native_ptr(),
