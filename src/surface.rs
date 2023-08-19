@@ -39,7 +39,7 @@ pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface> {
     pub(crate) device: Device,
     pub(crate) surface: Surface,
     pub(crate) format: VkFormat,
-    pub(crate) extent: VkExtent3D,
+    pub(crate) extent: VkExtent2D,
 }
 #[cfg(feature = "VK_KHR_swapchain")]
 unsafe impl<Device, Surface> Sync for SwapchainObject<Device, Surface>
@@ -79,7 +79,7 @@ where
         self.format
     }
 
-    fn size(&self) -> &VkExtent3D {
+    fn size(&self) -> &VkExtent2D {
         &self.extent
     }
 }
@@ -219,7 +219,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                     device,
                     surface: self.1,
                     format: structure.imageFormat,
-                    extent: structure.imageExtent.with_depth(1),
+                    extent: structure.imageExtent,
                 })
         }
     }
@@ -270,7 +270,7 @@ pub enum CompletionHandler<Fence: crate::Fence, Semaphore: crate::Semaphore> {
 #[cfg(feature = "VK_KHR_swapchain")]
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn format(&self) -> VkFormat;
-    fn size(&self) -> &VkExtent3D;
+    fn size(&self) -> &VkExtent2D;
 
     /// Retrieve the index of the next available presentation image
     /// # Failures
@@ -421,7 +421,7 @@ DerefContainerBracketImpl!(for Swapchain {
         T::format(self)
     }
 
-    fn size(&self) -> &VkExtent3D {
+    fn size(&self) -> &VkExtent2D {
         T::size(self)
     }
 });
