@@ -1220,6 +1220,11 @@ impl<I: Image> ImageViewBuilder<I> {
         self
     }
 
+    pub fn with_dimension(mut self, dimension: VkImageViewType) -> Self {
+        self.0.viewType = dimension;
+        self
+    }
+
     #[implements]
     pub fn create(mut self) -> crate::Result<ImageViewObject<I>> {
         self.0.image = self.1.native_ptr();
