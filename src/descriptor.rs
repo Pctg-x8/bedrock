@@ -5,7 +5,7 @@ use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, LifetimeBound, VkObject};
+use crate::{vk::*, DeviceChild, VkObject};
 use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
 DefineStdDeviceChildObject! {
@@ -308,7 +308,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn alloc(&mut self, layouts: &[impl DescriptorSetLayout]) -> crate::Result<Vec<DescriptorSet>>
     where
         Self: VkHandleMut,
@@ -338,7 +338,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "Implements")]
+    #[implements]
     unsafe fn reset(&mut self) -> crate::Result<()>
     where
         Self: VkHandleMut,
@@ -355,7 +355,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// On failure, this command returns
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "Implements")]
+    #[implements]
     unsafe fn free(&mut self, sets: &[VkDescriptorSet]) -> crate::Result<()>
     where
         Self: VkHandleMut,

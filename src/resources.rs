@@ -116,6 +116,8 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
+use derives::implements;
+
 use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
@@ -806,6 +808,50 @@ impl ImageDesc<'_> {
     }
 }
 
+pub struct ImageSubresource<S: Image> {
+    pub source: S,
+    pub subresource: VkImageSubresource,
+}
+impl<S: Image> ImageSubresource<S> {
+    /// Retrieve information about an image subresource
+    #[implements]
+    pub fn layout_info(&self) -> VkSubresourceLayout {
+        let mut s = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::get_image_subresource_layout(
+                self.source.device().native_ptr(),
+                self.source.native_ptr(),
+                &self.subresource,
+                s.as_mut_ptr(),
+            );
+
+            s.assume_init()
+        }
+    }
+}
+impl<S: Image> From<ImageSubresource<S>> for VkImageSubresource {
+    fn from(value: ImageSubresource<S>) -> Self {
+        value.subresource
+    }
+}
+
+#[derive(Clone)]
+pub struct ImageSubresourceRange<S: Image> {
+    pub source: S,
+    pub range: VkImageSubresourceRange,
+}
+impl<S: Image> ImageSubresourceRange<S> {
+    /// Builds ImageView information
+    pub fn view_builder(self) -> ImageViewBuilder<S> {
+        ImageViewBuilder::new(self.source, self.range)
+    }
+}
+impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
+    fn from(value: ImageSubresourceRange<S>) -> Self {
+        value.range
+    }
+}
+
 pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
     /// The pixel format of an image
     fn format(&self) -> VkFormat;
@@ -815,14 +861,87 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
 
     fn dimension(&self) -> VkImageViewType;
 
+    /// Creates subresource
+    #[inline]
+    fn subresource(self, aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> ImageSubresource<Self>
+    where
+        Self: Sized,
+    {
+        ImageSubresource {
+            source: self,
+            subresource: VkImageSubresource {
+                aspectMask: aspect_mask.0,
+                mipLevel: mip_level,
+                arrayLayer: array_layer,
+            },
+        }
+    }
+
+    /// Creates subresource reference
+    #[inline]
+    fn subresource_ref(&self, aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> ImageSubresource<&Self> {
+        ImageSubresource {
+            source: self,
+            subresource: VkImageSubresource {
+                aspectMask: aspect_mask.0,
+                mipLevel: mip_level,
+                arrayLayer: array_layer,
+            },
+        }
+    }
+
+    /// Creates subresource-range
+    #[inline]
+    fn subresource_range(
+        self,
+        aspect_mask: AspectMask,
+        mip_level: impl AnalogNumRange<u32>,
+        array_layers: impl AnalogNumRange<u32>,
+    ) -> ImageSubresourceRange<Self>
+    where
+        Self: Sized,
+    {
+        ImageSubresourceRange {
+            source: self,
+            range: VkImageSubresourceRange {
+                aspectMask: aspect_mask.0,
+                baseMipLevel: mip_level.begin(),
+                levelCount: mip_level.count(),
+                baseArrayLayer: array_layers.begin(),
+                layerCount: array_layers.count(),
+            },
+        }
+    }
+
+    /// Creates subresource-range reference
+    #[inline]
+    fn subresource_range_ref(
+        &self,
+        aspect_mask: AspectMask,
+        mip_level: impl AnalogNumRange<u32>,
+        array_layers: impl AnalogNumRange<u32>,
+    ) -> ImageSubresourceRange<&Self> {
+        ImageSubresourceRange {
+            source: self,
+            range: VkImageSubresourceRange {
+                aspectMask: aspect_mask.0,
+                baseMipLevel: mip_level.begin(),
+                levelCount: mip_level.count(),
+                baseArrayLayer: array_layers.begin(),
+                layerCount: array_layers.count(),
+            },
+        }
+    }
+
     /// Create an image view
     #[cfg(feature = "Implements")]
+    #[deprecated = "use ImageViewBuilder which can be omit some default arguments"]
     fn create_view(
         self,
         format: Option<VkFormat>,
         vtype: Option<VkImageViewType>,
         cmap: &ComponentMapping,
-        subresource_range: &ImageSubresourceRange,
+        subresource_range: &VkImageSubresourceRange,
     ) -> crate::Result<ImageViewObject<Self>>
     where
         Self: Sized,
@@ -839,7 +958,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             viewType: vtype,
             format,
             components: cmap.clone().into(),
-            subresourceRange: subresource_range.0.clone(),
+            subresourceRange: subresource_range.clone(),
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -851,7 +970,8 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
 
     /// Retrieve information about an image subresource  
     /// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
-    #[cfg(feature = "Implements")]
+    #[implements]
+    #[deprecated = "use ImageSubresource"]
     fn image_subresource_layout(
         &self,
         subres_aspect: AspectMask,
@@ -1068,6 +1188,47 @@ pub trait MemoryBound: VkHandle {
 pub trait BufferView: VkHandle<Handle = VkBufferView> + DeviceChild {}
 DerefContainerBracketImpl!(for BufferView {});
 GuardsImpl!(for BufferView {});
+
+pub struct ImageViewBuilder<I: Image>(VkImageViewCreateInfo, I);
+impl<I: Image> ImageViewBuilder<I> {
+    pub fn new(source: I, subresource_range: VkImageSubresourceRange) -> Self {
+        Self(
+            VkImageViewCreateInfo {
+                sType: VkImageViewCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                image: source.native_ptr(),
+                viewType: source.dimension(),
+                format: source.format(),
+                components: VkComponentMapping::default(),
+                subresourceRange: subresource_range,
+            },
+            source,
+        )
+    }
+
+    pub fn with_format_mutation(mut self, format: VkFormat) -> Self {
+        self.0.format = format;
+        self
+    }
+
+    pub fn with_mapping(mut self, mapping: VkComponentMapping) -> Self {
+        self.0.components = mapping;
+        self
+    }
+
+    #[implements]
+    pub fn create(mut self) -> crate::Result<ImageViewObject<I>> {
+        self.0.image = self.1.native_ptr();
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_image_view(self.1.device().native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| ImageViewObject(h.assume_init(), self.1))
+        }
+    }
+}
 
 pub trait ImageView: VkHandle<Handle = VkImageView> + DeviceChild {}
 DerefContainerBracketImpl!(for ImageView {});
@@ -1302,75 +1463,6 @@ impl BitOr for AspectMask {
 impl BitOrAssign for AspectMask {
     fn bitor_assign(&mut self, other: Self) {
         self.0 |= other.0;
-    }
-}
-
-/// Structure specifying a image subresource range
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[repr(transparent)]
-pub struct ImageSubresourceRange(VkImageSubresourceRange);
-impl From<VkImageSubresourceRange> for ImageSubresourceRange {
-    fn from(v: VkImageSubresourceRange) -> Self {
-        ImageSubresourceRange(v)
-    }
-}
-impl Into<VkImageSubresourceRange> for ImageSubresourceRange {
-    fn into(self) -> VkImageSubresourceRange {
-        self.0
-    }
-}
-impl AsRef<VkImageSubresourceRange> for ImageSubresourceRange {
-    fn as_ref(&self) -> &VkImageSubresourceRange {
-        &self.0
-    }
-}
-impl ImageSubresourceRange {
-    /// Specify color subresource
-    pub fn color(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
-        VkImageSubresourceRange {
-            aspectMask: AspectMask::COLOR.0,
-            baseMipLevel: mip_levels.begin(),
-            baseArrayLayer: array_layers.begin(),
-            levelCount: mip_levels.count(),
-            layerCount: array_layers.count(),
-        }
-        .into()
-    }
-
-    /// Specify stencil subresource
-    pub fn stencil(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
-        VkImageSubresourceRange {
-            aspectMask: AspectMask::STENCIL.0,
-            baseMipLevel: mip_levels.begin(),
-            baseArrayLayer: array_layers.begin(),
-            levelCount: mip_levels.count(),
-            layerCount: array_layers.count(),
-        }
-        .into()
-    }
-
-    /// Specify depth subresource
-    pub fn depth(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
-        VkImageSubresourceRange {
-            aspectMask: AspectMask::DEPTH.0,
-            baseMipLevel: mip_levels.begin(),
-            baseArrayLayer: array_layers.begin(),
-            levelCount: mip_levels.count(),
-            layerCount: array_layers.count(),
-        }
-        .into()
-    }
-
-    /// Specify depth and stencil subresource
-    pub fn depth_stencil(mip_levels: impl AnalogNumRange<u32>, array_layers: impl AnalogNumRange<u32>) -> Self {
-        VkImageSubresourceRange {
-            aspectMask: AspectMask::DEPTH.stencil().0,
-            baseMipLevel: mip_levels.begin(),
-            baseArrayLayer: array_layers.begin(),
-            levelCount: mip_levels.count(),
-            layerCount: array_layers.count(),
-        }
-        .into()
     }
 }
 
