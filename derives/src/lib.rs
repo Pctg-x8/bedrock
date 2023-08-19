@@ -622,3 +622,11 @@ pub fn derive_static_callable(input: TokenStream) -> TokenStream {
     }
     .into()
 }
+
+/// alias for `#[cfg(feature = "Implements")]`
+#[proc_macro_attribute]
+pub fn implements(_: TokenStream, target: TokenStream) -> TokenStream {
+    let t2 = proc_macro2::TokenStream::from(target);
+
+    quote! { #[cfg(feature = "Implements")] #t2 }.into()
+}

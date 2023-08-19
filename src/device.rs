@@ -1684,41 +1684,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a swapchain
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    /// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_swapchain")]
-    fn new_swapchain<B>(self, mut builder: B) -> crate::Result<crate::SwapchainObject<Self, B::ConcreteSurface>>
-    where
-        Self: Sized,
-        B: crate::VulkanStructureProvider<RootStructure = VkSwapchainCreateInfoKHR> + crate::TransferSurfaceObject,
-    {
-        let mut h = std::mem::MaybeUninit::uninit();
-        let mut structure = std::mem::MaybeUninit::uninit();
-        builder.build(unsafe { &mut *structure.as_mut_ptr() });
-        let structure = unsafe { structure.assume_init() };
-        unsafe {
-            crate::vkresolve::create_swapchain_khr(self.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| {
-                    crate::SwapchainObject(
-                        h.assume_init(),
-                        self,
-                        builder.transfer_surface(),
-                        structure.imageFormat,
-                        structure.imageExtent.with_depth(1),
-                    )
-                })
-        }
-    }
-
     // Extension Function Providers
 
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]

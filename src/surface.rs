@@ -4,26 +4,15 @@ use super::*;
 
 /// Opaque handle to a surface object
 #[cfg(feature = "VK_KHR_surface")]
-#[derive(VkHandle)]
-pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) VkSurfaceKHR, pub(crate) Instance);
-#[cfg(feature = "VK_KHR_surface")]
-impl<Instance: crate::Instance> VkObject for SurfaceObject<Instance> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
-}
+#[derive(VkHandle, VkObject, InstanceChild)]
+#[VkObject(type = VK_OBJECT_TYPE_SURFACE_KHR)]
+pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) VkSurfaceKHR, #[parent] pub(crate) Instance);
 #[cfg(feature = "VK_KHR_surface")]
 unsafe impl<Instance: crate::Instance + Sync> Sync for SurfaceObject<Instance> {}
 #[cfg(feature = "VK_KHR_surface")]
 unsafe impl<Instance: crate::Instance + Send> Send for SurfaceObject<Instance> {}
 #[cfg(feature = "VK_KHR_surface")]
-impl<Instance: crate::Instance> InstanceChild for SurfaceObject<Instance> {
-    type ConcreteInstance = Instance;
-
-    fn instance(&self) -> &Instance {
-        &self.1
-    }
-}
-#[cfg(feature = "VK_KHR_surface")]
-#[cfg(feature = "Implements")]
+#[implements]
 impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
@@ -34,19 +23,23 @@ impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
 #[cfg(feature = "VK_KHR_surface")]
 impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
 
+#[cfg(feature = "VK_KHR_surface")]
+pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
+#[cfg(feature = "VK_KHR_surface")]
+DerefContainerBracketImpl!(for Surface {});
+
 /// Opaque handle to as swapchain object
 #[cfg(feature = "VK_KHR_swapchain")]
-#[derive(VkHandle)]
-pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface>(
-    pub(crate) VkSwapchainKHR,
-    pub(crate) Device,
-    pub(crate) Surface,
-    pub(crate) VkFormat,
-    pub(crate) VkExtent3D,
-);
-#[cfg(feature = "VK_KHR_swapchain")]
-impl<Device: crate::Device, Surface: crate::Surface> VkObject for SwapchainObject<Device, Surface> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
+#[derive(VkHandle, VkObject, DeviceChild)]
+#[VkObject(type = VK_OBJECT_TYPE_SWAPCHAIN_KHR)]
+pub struct SwapchainObject<Device: crate::Device, Surface: crate::Surface> {
+    #[handle]
+    pub(crate) handle: VkSwapchainKHR,
+    #[parent]
+    pub(crate) device: Device,
+    pub(crate) surface: Surface,
+    pub(crate) format: VkFormat,
+    pub(crate) extent: VkExtent3D,
 }
 #[cfg(feature = "VK_KHR_swapchain")]
 unsafe impl<Device, Surface> Sync for SwapchainObject<Device, Surface>
@@ -63,19 +56,7 @@ where
 {
 }
 #[cfg(feature = "VK_KHR_swapchain")]
-impl<Device, Surface> DeviceChild for SwapchainObject<Device, Surface>
-where
-    Device: crate::Device,
-    Surface: crate::Surface,
-{
-    type ConcreteDevice = Device;
-
-    fn device(&self) -> &Device {
-        &self.1
-    }
-}
-#[cfg(feature = "VK_KHR_swapchain")]
-#[cfg(feature = "Implements")]
+#[implements]
 impl<Device, Surface> Drop for SwapchainObject<Device, Surface>
 where
     Device: crate::Device,
@@ -83,7 +64,7 @@ where
 {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_swapchain_khr(self.device.native_ptr(), self.handle, std::ptr::null());
         }
     }
 }
@@ -95,11 +76,11 @@ where
     Surface: crate::Surface,
 {
     fn format(&self) -> VkFormat {
-        self.3
+        self.format
     }
 
     fn size(&self) -> &VkExtent3D {
-        &self.4
+        &self.extent
     }
 }
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -110,23 +91,19 @@ where
     Surface: crate::Surface,
 {
     /// Deconstructs the swapchain and retrieves its parents
-    #[cfg(feature = "Implements")]
+    #[implements]
     pub fn deconstruct(self) -> (Device, Surface) {
-        let d = unsafe { std::ptr::read(&self.1) };
-        let s = unsafe { std::ptr::read(&self.2) };
+        let d = unsafe { core::ptr::read(&self.device) };
+        let s = unsafe { core::ptr::read(&self.surface) };
+        // Note: DeviceとSurfaceをdropさせたくない
         unsafe {
-            crate::vkresolve::destroy_swapchain_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_swapchain_khr(self.device.native_ptr(), self.handle, std::ptr::null());
         }
         std::mem::forget(self);
 
         (d, s)
     }
 }
-
-#[cfg(feature = "VK_KHR_surface")]
-pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
-#[cfg(feature = "VK_KHR_surface")]
-DerefContainerBracketImpl!(for Surface {});
 
 /// Builder object to construct a `Swapchain`
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -138,11 +115,11 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
     pub fn new(
         surface: Surface,
         min_image_count: u32,
-        format: &VkSurfaceFormatKHR,
-        extent: &VkExtent2D,
+        format: VkSurfaceFormatKHR,
+        extent: VkExtent2D,
         usage: ImageUsage,
     ) -> Self {
-        SwapchainBuilder(
+        Self(
             VkSwapchainCreateInfoKHR {
                 sType: VkSwapchainCreateInfoKHR::TYPE,
                 pNext: std::ptr::null(),
@@ -151,7 +128,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                 minImageCount: min_image_count,
                 imageFormat: format.format,
                 imageColorSpace: format.colorSpace,
-                imageExtent: extent.clone().into(),
+                imageExtent: extent,
                 imageArrayLayers: 1,
                 imageUsage: usage.0,
                 imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
@@ -167,12 +144,14 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         )
     }
 
-    pub fn array_layers(&mut self, layers: u32) -> &mut Self {
+    pub const fn array_layers(mut self, layers: u32) -> Self {
         self.0.imageArrayLayers = layers;
         self
     }
 
-    pub fn share(&mut self, queue_families: &[u32]) -> &mut Self {
+    pub const fn shared(mut self, queue_families: &[u32]) -> Self {
+        assert!(queue_families.len() > 0, "empty families not allowed");
+
         self.0.imageSharingMode = if queue_families.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
         } else {
@@ -183,26 +162,66 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         self
     }
 
-    pub fn pre_transform(&mut self, tf: SurfaceTransform) -> &mut Self {
+    pub const fn exclusive(mut self) -> Self {
+        self.0.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        self.0.queueFamilyIndexCount = 0;
+        self.0.pQueueFamilyIndices = core::ptr::null();
+
+        self
+    }
+
+    /// Default: Inherit
+    pub const fn pre_transform(mut self, tf: SurfaceTransform) -> Self {
         self.0.preTransform = tf as _;
         self
     }
 
-    pub fn composite_alpha(&mut self, a: CompositeAlpha) -> &mut Self {
+    /// Default: Inherit
+    pub const fn composite_alpha(mut self, a: CompositeAlpha) -> Self {
         self.0.compositeAlpha = a as _;
         self
     }
 
-    pub fn present_mode(&mut self, mode: PresentMode) -> &mut Self {
+    /// Default: FIFO
+    pub const fn present_mode(mut self, mode: PresentMode) -> Self {
         self.0.presentMode = mode as _;
         self
     }
 
     /// Enables whether the Vulkan implementation is allowed to discard rendering operations
     /// that affect regions of the surface which aren't visible
-    pub fn enable_clip(&mut self) -> &mut Self {
+    pub const fn enable_clip(mut self) -> Self {
         self.0.clipped = true as _;
         self
+    }
+
+    /// Create a swapchain
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
+    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
+    #[implements]
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SwapchainObject<Device, Surface>> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        let mut structure = core::mem::MaybeUninit::uninit();
+        self.build(unsafe { &mut *structure.as_mut_ptr() });
+        let structure = unsafe { structure.assume_init() };
+
+        unsafe {
+            crate::vkresolve::create_swapchain_khr(device.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| SwapchainObject {
+                    handle: h.assume_init(),
+                    device,
+                    surface: self.1,
+                    format: structure.imageFormat,
+                    extent: structure.imageExtent.with_depth(1),
+                })
+        }
     }
 }
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -262,7 +281,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn acquire_next(
         &mut self,
         timeout: Option<u64>,
@@ -296,7 +315,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn queue_present(
         &mut self,
         queue: &mut impl VkHandle<Handle = VkQueue>,
@@ -330,7 +349,8 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
+    #[implements]
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
     fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
         unsafe {
             VkResultBox(self.device().acquire_full_screen_exclusive_mode_ext_fn().0(
@@ -343,7 +363,8 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     }
 
     /// Release full-screen exclusive mode from a swapchain.
-    #[cfg(all(feature = "VK_EXT_full_screen_exclusive", feature = "Implements"))]
+    #[implements]
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
     fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
         unsafe {
             VkResultBox(self.device().release_full_screen_exclusive_mode_ext_fn().0(
@@ -361,7 +382,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn get_images(&self) -> crate::Result<Vec<crate::SwapchainImage<&Self>>>
     where
         Self: Sized,
