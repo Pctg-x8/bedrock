@@ -5,7 +5,7 @@ use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, VkObject};
+use crate::{vk::*, DeviceChild, LifetimeBound, VkObject};
 use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
 DefineStdDeviceChildObject! {
@@ -52,8 +52,145 @@ impl std::ops::Deref for DescriptorSet {
 unsafe impl Sync for DescriptorSet {}
 unsafe impl Send for DescriptorSet {}
 
+/// Specified the type of a descriptor in a descriptor set
+#[repr(u32)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
+pub enum DescriptorType {
+    Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
+    CombinedImageSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER as _,
+    SampledImage = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE as _,
+    StorageImage = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE as _,
+    UniformTexelBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER as _,
+    StorageTexelBuffer = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER as _,
+    UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER as _,
+    StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER as _,
+    UniformBufferDynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC as _,
+    StorageBufferDynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC as _,
+    InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _,
+}
+impl DescriptorType {
+    pub const fn with_count(self, count: u32) -> VkDescriptorPoolSize {
+        VkDescriptorPoolSize {
+            _type: self as _,
+            descriptorCount: count,
+        }
+    }
+
+    pub const fn make_binding<'a>(self, count: u32) -> DescriptorSetLayoutBinding<'a> {
+        DescriptorSetLayoutBinding {
+            ty: self,
+            count,
+            shader_stage_mask: ShaderStage::ALL,
+            immutable_samplers: Vec::new(),
+        }
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct SamplerObjectRef<'s>(
+    VkSampler,
+    std::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
+);
+impl<'s> SamplerObjectRef<'s> {
+    pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
+        Self(x.native_ptr(), std::marker::PhantomData)
+    }
+}
+
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct DescriptorSetLayoutBinding<'s> {
+    ty: DescriptorType,
+    count: u32,
+    shader_stage_mask: ShaderStage,
+    immutable_samplers: Vec<SamplerObjectRef<'s>>,
+}
+impl<'s> DescriptorSetLayoutBinding<'s> {
+    pub fn with_immutable_samplers(self, samplers: Vec<SamplerObjectRef<'s>>) -> Self {
+        Self {
+            immutable_samplers: samplers,
+            ..self
+        }
+    }
+
+    pub fn for_shader_stage(self, mask: ShaderStage) -> Self {
+        Self {
+            shader_stage_mask: mask,
+            ..self
+        }
+    }
+
+    fn make_structure_with_binding_index(&self, binding: u32) -> VkDescriptorSetLayoutBinding {
+        VkDescriptorSetLayoutBinding {
+            binding,
+            descriptorType: self.ty as _,
+            descriptorCount: self.count,
+            stageFlags: self.shader_stage_mask.0,
+            pImmutableSamplers: self.immutable_samplers.as_ptr() as *const _,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct DescriptorSetLayoutBuilder<'s>(VkDescriptorSetLayoutCreateInfo, Vec<DescriptorSetLayoutBinding<'s>>);
+impl<'s> DescriptorSetLayoutBuilder<'s> {
+    pub const fn new() -> Self {
+        Self::with_bindings(Vec::new())
+    }
+
+    pub const fn with_bindings(bindings: Vec<DescriptorSetLayoutBinding<'s>>) -> Self {
+        Self(
+            VkDescriptorSetLayoutCreateInfo {
+                sType: VkDescriptorSetLayoutCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                bindingCount: 0,
+                pBindings: core::ptr::null(),
+            },
+            bindings,
+        )
+    }
+
+    pub fn bind(mut self, binding: DescriptorSetLayoutBinding<'s>) -> Self {
+        self.1.push(binding);
+        self
+    }
+
+    /// Create a new descriptor set layout
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    #[implements]
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<DescriptorSetLayoutObject<Device>>
+    where
+        Self: Sized,
+    {
+        let bindings = self
+            .1
+            .into_iter()
+            .enumerate()
+            .map(|(n, b)| b.make_structure_with_binding_index(n as _))
+            .collect::<Vec<_>>();
+        self.0.bindingCount = bindings.len() as _;
+        self.0.pBindings = bindings.as_ptr();
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_descriptor_set_layout(
+                device.native_ptr(),
+                &self.0,
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| crate::DescriptorSetLayoutObject(h.assume_init(), device))
+        }
+    }
+}
+
 #[derive(Clone, Hash, PartialEq, Eq)]
-pub enum DescriptorSetLayoutBinding<'s> {
+pub enum DescriptorSetLayoutBinding1<'s> {
     Sampler(u32, ShaderStage, &'s [VkSampler]),
     CombinedImageSampler(u32, ShaderStage, &'s [VkSampler]),
     SampledImage(u32, ShaderStage),
@@ -66,7 +203,7 @@ pub enum DescriptorSetLayoutBinding<'s> {
     StorageBufferDynamic(u32, ShaderStage),
     InputAttachment(u32, ShaderStage),
 }
-impl<'s> DescriptorSetLayoutBinding<'s> {
+impl<'s> DescriptorSetLayoutBinding1<'s> {
     fn descriptor_type(&self) -> VkDescriptorType {
         match self {
             Self::Sampler(_, _, _) => VK_DESCRIPTOR_TYPE_SAMPLER,
@@ -105,7 +242,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         }
     }
 }
-impl<'s> DescriptorSetLayoutBinding<'s> {
+impl<'s> DescriptorSetLayoutBinding1<'s> {
     pub fn make_structure_with_binding_index(&self, binding_index: u32) -> VkDescriptorSetLayoutBinding {
         let (c, s) = self.common_part();
         let iss = self.immutable_samplers();
@@ -148,30 +285,6 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 /// Structure specifying descriptor pool size
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub struct DescriptorPoolSize(pub DescriptorType, pub u32);
-/// Specified the type of a descriptor in a descriptor set
-#[repr(u32)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord)]
-pub enum DescriptorType {
-    Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
-    CombinedImageSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER as _,
-    SampledImage = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE as _,
-    StorageImage = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE as _,
-    UniformTexelBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER as _,
-    StorageTexelBuffer = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER as _,
-    UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER as _,
-    StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER as _,
-    UniformBufferDynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC as _,
-    StorageBufferDynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC as _,
-    InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _,
-}
-impl DescriptorType {
-    pub const fn with_count(self, count: u32) -> VkDescriptorPoolSize {
-        VkDescriptorPoolSize {
-            _type: self as _,
-            descriptorCount: count,
-        }
-    }
-}
 
 #[derive(Clone, Debug)]
 pub struct DescriptorPoolBuilder(VkDescriptorPoolCreateInfo, Vec<VkDescriptorPoolSize>);

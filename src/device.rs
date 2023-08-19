@@ -1503,40 +1503,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a new descriptor set layout
-    /// # Failures
-    /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "Implements")]
-    fn new_descriptor_set_layout(
-        self,
-        bindings: &[crate::DescriptorSetLayoutBinding],
-    ) -> crate::Result<crate::DescriptorSetLayoutObject<Self>>
-    where
-        Self: Sized,
-    {
-        let binding_structures: Vec<_> = bindings
-            .into_iter()
-            .enumerate()
-            .map(|(n, b)| b.make_structure_with_binding_index(n as _))
-            .collect();
-        let cinfo = VkDescriptorSetLayoutCreateInfo {
-            sType: VkDescriptorSetLayoutCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            bindingCount: binding_structures.len() as _,
-            pBindings: binding_structures.as_ptr(),
-        };
-
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_descriptor_set_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::DescriptorSetLayoutObject(h.assume_init(), self))
-        }
-    }
-
     #[cfg(feature = "Implements")]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(not(feature = "VK_KHR_push_descriptor"))]
