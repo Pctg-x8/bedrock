@@ -242,10 +242,6 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 もしフラグメンテーションによって確保が失敗した場合、アプリケーションは続けてDescriptorSetの確保を行うために追加のDescriptorPoolを生成することができます
 */
 
-/// Structure specifying descriptor pool size
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
-pub struct DescriptorPoolSize(pub DescriptorType, pub u32);
-
 #[derive(Clone, Debug)]
 pub struct DescriptorPoolBuilder(VkDescriptorPoolCreateInfo, Vec<VkDescriptorPoolSize>);
 impl DescriptorPoolBuilder {
