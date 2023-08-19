@@ -852,15 +852,7 @@ impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
     }
 }
 
-pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
-    /// The pixel format of an image
-    fn format(&self) -> VkFormat;
-
-    /// The size of an image
-    fn size(&self) -> &VkExtent3D;
-
-    fn dimension(&self) -> VkImageViewType;
-
+pub trait ImageSubresourceSlice: Image {
     /// Creates subresource
     #[inline]
     fn subresource(self, aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> ImageSubresource<Self>
@@ -932,6 +924,17 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             },
         }
     }
+}
+impl<T> ImageSubresourceSlice for T where T: Image {}
+
+pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
+    /// The pixel format of an image
+    fn format(&self) -> VkFormat;
+
+    /// The size of an image
+    fn size(&self) -> &VkExtent3D;
+
+    fn dimension(&self) -> VkImageViewType;
 
     /// Create an image view
     #[cfg(feature = "Implements")]
