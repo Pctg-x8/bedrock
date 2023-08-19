@@ -69,6 +69,14 @@ pub struct DeviceObject<Instance: crate::Instance> {
     get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
     #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
     get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
+    import_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkImportSemaphoreWin32HandleKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
+    get_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkGetSemaphoreWin32HandleKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+    get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+    get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
@@ -103,6 +111,14 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
             get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
             get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
+            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
+            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -195,6 +211,28 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
+            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
+                *self.import_semaphore_win32_handle_khr.resolve()
+            }
+            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
+                *self.get_semaphore_win32_handle_khr.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
+            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
+                *self.get_memory_win32_handle_khr.resolve()
+            }
+            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
+                *self.get_memory_win32_handle_properties_khr.resolve()
+            }
+        }
+    }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
@@ -244,6 +282,16 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
             #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
             get_memory_host_pointer_properties_ext: unsafe {
                 core::ptr::read(&self.get_memory_host_pointer_properties_ext)
+            },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
+            import_semaphore_win32_handle_khr: unsafe { core::ptr::read(&self.import_semaphore_win32_handle_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
+            get_semaphore_win32_handle_khr: unsafe { core::ptr::read(&self.get_semaphore_win32_handle_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_khr: unsafe { core::ptr::read(&self.get_memory_win32_handle_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_properties_khr: unsafe {
+                core::ptr::read(&self.get_memory_win32_handle_properties_khr)
             },
         };
         // disable running VkDevice destruction
@@ -398,6 +446,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Return a function pointer for a command
     /// # Failures
     /// If function is not provided by instance or `name` is empty, returns `None`
+    #[deprecated = "do not use this directly(this does not provide caching)"]
     #[cfg(feature = "Implements")]
     fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F> {
         if name.is_empty() {
@@ -543,10 +592,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             name: windows::core::PCWSTR(name.as_ptr()),
         };
 
-        let f = self
-            .extra_procedure::<PFN_vkImportSemaphoreWin32HandleKHR>("vkImportSemaphoreWin32HandleKHR")
-            .expect("No vkImportSemaphoreWin32HandleKHR exported");
-        VkResultBox((f)(self.native_ptr(), &info)).into_result().map(drop)
+        unsafe {
+            VkResultBox(self.import_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info))
+                .into_result()
+                .map(drop)
+        }
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
@@ -571,12 +621,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = windows::Win32::Foundation::HANDLE(0);
 
-        let f = self
-            .extra_procedure::<PFN_vkGetSemaphoreWin32HandleKHR>("vkGetSemaphoreWin32HandleKHR")
-            .expect("No vkGetSemaphoreWin32HandleKHR exported");
-        VkResultBox((f)(self.native_ptr(), &info, &mut h))
+        unsafe {
+            VkResultBox(self.get_semaphore_win32_handle_khr_fn().0(
+                self.native_ptr(),
+                &info,
+                &mut h,
+            ))
             .into_result()
             .map(move |_| h)
+        }
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
@@ -601,12 +654,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut h = windows::Win32::Foundation::HANDLE(0);
 
-        let f = self
-            .extra_procedure::<PFN_vkGetMemoryWin32HandleKHR>("vkGetMemoryWin32HandleKHR")
-            .expect("No vkGetMemoryWin32HandleKHR exported");
-        VkResultBox((f)(self.native_ptr(), &info, &mut h))
+        unsafe {
+            VkResultBox(self.get_memory_win32_handle_khr_fn().0(
+                self.native_ptr(),
+                &info,
+                &mut h,
+            ))
             .into_result()
             .map(move |_| h)
+        }
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
@@ -650,12 +706,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
         let mut info = VkMemoryWin32HandlePropertiesKHR::uninit_sink();
 
-        let f = self
-            .extra_procedure::<PFN_vkGetMemoryWin32HandlePropertiesKHR>("vkGetMemoryWin32HandlePropertiesKHR")
-            .expect("No vkGetMemoryWin32HandlePropertiesKHR exported");
-        VkResultBox((f)(self.native_ptr(), handle_type as _, handle, info.as_mut_ptr()))
+        unsafe {
+            VkResultBox(self.get_memory_win32_handle_properties_khr_fn().0(
+                self.native_ptr(),
+                handle_type as _,
+                handle,
+                info.as_mut_ptr(),
+            ))
             .into_result()
-            .map(move |_| unsafe { info.assume_init() })
+            .map(move |_| info.assume_init())
+        }
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
@@ -1711,6 +1771,20 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
+            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
+            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
+            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
+            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1791,6 +1865,28 @@ DerefContainerBracketImpl!(for Device {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
+            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
+                (**self).import_semaphore_win32_handle_khr_fn()
+            }
+            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
+                (**self).get_semaphore_win32_handle_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
+            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
+                (**self).get_memory_win32_handle_khr_fn()
+            }
+            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
+                (**self).get_memory_win32_handle_properties_khr_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1868,6 +1964,28 @@ GuardsImpl!(for Device {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
             fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
                 (**self).get_memory_host_pointer_properties_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
+            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
+                (**self).import_semaphore_win32_handle_khr_fn()
+            }
+            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
+                (**self).get_semaphore_win32_handle_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
+            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
+                (**self).get_memory_win32_handle_khr_fn()
+            }
+            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
+                (**self).get_memory_win32_handle_properties_khr_fn()
             }
         }
     }

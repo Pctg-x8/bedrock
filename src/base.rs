@@ -451,6 +451,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// Return a function pointer for a command
     /// # Failures
     /// If function is not provided by instance or `name` is empty, returns `None`
+    #[deprecated = "do not use this directly(this does not provide caching)"]
     #[cfg(feature = "Implements")]
     fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F> {
         if name.is_empty() {

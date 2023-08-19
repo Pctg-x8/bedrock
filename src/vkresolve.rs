@@ -1180,7 +1180,7 @@ WrapAPI2!(
         instance: VkInstance,
         create_info: *const VkWin32SurfaceCreateInfoKHR,
         allocator: *const VkAllocationCallbacks,
-        surface_out: VkSurfaceKHR,
+        surface_out: *mut VkSurfaceKHR,
     ) -> VkResult;
     #[org = PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR]
     pub fn get_physical_device_win32_presentation_support_khr(
