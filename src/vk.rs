@@ -1511,10 +1511,10 @@ pub struct VkPhysicalDeviceLimits {
     pub maxStorageBufferRange: u32,
     pub maxPushConstantsSize: u32,
     pub maxMemoryAllocationCount: u32,
-    pub maxSamplerAlocationCount: u32,
+    pub maxSamplerAllocationCount: u32,
     pub bufferImageGranularity: VkDeviceSize,
     pub sparseAddressSparseSize: VkDeviceSize,
-    pub maxBoudnDescriptorSets: u32,
+    pub maxBoundDescriptorSets: u32,
     pub maxPerStageDescriptorSample: u32,
     pub maxPerStageDescriptorUniformBuffers: u32,
     pub maxPerStageDescriptorStorageBuffers: u32,
@@ -2936,9 +2936,9 @@ pub struct PFN_vkGetPhysicalDeviceFormatProperties(
 #[pfn_of(vkGetPhysicalDeviceImageFormatProperties)]
 pub struct PFN_vkGetPhysicalDeviceImageFormatProperties(
     pub  unsafe extern "system" fn(
-        physicalDeivce: VkPhysicalDevice,
+        physicalDevice: VkPhysicalDevice,
         format: VkFormat,
-        itype: VkImageType,
+        image_type: VkImageType,
         tiling: VkImageTiling,
         usage: VkImageUsageFlags,
         flags: VkImageCreateFlags,
@@ -2960,7 +2960,7 @@ pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties(
     pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         pQueueFamilyPropertyCount: *mut u32,
-        pQuueFamilProperties: *mut VkQueueFamilyProperties,
+        pQueueFamilyProperties: *mut VkQueueFamilyProperties,
     ),
 );
 #[cfg(feature = "Implements")]
@@ -3201,7 +3201,7 @@ pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties(
     pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         format: VkFormat,
-        itype: VkImageType,
+        image_type: VkImageType,
         samples: VkSampleCountFlags,
         usage: VkImageUsageFlags,
         tiling: VkImageTiling,
@@ -3653,7 +3653,7 @@ pub struct PFN_vkAllocateDescriptorSets(
     pub  unsafe extern "system" fn(
         device: VkDevice,
         pAllocateInfo: *const VkDescriptorSetAllocateInfo,
-        pDescriotorSet: *mut VkDescriptorSet,
+        pDescriptorSet: *mut VkDescriptorSet,
     ) -> VkResult,
 );
 #[cfg(feature = "Implements")]
@@ -4344,7 +4344,7 @@ extern "system" {
     pub fn vkGetPhysicalDeviceImageFormatProperties(
         physicalDevice: VkPhysicalDevice,
         format: VkFormat,
-        itype: VkImageType,
+        image_type: VkImageType,
         tiling: VkImageTiling,
         usage: VkImageUsageFlags,
         flags: VkImageCreateFlags,
@@ -4895,7 +4895,7 @@ extern "system" {
         bufferMemoryBarrierCount: u32,
         pBufferMemoryBarriers: *const VkBufferMemoryBarrier,
         imageMemoryBarrierCount: u32,
-        pImageMemoryBariers: *const VkImageMemoryBarrier,
+        pImageMemoryBarriers: *const VkImageMemoryBarrier,
     );
     pub fn vkCmdPipelineBarrier(
         commandBuffer: VkCommandBuffer,
