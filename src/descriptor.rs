@@ -195,7 +195,7 @@ impl DescriptorPoolBuilder {
         self
     }
 
-    pub fn replace_reservations(mut self, new_sizes: Vec<VkDescriptorPoolSize>) -> Self {
+    pub fn with_reservations(mut self, new_sizes: Vec<VkDescriptorPoolSize>) -> Self {
         self.1 = new_sizes;
         self
     }
