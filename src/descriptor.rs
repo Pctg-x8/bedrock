@@ -3,10 +3,10 @@
 use cfg_if::cfg_if;
 use derives::implements;
 
-use crate::{vk::*, DeviceChild, VkObject};
-use crate::{ImageLayout, ShaderStage, VkHandle};
 #[cfg(feature = "Implements")]
-use crate::{VkHandleMut, VulkanStructure};
+use crate::VkHandleMut;
+use crate::{vk::*, DeviceChild, VkObject};
+use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a descriptor set layout object
