@@ -1,6 +1,7 @@
 //! Vulkan Device and Queues
 
 use cfg_if::cfg_if;
+use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::{
@@ -478,9 +479,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// are made visible to the host
     /// # Safety
     /// Memory object in `ranges` must be currently host mapped
-    #[cfg(feature = "Implements")]
+    #[implements]
     unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
         crate::vkresolve::invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
+            .into_result()
+            .map(drop)
+    }
+
+    /// Flush `MappedMemoryRange`s
+    /// Flushing the memory range allows that host writes to the memory ranges can
+    /// be made available to device access
+    /// # Safety
+    /// Memory object in `ranges` must be currently host mapped
+    #[implements]
+    unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+        crate::vkresolve::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
             .into_result()
             .map(drop)
     }
@@ -632,39 +645,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-    /// Get a Windows HANDLE for a memory object
-    ///
-    /// A returned handle needs to be closed by caller
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    fn get_memory_win32_handle(
-        &self,
-        memory: &impl VkHandle<Handle = VkDeviceMemory>,
-        handle_type: crate::ExternalMemoryHandleTypeWin32,
-    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
-        let info = VkMemoryGetWin32HandleInfoKHR {
-            sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            memory: memory.native_ptr(),
-            handleType: handle_type as _,
-        };
-        let mut h = windows::Win32::Foundation::HANDLE(0);
-
-        unsafe {
-            VkResultBox(self.get_memory_win32_handle_khr_fn().0(
-                self.native_ptr(),
-                &info,
-                &mut h,
-            ))
-            .into_result()
-            .map(move |_| h)
-        }
-    }
-
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
     /// Get a POSIX file descriptor for a memory object
     /// # Failures
@@ -689,32 +669,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             VkResultBox(self.get_memory_fd_khr_fn().0(self.native_ptr(), &info, &mut fd))
                 .into_result()
                 .map(move |_| fd)
-        }
-    }
-
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-    /// Get Properties of External Memory Win32 Handles
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    fn get_memory_win32_handle_properties(
-        &self,
-        handle_type: crate::ExternalMemoryHandleTypeWin32,
-        handle: windows::Win32::Foundation::HANDLE,
-    ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        let mut info = VkMemoryWin32HandlePropertiesKHR::uninit_sink();
-
-        unsafe {
-            VkResultBox(self.get_memory_win32_handle_properties_khr_fn().0(
-                self.native_ptr(),
-                handle_type as _,
-                handle,
-                info.as_mut_ptr(),
-            ))
-            .into_result()
-            .map(move |_| info.assume_init())
         }
     }
 
@@ -881,18 +835,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
     }
 
-    /// Flush `MappedMemoryRange`s
-    /// Flushing the memory range allows that host writes to the memory ranges can
-    /// be made available to device access
-    /// # Safety
-    /// Memory object in `ranges` must be currently host mapped
-    #[cfg(feature = "Implements")]
-    unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkresolve::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
-            .into_result()
-            .map(drop)
-    }
-
     /// Creates a new shader module object
     /// # Failures
     /// On failure, this command returns
@@ -946,48 +888,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkresolve::create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| crate::PipelineCacheObject(h.assume_init(), self))
-        }
-    }
-
-    /// Creates a new pipeline layout object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    #[deprecated = "create object via builder struct(PipelineLayoutBuilder)"]
-    fn new_pipeline_layout(
-        self,
-        layouts: &[impl VkHandle<Handle = VkDescriptorSetLayout>],
-        push_constants: &[(crate::ShaderStage, std::ops::Range<u32>)],
-    ) -> crate::Result<crate::PipelineLayoutObject<Self>>
-    where
-        Self: Sized,
-    {
-        let layouts = layouts.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-        let push_constants = push_constants
-            .iter()
-            .map(|&(sh, ref r)| VkPushConstantRange {
-                stageFlags: sh.0,
-                offset: r.start,
-                size: r.end - r.start,
-            })
-            .collect::<Vec<_>>();
-        let cinfo = VkPipelineLayoutCreateInfo {
-            sType: VkPipelineLayoutCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            setLayoutCount: layouts.len() as _,
-            pSetLayouts: layouts.as_ptr(),
-            pushConstantRangeCount: push_constants.len() as _,
-            pPushConstantRanges: push_constants.as_ptr(),
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_pipeline_layout(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::PipelineLayoutObject(h.assume_init(), self))
         }
     }
 
@@ -1072,116 +972,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                     .map(|h| crate::PipelineObject(h, self.clone()))
                     .collect()
             })
-        }
-    }
-
-    /// Allocate GPU memory
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[cfg(feature = "Implements")]
-    fn allocate_memory(self, size: usize, type_index: u32) -> crate::Result<crate::DeviceMemoryObject<Self>>
-    where
-        Self: Sized,
-    {
-        let mut h = std::mem::MaybeUninit::uninit();
-        let cinfo = VkMemoryAllocateInfo {
-            sType: VkMemoryAllocateInfo::TYPE,
-            pNext: std::ptr::null(),
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-        };
-        unsafe {
-            crate::vkresolve::allocate_memory(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::DeviceMemoryObject(h.assume_init(), self))
-        }
-    }
-
-    /// Import GPU memory from external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[cfg(feature = "VK_KHR_external_memory_win32")]
-    #[cfg(feature = "Implements")]
-    fn import_memory_win32(
-        self,
-        size: usize,
-        type_index: u32,
-        handle_type: crate::ExternalMemoryHandleTypeWin32,
-        handle: windows::Win32::Foundation::HANDLE,
-        name: &widestring::WideCString,
-    ) -> crate::Result<crate::DeviceMemoryObject<Self>>
-    where
-        Self: Sized,
-    {
-        let import_info = VkImportMemoryWin32HandleInfoKHR {
-            sType: VkImportMemoryWin32HandleInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            handleType: handle_type as _,
-            handle,
-            name: windows::core::PCWSTR(name.as_ptr()),
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            sType: VkMemoryAllocateInfo::TYPE,
-            pNext: &import_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-        };
-
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
-        }
-    }
-
-    /// Allocate GPU memory and visible to external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[cfg(feature = "VK_KHR_external_memory_win32")]
-    #[cfg(feature = "Implements")]
-    fn allocate_memory_and_export_win32(
-        self,
-        size: usize,
-        type_index: u32,
-        security_attributes: Option<&windows::Win32::Security::SECURITY_ATTRIBUTES>,
-        access: u32,
-        name: &widestring::WideCString,
-    ) -> crate::Result<crate::DeviceMemoryObject<Self>>
-    where
-        Self: Sized,
-    {
-        let export_info = VkExportMemoryWin32HandleInfoKHR {
-            sType: VkExportMemoryWin32HandleInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
-            dwAccess: access,
-            name: windows::core::PCWSTR(name.as_ptr()),
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            sType: VkMemoryAllocateInfo::TYPE,
-            pNext: &export_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-        };
-
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
         }
     }
 

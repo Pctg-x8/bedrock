@@ -1,8 +1,10 @@
 //! External Memory Import/Export Operations
 
 use cfg_if::cfg_if;
+use derives::implements;
 
 use crate::vk::*;
+use crate::DeviceMemoryRequest;
 use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 #[allow(unused_imports)]
@@ -175,6 +177,7 @@ cfg_if! {
 
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[repr(C)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum ExternalMemoryHandleTypeWin32 {
     OpaqueWin32 = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR as _,
     OpaqueWin32KMT = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR as _,
@@ -185,6 +188,7 @@ pub enum ExternalMemoryHandleTypeWin32 {
 }
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(C)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum ExternalMemoryHandleTypeFd {
     Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _,
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
@@ -192,9 +196,54 @@ pub enum ExternalMemoryHandleTypeFd {
 }
 #[cfg(feature = "VK_EXT_external_memory_host")]
 #[repr(C)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum ExternalMemoryHandleType {
     HostAllocation = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT as _,
     HostMappedForeignMemory = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT as _,
+}
+
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct ExternalMemoryHandleWin32(
+    pub ExternalMemoryHandleTypeWin32,
+    pub windows::Win32::Foundation::HANDLE,
+);
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+impl ExternalMemoryHandleTypeWin32 {
+    pub const fn with_handle(self, handle: windows::Win32::Foundation::HANDLE) -> ExternalMemoryHandleWin32 {
+        ExternalMemoryHandleWin32(self, handle)
+    }
+}
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+impl ExternalMemoryHandleWin32 {
+    /// Get Properties of External Memory Win32 Handles
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
+    pub fn properties(
+        &self,
+        device: &(impl crate::Device + ?Sized),
+    ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
+        let mut info = VkMemoryWin32HandlePropertiesKHR::uninit_sink();
+
+        unsafe {
+            crate::VkResultBox(device.get_memory_win32_handle_properties_khr_fn().0(
+                device.native_ptr(),
+                self.0 as _,
+                self.1,
+                info.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(move |_| info.assume_init())
+        }
+    }
+
+    pub fn import_request(self, memory_type_index: u32, name: &widestring::WideCString) -> DeviceMemoryRequest {
+        DeviceMemoryRequest::import(memory_type_index, self, name)
+    }
 }
 
 cfg_if! {
