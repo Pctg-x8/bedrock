@@ -1215,8 +1215,8 @@ impl<I: Image> ImageViewBuilder<I> {
         self
     }
 
-    pub fn with_mapping(mut self, mapping: VkComponentMapping) -> Self {
-        self.0.components = mapping;
+    pub fn with_mapping(mut self, mapping: impl Into<VkComponentMapping>) -> Self {
+        self.0.components = mapping.into();
         self
     }
 
