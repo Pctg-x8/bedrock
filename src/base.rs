@@ -75,6 +75,8 @@ pub struct InstanceObject {
     get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
     #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
     release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
+    get_physical_device_multisample_properties_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
 }
 impl From<VkInstance> for InstanceObject {
     fn from(value: VkInstance) -> Self {
@@ -108,6 +110,8 @@ impl From<VkInstance> for InstanceObject {
             get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(value),
             #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
             release_display_ext: InstanceResolvedFn::new(value),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
+            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(value),
         }
     }
 }
@@ -200,6 +204,14 @@ impl Instance for InstanceObject {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
             fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
                 *self.release_display_ext.resolve()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))] {
+            fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+                *self.get_physical_device_multisample_properties_ext.resolve()
             }
         }
     }
@@ -593,6 +605,12 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
             fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))] {
+            fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Instance {
     cfg_if! {
@@ -676,6 +694,14 @@ DerefContainerBracketImpl!(for Instance {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))] {
+            fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+                (**self).get_physical_device_multisample_properties_ext_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Instance {
     cfg_if! {
@@ -756,6 +782,14 @@ GuardsImpl!(for Instance {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
             fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
                 (**self).release_display_ext_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))] {
+            fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+                (**self).get_physical_device_multisample_properties_ext_fn()
             }
         }
     }
@@ -909,7 +943,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Reports memory information for the specified physical device
     #[cfg(feature = "Implements")]
     fn memory_properties(&self) -> MemoryProperties {
-        let mut p = std::mem::MaybeUninit::uninit();
+        let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::get_physical_device_memory_properties(self.native_ptr(), p.as_mut_ptr());
 
@@ -959,11 +993,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "VK_EXT_sample_locations")]
     #[cfg(feature = "Implements")]
     fn multisample_properties(&self, samples: VkSampleCountFlags) -> VkMultisamplePropertiesEXT {
-        use crate::vkresolve::get_resolver;
-
-        let mut r = std::mem::MaybeUninit::uninit();
+        let mut r = VkMultisamplePropertiesEXT::uninit_sink();
         unsafe {
-            get_resolver().get_physical_device_multisample_properties_ext(self.native_ptr(), samples, r.as_mut_ptr());
+            self.instance().get_physical_device_multisample_properties_ext_fn().0(
+                self.native_ptr(),
+                samples,
+                r.as_mut_ptr(),
+            );
 
             r.assume_init()
         }

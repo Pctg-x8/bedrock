@@ -124,8 +124,8 @@ pub struct PFN_vkCmdSetSampleLocationsEXT(
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceMultisampleProeprtiesEXT)]
-pub struct PFN_vkGetPhysicalDeviceMultisampleProeprtiesEXT(
+#[pfn_of(vkGetPhysicalDeviceMultisamplePropertiesEXT)]
+pub struct PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT(
     pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         samples: VkSampleCountFlags,

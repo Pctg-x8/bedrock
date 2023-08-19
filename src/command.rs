@@ -770,11 +770,12 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
     /// Set the sample locations state
     #[cfg(feature = "VK_EXT_sample_locations")]
     #[must_use]
-    pub fn set_sample_locations(&mut self, info: &VkSampleLocationsInfoEXT) -> &mut Self {
-        unsafe {
-            Resolver::get().cmd_set_sample_locations_ext(self.ptr.native_ptr_mut(), info as _);
-        }
-        self
+    pub fn set_sample_locations(&mut self, _info: &VkSampleLocationsInfoEXT) -> &mut Self {
+        // unsafe {
+        //     Resolver::get().cmd_set_sample_locations_ext(self.ptr.native_ptr_mut(), info as _);
+        // }
+        // self
+        unimplemented!("acquire ext function in command recording");
     }
 }
 
