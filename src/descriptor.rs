@@ -1,6 +1,7 @@
 //! Vulkan Descriptors
 
 use cfg_if::cfg_if;
+use derives::implements;
 
 use crate::{vk::*, DeviceChild, VkObject};
 use crate::{ImageLayout, ShaderStage, VkHandle};
@@ -162,6 +163,73 @@ pub enum DescriptorType {
     UniformBufferDynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC as _,
     StorageBufferDynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC as _,
     InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _,
+}
+impl DescriptorType {
+    pub const fn with_count(self, count: u32) -> VkDescriptorPoolSize {
+        VkDescriptorPoolSize {
+            _type: self as _,
+            descriptorCount: count,
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct DescriptorPoolBuilder(VkDescriptorPoolCreateInfo, Vec<VkDescriptorPoolSize>);
+impl DescriptorPoolBuilder {
+    pub const fn new(max_sets: u32) -> Self {
+        Self(
+            VkDescriptorPoolCreateInfo {
+                sType: VkDescriptorPoolCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                maxSets: max_sets,
+                poolSizeCount: 0,
+                pPoolSizes: std::ptr::null(),
+            },
+            Vec::new(),
+        )
+    }
+
+    pub const fn allow_individual_free(mut self) -> Self {
+        self.0.flags |= VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        self
+    }
+
+    pub fn replace_reservations(mut self, new_sizes: Vec<VkDescriptorPoolSize>) -> Self {
+        self.1 = new_sizes;
+        self
+    }
+
+    pub fn reserve(mut self, size: VkDescriptorPoolSize) -> Self {
+        self.1.push(size);
+        self
+    }
+
+    pub fn reserve_all(mut self, size: impl IntoIterator<Item = VkDescriptorPoolSize>) -> Self {
+        self.1.extend(size);
+        self
+    }
+
+    /// Creates a descriptor pool object
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    #[implements]
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<DescriptorPoolObject<Device>>
+    where
+        Self: Sized,
+    {
+        self.0.poolSizeCount = self.1.len() as _;
+        self.0.pPoolSizes = self.1.as_ptr() as *const _;
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_descriptor_pool(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| DescriptorPoolObject(h.assume_init(), device))
+        }
+    }
 }
 
 pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {

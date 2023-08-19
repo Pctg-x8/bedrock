@@ -1537,41 +1537,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Creates a descriptor pool object
-    /// # Failures
-    /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "Implements")]
-    fn new_descriptor_pool(
-        self,
-        max_sets: u32,
-        pool_sizes: &[crate::DescriptorPoolSize],
-        allow_free: bool,
-    ) -> crate::Result<crate::DescriptorPoolObject<Self>>
-    where
-        Self: Sized,
-    {
-        let mut h = std::mem::MaybeUninit::uninit();
-        let cinfo = VkDescriptorPoolCreateInfo {
-            sType: VkDescriptorPoolCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            maxSets: max_sets,
-            flags: if allow_free {
-                VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT
-            } else {
-                0
-            },
-            poolSizeCount: pool_sizes.len() as _,
-            pPoolSizes: pool_sizes.as_ptr() as *const _,
-        };
-        unsafe {
-            crate::vkresolve::create_descriptor_pool(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::DescriptorPoolObject(h.assume_init(), self))
-        }
-    }
-
     #[cfg(feature = "Implements")]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(not(feature = "VK_KHR_push_descriptor"))]
