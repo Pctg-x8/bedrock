@@ -120,6 +120,34 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         }
     }
 
+    pub fn only_for_vertex(self) -> Self {
+        self.for_shader_stage(ShaderStage::VERTEX)
+    }
+
+    pub fn only_for_tess_control(self) -> Self {
+        self.for_shader_stage(ShaderStage::TESSELLATION_CONTROL)
+    }
+
+    pub fn only_for_tess_evaluation(self) -> Self {
+        self.for_shader_stage(ShaderStage::TESSELLATION_EVALUATION)
+    }
+
+    pub fn only_for_tessellation(self) -> Self {
+        self.for_shader_stage(ShaderStage::TESSELLATION)
+    }
+
+    pub fn only_for_geometry(self) -> Self {
+        self.for_shader_stage(ShaderStage::GEOMETRY)
+    }
+
+    pub fn only_for_fragment(self) -> Self {
+        self.for_shader_stage(ShaderStage::FRAGMENT)
+    }
+
+    pub fn only_for_compute(self) -> Self {
+        self.for_shader_stage(ShaderStage::COMPUTE)
+    }
+
     fn make_structure_with_binding_index(&self, binding: u32) -> VkDescriptorSetLayoutBinding {
         VkDescriptorSetLayoutBinding {
             binding,
