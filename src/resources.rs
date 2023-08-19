@@ -118,7 +118,7 @@
 
 use derives::implements;
 
-use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
+use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure, ImageMemoryBarrier};
 use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
@@ -844,6 +844,10 @@ impl<S: Image> ImageSubresourceRange<S> {
     /// Builds ImageView information
     pub fn view_builder(self) -> ImageViewBuilder<S> {
         ImageViewBuilder::new(self.source, self.range)
+    }
+
+    pub fn memory_barrier(&self, from_layout: ImageLayout, to_layout: ImageLayout) -> ImageMemoryBarrier {
+        ImageMemoryBarrier::new(&self.source, self.range.clone(), from_layout, to_layout)
     }
 }
 impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
