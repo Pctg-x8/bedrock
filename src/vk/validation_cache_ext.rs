@@ -15,6 +15,10 @@ pub struct VkValidationCacheEXT(pub u64);
 
 pub const VK_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkObjectType = ext_enum_value(161, 0) as _;
 
+pub const VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = ext_enum_value(161, 0) as _;
+pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType =
+    ext_enum_value(161, 1) as _;
+
 pub type VkValidationCacheHeaderVersionEXT = i32;
 pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVersionEXT = 1;
 

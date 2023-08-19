@@ -5,6 +5,11 @@ use super::*;
 use crate::PFN;
 use derives::promote_1_1;
 
+#[promote_1_1]
+pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 0) as _;
+#[promote_1_1]
+pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 1) as _;
+
 #[cfg(feature = "Implements")]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
@@ -46,11 +51,6 @@ extern "system" {
         pBindInfos: *const VkBindImageMemoryInfoKHR,
     ) -> VkResult;
 }
-
-#[promote_1_1]
-pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 0) as _;
-#[promote_1_1]
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 1) as _;
 
 vk_bitmask! {
     extending enum VkImageCreateFlagBits {

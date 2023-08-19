@@ -46,6 +46,19 @@ pub type VkObjectEntryUsageFlagsNVX = VkFlags;
 pub const VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX: VkObjectEntryUsageFlagsNVX = 0x01;
 pub const VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX: VkObjectEntryUsageFlagsNVX = 0x02;
 
+vk_bitmask! {
+    extending enum VkPipelineStageFlagBits {
+        pub VK_PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX: 17
+    }
+}
+
+vk_bitmask! {
+    extending enum VkAccessFlagBits {
+        pub VK_ACCESS_COMMAND_PROCESS_READ_BIT_NVX: 17,
+        pub VK_ACCESS_COMMAND_PROCESS_WRITE_BIT_NVX: 18
+    }
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX)]

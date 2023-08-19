@@ -10,6 +10,12 @@ pub const VK_SAMPLER_REDUCTION_MODE_WEIGHTED_AVERAGE_EXT: VkSamplerReductionMode
 pub const VK_SAMPLER_REDUCTION_MODE_MIN_EXT: VkSamplerReductionModeEXT = 1;
 pub const VK_SAMPLER_REDUCTION_MODE_MAX_EXT: VkSamplerReductionModeEXT = 2;
 
+vk_bitmask! {
+    extending enum VkFormatFeatureFlagBits {
+        pub VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT: 16
+    }
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT)]

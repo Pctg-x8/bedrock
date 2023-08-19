@@ -5,6 +5,9 @@ pub static VK_AMD_RASTERIZATION_ORDER_EXTENSION_NAME: &'static str = "VK_AMD_ras
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD: VkStructureType =
+    ext_enum_value(19, 0) as _;
+
 pub type VkRasterizationOrderAMD = i32;
 pub const VK_RASTERIZATION_ORDER_STRICT_AMD: VkRasterizationOrderAMD = 0;
 pub const VK_RASTERIZATION_ORDER_RELAXED_AMD: VkRasterizationOrderAMD = 1;

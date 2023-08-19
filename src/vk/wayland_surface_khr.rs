@@ -7,6 +7,8 @@ use wayland_client::sys::*;
 pub const VK_KHR_WAYLAND_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_wayland_surface";
 
+pub const VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(7, 0) as _;
+
 pub type VkWaylandSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]

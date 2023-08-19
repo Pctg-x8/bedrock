@@ -6,6 +6,8 @@ pub static VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME: &'static str = "VK_KH
 use super::*;
 use crate::PFN;
 
+pub const VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR: VkImageLayout = ext_enum_value(112, 0) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR)]

@@ -5,6 +5,8 @@ pub static VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &'static str = "VK_EXT_valida
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = ext_enum_value(62, 0) as _;
+
 pub type VkValidationCheckEXT = i32;
 pub const VK_VALIDATION_CHECK_ALL_EXT: VkValidationCheckEXT = 0;
 pub const VK_VALIDATION_CHECK_SHADERS_EXT: VkValidationCheckEXT = 1;

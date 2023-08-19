@@ -6,6 +6,12 @@ pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &'static str = "VK_KHR_push_de
 use super::*;
 use crate::PFN;
 
+vk_bitmask! {
+    extending enum VkDescriptorSetLayoutCreateFlagBits {
+        pub VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR: 0
+    }
+}
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR)]

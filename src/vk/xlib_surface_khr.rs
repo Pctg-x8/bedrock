@@ -7,6 +7,8 @@ use x11::xlib::*;
 pub const VK_KHR_XLIB_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_XLIB_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_xlib_surface";
 
+pub const VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(5, 0) as _;
+
 pub type VkXlibSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]

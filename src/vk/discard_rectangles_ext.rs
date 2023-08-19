@@ -6,6 +6,8 @@ pub static VK_EXT_DISCARD_RECTANGLES_EXTENSION_NAME: &'static str = "VK_EXT_disc
 use super::*;
 use crate::PFN;
 
+pub const VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT: VkDynamicState = ext_enum_value(100, 0) as _;
+
 pub type VkDiscardRectangleModeEXT = i32;
 pub const VK_DISCARD_RECTANGLE_MODE_INCLUSIVE_EXT: VkDiscardRectangleModeEXT = 0;
 pub const VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT: VkDiscardRectangleModeEXT = 1;

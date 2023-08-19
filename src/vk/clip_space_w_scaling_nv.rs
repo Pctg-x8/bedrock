@@ -6,6 +6,8 @@ pub static VK_NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME: &'static str = "VK_NV_clip
 use super::*;
 use crate::PFN;
 
+pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV: VkDynamicState = ext_enum_value(88, 0) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct VkViewportWScalingNV {

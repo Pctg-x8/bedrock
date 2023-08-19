@@ -5,6 +5,10 @@ pub static VK_NV_DEDICATED_ALLOCATION_EXTENSION_NAME: &'static str = "VK_NV_dedi
 
 use super::*;
 
+pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV: VkStructureType = ext_enum_value(27, 0) as _;
+pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV: VkStructureType = ext_enum_value(27, 1) as _;
+pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV: VkStructureType = ext_enum_value(27, 2) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV)]

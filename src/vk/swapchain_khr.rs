@@ -15,6 +15,14 @@ pub struct VkSwapchainKHR(pub u64);
 
 pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = ext_enum_value(2, 0) as _;
 
+pub const VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = ext_enum_value(2, 0) as _;
+pub const VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: VkStructureType = ext_enum_value(2, 1) as _;
+
+pub const VK_IMAGE_LAYOUT_PRESENT_SRC_KHR: VkImageLayout = ext_enum_value(2, 2) as _;
+
+pub const VK_SUBOPTIMAL_KHR: VkResult = ext_result_value(2, 3);
+pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = ext_err_value(2, 4);
+
 pub type VkSwapchainCreateFlagsKHR = VkFlags;
 vk_bitmask! {
     pub enum VkSwapchainCreateFlagBitsKHR {

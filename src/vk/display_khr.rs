@@ -21,11 +21,19 @@ pub struct VkDisplayModeKHR(pub u64);
 pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = ext_enum_value(3, 0) as _;
 pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = ext_enum_value(3, 1) as _;
 
+pub const VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(3, 0) as _;
+pub const VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(3, 1) as _;
+
 pub type VkDisplayPlaneAlphaFlagsKHR = VkFlags;
-pub const VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR: VkDisplayPlaneAlphaFlagsKHR = 0x01;
-pub const VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR: VkDisplayPlaneAlphaFlagsKHR = 0x02;
-pub const VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR: VkDisplayPlaneAlphaFlagsKHR = 0x04;
-pub const VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR: VkDisplayPlaneAlphaFlagsKHR = 0x08;
+vk_bitmask! {
+    pub enum VkDisplayPlaneAlphaFlagBitsKHR {
+        pub VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR: 0,
+        pub VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR: 1,
+        pub VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR: 2,
+        pub VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR: 3
+    }
+}
+
 pub type VkDisplayModeCreateFlagsKHR = VkFlags;
 pub type VkDisplaySurfaceCreateFlagsKHR = VkFlags;
 

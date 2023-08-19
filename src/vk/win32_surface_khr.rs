@@ -6,6 +6,8 @@ use crate::{StaticCallable, PFN};
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
 pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
 
+pub const VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(10, 0) as _;
+
 pub type VkWin32SurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]

@@ -346,8 +346,9 @@ impl PixelFormat for VkFormat {
             | VK_FORMAT_ASTC_10x8_UNORM_BLOCK
             | VK_FORMAT_ASTC_10x10_UNORM_BLOCK
             | VK_FORMAT_ASTC_12x10_UNORM_BLOCK
-            | VK_FORMAT_ASTC_12x12_UNORM_BLOCK
-            | VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG
+            | VK_FORMAT_ASTC_12x12_UNORM_BLOCK => ElementType::UNORM,
+            #[cfg(feature = "VK_IMG_format_pvrtc")]
+            VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG
             | VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG
             | VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG
             | VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG => ElementType::UNORM,
@@ -465,8 +466,9 @@ impl PixelFormat for VkFormat {
             | VK_FORMAT_ASTC_10x8_SRGB_BLOCK
             | VK_FORMAT_ASTC_10x10_SRGB_BLOCK
             | VK_FORMAT_ASTC_12x10_SRGB_BLOCK
-            | VK_FORMAT_ASTC_12x12_SRGB_BLOCK
-            | VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG
+            | VK_FORMAT_ASTC_12x12_SRGB_BLOCK => ElementType::SRGB,
+            #[cfg(feature = "VK_IMG_format_pvrtc")]
+            VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG
             | VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG
             | VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG
             | VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG => ElementType::SRGB,

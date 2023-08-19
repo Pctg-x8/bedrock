@@ -7,6 +7,8 @@ use xcb::ffi::*;
 pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_XCB_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_xcb_surface";
 
+pub const VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(6, 0) as _;
+
 pub type VkXcbSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]

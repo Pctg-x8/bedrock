@@ -13,6 +13,8 @@ pub struct VkDebugReportCallbackEXT(pub u64);
 
 pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = ext_enum_value(12, 0) as _;
 
+pub const VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT: VkStructureType = ext_enum_value(12, 0) as _;
+
 pub type VkDebugReportObjectTypeEXT = i32;
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT: VkDebugReportObjectTypeEXT = 0;
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT: VkDebugReportObjectTypeEXT = 1;

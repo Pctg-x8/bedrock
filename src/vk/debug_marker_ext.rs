@@ -6,6 +6,10 @@ pub static VK_EXT_DEBUG_MARKER_EXTENSION_NAME: &'static str = "VK_EXT_debug_mark
 use super::*;
 use crate::PFN;
 
+pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT: VkStructureType = ext_enum_value(23, 0) as _;
+pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT: VkStructureType = ext_enum_value(23, 1) as _;
+pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT: VkStructureType = ext_enum_value(23, 2) as _;
+
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT)]

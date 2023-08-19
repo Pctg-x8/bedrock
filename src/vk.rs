@@ -61,14 +61,24 @@ const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
     1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
 }
 
+#[inline]
+const fn ext_result_value(ext_number: u16, offset: u16) -> VkResult {
+    1000_000_000 + ((ext_number - 1) as VkResult * 1_000) + offset as VkResult
+}
+
+#[inline]
+const fn ext_err_value(ext_number: u16, offset: u16) -> VkResult {
+    -ext_result_value(ext_number, offset)
+}
+
 macro_rules! vk_bitmask {
-    ($(#[$ty_attr: meta])* $ty_vis: vis enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* }) => {
+    ($(#[$ty_attr: meta])* $ty_vis: vis enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* $(,)? }) => {
         $(#[$ty_attr])* $ty_vis type $ty_name = VkFlags;
         $(
             $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
         )*
     };
-    (extending enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* }) => {
+    (extending enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* $(,)? }) => {
         $(
             $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
         )*
@@ -249,11 +259,6 @@ pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = -10;
 pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = -11;
 pub const VK_ERROR_FRAGMENTED_POOL: VkResult = -12;
 pub const VK_ERROR_UNKNOWN: VkResult = -13;
-pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = -100_0000_000;
-pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = -100_0000_001;
-pub const VK_SUBOPTIMAL_KHR: VkResult = 100_0001_003;
-pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = -100_0001_004;
-pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = -100_0003_001;
 pub const VK_ERROR_VALIDATION_FAILED_EXT: VkResult = -100_0011_001;
 pub const VK_ERROR_INVALID_SHADER_NV: VkResult = -100_0012_000;
 pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = -100_0255_000;
@@ -310,73 +315,14 @@ pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER: VkStructureType = 45;
 pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER: VkStructureType = 46;
 pub const VK_STRUCTURE_TYPE_LOADER_INSTANCE_CREATE_INFO: VkStructureType = 47;
 pub const VK_STRUCTURE_TYPE_LOADER_DEVICE_CREATE_INFO: VkStructureType = 48;
+
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SUBGROUP_PROPERTIES: VkStructureType = 100_0094_000;
-pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO: VkStructureType = 100_0157_000;
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO: VkStructureType = 100_0157_001;
-pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS: VkStructureType = 100_0127_000;
-pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO: VkStructureType = 100_0127_001;
-pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_000;
-pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_001;
-pub const VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2: VkStructureType = 100_0146_002;
-pub const VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2: VkStructureType = 100_0146_003;
-pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2: VkStructureType = 100_0146_004;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES: VkStructureType = 100_0117_000;
-pub const VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO: VkStructureType = 100_0117_001;
-pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO: VkStructureType = 100_0117_002;
-pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO: VkStructureType = 100_0117_003;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES: VkStructureType = 100_0120_000;
 pub const VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO: VkStructureType = 100_0145_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES: VkStructureType = 100_0145_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES: VkStructureType = 100_0145_002;
 pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2: VkStructureType = 100_0145_003;
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO: VkStructureType = 100_0156_000;
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO: VkStructureType = 100_0156_001;
-pub const VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO: VkStructureType = 100_0156_002;
-pub const VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO: VkStructureType = 100_0156_003;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES: VkStructureType = 100_0156_004;
-pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES: VkStructureType = 100_0156_005;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO: VkStructureType = 100_0071_000;
-pub const VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES: VkStructureType = 100_0071_001;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO: VkStructureType = 100_0071_002;
-pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES: VkStructureType = 100_0071_003;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = 100_0071_004;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO: VkStructureType = 100_0112_000;
-pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES: VkStructureType = 100_0112_001;
-pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_CREATE_INFO: VkStructureType = 100_0113_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES: VkStructureType = 100_0168_000;
-pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT: VkStructureType = 100_0168_001;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES: VkStructureType = 100_0063_000;
-cfg_if! {
-    if #[cfg(feature = "VK_EXT_image_drm_format_modifier")] {
-        pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = 1000158000;
-        pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT: VkStructureType = 1000158002;
-        pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT: VkStructureType = 1000158003;
-        pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT: VkStructureType = 1000158004;
-        pub const VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT: VkStructureType = 1000158005;
-        #[cfg(feature = "VK_KHR_format_feature_flags2")]
-        pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT: VkStructureType = 1000158006;
-    }
-}
 
-pub const VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 100_0001_000;
-pub const VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: VkStructureType = 100_0001_001;
-pub const VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR: VkStructureType = 100_0002_000;
-pub const VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0002_001;
-pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = 100_0003_000;
-pub const VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0004_000;
-pub const VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0005_000;
-pub const VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0006_000;
-pub const VK_STRUCTURE_TYPE_MIR_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0007_000;
-pub const VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0008_000;
-pub const VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR: VkStructureType = 100_0009_000;
-pub const VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT: VkStructureType = 100_0011_000;
-pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD: VkStructureType = 100_0018_000;
-pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT: VkStructureType = 100_0022_000;
-pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT: VkStructureType = 100_0022_001;
-pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT: VkStructureType = 100_0022_002;
-pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV: VkStructureType = 100_0026_000;
-pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV: VkStructureType = 100_0026_001;
-pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV: VkStructureType = 100_0026_002;
 pub const VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD: VkStructureType = 100_0041_000;
 pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV: VkStructureType = 100_0056_000;
 pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_NV: VkStructureType = 100_0056_001;
@@ -391,8 +337,6 @@ pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHX: VkStructureTyp
 pub const VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHX: VkStructureType = 100_0060_010;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHX: VkStructureType = 100_0060_011;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX: VkStructureType = 100_0060_012;
-pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = 100_0061_000;
-pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = 100_0062_000;
 pub const VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR: VkStructureType = 100_0075_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: VkStructureType = 100_0080_000;
 pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: VkStructureType = 100_0084_000;
@@ -436,12 +380,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_
 pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT: VkStructureType = 100_0148_002;
 pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV: VkStructureType = 100_0149_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV: VkStructureType = 100_0152_000;
-pub const VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 100_0160_000;
-pub const VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT: VkStructureType = 100_0160_001;
 pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT: VkStructureType = 100_0174_000;
-pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT: VkStructureType = 100_0178_000;
-pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType = 100_0178_001;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT: VkStructureType = 100_0178_002;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT: VkStructureType = 100_0190_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT: VkStructureType = 100_0190_001;
 
@@ -641,48 +580,6 @@ pub const VK_FORMAT_ASTC_12x10_UNORM_BLOCK: VkFormat = 181;
 pub const VK_FORMAT_ASTC_12x10_SRGB_BLOCK: VkFormat = 182;
 pub const VK_FORMAT_ASTC_12x12_UNORM_BLOCK: VkFormat = 183;
 pub const VK_FORMAT_ASTC_12x12_SRGB_BLOCK: VkFormat = 184;
-pub const VK_FORMAT_G8B8G8R8_422_UNORM: VkFormat = 100_0156_000;
-pub const VK_FORMAT_B8G8R8G8_422_UNORM: VkFormat = 100_0156_001;
-pub const VK_FORMAT_G8_B8_R8_3PLANE_420_UNORM: VkFormat = 100_0156_002;
-pub const VK_FORMAT_G8_B8R8_2PLANE_420_UNORM: VkFormat = 100_0156_003;
-pub const VK_FORMAT_G8_B8_R8_3PLANE_422_UNORM: VkFormat = 100_0156_004;
-pub const VK_FORMAT_G8_B8R8_2PLANE_422_UNORM: VkFormat = 100_0156_005;
-pub const VK_FORMAT_G8_B8_R8_3PLANE_444_UNORM: VkFormat = 100_0156_006;
-pub const VK_FORMAT_R10X6_UNORM_PACK16: VkFormat = 100_0156_007;
-pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16: VkFormat = 100_0156_008;
-pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16: VkFormat = 100_0156_009;
-pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16: VkFormat = 100_0156_010;
-pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16: VkFormat = 100_0156_011;
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16: VkFormat = 100_0156_012;
-pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16: VkFormat = 100_0156_013;
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16: VkFormat = 100_0156_014;
-pub const VK_FORMAT_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16: VkFormat = 100_0156_015;
-pub const VK_FORMAT_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16: VkFormat = 100_0156_016;
-pub const VK_FORMAT_R12X4_UNORM_PACK16: VkFormat = 100_0156_017;
-pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16: VkFormat = 100_0156_018;
-pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16: VkFormat = 100_0156_019;
-pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16: VkFormat = 100_0156_020;
-pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16: VkFormat = 100_0156_021;
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16: VkFormat = 100_0156_022;
-pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16: VkFormat = 100_0156_023;
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16: VkFormat = 100_0156_024;
-pub const VK_FORMAT_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16: VkFormat = 100_0156_025;
-pub const VK_FORMAT_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16: VkFormat = 100_0156_026;
-pub const VK_FORMAT_G16B16G16R16_422_UNORM: VkFormat = 100_0156_027;
-pub const VK_FORMAT_B16G16R16G16_422_UNORM: VkFormat = 100_0156_028;
-pub const VK_FORMAT_G16_B16_R16_3PLANE_420_UNORM: VkFormat = 100_0156_029;
-pub const VK_FORMAT_G16_B16R16_2PLANE_420_UNORM: VkFormat = 100_0156_030;
-pub const VK_FORMAT_G16_B16_R16_3PLANE_422_UNORM: VkFormat = 100_0156_031;
-pub const VK_FORMAT_G16_B16R16_2PLANE_422_UNORM: VkFormat = 100_0156_032;
-pub const VK_FORMAT_G16_B16_R16_3PLANE_444_UNORM: VkFormat = 100_0156_033;
-pub const VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG: VkFormat = 100_0054_000;
-pub const VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG: VkFormat = 100_0054_001;
-pub const VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG: VkFormat = 100_0054_002;
-pub const VK_FORMAT_PVRTC2_4BPP_UNORM_BLOCK_IMG: VkFormat = 100_0054_003;
-pub const VK_FORMAT_PVRTC1_2BPP_SRGB_BLOCK_IMG: VkFormat = 100_0054_004;
-pub const VK_FORMAT_PVRTC1_4BPP_SRGB_BLOCK_IMG: VkFormat = 100_0054_005;
-pub const VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG: VkFormat = 100_0054_006;
-pub const VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG: VkFormat = 100_0054_007;
 
 pub type VkImageType = i32;
 pub const VK_IMAGE_TYPE_1D: VkImageType = 0;
@@ -692,8 +589,6 @@ pub const VK_IMAGE_TYPE_3D: VkImageType = 2;
 pub type VkImageTiling = i32;
 pub const VK_IMAGE_TILING_OPTIMAL: VkImageTiling = 0;
 pub const VK_IMAGE_TILING_LINEAR: VkImageTiling = 1;
-#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-pub const VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT: VkImageTiling = 1000158000;
 
 pub type VkPhysicalDeviceType = i32;
 pub const VK_PHYSICAL_DEVICE_TYPE_OTHER: VkPhysicalDeviceType = 0;
@@ -721,10 +616,6 @@ pub const VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL: VkImageLayout = 5;
 pub const VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL: VkImageLayout = 6;
 pub const VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL: VkImageLayout = 7;
 pub const VK_IMAGE_LAYOUT_PREINITIALIZED: VkImageLayout = 8;
-pub const VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL: VkImageLayout = 100_0117_000;
-pub const VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL: VkImageLayout = 100_0117_001;
-pub const VK_IMAGE_LAYOUT_PRESENT_SRC_KHR: VkImageLayout = 100_0001_002;
-pub const VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR: VkImageLayout = 100_0111_000;
 
 pub type VkImageViewType = i32;
 pub const VK_IMAGE_VIEW_TYPE_1D: VkImageViewType = 0;
@@ -765,7 +656,6 @@ pub type VkPolygonMode = i32;
 pub const VK_POLYGON_MODE_FILL: VkPolygonMode = 0;
 pub const VK_POLYGON_MODE_LINE: VkPolygonMode = 1;
 pub const VK_POLYGON_MODE_POINT: VkPolygonMode = 2;
-pub const VK_POLYGON_MODE_FILL_RECTANGLE_NV: VkPolygonMode = 100_0153_000;
 
 pub type VkFrontFace = i32;
 pub const VK_FRONT_FACE_COUNTER_CLOCKWISE: VkFrontFace = 0;
@@ -836,52 +726,6 @@ pub const VK_BLEND_OP_SUBTRACT: VkBlendOp = 1;
 pub const VK_BLEND_OP_REVERSE_SUBTRACT: VkBlendOp = 2;
 pub const VK_BLEND_OP_MIN: VkBlendOp = 3;
 pub const VK_BLEND_OP_MAX: VkBlendOp = 4;
-pub const VK_BlEND_OP_ZERO_EXT: VkBlendOp = 100_0148_000;
-pub const VK_BLEND_OP_SRC_EXT: VkBlendOp = 100_0148_001;
-pub const VK_BLEND_OP_DST_EXT: VkBlendOp = 100_0148_002;
-pub const VK_BLEND_OP_SRC_OVER_EXT: VkBlendOp = 100_0148_003;
-pub const VK_BLEND_OP_DST_OVER_EXT: VkBlendOp = 100_0148_004;
-pub const VK_BLEND_OP_SRC_IN_EXT: VkBlendOp = 100_0148_005;
-pub const VK_BLEND_OP_DST_IN_EXT: VkBlendOp = 100_0148_006;
-pub const VK_BLEND_OP_SRC_OUT_EXT: VkBlendOp = 100_0148_007;
-pub const VK_BLEND_OP_DST_OUT_EXT: VkBlendOp = 100_0148_008;
-pub const VK_BLEND_OP_SRC_ATOP_EXT: VkBlendOp = 100_0148_009;
-pub const VK_BLEND_OP_DST_ATOP_EXT: VkBlendOp = 100_0148_010;
-pub const VK_BLEND_OP_XOR_EXT: VkBlendOp = 100_0148_011;
-pub const VK_BLEND_OP_MULTIPLY_EXT: VkBlendOp = 100_0148_012;
-pub const VK_BLEND_OP_SCREEN_EXT: VkBlendOp = 100_0148_013;
-pub const VK_BLEND_OP_OVERLAY_EXT: VkBlendOp = 100_0148_014;
-pub const VK_BLEND_OP_DARKEN_EXT: VkBlendOp = 100_0148_015;
-pub const VK_BLEND_OP_LIGHTEN_EXT: VkBlendOp = 100_0148_016;
-pub const VK_BLEND_OP_COLORDODGE_EXT: VkBlendOp = 100_0148_017;
-pub const VK_BLEND_OP_COLORBURN_EXT: VkBlendOp = 100_0148_018;
-pub const VK_BLEND_OP_HARDLIGHT_EXT: VkBlendOp = 100_0148_019;
-pub const VK_BLEND_OP_SOFTLIGHT_EXT: VkBlendOp = 100_0148_020;
-pub const VK_BLEND_OP_DIFFERENCE_EXT: VkBlendOp = 100_0148_021;
-pub const VK_BLEND_OP_EXCLUSION_EXT: VkBlendOp = 100_0148_022;
-pub const VK_BLEND_OP_INVERT_EXT: VkBlendOp = 100_0148_023;
-pub const VK_BLEND_OP_INVERT_RGB_EXT: VkBlendOp = 100_0148_024;
-pub const VK_BLEND_OP_LINEARDODGE_EXT: VkBlendOp = 100_0148_025;
-pub const VK_BLEND_OP_LINEARBURN_EXT: VkBlendOp = 100_0148_026;
-pub const VK_BLEND_OP_VIVIDLIGHT_EXT: VkBlendOp = 100_0148_027;
-pub const VK_BLEND_OP_LINEARLIGHT_EXT: VkBlendOp = 100_0148_028;
-pub const VK_BLEND_OP_PINLIGHT_EXT: VkBlendOp = 100_0148_029;
-pub const VK_BLEND_OP_HARDMIX_EXT: VkBlendOp = 100_0148_030;
-pub const VK_BLEND_OP_HSL_HUE_EXT: VkBlendOp = 100_0148_031;
-pub const VK_BLEND_OP_HSL_SATURATION_EXT: VkBlendOp = 100_0148_032;
-pub const VK_BLEND_OP_HSL_COLOR_EXT: VkBlendOp = 100_0148_033;
-pub const VK_BLEND_OP_HSL_LUMINOSITY_EXT: VkBlendOp = 100_0148_034;
-pub const VK_BLEND_OP_PLUS_EXT: VkBlendOp = 100_0148_035;
-pub const VK_BLEND_OP_PLUS_CLAMPED_EXT: VkBlendOp = 100_0148_036;
-pub const VK_BLEND_OP_PLUS_CLAMPED_ALHPA_EXT: VkBlendOp = 100_0148_037;
-pub const VK_BLEND_OP_PLUS_DARKER_EXT: VkBlendOp = 100_0148_038;
-pub const VK_BLEND_OP_MINUS_EXT: VkBlendOp = 100_0148_039;
-pub const VK_BLEND_OP_MINUS_CLAMPED_EXT: VkBlendOp = 100_0148_040;
-pub const VK_BLEND_OP_CONTRAST_EXT: VkBlendOp = 100_0148_041;
-pub const VK_BLEND_OP_INVERT_OVG_EXT: VkBlendOp = 100_0148_042;
-pub const VK_BLEND_OP_RED_EXT: VkBlendOp = 100_0148_043;
-pub const VK_BLEND_OP_GREEN_EXT: VkBlendOp = 100_0148_044;
-pub const VK_BLEND_OP_BLUE_EXT: VkBlendOp = 100_0148_045;
 
 pub type VkDynamicState = i32;
 pub const VK_DYNAMIC_STATE_VIEWPORT: VkDynamicState = 0;
@@ -893,14 +737,10 @@ pub const VK_DYNAMIC_STATE_DEPTH_BOUNDS: VkDynamicState = 5;
 pub const VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK: VkDynamicState = 6;
 pub const VK_DYNAMIC_STATE_STENCIL_WRITE_MASK: VkDynamicState = 7;
 pub const VK_DYNAMIC_STATE_STENCIL_REFERENCE: VkDynamicState = 8;
-pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV: VkDynamicState = 100_0087_000;
-pub const VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT: VkDynamicState = 100_0099_000;
-pub const VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT: VkDynamicState = 100_0143_000;
 
 pub type VkFilter = i32;
 pub const VK_FILTER_NEAREST: VkFilter = 0;
 pub const VK_FILTER_LINEAR: VkFilter = 1;
-pub const VK_FILTER_CUBIC_IMG: VkFilter = 100_0015_000;
 
 pub type VkSamplerMipmapMode = i32;
 pub const VK_SAMPLER_MIPMAP_MODE_NEAREST: VkSamplerMipmapMode = 0;
@@ -988,112 +828,141 @@ pub const VK_OBJECT_TYPE_FRAMEBUFFER: VkObjectType = 24;
 pub const VK_OBJECT_TYPE_COMMAND_POOL: VkObjectType = 25;
 
 pub type VkInstanceCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkInstanceCreateFlagBits {}
+}
 
 pub type VkFormatFeatureFlags = VkFlags;
-pub type VkFormatFeatureFlagBits = VkFlags;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT: VkFormatFeatureFlagBits = 0x0000_0001;
-pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT: VkFormatFeatureFlagBits = 0x0000_0002;
-pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT: VkFormatFeatureFlagBits = 0x0000_0004;
-pub const VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits = 0x0000_0008;
-pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits = 0x0000_0010;
-pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT: VkFormatFeatureFlagBits = 0x0000_0020;
-pub const VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT: VkFormatFeatureFlagBits = 0x0000_0040;
-pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT: VkFormatFeatureFlagBits = 0x0000_0080;
-pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT: VkFormatFeatureFlagBits = 0x0000_0100;
-pub const VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT: VkFormatFeatureFlagBits = 0x0000_0200;
-pub const VK_FORMAT_FEATURE_BLIT_SRC_BIT: VkFormatFeatureFlagBits = 0x0000_0400;
-pub const VK_FORMAT_FEATURE_BLIT_DST_BIT: VkFormatFeatureFlagBits = 0x0000_0800;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT: VkFormatFeatureFlagBits = 0x0000_1000;
-pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x0002_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits = 0x0004_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits =
-    0x0008_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlagBits =
-    0x0010_0000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT:
-    VkFormatFeatureFlagBits = 0x0020_0000;
-pub const VK_FORMAT_FEATURE_DISJOINT_BIT: VkFormatFeatureFlagBits = 0x0040_0000;
-pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x0080_0000;
-pub const VK_FORMAT_FeATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlagBits = 0x0000_2000;
-pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_MINMAX_BIT_EXT: VkFormatFeatureFlagBits = 0x0001_0000;
+vk_bitmask! {
+    pub enum VkFormatFeatureFlagBits {
+        pub VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT: 0,
+        pub VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT: 1,
+        pub VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT: 2,
+        pub VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT: 3,
+        pub VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT: 4,
+        pub VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT: 5,
+        pub VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT: 6,
+        pub VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT: 7,
+        pub VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT: 8,
+        pub VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT: 9,
+        pub VK_FORMAT_FEATURE_BLIT_SRC_BIT: 10,
+        pub VK_FORMAT_FEATURE_BLIT_DST_BIT: 11,
+        pub VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT: 12
+    }
+}
 
 pub type VkImageUsageFlags = VkFlags;
-pub const VK_IMAGE_USAGE_TRANSFER_SRC_BIT: VkImageUsageFlags = 0x01;
-pub const VK_IMAGE_USAGE_TRANSFER_DST_BIT: VkImageUsageFlags = 0x02;
-pub const VK_IMAGE_USAGE_SAMPLED_BIT: VkImageUsageFlags = 0x04;
-pub const VK_IMAGE_USAGE_STORAGE_BIT: VkImageUsageFlags = 0x08;
-pub const VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT: VkImageUsageFlags = 0x10;
-pub const VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT: VkImageUsageFlags = 0x20;
-pub const VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT: VkImageUsageFlags = 0x40;
-pub const VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT: VkImageUsageFlags = 0x80;
+vk_bitmask! {
+    pub enum VkImageUsageFlagBits {
+        pub VK_IMAGE_USAGE_TRANSFER_SRC_BIT: 0,
+        pub VK_IMAGE_USAGE_TRANSFER_DST_BIT: 1,
+        pub VK_IMAGE_USAGE_SAMPLED_BIT: 2,
+        pub VK_IMAGE_USAGE_STORAGE_BIT: 3,
+        pub VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT: 4,
+        pub VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT: 5,
+        pub VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT: 6,
+        pub VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT: 7
+    }
+}
 
 pub type VkImageCreateFlags = VkFlags;
-pub type VkImageCreateFlagBits = VkFlags;
-pub const VK_IMAGE_CREATE_SPARSE_BINDING_BIT: VkImageCreateFlagBits = 0x0001;
-pub const VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT: VkImageCreateFlagBits = 0x0002;
-pub const VK_IMAGE_CREATE_SPARSE_ALIASED_BIT: VkImageCreateFlagBits = 0x0004;
-pub const VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT: VkImageCreateFlagBits = 0x0008;
-pub const VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0010;
-pub const VK_IMAGE_CREATE_ALIAS_BIT: VkImageCreateFlagBits = 0x0400;
-pub const VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT: VkImageCreateFlagBits = 0x0040;
-pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x0080;
-pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: VkImageCreateFlagBits = 0x0100;
-pub const VK_IMAGE_CREATE_PROTECTED_BIT: VkImageCreateFlagBits = 0x0800;
-pub const VK_IMAGE_CREATE_DISJOINT_BIT: VkImageCreateFlagBits = 0x0200;
-pub const VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT: VkImageCreateFlagBits = 0x1000;
+vk_bitmask! {
+    pub enum VkImageCreateFlagBits {
+        pub VK_IMAGE_CREATE_SPARSE_BINDING_BIT: 0,
+        pub VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT: 1,
+        pub VK_IMAGE_CREATE_SPARSE_ALIASED_BIT: 2,
+        pub VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT: 3,
+        pub VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT: 4,
+        pub VK_IMAGE_CREATE_ALIAS_BIT: 5,
+        pub VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT: 6,
+        pub VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT: 7,
+        pub VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: 8,
+        pub VK_IMAGE_CREATE_PROTECTED_BIT: 11
+    }
+}
 
 pub type VkSampleCountFlags = VkFlags;
-pub type VkSampleCountFlagBits = VkFlags;
-pub const VK_SAMPLE_COUNT_1_BIT: VkSampleCountFlagBits = 0x01;
-pub const VK_SAMPLE_COUNT_2_BIT: VkSampleCountFlagBits = 0x02;
-pub const VK_SAMPLE_COUNT_4_BIT: VkSampleCountFlagBits = 0x04;
-pub const VK_SAMPLE_COUNT_8_BIT: VkSampleCountFlagBits = 0x08;
-pub const VK_SAMPLE_COUNT_16_BIT: VkSampleCountFlagBits = 0x10;
-pub const VK_SAMPLE_COUNT_32_BIT: VkSampleCountFlagBits = 0x20;
-pub const VK_SAMPLE_COUNT_64_BIT: VkSampleCountFlagBits = 0x40;
+vk_bitmask! {
+    pub enum VkSampleCountFlagBits {
+        pub VK_SAMPLE_COUNT_1_BIT: 0,
+        pub VK_SAMPLE_COUNT_2_BIT: 1,
+        pub VK_SAMPLE_COUNT_4_BIT: 2,
+        pub VK_SAMPLE_COUNT_8_BIT: 3,
+        pub VK_SAMPLE_COUNT_16_BIT: 4,
+        pub VK_SAMPLE_COUNT_32_BIT: 5,
+        pub VK_SAMPLE_COUNT_64_BIT: 6
+    }
+}
 
 pub type VkQueueFlags = VkFlags;
-pub const VK_QUEUE_GRAPHICS_BIT: VkQueueFlags = 0x01;
-pub const VK_QUEUE_COMPUTE_BIT: VkQueueFlags = 0x02;
-pub const VK_QUEUE_TRANSFER_BIT: VkQueueFlags = 0x04;
-pub const VK_QUEUE_SPARSE_BINDING_BIT: VkQueueFlags = 0x08;
-pub const VK_QUEUE_PROTECTED_BIT: VkQueueFlags = 0x10;
+vk_bitmask! {
+    pub enum VkQueueFlagBits {
+        pub VK_QUEUE_GRAPHICS_BIT: 0,
+        pub VK_QUEUE_COMPUTE_BIT: 1,
+        pub VK_QUEUE_TRANSFER_BIT: 2,
+        pub VK_QUEUE_SPARSE_BINDING_BIT: 3,
+        pub VK_QUEUE_PROTECTED_BIT: 4
+    }
+}
 
 pub type VkMemoryPropertyFlags = VkFlags;
-pub const VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT: VkMemoryPropertyFlags = 0x01;
-pub const VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT: VkMemoryPropertyFlags = 0x02;
-pub const VK_MEMORY_PROPERTY_HOST_COHERENT_BIT: VkMemoryPropertyFlags = 0x04;
-pub const VK_MEMORY_PROPERTY_HOST_CACHED_BIT: VkMemoryPropertyFlags = 0x08;
-pub const VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT: VkMemoryPropertyFlags = 0x10;
-pub const VK_MEMORY_PROPERTY_PROTECTED_BIT: VkMemoryPropertyFlags = 0x20;
+vk_bitmask! {
+    pub enum VkMemoryPropertyFlagBits {
+        pub VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT: 0,
+        pub VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT: 1,
+        pub VK_MEMORY_PROPERTY_HOST_COHERENT_BIT: 2,
+        pub VK_MEMORY_PROPERTY_HOST_CACHED_BIT: 3,
+        pub VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT: 4,
+        pub VK_MEMORY_PROPERTY_PROTECTED_BIT: 5
+    }
+}
 
 pub type VkMemoryHeapFlags = VkFlags;
-pub const VK_MEMORY_HEAP_DEVICE_LOCAL_BIT: VkMemoryHeapFlags = 0x01;
+vk_bitmask! {
+    pub enum VkMemoryHeapFlagBits {
+        pub VK_MEMORY_HEAP_DEVICE_LOCAL_BIT: 0
+    }
+}
+
 pub type VkDeviceCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkDeviceCreateFlagBits {}
+}
 
 pub type VkDeviceQueueCreateFlags = VkFlags;
-pub const VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT: VkDeviceQueueCreateFlags = 0x01;
+vk_bitmask! {
+    pub enum VkDeviceQueueCreateFlagBits {
+        pub VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT: 0
+    }
+}
 
 pub type VkPipelineStageFlags = VkFlags;
-pub const VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT: VkPipelineStageFlags = 0x0000_0001;
-pub const VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT: VkPipelineStageFlags = 0x0000_0002;
-pub const VK_PIPELINE_STAGE_VERTEX_INPUT_BIT: VkPipelineStageFlags = 0x0000_0004;
-pub const VK_PIPELINE_STAGE_VERTEX_SHADER_BIT: VkPipelineStageFlags = 0x0000_0008;
-pub const VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT: VkPipelineStageFlags = 0x0000_0010;
-pub const VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT: VkPipelineStageFlags = 0x0000_0020;
-pub const VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT: VkPipelineStageFlags = 0x0000_0040;
-pub const VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT: VkPipelineStageFlags = 0x0000_0080;
-pub const VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT: VkPipelineStageFlags = 0x0000_0100;
-pub const VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT: VkPipelineStageFlags = 0x0000_0200;
-pub const VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT: VkPipelineStageFlags = 0x0000_0400;
-pub const VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT: VkPipelineStageFlags = 0x0000_0800;
-pub const VK_PIPELINE_STAGE_TRANSFER_BIT: VkPipelineStageFlags = 0x0000_1000;
-pub const VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT: VkPipelineStageFlags = 0x0000_2000;
-pub const VK_PIPELINE_STAGE_HOST_BIT: VkPipelineStageFlags = 0x0000_4000;
-pub const VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT: VkPipelineStageFlags = 0x0000_8000;
-pub const VK_PIPELINE_STAGE_ALL_COMMANDS_BIT: VkPipelineStageFlags = 0x0001_0000;
-pub const VK_PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX: VkPipelineStageFlags = 0x0002_0000;
+vk_bitmask! {
+    pub enum VkPipelineStageFlagBits {
+        pub VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT: 0,
+        pub VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT: 1,
+        pub VK_PIPELINE_STAGE_VERTEX_INPUT_BIT: 2,
+        pub VK_PIPELINE_STAGE_VERTEX_SHADER_BIT: 3,
+        pub VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT: 4,
+        pub VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT: 5,
+        pub VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT: 6,
+        pub VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT: 7,
+        pub VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT: 8,
+        pub VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT: 9,
+        pub VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT: 10,
+        pub VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT: 11,
+        pub VK_PIPELINE_STAGE_TRANSFER_BIT: 12,
+        pub VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT: 13,
+        pub VK_PIPELINE_STAGE_HOST_BIT: 14,
+        pub VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT: 15,
+        pub VK_PIPELINE_STAGE_ALL_COMMANDS_BIT: 16
+    }
+}
+
 pub type VkMemoryMapFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkMemoryMapFlagBits {}
+}
 
 pub type VkImageAspectFlags = VkFlags;
 vk_bitmask! {
@@ -1107,179 +976,341 @@ vk_bitmask! {
         pub VK_IMAGE_ASPECT_PLANE_2_BIT: 6
     }
 }
-cfg_if! {
-    if #[cfg(feature = "VK_EXT_image_drm_format_modifier")] {
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_0_BIT_EXT: VkImageAspectFlagBits = 0x00000080;
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_1_BIT_EXT: VkImageAspectFlagBits = 0x00000100;
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_2_BIT_EXT: VkImageAspectFlagBits = 0x00000200;
-        pub const VK_IMAGE_ASPECT_MEMORY_PLANE_3_BIT_EXT: VkImageAspectFlagBits = 0x00000400;
+
+pub type VkSparseImageFormatFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkSparseImageFormatFlagBits {
+        pub VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT: 0,
+        pub VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT: 1,
+        pub VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT: 2
     }
 }
 
-pub type VkSparseImageFormatFlags = VkFlags;
-pub const VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT: VkSparseImageFormatFlags = 0x01;
-pub const VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT: VkSparseImageFormatFlags = 0x02;
-pub const VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT: VkSparseImageFormatFlags = 0x04;
-
 pub type VkSparseMemoryBindFlags = VkFlags;
-pub const VK_SPARSE_MEMORY_BIND_METADATA_BIT: VkSparseMemoryBindFlags = 0x01;
+vk_bitmask! {
+    pub enum VkSparseMemoryBindFlagBits {
+        pub VK_SPARSE_MEMORY_BIND_METADATA_BIT: 0
+    }
+}
 
 pub type VkFenceCreateFlags = VkFlags;
-pub const VK_FENCE_CREATE_SIGNALED_BIT: VkFenceCreateFlags = 0x01;
+vk_bitmask! {
+    pub enum VkFenceCreateFlagBits {
+        pub VK_FENCE_CREATE_SIGNALED_BIT: 0
+    }
+}
+
 pub type VkSemaphoreCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkSemaphoreCreateFlagBits {}
+}
+
 pub type VkEventCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkEventCreateFlagBits {}
+}
+
 pub type VkQueryPoolCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkQueryPoolCreateFlagBits {}
+}
 
 pub type VkQueryPipelineStatisticFlags = VkFlags;
-pub const VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT: VkQueryPipelineStatisticFlags = 0x0001;
-pub const VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT: VkQueryPipelineStatisticFlags = 0x0002;
-pub const VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlags = 0x0004;
-pub const VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlags = 0x0008;
-pub const VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT: VkQueryPipelineStatisticFlags = 0x0010;
-pub const VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT: VkQueryPipelineStatisticFlags = 0x0020;
-pub const VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT: VkQueryPipelineStatisticFlags = 0x0040;
-pub const VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlags = 0x0080;
-pub const VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT: VkQueryPipelineStatisticFlags = 0x0100;
-pub const VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlags =
-    0x0200;
-pub const VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlags = 0x0400;
+vk_bitmask! {
+    pub enum VkQueryPipelineStatisticsFlagBits {
+        pub VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT: 0,
+        pub VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT: 1,
+        pub VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT: 2,
+        pub VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT: 3,
+        pub VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT: 4,
+        pub VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT: 5,
+        pub VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT: 6,
+        pub VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT: 7,
+        pub VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT: 8,
+        pub VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT: 9,
+        pub VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT: 10
+    }
+}
 
 pub type VkQueryResultFlags = VkFlags;
-pub const VK_QUERY_RESULT_64_BIT: VkQueryResultFlags = 0x01;
-pub const VK_QUERY_RESULT_WAIT_BIT: VkQueryResultFlags = 0x02;
-pub const VK_QUERY_RESULT_WITH_AVAILABILITY_BIT: VkQueryResultFlags = 0x04;
-pub const VK_QUERY_RESULT_PARTIAL_BIT: VkQueryResultFlags = 0x08;
+vk_bitmask! {
+    pub enum VkQueryResultFlagBits {
+        pub VK_QUERY_RESULT_64_BIT: 0,
+        pub VK_QUERY_RESULT_WAIT_BIT: 1,
+        pub VK_QUERY_RESULT_WITH_AVAILABILITY_BIT: 2,
+        pub VK_QUERY_RESULT_PARTIAL_BIT: 3
+    }
+}
 
 pub type VkBufferCreateFlags = VkFlags;
-pub const VK_BUFFER_CREATE_SPARSE_BINDING_BIT: VkBufferCreateFlags = 0x01;
-pub const VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT: VkBufferCreateFlags = 0x02;
-pub const VK_BUFFER_CREATE_SPARSE_ALIASED_BIT: VkBufferCreateFlags = 0x04;
-pub const VK_BUFFER_CREATE_PROTECTED_BIT: VkBufferCreateFlags = 0x08;
+vk_bitmask! {
+    pub enum VkBufferCreateFlagBits {
+        pub VK_BUFFER_CREATE_SPARSE_BINDING_BIT: 0,
+        pub VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT: 1,
+        pub VK_BUFFER_CREATE_SPARSE_ALIASED_BIT: 2,
+        pub VK_BUFFER_CREATE_PROTECTED_BIT: 3
+    }
+}
 
 pub type VkBufferUsageFlags = VkFlags;
-pub const VK_BUFFER_USAGE_TRANSFER_SRC_BIT: VkBufferUsageFlags = 0x0001;
-pub const VK_BUFFER_USAGE_TRANSFER_DST_BIT: VkBufferUsageFlags = 0x0002;
-pub const VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT: VkBufferUsageFlags = 0x0004;
-pub const VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT: VkBufferUsageFlags = 0x0008;
-pub const VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT: VkBufferUsageFlags = 0x0010;
-pub const VK_BUFFER_USAGE_STORAGE_BUFFER_BIT: VkBufferUsageFlags = 0x0020;
-pub const VK_BUFFER_USAGE_INDEX_BUFFER_BIT: VkBufferUsageFlags = 0x0040;
-pub const VK_BUFFER_USAGE_VERTEX_BUFFER_BIT: VkBufferUsageFlags = 0x0080;
-pub const VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT: VkBufferUsageFlags = 0x0100;
+vk_bitmask! {
+    pub enum VkBufferUsageFlagBits {
+        pub VK_BUFFER_USAGE_TRANSFER_SRC_BIT: 0,
+        pub VK_BUFFER_USAGE_TRANSFER_DST_BIT: 1,
+        pub VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT: 2,
+        pub VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT: 3,
+        pub VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT: 4,
+        pub VK_BUFFER_USAGE_STORAGE_BUFFER_BIT: 5,
+        pub VK_BUFFER_USAGE_INDEX_BUFFER_BIT: 6,
+        pub VK_BUFFER_USAGE_VERTEX_BUFFER_BIT: 7,
+        pub VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT: 8
+    }
+}
+
 pub type VkBufferViewCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkBufferViewCreateFlagBits {}
+}
+
 pub type VkImageViewCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkImageViewCreateFlagBits {}
+}
+
 pub type VkShaderModuleCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkShaderModuleCreateFlagBits {}
+}
+
 pub type VkPipelineCacheCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineCacheCreateFlagBits {}
+}
 
 pub type VkPipelineCreateFlags = VkFlags;
-pub type VkPipelineCreateFlagBits = VkFlags;
-pub const VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT: VkPipelineCreateFlagBits = 0x01;
-pub const VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT: VkPipelineCreateFlagBits = 0x02;
-pub const VK_PIPELINE_CREATE_DERIVATIVE_BIT: VkPipelineCreateFlagBits = 0x04;
-pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT: VkPipelineCreateFlagBits = 0x08;
-pub const VK_PIPELINE_CREATE_DISPATCH_BASE: VkPipelineCreateFlagBits = 0x10;
+vk_bitmask! {
+    pub enum VkPipelineCreateFlagBits {
+        pub VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT: 0,
+        pub VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT: 1,
+        pub VK_PIPELINE_CREATE_DERIVATIVE_BIT: 2,
+        pub VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT: 3,
+        pub VK_PIPELINE_CREATE_DISPATCH_BASE: 4
+    }
+}
+
 pub type VkPipelineShaderStageCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineShaderStageCreateFlagBits {}
+}
 
 pub type VkShaderStageFlags = VkFlags;
-pub const VK_SHADER_STAGE_VERTEX_BIT: VkShaderStageFlags = 0x01;
-pub const VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: VkShaderStageFlags = 0x02;
-pub const VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: VkShaderStageFlags = 0x04;
-pub const VK_SHADER_STAGE_GEOMETRY_BIT: VkShaderStageFlags = 0x08;
-pub const VK_SHADER_STAGE_FRAGMENT_BIT: VkShaderStageFlags = 0x10;
-pub const VK_SHADER_STAGE_COMPUTE_BIT: VkShaderStageFlags = 0x20;
+vk_bitmask! {
+    pub enum VkShaderStageFlagBits {
+        pub VK_SHADER_STAGE_VERTEX_BIT: 0,
+        pub VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: 1,
+        pub VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: 2,
+        pub VK_SHADER_STAGE_GEOMETRY_BIT: 3,
+        pub VK_SHADER_STAGE_FRAGMENT_BIT: 4,
+        pub VK_SHADER_STAGE_COMPUTE_BIT: 5
+    }
+}
 pub const VK_SHADER_STAGE_ALL_GRAPHICS: VkShaderStageFlags = VK_SHADER_STAGE_COMPUTE_BIT - 1;
 pub const VK_SHADER_STAGE_ALL: VkShaderStageFlags = 0x7fff_ffff;
+
 pub type VkPipelineVertexInputStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineVertexInputStateCreateFlagBits {}
+}
+
 pub type VkPipelineInputAssemblyStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineInputAssemblyStateCreateFlagBits {}
+}
+
 pub type VkPipelineTessellationStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineTessellationStateCreateFlagBits {}
+}
+
 pub type VkPipelineViewportStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineViewportStateCreateFlagBits {}
+}
+
 pub type VkPipelineRasterizationStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineRasterizationStateCreateFlagBits {}
+}
 
 pub type VkCullModeFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkCullModeFlagBits {
+        pub VK_CULL_MODE_FRONT_BIT: 0,
+        pub VK_CULL_MODE_BACK_BIT: 1
+    }
+}
 pub const VK_CULL_MODE_NONE: VkCullModeFlags = 0;
-pub const VK_CULL_MODE_FRONT_BIT: VkCullModeFlags = 0x01;
-pub const VK_CULL_MODE_BACK_BIT: VkCullModeFlags = 0x02;
-pub const VK_CULL_MODE_FRONT_AND_BACK: VkCullModeFlags = 0x03;
+pub const VK_CULL_MODE_FRONT_AND_BACK: VkCullModeFlags = VK_CULL_MODE_FRONT_BIT | VK_CULL_MODE_BACK_BIT;
+
 pub type VkPipelineMultisampleStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineMultisampleStateCreateFlagBits {}
+}
+
 pub type VkPipelineDepthStencilStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineDepthStencilStateCreateFlagBits {}
+}
+
 pub type VkPipelineColorBlendStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineColorBlendStateCreateFlagBits {}
+}
 
 pub type VkColorComponentFlags = VkFlags;
-pub const VK_COLOR_COMPONENT_R_BIT: VkColorComponentFlags = 0x01;
-pub const VK_COLOR_COMPONENT_G_BIT: VkColorComponentFlags = 0x02;
-pub const VK_COLOR_COMPONENT_B_BIT: VkColorComponentFlags = 0x04;
-pub const VK_COLOR_COMPONENT_A_BIT: VkColorComponentFlags = 0x08;
+vk_bitmask! {
+    pub enum VkColorComponentFlagBits {
+        pub VK_COLOR_COMPONENT_R_BIT: 0,
+        pub VK_COLOR_COMPONENT_G_BIT: 1,
+        pub VK_COLOR_COMPONENT_B_BIT: 2,
+        pub VK_COLOR_COMPONENT_A_BIT: 3
+    }
+}
+
 pub type VkPipelineDynamicStateCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineDynamicStateCreateFlagBits {}
+}
+
 pub type VkPipelineLayoutCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkPipelineLayoutCreateFlagBits {}
+}
+
 pub type VkSamplerCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkSamplerCreateFlagBits {}
+}
 
 pub type VkDescriptorSetLayoutCreateFlags = VkFlags;
-pub const VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR: VkDescriptorSetLayoutCreateFlags = 0x01;
+vk_bitmask! {
+    pub enum VkDescriptorSetLayoutCreateFlagBits {}
+}
 
 pub type VkDescriptorPoolCreateFlags = VkFlags;
-pub const VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT: VkDescriptorPoolCreateFlags = 0x01;
+vk_bitmask! {
+    pub enum VkDescriptorPoolCreateFlagBits {
+        pub VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT: 0
+    }
+}
+
 pub type VkDescriptorPoolResetFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkDescriptorPoolResetFlagBits {}
+}
+
 pub type VkFramebufferCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkFramebufferCreateFlagBits {}
+}
+
 pub type VkRenderPassCreateFlags = VkFlags;
+vk_bitmask! {
+    pub enum VkRenderPassCreateFlagBits {}
+}
 
 pub type VkAttachmentDescriptionFlags = VkFlags;
-pub const VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT: VkAttachmentDescriptionFlags = 0x01;
+vk_bitmask! {
+    pub enum VkAttachmentDescriptionFlagBits {
+        pub VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT: 0
+    }
+}
 
 pub type VkSubpassDescriptionFlags = VkFlags;
-pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX: VkSubpassDescriptionFlags = 0x01;
-pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX: VkSubpassDescriptionFlags = 0x02;
+vk_bitmask! {
+    pub enum VkSubpassDescriptionFlagBits {}
+}
 
 pub type VkAccessFlags = VkFlags;
-pub const VK_ACCESS_INDIRECT_COMMAND_READ_BIT: VkAccessFlags = 0x0000_0001;
-pub const VK_ACCESS_INDEX_READ_BIT: VkAccessFlags = 0x0000_0002;
-pub const VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT: VkAccessFlags = 0x0000_0004;
-pub const VK_ACCESS_UNIFORM_READ_BIT: VkAccessFlags = 0x0000_0008;
-pub const VK_ACCESS_INPUT_ATTACHMENT_READ_BIT: VkAccessFlags = 0x0000_0010;
-pub const VK_ACCESS_SHADER_READ_BIT: VkAccessFlags = 0x0000_0020;
-pub const VK_ACCESS_SHADER_WRITE_BIT: VkAccessFlags = 0x0000_0040;
-pub const VK_ACCESS_COLOR_ATTACHMENT_READ_BIT: VkAccessFlags = 0x0000_0080;
-pub const VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT: VkAccessFlags = 0x0000_0100;
-pub const VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT: VkAccessFlags = 0x0000_0200;
-pub const VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT: VkAccessFlags = 0x0000_0400;
-pub const VK_ACCESS_TRANSFER_READ_BIT: VkAccessFlags = 0x0000_0800;
-pub const VK_ACCESS_TRANSFER_WRITE_BIT: VkAccessFlags = 0x0000_1000;
-pub const VK_ACCESS_HOST_READ_BIT: VkAccessFlags = 0x0000_2000;
-pub const VK_ACCESS_HOST_WRITE_BIT: VkAccessFlags = 0x0000_4000;
-pub const VK_ACCESS_MEMORY_READ_BIT: VkAccessFlags = 0x0000_8000;
-pub const VK_ACCESS_MEMORY_WRITE_BIT: VkAccessFlags = 0x0001_0000;
-pub const VK_ACCESS_COMMAND_PROCESS_READ_BIT_NVX: VkAccessFlags = 0x0002_0000;
-pub const VK_ACCESS_COMMAND_PROCESS_WRITE_BIT_NVX: VkAccessFlags = 0x0004_0000;
-pub const VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT: VkAccessFlags = 0x0008_0000;
+vk_bitmask! {
+    pub enum VkAccessFlagBits {
+        pub VK_ACCESS_INDIRECT_COMMAND_READ_BIT: 0,
+        pub VK_ACCESS_INDEX_READ_BIT: 1,
+        pub VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT: 2,
+        pub VK_ACCESS_UNIFORM_READ_BIT: 3,
+        pub VK_ACCESS_INPUT_ATTACHMENT_READ_BIT: 4,
+        pub VK_ACCESS_SHADER_READ_BIT: 5,
+        pub VK_ACCESS_SHADER_WRITE_BIT: 6,
+        pub VK_ACCESS_COLOR_ATTACHMENT_READ_BIT: 7,
+        pub VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT: 8,
+        pub VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT: 9,
+        pub VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT: 10,
+        pub VK_ACCESS_TRANSFER_READ_BIT: 11,
+        pub VK_ACCESS_TRANSFER_WRITE_BIT: 12,
+        pub VK_ACCESS_HOST_READ_BIT: 13,
+        pub VK_ACCESS_HOST_WRITE_BIT: 14,
+        pub VK_ACCESS_MEMORY_READ_BIT: 15,
+        pub VK_ACCESS_MEMORY_WRITE_BIT: 16,
+        pub VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT: 19
+    }
+}
 
 pub type VkDependencyFlags = VkFlags;
-pub type VkDependencyFlagBits = VkFlags;
-pub const VK_DEPENDENCY_BY_REGION_BIT: VkDependencyFlagBits = 0x01;
-pub const VK_DEPENDENCY_VIEW_LOCAL_BIT: VkDependencyFlagBits = 0x02;
-pub const VK_DEPENDENCY_DEVICE_GROUP_BIT: VkDependencyFlagBits = 0x04;
+vk_bitmask! {
+    pub enum VkDependencyFlagBits {
+        pub VK_DEPENDENCY_BY_REGION_BIT: 0,
+        pub VK_DEPENDENCY_VIEW_LOCAL_BIT: 1,
+        pub VK_DEPENDENCY_DEVICE_GROUP_BIT: 2
+    }
+}
 
 pub type VkCommandPoolCreateFlags = VkFlags;
-pub const VK_COMMAND_POOL_CREATE_TRANSIENT_BIT: VkCommandPoolCreateFlags = 0x01;
-pub const VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT: VkCommandPoolCreateFlags = 0x02;
-pub const VK_COMMAND_POOL_PROTECTED_BIT: VkCommandPoolCreateFlags = 0x04;
+vk_bitmask! {
+    pub enum VkCommandPoolCreateFlagBits {
+        pub VK_COMMAND_POOL_CREATE_TRANSIENT_BIT: 0,
+        pub VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT: 1,
+        pub VK_COMMAND_POOL_PROTECTED_BIT: 2
+    }
+}
 
 pub type VkCommandPoolResetFlags = VkFlags;
-pub const VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT: VkCommandPoolCreateFlags = 0x01;
+vk_bitmask! {
+    pub enum VkCommandPoolResetFlagBits {
+        pub VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT: 0
+    }
+}
 
 pub type VkCommandBufferUsageFlags = VkFlags;
-pub const VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: VkCommandBufferUsageFlags = 0x01;
-pub const VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: VkCommandBufferUsageFlags = 0x02;
-pub const VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: VkCommandBufferUsageFlags = 0x04;
+vk_bitmask! {
+    pub enum VkCommandBufferUsageFlagBits {
+        pub VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: 0,
+        pub VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: 1,
+        pub VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: 2
+    }
+}
 
 pub type VkQueryControlFlags = VkFlags;
-pub const VK_QUERY_CONTROL_PRECISE_BIT: VkQueryControlFlags = 0x01;
+vk_bitmask! {
+    pub enum VkQueryControlFlagBits {
+        pub VK_QUERY_CONTROL_PRECISE_BIT: 0
+    }
+}
 
 pub type VkCommandBufferResetFlags = VkFlags;
-pub const VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT: VkCommandBufferResetFlags = 0x01;
+vk_bitmask! {
+    pub enum VkCommandBufferResetFlagBits {
+        pub VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT: 0
+    }
+}
 
 pub type VkStencilFaceFlags = VkFlags;
-pub const VK_STENCIL_FACE_FRONT_BIT: VkStencilFaceFlags = 0x01;
-pub const VK_STENCIL_FACE_BACK_BIT: VkStencilFaceFlags = 0x02;
-pub const VK_STENCIL_FRONT_AND_BACK: VkStencilFaceFlags = 0x03;
+vk_bitmask! {
+    pub enum VkStencilFaceFlagBits {
+        pub VK_STENCIL_FACE_FRONT_BIT: 0,
+        pub VK_STENCIL_FACE_BACK_BIT: 1
+    }
+}
+pub const VK_STENCIL_FRONT_AND_BACK: VkStencilFaceFlags = VK_STENCIL_FACE_FRONT_BIT | VK_STENCIL_FACE_BACK_BIT;
 
 pub type PFN_vkAllocationFunction = extern "system" fn(
     pUserData: *mut c_void,

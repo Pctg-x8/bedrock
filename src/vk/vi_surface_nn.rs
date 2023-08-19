@@ -6,6 +6,8 @@ pub static VK_NN_VI_SURFACE_EXTENSION_NAME: &'static str = "VK_NN_vi_surface";
 use super::*;
 use crate::PFN;
 
+pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = ext_enum_value(63, 0) as _;
+
 pub type VkViSurfaceCreateFlagsNN = VkFlags;
 
 #[repr(C)]

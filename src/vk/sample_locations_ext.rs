@@ -6,6 +6,14 @@ pub const VK_EXT_SAMPLE_LOCATIONS_EXTENSION_NAME: &str = "VK_EXT_sample_location
 use super::*;
 use crate::PFN;
 
+pub const VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT: VkDynamicState = ext_enum_value(144, 0) as _;
+
+vk_bitmask! {
+    extending enum VkImageCreateFlagBits {
+        pub VK_IMAGE_CREATE_SAMPLE_LOCATIONS_COMPATIBLE_DEPTH_BIT_EXT: 12
+    }
+}
+
 #[repr(C)]
 #[derive(Clone, PartialEq, Debug)]
 pub struct VkSampleLocationEXT {

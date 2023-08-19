@@ -13,6 +13,9 @@ pub struct VkSurfaceKHR(pub u64);
 
 pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = ext_enum_value(1, 0) as _;
 
+pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = ext_err_value(1, 0);
+pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = ext_err_value(1, 1);
+
 pub type VkColorSpaceKHR = i32;
 pub const VK_COLOR_SPACE_SRGB_NONLINEAR_KHR: VkColorSpaceKHR = 0;
 pub const VK_COLOR_SPACE_DISPLAY_P3_NONLINEAR_EXT: VkColorSpaceKHR = 100_0104_001;
