@@ -5,12 +5,12 @@ use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::{
-    fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, VulkanStructure,
+    fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle,
     VulkanStructureProvider,
 };
 use crate::{
     vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, TemporalSubmissionBatchResources, VkHandle, VkObject,
-    VkResultBox,
+    VkResultBox, VulkanStructure,
 };
 
 cfg_if! {
