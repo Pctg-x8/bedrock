@@ -426,21 +426,6 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
 DerefContainerBracketImpl!(for DescriptorPool {});
 GuardsImpl!(for DescriptorPool {});
 
-/// Structure specifying the parameters of a descriptor set write operation
-/// Element order: DescriptorSet, Binding, ArrayIndex, Description
-#[derive(Clone)]
-#[deprecated = "use more simplified request definition"]
-pub struct DescriptorSetWriteInfo0(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo);
-
-/// Structure specifying a copy descriptor set operation
-#[derive(Clone)]
-#[deprecated = "use more simplified request definition"]
-pub struct DescriptorSetCopyInfo0 {
-    pub src: (VkDescriptorSet, u32, u32),
-    pub dst: (VkDescriptorSet, u32, u32),
-    pub count: u32,
-}
-
 /// Pointer for descriptor array in set
 #[derive(Clone)]
 pub struct DescriptorPointer {
@@ -629,71 +614,6 @@ impl DescriptorSetCopyInfo {
             dstBinding: self.1.binding,
             dstArrayElement: self.1.array_offset,
             descriptorCount: self.2,
-        }
-    }
-}
-
-/// Structure specifying the parameters of a descriptor set write/copy operations.
-///
-/// * For Sampler, CombinedImageSampler, SampledImage, StorageImage and InputAttachment: Vec of tuple(ref to Sampler(optional), ref to ImageView, ImageLayout)
-/// * For UniformBuffer, StorageBuffer, UniformBufferDynamic and StorageBufferDynamic: Vec of tuple(ref to Buffer, range of bytes)
-/// * For UniformTexelBuffer and StorageTexelBuffer: Vec of ref to BufferView
-///
-/// ## Safety
-///
-/// Please ensure that resources are alive while updating
-#[derive(Clone)]
-pub enum DescriptorUpdateInfo {
-    Sampler(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
-    CombinedImageSampler(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
-    SampledImage(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
-    StorageImage(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
-    InputAttachment(Vec<(Option<VkSampler>, VkImageView, ImageLayout)>),
-    UniformBuffer(Vec<(VkBuffer, std::ops::Range<usize>)>),
-    StorageBuffer(Vec<(VkBuffer, std::ops::Range<usize>)>),
-    UniformBufferDynamic(Vec<(VkBuffer, std::ops::Range<usize>)>),
-    StorageBufferDynamic(Vec<(VkBuffer, std::ops::Range<usize>)>),
-    UniformTexelBuffer(Vec<VkBufferView>),
-    StorageTexelBuffer(Vec<VkBufferView>),
-}
-#[cfg(feature = "Implements")]
-use std::ops::Range;
-impl DescriptorUpdateInfo {
-    #[cfg(feature = "Implements")]
-    #[allow(clippy::type_complexity)]
-    pub(crate) fn de_composite(
-        &self,
-    ) -> (
-        DescriptorType,
-        u32,
-        &[(Option<VkSampler>, VkImageView, ImageLayout)],
-        &[(VkBuffer, Range<usize>)],
-        &[VkBufferView],
-    ) {
-        match self {
-            DescriptorUpdateInfo::Sampler(ref iv) => (DescriptorType::Sampler, iv.len() as _, iv, &[], &[]),
-            DescriptorUpdateInfo::CombinedImageSampler(ref iv) => {
-                (DescriptorType::CombinedImageSampler, iv.len() as _, iv, &[], &[])
-            }
-            DescriptorUpdateInfo::SampledImage(ref iv) => (DescriptorType::SampledImage, iv.len() as _, iv, &[], &[]),
-            DescriptorUpdateInfo::StorageImage(ref iv) => (DescriptorType::StorageImage, iv.len() as _, iv, &[], &[]),
-            DescriptorUpdateInfo::InputAttachment(ref iv) => {
-                (DescriptorType::InputAttachment, iv.len() as _, iv, &[], &[])
-            }
-            DescriptorUpdateInfo::UniformBuffer(ref bv) => (DescriptorType::UniformBuffer, bv.len() as _, &[], bv, &[]),
-            DescriptorUpdateInfo::StorageBuffer(ref bv) => (DescriptorType::StorageBuffer, bv.len() as _, &[], bv, &[]),
-            DescriptorUpdateInfo::UniformBufferDynamic(ref bv) => {
-                (DescriptorType::UniformBufferDynamic, bv.len() as _, &[], bv, &[])
-            }
-            DescriptorUpdateInfo::StorageBufferDynamic(ref bv) => {
-                (DescriptorType::StorageBufferDynamic, bv.len() as _, &[], bv, &[])
-            }
-            DescriptorUpdateInfo::UniformTexelBuffer(ref bvv) => {
-                (DescriptorType::UniformTexelBuffer, bvv.len() as _, &[], &[], bvv)
-            }
-            DescriptorUpdateInfo::StorageTexelBuffer(ref bvv) => {
-                (DescriptorType::StorageTexelBuffer, bvv.len() as _, &[], &[], bvv)
-            }
         }
     }
 }
