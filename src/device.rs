@@ -611,69 +611,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .map(drop)
     }
 
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-    /// Import a semaphore from a Windows HANDLE
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
-    fn import_semaphore_win32_handle(
-        &self,
-        target: &impl VkHandle<Handle = VkSemaphore>,
-        handle: crate::ExternalSemaphoreHandleWin32,
-        name: &widestring::WideCString,
-    ) -> crate::Result<()> {
-        let info = VkImportSemaphoreWin32HandleInfoKHR {
-            sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            semaphore: target.native_ptr(),
-            handleType: handle.as_type_bits(),
-            handle: handle.handle(),
-            name: windows::core::PCWSTR(name.as_ptr()),
-        };
-
-        unsafe {
-            VkResultBox(self.import_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info))
-                .into_result()
-                .map(drop)
-        }
-    }
-
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-    /// Get a Windows HANDLE for a semaphore
-    ///
-    /// A returned handle needs to be closed by caller
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * VK_ERROR_TOO_MANY_OBJECTS
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    fn get_semaphore_win32_handle(
-        &self,
-        target: &impl VkHandle<Handle = VkSemaphore>,
-        handle_type: crate::ExternalSemaphoreHandleTypeWin32,
-    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
-        let info = VkSemaphoreGetWin32HandleInfoKHR {
-            sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            semaphore: target.native_ptr(),
-            handleType: handle_type as _,
-        };
-        let mut h = windows::Win32::Foundation::HANDLE(0);
-
-        unsafe {
-            VkResultBox(self.get_semaphore_win32_handle_khr_fn().0(
-                self.native_ptr(),
-                &info,
-                &mut h,
-            ))
-            .into_result()
-            .map(move |_| h)
-        }
-    }
-
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
     /// Get a POSIX file descriptor for a memory object
     /// # Failures

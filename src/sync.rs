@@ -4,7 +4,8 @@ use crate::vk::*;
 use crate::DeviceChild;
 use crate::VkHandle;
 #[cfg(feature = "Implements")]
-use crate::VkHandleMut;
+use crate::{Device, VkHandleMut, VkResultBox, VulkanStructure};
+use derives::implements;
 
 DefineStdDeviceChildObject! {
     /// Opaque Handle to a fence object
@@ -101,7 +102,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
-    fn get_fd(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
+    fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
         use crate::{ext::VulkanStructure, Device, VkResultBox};
 
         let info = VkFenceGetFdInfoKHR {
@@ -164,7 +165,69 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
 DerefContainerBracketImpl!(for Fence {});
 GuardsImpl!(for Fence {});
 
-pub trait Semaphore: VkHandle<Handle = VkSemaphore> {}
+pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
+    /// Get a Windows HANDLE for a semaphore
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_TOO_MANY_OBJECTS
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    #[implements]
+    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
+    fn request_external_handle(
+        &self,
+        handle_type: crate::ExternalSemaphoreHandleTypeWin32,
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        let info = VkSemaphoreGetWin32HandleInfoKHR {
+            sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
+            pNext: core::ptr::null(),
+            semaphore: self.native_ptr(),
+            handleType: handle_type as _,
+        };
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            VkResultBox(self.device().get_semaphore_win32_handle_khr_fn().0(
+                self.device().native_ptr(),
+                &info,
+                h.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(move |_| h.assume_init())
+        }
+    }
+
+    /// Import a semaphore from a Windows HANDLE
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
+    #[implements]
+    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
+    fn import(&self, handle: crate::ExternalSemaphoreHandleWin32, name: &widestring::WideCString) -> crate::Result<()> {
+        let info = VkImportSemaphoreWin32HandleInfoKHR {
+            sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
+            pNext: core::ptr::null(),
+            flags: 0,
+            semaphore: self.native_ptr(),
+            handleType: handle.as_type_bits(),
+            handle: handle.handle(),
+            name: windows::core::PCWSTR(name.as_ptr()),
+        };
+
+        unsafe {
+            VkResultBox(self.device().import_semaphore_win32_handle_khr_fn().0(
+                self.device().native_ptr(),
+                &info,
+            ))
+            .into_result()
+            .map(drop)
+        }
+    }
+}
 DerefContainerBracketImpl!(for Semaphore {});
 GuardsImpl!(for Semaphore {});
 
