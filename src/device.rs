@@ -311,7 +311,27 @@ unsafe impl<Device: crate::Device + Send> Send for QueueObject<Device> {}
 impl<Device: crate::Device> Queue for QueueObject<Device> {}
 
 /// Family Index, Queue Priorities
-pub struct DeviceQueueCreateInfo(pub u32, pub Vec<f32>);
+pub struct DeviceQueueCreateInfo(VkDeviceQueueCreateInfo, Vec<f32>);
+impl DeviceQueueCreateInfo {
+    pub const fn new(family_index: u32, priorities: Vec<f32>) -> Self {
+        Self(
+            VkDeviceQueueCreateInfo {
+                sType: VkDeviceQueueCreateInfo::TYPE,
+                pNext: std::ptr::null(),
+                flags: 0,
+                queueFamilyIndex: family_index,
+                queueCount: 0,
+                pQueuePriorities: core::ptr::null(),
+            },
+            priorities,
+        )
+    }
+
+    fn complete(&mut self) {
+        self.0.queueCount = self.1.len() as _;
+        self.0.pQueuePriorities = self.1.as_ptr();
+    }
+}
 
 /// Builder object for constructing a `Device`
 pub struct DeviceBuilder<PhysicalDevice: crate::PhysicalDevice + InstanceChild> {
@@ -380,37 +400,31 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_DEVICE_LOST`
     #[cfg(feature = "Implements")]
-    pub fn create(self) -> crate::Result<DeviceObject<PhysicalDevice::ConcreteInstance>>
+    pub fn create(mut self) -> crate::Result<DeviceObject<PhysicalDevice::ConcreteInstance>>
     where
         PhysicalDevice: crate::InstanceChildTransferrable,
     {
-        let qinfos = self
-            .queue_infos
-            .iter()
-            .map(|&DeviceQueueCreateInfo(fi, ref ps)| VkDeviceQueueCreateInfo {
-                sType: VkDeviceQueueCreateInfo::TYPE,
-                pNext: std::ptr::null(),
-                flags: 0,
-                queueFamilyIndex: fi,
-                queueCount: ps.len() as _,
-                pQueuePriorities: ps.as_ptr(),
-            })
-            .collect::<Vec<_>>();
+        for q in &mut self.queue_infos {
+            q.complete();
+        }
+
+        let queue_infos = self.queue_infos.iter().map(|q| q.0.clone()).collect::<Vec<_>>();
         let layers = self.layers.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
         let extensions = self.extensions.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
         let cinfo = VkDeviceCreateInfo {
             sType: VkDeviceCreateInfo::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
-            queueCreateInfoCount: qinfos.len() as _,
-            pQueueCreateInfos: qinfos.as_ptr(),
+            queueCreateInfoCount: queue_infos.len() as _,
+            pQueueCreateInfos: queue_infos.as_ptr(),
             enabledLayerCount: layers.len() as _,
             ppEnabledLayerNames: layers.as_ptr(),
             enabledExtensionCount: extensions.len() as _,
             ppEnabledExtensionNames: extensions.as_ptr(),
             pEnabledFeatures: &self.features,
         };
-        let mut h = std::mem::MaybeUninit::uninit();
+
+        let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
