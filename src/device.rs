@@ -981,46 +981,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Import GPU memory from external apis
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[cfg(feature = "VK_EXT_external_memory_host")]
-    #[cfg(feature = "Implements")]
-    fn import_memory_from_host_pointer(
-        self,
-        size: usize,
-        type_index: u32,
-        handle_type: crate::ExternalMemoryHandleType,
-        host_pointer: *mut (),
-    ) -> crate::Result<crate::DeviceMemoryObject<Self>>
-    where
-        Self: Sized,
-    {
-        let import_info = VkImportMemoryHostPointerInfoEXT {
-            sType: VkImportMemoryHostPointerInfoEXT::TYPE,
-            pNext: std::ptr::null(),
-            handleType: handle_type as _,
-            pHostPointer: host_pointer as _,
-        };
-        let ainfo = VkMemoryAllocateInfo {
-            sType: VkMemoryAllocateInfo::TYPE,
-            pNext: &import_info as *const _ as _,
-            allocationSize: size as _,
-            memoryTypeIndex: type_index,
-        };
-
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::allocate_memory(self.native_ptr(), &ainfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::DeviceMemoryObject(h.assume_init(), self))
-        }
-    }
-
     /// Create a new fence object
     /// # Failures
     /// On failure, this command returns

@@ -1153,6 +1153,24 @@ impl DeviceMemoryRequest {
         }
     }
 
+    #[cfg(feature = "VK_EXT_external_memory_host")]
+    #[implements]
+    pub fn import_host_pointer(
+        memory_type_index: u32,
+        handle_type: crate::ExternalMemoryHandleType,
+        host_pointer: *mut std::os::raw::c_void,
+    ) -> Self {
+        unsafe {
+            // Note: size is ignored by specification(but 0 is not allowed by validation layer...)
+            Self::allocate(1, memory_type_index).with_additional_info(VkImportMemoryHostPointerInfoEXT {
+                sType: VkImportMemoryHostPointerInfoEXT::TYPE,
+                pNext: std::ptr::null(),
+                handleType: handle_type as _,
+                pHostPointer: host_pointer,
+            })
+        }
+    }
+
     #[cfg(feature = "VK_KHR_external_memory_win32")]
     pub fn and_export(
         self,
