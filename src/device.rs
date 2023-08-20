@@ -1044,68 +1044,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a new queue semaphore object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn new_semaphore(self) -> crate::Result<crate::SemaphoreObject<Self>>
-    where
-        Self: Sized,
-    {
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_semaphore(
-                self.native_ptr(),
-                &VkSemaphoreCreateInfo {
-                    sType: VkSemaphoreCreateInfo::TYPE,
-                    pNext: std::ptr::null(),
-                    flags: 0,
-                },
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| crate::SemaphoreObject(h.assume_init(), self))
-        }
-    }
-
-    /// Create a new queue semaphore object, with exporting as Windows HANDLE
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    #[cfg(feature = "Implements")]
-    fn new_semaphore_with_export_win32(
-        self,
-        handle_types: crate::ExternalSemaphoreHandleTypes,
-        export_info: &crate::ExportSemaphoreWin32HandleInfo,
-    ) -> crate::Result<crate::SemaphoreObject<Self>>
-    where
-        Self: Sized,
-    {
-        let exp_info = VkExportSemaphoreCreateInfoKHR {
-            sType: VkExportSemaphoreCreateInfoKHR::TYPE,
-            pNext: export_info.as_ref() as *const _ as _,
-            handleTypes: handle_types.into(),
-        };
-        let info = VkSemaphoreCreateInfo {
-            sType: VkSemaphoreCreateInfo::TYPE,
-            pNext: &exp_info as *const _ as _,
-            flags: 0,
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_semaphore(self.native_ptr(), &info, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::SemaphoreObject(h.assume_init(), self))
-        }
-    }
-
     /// Create a new event object
     /// # Failures
     /// On failure, this command returns

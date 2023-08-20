@@ -1,7 +1,9 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
+use crate::chain;
 use crate::vk::*;
 use crate::DeviceChild;
+use crate::GenericVulkanStructure;
 use crate::VkHandle;
 #[cfg(feature = "Implements")]
 use crate::{Device, VkHandleMut, VkResultBox, VulkanStructure};
@@ -164,6 +166,55 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
 }
 DerefContainerBracketImpl!(for Fence {});
 GuardsImpl!(for Fence {});
+
+pub struct SemaphoreBuilder(VkSemaphoreCreateInfo, Vec<Box<GenericVulkanStructure>>);
+impl SemaphoreBuilder {
+    pub const fn new() -> Self {
+        Self(
+            VkSemaphoreCreateInfo {
+                sType: VkSemaphoreCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+            },
+            Vec::new(),
+        )
+    }
+
+    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
+    pub fn with_export(
+        mut self,
+        handle_types: crate::ExternalSemaphoreHandleTypes,
+        export_info: &crate::ExportSemaphoreWin32HandleInfo,
+    ) -> Self {
+        self.1.push(unsafe {
+            core::mem::transmute(Box::new(VkExportSemaphoreCreateInfoKHR {
+                sType: VkExportSemaphoreCreateInfoKHR::TYPE,
+                pNext: export_info.as_ref() as *const _ as _,
+                handleTypes: handle_types.into(),
+            }))
+        });
+
+        self
+    }
+
+    /// Create a new queue semaphore object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
+        chain(&mut self.0, &mut self.1);
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_semaphore(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| SemaphoreObject(h.assume_init(), device))
+        }
+    }
+}
 
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     /// Get a Windows HANDLE for a semaphore

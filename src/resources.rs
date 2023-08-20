@@ -118,7 +118,9 @@
 
 use derives::implements;
 
-use crate::{vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, VkHandleMut, VkObject, VulkanStructure};
+use crate::{
+    chain, vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, VkHandleMut, VkObject, VulkanStructure,
+};
 use crate::{AnalogNumRange, CompareOp, VkHandle};
 #[cfg(feature = "Implements")]
 use std::ops::Range;
@@ -1206,10 +1208,7 @@ impl DeviceMemoryRequest {
     where
         Self: Sized,
     {
-        self.1.iter_mut().fold(self.0.as_generic_mut(), |p, s| {
-            p.pNext = Box::as_ref(s) as *const _ as _;
-            s
-        });
+        chain(&mut self.0, &mut self.1);
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {

@@ -2,6 +2,13 @@
 
 use std::iter::FusedIterator;
 
+pub(crate) fn chain(base: &mut impl VulkanStructure, extends: &mut [Box<GenericVulkanStructure>]) {
+    extends.iter_mut().fold(base.as_generic_mut(), |p, s| {
+        p.pNext = Box::as_ref(s) as *const _ as _;
+        s
+    });
+}
+
 pub trait Chainable<'d, T> {
     fn chain(&mut self, next: &'d T) -> &mut Self;
 }
