@@ -205,7 +205,7 @@ impl SemaphoreBuilder {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
-        chain(&mut self.0, &mut self.1);
+        chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {

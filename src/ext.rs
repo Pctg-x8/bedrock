@@ -2,9 +2,12 @@
 
 use std::iter::FusedIterator;
 
-pub(crate) fn chain(base: &mut impl VulkanStructure, extends: &mut [Box<GenericVulkanStructure>]) {
-    extends.iter_mut().fold(base.as_generic_mut(), |p, s| {
-        p.pNext = Box::as_ref(s) as *const _ as _;
+pub(crate) fn chain<'s>(
+    base: &'s mut impl VulkanStructure,
+    extends: impl IntoIterator<Item = &'s mut GenericVulkanStructure>,
+) {
+    extends.into_iter().fold(base.as_generic_mut(), |p, s| {
+        p.pNext = s as *const _ as _;
         s
     });
 }

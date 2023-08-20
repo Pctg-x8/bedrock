@@ -1208,7 +1208,7 @@ impl DeviceMemoryRequest {
     where
         Self: Sized,
     {
-        chain(&mut self.0, &mut self.1);
+        chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
