@@ -1119,44 +1119,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a new command pool object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn new_command_pool(
-        self,
-        queue_family: u32,
-        transient: bool,
-        indiv_resettable: bool,
-    ) -> crate::Result<crate::CommandPoolObject<Self>>
-    where
-        Self: Sized,
-    {
-        let cinfo = VkCommandPoolCreateInfo {
-            sType: VkCommandPoolCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            queueFamilyIndex: queue_family,
-            flags: if transient {
-                VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
-            } else {
-                0
-            } | if indiv_resettable {
-                VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
-            } else {
-                0
-            },
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_command_pool(self.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::CommandPoolObject(h.assume_init(), self))
-        }
-    }
-
     #[cfg(feature = "Implements")]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(not(feature = "VK_KHR_push_descriptor"))]

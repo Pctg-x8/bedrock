@@ -1,5 +1,7 @@
 //! Vulkan Commands
 
+use derives::implements;
+
 use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
@@ -25,11 +27,51 @@ unsafe impl<Device: crate::Device + Sync> Sync for CommandBufferObject<Device> {
 unsafe impl<Device: crate::Device + Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
 
-/// The recording state of commandbuffers
+/// The recording state of command buffers
 #[cfg(feature = "Implements")]
 pub struct CmdRecord<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> {
     ptr: &'d mut CommandBuffer,
     layout: [Option<VkPipelineLayout>; 2],
+}
+
+pub struct CommandPoolBuilder(VkCommandPoolCreateInfo);
+impl CommandPoolBuilder {
+    pub const fn new(queue_family: u32) -> Self {
+        Self(VkCommandPoolCreateInfo {
+            sType: VkCommandPoolCreateInfo::TYPE,
+            pNext: core::ptr::null(),
+            flags: 0,
+            queueFamilyIndex: queue_family,
+        })
+    }
+
+    pub const fn transient(mut self) -> Self {
+        self.0.flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+
+        self
+    }
+
+    pub const fn individual_resettable(mut self) -> Self {
+        self.0.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+
+        self
+    }
+
+    /// Create a new command pool object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<CommandPoolObject<Device>> {
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_command_pool(device.native_ptr(), &self.0, ::std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| CommandPoolObject(h.assume_init(), device))
+        }
+    }
 }
 
 pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
