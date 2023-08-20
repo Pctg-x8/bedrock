@@ -664,32 +664,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
-    /// Get Properties of external memory host pointer
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    fn get_memory_host_pointer_properties(
-        &self,
-        handle_type: crate::ExternalMemoryHandleType,
-        host_pointer: *const (),
-    ) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
-        let mut info = VkMemoryHostPointerPropertiesEXT::uninit_sink();
-
-        unsafe {
-            VkResultBox(self.get_memory_host_pointer_properties_ext_fn().0(
-                self.native_ptr(),
-                handle_type as _,
-                host_pointer as _,
-                info.as_mut_ptr(),
-            ))
-            .into_result()
-            .map(move |_| info.assume_init())
-        }
-    }
-
     /// Create a new buffer object
     /// # Failure
     /// On failure, this command returns

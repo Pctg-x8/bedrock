@@ -202,6 +202,42 @@ pub enum ExternalMemoryHandleType {
     HostMappedForeignMemory = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT as _,
 }
 
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct ExternalMemoryHostPointer(pub ExternalMemoryHandleType, pub *const std::os::raw::c_void);
+#[cfg(feature = "VK_EXT_external_memory_host")]
+impl ExternalMemoryHandleType {
+    pub const fn with_pointer(self, p: *const std::os::raw::c_void) -> ExternalMemoryHostPointer {
+        ExternalMemoryHostPointer(self, p)
+    }
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+impl ExternalMemoryHostPointer {
+    /// Get Properties of external memory host pointer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
+    pub fn properties(
+        &self,
+        device: &(impl crate::Device + ?Sized),
+        mut sink: core::mem::MaybeUninit<VkMemoryHostPointerPropertiesEXT>,
+    ) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
+        unsafe {
+            crate::VkResultBox(device.get_memory_host_pointer_properties_ext_fn().0(
+                device.native_ptr(),
+                self.0 as _,
+                self.1,
+                sink.as_mut_ptr(),
+            ))
+            .into_result()
+            .map(move |_| sink.assume_init())
+        }
+    }
+}
+
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct ExternalMemoryHandleWin32(
@@ -226,18 +262,17 @@ impl ExternalMemoryHandleWin32 {
     pub fn properties(
         &self,
         device: &(impl crate::Device + ?Sized),
+        mut sink: core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
     ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        let mut info = VkMemoryWin32HandlePropertiesKHR::uninit_sink();
-
         unsafe {
             crate::VkResultBox(device.get_memory_win32_handle_properties_khr_fn().0(
                 device.native_ptr(),
                 self.0 as _,
                 self.1,
-                info.as_mut_ptr(),
+                sink.as_mut_ptr(),
             ))
             .into_result()
-            .map(move |_| info.assume_init())
+            .map(move |_| sink.assume_init())
         }
     }
 
