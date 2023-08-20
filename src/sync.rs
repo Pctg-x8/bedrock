@@ -3,10 +3,10 @@
 use crate::chain;
 use crate::vk::*;
 use crate::DeviceChild;
-use crate::GenericVulkanStructure;
 use crate::VkHandle;
 #[cfg(feature = "Implements")]
-use crate::{Device, VkHandleMut, VkResultBox, VulkanStructure};
+use crate::{Device, VkHandleMut, VkResultBox};
+use crate::{GenericVulkanStructure, VulkanStructure};
 use derives::implements;
 
 DefineStdDeviceChildObject! {
