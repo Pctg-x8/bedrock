@@ -498,14 +498,43 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .map(drop)
     }
 
+    /// Update the contents of descriptor set objects
+    #[implements]
+    fn update_descriptor_sets(&self, writes: &[DescriptorSetWriteInfo], copies: &[DescriptorSetCopyInfo]) {
+        let writes = writes
+            .iter()
+            .map(DescriptorSetWriteInfo::make_structure)
+            .collect::<Vec<_>>();
+        let copies = copies
+            .iter()
+            .map(DescriptorSetCopyInfo::make_structure)
+            .collect::<Vec<_>>();
+
+        unsafe {
+            crate::vkresolve::update_descriptor_sets(
+                self.native_ptr(),
+                writes.len() as _,
+                writes.as_ptr(),
+                copies.len() as _,
+                copies.as_ptr(),
+            );
+        }
+    }
+
     /// Update the contents of a descriptor set object
     #[cfg(feature = "Implements")]
-    fn update_descriptor_sets(&self, write: &[DescriptorSetWriteInfo], copy: &[DescriptorSetCopyInfo]) {
+    #[deprecated = "old definitions"]
+    #[allow(deprecated)]
+    fn update_descriptor_sets_old(
+        &self,
+        write: &[crate::DescriptorSetWriteInfo0],
+        copy: &[crate::DescriptorSetCopyInfo0],
+    ) {
         // save flatten results
         let wt = write
             .iter()
             .map(|x| {
-                let (ty, count, imgs, bufs, bufviews) = x.3.decomposite();
+                let (ty, count, imgs, bufs, bufviews) = x.3.de_composite();
                 (
                     x.0,
                     x.1,

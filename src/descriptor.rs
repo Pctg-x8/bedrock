@@ -5,13 +5,26 @@ use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, VkObject};
+use crate::{vk::*, DeviceChild, VkObject, VkRawHandle};
 use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a descriptor set layout object
-    DescriptorSetLayoutObject(VkDescriptorSetLayout, VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT): DescriptorSetLayout { drop destroy_descriptor_set_layout }
+#[derive(VkHandle, VkObject, DeviceChild)]
+#[VkObject(type = VkDescriptorSetLayout::OBJECT_TYPE)]
+pub struct DescriptorSetLayoutObject<Device: crate::Device>(
+    pub(crate) VkDescriptorSetLayout,
+    #[parent] pub(crate) Device,
+);
+unsafe impl<Device: crate::Device + Send> Send for DescriptorSetLayoutObject<Device> {}
+unsafe impl<Device: crate::Device + Sync> Sync for DescriptorSetLayoutObject<Device> {}
+#[implements]
+impl<Device: crate::Device> Drop for DescriptorSetLayoutObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            crate::vkresolve::destroy_descriptor_set_layout(self.1.native_ptr(), self.0, core::ptr::null());
+        }
+    }
 }
+impl<Device: crate::Device> DescriptorSetLayout for DescriptorSetLayoutObject<Device> {}
 impl<Device: crate::Device> std::cmp::PartialEq for DescriptorSetLayoutObject<Device> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
@@ -24,13 +37,23 @@ impl<Device: crate::Device> std::hash::Hash for DescriptorSetLayoutObject<Device
     }
 }
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a descriptor pool object
-    DescriptorPoolObject(VkDescriptorPool, VK_OBJECT_TYPE_DESCRIPTOR_POOL): DescriptorPool { drop destroy_descriptor_pool }
+#[derive(VkHandle, VkObject, DeviceChild)]
+#[VkObject(type = VkDescriptorPool::OBJECT_TYPE)]
+pub struct DescriptorPoolObject<Device: crate::Device>(pub(crate) VkDescriptorPool, #[parent] pub(crate) Device);
+unsafe impl<Device: crate::Device + Send> Send for DescriptorPoolObject<Device> {}
+unsafe impl<Device: crate::Device + Sync> Sync for DescriptorPoolObject<Device> {}
+#[implements]
+impl<Device: crate::Device> Drop for DescriptorPoolObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            crate::vkresolve::destroy_descriptor_pool(self.1.native_ptr(), self.0, core::ptr::null());
+        }
+    }
 }
+impl<Device: crate::Device> DescriptorPool for DescriptorPoolObject<Device> {}
 
 #[repr(transparent)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct DescriptorSet(pub VkDescriptorSet);
 impl From<DescriptorSet> for VkDescriptorSet {
     fn from(v: DescriptorSet) -> Self {
@@ -90,11 +113,41 @@ impl DescriptorType {
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
 pub struct SamplerObjectRef<'s>(
     VkSampler,
-    std::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
+    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
 );
 impl<'s> SamplerObjectRef<'s> {
     pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
-        Self(x.native_ptr(), std::marker::PhantomData)
+        Self(x.native_ptr(), core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct ImageViewObjectRef<'s>(
+    VkImageView,
+    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkImageView>>,
+);
+impl<'s> ImageViewObjectRef<'s> {
+    pub fn new(r: &'s (impl VkHandle<Handle = VkImageView> + ?Sized)) -> Self {
+        Self(r.native_ptr(), core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct BufferObjectRef<'s>(VkBuffer, core::marker::PhantomData<&'s dyn VkHandle<Handle = VkBuffer>>);
+impl<'s> BufferObjectRef<'s> {
+    pub fn new(r: &'s (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
+        Self(r.native_ptr(), core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct VkHandleRef<'r, H>(H, core::marker::PhantomData<&'r dyn VkHandle<Handle = H>>);
+impl<'r, H> VkHandleRef<'r, H> {
+    pub fn new(r: &'r (impl VkHandle<Handle = H> + ?Sized)) -> Self {
+        Self(r.native_ptr(), core::marker::PhantomData)
     }
 }
 
@@ -212,7 +265,7 @@ impl<'s> DescriptorSetLayoutBuilder<'s> {
                 h.as_mut_ptr(),
             )
             .into_result()
-            .map(move |_| crate::DescriptorSetLayoutObject(h.assume_init(), device))
+            .map(move |_| DescriptorSetLayoutObject(h.assume_init(), device))
         }
     }
 }
@@ -309,7 +362,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
     #[implements]
-    fn alloc(&mut self, layouts: &[impl DescriptorSetLayout]) -> crate::Result<Vec<DescriptorSet>>
+    fn alloc(&mut self, layouts: &[&(impl DescriptorSetLayout + ?Sized)]) -> crate::Result<Vec<DescriptorSet>>
     where
         Self: VkHandleMut,
     {
@@ -376,14 +429,193 @@ GuardsImpl!(for DescriptorPool {});
 /// Structure specifying the parameters of a descriptor set write operation
 /// Element order: DescriptorSet, Binding, ArrayIndex, Description
 #[derive(Clone)]
-pub struct DescriptorSetWriteInfo(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo);
+#[deprecated = "use more simplified request definition"]
+pub struct DescriptorSetWriteInfo0(pub VkDescriptorSet, pub u32, pub u32, pub DescriptorUpdateInfo);
 
 /// Structure specifying a copy descriptor set operation
 #[derive(Clone)]
-pub struct DescriptorSetCopyInfo {
+#[deprecated = "use more simplified request definition"]
+pub struct DescriptorSetCopyInfo0 {
     pub src: (VkDescriptorSet, u32, u32),
     pub dst: (VkDescriptorSet, u32, u32),
     pub count: u32,
+}
+
+/// Pointer for descriptor array in set
+#[derive(Clone)]
+pub struct DescriptorPointer {
+    pub set: VkDescriptorSet,
+    pub binding: u32,
+    pub array_offset: u32,
+}
+impl DescriptorPointer {
+    pub const fn new(set: VkDescriptorSet, binding: u32) -> Self {
+        Self {
+            set,
+            binding,
+            array_offset: 0,
+        }
+    }
+
+    pub const fn array_offset(self, offset: u32) -> Self {
+        Self {
+            array_offset: offset,
+            ..self
+        }
+    }
+
+    pub const fn write<'r>(self, contents: DescriptorContents<'r>) -> DescriptorSetWriteInfo<'r> {
+        DescriptorSetWriteInfo(self, contents)
+    }
+
+    pub const fn copy(self, count: u32, dest: DescriptorPointer) -> DescriptorSetCopyInfo {
+        DescriptorSetCopyInfo(self, dest, count)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct OptionalSamplerObjectRef<'s>(
+    VkSampler,
+    core::marker::PhantomData<Option<&'s dyn VkHandle<Handle = VkSampler>>>,
+);
+impl<'s> OptionalSamplerObjectRef<'s> {
+    pub const NONE: Self = Self(VkSampler::NULL, core::marker::PhantomData);
+
+    pub fn new(r: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
+        Self(r.native_ptr(), core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DescriptorBufferRef<'r>(
+    VkDescriptorBufferInfo,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkBuffer>>,
+);
+impl<'r> DescriptorBufferRef<'r> {
+    pub fn new(r: &'r (impl VkHandle<Handle = VkBuffer> + ?Sized), range: core::ops::Range<VkDeviceSize>) -> Self {
+        Self(
+            VkDescriptorBufferInfo {
+                buffer: r.native_ptr(),
+                offset: range.start,
+                range: range.end - range.start,
+            },
+            core::marker::PhantomData,
+        )
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct DescriptorImageRef<'r>(
+    VkDescriptorImageInfo,
+    core::marker::PhantomData<(
+        &'r dyn VkHandle<Handle = VkImageView>,
+        Option<&'r dyn VkHandle<Handle = VkSampler>>,
+    )>,
+);
+impl<'r> DescriptorImageRef<'r> {
+    pub fn new(r: &'r (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+        Self(
+            VkDescriptorImageInfo {
+                imageView: r.native_ptr(),
+                imageLayout: layout as _,
+                sampler: VkSampler::NULL,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub fn with_sampler(mut self, sampler: &'r (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
+        self.0.sampler = sampler.native_ptr();
+        self
+    }
+}
+
+#[derive(Clone)]
+pub enum DescriptorContents<'r> {
+    Sampler(Vec<DescriptorImageRef<'r>>),
+    CombinedImageSampler(Vec<DescriptorImageRef<'r>>),
+    SampledImage(Vec<DescriptorImageRef<'r>>),
+    StorageImage(Vec<DescriptorImageRef<'r>>),
+    InputAttachment(Vec<DescriptorImageRef<'r>>),
+    UniformBuffer(Vec<DescriptorBufferRef<'r>>),
+    StorageBuffer(Vec<DescriptorBufferRef<'r>>),
+    UniformBufferDynamic(Vec<DescriptorBufferRef<'r>>),
+    StorageBufferDynamic(Vec<DescriptorBufferRef<'r>>),
+    UniformTexelBuffer(Vec<VkHandleRef<'r, VkBufferView>>),
+    StorageTexelBuffer(Vec<VkHandleRef<'r, VkBufferView>>),
+}
+impl DescriptorContents<'_> {
+    pub fn type_count(&self) -> (DescriptorType, usize) {
+        match self {
+            Self::Sampler(rs) => (DescriptorType::Sampler, rs.len()),
+            Self::CombinedImageSampler(rs) => (DescriptorType::CombinedImageSampler, rs.len()),
+            Self::SampledImage(rs) => (DescriptorType::SampledImage, rs.len()),
+            Self::StorageImage(rs) => (DescriptorType::StorageImage, rs.len()),
+            Self::InputAttachment(rs) => (DescriptorType::InputAttachment, rs.len()),
+            Self::UniformBuffer(rs) => (DescriptorType::UniformBuffer, rs.len()),
+            Self::StorageBuffer(rs) => (DescriptorType::StorageBuffer, rs.len()),
+            Self::UniformBufferDynamic(rs) => (DescriptorType::UniformBufferDynamic, rs.len()),
+            Self::StorageBufferDynamic(rs) => (DescriptorType::StorageBufferDynamic, rs.len()),
+            Self::UniformTexelBuffer(rs) => (DescriptorType::UniformTexelBuffer, rs.len()),
+            Self::StorageTexelBuffer(rs) => (DescriptorType::StorageTexelBuffer, rs.len()),
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct DescriptorSetWriteInfo<'s>(pub DescriptorPointer, pub DescriptorContents<'s>);
+impl DescriptorSetWriteInfo<'_> {
+    pub fn make_structure(&self) -> VkWriteDescriptorSet {
+        let (r#type, count) = self.1.type_count();
+        let (buffers, images, buffer_views) = match self.1 {
+            DescriptorContents::Sampler(ref res)
+            | DescriptorContents::CombinedImageSampler(ref res)
+            | DescriptorContents::SampledImage(ref res)
+            | DescriptorContents::StorageImage(ref res)
+            | DescriptorContents::InputAttachment(ref res) => (core::ptr::null(), res.as_ptr(), core::ptr::null()),
+            DescriptorContents::UniformBuffer(ref res)
+            | DescriptorContents::StorageBuffer(ref res)
+            | DescriptorContents::UniformBufferDynamic(ref res)
+            | DescriptorContents::StorageBufferDynamic(ref res) => (res.as_ptr(), core::ptr::null(), core::ptr::null()),
+            DescriptorContents::UniformTexelBuffer(ref res) | DescriptorContents::StorageTexelBuffer(ref res) => {
+                (core::ptr::null(), core::ptr::null(), res.as_ptr())
+            }
+        };
+
+        VkWriteDescriptorSet {
+            sType: VkWriteDescriptorSet::TYPE,
+            pNext: core::ptr::null(),
+            dstSet: self.0.set,
+            dstBinding: self.0.binding,
+            dstArrayElement: self.0.array_offset,
+            descriptorType: r#type as _,
+            descriptorCount: count as _,
+            pImageInfo: images as _,
+            pBufferInfo: buffers as _,
+            pTexelBufferView: buffer_views as _,
+        }
+    }
+}
+
+#[derive(Clone)]
+pub struct DescriptorSetCopyInfo(pub DescriptorPointer, pub DescriptorPointer, u32);
+impl DescriptorSetCopyInfo {
+    pub fn make_structure(&self) -> VkCopyDescriptorSet {
+        VkCopyDescriptorSet {
+            sType: VkCopyDescriptorSet::TYPE,
+            pNext: core::ptr::null(),
+            srcSet: self.0.set,
+            srcBinding: self.0.binding,
+            srcArrayElement: self.0.array_offset,
+            dstSet: self.1.set,
+            dstBinding: self.1.binding,
+            dstArrayElement: self.1.array_offset,
+            descriptorCount: self.2,
+        }
+    }
 }
 
 /// Structure specifying the parameters of a descriptor set write/copy operations.
@@ -414,7 +646,7 @@ use std::ops::Range;
 impl DescriptorUpdateInfo {
     #[cfg(feature = "Implements")]
     #[allow(clippy::type_complexity)]
-    pub(crate) fn decomposite(
+    pub(crate) fn de_composite(
         &self,
     ) -> (
         DescriptorType,
