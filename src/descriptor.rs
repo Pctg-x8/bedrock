@@ -471,6 +471,21 @@ impl DescriptorPointer {
     pub const fn copy(self, count: u32, dest: DescriptorPointer) -> DescriptorSetCopyInfo {
         DescriptorSetCopyInfo(self, dest, count)
     }
+
+    pub fn write_multiple<'r>(
+        self,
+        contents: impl IntoIterator<Item = DescriptorContents<'r>>,
+    ) -> impl Iterator<Item = DescriptorSetWriteInfo<'r>> {
+        let base_binding = self.binding;
+
+        contents.into_iter().enumerate().map(move |(n, c)| {
+            Self {
+                binding: base_binding + n as u32,
+                ..self.clone()
+            }
+            .write(c)
+        })
+    }
 }
 
 #[repr(transparent)]
