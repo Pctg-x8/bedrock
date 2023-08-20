@@ -313,7 +313,7 @@ impl<Device: crate::Device> Queue for QueueObject<Device> {}
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(VkDeviceQueueCreateInfo, Vec<f32>);
 impl DeviceQueueCreateInfo {
-    pub const fn new(family_index: u32, priorities: Vec<f32>) -> Self {
+    pub const fn new(family_index: u32) -> Self {
         Self(
             VkDeviceQueueCreateInfo {
                 sType: VkDeviceQueueCreateInfo::TYPE,
@@ -323,8 +323,18 @@ impl DeviceQueueCreateInfo {
                 queueCount: 0,
                 pQueuePriorities: core::ptr::null(),
             },
-            priorities,
+            Vec::new(),
         )
+    }
+
+    pub fn add(mut self, priority: f32) -> Self {
+        self.1.push(priority);
+        self
+    }
+
+    pub fn priorities(mut self, priorities: impl IntoIterator<Item = f32>) -> Self {
+        self.1.extend(priorities);
+        self
     }
 
     fn complete(&mut self) {
