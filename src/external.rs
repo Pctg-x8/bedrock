@@ -4,7 +4,6 @@ use cfg_if::cfg_if;
 use derives::implements;
 
 use crate::vk::*;
-use crate::DeviceMemoryRequest;
 use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 #[allow(unused_imports)]
@@ -276,8 +275,8 @@ impl ExternalMemoryHandleWin32 {
         }
     }
 
-    pub fn import_request(self, memory_type_index: u32, name: &widestring::WideCString) -> DeviceMemoryRequest {
-        DeviceMemoryRequest::import(memory_type_index, self, name)
+    pub fn import_request(self, memory_type_index: u32, name: &widestring::WideCString) -> crate::DeviceMemoryRequest {
+        crate::DeviceMemoryRequest::import(memory_type_index, self, name)
     }
 }
 

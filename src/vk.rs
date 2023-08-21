@@ -1824,7 +1824,7 @@ pub struct VkSparseImageOpaqueMemoryBindInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkImageSubresource {
     pub aspectMask: VkImageAspectFlags,
     pub mipLevel: u32,
@@ -1937,7 +1937,7 @@ pub struct VkQueryPoolCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO)]
 pub struct VkBufferCreateInfo {
     pub sType: VkStructureType,
@@ -2014,7 +2014,7 @@ impl Default for VkComponentMapping {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkImageSubresourceRange {
     pub aspectMask: VkImageAspectFlags,
     pub baseMipLevel: u32,

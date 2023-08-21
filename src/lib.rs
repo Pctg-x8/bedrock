@@ -54,7 +54,24 @@ macro_rules! DefineStdDeviceChildObject {
         }
         unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
         unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
-        #[cfg(feature = "Implements")]
+        #[derives::implements]
+        impl<Device: $crate::Device> Drop for $name<Device> {
+            fn drop(&mut self) {
+                unsafe {
+                    $crate::vkresolve::$dropper(self.1.native_ptr(), self.0, std::ptr::null());
+                }
+            }
+        }
+        impl<Device: crate::Device> $i for $name<Device> {}
+    };
+    { $(#[$m: meta])* $name: ident($vkh: ty): $i: ty { drop $dropper: ident } } => {
+        #[derive($crate::VkHandle, $crate::DeviceChild, $crate::VkObject)]
+        #[VkObject(type = <$vkh as $crate::VkRawHandle>::OBJECT_TYPE)]
+        $(#[$m])*
+        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, #[parent] pub(crate) Device);
+        unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
+        unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
+        #[derives::implements]
         impl<Device: $crate::Device> Drop for $name<Device> {
             fn drop(&mut self) {
                 unsafe {
