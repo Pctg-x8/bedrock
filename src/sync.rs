@@ -11,7 +11,7 @@ use derives::implements;
 
 DefineStdDeviceChildObject! {
     /// Opaque Handle to a fence object
-    FenceObject(VkFence, VK_OBJECT_TYPE_FENCE): Fence { drop destroy_fence }
+    FenceObject(VkFence): Fence { drop destroy_fence }
 }
 impl<Device: crate::Device> Status for FenceObject<Device> {
     #[cfg(feature = "Implements")]
@@ -27,12 +27,12 @@ impl<Device: crate::Device> Status for FenceObject<Device> {
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a semaphore object
-    SemaphoreObject(VkSemaphore, VK_OBJECT_TYPE_SEMAPHORE): Semaphore { drop destroy_semaphore }
+    SemaphoreObject(VkSemaphore): Semaphore { drop destroy_semaphore }
 }
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a event object
-    EventObject(VkEvent, VK_OBJECT_TYPE_EVENT): Event { drop destroy_event }
+    EventObject(VkEvent): Event { drop destroy_event }
 }
 impl<Device: crate::Device> Status for EventObject<Device> {
     #[cfg(feature = "Implements")]
@@ -105,14 +105,13 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
     fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
-        use crate::{ext::VulkanStructure, Device, VkResultBox};
-
         let info = VkFenceGetFdInfoKHR {
             sType: VkFenceGetFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
             fence: self.native_ptr(),
             handleType: ty as _,
         };
+
         let mut fd = 0;
         unsafe {
             VkResultBox(self.device().get_fence_fd_khr_fn().0(
@@ -133,14 +132,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
-    fn import(
-        &self,
-        ty: crate::ExternalFenceFdType,
-        fd: std::os::unix::io::RawFd,
-        temporary: bool,
-    ) -> crate::Result<()> {
-        use crate::{ext::VulkanStructure, Device, VkResultBox};
-
+    fn import(&self, handle: crate::ExternalFenceFd, temporary: bool) -> crate::Result<()> {
         let info = VkImportFenceFdInfoKHR {
             sType: VkImportFenceFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -150,8 +142,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             } else {
                 0
             },
-            handleType: ty as _,
-            fd,
+            handleType: handle.0 as _,
+            fd: handle.1,
         };
 
         unsafe {

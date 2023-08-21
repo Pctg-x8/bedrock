@@ -90,6 +90,36 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
             .map(move |_| h)
         }
     }
+
+    /// Get a POSIX file descriptor for a memory object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements]
+    #[cfg(feature = "VK_KHR_external_memory_fd")]
+    fn get_fd(&self, handle_type: crate::ExternalMemoryHandleTypeFd) -> crate::Result<std::os::unix::io::RawFd> {
+        use crate::Device;
+
+        let info = VkMemoryGetFdInfoKHR {
+            sType: VkMemoryGetFdInfoKHR::TYPE,
+            pNext: std::ptr::null(),
+            memory: self.native_ptr(),
+            handleType: handle_type as _,
+        };
+        let mut fd = 0;
+
+        unsafe {
+            crate::VkResultBox(self.device().get_memory_fd_khr_fn().0(
+                self.device().native_ptr(),
+                &info,
+                &mut fd,
+            ))
+            .into_result()
+            .map(move |_| fd)
+        }
+    }
 }
 DerefContainerBracketImpl!(for DeviceMemory {});
 GuardsImpl!(for DeviceMemory {});
@@ -127,6 +157,18 @@ impl DeviceMemoryRequest {
                 handleType: handle.0 as _,
                 handle: handle.1,
                 name: windows::core::PCWSTR::from_raw(name.as_ptr()),
+            })
+        }
+    }
+
+    #[cfg(feature = "VK_KHR_external_memory_fd")]
+    pub fn import(memory_type_index: u32, handle: crate::ExternalMemoryHandleFd) -> Self {
+        unsafe {
+            Self::allocate(1, memory_type_index).with_additional_info(VkImportMemoryFdInfoKHR {
+                sType: VkImportMemoryFdInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                handleType: handle.0 as _,
+                fd: handle.1,
             })
         }
     }

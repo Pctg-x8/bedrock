@@ -185,6 +185,13 @@ pub enum ExternalMemoryHandleTypeWin32 {
     D3D12Heap = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR as _,
     D3D12Resource = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR as _,
 }
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+impl ExternalMemoryHandleTypeWin32 {
+    pub const fn with_handle(self, handle: windows::Win32::Foundation::HANDLE) -> ExternalMemoryHandleWin32 {
+        ExternalMemoryHandleWin32(self, handle)
+    }
+}
+
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -193,6 +200,13 @@ pub enum ExternalMemoryHandleTypeFd {
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
     DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _,
 }
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+impl ExternalMemoryHandleTypeFd {
+    pub const fn with_fd(self, fd: std::os::unix::io::RawFd) -> ExternalMemoryHandleFd {
+        ExternalMemoryHandleFd(self, fd)
+    }
+}
+
 #[cfg(feature = "VK_EXT_external_memory_host")]
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -200,16 +214,91 @@ pub enum ExternalMemoryHandleType {
     HostAllocation = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT as _,
     HostMappedForeignMemory = VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_MAPPED_FOREIGN_MEMORY_BIT_EXT as _,
 }
-
-#[cfg(feature = "VK_EXT_external_memory_host")]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub struct ExternalMemoryHostPointer(pub ExternalMemoryHandleType, pub *const std::os::raw::c_void);
 #[cfg(feature = "VK_EXT_external_memory_host")]
 impl ExternalMemoryHandleType {
     pub const fn with_pointer(self, p: *const std::os::raw::c_void) -> ExternalMemoryHostPointer {
         ExternalMemoryHostPointer(self, p)
     }
 }
+
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct ExternalMemoryHandleWin32(
+    pub ExternalMemoryHandleTypeWin32,
+    pub windows::Win32::Foundation::HANDLE,
+);
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+impl ExternalMemoryHandleWin32 {
+    /// Get Properties of External Memory Win32 Handles
+    /// # Safety
+    /// sink must be constructed correctly
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
+    pub unsafe fn properties(
+        &self,
+        device: &(impl crate::Device + ?Sized),
+        mut sink: core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
+    ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
+        crate::VkResultBox(device.get_memory_win32_handle_properties_khr_fn().0(
+            device.native_ptr(),
+            self.0 as _,
+            self.1,
+            sink.as_mut_ptr(),
+        ))
+        .into_result()
+        .map(move |_| sink.assume_init())
+    }
+
+    pub fn into_import_request(
+        self,
+        memory_type_index: u32,
+        name: &widestring::WideCString,
+    ) -> crate::DeviceMemoryRequest {
+        crate::DeviceMemoryRequest::import(memory_type_index, self, name)
+    }
+}
+
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct ExternalMemoryHandleFd(pub ExternalMemoryHandleTypeFd, pub std::os::unix::io::RawFd);
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+impl ExternalMemoryHandleFd {
+    /// Get Properties of External Memory File Descriptors
+    /// # Safety
+    /// sink must be constructed correctly
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
+    pub unsafe fn properties(
+        &self,
+        device: &(impl crate::Device + ?Sized),
+        mut sink: core::mem::MaybeUninit<VkMemoryFdPropertiesKHR>,
+    ) -> crate::Result<VkMemoryFdPropertiesKHR> {
+        crate::VkResultBox(device.get_memory_fd_properties_khr_fn().0(
+            device.native_ptr(),
+            self.0 as _,
+            self.1,
+            sink.as_mut_ptr(),
+        ))
+        .into_result()
+        .map(move |_| sink.assume_init())
+    }
+
+    pub fn into_import_request(self, memory_type_index: u32) -> crate::DeviceMemoryRequest {
+        crate::DeviceMemoryRequest::import(memory_type_index, self)
+    }
+}
+
+#[cfg(feature = "VK_EXT_external_memory_host")]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub struct ExternalMemoryHostPointer(pub ExternalMemoryHandleType, pub *const std::os::raw::c_void);
 #[cfg(feature = "VK_EXT_external_memory_host")]
 impl ExternalMemoryHostPointer {
     /// Get Properties of external memory host pointer
@@ -234,49 +323,6 @@ impl ExternalMemoryHostPointer {
             .into_result()
             .map(move |_| sink.assume_init())
         }
-    }
-}
-
-#[cfg(feature = "VK_KHR_external_memory_win32")]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub struct ExternalMemoryHandleWin32(
-    pub ExternalMemoryHandleTypeWin32,
-    pub windows::Win32::Foundation::HANDLE,
-);
-#[cfg(feature = "VK_KHR_external_memory_win32")]
-impl ExternalMemoryHandleTypeWin32 {
-    pub const fn with_handle(self, handle: windows::Win32::Foundation::HANDLE) -> ExternalMemoryHandleWin32 {
-        ExternalMemoryHandleWin32(self, handle)
-    }
-}
-#[cfg(feature = "VK_KHR_external_memory_win32")]
-impl ExternalMemoryHandleWin32 {
-    /// Get Properties of External Memory Win32 Handles
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    #[implements]
-    pub fn properties(
-        &self,
-        device: &(impl crate::Device + ?Sized),
-        mut sink: core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
-    ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        unsafe {
-            crate::VkResultBox(device.get_memory_win32_handle_properties_khr_fn().0(
-                device.native_ptr(),
-                self.0 as _,
-                self.1,
-                sink.as_mut_ptr(),
-            ))
-            .into_result()
-            .map(move |_| sink.assume_init())
-        }
-    }
-
-    pub fn import_request(self, memory_type_index: u32, name: &widestring::WideCString) -> crate::DeviceMemoryRequest {
-        crate::DeviceMemoryRequest::import(memory_type_index, self, name)
     }
 }
 
@@ -365,11 +411,21 @@ cfg_if! {
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 pub enum ExternalFenceFdType {
     Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _,
     Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR as _,
+}
+
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ExternalFenceFd(pub ExternalFenceFdType, pub std::os::unix::io::RawFd);
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+impl ExternalFenceFdType {
+    pub const fn with_fd(self, fd: std::os::unix::io::RawFd) -> ExternalFenceFd {
+        ExternalFenceFd(self, fd)
+    }
 }
 
 cfg_if! {
