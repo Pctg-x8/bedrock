@@ -806,69 +806,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a new fence object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn new_fence(self, signaled: bool) -> crate::Result<crate::FenceObject<Self>>
-    where
-        Self: Sized,
-    {
-        let mut h = std::mem::MaybeUninit::uninit();
-        let flags = if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 };
-        unsafe {
-            crate::vkresolve::create_fence(
-                self.native_ptr(),
-                &VkFenceCreateInfo {
-                    sType: VkFenceCreateInfo::TYPE,
-                    pNext: std::ptr::null(),
-                    flags,
-                },
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| crate::FenceObject(h.assume_init(), self))
-        }
-    }
-
-    #[cfg(feature = "VK_KHR_external_fence_fd")]
-    /// Create a new fence object, with exporting as file descriptors
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn new_fence_with_export_fd(
-        self,
-        signaled: bool,
-        compatible_handle_types: crate::ExternalFenceHandleTypes,
-    ) -> crate::Result<crate::FenceObject<Self>>
-    where
-        Self: Sized,
-    {
-        let mut h = std::mem::MaybeUninit::uninit();
-        let exp_info = VkExportFenceCreateInfoKHR {
-            sType: VkExportFenceCreateInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            handleTypes: compatible_handle_types.0,
-        };
-        let cinfo = VkFenceCreateInfo {
-            sType: VkFenceCreateInfo::TYPE,
-            flags: if signaled { VK_FENCE_CREATE_SIGNALED_BIT } else { 0 },
-            pNext: &exp_info as *const _ as _,
-        };
-        unsafe {
-            crate::vkresolve::create_fence(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::FenceObject(h.assume_init(), self))
-        }
-    }
-
     /// Create a new event object
     /// # Failures
     /// On failure, this command returns
