@@ -14,11 +14,6 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
 
     fn dimension(&self) -> VkImageViewType;
 
-    /// method chaining helper
-    fn by_ref(&self) -> &Self {
-        self
-    }
-
     /// Create an image view
     #[implements]
     #[deprecated = "use ImageViewBuilder which can be omit some default arguments"]
@@ -157,6 +152,11 @@ GuardsImpl!(for Image {
 });
 
 pub trait ImageSubresourceSlice: Image {
+    /// method chaining helper
+    fn by_ref(&self) -> &Self {
+        self
+    }
+
     /// Creates subresource
     #[inline]
     fn subresource(self, aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> ImageSubresource<Self>
