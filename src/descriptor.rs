@@ -249,7 +249,7 @@ impl<'s> DescriptorSetLayoutBuilder<'s> {
     {
         let bindings = self
             .1
-            .into_iter()
+            .iter()
             .enumerate()
             .map(|(n, b)| b.make_structure_with_binding_index(n as _))
             .collect::<Vec<_>>();
