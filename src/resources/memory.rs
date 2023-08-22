@@ -1,6 +1,4 @@
-#[implements]
-use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, GenericVulkanStructure, VkHandle, VulkanStructure};
+use crate::{vk::*, DeviceChild, GenericVulkanStructure, VkHandle, VkHandleMut, VulkanStructure};
 use derives::implements;
 #[implements]
 use std::ops::Range;
