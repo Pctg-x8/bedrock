@@ -1,5 +1,7 @@
 //! Vulkan RenderPass/Framebuffer
 
+use derives::implements;
+
 #[cfg(feature = "Implements")]
 use crate::VulkanStructure;
 use crate::{vk::*, DeviceChild, DeviceChildTransferrable, VkObject};
@@ -48,7 +50,7 @@ impl<Device: crate::Device, ImageView: crate::ImageView> Framebuffer for Framebu
 pub struct AttachmentDescription(VkAttachmentDescription);
 impl AttachmentDescription {
     pub const fn new(format: VkFormat, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
-        AttachmentDescription(VkAttachmentDescription {
+        Self(VkAttachmentDescription {
             format,
             samples: 1,
             loadOp: VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -66,10 +68,12 @@ impl AttachmentDescription {
         self
     }
 
+    /// default: don't care
     pub const fn load_op(mut self, op: LoadOp) -> Self {
         self.0.loadOp = op as _;
         self
     }
+    /// default: don't care
     pub const fn store_op(mut self, op: StoreOp) -> Self {
         self.0.storeOp = op as _;
         self
@@ -78,10 +82,12 @@ impl AttachmentDescription {
         self.load_op(load).store_op(store)
     }
 
+    /// default: don't care
     pub const fn stencil_load_op(mut self, op: LoadOp) -> Self {
         self.0.stencilLoadOp = op as _;
         self
     }
+    /// default: don't care
     pub const fn stencil_store_op(mut self, op: StoreOp) -> Self {
         self.0.stencilStoreOp = op as _;
         self
@@ -254,42 +260,42 @@ impl RenderPassBuilder {
         }
     }
 
-    pub fn add_attachment(&mut self, desc: impl Into<VkAttachmentDescription>) -> &mut Self {
+    pub fn add_attachment(mut self, desc: impl Into<VkAttachmentDescription>) -> Self {
         self.attachments.push(desc.into());
         self
     }
-    pub fn add_subpass(&mut self, desc: SubpassDescription) -> &mut Self {
+    pub fn add_subpass(mut self, desc: SubpassDescription) -> Self {
         self.subpasses.push(desc);
         self
     }
-    pub fn add_dependency(&mut self, desc: VkSubpassDependency) -> &mut Self {
+    pub fn add_dependency(mut self, desc: VkSubpassDependency) -> Self {
         self.dependencies.push(desc);
         self
     }
 
     pub fn add_attachments<A: Into<VkAttachmentDescription>>(
-        &mut self,
+        mut self,
         collection: impl IntoIterator<Item = A>,
-    ) -> &mut Self {
+    ) -> Self {
         self.attachments.extend(collection.into_iter().map(Into::into));
         self
     }
-    pub fn add_subpasses(&mut self, collection: impl IntoIterator<Item = SubpassDescription>) -> &mut Self {
+    pub fn add_subpasses(mut self, collection: impl IntoIterator<Item = SubpassDescription>) -> Self {
         self.subpasses.extend(collection);
         self
     }
-    pub fn add_dependencies(&mut self, collection: impl IntoIterator<Item = VkSubpassDependency>) -> &mut Self {
+    pub fn add_dependencies(mut self, collection: impl IntoIterator<Item = VkSubpassDependency>) -> Self {
         self.dependencies.extend(collection);
         self
     }
 
-    pub fn mod_attachment(&mut self, index: usize) -> &mut AttachmentDescription {
+    pub fn attachment_mut(&mut self, index: usize) -> &mut AttachmentDescription {
         unsafe { &mut *(&mut self.attachments[index] as *mut _ as *mut _) }
     }
-    pub fn mod_subpass(&mut self, index: usize) -> &mut SubpassDescription {
+    pub fn subpass_mut(&mut self, index: usize) -> &mut SubpassDescription {
         &mut self.subpasses[index]
     }
-    pub fn mod_dependency(&mut self, index: usize) -> &mut VkSubpassDependency {
+    pub fn dependency_mut(&mut self, index: usize) -> &mut VkSubpassDependency {
         &mut self.dependencies[index]
     }
 }
@@ -439,6 +445,7 @@ impl RenderPassBuilder {
             dependencyCount: self.dependencies.len() as _,
             pDependencies: self.dependencies.as_ptr(),
         };
+
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
@@ -455,7 +462,7 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_framebuffer<ImageView: crate::ImageView>(
         self,
         attachment_objects: Vec<ImageView>,
@@ -477,6 +484,7 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
             height: size.height,
             layers,
         };
+
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())

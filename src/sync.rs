@@ -9,43 +9,6 @@ use crate::{Device, VkHandleMut, VkResultBox};
 use crate::{GenericVulkanStructure, VulkanStructure};
 use derives::implements;
 
-DefineStdDeviceChildObject! {
-    /// Opaque Handle to a fence object
-    FenceObject(VkFence, VK_OBJECT_TYPE_FENCE): Fence { drop destroy_fence }
-}
-impl<Device: crate::Device> Status for FenceObject<Device> {
-    #[cfg(feature = "Implements")]
-    fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { crate::vkresolve::get_fence_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr.0 {
-            VK_SUCCESS => Ok(true),
-            VK_NOT_READY => Ok(false),
-            _ => Err(vr),
-        }
-    }
-}
-
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a semaphore object
-    SemaphoreObject(VkSemaphore, VK_OBJECT_TYPE_SEMAPHORE): Semaphore { drop destroy_semaphore }
-}
-
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a event object
-    EventObject(VkEvent, VK_OBJECT_TYPE_EVENT): Event { drop destroy_event }
-}
-impl<Device: crate::Device> Status for EventObject<Device> {
-    #[cfg(feature = "Implements")]
-    fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { crate::vkresolve::get_event_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr.0 {
-            VK_EVENT_SET => Ok(true),
-            VK_EVENT_RESET => Ok(false),
-            _ => Err(vr),
-        }
-    }
-}
-
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
@@ -105,14 +68,13 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
     fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
-        use crate::{ext::VulkanStructure, Device, VkResultBox};
-
         let info = VkFenceGetFdInfoKHR {
             sType: VkFenceGetFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
             fence: self.native_ptr(),
             handleType: ty as _,
         };
+
         let mut fd = 0;
         unsafe {
             VkResultBox(self.device().get_fence_fd_khr_fn().0(
@@ -133,14 +95,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
     #[cfg(unix)]
-    fn import(
-        &self,
-        ty: crate::ExternalFenceFdType,
-        fd: std::os::unix::io::RawFd,
-        temporary: bool,
-    ) -> crate::Result<()> {
-        use crate::{ext::VulkanStructure, Device, VkResultBox};
-
+    fn import(&self, handle: crate::ExternalFenceFd, temporary: bool) -> crate::Result<()> {
         let info = VkImportFenceFdInfoKHR {
             sType: VkImportFenceFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -150,8 +105,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
             } else {
                 0
             },
-            handleType: ty as _,
-            fd,
+            handleType: handle.0 as _,
+            fd: handle.1,
         };
 
         unsafe {
@@ -166,55 +121,6 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
 }
 DerefContainerBracketImpl!(for Fence {});
 GuardsImpl!(for Fence {});
-
-pub struct SemaphoreBuilder(VkSemaphoreCreateInfo, Vec<Box<GenericVulkanStructure>>);
-impl SemaphoreBuilder {
-    pub const fn new() -> Self {
-        Self(
-            VkSemaphoreCreateInfo {
-                sType: VkSemaphoreCreateInfo::TYPE,
-                pNext: core::ptr::null(),
-                flags: 0,
-            },
-            Vec::new(),
-        )
-    }
-
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    pub fn with_export(
-        mut self,
-        handle_types: crate::ExternalSemaphoreHandleTypes,
-        export_info: &crate::ExportSemaphoreWin32HandleInfo,
-    ) -> Self {
-        self.1.push(unsafe {
-            core::mem::transmute(Box::new(VkExportSemaphoreCreateInfoKHR {
-                sType: VkExportSemaphoreCreateInfoKHR::TYPE,
-                pNext: export_info.as_ref() as *const _ as _,
-                handleTypes: handle_types.into(),
-            }))
-        });
-
-        self
-    }
-
-    /// Create a new queue semaphore object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
-        chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
-
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_semaphore(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| SemaphoreObject(h.assume_init(), device))
-        }
-    }
-}
 
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     /// Get a Windows HANDLE for a semaphore
@@ -345,3 +251,145 @@ GuardsImpl!(for Status {
         T::status(&self)
     }
 });
+
+DefineStdDeviceChildObject! {
+    /// Opaque Handle to a fence object
+    FenceObject(VkFence): Fence { drop destroy_fence }
+}
+impl<Device: crate::Device> Status for FenceObject<Device> {
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        let vr = unsafe { crate::vkresolve::get_fence_status(self.device().native_ptr(), self.native_ptr()) };
+        match vr.0 {
+            VK_SUCCESS => Ok(true),
+            VK_NOT_READY => Ok(false),
+            _ => Err(vr),
+        }
+    }
+}
+
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a semaphore object
+    SemaphoreObject(VkSemaphore): Semaphore { drop destroy_semaphore }
+}
+
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a event object
+    EventObject(VkEvent): Event { drop destroy_event }
+}
+impl<Device: crate::Device> Status for EventObject<Device> {
+    #[cfg(feature = "Implements")]
+    fn status(&self) -> crate::Result<bool> {
+        let vr = unsafe { crate::vkresolve::get_event_status(self.device().native_ptr(), self.native_ptr()) };
+        match vr.0 {
+            VK_EVENT_SET => Ok(true),
+            VK_EVENT_RESET => Ok(false),
+            _ => Err(vr),
+        }
+    }
+}
+
+pub struct FenceBuilder(VkFenceCreateInfo, Vec<Box<GenericVulkanStructure>>);
+impl FenceBuilder {
+    pub const fn new() -> Self {
+        Self(
+            VkFenceCreateInfo {
+                sType: VkFenceCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+            },
+            Vec::new(),
+        )
+    }
+
+    pub unsafe fn with_additional_info(mut self, ext: impl VulkanStructure) -> Self {
+        self.1.push(core::mem::transmute(Box::new(ext)));
+
+        self
+    }
+
+    pub const fn signaled(mut self) -> Self {
+        self.0.flags |= VK_FENCE_CREATE_SIGNALED_BIT;
+
+        self
+    }
+
+    #[cfg(feature = "VK_KHR_external_fence")]
+    pub fn exportable_as(self, ty: crate::ExternalFenceHandleTypes) -> Self {
+        unsafe {
+            self.with_additional_info(VkExportFenceCreateInfoKHR {
+                sType: VkExportFenceCreateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                handleTypes: ty.0,
+            })
+        }
+    }
+
+    /// Create a new fence object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<FenceObject<Device>> {
+        crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_fence(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| FenceObject(h.assume_init(), device))
+        }
+    }
+}
+
+pub struct SemaphoreBuilder(VkSemaphoreCreateInfo, Vec<Box<GenericVulkanStructure>>);
+impl SemaphoreBuilder {
+    pub const fn new() -> Self {
+        Self(
+            VkSemaphoreCreateInfo {
+                sType: VkSemaphoreCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+            },
+            Vec::new(),
+        )
+    }
+
+    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
+    pub fn exportable_as(
+        mut self,
+        handle_types: crate::ExternalSemaphoreHandleTypes,
+        export_info: crate::ExportSemaphoreWin32HandleInfo,
+    ) -> Self {
+        self.1.push(unsafe {
+            core::mem::transmute(Box::new(VkExportSemaphoreCreateInfoKHR {
+                sType: VkExportSemaphoreCreateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                handleTypes: handle_types.into(),
+            }))
+        });
+        self.1.push(unsafe { core::mem::transmute(Box::new(export_info)) });
+
+        self
+    }
+
+    /// Create a new queue semaphore object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
+        chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_semaphore(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| SemaphoreObject(h.assume_init(), device))
+        }
+    }
+}
