@@ -60,11 +60,11 @@ cfg_if! {
         }
         impl ResolverInterface for Resolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
-                T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw())
+                T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw() as _)
             }
 
             unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
-                F::from_ptr(self.0.get::<F>(name).unwrap().into_raw().into_raw())
+                F::from_ptr(self.0.get::<F>(name).unwrap().into_raw().into_raw() as _)
             }
         }
 
