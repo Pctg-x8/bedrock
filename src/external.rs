@@ -397,24 +397,6 @@ cfg_if! {
                 Self(self.0 | Self::HOST_MAPPED_FOREIGN_MEMORY.0)
             }
         }
-
-        #[repr(transparent)]
-        pub struct ExternalMemoryImageCreateInfo(VkExternalMemoryImageCreateInfoKHR);
-        impl ExternalMemoryImageCreateInfo {
-            pub fn new(handle_types: ExternalMemoryHandleTypes) -> Self {
-                Self(VkExternalMemoryImageCreateInfoKHR {
-                    sType: VkExternalMemoryImageCreateInfoKHR::TYPE,
-                    pNext: std::ptr::null(),
-                    handleTypes: handle_types.into(),
-                })
-            }
-        }
-        impl<'d> crate::Chainable<'d, ExternalMemoryImageCreateInfo> for crate::ImageDesc<'d> {
-            fn chain(&mut self, next: &'d ExternalMemoryImageCreateInfo) -> &mut Self {
-                self.0.pNext = next as *const _ as _;
-                self
-            }
-        }
     }
 }
 

@@ -1,6 +1,9 @@
 use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
 
-use crate::{vk::*, DeviceChild, ImageMemoryBarrier, MemoryBound, VkHandle, VkObject, VkRawHandle, VulkanStructure};
+use crate::{
+    vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound, VkHandle, VkObject, VkRawHandle,
+    VulkanStructure,
+};
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
 use derives::implements;
@@ -319,10 +322,10 @@ where
 }
 
 /// Builder structure specifying the parameters of a newly created image object
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[repr(transparent)]
+#[derive(Clone, Debug)]
 pub struct ImageDesc<'d>(
-    pub(crate) VkImageCreateInfo,
+    VkImageCreateInfo,
+    Vec<Box<GenericVulkanStructure>>,
     core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
 );
 impl<'d> ImageDesc<'d> {
@@ -345,21 +348,27 @@ impl<'d> ImageDesc<'d> {
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
             },
+            Vec::new(),
             core::marker::PhantomData,
         )
+    }
+
+    pub unsafe fn with_extension(mut self, ext: impl VulkanStructure) -> Self {
+        self.1.push(core::mem::transmute(Box::new(ext)));
+        self
     }
 
     /// Wraps raw vulkan structure
     /// # Safety
     /// This function does not check any references/constraints
     pub const unsafe fn from_raw(s: VkImageCreateInfo) -> Self {
-        Self(s, core::marker::PhantomData)
+        Self(s, Vec::new(), core::marker::PhantomData)
     }
 
     /// Unwraps raw vulkan structure
     /// # Safety
     /// Lifetime constraints are removed
-    pub const unsafe fn into_raw(self) -> VkImageCreateInfo {
+    pub unsafe fn into_raw(self) -> VkImageCreateInfo {
         self.0
     }
 
@@ -412,9 +421,22 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
+    #[cfg(feature = "VK_KHR_external_memory")]
+    pub fn exportable_as(self, types: crate::ExternalMemoryHandleTypes) -> Self {
+        unsafe {
+            self.with_extension(VkExternalMemoryImageCreateInfoKHR {
+                sType: VkExternalMemoryImageCreateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                handleTypes: types.into(),
+            })
+        }
+    }
+
     /// Create an image
     #[implements]
-    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<ImageObject<Device>> {
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<ImageObject<Device>> {
+        crate::ext::chain(&mut self.0, self.1.iter_mut().map(AsMut::as_mut));
+
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
@@ -429,11 +451,6 @@ impl<'d> ImageDesc<'d> {
                     )
                 })
         }
-    }
-}
-impl AsRef<VkImageCreateInfo> for ImageDesc<'_> {
-    fn as_ref(&self) -> &VkImageCreateInfo {
-        &self.0
     }
 }
 

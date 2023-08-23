@@ -61,6 +61,7 @@ impl<S: VulkanStructure> StructureChainQuery for S {
 
 #[repr(C)]
 #[allow(non_snake_case)]
+#[derive(Clone, Debug)]
 pub struct GenericVulkanStructure {
     pub sType: crate::vk::VkStructureType,
     pub pNext: *const libc::c_void,
