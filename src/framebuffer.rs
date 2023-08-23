@@ -10,7 +10,7 @@ use std::ops::*;
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a render pass object
-    RenderPassObject(VkRenderPass, VK_OBJECT_TYPE_RENDER_PASS): RenderPass { drop destroy_render_pass }
+    RenderPassObject(VkRenderPass): RenderPass
 }
 
 /// Opaque handle to a framebuffer object

@@ -204,3 +204,7 @@ pub trait VkRawHandle {
 
     fn raw_handle_value(&self) -> u64;
 }
+
+pub trait VkDeviceChildNonExtDestroyable {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks);
+}

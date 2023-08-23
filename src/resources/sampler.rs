@@ -8,7 +8,7 @@ GuardsImpl!(for Sampler {});
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a sampler object
-    SamplerObject(VkSampler): Sampler { drop destroy_sampler }
+    SamplerObject(VkSampler): Sampler
 }
 
 /// Builder object for constructing the sampler object

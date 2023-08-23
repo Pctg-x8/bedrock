@@ -1,8 +1,8 @@
 use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
 
 use crate::{
-    vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure,
+    vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound, VkDeviceChildNonExtDestroyable,
+    VkHandle, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -263,7 +263,7 @@ unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
 impl<Device: crate::Device> Drop for ImageObject<Device> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_image(self.1.native_ptr(), self.0, std::ptr::null());
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
         }
     }
 }
@@ -775,7 +775,7 @@ impl<Image: self::Image> DeviceChild for ImageViewObject<Image> {
 impl<Image: self::Image> Drop for ImageViewObject<Image> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null());
+            self.0.destroy(self.1.device().native_ptr(), core::ptr::null());
         }
     }
 }

@@ -1,6 +1,6 @@
 use crate::{
     vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsage, PresentMode, SurfaceTransform, Swapchain,
-    VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureProvider,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureProvider,
 };
 use derives::implements;
 
@@ -36,7 +36,7 @@ where
 {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_swapchain_khr(self.device.native_ptr(), self.handle, std::ptr::null());
+            self.handle.destroy(self.device.native_ptr(), core::ptr::null());
         }
     }
 }
@@ -63,11 +63,12 @@ where
     pub fn deconstruct(self) -> (Device, Surface) {
         let d = unsafe { core::ptr::read(&self.device) };
         let s = unsafe { core::ptr::read(&self.surface) };
+
         // Note: DeviceとSurfaceをdropさせたくない
         unsafe {
-            crate::vkresolve::destroy_swapchain_khr(self.device.native_ptr(), self.handle, std::ptr::null());
+            self.handle.destroy(self.device.native_ptr(), core::ptr::null());
         }
-        std::mem::forget(self);
+        core::mem::forget(self);
 
         (d, s)
     }

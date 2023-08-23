@@ -1,4 +1,6 @@
-use crate::{vk::*, DeviceChild, MemoryBound, VkHandle, VkObject, VkRawHandle, VulkanStructure};
+use crate::{
+    vk::*, DeviceChild, MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+};
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
 use derives::implements;
@@ -39,7 +41,7 @@ GuardsImpl!(for BufferView {});
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a buffer object(constructed via [`BufferDesc`])
-    BufferObject(VkBuffer): Buffer { drop destroy_buffer }
+    BufferObject(VkBuffer): Buffer
 }
 impl<Device: crate::Device> MemoryBound for BufferObject<Device>
 where
@@ -94,7 +96,7 @@ impl<Buffer: crate::Buffer> DeviceChild for BufferViewObject<Buffer> {
 impl<Buffer: crate::Buffer> Drop for BufferViewObject<Buffer> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_buffer_view(self.1.device().native_ptr(), self.0, std::ptr::null());
+            self.0.destroy(self.1.device().native_ptr(), core::ptr::null());
         }
     }
 }

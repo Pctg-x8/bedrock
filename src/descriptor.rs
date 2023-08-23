@@ -8,23 +8,10 @@ use crate::VkHandleMut;
 use crate::{vk::*, DeviceChild, VkObject, VkRawHandle};
 use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
-#[derive(VkHandle, VkObject, DeviceChild)]
-#[VkObject(type = VkDescriptorSetLayout::OBJECT_TYPE)]
-pub struct DescriptorSetLayoutObject<Device: crate::Device>(
-    pub(crate) VkDescriptorSetLayout,
-    #[parent] pub(crate) Device,
-);
-unsafe impl<Device: crate::Device + Send> Send for DescriptorSetLayoutObject<Device> {}
-unsafe impl<Device: crate::Device + Sync> Sync for DescriptorSetLayoutObject<Device> {}
-#[implements]
-impl<Device: crate::Device> Drop for DescriptorSetLayoutObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            crate::vkresolve::destroy_descriptor_set_layout(self.1.native_ptr(), self.0, core::ptr::null());
-        }
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a descriptor set layout object
+    DescriptorSetLayoutObject(VkDescriptorSetLayout): DescriptorSetLayout
 }
-impl<Device: crate::Device> DescriptorSetLayout for DescriptorSetLayoutObject<Device> {}
 impl<Device: crate::Device> std::cmp::PartialEq for DescriptorSetLayoutObject<Device> {
     fn eq(&self, other: &Self) -> bool {
         self.0 == other.0
@@ -37,20 +24,10 @@ impl<Device: crate::Device> std::hash::Hash for DescriptorSetLayoutObject<Device
     }
 }
 
-#[derive(VkHandle, VkObject, DeviceChild)]
-#[VkObject(type = VkDescriptorPool::OBJECT_TYPE)]
-pub struct DescriptorPoolObject<Device: crate::Device>(pub(crate) VkDescriptorPool, #[parent] pub(crate) Device);
-unsafe impl<Device: crate::Device + Send> Send for DescriptorPoolObject<Device> {}
-unsafe impl<Device: crate::Device + Sync> Sync for DescriptorPoolObject<Device> {}
-#[implements]
-impl<Device: crate::Device> Drop for DescriptorPoolObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            crate::vkresolve::destroy_descriptor_pool(self.1.native_ptr(), self.0, core::ptr::null());
-        }
-    }
+DefineStdDeviceChildObject! {
+    /// Opaque handle to a descriptor pool object
+    DescriptorPoolObject(VkDescriptorPool): DescriptorPool
 }
-impl<Device: crate::Device> DescriptorPool for DescriptorPoolObject<Device> {}
 
 #[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
