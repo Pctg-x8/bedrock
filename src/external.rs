@@ -181,6 +181,12 @@ impl ExternalMemoryHandleTypeWin32 {
         ExternalMemoryHandleWin32(self, handle)
     }
 }
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+impl From<ExternalMemoryHandleTypeWin32> for ExternalMemoryHandleTypes {
+    fn from(value: ExternalMemoryHandleTypeWin32) -> Self {
+        Self(value as _)
+    }
+}
 
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(C)]
@@ -196,6 +202,12 @@ impl ExternalMemoryHandleTypeFd {
         ExternalMemoryHandleFd(self, fd)
     }
 }
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+impl From<ExternalMemoryHandleTypeFd> for ExternalMemoryHandleTypes {
+    fn from(value: ExternalMemoryHandleTypeFd) -> Self {
+        Self(value as _)
+    }
+}
 
 #[cfg(feature = "VK_EXT_external_memory_host")]
 #[repr(C)]
@@ -208,6 +220,12 @@ pub enum ExternalMemoryHandleType {
 impl ExternalMemoryHandleType {
     pub const fn with_pointer(self, p: *const std::os::raw::c_void) -> ExternalMemoryHostPointer {
         ExternalMemoryHostPointer(self, p)
+    }
+}
+#[cfg(feature = "VK_EXT_external_memory_host")]
+impl From<ExternalMemoryHandleType> for ExternalMemoryHandleTypes {
+    fn from(value: ExternalMemoryHandleType) -> Self {
+        Self(value as _)
     }
 }
 
