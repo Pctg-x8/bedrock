@@ -170,8 +170,8 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
             pNext: core::ptr::null(),
             flags: 0,
             semaphore: self.native_ptr(),
-            handleType: handle.as_type_bits(),
-            handle: handle.handle(),
+            handleType: handle.0 as _,
+            handle: handle.1,
             name: windows::core::PCWSTR(name.as_ptr()),
         };
 

@@ -16,6 +16,18 @@ pub enum ExternalSemaphoreHandleTypeWin32 {
     OpaqueWin32KMT = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR as _,
     D3DFence = VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR as _,
 }
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+impl ExternalSemaphoreHandleTypeWin32 {
+    pub const fn with_handle(self, handle: windows::Win32::Foundation::HANDLE) -> ExternalSemaphoreHandleWin32 {
+        ExternalSemaphoreHandleWin32(self, handle)
+    }
+}
+
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+pub struct ExternalSemaphoreHandleWin32(
+    pub ExternalSemaphoreHandleTypeWin32,
+    pub windows::Win32::Foundation::HANDLE,
+);
 
 cfg_if! {
     if #[cfg(feature = "VK_KHR_external_semaphore")] {
@@ -48,28 +60,6 @@ cfg_if! {
 
 cfg_if! {
     if #[cfg(feature = "VK_KHR_external_semaphore_win32")] {
-        pub enum ExternalSemaphoreHandleWin32 {
-            OpaqueWin32(windows::Win32::Foundation::HANDLE),
-            OpaqueWin32KMT(windows::Win32::Foundation::HANDLE),
-            D3DFence(windows::Win32::Foundation::HANDLE),
-        }
-        impl ExternalSemaphoreHandleWin32 {
-            pub(crate) const fn as_type_bits(&self) -> VkExternalSemaphoreHandleTypeFlagsKHR {
-                match self {
-                    Self::OpaqueWin32(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR,
-                    Self::OpaqueWin32KMT(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR,
-                    // note: same value: VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT
-                    Self::D3DFence(_) => VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR,
-                }
-            }
-
-            pub(crate) fn handle(&self) -> windows::Win32::Foundation::HANDLE {
-                match self {
-                    &Self::OpaqueWin32(h) | &Self::OpaqueWin32KMT(h) | &Self::D3DFence(h) => h,
-                }
-            }
-        }
-
         #[repr(transparent)]
         pub struct D3D12FenceSubmitInfo<'t>(VkD3D12FenceSubmitInfoKHR, std::marker::PhantomData<&'t [u64]>);
         impl<'t> From<D3D12FenceSubmitInfo<'t>> for VkD3D12FenceSubmitInfoKHR {
