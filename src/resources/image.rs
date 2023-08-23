@@ -472,6 +472,10 @@ impl<S: Image> ImageSubresource<S> {
             s.assume_init()
         }
     }
+
+    pub fn make_ref(&self) -> ImageSubresource<&S> {
+        ImageSubresource(&self.0, self.1.clone())
+    }
 }
 impl<S: Image> From<ImageSubresource<S>> for VkImageSubresource {
     fn from(value: ImageSubresource<S>) -> Self {
@@ -497,6 +501,10 @@ impl<S: Image> ImageSubresourceRange<S> {
                 arrayLayer: self.1.baseArrayLayer + array_layer_offset,
             },
         )
+    }
+
+    pub fn make_ref(&self) -> ImageSubresourceRange<&S> {
+        ImageSubresourceRange(&self.0, self.1.clone())
     }
 }
 impl<S: Image> ImageSubresourceRange<&'_ S> {
