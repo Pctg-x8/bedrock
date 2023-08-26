@@ -12,6 +12,12 @@ use libc::*;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_SWAPCHAIN_KHR)]
 pub struct VkSwapchainKHR(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkSwapchainKHR {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_swapchain_khr(device, self, allocator);
+    }
+}
 
 pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = ext_enum_value(2, 0) as _;
 

@@ -254,7 +254,7 @@ GuardsImpl!(for Status {
 
 DefineStdDeviceChildObject! {
     /// Opaque Handle to a fence object
-    FenceObject(VkFence): Fence { drop destroy_fence }
+    FenceObject(VkFence): Fence
 }
 impl<Device: crate::Device> Status for FenceObject<Device> {
     #[cfg(feature = "Implements")]
@@ -270,12 +270,12 @@ impl<Device: crate::Device> Status for FenceObject<Device> {
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a semaphore object
-    SemaphoreObject(VkSemaphore): Semaphore { drop destroy_semaphore }
+    SemaphoreObject(VkSemaphore): Semaphore
 }
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a event object
-    EventObject(VkEvent): Event { drop destroy_event }
+    EventObject(VkEvent): Event
 }
 impl<Device: crate::Device> Status for EventObject<Device> {
     #[cfg(feature = "Implements")]

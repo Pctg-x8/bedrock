@@ -174,22 +174,22 @@ pub enum StencilFaceMask {
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a shader module object
-    ShaderModuleObject(VkShaderModule, VK_OBJECT_TYPE_SHADER_MODULE): ShaderModule { drop destroy_shader_module }
+    ShaderModuleObject(VkShaderModule): ShaderModule
 }
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a pipeline cache object
-    PipelineCacheObject(VkPipelineCache, VK_OBJECT_TYPE_PIPELINE_CACHE): PipelineCache { drop destroy_pipeline_cache }
+    PipelineCacheObject(VkPipelineCache): PipelineCache
 }
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a pipeline layout object
-    PipelineLayoutObject(VkPipelineLayout, VK_OBJECT_TYPE_PIPELINE_LAYOUT): PipelineLayout { drop destroy_pipeline_layout }
+    PipelineLayoutObject(VkPipelineLayout): PipelineLayout
 }
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a pipeline object
-    PipelineObject(VkPipeline, VK_OBJECT_TYPE_PIPELINE): Pipeline { drop destroy_pipeline }
+    PipelineObject(VkPipeline): Pipeline
 }
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}

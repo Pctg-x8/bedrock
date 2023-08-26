@@ -80,7 +80,26 @@ macro_rules! DefineStdDeviceChildObject {
             }
         }
         impl<Device: crate::Device> $i for $name<Device> {}
-    }
+    };
+    { $(#[$m: meta])* $name: ident($vkh: ty): $i: ty } => {
+        #[derive($crate::VkHandle, $crate::DeviceChild, $crate::VkObject)]
+        #[VkObject(type = <$vkh as $crate::VkRawHandle>::OBJECT_TYPE)]
+        $(#[$m])*
+        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, #[parent] pub(crate) Device);
+        unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
+        unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
+        #[derives::implements]
+        impl<Device: $crate::Device> Drop for $name<Device> {
+            fn drop(&mut self) {
+                use $crate::handle::VkDeviceChildNonExtDestroyable;
+
+                unsafe {
+                    self.0.destroy(self.1.native_ptr(), core::ptr::null());
+                }
+            }
+        }
+        impl<Device: crate::Device> $i for $name<Device> {}
+    };
 }
 
 macro_rules! DerefContainerBracketImpl {

@@ -124,7 +124,7 @@ GuardsImpl!(for DeviceMemory {});
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a device memory object
-    DeviceMemoryObject(VkDeviceMemory): DeviceMemory { drop free_memory }
+    DeviceMemoryObject(VkDeviceMemory): DeviceMemory
 }
 
 pub struct DeviceMemoryRequest(VkMemoryAllocateInfo, Vec<Box<GenericVulkanStructure>>);

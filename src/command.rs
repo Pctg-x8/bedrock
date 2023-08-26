@@ -15,7 +15,7 @@ use std::ops::Range;
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a command pool object
-    CommandPoolObject(VkCommandPool, VK_OBJECT_TYPE_COMMAND_POOL): CommandPool { drop destroy_command_pool }
+    CommandPoolObject(VkCommandPool): CommandPool
 }
 
 /// Opaque handle to a command buffer object

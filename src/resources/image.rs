@@ -1,8 +1,8 @@
 use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
 
 use crate::{
-    vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure,
+    vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound, VkDeviceChildNonExtDestroyable,
+    VkHandle, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -263,7 +263,7 @@ unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
 impl<Device: crate::Device> Drop for ImageObject<Device> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_image(self.1.native_ptr(), self.0, std::ptr::null());
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
         }
     }
 }
@@ -472,6 +472,10 @@ impl<S: Image> ImageSubresource<S> {
             s.assume_init()
         }
     }
+
+    pub fn make_ref(&self) -> ImageSubresource<&S> {
+        ImageSubresource(&self.0, self.1.clone())
+    }
 }
 impl<S: Image> From<ImageSubresource<S>> for VkImageSubresource {
     fn from(value: ImageSubresource<S>) -> Self {
@@ -497,6 +501,10 @@ impl<S: Image> ImageSubresourceRange<S> {
                 arrayLayer: self.1.baseArrayLayer + array_layer_offset,
             },
         )
+    }
+
+    pub fn make_ref(&self) -> ImageSubresourceRange<&S> {
+        ImageSubresourceRange(&self.0, self.1.clone())
     }
 }
 impl<S: Image> ImageSubresourceRange<&'_ S> {
@@ -775,7 +783,7 @@ impl<Image: self::Image> DeviceChild for ImageViewObject<Image> {
 impl<Image: self::Image> Drop for ImageViewObject<Image> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_image_view(self.1.device().native_ptr(), self.0, std::ptr::null());
+            self.0.destroy(self.1.device().native_ptr(), core::ptr::null());
         }
     }
 }

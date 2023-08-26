@@ -21,7 +21,7 @@
 
 use crate::{ffi_helper::FixedCStrBuffer, StaticCallable, VulkanStructure, PFN};
 use cfg_if::cfg_if;
-use derives::vk_raw_handle;
+use derives::{implements, vk_raw_handle};
 use libc::*;
 use std;
 
@@ -119,6 +119,12 @@ pub struct VkQueue(pub *mut c_void);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_SEMAPHORE)]
 pub struct VkSemaphore(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkSemaphore {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_semaphore(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -129,81 +135,177 @@ pub struct VkCommandBuffer(pub *mut c_void);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_FENCE)]
 pub struct VkFence(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkFence {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_fence(device, self, allocator)
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_DEVICE_MEMORY)]
 pub struct VkDeviceMemory(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkDeviceMemory {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::free_memory(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_BUFFER)]
 pub struct VkBuffer(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkBuffer {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_buffer(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_IMAGE)]
 pub struct VkImage(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkImage {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_image(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_EVENT)]
 pub struct VkEvent(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkEvent {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_event(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_QUERY_POOL)]
 pub struct VkQueryPool(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkQueryPool {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_query_pool(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_BUFFER_VIEW)]
 pub struct VkBufferView(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkBufferView {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_buffer_view(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_IMAGE_VIEW)]
 pub struct VkImageView(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkImageView {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_image_view(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_SHADER_MODULE)]
 pub struct VkShaderModule(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkShaderModule {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_shader_module(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_PIPELINE_CACHE)]
 pub struct VkPipelineCache(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkPipelineCache {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_pipeline_cache(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_PIPELINE_LAYOUT)]
 pub struct VkPipelineLayout(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkPipelineLayout {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_pipeline_layout(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_RENDER_PASS)]
 pub struct VkRenderPass(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkRenderPass {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_render_pass(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_PIPELINE)]
 pub struct VkPipeline(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkPipeline {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_pipeline(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT)]
 pub struct VkDescriptorSetLayout(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkDescriptorSetLayout {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_descriptor_set_layout(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_SAMPLER)]
 pub struct VkSampler(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkSampler {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_sampler(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_DESCRIPTOR_POOL)]
 pub struct VkDescriptorPool(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkDescriptorPool {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_descriptor_pool(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -214,11 +316,23 @@ pub struct VkDescriptorSet(pub u64);
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_FRAMEBUFFER)]
 pub struct VkFramebuffer(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkFramebuffer {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_framebuffer(device, self, allocator);
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_COMMAND_POOL)]
 pub struct VkCommandPool(pub u64);
+#[implements]
+impl crate::VkDeviceChildNonExtDestroyable for VkCommandPool {
+    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
+        crate::vkresolve::destroy_command_pool(device, self, allocator);
+    }
+}
 
 pub const VK_LOD_CLAMP_NONE: f32 = 1000.0;
 pub const VK_REMAINING_MIP_LEVELS: u32 = !0;
