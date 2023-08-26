@@ -391,7 +391,7 @@ impl<'p, 'b: 'p, Pool: crate::CommandPool + VkHandleMut + 'p, Buffer: crate::Com
 
 /// Common Commands: End Recording
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Finish recording a command buffer
     pub fn end(self) -> crate::Result<()> {
         unsafe {
@@ -404,7 +404,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics Commands: Manipulating with Render Passes
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Begin a new render pass
     #[must_use]
     pub fn begin_render_pass(
@@ -460,7 +460,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics/Compute Commands: Pipeline Setup
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Bind a pipeline object to a command buffer
     #[must_use]
     pub fn bind_graphics_pipeline(&mut self, pipeline: &(impl crate::Pipeline + ?Sized)) -> &mut Self {
@@ -731,7 +731,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics Commands: Updating dynamic states
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd> CmdRecord<'d, CommandBuffer> {
     /// Set the viewport on a command buffer
     #[must_use]
     pub fn set_viewport(&mut self, first: u32, viewports: &[VkViewport]) -> &mut Self {
@@ -823,7 +823,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics Commands: Binding Buffers
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Bind an index buffer to a command buffer
     #[must_use]
     pub fn bind_index_buffer(
@@ -868,7 +868,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics Commands: Inside a Render Pass
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Draw primitives
     #[must_use]
     pub fn draw(
@@ -955,7 +955,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Compute Commands: Dispatching kernels
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Dispatch compute work items
     #[must_use]
     pub fn dispatch(&mut self, group_count_x: u32, group_count_y: u32, group_count_z: u32) -> &mut Self {
@@ -981,7 +981,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Transfer Commands: Copying resources
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Copy data between buffer regions
     #[must_use]
     pub fn copy_buffer(
@@ -1119,7 +1119,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics/Compute Commands: Transfer-like(clearing/filling) commands
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Fill a region of a buffer with a fixed value.  
     /// `size` is number of bytes to fill
     #[must_use]
@@ -1207,7 +1207,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics Commands: Executing Subcommands
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Execute a secondary command buffer from a primary command buffer
     /// # Safety
     ///
@@ -1221,7 +1221,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics Commands: Resolving an image to another image
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Resolve regions of an image
     #[must_use]
     pub fn resolve_image(
@@ -1249,7 +1249,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics/Compute Commands: Synchronization between command buffers/queues
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Set an event object to signaled state
     #[must_use]
     pub fn set_event(&mut self, event: impl VkHandle<Handle = VkEvent>, stage_mask: PipelineStageFlags) -> &mut Self {
@@ -1329,7 +1329,7 @@ impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRec
 
 /// Graphics/Compute Commands: Querying
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Begin a query
     #[must_use]
     pub fn begin_query(
