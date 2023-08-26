@@ -35,7 +35,7 @@ pub struct CmdRecord<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 
 }
 #[implements]
 impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd> CmdRecord<'d, CommandBuffer> {
-    pub fn as_dyn_ref(&'d mut self) -> CmdRecord<'d, dyn VkHandleMut<Handle = VkCommandBuffer> + 'd> {
+    pub fn as_dyn_ref<'r>(&'r mut self) -> CmdRecord<'r, dyn VkHandleMut<Handle = VkCommandBuffer> + 'r> {
         CmdRecord {
             ptr: self.ptr as _,
             layout: self.layout,
