@@ -28,11 +28,12 @@ unsafe impl<Device: crate::Device + Send> Send for CommandBufferObject<Device> {
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
 
 /// The recording state of command buffers
-#[cfg(feature = "Implements")]
+#[implements]
 pub struct CmdRecord<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> {
     ptr: &'d mut CommandBuffer,
     layout: [Option<VkPipelineLayout>; 2],
 }
+#[implements]
 impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd> CmdRecord<'d, CommandBuffer> {
     pub fn as_dyn_ref(&'d mut self) -> CmdRecord<'d, dyn VkHandleMut<Handle = VkCommandBuffer> + 'd> {
         CmdRecord {
