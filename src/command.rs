@@ -29,7 +29,7 @@ impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
 
 /// The recording state of command buffers
 #[cfg(feature = "Implements")]
-pub struct CmdRecord<'d, CommandBuffer: crate::CommandBuffer + VkHandleMut + ?Sized + 'd> {
+pub struct CmdRecord<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> {
     ptr: &'d mut CommandBuffer,
     layout: [Option<VkPipelineLayout>; 2],
 }
