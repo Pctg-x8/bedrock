@@ -33,6 +33,14 @@ pub struct CmdRecord<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 
     ptr: &'d mut CommandBuffer,
     layout: [Option<VkPipelineLayout>; 2],
 }
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd> CmdRecord<'d, CommandBuffer> {
+    pub fn as_dyn_ref(&'d mut self) -> CmdRecord<'d, dyn VkHandleMut<Handle = VkCommandBuffer> + 'd> {
+        CmdRecord {
+            ptr: self.ptr as _,
+            layout: self.layout,
+        }
+    }
+}
 
 pub struct CommandPoolBuilder(VkCommandPoolCreateInfo);
 impl CommandPoolBuilder {
