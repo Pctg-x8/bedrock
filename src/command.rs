@@ -731,7 +731,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
 
 /// Graphics Commands: Updating dynamic states
 #[cfg(feature = "Implements")]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd> CmdRecord<'d, CommandBuffer> {
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> CmdRecord<'d, CommandBuffer> {
     /// Set the viewport on a command buffer
     #[must_use]
     pub fn set_viewport(&mut self, first: u32, viewports: &[VkViewport]) -> &mut Self {
