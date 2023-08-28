@@ -127,7 +127,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
                     static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
-                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
+                    log::trace!(target: "br-vkapi-call", stringify!($name));
 
                     VkResultBox(F.resolve().0($($arg_name),*))
                 }
@@ -135,7 +135,7 @@ macro_rules! WrapAPI2 {
                 $(#[$attr])*
                 #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
-                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
+                    log::trace!(target: "br-vkapi-call", stringify!($name));
 
                     VkResultBox(<$org_fn_type>::STATIC.0($($arg_name),*))
                 }
@@ -151,7 +151,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
                     static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
-                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
+                    log::trace!(target: "br-vkapi-call", stringify!($name));
 
                     F.resolve().0($($arg_name),*)
                 }
@@ -159,7 +159,7 @@ macro_rules! WrapAPI2 {
                 $(#[$attr])*
                 #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) -> $rt {
-                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
+                    log::trace!(target: "br-vkapi-call", stringify!($name));
 
                     <$org_fn_type>::STATIC.0($($arg_name),*)
                 }
@@ -175,7 +175,7 @@ macro_rules! WrapAPI2 {
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
                     static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
-                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
+                    log::trace!(target: "br-vkapi-call", stringify!($name));
 
                     F.resolve().0($($arg_name),*)
                 }
@@ -183,7 +183,7 @@ macro_rules! WrapAPI2 {
                 $(#[$attr])*
                 #[inline]
                 $v unsafe fn $name($($arg_name: $arg_type),*) {
-                    log::trace!(target: "br-vkapi-call", stringify!($org_fn));
+                    log::trace!(target: "br-vkapi-call", stringify!($name));
 
                     <$org_fn_type>::STATIC.0($($arg_name),*)
                 }
