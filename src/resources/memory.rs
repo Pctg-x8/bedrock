@@ -16,19 +16,38 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::map_memory(
-                self.device().native_ptr(),
-                self.native_ptr_mut(),
-                range.start as _,
-                (range.end - range.start) as _,
-                0,
-                p.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| MappedMemoryRange(range, p.assume_init() as *mut _, self))
+            self.map_raw(range.start as _..range.end as _)
+                .map(move |p| MappedMemoryRange(range, p as _, self))
         }
+    }
+
+    /// Map a memory object into application address space
+    /// # Safety
+    /// mapped memory must be unmapped once
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_MEMORY_MAP_FAILED`
+    #[implements]
+    unsafe fn map_raw(&mut self, range: Range<VkDeviceSize>) -> crate::Result<*mut libc::c_void>
+    where
+        Self: VkHandleMut,
+    {
+        let mut p = core::mem::MaybeUninit::uninit();
+
+        crate::vkresolve::map_memory(
+            self.device().native_ptr(),
+            self.native_ptr_mut(),
+            range.start,
+            range.end - range.start,
+            0,
+            p.as_mut_ptr(),
+        )
+        .into_result()
+        .map(move |_| p.assume_init())
     }
 
     /// Unmap a previously mapped memory object
