@@ -163,6 +163,11 @@ impl<'s> BufferDesc<'s> {
         self
     }
 
+    pub const fn and_usage(mut self, usage: BufferUsage) -> Self {
+        self.0.usage |= usage.0;
+        self
+    }
+
     /// Create a new buffer object
     /// # Failure
     /// On failure, this command returns
