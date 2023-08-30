@@ -90,7 +90,7 @@ impl VkSparseImageMemoryRequirements2KHR {
     }
 }
 
-#[cfg(feature = "Implements")]
+#[implements]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -98,11 +98,11 @@ impl VkSparseImageMemoryRequirements2KHR {
 pub struct PFN_vkGetImageMemoryRequirements2KHR(
     pub  unsafe extern "system" fn(
         device: VkDevice,
-        pInfo: *const VkImageMemoryRequirementsInfo2,
-        pMemoryRequirements: *mut VkMemoryRequirements2,
+        pInfo: *const VkImageMemoryRequirementsInfo2KHR,
+        pMemoryRequirements: *mut VkMemoryRequirements2KHR,
     ),
 );
-#[cfg(feature = "Implements")]
+#[implements]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -110,11 +110,11 @@ pub struct PFN_vkGetImageMemoryRequirements2KHR(
 pub struct PFN_vkGetBufferMemoryRequirements2KHR(
     pub  unsafe extern "system" fn(
         device: VkDevice,
-        pInfo: *const VkBufferMemoryRequirementsInfo2,
-        pMemoryRequirements: *mut VkMemoryRequirements2,
+        pInfo: *const VkBufferMemoryRequirementsInfo2KHR,
+        pMemoryRequirements: *mut VkMemoryRequirements2KHR,
     ),
 );
-#[cfg(feature = "Implements")]
+#[implements]
 #[promote_1_1(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
@@ -122,32 +122,8 @@ pub struct PFN_vkGetBufferMemoryRequirements2KHR(
 pub struct PFN_vkGetImageSparseMemoryRequirements2KHR(
     pub  unsafe extern "system" fn(
         device: VkDevice,
-        pInfo: *const VkImageSparseMemoryRequirementsInfo2,
+        pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR,
         pSparseMemoryRequirementCount: *mut u32,
-        pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2,
+        pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR,
     ),
 );
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetImageMemoryRequirements2KHR(
-        device: VkDevice,
-        pInfo: *const VkImageMemoryRequirementsInfo2,
-        pMemoryRequirements: *mut VkMemoryRequirements2,
-    );
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetBufferMemoryRequirements2KHR(
-        device: VkDevice,
-        pInfo: *const VkBufferMemoryRequirementsInfo2,
-        pMemoryRequirements: *mut VkMemoryRequirements2,
-    );
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetImageSparseMemoryRequirements2KHR(
-        device: VkDevice,
-        pInfo: *const VkImageSparseMemoryRequirementsInfo2,
-        pSparseMemoryRequirementCount: *mut u32,
-        pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2,
-    );
-}
