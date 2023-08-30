@@ -1,7 +1,4 @@
-#[implements]
-use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, DeviceMemory, Image, MemoryBound, VkHandle, VkObject, VkRawHandle};
-use derives::implements;
+use crate::{vk::*, DeviceChild, Image, VkHandle, VkObject, VkRawHandle};
 
 /// Opaque handle to a image object, backed by Swapchain.
 #[derive(VkHandle, VkObject)]
@@ -27,41 +24,6 @@ impl<Swapchain: crate::Swapchain> Image for SwapchainImage<Swapchain> {
 
     fn dimension(&self) -> VkImageViewType {
         VK_IMAGE_VIEW_TYPE_2D
-    }
-}
-impl<Swapchain: crate::Swapchain> MemoryBound for SwapchainImage<Swapchain>
-where
-    Self: VkHandle<Handle = VkImage>,
-{
-    #[implements]
-    fn requirements(&self) -> VkMemoryRequirements {
-        let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::get_image_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                p.as_mut_ptr(),
-            );
-
-            p.assume_init()
-        }
-    }
-
-    #[implements]
-    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
-        unsafe {
-            crate::vkresolve::bind_image_memory(
-                self.device().native_ptr(),
-                self.native_ptr_mut(),
-                memory.native_ptr(),
-                offset as _,
-            )
-            .into_result()
-            .map(drop)
-        }
     }
 }
 impl<Swapchain: crate::Swapchain + Clone> SwapchainImage<&'_ Swapchain> {
