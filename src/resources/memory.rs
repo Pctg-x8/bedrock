@@ -226,6 +226,36 @@ impl DeviceMemoryRequest {
         }
     }
 
+    /// Adds dedicated allocation info for a buffer
+    /// # Safety
+    /// lifetime not captured
+    #[cfg(feature = "VK_KHR_dedicated_allocation")]
+    pub unsafe fn for_dedicated_buffer_allocation(self, buffer: &impl crate::Buffer) -> Self {
+        use crate::VkRawHandle;
+
+        self.with_additional_info(VkMemoryDedicatedAllocateInfoKHR {
+            sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+            pNext: core::ptr::null(),
+            image: VkImage::NULL,
+            buffer: buffer.native_ptr(),
+        })
+    }
+
+    /// Adds dedicated allocation info for an image
+    /// # Safety
+    /// lifetime not captured
+    #[cfg(feature = "VK_KHR_dedicated_allocation")]
+    pub unsafe fn for_dedicated_image_allocation(self, image: &impl crate::Image) -> Self {
+        use crate::VkRawHandle;
+
+        self.with_additional_info(VkMemoryDedicatedAllocateInfoKHR {
+            sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+            pNext: core::ptr::null(),
+            image: image.native_ptr(),
+            buffer: VkBuffer::NULL,
+        })
+    }
+
     pub unsafe fn with_additional_info(mut self, x: impl VulkanStructure) -> Self {
         self.1.push(core::mem::transmute(Box::new(x)));
         self
