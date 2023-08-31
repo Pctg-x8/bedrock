@@ -142,9 +142,18 @@ cfg_if! {
 
 /// Common operations for memory bound objects
 pub trait MemoryBound: VkHandle {
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    type MemoryRequirementsInfo2<'b>
+    where
+        Self: 'b;
+
     /// Returns the memory requirements for specified Vulkan object
     #[implements]
     fn requirements(&self) -> VkMemoryRequirements;
+
+    #[implements]
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b>;
 
     /// Bind device memory to the object
     /// # Failure

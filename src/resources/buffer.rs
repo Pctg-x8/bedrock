@@ -47,6 +47,9 @@ impl<Device: crate::Device> MemoryBound for BufferObject<Device>
 where
     Self: VkHandle<Handle = VkBuffer>,
 {
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    type MemoryRequirementsInfo2<'b> = BufferMemoryRequirementsInfo2<'b, Self> where Device: 'b;
+
     #[implements]
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = core::mem::MaybeUninit::uninit();
@@ -59,6 +62,12 @@ where
 
             p.assume_init()
         }
+    }
+
+    #[implements]
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b> {
+        BufferMemoryRequirementsInfo2::new(self)
     }
 
     #[implements]
@@ -193,6 +202,38 @@ impl crate::VulkanStructureProvider for BufferDesc<'_> {
     fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut crate::GenericVulkanStructure {
         *root = self.0.clone();
         root.as_generic_mut()
+    }
+}
+
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+pub struct BufferMemoryRequirementsInfo2<'b, Buffer: self::Buffer + 'b>(VkBufferMemoryRequirementsInfo2KHR, &'b Buffer);
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+impl<'b, Buffer: self::Buffer + 'b> BufferMemoryRequirementsInfo2<'b, Buffer> {
+    pub fn new(buffer: &'b Buffer) -> Self {
+        Self(
+            VkBufferMemoryRequirementsInfo2KHR {
+                sType: VkBufferMemoryRequirementsInfo2KHR::TYPE,
+                pNext: core::ptr::null(),
+                buffer: buffer.native_ptr(),
+            },
+            buffer,
+        )
+    }
+
+    #[implements]
+    pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
+    where
+        <Buffer as crate::DeviceChild>::ConcreteDevice: crate::Device,
+    {
+        use crate::Device;
+
+        unsafe {
+            self.1.device().get_buffer_memory_requirements_2_khr_fn().0(
+                self.1.device().native_ptr(),
+                &self.0,
+                sink.as_mut_ptr(),
+            );
+        }
     }
 }
 

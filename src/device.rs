@@ -10,7 +10,7 @@ use crate::{
 };
 use crate::{
     vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, TemporalSubmissionBatchResources, VkHandle, VkObject,
-    VkResultBox, VulkanStructure,
+    VulkanStructure,
 };
 
 cfg_if! {
@@ -78,6 +78,12 @@ pub struct DeviceObject<Instance: crate::Instance> {
     get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
     #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
     get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+    get_buffer_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetBufferMemoryRequirements2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+    get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+    get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
@@ -120,6 +126,12 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
             get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
             get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -234,6 +246,22 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
+            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
+                *self.get_buffer_memory_requirements_2_khr.resolve()
+            }
+
+            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
+                *self.get_image_memory_requirements_2_khr.resolve()
+            }
+
+            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
+                *self.get_image_sparse_memory_requirements_2_khr.resolve()
+            }
+        }
+    }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
@@ -293,6 +321,16 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
             #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
             get_memory_win32_handle_properties_khr: unsafe {
                 core::ptr::read(&self.get_memory_win32_handle_properties_khr)
+            },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+            get_buffer_memory_requirements_2_khr: unsafe {
+                core::ptr::read(&self.get_buffer_memory_requirements_2_khr)
+            },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+            get_image_memory_requirements_2_khr: unsafe { core::ptr::read(&self.get_image_memory_requirements_2_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
+            get_image_sparse_memory_requirements_2_khr: unsafe {
+                core::ptr::read(&self.get_image_sparse_memory_requirements_2_khr)
             },
         };
         // disable running VkDevice destruction
@@ -603,7 +641,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .collect();
 
         unsafe {
-            VkResultBox(self.bind_buffer_memory2_khr_fn().0(
+            crate::VkResultBox(self.bind_buffer_memory2_khr_fn().0(
                 self.native_ptr(),
                 infos.len() as _,
                 infos.as_ptr(),
@@ -636,7 +674,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .collect();
 
         unsafe {
-            VkResultBox(self.bind_image_memory2_khr_fn().0(
+            crate::VkResultBox(self.bind_image_memory2_khr_fn().0(
                 self.native_ptr(),
                 infos.len() as _,
                 infos.as_ptr(),
@@ -906,7 +944,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut handle = std::mem::MaybeUninit::uninit();
         unsafe {
-            VkResultBox(self.create_descriptor_update_template_khr_fn().0(
+            crate::VkResultBox(self.create_descriptor_update_template_khr_fn().0(
                 self.native_ptr(),
                 &cinfo,
                 std::ptr::null(),
@@ -1059,6 +1097,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
+            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR;
+            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR;
+            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1161,6 +1207,22 @@ DerefContainerBracketImpl!(for Device {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
+            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
+                (**self).get_buffer_memory_requirements_2_khr_fn()
+            }
+
+            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
+                (**self).get_image_memory_requirements_2_khr_fn()
+            }
+
+            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
+                (**self).get_image_sparse_memory_requirements_2_khr_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1260,6 +1322,22 @@ GuardsImpl!(for Device {
             }
             fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
                 (**self).get_memory_win32_handle_properties_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
+            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
+                (**self).get_buffer_memory_requirements_2_khr_fn()
+            }
+
+            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
+                (**self).get_image_memory_requirements_2_khr_fn()
+            }
+
+            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
+                (**self).get_image_sparse_memory_requirements_2_khr_fn()
             }
         }
     }

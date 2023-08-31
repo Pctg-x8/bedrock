@@ -289,6 +289,9 @@ impl<Device: crate::Device> MemoryBound for ImageObject<Device>
 where
     Self: VkHandle<Handle = VkImage>,
 {
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    type MemoryRequirementsInfo2<'b> = ImageMemoryRequirementsInfo2<'b, Self> where Device: 'b;
+
     #[implements]
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = core::mem::MaybeUninit::uninit();
@@ -301,6 +304,12 @@ where
 
             p.assume_init()
         }
+    }
+
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    #[implements]
+    fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b> {
+        ImageMemoryRequirementsInfo2::new(self)
     }
 
     #[implements]
@@ -515,6 +524,38 @@ impl<S: Image> ImageSubresourceRange<&'_ S> {
 impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
     fn from(value: ImageSubresourceRange<S>) -> Self {
         value.1
+    }
+}
+
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+pub struct ImageMemoryRequirementsInfo2<'b, Image: self::Image + 'b>(VkImageMemoryRequirementsInfo2KHR, &'b Image);
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+impl<'b, Image: self::Image + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
+    pub fn new(image: &'b Image) -> Self {
+        Self(
+            VkImageMemoryRequirementsInfo2KHR {
+                sType: VkImageMemoryRequirementsInfo2KHR::TYPE,
+                pNext: core::ptr::null(),
+                image: image.native_ptr(),
+            },
+            image,
+        )
+    }
+
+    #[implements]
+    pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
+    where
+        <Image as crate::DeviceChild>::ConcreteDevice: crate::Device,
+    {
+        use crate::Device;
+
+        unsafe {
+            self.1.device().get_image_memory_requirements_2_khr_fn().0(
+                self.1.device().native_ptr(),
+                &self.0,
+                sink.as_mut_ptr(),
+            );
+        }
     }
 }
 

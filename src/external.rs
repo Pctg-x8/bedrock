@@ -4,6 +4,7 @@ use cfg_if::cfg_if;
 use derives::implements;
 
 use crate::vk::*;
+#[allow(unused_imports)]
 use crate::VulkanStructure;
 #[cfg(feature = "Implements")]
 #[allow(unused_imports)]
