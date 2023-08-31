@@ -168,6 +168,14 @@ impl<'s> BufferDesc<'s> {
         self
     }
 
+    pub const fn size(&self) -> VkDeviceSize {
+        self.0.size
+    }
+
+    pub const fn usage(&self) -> BufferUsage {
+        BufferUsage(self.0.usage)
+    }
+
     /// Create a new buffer object
     /// # Failure
     /// On failure, this command returns
