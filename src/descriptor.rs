@@ -130,10 +130,10 @@ impl<'r, H> VkHandleRef<'r, H> {
 
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
 pub struct DescriptorSetLayoutBinding<'s> {
-    ty: DescriptorType,
-    count: u32,
-    shader_stage_mask: ShaderStage,
-    immutable_samplers: Vec<SamplerObjectRef<'s>>,
+    pub ty: DescriptorType,
+    pub count: u32,
+    pub shader_stage_mask: ShaderStage,
+    pub immutable_samplers: Vec<SamplerObjectRef<'s>>,
 }
 impl<'s> DescriptorSetLayoutBinding<'s> {
     pub fn with_immutable_samplers(self, samplers: Vec<SamplerObjectRef<'s>>) -> Self {
