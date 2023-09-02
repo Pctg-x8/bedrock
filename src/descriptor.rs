@@ -87,7 +87,7 @@ impl DescriptorType {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
 pub struct SamplerObjectRef<'s>(
     VkSampler,
     core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
@@ -99,7 +99,7 @@ impl<'s> SamplerObjectRef<'s> {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
 pub struct ImageViewObjectRef<'s>(
     VkImageView,
     core::marker::PhantomData<&'s dyn VkHandle<Handle = VkImageView>>,
@@ -111,7 +111,7 @@ impl<'s> ImageViewObjectRef<'s> {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
 pub struct BufferObjectRef<'s>(VkBuffer, core::marker::PhantomData<&'s dyn VkHandle<Handle = VkBuffer>>);
 impl<'s> BufferObjectRef<'s> {
     pub fn new(r: &'s (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
@@ -125,6 +125,18 @@ pub struct VkHandleRef<'r, H>(H, core::marker::PhantomData<&'r dyn VkHandle<Hand
 impl<'r, H> VkHandleRef<'r, H> {
     pub fn new(r: &'r (impl VkHandle<Handle = H> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
+    }
+}
+impl<H: Copy> VkHandle for VkHandleRef<'_, H> {
+    type Handle = H;
+
+    fn native_ptr(&self) -> H {
+        self.0
+    }
+}
+impl<H: Copy> VkHandleMut for VkHandleRef<'_, H> {
+    fn native_ptr_mut(&mut self) -> H {
+        self.0
     }
 }
 
