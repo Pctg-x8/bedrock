@@ -126,6 +126,13 @@ impl<'r, H> VkHandleRef<'r, H> {
     pub fn new(r: &'r (impl VkHandle<Handle = H> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
     }
+
+    /// simple raw handle wrapper without any lifetime constraints.
+    /// # Safety
+    /// owner of the handle must be alive while the handle will be used.
+    pub const unsafe fn dangling(h: H) -> Self {
+        Self(h, core::marker::PhantomData)
+    }
 }
 impl<H: Copy> VkHandle for VkHandleRef<'_, H> {
     type Handle = H;
