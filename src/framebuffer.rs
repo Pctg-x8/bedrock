@@ -2,10 +2,9 @@
 
 use derives::implements;
 
-#[implements]
-use crate::VulkanStructure;
-use crate::{vk::*, DeviceChild, DeviceChildTransferrable, Image, VkObject, VkRawHandle};
-use crate::{ImageLayout, VkHandle};
+use crate::{
+    vk::*, DeviceChild, DeviceChildTransferrable, Image, ImageLayout, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+};
 use std::ops::*;
 
 DefineStdDeviceChildObject! {
@@ -21,7 +20,7 @@ pub struct FramebufferObject<Device: crate::Device> {
     pub(crate) handle: VkFramebuffer,
     #[parent]
     pub(crate) parent: Device,
-    pub(crate) under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = Device>>>,
+    pub(crate) _under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = Device>>>,
     pub(crate) size: VkExtent2D,
 }
 unsafe impl<Device> Sync for FramebufferObject<Device> where Device: crate::Device + Sync {}
@@ -558,7 +557,7 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
             .map(|_| FramebufferObject {
                 handle: h.assume_init(),
                 parent: self.render_pass.transfer_device(),
-                under_resources: self.under_resources,
+                _under_resources: self.under_resources,
                 size: VkExtent2D {
                     width: self.info.width,
                     height: self.info.height,
@@ -583,7 +582,7 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
                 .map(|_| FramebufferObject {
                     handle: h.assume_init(),
                     parent: device,
-                    under_resources: self.under_resources,
+                    _under_resources: self.under_resources,
                     size: VkExtent2D {
                         width: self.info.width,
                         height: self.info.height,
@@ -631,7 +630,7 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
                 .map(|_| FramebufferObject {
                     handle: h.assume_init(),
                     parent: self.transfer_device(),
-                    under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
+                    _under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
                     size: size.as_ref().clone(),
                 })
         }

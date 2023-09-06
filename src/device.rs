@@ -1031,7 +1031,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 .map(|_| crate::FramebufferObject {
                     handle: h.assume_init(),
                     parent: self,
-                    under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
+                    _under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
                     size: size.as_ref().clone(),
                 })
         }
