@@ -2,9 +2,9 @@
 
 use derives::implements;
 
-#[cfg(feature = "Implements")]
+#[implements]
 use crate::VulkanStructure;
-use crate::{vk::*, DeviceChild, DeviceChildTransferrable, VkObject};
+use crate::{vk::*, DeviceChild, DeviceChildTransferrable, Image, VkObject, VkRawHandle};
 use crate::{ImageLayout, VkHandle};
 use std::ops::*;
 
@@ -16,33 +16,25 @@ DefineStdDeviceChildObject! {
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle, VkObject, DeviceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_FRAMEBUFFER)]
-pub struct FramebufferObject<Device: crate::Device, ImageView: crate::ImageView>(
-    pub(crate) VkFramebuffer,
-    #[parent] pub(crate) Device,
-    pub(crate) Vec<ImageView>,
-    pub(crate) VkExtent2D,
-);
-unsafe impl<Device, ImageView> Sync for FramebufferObject<Device, ImageView>
-where
-    Device: crate::Device + Sync,
-    ImageView: crate::ImageView + Sync,
-{
+pub struct FramebufferObject<Device: crate::Device> {
+    #[handle]
+    pub(crate) handle: VkFramebuffer,
+    #[parent]
+    pub(crate) parent: Device,
+    pub(crate) under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = Device>>>,
+    pub(crate) size: VkExtent2D,
 }
-unsafe impl<Device, ImageView> Send for FramebufferObject<Device, ImageView>
-where
-    Device: crate::Device + Send,
-    ImageView: crate::ImageView + Send,
-{
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device, ImageView: crate::ImageView> Drop for FramebufferObject<Device, ImageView> {
+unsafe impl<Device> Sync for FramebufferObject<Device> where Device: crate::Device + Sync {}
+unsafe impl<Device> Send for FramebufferObject<Device> where Device: crate::Device + Send {}
+#[implements]
+impl<Device: crate::Device> Drop for FramebufferObject<Device> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_framebuffer(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkresolve::destroy_framebuffer(self.parent.native_ptr(), self.handle, std::ptr::null());
         }
     }
 }
-impl<Device: crate::Device, ImageView: crate::ImageView> Framebuffer for FramebufferObject<Device, ImageView> {}
+impl<Device: crate::Device> Framebuffer for FramebufferObject<Device> {}
 
 /// Builder structure to construct the `VkAttachmentDescription`
 #[repr(transparent)]
@@ -455,6 +447,152 @@ impl RenderPassBuilder {
     }
 }
 
+pub struct FramebufferBuilder<RenderPass: self::RenderPass> {
+    info: VkFramebufferCreateInfo,
+    render_pass: RenderPass,
+    under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice>>>,
+}
+impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
+    pub const fn empty(render_pass: RenderPass, size: &VkExtent2D) -> Self {
+        Self {
+            info: VkFramebufferCreateInfo {
+                sType: VkFramebufferCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                renderPass: VkRenderPass::NULL,
+                attachmentCount: 0,
+                pAttachments: core::ptr::null(),
+                width: size.width,
+                height: size.height,
+                layers: 1,
+            },
+            render_pass,
+            under_resources: Vec::new(),
+        }
+    }
+
+    pub fn new_with_attachment(
+        render_pass: RenderPass,
+        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
+    ) -> Self {
+        Self::new_with_attachments(render_pass, vec![attachment])
+    }
+
+    pub fn new_with_attachments(
+        render_pass: RenderPass,
+        attachments: Vec<
+            impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
+        >,
+    ) -> Self {
+        let size = attachments[0].image().size();
+
+        Self {
+            info: VkFramebufferCreateInfo {
+                sType: VkFramebufferCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                renderPass: VkRenderPass::NULL,
+                attachmentCount: 0,
+                pAttachments: core::ptr::null(),
+                width: size.width,
+                height: size.height,
+                layers: 1,
+            },
+            render_pass,
+            under_resources: attachments.into_iter().map(|x| Box::new(x) as _).collect(),
+        }
+    }
+
+    pub fn with_attachment(
+        mut self,
+        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'static,
+    ) -> Self {
+        self.under_resources.push(Box::new(attachment) as _);
+
+        self
+    }
+
+    pub fn with_attachments(
+        mut self,
+        attachments: impl IntoIterator<Item = impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'static>,
+    ) -> Self {
+        self.under_resources
+            .extend(attachments.into_iter().map(|x| Box::new(x) as _));
+
+        self
+    }
+
+    /// default: 1
+    pub fn layers(mut self, layers: u32) -> Self {
+        self.info.layers = layers;
+
+        self
+    }
+
+    /// default: first attachment size
+    pub fn size(mut self, width: u32, height: u32) -> Self {
+        self.info.width = width;
+        self.info.height = height;
+
+        self
+    }
+
+    #[implements]
+    pub fn create(mut self) -> crate::Result<FramebufferObject<RenderPass::ConcreteDevice>>
+    where
+        RenderPass: DeviceChildTransferrable,
+    {
+        let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+        self.info.attachmentCount = views.len() as _;
+        self.info.pAttachments = views.as_ptr();
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_framebuffer(
+                self.render_pass.device().native_ptr(),
+                &self.info,
+                core::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| FramebufferObject {
+                handle: h.assume_init(),
+                parent: self.render_pass.transfer_device(),
+                under_resources: self.under_resources,
+                size: VkExtent2D {
+                    width: self.info.width,
+                    height: self.info.height,
+                },
+            })
+        }
+    }
+
+    #[implements]
+    pub fn create_with_device(
+        mut self,
+        device: RenderPass::ConcreteDevice,
+    ) -> crate::Result<FramebufferObject<RenderPass::ConcreteDevice>> {
+        let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+        self.info.attachmentCount = views.len() as _;
+        self.info.pAttachments = views.as_ptr();
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_framebuffer(device.native_ptr(), &self.info, core::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| FramebufferObject {
+                    handle: h.assume_init(),
+                    parent: device,
+                    under_resources: self.under_resources,
+                    size: VkExtent2D {
+                        width: self.info.width,
+                        height: self.info.height,
+                    },
+                })
+        }
+    }
+}
+
 pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     /// Create a new framebuffer object
     /// # Failures
@@ -463,12 +601,13 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn new_framebuffer<ImageView: crate::ImageView>(
+    #[deprecated = "use FramebufferBuilder"]
+    fn new_framebuffer(
         self,
-        attachment_objects: Vec<ImageView>,
+        attachment_objects: Vec<impl crate::ImageView<ConcreteDevice = Self::ConcreteDevice> + 'static>,
         size: &VkExtent2D,
         layers: u32,
-    ) -> crate::Result<FramebufferObject<Self::ConcreteDevice, ImageView>>
+    ) -> crate::Result<FramebufferObject<Self::ConcreteDevice>>
     where
         Self: Sized + DeviceChildTransferrable,
     {
@@ -489,15 +628,23 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
         unsafe {
             crate::vkresolve::create_framebuffer(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| {
-                    FramebufferObject(
-                        h.assume_init(),
-                        self.transfer_device(),
-                        attachment_objects,
-                        size.as_ref().clone(),
-                    )
+                .map(|_| FramebufferObject {
+                    handle: h.assume_init(),
+                    parent: self.transfer_device(),
+                    under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
+                    size: size.as_ref().clone(),
                 })
         }
+    }
+
+    fn framebuffer_builder(
+        self,
+        attachments: Vec<impl crate::ImageView<ConcreteDevice = Self::ConcreteDevice> + crate::ImageChild + 'static>,
+    ) -> FramebufferBuilder<Self>
+    where
+        Self: Sized,
+    {
+        FramebufferBuilder::new_with_attachments(self, attachments)
     }
 
     /// Returns the granularity for optimal render area
@@ -522,12 +669,8 @@ pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> + DeviceChild {}
 DerefContainerBracketImpl!(for Framebuffer {});
 GuardsImpl!(for Framebuffer {});
 
-impl<Device: crate::Device, ImageView: crate::ImageView> FramebufferObject<Device, ImageView> {
+impl<Device: crate::Device> FramebufferObject<Device> {
     pub const fn size(&self) -> &VkExtent2D {
-        &self.3
-    }
-
-    pub fn resources(&self) -> &[ImageView] {
-        &self.2
+        &self.size
     }
 }

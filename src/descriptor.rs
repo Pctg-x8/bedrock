@@ -5,7 +5,7 @@ use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, VkObject, VkRawHandle};
+use crate::{vk::*, DeviceChild, VkHandleRef, VkObject, VkRawHandle};
 use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
 DefineStdDeviceChildObject! {
@@ -116,34 +116,6 @@ pub struct BufferObjectRef<'s>(VkBuffer, core::marker::PhantomData<&'s dyn VkHan
 impl<'s> BufferObjectRef<'s> {
     pub fn new(r: &'s (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
-    }
-}
-
-#[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
-pub struct VkHandleRef<'r, H>(H, core::marker::PhantomData<&'r dyn VkHandle<Handle = H>>);
-impl<'r, H> VkHandleRef<'r, H> {
-    pub fn new(r: &'r (impl VkHandle<Handle = H> + ?Sized)) -> Self {
-        Self(r.native_ptr(), core::marker::PhantomData)
-    }
-
-    /// simple raw handle wrapper without any lifetime constraints.
-    /// # Safety
-    /// owner of the handle must be alive while the handle will be used.
-    pub const unsafe fn dangling(h: H) -> Self {
-        Self(h, core::marker::PhantomData)
-    }
-}
-impl<H: Copy> VkHandle for VkHandleRef<'_, H> {
-    type Handle = H;
-
-    fn native_ptr(&self) -> H {
-        self.0
-    }
-}
-impl<H: Copy> VkHandleMut for VkHandleRef<'_, H> {
-    fn native_ptr_mut(&mut self) -> H {
-        self.0
     }
 }
 

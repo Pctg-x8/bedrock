@@ -1001,13 +1001,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn new_framebuffer<ImageView: crate::ImageView>(
+    #[deprecated = "use FramebufferBuilder"]
+    fn new_framebuffer(
         self,
         mold: &impl crate::RenderPass,
-        attachment_objects: Vec<ImageView>,
+        attachment_objects: Vec<impl crate::ImageView<ConcreteDevice = Self> + 'static>,
         size: &VkExtent2D,
         layers: u32,
-    ) -> crate::Result<crate::FramebufferObject<Self, ImageView>>
+    ) -> crate::Result<crate::FramebufferObject<Self>>
     where
         Self: Sized,
     {
@@ -1027,7 +1028,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         unsafe {
             crate::vkresolve::create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| crate::FramebufferObject(h.assume_init(), self, attachment_objects, size.as_ref().clone()))
+                .map(|_| crate::FramebufferObject {
+                    handle: h.assume_init(),
+                    parent: self,
+                    under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
+                    size: size.as_ref().clone(),
+                })
         }
     }
 
