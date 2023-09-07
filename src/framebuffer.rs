@@ -448,11 +448,12 @@ impl RenderPassBuilder {
 
 pub struct FramebufferBuilder<RenderPass: self::RenderPass> {
     info: VkFramebufferCreateInfo,
+    init_size: Option<VkExtent2D>,
     render_pass: RenderPass,
     under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice>>>,
 }
 impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
-    pub const fn empty(render_pass: RenderPass, size: &VkExtent2D) -> Self {
+    pub const fn new(render_pass: RenderPass) -> Self {
         Self {
             info: VkFramebufferCreateInfo {
                 sType: VkFramebufferCreateInfo::TYPE,
@@ -461,13 +462,18 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
                 renderPass: VkRenderPass::NULL,
                 attachmentCount: 0,
                 pAttachments: core::ptr::null(),
-                width: size.width,
-                height: size.height,
+                width: 0,
+                height: 0,
                 layers: 1,
             },
+            init_size: None,
             render_pass,
             under_resources: Vec::new(),
         }
+    }
+
+    pub const fn empty(render_pass: RenderPass, size: VkExtent2D) -> Self {
+        Self::new(render_pass).size(size.width, size.height)
     }
 
     pub fn new_with_attachment(
@@ -483,7 +489,7 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
             impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
         >,
     ) -> Self {
-        let size = attachments[0].image().size();
+        let size = attachments[0].image().size().wh();
 
         Self {
             info: VkFramebufferCreateInfo {
@@ -497,6 +503,7 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
                 height: size.height,
                 layers: 1,
             },
+            init_size: Some(size),
             render_pass,
             under_resources: attachments.into_iter().map(|x| Box::new(x) as _).collect(),
         }
@@ -504,8 +511,12 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
 
     pub fn with_attachment(
         mut self,
-        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'static,
+        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
     ) -> Self {
+        if self.under_resources.is_empty() && self.init_size.is_none() {
+            self.init_size = Some(attachment.image().size().wh());
+        }
+
         self.under_resources.push(Box::new(attachment) as _);
 
         self
@@ -513,25 +524,36 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
 
     pub fn with_attachments(
         mut self,
-        attachments: impl IntoIterator<Item = impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'static>,
+        attachments: impl IntoIterator<
+            Item = impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
+        >,
     ) -> Self {
-        self.under_resources
-            .extend(attachments.into_iter().map(|x| Box::new(x) as _));
+        let mut attachments_iter = attachments.into_iter();
+
+        if self.under_resources.is_empty() && self.init_size.is_none() {
+            let Some(first_res) = attachments_iter.next() else {
+                return self;
+            };
+
+            self.init_size = Some(first_res.image().size().wh());
+            self.under_resources.push(Box::new(first_res) as _);
+        }
+
+        self.under_resources.extend(attachments_iter.map(|x| Box::new(x) as _));
 
         self
     }
 
     /// default: 1
-    pub fn layers(mut self, layers: u32) -> Self {
+    pub const fn layers(mut self, layers: u32) -> Self {
         self.info.layers = layers;
 
         self
     }
 
     /// default: first attachment size
-    pub fn size(mut self, width: u32, height: u32) -> Self {
-        self.info.width = width;
-        self.info.height = height;
+    pub const fn size(mut self, width: u32, height: u32) -> Self {
+        self.init_size = Some(VkExtent2D { width, height });
 
         self
     }
@@ -541,10 +563,14 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
     where
         RenderPass: DeviceChildTransferrable,
     {
+        let size = self.init_size.as_ref().expect("auto-sized builder but no attachments");
         let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+
         self.info.attachmentCount = views.len() as _;
         self.info.pAttachments = views.as_ptr();
         self.info.renderPass = self.render_pass.native_ptr();
+        self.info.width = size.width;
+        self.info.height = size.height;
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
@@ -572,10 +598,14 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
         mut self,
         device: RenderPass::ConcreteDevice,
     ) -> crate::Result<FramebufferObject<RenderPass::ConcreteDevice>> {
+        let size = self.init_size.as_ref().expect("auto-sized builder but no attachments");
         let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
+
         self.info.attachmentCount = views.len() as _;
         self.info.pAttachments = views.as_ptr();
         self.info.renderPass = self.render_pass.native_ptr();
+        self.info.width = size.width;
+        self.info.height = size.height;
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
