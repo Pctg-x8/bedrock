@@ -544,6 +544,7 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
         let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         self.info.attachmentCount = views.len() as _;
         self.info.pAttachments = views.as_ptr();
+        self.info.renderPass = self.render_pass.native_ptr();
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
@@ -574,6 +575,7 @@ impl<RenderPass: self::RenderPass> FramebufferBuilder<RenderPass> {
         let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
         self.info.attachmentCount = views.len() as _;
         self.info.pAttachments = views.as_ptr();
+        self.info.renderPass = self.render_pass.native_ptr();
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
