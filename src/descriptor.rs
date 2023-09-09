@@ -175,6 +175,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
             descriptorType: self.ty as _,
             descriptorCount: self.count,
             stageFlags: self.shader_stage_mask.0,
+            // as_ptrは空の場合でも0にならないらしい
             pImmutableSamplers: if self.immutable_samplers.is_empty() {
                 core::ptr::null()
             } else {
