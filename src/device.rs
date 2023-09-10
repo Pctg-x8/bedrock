@@ -619,32 +619,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     }
 
     /// Multiple Binding for Buffers
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_bind_memory2")]
-    fn bind_buffers(
-        &self,
-        bounds: &[(
-            &impl VkHandle<Handle = VkBuffer>,
-            &impl VkHandle<Handle = VkDeviceMemory>,
-            VkDeviceSize,
-        )],
-    ) -> crate::Result<()> {
-        let infos: Vec<_> = bounds
-            .iter()
-            .map(|&(b, m, offs)| VkBindBufferMemoryInfoKHR {
-                sType: VkBindBufferMemoryInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                buffer: b.native_ptr(),
-                memory: m.native_ptr(),
-                memoryOffset: offs,
-            })
-            .collect();
-
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
         unsafe {
             crate::VkResultBox(self.bind_buffer_memory2_khr_fn().0(
                 self.native_ptr(),
-                infos.len() as _,
-                infos.as_ptr(),
+                bounds.len() as _,
+                bounds.as_ptr(),
             ))
             .into_result()
             .map(drop)
@@ -652,32 +633,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     }
 
     /// Multiple Binding for Images
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_bind_memory2")]
-    fn bind_images(
-        &self,
-        bounds: &[(
-            &impl VkHandle<Handle = VkImage>,
-            &impl VkHandle<Handle = VkDeviceMemory>,
-            VkDeviceSize,
-        )],
-    ) -> crate::Result<()> {
-        let infos: Vec<_> = bounds
-            .iter()
-            .map(|&(i, m, offs)| VkBindImageMemoryInfoKHR {
-                sType: VkBindImageMemoryInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                image: i.native_ptr(),
-                memory: m.native_ptr(),
-                memoryOffset: offs,
-            })
-            .collect();
-
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
         unsafe {
             crate::VkResultBox(self.bind_image_memory2_khr_fn().0(
                 self.native_ptr(),
-                infos.len() as _,
-                infos.as_ptr(),
+                bounds.len() as _,
+                bounds.as_ptr(),
             ))
             .into_result()
             .map(drop)
@@ -685,20 +647,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     }
 
     /// Multiple Binding for both resources
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_bind_memory2")]
+    #[implements("VK_KHR_bind_memory2")]
     fn bind_resources(
         &self,
-        buf_bounds: &[(
-            &impl VkHandle<Handle = VkBuffer>,
-            &impl VkHandle<Handle = VkDeviceMemory>,
-            VkDeviceSize,
-        )],
-        img_bounds: &[(
-            &impl VkHandle<Handle = VkImage>,
-            &impl VkHandle<Handle = VkDeviceMemory>,
-            VkDeviceSize,
-        )],
+        buf_bounds: &[VkBindBufferMemoryInfoKHR],
+        img_bounds: &[VkBindImageMemoryInfoKHR],
     ) -> crate::Result<()> {
         // 必ず両方実行されるようにする
         self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))

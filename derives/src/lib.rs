@@ -623,10 +623,19 @@ pub fn derive_static_callable(input: TokenStream) -> TokenStream {
     .into()
 }
 
-/// alias for `#[cfg(feature = "Implements")]`
+/// alias for `#[cfg(feature = "Implements")]`, with additional feature requirements
 #[proc_macro_attribute]
-pub fn implements(_: TokenStream, target: TokenStream) -> TokenStream {
+pub fn implements(args: TokenStream, target: TokenStream) -> TokenStream {
+    let args = if args.is_empty() {
+        None
+    } else {
+        Some(parse_macro_input!(args with syn::punctuated::Punctuated<syn::LitStr, syn::Token![,]>::parse_terminated))
+    };
     let t2 = proc_macro2::TokenStream::from(target);
 
-    quote! { #[cfg(feature = "Implements")] #t2 }.into()
+    let extra_feature_requirements = args.map_or_else(Vec::new, |a| {
+        a.into_iter().map(|x| quote! { #[cfg(feature = #x)] }).collect()
+    });
+
+    quote! { #[cfg(feature = "Implements")] #(#extra_feature_requirements)* #t2 }.into()
 }
