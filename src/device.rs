@@ -621,6 +621,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Multiple Binding for Buffers
     #[implements("VK_KHR_bind_memory2")]
     fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
+        tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
+
         unsafe {
             crate::VkResultBox(self.bind_buffer_memory2_khr_fn().0(
                 self.native_ptr(),
@@ -635,6 +637,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Multiple Binding for Images
     #[implements("VK_KHR_bind_memory2")]
     fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
+        tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
+
         unsafe {
             crate::VkResultBox(self.bind_image_memory2_khr_fn().0(
                 self.native_ptr(),
