@@ -951,49 +951,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a new framebuffer object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    #[deprecated = "use FramebufferBuilder"]
-    fn new_framebuffer(
-        self,
-        mold: &impl crate::RenderPass,
-        attachment_objects: Vec<impl crate::ImageView<ConcreteDevice = Self> + 'static>,
-        size: &VkExtent2D,
-        layers: u32,
-    ) -> crate::Result<crate::FramebufferObject<Self>>
-    where
-        Self: Sized,
-    {
-        let views = attachment_objects.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
-        let cinfo = VkFramebufferCreateInfo {
-            sType: VkFramebufferCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            renderPass: mold.native_ptr(),
-            attachmentCount: views.len() as _,
-            pAttachments: views.as_ptr(),
-            width: size.width,
-            height: size.height,
-            layers,
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_framebuffer(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::FramebufferObject {
-                    handle: h.assume_init(),
-                    parent: self,
-                    _under_resources: attachment_objects.into_iter().map(|x| Box::new(x) as _).collect(),
-                    size: size.as_ref().clone(),
-                })
-        }
-    }
-
     // Extension Function Providers
 
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
