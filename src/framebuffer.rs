@@ -20,7 +20,7 @@ pub struct FramebufferObject<'r, Device: crate::Device> {
     pub(crate) handle: VkFramebuffer,
     #[parent]
     pub(crate) parent: Device,
-    pub(crate) _under_resources: Vec<FramebufferAttachment<'r, Device>>,
+    pub(crate) _under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = Device> + 'r>>,
     pub(crate) size: VkExtent2D,
 }
 unsafe impl<Device> Sync for FramebufferObject<'_, Device> where Device: crate::Device + Sync {}
@@ -446,24 +446,11 @@ impl RenderPassBuilder {
     }
 }
 
-pub enum FramebufferAttachment<'r, Device: crate::Device> {
-    Owned(Box<dyn crate::ImageView<ConcreteDevice = Device>>),
-    Borrowed(&'r dyn crate::ImageView<ConcreteDevice = Device>),
-}
-impl<Device: crate::Device> FramebufferAttachment<'_, Device> {
-    fn native_ptr(&self) -> VkImageView {
-        match self {
-            Self::Owned(r) => r.native_ptr(),
-            Self::Borrowed(r) => r.native_ptr(),
-        }
-    }
-}
-
 pub struct FramebufferBuilder<'r, RenderPass: self::RenderPass> {
     info: VkFramebufferCreateInfo,
     init_size: Option<VkExtent2D>,
     render_pass: RenderPass,
-    under_resources: Vec<FramebufferAttachment<'r, RenderPass::ConcreteDevice>>,
+    under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'r>>,
 }
 impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
     pub const fn new(render_pass: RenderPass) -> Self {
@@ -491,23 +478,14 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
 
     pub fn new_with_attachment(
         render_pass: RenderPass,
-        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
+        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
     ) -> Self {
         Self::new_with_attachments(render_pass, vec![attachment])
     }
 
-    pub fn new_with_ref_attachment(
-        render_pass: RenderPass,
-        attachment: &'r (impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild),
-    ) -> Self {
-        Self::new_with_ref_attachments(render_pass, vec![attachment])
-    }
-
     pub fn new_with_attachments(
         render_pass: RenderPass,
-        attachments: Vec<
-            impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
-        >,
+        attachments: Vec<impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r>,
     ) -> Self {
         let size = attachments[0].image().size().wh();
 
@@ -525,50 +503,19 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
             },
             init_size: Some(size),
             render_pass,
-            under_resources: attachments
-                .into_iter()
-                .map(|x| FramebufferAttachment::Owned(Box::new(x)) as _)
-                .collect(),
-        }
-    }
-
-    pub fn new_with_ref_attachments(
-        render_pass: RenderPass,
-        attachments: Vec<&'r (impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild)>,
-    ) -> Self {
-        let size = attachments[0].image().size().wh();
-
-        Self {
-            info: VkFramebufferCreateInfo {
-                sType: VkFramebufferCreateInfo::TYPE,
-                pNext: core::ptr::null(),
-                flags: 0,
-                renderPass: VkRenderPass::NULL,
-                attachmentCount: 0,
-                pAttachments: core::ptr::null(),
-                width: size.width,
-                height: size.height,
-                layers: 1,
-            },
-            init_size: Some(size),
-            render_pass,
-            under_resources: attachments
-                .into_iter()
-                .map(|x| FramebufferAttachment::Borrowed(x as _))
-                .collect(),
+            under_resources: attachments.into_iter().map(|x| Box::new(x) as _).collect(),
         }
     }
 
     pub fn with_attachment(
         mut self,
-        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
+        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
     ) -> Self {
         if self.under_resources.is_empty() && self.init_size.is_none() {
             self.init_size = Some(attachment.image().size().wh());
         }
 
-        self.under_resources
-            .push(FramebufferAttachment::Owned(Box::new(attachment) as _));
+        self.under_resources.push(Box::new(attachment) as _);
 
         self
     }
@@ -576,7 +523,7 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
     pub fn with_attachments(
         mut self,
         attachments: impl IntoIterator<
-            Item = impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'static,
+            Item = impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
         >,
     ) -> Self {
         let mut attachments_iter = attachments.into_iter();
@@ -587,50 +534,10 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
             };
 
             self.init_size = Some(first_res.image().size().wh());
-            self.under_resources
-                .push(FramebufferAttachment::Owned(Box::new(first_res) as _));
+            self.under_resources.push(Box::new(first_res) as _);
         }
 
-        self.under_resources
-            .extend(attachments_iter.map(|x| FramebufferAttachment::Owned(Box::new(x) as _)));
-
-        self
-    }
-
-    pub fn with_ref_attachment(
-        mut self,
-        attachment: &'r (impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild),
-    ) -> Self {
-        if self.under_resources.is_empty() && self.init_size.is_none() {
-            self.init_size = Some(attachment.image().size().wh());
-        }
-
-        self.under_resources
-            .push(FramebufferAttachment::Borrowed(attachment as _));
-
-        self
-    }
-
-    pub fn with_ref_attachments(
-        mut self,
-        attachments: impl IntoIterator<
-            Item = &'r (impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r),
-        >,
-    ) -> Self {
-        let mut attachments_iter = attachments.into_iter();
-
-        if self.under_resources.is_empty() && self.init_size.is_none() {
-            let Some(first_res) = attachments_iter.next() else {
-                return self;
-            };
-
-            self.init_size = Some(first_res.image().size().wh());
-            self.under_resources
-                .push(FramebufferAttachment::Borrowed(first_res as _));
-        }
-
-        self.under_resources
-            .extend(attachments_iter.map(|x| FramebufferAttachment::Borrowed(x as _)));
+        self.under_resources.extend(attachments_iter.map(|x| Box::new(x) as _));
 
         self
     }
