@@ -13,6 +13,9 @@ use crate::{
     VulkanStructure,
 };
 
+#[implements]
+use core::convert::TryInto;
+
 cfg_if! {
     if #[cfg(feature = "Implements")] {
         type DeviceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkDevice>;
@@ -723,7 +726,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_graphics_pipelines(
         &self,
         infos: &[VkGraphicsPipelineCreateInfo],
@@ -748,13 +751,32 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .map(|_| hs.into_iter().map(|h| crate::PipelineObject(h, self.clone())).collect())
     }
 
+    /// Create graphics pipelines
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    fn new_graphics_pipeline_array<const N: usize>(
+        &self,
+        infos: &[VkGraphicsPipelineCreateInfo; N],
+        cache: Option<&impl crate::PipelineCache>,
+    ) -> crate::Result<[crate::PipelineObject<Self>; N]>
+    where
+        Self: Clone,
+    {
+        self.new_graphics_pipelines(infos, cache)
+            .map(|xs| unsafe { xs.try_into().unwrap_unchecked() })
+    }
+
     /// Create compute pipelines
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_compute_pipelines(
         &self,
         builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::ShaderModule>],
@@ -799,6 +821,25 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                     .collect()
             })
         }
+    }
+
+    /// Create compute pipelines
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    fn new_compute_pipeline_array<const N: usize>(
+        &self,
+        info: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::ShaderModule>; N],
+        cache: Option<&impl crate::PipelineCache>,
+    ) -> crate::Result<[crate::PipelineObject<Self>; N]>
+    where
+        Self: Clone,
+    {
+        self.new_compute_pipelines(info, cache)
+            .map(|xs| unsafe { xs.try_into().unwrap_unchecked() })
     }
 
     /// Create a new event object
