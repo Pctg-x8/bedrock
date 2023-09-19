@@ -779,29 +779,32 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     fn new_compute_pipelines(
         &self,
-        builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::ShaderModule>],
+        builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>],
         cache: Option<&impl crate::PipelineCache>,
     ) -> crate::Result<Vec<crate::PipelineObject<Self>>>
     where
         Self: Clone,
     {
-        let (stages, _specinfos): (Vec<_>, Vec<_>) = builders
+        let (cinfos, _extras): (Vec<_>, Vec<_>) = builders
             .iter()
-            .map(|b| b.shader.createinfo_native(crate::ShaderStage::COMPUTE))
-            .unzip();
-        let cinfos = builders
-            .iter()
-            .zip(stages.into_iter())
-            .map(|(b, stage)| VkComputePipelineCreateInfo {
-                sType: VkComputePipelineCreateInfo::TYPE,
-                pNext: std::ptr::null(),
-                flags: 0,
-                basePipelineHandle: VkPipeline::NULL,
-                basePipelineIndex: -1,
-                stage,
-                layout: b.layout.native_ptr(),
+            .map(|b| {
+                let extras = Box::pin(b.shader.make_extras());
+                let stage = b.shader.base_struct(crate::ShaderStage::COMPUTE, &extras);
+
+                (
+                    VkComputePipelineCreateInfo {
+                        sType: VkComputePipelineCreateInfo::TYPE,
+                        pNext: std::ptr::null(),
+                        flags: 0,
+                        basePipelineHandle: VkPipeline::NULL,
+                        basePipelineIndex: -1,
+                        stage,
+                        layout: b.layout.native_ptr(),
+                    },
+                    extras,
+                )
             })
-            .collect::<Vec<_>>();
+            .unzip();
 
         let mut pipelines = vec![VkPipeline::NULL; builders.len()];
         unsafe {
@@ -832,7 +835,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     fn new_compute_pipeline_array<const N: usize>(
         &self,
-        info: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::ShaderModule>; N],
+        info: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>; N],
         cache: Option<&impl crate::PipelineCache>,
     ) -> crate::Result<[crate::PipelineObject<Self>; N]>
     where

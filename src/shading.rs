@@ -368,9 +368,11 @@ impl<T> SwitchOrDynamicState<T> {
         }
     }
 }
+use derives::implements;
+use libc::c_void;
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
-#[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+#[allow(dead_code)]
 #[derive(Clone)]
 pub struct DynamicDataCell<'d> {
     size: usize,
@@ -398,7 +400,7 @@ impl<'d> DynamicDataCell<'d> {
 }
 /// Builder struct to construct a shader stage in a `Pipeline`
 #[derive(Clone)]
-pub struct PipelineShader<'d, Module: ShaderModule> {
+pub struct OldPipelineShader<'d, Module: ShaderModule> {
     pub module: Module,
     pub entry_name: CString,
     pub specinfo: Option<(Cow<'d, [VkSpecializationMapEntry]>, DynamicDataCell<'d>)>,
@@ -487,17 +489,12 @@ impl PipelineDynamicStates {
         }
     }
 }
-impl<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
-    GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+impl<'d, Layout, BP, RenderPass, ShaderStages> GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 where
     Layout: PipelineLayout,
     BP: Pipeline,
     RenderPass: crate::RenderPass,
-    VSM: ShaderModule,
-    GSM: ShaderModule,
-    FSM: ShaderModule,
-    TCSM: ShaderModule,
-    TESM: ShaderModule,
+    ShaderStages: PipelineShaderStageProvider,
 {
     /// Gets a mutable reference to the dynamic state settings
     pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates {
@@ -512,25 +509,14 @@ pub struct GraphicsPipelineBuilder<
     Layout: PipelineLayout,
     BP: Pipeline,
     RenderPass: crate::RenderPass,
-    VertexShaderModule: ShaderModule,
-    GeometryShaderModule: ShaderModule,
-    FragmentShaderModule: ShaderModule,
-    TessControlShaderModule: ShaderModule,
-    TessEvalShaderModule: ShaderModule,
+    ShaderStages: PipelineShaderStageProvider,
 > {
     flags: VkPipelineCreateFlags,
     _layout: Layout,
     rp: &'d RenderPass,
     subpass: u32,
     _base: BasePipeline<BP>,
-    vp: VertexProcessingStages<
-        'd,
-        VertexShaderModule,
-        GeometryShaderModule,
-        FragmentShaderModule,
-        TessControlShaderModule,
-        TessEvalShaderModule,
-    >,
+    vp: VertexProcessingStages<'d, ShaderStages>,
     rasterizer_state: RasterizationState,
     tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
     viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
@@ -585,44 +571,222 @@ impl VertexInputBindingDescription {
     }
 }
 
-/// Tessellation Stage Shaders
-#[derive(Clone)]
-pub struct TessellationStages<'d, ControlShaderModule: ShaderModule, EvaluationShaderModule: ShaderModule> {
-    pub control: PipelineShader<'d, ControlShaderModule>,
-    pub evaluation: PipelineShader<'d, EvaluationShaderModule>,
+pub trait SpecializationConstants {
+    const ENTRIES: &'static [VkSpecializationMapEntry];
+
+    fn as_ptr(&self) -> *const c_void;
 }
+DerefContainerBracketImpl!(for SpecializationConstants {
+    const ENTRIES: &'static [VkSpecializationMapEntry] = T::ENTRIES;
+
+    fn as_ptr(&self) -> *const c_void {
+        T::as_ptr(&**self)
+    }
+});
+
+pub trait PipelineShaderProvider {
+    type ExtraStorage;
+
+    fn base_struct(&self, stage: ShaderStage, extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo;
+    fn make_extras(&self) -> Self::ExtraStorage;
+}
+DerefContainerBracketImpl!(for PipelineShaderProvider {
+    type ExtraStorage = T::ExtraStorage;
+
+    fn base_struct(&self, stage: ShaderStage, extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo {
+        T::base_struct(&**self, stage, extras)
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        T::make_extras(&**self)
+    }
+});
+
+pub struct PipelineShader2<M: ShaderModule>(M, std::ffi::CString);
+impl<M: ShaderModule> PipelineShader2<M> {
+    pub const fn new(module: M, entry_point: std::ffi::CString) -> Self {
+        Self(module, entry_point)
+    }
+
+    pub const fn specialize<T: SpecializationConstants>(self, value: T) -> SpecializedPipelineShader<Self, T> {
+        SpecializedPipelineShader(self, value)
+    }
+}
+impl<M: ShaderModule> PipelineShaderProvider for PipelineShader2<M> {
+    type ExtraStorage = ();
+
+    fn base_struct(&self, stage: ShaderStage, _extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo {
+        VkPipelineShaderStageCreateInfo {
+            sType: VkPipelineShaderStageCreateInfo::TYPE,
+            pNext: core::ptr::null(),
+            flags: 0,
+            stage: stage.0,
+            module: self.0.native_ptr(),
+            pName: self.1.as_ptr(),
+            pSpecializationInfo: core::ptr::null(),
+        }
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {}
+}
+
+pub struct SpecializedPipelineShader<P: PipelineShaderProvider, T: SpecializationConstants>(P, T);
+impl<P: PipelineShaderProvider, T: SpecializationConstants> PipelineShaderProvider for SpecializedPipelineShader<P, T> {
+    type ExtraStorage = (P::ExtraStorage, VkSpecializationInfo);
+
+    fn base_struct(&self, stage: ShaderStage, extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo {
+        VkPipelineShaderStageCreateInfo {
+            pSpecializationInfo: &extras.1 as _,
+            ..self.0.base_struct(stage, &extras.0)
+        }
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        (
+            self.0.make_extras(),
+            VkSpecializationInfo {
+                mapEntryCount: T::ENTRIES.len() as _,
+                pMapEntries: T::ENTRIES.as_ptr(),
+                dataSize: core::mem::size_of::<T>(),
+                pData: self.1.as_ptr(),
+            },
+        )
+    }
+}
+
+pub trait PipelineShaderStageProvider {
+    type ExtraStorage;
+
+    fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo>;
+    fn make_extras(&self) -> Self::ExtraStorage;
+
+    #[inline]
+    fn with_fragment_shader_stage<P: PipelineShaderProvider>(self, shader: P) -> WithFragmentShaderStage<Self, P>
+    where
+        Self: Sized,
+    {
+        WithFragmentShaderStage(self, shader)
+    }
+
+    #[inline]
+    fn with_geometry_shader_stage<P: PipelineShaderProvider>(self, shader: P) -> WithGeometryShaderStage<Self, P>
+    where
+        Self: Sized,
+    {
+        WithGeometryShaderStage(self, shader)
+    }
+
+    #[inline]
+    fn with_tessellation_shader_stage<C: PipelineShaderProvider, E: PipelineShaderProvider>(
+        self,
+        control_shader: C,
+        eval_shader: E,
+    ) -> WithTessellationShaderStage<Self, C, E>
+    where
+        Self: Sized,
+    {
+        WithTessellationShaderStage(self, control_shader, eval_shader)
+    }
+}
+DerefContainerBracketImpl!(for PipelineShaderStageProvider {
+    type ExtraStorage = T::ExtraStorage;
+
+    fn base_struct(&self, extras: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
+        T::base_struct(&**self, extras)
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        T::make_extras(&**self)
+    }
+});
+
+#[repr(transparent)]
+pub struct VertexShaderStage<P: PipelineShaderProvider>(P);
+impl<P: PipelineShaderProvider> VertexShaderStage<P> {
+    pub const fn new(shader: P) -> Self {
+        Self(shader)
+    }
+}
+impl<P: PipelineShaderProvider> PipelineShaderStageProvider for VertexShaderStage<P> {
+    type ExtraStorage = P::ExtraStorage;
+
+    fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
+        vec![self.0.base_struct(ShaderStage::VERTEX, extra_storage)]
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        self.0.make_extras()
+    }
+}
+
+pub struct WithFragmentShaderStage<S: PipelineShaderStageProvider, P: PipelineShaderProvider>(S, P);
+impl<S: PipelineShaderStageProvider, P: PipelineShaderProvider> PipelineShaderStageProvider
+    for WithFragmentShaderStage<S, P>
+{
+    type ExtraStorage = (S::ExtraStorage, P::ExtraStorage);
+
+    fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
+        let mut vs = self.0.base_struct(&extra_storage.0);
+        vs.push(self.1.base_struct(ShaderStage::FRAGMENT, &extra_storage.1));
+        vs
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        (self.0.make_extras(), self.1.make_extras())
+    }
+}
+
+pub struct WithGeometryShaderStage<S: PipelineShaderStageProvider, P: PipelineShaderProvider>(S, P);
+impl<S: PipelineShaderStageProvider, P: PipelineShaderProvider> PipelineShaderStageProvider
+    for WithGeometryShaderStage<S, P>
+{
+    type ExtraStorage = (S::ExtraStorage, P::ExtraStorage);
+
+    fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
+        let mut vs = self.0.base_struct(&extra_storage.0);
+        vs.push(self.1.base_struct(ShaderStage::FRAGMENT, &extra_storage.1));
+        vs
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        (self.0.make_extras(), self.1.make_extras())
+    }
+}
+
+pub struct WithTessellationShaderStage<
+    S: PipelineShaderStageProvider,
+    C: PipelineShaderProvider,
+    E: PipelineShaderProvider,
+>(S, C, E);
+impl<S: PipelineShaderStageProvider, C: PipelineShaderProvider, E: PipelineShaderProvider> PipelineShaderStageProvider
+    for WithTessellationShaderStage<S, C, E>
+{
+    type ExtraStorage = (S::ExtraStorage, C::ExtraStorage, E::ExtraStorage);
+
+    fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
+        let mut vs = self.0.base_struct(&extra_storage.0);
+        vs.push(self.1.base_struct(ShaderStage::FRAGMENT, &extra_storage.1));
+        vs.push(self.2.base_struct(ShaderStage::FRAGMENT, &extra_storage.2));
+        vs
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        (self.0.make_extras(), self.1.make_extras(), self.2.make_extras())
+    }
+}
+
 /// PipelineStateDesc: Shader Stages and Input descriptions
 #[derive(Clone)]
-pub struct VertexProcessingStages<
-    'd,
-    VertexShaderModule: ShaderModule,
-    GeometryShaderModule: ShaderModule,
-    FragmentShaderModule: ShaderModule,
-    TessControlShaderModule: ShaderModule,
-    TessEvalShaderModule: ShaderModule,
-> {
-    vertex: PipelineShader<'d, VertexShaderModule>,
+pub struct VertexProcessingStages<'d, ShaderStages: PipelineShaderStageProvider> {
+    shader_stages: ShaderStages,
     vi: VkPipelineVertexInputStateCreateInfo,
     ia: VkPipelineInputAssemblyStateCreateInfo,
-    geometry: Option<PipelineShader<'d, GeometryShaderModule>>,
-    fragment: Option<PipelineShader<'d, FragmentShaderModule>>,
-    tessellation: Option<TessellationStages<'d, TessControlShaderModule, TessEvalShaderModule>>,
     _holder: PhantomData<(
         &'d [VertexInputBindingDescription],
         &'d [VkVertexInputAttributeDescription],
     )>,
 }
-impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderModule, TESM: ShaderModule>
-    VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>
-{
+impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, ShaderStages> {
     pub fn new(
-        vsh: PipelineShader<'d, VSM>,
+        shader_stages: ShaderStages,
         vbind: &'d [VertexInputBindingDescription],
         vattr: &'d [VkVertexInputAttributeDescription],
         primitive_topo: VkPrimitiveTopology,
     ) -> Self {
         VertexProcessingStages {
-            vertex: vsh,
+            shader_stages,
             vi: VkPipelineVertexInputStateCreateInfo {
                 sType: VkPipelineVertexInputStateCreateInfo::TYPE,
                 pNext: std::ptr::null(),
@@ -639,51 +803,8 @@ impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderMo
                 topology: primitive_topo,
                 primitiveRestartEnable: VK_FALSE,
             },
-            geometry: None,
-            fragment: None,
-            tessellation: None,
             _holder: PhantomData,
         }
-    }
-
-    /// Update the vertex shader
-    pub fn vertex_shader(&mut self, vsh: PipelineShader<'d, VSM>) -> &mut Self {
-        self.vertex = vsh;
-        self
-    }
-    /// Mutable reference to the Vertex Shader structure.
-    pub fn vertex_shader_mut(&mut self) -> &mut PipelineShader<'d, VSM> {
-        &mut self.vertex
-    }
-
-    /// Update the geometry shader, or disable geometry shader stage
-    pub fn geometry_shader(&mut self, gsh: impl Into<Option<PipelineShader<'d, GSM>>>) -> &mut Self {
-        self.geometry = gsh.into();
-        self
-    }
-    /// Mutable reference to the Geometry Shader structure.
-    pub fn geometry_shader_mut(&mut self) -> Option<&mut PipelineShader<'d, GSM>> {
-        self.geometry.as_mut()
-    }
-
-    /// Update the fragment shader, or disable fragment shader stage
-    pub fn fragment_shader(&mut self, fsh: impl Into<Option<PipelineShader<'d, FSM>>>) -> &mut Self {
-        self.fragment = fsh.into();
-        self
-    }
-    /// Mutable reference to the fragment shader.
-    pub fn fragment_shader_mut(&mut self) -> Option<&mut PipelineShader<'d, FSM>> {
-        self.fragment.as_mut()
-    }
-
-    /// Update the tessellation stage shaders, or disable tessellation stage
-    pub fn tessellation_stage(&mut self, stage: impl Into<Option<TessellationStages<'d, TCSM, TESM>>>) -> &mut Self {
-        self.tessellation = stage.into();
-        self
-    }
-    /// Mutable reference to the Tessellation Shader stage configuration.
-    pub fn tessellation_stage_mut(&mut self) -> Option<&mut TessellationStages<'d, TCSM, TESM>> {
-        self.tessellation.as_mut()
     }
 
     /// Update the vertex binding description
@@ -705,15 +826,6 @@ impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderMo
         vattr: &'d [VkVertexInputAttributeDescription],
     ) -> &mut Self {
         self.vertex_binding(vbind).vertex_attributes(vattr)
-    }
-    /// Update the vertex shader and the vertex input description
-    pub fn vertex_processing(
-        &mut self,
-        vsh: PipelineShader<'d, VSM>,
-        vbind: &'d [VkVertexInputBindingDescription],
-        vattr: &'d [VkVertexInputAttributeDescription],
-    ) -> &mut Self {
-        self.vertex_shader(vsh).vertex_input(vbind, vattr)
     }
 
     /// Controls whether a special vertex index value is treated as restarting the assembly of primitives.
@@ -948,19 +1060,11 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// Initialize the builder object
-    pub fn new(
-        layout: Layout,
-        rpsp: (&'d RenderPass, u32),
-        vp: VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>,
-    ) -> Self {
+    pub fn new(layout: Layout, rpsp: (&'d RenderPass, u32), vp: VertexProcessingStages<'d, ShaderStages>) -> Self {
         Self {
             flags: 0,
             _layout: layout,
@@ -984,20 +1088,16 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// Set the vertex processing stages in this pipeline
-    pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>) -> &mut Self {
+    pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d, ShaderStages>) -> &mut Self {
         self.vp = vp;
         self
     }
     /// Get a mutable reference to the vertex processing stage configuration in this pipeline
-    pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM> {
+    pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d, ShaderStages> {
         &mut self.vp
     }
 
@@ -1014,17 +1114,6 @@ impl<
         self.tess_state.as_mut().unwrap().patchControlPoints = count;
         self
     }
-    /// Set the tessellation processing state(hull/domain shaders and a number of control points)
-    pub fn tessellator_settings(
-        &mut self,
-        control: PipelineShader<'d, TCSM>,
-        evaluation: PipelineShader<'d, TESM>,
-        num_control_points: u32,
-    ) -> &mut Self {
-        self.vertex_processing_mut()
-            .tessellation_stage(TessellationStages { control, evaluation });
-        self.patch_control_point_count(num_control_points)
-    }
 }
 
 /// Viewport / Scissor State
@@ -1033,12 +1122,8 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// # Safety
     /// Application must guarantee that the number of viewports and scissors are identical
@@ -1099,12 +1184,8 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// Rasterization State
     pub fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
@@ -1124,12 +1205,8 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// Clear depth/stencil state
     pub fn clear_depth_stencil_state(&mut self) -> &mut Self {
@@ -1410,12 +1487,8 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     fn cb_ref(
         &mut self,
@@ -1496,12 +1569,8 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// The base pipeline handle/index to derive from
     pub fn base(&mut self, b: BasePipeline<BP>) -> &mut Self {
@@ -1549,12 +1618,8 @@ impl<
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// Set the `VkPipelineTessellationStateCreateInfo` structure directly
     /// # Safety
@@ -1613,78 +1678,14 @@ impl<
     }
 }
 
-#[cfg(feature = "Implements")]
-impl<'d, Module: ShaderModule> PipelineShader<'d, Module> {
-    pub(crate) fn createinfo_native(
-        &self,
-        stage: ShaderStage,
-    ) -> (VkPipelineShaderStageCreateInfo, Option<Box<VkSpecializationInfo>>) {
-        let specinfo = self.specinfo.as_ref().map(|&(ref m, ref d)| {
-            Box::new(VkSpecializationInfo {
-                mapEntryCount: m.len() as _,
-                pMapEntries: m.as_ptr(),
-                dataSize: d.size as _,
-                pData: d.data as _,
-            })
-        });
-        (
-            VkPipelineShaderStageCreateInfo {
-                sType: VkPipelineShaderStageCreateInfo::TYPE,
-                pNext: std::ptr::null(),
-                flags: 0,
-                stage: stage.0,
-                module: self.module.native_ptr(),
-                pName: self.entry_name.as_ptr(),
-                pSpecializationInfo: specinfo
-                    .as_ref()
-                    .map(|x| &**x as *const _)
-                    .unwrap_or_else(std::ptr::null),
-            },
-            specinfo,
-        )
-    }
-}
-#[cfg(feature = "Implements")]
-impl<'d, VSM: ShaderModule, GSM: ShaderModule, FSM: ShaderModule, TCSM: ShaderModule, TESM: ShaderModule>
-    VertexProcessingStages<'d, VSM, GSM, FSM, TCSM, TESM>
-{
-    pub fn generate_stages(
-        &self,
-    ) -> (
-        Vec<VkPipelineShaderStageCreateInfo>,
-        Vec<Option<Box<VkSpecializationInfo>>>,
-    ) {
-        let mut stages = Vec::with_capacity(5);
-        stages.push(self.vertex.createinfo_native(ShaderStage::VERTEX));
-        if let Some(TessellationStages {
-            ref control,
-            ref evaluation,
-        }) = self.tessellation
-        {
-            stages.push(control.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
-            stages.push(evaluation.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
-        }
-        if let Some(ref s) = self.geometry {
-            stages.push(s.createinfo_native(ShaderStage::GEOMETRY));
-        }
-        if let Some(ref s) = self.fragment {
-            stages.push(s.createinfo_native(ShaderStage::FRAGMENT));
-        }
-        stages.into_iter().unzip()
-    }
-}
-#[cfg(feature = "Implements")]
+#[implements]
 impl<
         'd,
         Layout: PipelineLayout,
         BP: Pipeline,
         RenderPass: crate::RenderPass,
-        VSM: ShaderModule,
-        GSM: ShaderModule,
-        FSM: ShaderModule,
-        TCSM: ShaderModule,
-        TESM: ShaderModule,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, VSM, GSM, FSM, TCSM, TESM>
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
 {
     /// Create a graphics pipeline
     /// # Failures
@@ -1698,7 +1699,8 @@ impl<
         cache: Option<&impl PipelineCache>,
     ) -> crate::Result<PipelineObject<Device>> {
         // VERTEX PROCESSING //
-        let (stages, _specinfo) = self.vp.generate_stages();
+        let extras = self.vp.shader_stages.make_extras();
+        let stages = self.vp.shader_stages.base_struct(&extras);
 
         // let tcs = self.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
         // let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
@@ -1791,17 +1793,17 @@ impl<
 }
 
 #[derive(Clone)]
-pub struct ComputePipelineBuilder<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> {
-    pub(crate) shader: PipelineShader<'d, ShaderModule>,
+pub struct ComputePipelineBuilder<Layout: PipelineLayout, Shader: PipelineShaderProvider> {
+    pub(crate) shader: Shader,
     pub(crate) layout: Layout,
 }
-impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipelineBuilder<'d, Layout, ShaderModule> {
-    pub const fn new(layout: Layout, shader: PipelineShader<'d, ShaderModule>) -> Self {
+impl<'d, Layout: PipelineLayout, Shader: PipelineShaderProvider> ComputePipelineBuilder<Layout, Shader> {
+    pub const fn new(layout: Layout, shader: Shader) -> Self {
         ComputePipelineBuilder { shader, layout }
     }
 }
-#[cfg(feature = "Implements")]
-impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipelineBuilder<'d, Layout, ShaderModule> {
+#[implements]
+impl<'d, Layout: PipelineLayout, Shader: PipelineShaderProvider> ComputePipelineBuilder<Layout, Shader> {
     /// Create a compute pipeline
     /// # Failures
     /// On failure, this command returns
@@ -1813,7 +1815,9 @@ impl<'d, Layout: PipelineLayout, ShaderModule: crate::ShaderModule> ComputePipel
         device: Device,
         cache: Option<&impl PipelineCache>,
     ) -> crate::Result<PipelineObject<Device>> {
-        let (stage, _specinfo) = self.shader.createinfo_native(ShaderStage::COMPUTE);
+        let extras = self.shader.make_extras();
+        let stage = self.shader.base_struct(ShaderStage::COMPUTE, &extras);
+
         let cinfo = VkComputePipelineCreateInfo {
             sType: VkComputePipelineCreateInfo::TYPE,
             pNext: std::ptr::null(),
