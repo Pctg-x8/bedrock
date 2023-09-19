@@ -489,10 +489,9 @@ impl PipelineDynamicStates {
         }
     }
 }
-impl<'d, Layout, BP, RenderPass, ShaderStages> GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout, RenderPass, ShaderStages> NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 where
     Layout: PipelineLayout,
-    BP: Pipeline,
     RenderPass: crate::RenderPass,
     ShaderStages: PipelineShaderStageProvider,
 {
@@ -500,33 +499,6 @@ where
     pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates {
         &mut self.dynamic_state_flags
     }
-}
-
-/// Builder struct to construct a `Pipeline` for graphics operations
-#[derive(Clone)]
-pub struct GraphicsPipelineBuilder<
-    'd,
-    Layout: PipelineLayout,
-    BP: Pipeline,
-    RenderPass: crate::RenderPass,
-    ShaderStages: PipelineShaderStageProvider,
-> {
-    flags: VkPipelineCreateFlags,
-    _layout: Layout,
-    rp: &'d RenderPass,
-    subpass: u32,
-    _base: BasePipeline<BP>,
-    vp: VertexProcessingStages<'d, ShaderStages>,
-    rasterizer_state: RasterizationState,
-    tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
-    viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
-    ms_state: Option<MultisampleState<'d>>,
-    ds_state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>,
-    color_blending: Option<(
-        Box<VkPipelineColorBlendStateCreateInfo>,
-        Vec<VkPipelineColorBlendAttachmentState>,
-    )>,
-    dynamic_state_flags: PipelineDynamicStates,
 }
 
 /// Helper structure for VkVertexInputBindingDescription
@@ -1055,13 +1027,73 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo>> for Multi
     }
 }
 
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+pub trait GraphicsPipelineBuilder {
+    type ExtraStorage;
+
+    fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo;
+    /// Builds extra values needed by constructing the Struct.
+    ///
+    /// Values live until the struct will be consumed.
+    fn make_extras(&self) -> Self::ExtraStorage;
+
+    /// Create a graphics pipeline
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    fn create<Device: crate::Device>(
+        &mut self,
+        device: Device,
+        cache: Option<&impl PipelineCache>,
+    ) -> crate::Result<PipelineObject<Device>> {
+        let extras = self.make_extras();
+        let cinfo = self.build(&extras);
+
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_graphics_pipelines(
+                device.native_ptr(),
+                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                1,
+                &cinfo,
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| PipelineObject(h.assume_init(), device))
+        }
+    }
+}
+
+/// Builder struct to construct a `Pipeline` for graphics operations
+#[derive(Clone)]
+pub struct NonDerivedGraphicsPipelineBuilder<
+    'd,
+    Layout: PipelineLayout,
+    RenderPass: crate::RenderPass,
+    ShaderStages: PipelineShaderStageProvider,
+> {
+    flags: VkPipelineCreateFlags,
+    _layout: Layout,
+    rp: &'d RenderPass,
+    subpass: u32,
+    vp: VertexProcessingStages<'d, ShaderStages>,
+    rasterizer_state: RasterizationState,
+    tess_state: Option<Box<VkPipelineTessellationStateCreateInfo>>,
+    viewport_state: Option<Box<VkPipelineViewportStateCreateInfo>>,
+    ms_state: Option<MultisampleState<'d>>,
+    ds_state: Option<Box<VkPipelineDepthStencilStateCreateInfo>>,
+    color_blending: Option<(
+        Box<VkPipelineColorBlendStateCreateInfo>,
+        Vec<VkPipelineColorBlendAttachmentState>,
+    )>,
+    dynamic_state_flags: PipelineDynamicStates,
+}
+
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Initialize the builder object
     pub fn new(layout: Layout, rpsp: (&'d RenderPass, u32), vp: VertexProcessingStages<'d, ShaderStages>) -> Self {
@@ -1070,7 +1102,6 @@ impl<
             _layout: layout,
             rp: rpsp.0,
             subpass: rpsp.1,
-            _base: BasePipeline::None,
             vp,
             rasterizer_state: Default::default(),
             tess_state: None,
@@ -1083,13 +1114,8 @@ impl<
     }
 }
 /// Shading State and Input Configuration
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Set the vertex processing stages in this pipeline
     pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d, ShaderStages>) -> &mut Self {
@@ -1117,13 +1143,8 @@ impl<
 }
 
 /// Viewport / Scissor State
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// # Safety
     /// Application must guarantee that the number of viewports and scissors are identical
@@ -1179,13 +1200,8 @@ impl<
     }
 }
 
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Rasterization State
     pub fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
@@ -1200,13 +1216,8 @@ impl<
 }
 
 /// Depth/Stencil State
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Clear depth/stencil state
     pub fn clear_depth_stencil_state(&mut self) -> &mut Self {
@@ -1482,13 +1493,8 @@ impl AttachmentColorBlendState {
 }
 
 /// Color Blending
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     fn cb_ref(
         &mut self,
@@ -1564,19 +1570,18 @@ impl<
 }
 
 /// Misc Configurations
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
-    /// The base pipeline handle/index to derive from
-    pub fn base(&mut self, b: BasePipeline<BP>) -> &mut Self {
-        self._base = b;
-        self
+    /// The base pipeline handle to derive from
+    pub const fn derive<BP: Pipeline>(self, b: BP) -> DerivedGraphicsPipelineBuilder<BP, Self> {
+        DerivedGraphicsPipelineBuilder(b, self)
     }
+    //// The base pipeline index to derive from
+    pub const fn derive_index(self, index: i32) -> IndexDerivedGraphicsPipelineBuilder<Self> {
+        IndexDerivedGraphicsPipelineBuilder(index, self)
+    }
+
     /// The description of binding locations used by both the pipeline and descriptor sets used with the pipeline
     pub fn layout(&mut self, l: Layout) -> &mut Self {
         self._layout = l;
@@ -1613,13 +1618,8 @@ impl<
 }
 
 /// Unsafe Utilities
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Set the `VkPipelineTessellationStateCreateInfo` structure directly
     /// # Safety
@@ -1677,35 +1677,14 @@ impl<
         self
     }
 }
-
-#[implements]
-impl<
-        'd,
-        Layout: PipelineLayout,
-        BP: Pipeline,
-        RenderPass: crate::RenderPass,
-        ShaderStages: PipelineShaderStageProvider,
-    > GraphicsPipelineBuilder<'d, Layout, BP, RenderPass, ShaderStages>
+impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
+    GraphicsPipelineBuilder for NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
-    /// Create a graphics pipeline
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    pub fn create<Device: crate::Device>(
-        &mut self,
-        device: Device,
-        cache: Option<&impl PipelineCache>,
-    ) -> crate::Result<PipelineObject<Device>> {
-        // VERTEX PROCESSING //
-        let extras = self.vp.shader_stages.make_extras();
-        let stages = self.vp.shader_stages.base_struct(&extras);
+    type ExtraStorage = ShaderStages::ExtraStorage;
 
-        // let tcs = self.tcs.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_CONTROL));
-        // let tes = self.tes.as_ref().map(|x| x.createinfo_native(ShaderStage::TESSELLATION_EVALUATION));
-        // let tcs_ = if let Some((s, sp)) = tcs { stages.push(s); Some(sp) } else { None };
-        // let tes_ = if let Some((s, sp)) = tes { stages.push(s); Some(sp) } else { None };
+    fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo {
+        let stages = self.vp.shader_stages.base_struct(extras);
+
         self.rasterizer_state
             .apply_dynamic_states(&mut self.dynamic_state_flags);
         let ds = if !self.dynamic_state_flags.0.is_empty() {
@@ -1713,17 +1692,6 @@ impl<
         } else {
             None
         };
-        let base = match self._base {
-            BasePipeline::Handle(ref h) => Some(h.native_ptr()),
-            BasePipeline::None => None,
-            _ => panic!("Deriving from other info in same creation is invalid for single creation of pipeline"),
-        };
-        let flags = self.flags
-            | if base.is_some() {
-                VK_PIPELINE_CREATE_DERIVATIVE_BIT
-            } else {
-                0
-            };
         let rst = self.rasterizer_state.make_chained();
         let ms = if let Some(ref msr) = self.ms_state {
             Some(&msr.data)
@@ -1735,7 +1703,7 @@ impl<
             None
         };
 
-        let cinfo = VkGraphicsPipelineCreateInfo {
+        VkGraphicsPipelineCreateInfo {
             sType: VkGraphicsPipelineCreateInfo::TYPE,
             pNext: std::ptr::null(),
             stageCount: stages.len() as _,
@@ -1768,27 +1736,63 @@ impl<
             layout: self._layout.native_ptr(),
             renderPass: self.rp.native_ptr(),
             subpass: self.subpass,
-            basePipelineHandle: if let BasePipeline::Handle(ref h) = self._base {
-                h.native_ptr()
-            } else {
-                VkPipeline::NULL
-            },
+            basePipelineHandle: VkPipeline::NULL,
             basePipelineIndex: -1,
-            flags,
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_graphics_pipelines(
-                device.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                1,
-                &cinfo,
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| PipelineObject(h.assume_init(), device))
+            flags: 0,
         }
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        self.vp.shader_stages.make_extras()
+    }
+}
+
+pub struct DerivedGraphicsPipelineBuilder<Base: Pipeline, Diff: GraphicsPipelineBuilder>(Base, Diff);
+impl<Base: Pipeline, Diff: GraphicsPipelineBuilder> DerivedGraphicsPipelineBuilder<Base, Diff> {
+    pub fn diff_mut(&mut self) -> &mut Diff {
+        &mut self.1
+    }
+}
+impl<Base: Pipeline, Diff: GraphicsPipelineBuilder> GraphicsPipelineBuilder
+    for DerivedGraphicsPipelineBuilder<Base, Diff>
+{
+    type ExtraStorage = Diff::ExtraStorage;
+
+    fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo {
+        let base = self.1.build(extras);
+
+        VkGraphicsPipelineCreateInfo {
+            basePipelineIndex: -1,
+            basePipelineHandle: self.0.native_ptr(),
+            flags: base.flags | VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+            ..base
+        }
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        self.1.make_extras()
+    }
+}
+
+pub struct IndexDerivedGraphicsPipelineBuilder<Diff: GraphicsPipelineBuilder>(i32, Diff);
+impl<Diff: GraphicsPipelineBuilder> IndexDerivedGraphicsPipelineBuilder<Diff> {
+    pub fn diff_mut(&mut self) -> &mut Diff {
+        &mut self.1
+    }
+}
+impl<Diff: GraphicsPipelineBuilder> GraphicsPipelineBuilder for IndexDerivedGraphicsPipelineBuilder<Diff> {
+    type ExtraStorage = Diff::ExtraStorage;
+
+    fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo {
+        let base = self.1.build(extras);
+
+        VkGraphicsPipelineCreateInfo {
+            basePipelineIndex: self.0,
+            basePipelineHandle: VkPipeline::NULL,
+            flags: base.flags | VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+            ..base
+        }
+    }
+    fn make_extras(&self) -> Self::ExtraStorage {
+        self.1.make_extras()
     }
 }
 
