@@ -816,6 +816,10 @@ impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, S
         self.ia.topology = topo;
         self
     }
+
+    pub fn shader_stages_mut(&mut self) -> &mut ShaderStages {
+        &mut self.shader_stages
+    }
 }
 
 #[cfg(feature = "VK_EXT_conservative_rasterization")]
