@@ -1681,14 +1681,16 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
         self
     }
 }
+pub struct NonDerivedGraphicPipelineBuilderExtraStorage<ShaderStages: PipelineShaderStageProvider> {
+    pub stages: Vec<VkPipelineShaderStageCreateInfo>,
+    pub shader_stage_extras: ShaderStages::ExtraStorage,
+}
 impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
     GraphicsPipelineBuilder for NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
-    type ExtraStorage = ShaderStages::ExtraStorage;
+    type ExtraStorage = NonDerivedGraphicPipelineBuilderExtraStorage<ShaderStages>;
 
     fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo {
-        let stages = self.vp.shader_stages.base_struct(extras);
-
         self.rasterizer_state
             .apply_dynamic_states(&mut self.dynamic_state_flags);
         let ds = if !self.dynamic_state_flags.0.is_empty() {
@@ -1710,8 +1712,8 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
         VkGraphicsPipelineCreateInfo {
             sType: VkGraphicsPipelineCreateInfo::TYPE,
             pNext: std::ptr::null(),
-            stageCount: stages.len() as _,
-            pStages: stages.as_ptr(),
+            stageCount: extras.stages.len() as _,
+            pStages: extras.stages.as_ptr(),
             pVertexInputState: &self.vp.vi,
             pInputAssemblyState: &self.vp.ia,
             pTessellationState: self
@@ -1746,7 +1748,13 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
         }
     }
     fn make_extras(&self) -> Self::ExtraStorage {
-        self.vp.shader_stages.make_extras()
+        let shader_stage_extras = self.vp.shader_stages.make_extras();
+        let stages = self.vp.shader_stages.base_struct(&shader_stage_extras);
+
+        NonDerivedGraphicPipelineBuilderExtraStorage {
+            stages,
+            shader_stage_extras,
+        }
     }
 }
 
