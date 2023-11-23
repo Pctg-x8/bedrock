@@ -61,7 +61,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             sType: VkPresentInfoKHR::TYPE,
             pNext: std::ptr::null(),
             waitSemaphoreCount: wait_semaphores.len() as _,
-            pWaitSemaphores: wait_semaphores.as_ptr(),
+            pWaitSemaphores: wait_semaphores.as_ptr_empty_null(),
             swapchainCount: 1,
             pSwapchains: &self.native_ptr(),
             pImageIndices: &index,

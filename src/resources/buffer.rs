@@ -1,5 +1,6 @@
 use crate::{
-    vk::*, DeviceChild, MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle,
+    VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -161,7 +162,7 @@ impl<'s> BufferDesc<'s> {
             VK_SHARING_MODE_CONCURRENT
         };
         self.0.queueFamilyIndexCount = indices.len() as _;
-        self.0.pQueueFamilyIndices = indices.as_ptr();
+        self.0.pQueueFamilyIndices = indices.as_ptr_empty_null();
 
         self
     }

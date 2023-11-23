@@ -2,7 +2,7 @@
 
 use derives::implements;
 
-use crate::{vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
+use crate::{ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 #[cfg(feature = "Implements")]
 use crate::{
     FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
@@ -153,7 +153,7 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
             self.device().native_ptr(),
             self.native_ptr_mut(),
             buffers.len() as _,
-            buffers.as_ptr() as *const _,
+            buffers.as_ptr_empty_null() as *const _,
         );
     }
 
@@ -431,7 +431,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
             framebuffer: framebuffer.native_ptr(),
             renderArea: render_area,
             clearValueCount: clear_values.len() as _,
-            pClearValues: clear_values.as_ptr(),
+            pClearValues: clear_values.as_ptr_empty_null(),
         };
         let contents = if inline_commands {
             VK_SUBPASS_CONTENTS_INLINE
@@ -554,9 +554,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.current_pipeline_layout_g(),
                 first,
                 descriptor_sets.len() as _,
-                descriptor_sets.as_ptr(),
+                descriptor_sets.as_ptr_empty_null(),
                 dynamic_offsets.len() as _,
-                dynamic_offsets.as_ptr(),
+                dynamic_offsets.as_ptr_empty_null(),
             );
         }
 
@@ -577,9 +577,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.current_pipeline_layout_c(),
                 first,
                 descriptor_sets.len() as _,
-                descriptor_sets.as_ptr(),
+                descriptor_sets.as_ptr_empty_null(),
                 dynamic_offsets.len() as _,
-                dynamic_offsets.as_ptr(),
+                dynamic_offsets.as_ptr_empty_null(),
             );
         }
         self
@@ -656,9 +656,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                     dstArrayElement: array,
                     descriptorType: dty as _,
                     descriptorCount: count,
-                    pImageInfo: iv.as_ptr(),
-                    pBufferInfo: bv.as_ptr(),
-                    pTexelBufferView: bvv.as_ptr(),
+                    pImageInfo: iv.as_ptr_empty_null(),
+                    pBufferInfo: bv.as_ptr_empty_null(),
+                    pTexelBufferView: bvv.as_ptr_empty_null(),
                 },
             )
             .collect::<Vec<_>>();
@@ -669,7 +669,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.current_pipeline_layout_g(),
                 set,
                 w.len() as _,
-                w.as_ptr(),
+                w.as_ptr_empty_null(),
             );
         }
 
@@ -717,9 +717,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                     dstArrayElement: array,
                     descriptorType: dty as _,
                     descriptorCount: count,
-                    pImageInfo: iv.as_ptr(),
-                    pBufferInfo: bv.as_ptr(),
-                    pTexelBufferView: bvv.as_ptr(),
+                    pImageInfo: iv.as_ptr_empty_null(),
+                    pBufferInfo: bv.as_ptr_empty_null(),
+                    pTexelBufferView: bvv.as_ptr_empty_null(),
                 },
             )
             .collect::<Vec<_>>();
@@ -730,7 +730,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.current_pipeline_layout_c(),
                 set,
                 w.len() as _,
-                w.as_ptr(),
+                w.as_ptr_empty_null(),
             );
         }
 
@@ -749,7 +749,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.ptr.native_ptr_mut(),
                 first,
                 viewports.len() as _,
-                viewports.as_ptr(),
+                viewports.as_ptr_empty_null(),
             );
         }
         self
@@ -758,7 +758,12 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
     #[must_use]
     pub fn set_scissor(&mut self, first: u32, scissors: &[VkRect2D]) -> &mut Self {
         unsafe {
-            crate::vkresolve::cmd_set_scissor(self.ptr.native_ptr_mut(), first, scissors.len() as _, scissors.as_ptr());
+            crate::vkresolve::cmd_set_scissor(
+                self.ptr.native_ptr_mut(),
+                first,
+                scissors.len() as _,
+                scissors.as_ptr_empty_null(),
+            );
         }
         self
     }
@@ -867,8 +872,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.ptr.native_ptr_mut(),
                 first,
                 bufs.len() as _,
-                bufs.as_ptr(),
-                ofs.as_ptr(),
+                bufs.as_ptr_empty_null(),
+                ofs.as_ptr_empty_null(),
             );
         }
         self
@@ -1005,7 +1010,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 src.native_ptr(),
                 dst.native_ptr(),
                 regions.len() as _,
-                regions.as_ptr(),
+                regions.as_ptr_empty_null(),
             );
         }
         self
@@ -1029,7 +1034,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                regions.as_ptr(),
+                regions.as_ptr_empty_null(),
             );
         }
         self
@@ -1054,7 +1059,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                regions.as_ptr(),
+                regions.as_ptr_empty_null(),
                 filter as _,
             );
         }
@@ -1077,7 +1082,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 dst_image.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                regions.as_ptr(),
+                regions.as_ptr_empty_null(),
             );
         }
         self
@@ -1098,7 +1103,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 src_layout as _,
                 dst_buffer.native_ptr(),
                 regions.len() as _,
-                regions.as_ptr(),
+                regions.as_ptr_empty_null(),
             );
         }
         self
@@ -1167,9 +1172,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 self.ptr.native_ptr_mut(),
                 image.native_ptr(),
                 layout as _,
-                colors.as_ptr(),
+                colors.as_ptr_empty_null(),
                 ranges.len() as _,
-                ranges.as_ptr(),
+                ranges.as_ptr_empty_null(),
             );
         }
         self
@@ -1192,7 +1197,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 layout as _,
                 &VkClearDepthStencilValue { depth, stencil },
                 ranges.len() as _,
-                ranges.as_ptr(),
+                ranges.as_ptr_empty_null(),
             );
         }
         self
@@ -1205,9 +1210,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
             crate::vkresolve::cmd_clear_attachments(
                 self.ptr.native_ptr_mut(),
                 attachments.len() as _,
-                attachments.as_ptr(),
+                attachments.as_ptr_empty_null(),
                 rects.len() as _,
-                rects.as_ptr(),
+                rects.as_ptr_empty_null(),
             );
         }
         self
@@ -1223,7 +1228,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
     /// Caller must be primary buffer and in the render pass when executing secondary command buffer
     #[must_use]
     pub unsafe fn execute_commands(&mut self, buffers: &[VkCommandBuffer]) -> &mut Self {
-        crate::vkresolve::cmd_execute_commands(self.ptr.native_ptr_mut(), buffers.len() as _, buffers.as_ptr());
+        crate::vkresolve::cmd_execute_commands(
+            self.ptr.native_ptr_mut(),
+            buffers.len() as _,
+            buffers.as_ptr_empty_null(),
+        );
         self
     }
 }
@@ -1249,7 +1258,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                regions.as_ptr(),
+                regions.as_ptr_empty_null(),
             )
         };
         self
@@ -1293,15 +1302,15 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
             crate::vkresolve::cmd_wait_events(
                 self.ptr.native_ptr_mut(),
                 evs.len() as _,
-                evs.as_ptr(),
+                evs.as_ptr_empty_null(),
                 src_stage_mask.0,
                 dst_stage_mask.0,
                 memory_barriers.len() as _,
-                memory_barriers.as_ptr(),
+                memory_barriers.as_ptr_empty_null(),
                 buffer_memory_barriers.len() as _,
-                buffer_memory_barriers.as_ptr(),
+                buffer_memory_barriers.as_ptr_empty_null(),
                 image_memory_barriers.len() as _,
-                image_memory_barriers.as_ptr(),
+                image_memory_barriers.as_ptr_empty_null(),
             );
         }
         self
@@ -1325,11 +1334,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 dst_stage_mask.0,
                 if by_region { VK_DEPENDENCY_BY_REGION_BIT } else { 0 },
                 memory_barriers.len() as _,
-                memory_barriers.as_ptr(),
+                memory_barriers.as_ptr_empty_null(),
                 buffer_memory_barriers.len() as _,
-                buffer_memory_barriers.as_ptr() as _,
+                buffer_memory_barriers.as_ptr_empty_null() as _,
                 image_memory_barriers.len() as _,
-                image_memory_barriers.as_ptr() as _,
+                image_memory_barriers.as_ptr_empty_null() as _,
             );
         }
         self

@@ -3,6 +3,7 @@
 use cfg_if::cfg_if;
 use derives::implements;
 
+use crate::ffi_helper::ArrayFFIExtensions;
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
 use crate::{vk::*, DeviceChild, VkHandleRef, VkObject, VkRawHandle};
@@ -175,12 +176,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
             descriptorType: self.ty as _,
             descriptorCount: self.count,
             stageFlags: self.shader_stage_mask.0,
-            // as_ptrは空の場合でも0にならないらしい
-            pImmutableSamplers: if self.immutable_samplers.is_empty() {
-                core::ptr::null()
-            } else {
-                self.immutable_samplers.as_ptr() as *const _
-            },
+            pImmutableSamplers: self.immutable_samplers.as_ptr_empty_null() as *const _,
         }
     }
 }
@@ -227,7 +223,7 @@ impl<'s> DescriptorSetLayoutBuilder<'s> {
             .map(|(n, b)| b.make_structure_with_binding_index(n as _))
             .collect::<Vec<_>>();
         self.0.bindingCount = bindings.len() as _;
-        self.0.pBindings = bindings.as_ptr();
+        self.0.pBindings = bindings.as_ptr_empty_null();
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
@@ -316,7 +312,7 @@ impl DescriptorPoolBuilder {
         Self: Sized,
     {
         self.0.poolSizeCount = self.1.len() as _;
-        self.0.pPoolSizes = self.1.as_ptr() as *const _;
+        self.0.pPoolSizes = self.1.as_ptr_empty_null() as *const _;
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
@@ -347,7 +343,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
             pNext: std::ptr::null(),
             descriptorPool: self.native_ptr_mut(),
             descriptorSetCount: layout_ptrs.len() as _,
-            pSetLayouts: layout_ptrs.as_ptr(),
+            pSetLayouts: layout_ptrs.as_ptr_empty_null(),
         };
         let mut hs = vec![VkDescriptorSet::NULL; layout_ptrs.len()];
         unsafe {
@@ -390,7 +386,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
             self.device().native_ptr(),
             self.native_ptr(),
             sets.len() as _,
-            sets.as_ptr(),
+            sets.as_ptr_empty_null(),
         )
         .into_result()
         .map(drop)
@@ -548,13 +544,17 @@ impl DescriptorSetWriteInfo<'_> {
             | DescriptorContents::CombinedImageSampler(ref res)
             | DescriptorContents::SampledImage(ref res)
             | DescriptorContents::StorageImage(ref res)
-            | DescriptorContents::InputAttachment(ref res) => (core::ptr::null(), res.as_ptr(), core::ptr::null()),
+            | DescriptorContents::InputAttachment(ref res) => {
+                (core::ptr::null(), res.as_ptr_empty_null(), core::ptr::null())
+            }
             DescriptorContents::UniformBuffer(ref res)
             | DescriptorContents::StorageBuffer(ref res)
             | DescriptorContents::UniformBufferDynamic(ref res)
-            | DescriptorContents::StorageBufferDynamic(ref res) => (res.as_ptr(), core::ptr::null(), core::ptr::null()),
+            | DescriptorContents::StorageBufferDynamic(ref res) => {
+                (res.as_ptr_empty_null(), core::ptr::null(), core::ptr::null())
+            }
             DescriptorContents::UniformTexelBuffer(ref res) | DescriptorContents::StorageTexelBuffer(ref res) => {
-                (core::ptr::null(), core::ptr::null(), res.as_ptr())
+                (core::ptr::null(), core::ptr::null(), res.as_ptr_empty_null())
             }
         };
 

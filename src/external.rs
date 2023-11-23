@@ -86,9 +86,9 @@ cfg_if! {
                         sType: VkD3D12FenceSubmitInfoKHR::TYPE,
                         pNext: std::ptr::null(),
                         waitSemaphoreValuesCount: wait_semaphore_values.len() as _,
-                        pWaitSemaphoreValues: wait_semaphore_values.as_ptr(),
+                        pWaitSemaphoreValues: wait_semaphore_values.as_ptr_empty_null(),
                         signalSemaphoreValuesCount: signal_semaphore_values.len() as _,
-                        pSignalSemaphoreValues: signal_semaphore_values.as_ptr(),
+                        pSignalSemaphoreValues: signal_semaphore_values.as_ptr_empty_null(),
                     },
                     std::marker::PhantomData,
                 )

@@ -3,7 +3,8 @@
 use derives::implements;
 
 use crate::{
-    vk::*, DeviceChild, DeviceChildTransferrable, Image, ImageLayout, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildTransferrable, Image, ImageLayout, VkHandle,
+    VkObject, VkRawHandle, VulkanStructure,
 };
 use std::ops::*;
 
@@ -408,21 +409,16 @@ impl RenderPassBuilder {
                 flags: 0,
                 pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
                 inputAttachmentCount: x.input_attachments.len() as _,
-                pInputAttachments: x.input_attachments.as_ptr(),
+                pInputAttachments: x.input_attachments.as_ptr_empty_null(),
                 colorAttachmentCount: x.color_attachments.len() as _,
-                pColorAttachments: x.color_attachments.as_ptr(),
-                pResolveAttachments: if x.resolve_attachments.is_empty() {
-                    std::ptr::null()
-                } else {
-                    x.resolve_attachments.as_ptr()
-                },
-                pDepthStencilAttachment: if let Some(ref x) = x.depth_stencil_attachment {
-                    x
-                } else {
-                    std::ptr::null()
-                },
+                pColorAttachments: x.color_attachments.as_ptr_empty_null(),
+                pResolveAttachments: x.resolve_attachments.as_ptr_empty_null(),
+                pDepthStencilAttachment: x
+                    .depth_stencil_attachment
+                    .as_ref()
+                    .map_or(core::ptr::null(), |p| p as *const _),
                 preserveAttachmentCount: x.preserve_attachments.len() as _,
-                pPreserveAttachments: x.preserve_attachments.as_ptr(),
+                pPreserveAttachments: x.preserve_attachments.as_ptr_empty_null(),
             })
             .collect::<Vec<_>>();
         let cinfo = VkRenderPassCreateInfo {
@@ -430,11 +426,11 @@ impl RenderPassBuilder {
             pNext: std::ptr::null(),
             flags: 0,
             attachmentCount: self.attachments.len() as _,
-            pAttachments: self.attachments.as_ptr(),
+            pAttachments: self.attachments.as_ptr_empty_null(),
             subpassCount: subpasses.len() as _,
-            pSubpasses: subpasses.as_ptr(),
+            pSubpasses: subpasses.as_ptr_empty_null(),
             dependencyCount: self.dependencies.len() as _,
-            pDependencies: self.dependencies.as_ptr(),
+            pDependencies: self.dependencies.as_ptr_empty_null(),
         };
 
         let mut h = std::mem::MaybeUninit::uninit();
@@ -565,7 +561,7 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
         let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 
         self.info.attachmentCount = views.len() as _;
-        self.info.pAttachments = views.as_ptr();
+        self.info.pAttachments = views.as_ptr_empty_null();
         self.info.renderPass = self.render_pass.native_ptr();
         self.info.width = size.width;
         self.info.height = size.height;
@@ -600,7 +596,7 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
         let views = self.under_resources.iter().map(|x| x.native_ptr()).collect::<Vec<_>>();
 
         self.info.attachmentCount = views.len() as _;
-        self.info.pAttachments = views.as_ptr();
+        self.info.pAttachments = views.as_ptr_empty_null();
         self.info.renderPass = self.render_pass.native_ptr();
         self.info.width = size.width;
         self.info.height = size.height;

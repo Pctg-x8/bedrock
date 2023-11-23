@@ -4,6 +4,7 @@ pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION: usize = 1;
 pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &'static str = "VK_EXT_image_drm_format_modifier";
 
 use super::*;
+use crate::ffi_helper::ArrayFFIExtensions;
 use crate::PFN;
 
 pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = ext_enum_value(159, 0) as _;
@@ -101,7 +102,7 @@ impl VkImageDrmFormatModifierListCreateInfoEXT {
             sType: Self::TYPE,
             pNext: std::ptr::null(),
             drmFormatModifierCount: modifiers.len() as _,
-            pDrmFormatModifiers: modifiers.as_ptr(),
+            pDrmFormatModifiers: modifiers.as_ptr_empty_null(),
         }
     }
 }

@@ -373,6 +373,8 @@ impl InstanceBuilder {
     pub fn create(mut self) -> crate::Result<InstanceObject> {
         // construct ext chains
 
+        use crate::ffi_helper::ArrayFFIExtensions;
+
         if !self.ext_structures.is_empty() {
             for n in 0..self.ext_structures.len() - 1 {
                 let next_ptr = self.ext_structures[n + 1].as_ref() as *const _ as _;
@@ -399,13 +401,10 @@ impl InstanceBuilder {
         self.appinfo.pEngineName = self._engine_name.as_ptr();
         self.cinfo.enabledLayerCount = layers.len() as _;
         self.cinfo.enabledExtensionCount = extensions.len() as _;
-        self.cinfo.ppEnabledLayerNames = if layers.is_empty() { 0 as _ } else { layers.as_ptr() };
-        self.cinfo.ppEnabledExtensionNames = if extensions.is_empty() {
-            0 as _
-        } else {
-            extensions.as_ptr()
-        };
+        self.cinfo.ppEnabledLayerNames = layers.as_ptr_empty_null();
+        self.cinfo.ppEnabledExtensionNames = extensions.as_ptr_empty_null();
         self.cinfo.pApplicationInfo = &self.appinfo;
+
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())

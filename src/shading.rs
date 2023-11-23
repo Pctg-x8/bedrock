@@ -1,5 +1,6 @@
 //! Vulkan Shading(Shader/Pipeline)
 
+use crate::ffi_helper::ArrayFFIExtensions;
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
 use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
@@ -246,7 +247,7 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
                 self.device().native_ptr(),
                 self.native_ptr_mut(),
                 srcs.len() as _,
-                srcs.as_ptr(),
+                srcs.as_ptr_empty_null(),
             )
             .into_result()
             .map(drop)
@@ -321,9 +322,9 @@ impl<'l, D: crate::Device> PipelineLayoutBuilder<'l, D> {
             pNext: std::ptr::null(),
             flags: 0,
             setLayoutCount: layout_handles.len() as _,
-            pSetLayouts: layout_handles.as_ptr(),
+            pSetLayouts: layout_handles.as_ptr_empty_null(),
             pushConstantRangeCount: push_constant_ranges.len() as _,
-            pPushConstantRanges: push_constant_ranges.as_ptr(),
+            pPushConstantRanges: push_constant_ranges.as_ptr_empty_null(),
         };
 
         let mut handle = core::mem::MaybeUninit::uninit();
@@ -393,7 +394,7 @@ impl<'d> DynamicDataCell<'d> {
     pub fn from_slice<T>(s: &'d [T]) -> Self {
         DynamicDataCell {
             size: std::mem::size_of::<T>() * s.len(),
-            data: s.as_ptr() as *const _,
+            data: s.as_ptr_empty_null() as *const _,
             ph: PhantomData,
         }
     }
@@ -419,7 +420,7 @@ impl<'d, T> DynamicArrayState<'d, T> {
     }
     fn as_ptr(&self) -> *const T {
         match self {
-            DynamicArrayState::Static(v) => v.as_ptr(),
+            DynamicArrayState::Static(v) => v.as_ptr_empty_null(),
             _ => std::ptr::null(),
         }
     }
@@ -457,7 +458,7 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d Pipel
             pNext: std::ptr::null(),
             flags: 0,
             dynamicStateCount: self.0.len() as _,
-            pDynamicStates: self.0.as_ptr(),
+            pDynamicStates: self.0.as_ptr_empty_null(),
         })
     }
 }
@@ -615,7 +616,7 @@ impl<P: PipelineShaderProvider, T: SpecializationConstants> PipelineShaderProvid
             self.0.make_extras(),
             VkSpecializationInfo {
                 mapEntryCount: T::ENTRIES.len() as _,
-                pMapEntries: T::ENTRIES.as_ptr(),
+                pMapEntries: T::ENTRIES.as_ptr_empty_null(),
                 dataSize: core::mem::size_of::<T>(),
                 pData: self.1.as_ptr(),
             },
@@ -764,9 +765,9 @@ impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, S
                 pNext: std::ptr::null(),
                 flags: 0,
                 vertexBindingDescriptionCount: vbind.len() as _,
-                pVertexBindingDescriptions: vbind.as_ptr() as _,
+                pVertexBindingDescriptions: vbind.as_ptr_empty_null() as _,
                 vertexAttributeDescriptionCount: vattr.len() as _,
-                pVertexAttributeDescriptions: vattr.as_ptr(),
+                pVertexAttributeDescriptions: vattr.as_ptr_empty_null(),
             },
             ia: VkPipelineInputAssemblyStateCreateInfo {
                 sType: VkPipelineInputAssemblyStateCreateInfo::TYPE,
@@ -782,13 +783,13 @@ impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, S
     /// Update the vertex binding description
     pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self {
         self.vi.vertexBindingDescriptionCount = vbind.len() as _;
-        self.vi.pVertexBindingDescriptions = vbind.as_ptr();
+        self.vi.pVertexBindingDescriptions = vbind.as_ptr_empty_null();
         self
     }
     /// Update the vertex attribute description
     pub fn vertex_attributes(&mut self, vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self {
         self.vi.vertexAttributeDescriptionCount = vattr.len() as _;
-        self.vi.pVertexAttributeDescriptions = vattr.as_ptr();
+        self.vi.pVertexAttributeDescriptions = vattr.as_ptr_empty_null();
         self
     }
     /// Update the vertex input description
@@ -995,7 +996,7 @@ impl<'d> MultisampleState<'d> {
             self.data.pSampleMask = std::ptr::null();
         } else {
             assert_eq!(mask.len(), (self.data.rasterizationSamples as usize + 31) / 32);
-            self.data.pSampleMask = mask.as_ptr();
+            self.data.pSampleMask = mask.as_ptr_empty_null();
         }
         self
     }
@@ -1537,7 +1538,7 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
             let cb = self.cb_ref();
             cb.1.push(blend.0);
             cb.0.attachmentCount = cb.1.len() as _;
-            cb.0.pAttachments = cb.1.as_ptr();
+            cb.0.pAttachments = cb.1.as_ptr_empty_null();
         }
         self
     }
@@ -1546,7 +1547,7 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
         let (ref mut state, ref mut blend_infos) = self.cb_ref();
         *blend_infos = blends;
         state.attachmentCount = blend_infos.len() as _;
-        state.pAttachments = blend_infos.as_ptr();
+        state.pAttachments = blend_infos.as_ptr_empty_null();
         self
     }
     /// Clears per-target attachment blending state
@@ -1713,7 +1714,7 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
             sType: VkGraphicsPipelineCreateInfo::TYPE,
             pNext: std::ptr::null(),
             stageCount: extras.stages.len() as _,
-            pStages: extras.stages.as_ptr(),
+            pStages: extras.stages.as_ptr_empty_null(),
             pVertexInputState: &self.vp.vi,
             pInputAssemblyState: &self.vp.ia,
             pTessellationState: self

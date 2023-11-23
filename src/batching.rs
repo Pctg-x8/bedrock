@@ -1,4 +1,4 @@
-use crate::{vk::*, PipelineStageFlags, VkHandle, VulkanStructure};
+use crate::{ffi_helper::ArrayFFIExtensions, vk::*, PipelineStageFlags, VkHandle, VulkanStructure};
 
 pub struct TemporalSubmissionBatchResources {
     command_buffers: Vec<VkCommandBuffer>,
@@ -21,12 +21,12 @@ impl TemporalSubmissionBatchResources {
             sType: VkSubmitInfo::TYPE,
             pNext: std::ptr::null(),
             commandBufferCount: self.command_buffers.len() as _,
-            pCommandBuffers: self.command_buffers.as_ptr(),
+            pCommandBuffers: self.command_buffers.as_ptr_empty_null(),
             waitSemaphoreCount: self.wait_semaphores.len() as _,
-            pWaitSemaphores: self.wait_semaphores.as_ptr(),
-            pWaitDstStageMask: self.wait_stages.as_ptr(),
+            pWaitSemaphores: self.wait_semaphores.as_ptr_empty_null(),
+            pWaitDstStageMask: self.wait_stages.as_ptr_empty_null(),
             signalSemaphoreCount: self.signal_semaphores.len() as _,
-            pSignalSemaphores: self.signal_semaphores.as_ptr(),
+            pSignalSemaphores: self.signal_semaphores.as_ptr_empty_null(),
         }
     }
 }
@@ -261,7 +261,7 @@ impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpB
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {
             bufferBindCount: self.1.len() as _,
-            pBufferBinds: self.1.as_ptr(),
+            pBufferBinds: self.1.as_ptr_empty_null(),
             ..self.0.make_info_struct()
         }
     }
@@ -275,7 +275,7 @@ impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpB
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {
             imageBindCount: self.1.len() as _,
-            pImageBinds: self.1.as_ptr(),
+            pImageBinds: self.1.as_ptr_empty_null(),
             ..self.0.make_info_struct()
         }
     }
@@ -289,7 +289,7 @@ impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpB
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {
             imageOpaqueBindCount: self.1.len() as _,
-            pImageOpaqueBinds: self.1.as_ptr(),
+            pImageOpaqueBinds: self.1.as_ptr_empty_null(),
             ..self.0.make_info_struct()
         }
     }
@@ -306,7 +306,7 @@ impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseB
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {
             waitSemaphoreCount: self.1.len() as _,
-            pWaitSemaphores: self.1.as_ptr(),
+            pWaitSemaphores: self.1.as_ptr_empty_null(),
             ..self.0.make_info_struct()
         }
     }
@@ -323,7 +323,7 @@ impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseB
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {
             signalSemaphoreCount: self.1.len() as _,
-            pSignalSemaphores: self.1.as_ptr(),
+            pSignalSemaphores: self.1.as_ptr_empty_null(),
             ..self.0.make_info_struct()
         }
     }

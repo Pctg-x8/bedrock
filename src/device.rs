@@ -3,14 +3,14 @@
 use cfg_if::cfg_if;
 use derives::implements;
 
+use crate::{
+    ffi_helper::ArrayFFIExtensions, vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch,
+    TemporalSubmissionBatchResources, VkHandle, VkObject, VulkanStructure,
+};
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle,
     VulkanStructureProvider,
-};
-use crate::{
-    vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch, TemporalSubmissionBatchResources, VkHandle, VkObject,
-    VulkanStructure,
 };
 
 #[implements]
@@ -380,7 +380,7 @@ impl DeviceQueueCreateInfo {
 
     fn complete(&mut self) {
         self.0.queueCount = self.1.len() as _;
-        self.0.pQueuePriorities = self.1.as_ptr();
+        self.0.pQueuePriorities = self.1.as_ptr_empty_null();
     }
 }
 
@@ -467,11 +467,11 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             pNext: std::ptr::null(),
             flags: 0,
             queueCreateInfoCount: queue_infos.len() as _,
-            pQueueCreateInfos: queue_infos.as_ptr(),
+            pQueueCreateInfos: queue_infos.as_ptr_empty_null(),
             enabledLayerCount: layers.len() as _,
-            ppEnabledLayerNames: layers.as_ptr(),
+            ppEnabledLayerNames: layers.as_ptr_empty_null(),
             enabledExtensionCount: extensions.len() as _,
-            ppEnabledExtensionNames: extensions.as_ptr(),
+            ppEnabledExtensionNames: extensions.as_ptr_empty_null(),
             pEnabledFeatures: &self.features,
         };
 
@@ -546,9 +546,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[implements]
     unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkresolve::invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr())
-            .into_result()
-            .map(drop)
+        crate::vkresolve::invalidate_mapped_memory_ranges(
+            self.native_ptr(),
+            ranges.len() as _,
+            ranges.as_ptr_empty_null(),
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Flush `MappedMemoryRange`s
@@ -558,9 +562,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[implements]
     unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkresolve::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr() as *const _)
-            .into_result()
-            .map(drop)
+        crate::vkresolve::flush_mapped_memory_ranges(
+            self.native_ptr(),
+            ranges.len() as _,
+            ranges.as_ptr_empty_null() as *const _,
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Update the contents of descriptor set objects
@@ -579,9 +587,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkresolve::update_descriptor_sets(
                 self.native_ptr(),
                 writes.len() as _,
-                writes.as_ptr(),
+                writes.as_ptr_empty_null(),
                 copies.len() as _,
-                copies.as_ptr(),
+                copies.as_ptr_empty_null(),
             );
         }
     }
@@ -630,7 +638,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::VkResultBox(self.bind_buffer_memory2_khr_fn().0(
                 self.native_ptr(),
                 bounds.len() as _,
-                bounds.as_ptr(),
+                bounds.as_ptr_empty_null(),
             ))
             .into_result()
             .map(drop)
@@ -646,7 +654,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::VkResultBox(self.bind_image_memory2_khr_fn().0(
                 self.native_ptr(),
                 bounds.len() as _,
-                bounds.as_ptr(),
+                bounds.as_ptr_empty_null(),
             ))
             .into_result()
             .map(drop)
@@ -681,7 +689,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: std::ptr::null(),
             flags: 0,
             codeSize: code.as_ref().len() as _,
-            pCode: code.as_ref().as_ptr() as *const _,
+            pCode: code.as_ref().as_ptr_empty_null() as *const _,
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -710,7 +718,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             pNext: std::ptr::null(),
             flags: 0,
             initialDataSize: initial.as_ref().len() as _,
-            pInitialData: initial.as_ref().as_ptr() as *const _,
+            pInitialData: initial.as_ref().as_ptr_empty_null() as *const _,
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -741,7 +749,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 self.native_ptr(),
                 cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                 infos.len() as _,
-                infos.as_ptr(),
+                infos.as_ptr_empty_null(),
                 std::ptr::null(),
                 hs.as_mut_ptr(),
             )
@@ -812,7 +820,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 self.native_ptr(),
                 cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
                 cinfos.len() as _,
-                cinfos.as_ptr(),
+                cinfos.as_ptr_empty_null(),
                 std::ptr::null(),
                 pipelines.as_mut_ptr(),
             )
@@ -892,7 +900,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkresolve::wait_for_fences(
                 self.native_ptr(),
                 objects_ptr.len() as _,
-                objects_ptr.as_ptr(),
+                objects_ptr.as_ptr_empty_null(),
                 wait_all as _,
                 timeout.unwrap_or(std::u64::MAX),
             )
@@ -914,9 +922,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn reset_multiple_fences(&self, objects: &[&mut impl crate::Fence]) -> crate::Result<()> {
         let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         unsafe {
-            crate::vkresolve::reset_fences(self.native_ptr(), objects_ptr.len() as _, objects_ptr.as_ptr())
-                .into_result()
-                .map(drop)
+            crate::vkresolve::reset_fences(
+                self.native_ptr(),
+                objects_ptr.len() as _,
+                objects_ptr.as_ptr_empty_null(),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -939,7 +951,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             set: 0,
             pipelineLayout: VkPipelineLayout::NULL,
             descriptorUpdateEntryCount: entries.len() as _,
-            pDescriptorUpdateEntries: entries.as_ptr(),
+            pDescriptorUpdateEntries: entries.as_ptr_empty_null(),
             templateType: VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
             descriptorSetLayout: dsl.native_ptr(),
         };
@@ -978,7 +990,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             set: 0,
             pipelineLayout: VkPipelineLayout::NULL,
             descriptorUpdateEntryCount: entries.len() as _,
-            pDescriptorUpdateEntries: entries.as_ptr(),
+            pDescriptorUpdateEntries: entries.as_ptr_empty_null(),
             templateType: if dsl.is_none() {
                 VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS
             } else {
@@ -1394,7 +1406,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
             crate::vkresolve::queue_bind_sparse(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr(),
+                batches.as_ptr_empty_null(),
                 fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
             )
             .into_result()
@@ -1454,7 +1466,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
             crate::vkresolve::queue_submit(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr(),
+                batches.as_ptr_empty_null(),
                 fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
             )
             .into_result()
@@ -1494,10 +1506,10 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
             sType: VkPresentInfoKHR::TYPE,
             pNext: std::ptr::null(),
             waitSemaphoreCount: wait_semaphores.len() as _,
-            pWaitSemaphores: wait_semaphores.as_ptr(),
+            pWaitSemaphores: wait_semaphores.as_ptr_empty_null(),
             swapchainCount: swapchains.len() as _,
-            pSwapchains: swapchains.as_ptr(),
-            pImageIndices: indices.as_ptr(),
+            pSwapchains: swapchains.as_ptr_empty_null(),
+            pImageIndices: indices.as_ptr_empty_null(),
             pResults: res.as_mut_ptr(),
         };
         unsafe {

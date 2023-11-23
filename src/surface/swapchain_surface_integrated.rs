@@ -130,7 +130,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
             VK_SHARING_MODE_CONCURRENT
         };
         self.0.queueFamilyIndexCount = queue_families.len() as _;
-        self.0.pQueueFamilyIndices = queue_families.as_ptr();
+        self.0.pQueueFamilyIndices = queue_families.as_ptr_empty_null();
         self
     }
 

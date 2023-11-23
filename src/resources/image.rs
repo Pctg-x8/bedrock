@@ -1,8 +1,8 @@
 use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
 
 use crate::{
-    vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound, VkDeviceChildNonExtDestroyable,
-    VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -390,7 +390,7 @@ impl<'d> ImageDesc<'d> {
             VK_SHARING_MODE_CONCURRENT
         };
         self.0.queueFamilyIndexCount = indices.len() as _;
-        self.0.pQueueFamilyIndices = indices.as_ptr();
+        self.0.pQueueFamilyIndices = indices.as_ptr_empty_null();
 
         self
     }
