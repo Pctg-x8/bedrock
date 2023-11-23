@@ -6,9 +6,9 @@ use derives::implements;
 use crate::vk::*;
 #[allow(unused_imports)]
 use crate::VulkanStructure;
-#[cfg(feature = "Implements")]
+#[implements]
 #[allow(unused_imports)]
-use crate::{DeviceChild, VkHandle};
+use crate::{ffi_helper::ArrayFFIExtensions, DeviceChild, VkHandle};
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]
