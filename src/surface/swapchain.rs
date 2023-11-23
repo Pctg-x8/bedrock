@@ -1,4 +1,6 @@
-use crate::{vk::*, CompletionHandler, DeviceChild, VkHandle, VkRawHandle, VulkanStructure};
+use crate::{
+    ffi_helper::ArrayFFIExtensions, vk::*, CompletionHandler, DeviceChild, VkHandle, VkRawHandle, VulkanStructure,
+};
 use derives::implements;
 
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {

@@ -1,6 +1,7 @@
 use crate::{
-    vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsage, PresentMode, SurfaceTransform, Swapchain,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureProvider,
+    ffi_helper::ArrayFFIExtensions, vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsage,
+    PresentMode, SurfaceTransform, Swapchain, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
+    VulkanStructure, VulkanStructureProvider,
 };
 use derives::implements;
 
@@ -121,7 +122,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         self
     }
 
-    pub const fn shared(mut self, queue_families: &[u32]) -> Self {
+    pub fn shared(mut self, queue_families: &[u32]) -> Self {
         assert!(queue_families.len() > 0, "empty families not allowed");
 
         self.0.imageSharingMode = if queue_families.is_empty() {
