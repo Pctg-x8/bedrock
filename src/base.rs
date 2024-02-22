@@ -353,6 +353,13 @@ impl InstanceBuilder {
         self
     }
 
+    #[cfg(feature = "VK_KHR_portability_enumeration")]
+    pub fn enumerate_portability(&mut self) -> &mut Self {
+        self.add_extension("VK_KHR_portability_enumeration");
+        self.cinfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+        self
+    }
+
     pub fn create_info(&self) -> &VkInstanceCreateInfo {
         &self.cinfo
     }

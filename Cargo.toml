@@ -113,6 +113,7 @@ VK_AMD_buffer_marker = []
 VK_EXT_vertex_attribute_divisor = []
 VK_KHR_image_format_list = []
 VK_EXT_image_drm_format_modifier = []
+VK_KHR_portability_enumeration = []
 
 # 1.1 promoted extensions
 VK_KHR_multiview = ["VK_KHR_get_physical_device_properties2"]

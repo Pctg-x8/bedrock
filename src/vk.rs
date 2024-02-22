@@ -5266,3 +5266,4 @@ ExportExtensions!("VK_KHR_get_memory_requirements2": get_memory_requirements2_kh
 ExportExtensions!("VK_KHR_sampler_ycbcr_conversion": sampler_ycbcr_conversion_khr);
 ExportExtensions!("VK_KHR_bind_memory2": bind_memory2_khr);
 ExportExtensions!("VK_KHR_maintenance3": maintenance3_khr);
+ExportExtensions!("VK_KHR_portability_enumeration": portability_enumeration_khr);
