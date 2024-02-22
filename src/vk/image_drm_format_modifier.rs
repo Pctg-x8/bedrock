@@ -97,7 +97,7 @@ pub struct VkImageDrmFormatModifierListCreateInfoEXT {
     pub pDrmFormatModifiers: *const u64,
 }
 impl VkImageDrmFormatModifierListCreateInfoEXT {
-    pub const unsafe fn from_values(modifiers: &[u64]) -> Self {
+    pub unsafe fn from_values(modifiers: &[u64]) -> Self {
         Self {
             sType: Self::TYPE,
             pNext: std::ptr::null(),

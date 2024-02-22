@@ -77,6 +77,7 @@ let PlatformIndependent =
       , "VK_NN_vi_surface"
       , "VK_NV_viewport_array2"
       , "VK_NV_viewport_swizzle"
+      , "VK_KHR_portability_extensions"
       ]
 
 let Win32Specific =
