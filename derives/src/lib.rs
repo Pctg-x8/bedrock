@@ -105,7 +105,7 @@ fn find_parent_field(fields: &syn::Fields) -> (usize, &syn::Field) {
                 .filter(|(_, n)| {
                     n.attrs
                         .iter()
-                        .any(|a| a.meta.require_path_only().map_or(false, |m| m.is_ident("parent")))
+                        .any(|a| a.meta.require_path_only().is_ok_and(|m| m.is_ident("parent")))
                 })
                 .collect::<Vec<_>>();
             match parents.len() {
@@ -122,7 +122,7 @@ fn find_parent_field(fields: &syn::Fields) -> (usize, &syn::Field) {
                 .filter(|(_, n)| {
                     n.attrs
                         .iter()
-                        .any(|a| a.meta.require_path_only().map_or(false, |m| m.is_ident("parent")))
+                        .any(|a| a.meta.require_path_only().is_ok_and(|m| m.is_ident("parent")))
                 })
                 .collect::<Vec<_>>();
             match parents.len() {
@@ -137,7 +137,7 @@ fn find_parent_field(fields: &syn::Fields) -> (usize, &syn::Field) {
 
 #[proc_macro_derive(InstanceChild, attributes(parent))]
 pub fn derive_instance_child(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let (parent_index, parent_field) = match input.data {
@@ -164,7 +164,7 @@ pub fn derive_instance_child(tok: TokenStream) -> TokenStream {
 
 #[proc_macro_derive(InstanceChildTransferrable, attributes(parent))]
 pub fn derive_instance_child_transferrable(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let (parent_index, parent_field) = match input.data {

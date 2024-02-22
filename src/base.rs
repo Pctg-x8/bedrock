@@ -1,6 +1,7 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
 use cfg_if::cfg_if;
+use derives::implements;
 
 #[cfg(feature = "Implements")]
 use crate::{fnconv::FnTransmute, ImageFlags, ImageUsage};
@@ -442,19 +443,36 @@ pub fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>> {
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 /// * `VK_ERROR_LAYER_NOT_PRESENT`
+#[implements]
+pub fn enumerate_extension_properties_cstr(
+    layer_name: Option<&core::ffi::CStr>,
+) -> crate::Result<Vec<VkExtensionProperties>> {
+    let ln_ptr = layer_name.map_or_else(core::ptr::null, |x| x.as_ptr());
+
+    unsafe {
+        let mut n = 0;
+        crate::vkresolve::enumerate_instance_extension_properties(ln_ptr, &mut n, core::ptr::null_mut())
+            .into_result()?;
+        let mut v = Vec::with_capacity(n as _);
+        v.set_len(n as _);
+        crate::vkresolve::enumerate_instance_extension_properties(ln_ptr, &mut n, v.as_mut_ptr()).into_result()?;
+
+        Ok(v)
+    }
+}
+
+/// Returns up to all of global extension properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `VK_ERROR_LAYER_NOT_PRESENT`
 #[cfg(feature = "Implements")]
 pub fn enumerate_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
     let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
-    let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or_else(std::ptr::null);
-    unsafe {
-        let mut n = 0;
-        crate::vkresolve::enumerate_instance_extension_properties(cptr, &mut n, std::ptr::null_mut()).into_result()?;
-        let mut v = Vec::with_capacity(n as _);
-        v.set_len(n as _);
-        crate::vkresolve::enumerate_instance_extension_properties(cptr, &mut n, v.as_mut_ptr())
-            .into_result()
-            .map(|_| v)
-    }
+
+    enumerate_extension_properties_cstr(cn.as_deref())
 }
 
 /// A Vulkan Instance interface
@@ -827,25 +845,43 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    #[cfg(feature = "Implements")]
-    fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
-        let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
-        let cptr = cn.as_ref().map(|s| s.as_ptr()).unwrap_or_else(std::ptr::null);
+    #[implements]
+    fn enumerate_extension_properties_cstr(
+        &self,
+        layer_name: Option<&core::ffi::CStr>,
+    ) -> crate::Result<Vec<VkExtensionProperties>> {
+        let ln_ptr = layer_name.map_or_else(core::ptr::null, |x| x.as_ptr());
+
         unsafe {
             let mut n = 0;
             crate::vkresolve::enumerate_device_extension_properties(
                 self.native_ptr(),
-                cptr,
+                ln_ptr,
                 &mut n,
-                std::ptr::null_mut(),
+                core::ptr::null_mut(),
             )
             .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::enumerate_device_extension_properties(self.native_ptr(), cptr, &mut n, v.as_mut_ptr())
-                .into_result()
-                .map(move |_| v)
+            crate::vkresolve::enumerate_device_extension_properties(self.native_ptr(), ln_ptr, &mut n, v.as_mut_ptr())
+                .into_result()?;
+
+            Ok(v)
         }
+    }
+
+    /// Returns properties of available physical device extensions
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_LAYER_NOT_PRESENT`
+    #[cfg(feature = "Implements")]
+    fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
+        let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
+
+        self.enumerate_extension_properties_cstr(cn.as_deref())
     }
 
     /// Reports capabilities of a physical device.
