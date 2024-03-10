@@ -13,6 +13,7 @@ use std::ops::*;
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
+#[bitflags_newtype]
 pub struct ShaderStage(pub VkShaderStageFlags);
 impl ShaderStage {
     /// Empty bits
@@ -36,50 +37,6 @@ impl ShaderStage {
     pub const ALL: Self = ShaderStage(VK_SHADER_STAGE_ALL);
     /// A combination of tessellation control stage and tessellation evaluation stage
     pub const TESSELLATION: Self = ShaderStage(Self::TESSELLATION_CONTROL.0 | Self::TESSELLATION_EVALUATION.0);
-
-    /// The vertex stage
-    pub fn vertex(self) -> Self {
-        ShaderStage(self.0 | Self::VERTEX.0)
-    }
-    /// The tessellation control stage
-    pub fn tessellation_control(self) -> Self {
-        ShaderStage(self.0 | Self::TESSELLATION_CONTROL.0)
-    }
-    /// The tessellation evaluation stage
-    pub fn tessellation_evaluation(self) -> Self {
-        ShaderStage(self.0 | Self::TESSELLATION_EVALUATION.0)
-    }
-    /// The geometry stage
-    pub fn geometry(self) -> Self {
-        ShaderStage(self.0 | Self::GEOMETRY.0)
-    }
-    /// The fragment stage
-    pub fn fragment(self) -> Self {
-        ShaderStage(self.0 | Self::FRAGMENT.0)
-    }
-    /// The compute stage
-    pub fn compute(self) -> Self {
-        ShaderStage(self.0 | Self::COMPUTE.0)
-    }
-    /// A combination of bits used as shorthand to specify all graphics stages defined above (excluding the compute stage)
-    pub fn all_graphics(self) -> Self {
-        ShaderStage(self.0 | Self::ALL_GRAPHICS.0)
-    }
-    /// A combination of tessellation control stage and tessellation evaluation stage
-    pub fn tessellation(self) -> Self {
-        ShaderStage(self.0 | Self::TESSELLATION.0)
-    }
-}
-impl BitOr for ShaderStage {
-    type Output = Self;
-    fn bitor(self, other: Self) -> Self {
-        ShaderStage(self.0 | other.0)
-    }
-}
-impl BitOrAssign for ShaderStage {
-    fn bitor_assign(&mut self, other: Self) {
-        self.0 |= other.0;
-    }
 }
 
 /// Stencil comparison function
@@ -269,8 +226,8 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn merge_into(&mut self, src: &[impl PipelineCache]) -> crate::Result<()>
+    #[implements]
+    fn merge(&mut self, src: &[impl PipelineCache]) -> crate::Result<()>
     where
         Self: VkHandleMut,
     {
@@ -333,7 +290,7 @@ impl<'l, D: crate::Device> PipelineLayoutBuilder<'l, D> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     pub fn create(&self, device: D) -> crate::Result<PipelineLayoutObject<D>> {
         let layout_handles = self
             .descriptor_set_layouts
@@ -402,7 +359,7 @@ impl<T> SwitchOrDynamicState<T> {
         }
     }
 }
-use derives::implements;
+use derives::{bitflags_newtype, implements};
 use libc::c_void;
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell

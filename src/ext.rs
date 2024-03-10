@@ -50,6 +50,7 @@ pub unsafe trait VulkanStructure: Sized {
         }
     }
 }
+
 impl<S: VulkanStructure> StructureChainQuery for S {
     fn iter_chain(&self) -> StructureChainIterator {
         StructureChainIterator {

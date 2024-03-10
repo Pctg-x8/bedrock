@@ -1,7 +1,7 @@
 //! Direct Display Rendering
 //! All functionality requires VK_KHR_display feature.
 
-#[cfg(feature = "Implements")]
+#[implements]
 use crate::VkHandle;
 use crate::{vk::*, VkObject, VulkanStructure};
 #[allow(unused_imports)]

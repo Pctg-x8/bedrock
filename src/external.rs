@@ -162,6 +162,9 @@ cfg_if! {
                 Self(v, std::marker::PhantomData)
             }
         }
+        unsafe impl VulkanStructure for ExportSemaphoreWin32HandleInfo<'_> {
+            const TYPE: crate::vk::VkStructureType = <VkExportSemaphoreWin32HandleInfoKHR as VulkanStructure>::TYPE;
+        }
     }
 }
 
