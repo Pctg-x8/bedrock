@@ -113,6 +113,7 @@ pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub pObjects: *const VkDebugUtilsObjectNameInfoEXT,
 }
 
+#[allow(non_camel_case_types)]
 pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(
     messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT,
     messageTypes: VkDebugUtilsMessageTypeFlagsEXT,

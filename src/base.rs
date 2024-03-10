@@ -1708,13 +1708,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         sink: &mut VkSurfaceCapabilities2KHR,
     ) -> crate::Result<()> {
         unsafe {
-            crate::VkResultBox(self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
-                self.native_ptr(),
-                surface_info,
-                sink,
-            ))
-            .into_result()
-            .map(drop)
+            self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(self.native_ptr(), surface_info, sink)
+                .into_result()
+                .map(drop)
         }
     }
 
@@ -1727,11 +1723,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let mut p = VkSurfaceCapabilities2KHR::uninit_sink();
 
         unsafe {
-            crate::VkResultBox(self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
+            self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
                 self.native_ptr(),
                 surface_info,
                 p.as_mut_ptr(),
-            ))
+            )
             .into_result()
             .map(move |_| p.assume_init())
         }
@@ -1763,23 +1759,23 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> crate::Result<Vec<VkPresentModeKHR>> {
         let mut n = 0;
         unsafe {
-            crate::VkResultBox(self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
+            self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
                 self.native_ptr(),
                 surface_info,
                 &mut n,
                 std::ptr::null_mut(),
-            ))
+            )
             .into_result()?;
         }
         let mut x = Vec::with_capacity(n as _);
         unsafe {
             x.set_len(n as _);
-            crate::VkResultBox(self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
+            self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
                 self.native_ptr(),
                 surface_info,
                 &mut n,
                 x.as_mut_ptr(),
-            ))
+            )
             .into_result()
             .map(move |_| x)
         }

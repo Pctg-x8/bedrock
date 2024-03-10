@@ -13,7 +13,7 @@ pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR: VkStructureTy
 pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR: VkStructureType = ext_enum_value(73, 2) as _;
 
 #[promote_1_1(suffix = "KHR")]
-pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = -(ext_enum_value(73, 3) as VkResult);
+pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = VkResult::ext_err_value(73, 3);
 
 #[promote_1_1(suffix = "KHR")]
 pub const VK_QUEUE_FAMILY_EXTERNAL_KHR: u32 = !1;

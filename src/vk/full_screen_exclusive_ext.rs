@@ -10,8 +10,7 @@ pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureT
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType =
     ext_enum_value(256, 2) as _;
 
-pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult =
-    unsafe { -std::mem::transmute::<_, VkResult>(ext_enum_value(256, 0) as u32) };
+pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = VkResult::ext_err_value(256, 0);
 
 pub type VkFullScreenExclusiveEXT = i32;
 pub const VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT: VkFullScreenExclusiveEXT = 0;

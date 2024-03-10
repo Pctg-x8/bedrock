@@ -32,7 +32,6 @@ use derives::*;
 pub mod vk;
 use vk::*;
 pub mod error;
-pub use self::error::*;
 
 cfg_if! {
     if #[cfg(feature = "Implements")] {
@@ -134,7 +133,7 @@ macro_rules! GuardsImpl {
     };
 }
 
-pub type Result<T> = std::result::Result<T, VkResultBox>;
+pub type Result<T> = std::result::Result<T, VkResult>;
 
 mod handle;
 pub use self::handle::*;
@@ -530,8 +529,8 @@ pub use self::fmt::*;
 
 /// All of traits
 pub mod traits {
-    pub use super::{AnalogNumRange, ClearColorValue, DeviceChild, ImageSize, PixelFormat, VkHandle, VkResultBox};
-    #[cfg(feature = "Implements")]
+    pub use super::{AnalogNumRange, ClearColorValue, DeviceChild, ImageSize, PixelFormat, VkHandle};
+    #[derives::implements]
     pub use super::{MemoryBound, Status};
 }
 

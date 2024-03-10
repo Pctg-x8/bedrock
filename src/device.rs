@@ -635,13 +635,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
 
         unsafe {
-            crate::VkResultBox(self.bind_buffer_memory2_khr_fn().0(
-                self.native_ptr(),
-                bounds.len() as _,
-                bounds.as_ptr_empty_null(),
-            ))
-            .into_result()
-            .map(drop)
+            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
         }
     }
 
@@ -651,13 +647,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
 
         unsafe {
-            crate::VkResultBox(self.bind_image_memory2_khr_fn().0(
-                self.native_ptr(),
-                bounds.len() as _,
-                bounds.as_ptr_empty_null(),
-            ))
-            .into_result()
-            .map(drop)
+            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
         }
     }
 
@@ -905,7 +897,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 timeout.unwrap_or(std::u64::MAX),
             )
         };
-        match vr.0 {
+        match vr {
             VK_SUCCESS => Ok(false),
             VK_TIMEOUT => Ok(true),
             _ => Err(vr),
@@ -1493,7 +1485,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     where
         Self: VkHandleMut,
     {
-        let mut res = vec![0; swapchains.len()];
+        let mut res = vec![VkResult(0); swapchains.len()];
         let wait_semaphores = wait_semaphores
             .iter_mut()
             .map(VkHandleMut::native_ptr_mut)

@@ -1,13 +1,12 @@
 //! Vulkan Debug Layer Extensions
 
-#[cfg(feature = "Implements")]
+#[implements]
 use crate::Instance;
+use crate::VkRawHandle;
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
 #[allow(unused_imports)]
 use crate::{InstanceChild, VkHandle, VkObject};
-use crate::{VkRawHandle, VkResultBox};
-#[allow(unused_imports)]
 use derives::*;
 
 cfg_if::cfg_if! {
@@ -100,7 +99,7 @@ cfg_if::cfg_if! {
 
                 let mut h = core::mem::MaybeUninit::uninit();
                 unsafe {
-                    VkResultBox(instance.create_debug_report_callback_ext_fn().0(instance.native_ptr(), &s, core::ptr::null(), h.as_mut_ptr()))
+                    instance.create_debug_report_callback_ext_fn().0(instance.native_ptr(), &s, core::ptr::null(), h.as_mut_ptr())
                         .into_result()
                         .map(move |_| DebugReportCallbackObject(h.assume_init(), instance))
                 }
@@ -277,7 +276,7 @@ cfg_if::cfg_if! {
             ) -> super::Result<DebugUtilsMessengerObject<Instance>> {
                 let mut h = std::mem::MaybeUninit::uninit();
                 unsafe {
-                    VkResultBox(instance.create_debug_utils_messenger_ext_fn().0(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr()))
+                    instance.create_debug_utils_messenger_ext_fn().0(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr())
                         .into_result()
                         .map(|_| DebugUtilsMessengerObject(h.assume_init(), instance))
                 }
@@ -321,7 +320,7 @@ cfg_if::cfg_if! {
             /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
             pub fn apply(&self, device: &(impl crate::Device + crate::InstanceChild)) -> crate::Result<()> {
                 unsafe {
-                    VkResultBox(device.instance().set_debug_utils_object_name_ext_fn().0(device.native_ptr(), &self.0))
+                    device.instance().set_debug_utils_object_name_ext_fn().0(device.native_ptr(), &self.0)
                         .into_result()
                         .map(drop)
                 }

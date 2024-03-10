@@ -4,7 +4,6 @@
 #![allow(non_snake_case)]
 
 use crate::vk::*;
-use crate::VkResultBox;
 use cfg_if::cfg_if;
 #[cfg(feature = "DynamicLoaded")]
 use libloading::*;
@@ -124,20 +123,20 @@ macro_rules! WrapAPI2 {
         cfg_if! {
             if #[cfg(feature = "DynamicLoaded")] {
                 $(#[$attr])*
-                $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
+                $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResult {
                     static F: ResolvedFnCell<$org_fn_type, DefaultGlobalResolver> = ResolvedFnCell::new(DefaultGlobalResolver);
 
                     tracing::trace!(target: "br-vkapi-call", stringify!($name));
 
-                    VkResultBox(F.resolve().0($($arg_name),*))
+                    F.resolve().0($($arg_name),*)
                 }
             } else {
                 $(#[$attr])*
                 #[inline]
-                $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResultBox {
+                $v unsafe fn $name($($arg_name: $arg_type),*) -> VkResult {
                     tracing::trace!(target: "br-vkapi-call", stringify!($name));
 
-                    VkResultBox(<$org_fn_type>::STATIC.0($($arg_name),*))
+                    <$org_fn_type>::STATIC.0($($arg_name),*)
                 }
             }
         }
@@ -1267,7 +1266,7 @@ pub trait OldResolverInterface {
         physicalDevice: VkPhysicalDevice,
         surface_info: *const VkPhysicalDeviceSurfaceInfo2KHR,
         surface_capabilities: *mut VkSurfaceCapabilities2KHR,
-    ) -> VkResultBox;
+    ) -> VkResult;
 
     #[cfg(feature = "VK_KHR_push_descriptor")]
     unsafe fn cmd_push_descriptor_set_khr(

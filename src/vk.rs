@@ -61,16 +61,6 @@ const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
     1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
 }
 
-#[inline]
-const fn ext_result_value(ext_number: u16, offset: u16) -> VkResult {
-    1000_000_000 + ((ext_number - 1) as VkResult * 1_000) + offset as VkResult
-}
-
-#[inline]
-const fn ext_err_value(ext_number: u16, offset: u16) -> VkResult {
-    -ext_result_value(ext_number, offset)
-}
-
 macro_rules! vk_bitmask {
     ($(#[$ty_attr: meta])* $ty_vis: vis enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* $(,)? }) => {
         $(#[$ty_attr])* $ty_vis type $ty_name = VkFlags;
@@ -353,31 +343,44 @@ pub const VK_MAX_DESCRIPTION_SIZE: usize = 256;
 pub type VkPipelineCacheHeaderVersion = i32;
 pub const VK_PIPELINE_CACHE_HEADER_VERSION_ONE: VkPipelineCacheHeaderVersion = 1;
 
-pub type VkResult = i32;
-pub const VK_SUCCESS: VkResult = 0;
-pub const VK_NOT_READY: VkResult = 1;
-pub const VK_TIMEOUT: VkResult = 2;
-pub const VK_EVENT_SET: VkResult = 3;
-pub const VK_EVENT_RESET: VkResult = 4;
-pub const VK_INCOMPLETE: VkResult = 5;
-pub const VK_ERROR_OUT_OF_HOST_MEMORY: VkResult = -1;
-pub const VK_ERROR_OUT_OF_DEVICE_MEMORY: VkResult = -2;
-pub const VK_ERROR_INITIALIZATION_FAILED: VkResult = -3;
-pub const VK_ERROR_DEVICE_LOST: VkResult = -4;
-pub const VK_ERROR_MEMORY_MAP_FAILED: VkResult = -5;
-pub const VK_ERROR_LAYER_NOT_PRESENT: VkResult = -6;
-pub const VK_ERROR_EXTENSION_NOT_PRESENT: VkResult = -7;
-pub const VK_ERROR_FEATURE_NOT_PRESENT: VkResult = -8;
-pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = -9;
-pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = -10;
-pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = -11;
-pub const VK_ERROR_FRAGMENTED_POOL: VkResult = -12;
-pub const VK_ERROR_UNKNOWN: VkResult = -13;
-pub const VK_ERROR_VALIDATION_FAILED_EXT: VkResult = -100_0011_001;
-pub const VK_ERROR_INVALID_SHADER_NV: VkResult = -100_0012_000;
-pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = -100_0255_000;
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkResult(pub i32);
+impl VkResult {
+    #[inline(always)]
+    const fn ext_value(ext_number: u16, offset: u16) -> Self {
+        Self(1000_000_000 + ((ext_number - 1) as i32 * 1_000) + offset as i32)
+    }
+
+    #[inline(always)]
+    const fn ext_err_value(ext_number: u16, offset: u16) -> Self {
+        Self(-Self::ext_value(ext_number, offset).0)
+    }
+}
+pub const VK_SUCCESS: VkResult = VkResult(0);
+pub const VK_NOT_READY: VkResult = VkResult(1);
+pub const VK_TIMEOUT: VkResult = VkResult(2);
+pub const VK_EVENT_SET: VkResult = VkResult(3);
+pub const VK_EVENT_RESET: VkResult = VkResult(4);
+pub const VK_INCOMPLETE: VkResult = VkResult(5);
+pub const VK_ERROR_OUT_OF_HOST_MEMORY: VkResult = VkResult(-1);
+pub const VK_ERROR_OUT_OF_DEVICE_MEMORY: VkResult = VkResult(-2);
+pub const VK_ERROR_INITIALIZATION_FAILED: VkResult = VkResult(-3);
+pub const VK_ERROR_DEVICE_LOST: VkResult = VkResult(-4);
+pub const VK_ERROR_MEMORY_MAP_FAILED: VkResult = VkResult(-5);
+pub const VK_ERROR_LAYER_NOT_PRESENT: VkResult = VkResult(-6);
+pub const VK_ERROR_EXTENSION_NOT_PRESENT: VkResult = VkResult(-7);
+pub const VK_ERROR_FEATURE_NOT_PRESENT: VkResult = VkResult(-8);
+pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = VkResult(-9);
+pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = VkResult(-10);
+pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = VkResult(-11);
+pub const VK_ERROR_FRAGMENTED_POOL: VkResult = VkResult(-12);
+pub const VK_ERROR_UNKNOWN: VkResult = VkResult(-13);
+pub const VK_ERROR_VALIDATION_FAILED_EXT: VkResult = VkResult(-100_0011_001);
+pub const VK_ERROR_INVALID_SHADER_NV: VkResult = VkResult(-100_0012_000);
+pub const VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT: VkResult = VkResult(-100_0255_000);
 #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
-pub const VK_ERROR_INVALID_FORMAT_MODIFIER_PLANE_LAYOUT_EXT: VkResult = -1000158000;
+pub const VK_ERROR_INVALID_FORMAT_MODIFIER_PLANE_LAYOUT_EXT: VkResult = VkResult(-100_0158_000);
 
 pub type VkStructureType = i32;
 pub const VK_STRUCTURE_TYPE_APPLICATION_INFO: VkStructureType = 0;

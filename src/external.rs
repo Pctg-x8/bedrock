@@ -252,12 +252,12 @@ impl ExternalMemoryHandleWin32 {
         device: &(impl crate::Device + ?Sized),
         mut sink: core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
     ) -> crate::Result<VkMemoryWin32HandlePropertiesKHR> {
-        crate::VkResultBox(device.get_memory_win32_handle_properties_khr_fn().0(
+        device.get_memory_win32_handle_properties_khr_fn().0(
             device.native_ptr(),
             self.0 as _,
             self.1,
             sink.as_mut_ptr(),
-        ))
+        )
         .into_result()
         .map(move |_| sink.assume_init())
     }
@@ -323,12 +323,12 @@ impl ExternalMemoryHostPointer {
         mut sink: core::mem::MaybeUninit<VkMemoryHostPointerPropertiesEXT>,
     ) -> crate::Result<VkMemoryHostPointerPropertiesEXT> {
         unsafe {
-            crate::VkResultBox(device.get_memory_host_pointer_properties_ext_fn().0(
+            device.get_memory_host_pointer_properties_ext_fn().0(
                 device.native_ptr(),
                 self.0 as _,
                 self.1,
                 sink.as_mut_ptr(),
-            ))
+            )
             .into_result()
             .map(move |_| sink.assume_init())
         }

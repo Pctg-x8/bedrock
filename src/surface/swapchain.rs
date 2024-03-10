@@ -57,7 +57,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         index: u32,
         wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
     ) -> crate::Result<()> {
-        let mut res = 0;
+        let mut res = VkResult(0);
         let wait_semaphores = wait_semaphores.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let pinfo = VkPresentInfoKHR {
             sType: VkPresentInfoKHR::TYPE,
@@ -72,7 +72,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         unsafe {
             crate::vkresolve::queue_present_khr(queue.native_ptr(), &pinfo)
                 .into_result()
-                .and_then(|x| if x.0 == VK_SUCCESS { Ok(()) } else { Err(x) })
+                .and_then(|x| if x == VK_SUCCESS { Ok(()) } else { Err(x) })
         }
     }
 
@@ -84,34 +84,26 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements]
-    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    #[implements("VK_EXT_full_screen_exclusive")]
     fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
         use crate::Device;
 
         unsafe {
-            crate::VkResultBox(self.device().acquire_full_screen_exclusive_mode_ext_fn().0(
-                self.device().native_ptr(),
-                self.native_ptr(),
-            ))
-            .into_result()
-            .map(drop)
+            self.device().acquire_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
+                .into_result()
+                .map(drop)
         }
     }
 
     /// Release full-screen exclusive mode from a swapchain.
-    #[implements]
-    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    #[implements("VK_EXT_full_screen_exclusive")]
     fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
         use crate::Device;
 
         unsafe {
-            crate::VkResultBox(self.device().release_full_screen_exclusive_mode_ext_fn().0(
-                self.device().native_ptr(),
-                self.native_ptr(),
-            ))
-            .into_result()
-            .map(drop)
+            self.device().release_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
+                .into_result()
+                .map(drop)
         }
     }
 

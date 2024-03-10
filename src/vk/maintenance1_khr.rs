@@ -9,8 +9,7 @@ use super::*;
 use crate::PFN;
 
 #[promote_1_1]
-pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult =
-    unsafe { -std::mem::transmute::<_, VkResult>(ext_enum_value(70, 0) as u32) };
+pub const VK_ERROR_OUT_OF_POOL_MEMORY_KHR: VkResult = VkResult::ext_err_value(70, 0);
 
 vk_bitmask! {
     extending enum VkFormatFeatureFlagBits {

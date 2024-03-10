@@ -1,16 +1,15 @@
 use crate::vk::*;
 
-/// Boxed version of `VkResult`
-#[derive(Clone, Copy, PartialEq, Eq)]
-#[repr(transparent)]
-pub struct VkResultBox(pub VkResult);
-impl std::fmt::Debug for VkResultBox {
+impl std::fmt::Debug for VkResult {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(fmt, "[{:?}] {}", self.0, match self.0 {
+        let msg = match *self {
             // Success Codes //
-            VK_SUCCESS => "Command successfully completed", VK_NOT_READY => "A fence or query has not yet completed",
-            VK_TIMEOUT => "A wait operation has not completed in the specified time", VK_EVENT_SET => "An event is signaled",
-            VK_EVENT_RESET => "An event is unsignaled", VK_INCOMPLETE => "A return array was too small for the result",
+            VK_SUCCESS => "Command successfully completed",
+            VK_NOT_READY => "A fence or query has not yet completed",
+            VK_TIMEOUT => "A wait operation has not completed in the specified time",
+            VK_EVENT_SET => "An event is signaled",
+            VK_EVENT_RESET => "An event is unsignaled",
+            VK_INCOMPLETE => "A return array was too small for the result",
             #[cfg(feature = "VK_KHR_swapchain")]
             VK_SUBOPTIMAL_KHR => "Sub-optimal swapchain",
             // Error Codes //
@@ -43,16 +42,18 @@ impl std::fmt::Debug for VkResultBox {
             #[cfg(feature = "VK_KHR_external_memory_capabilities")]
             VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR => "An external handle is not a valid handle of ths specified type",
             _ => "Unknown or extension-specific error"
-        })
+        };
+
+        write!(fmt, "[{:?}] {}", self.0, msg)
     }
 }
-impl std::fmt::Display for VkResultBox {
+impl std::fmt::Display for VkResult {
     fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
         std::fmt::Debug::fmt(self, fmt)
     }
 }
-impl std::error::Error for VkResultBox {}
-impl VkResultBox {
+impl std::error::Error for VkResult {}
+impl VkResult {
     #[inline]
     pub fn is_err(&self) -> bool {
         self.0 < 0
