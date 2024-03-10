@@ -5,7 +5,7 @@ use crate::PFN;
 
 pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = ext_enum_value(4, 0) as _;
 
-pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = ext_err_value(4, 1);
+pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = VkResult::ext_err_value(4, 1);
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
