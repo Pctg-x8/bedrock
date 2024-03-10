@@ -159,16 +159,19 @@ impl CompositeAlphaFlags {
 // specification extensions
 impl VkSurfaceCapabilitiesKHR {
     /// Supported transform flags by the surface.
+    #[inline(always)]
     pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
         SurfaceTransformFlags(self.supportedTransforms)
     }
 
     /// Supported composite-alpha flags by the surface.
+    #[inline(always)]
     pub const fn supported_composite_alpha(&self) -> CompositeAlphaFlags {
         CompositeAlphaFlags(self.supportedCompositeAlpha)
     }
 
     /// returns (width, height), `None` if there is no value specified(=0xffff_ffff)
+    #[inline(always)]
     pub const fn current_extent(&self) -> (Option<u32>, Option<u32>) {
         #[inline(always)]
         const fn conv(x: u32) -> Option<u32> {
