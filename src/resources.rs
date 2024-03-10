@@ -169,7 +169,7 @@ pub trait MemoryBound: VkHandle {
 
 /// Specify how a component is swizzled
 #[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ComponentSwizzle {
     /// the component is set to the identity swizzle
     Identity = VK_COMPONENT_SWIZZLE_IDENTITY as _,
@@ -197,19 +197,14 @@ pub struct ComponentMapping(
     pub ComponentSwizzle,
     pub ComponentSwizzle,
 );
-impl Into<VkComponentMapping> for ComponentMapping {
-    fn into(self) -> VkComponentMapping {
-        VkComponentMapping {
-            r: self.0 as _,
-            g: self.1 as _,
-            b: self.2 as _,
-            a: self.3 as _,
+impl From<ComponentMapping> for VkComponentMapping {
+    fn from(value: ComponentMapping) -> Self {
+        Self {
+            r: value.0 as _,
+            g: value.1 as _,
+            b: value.2 as _,
+            a: value.3 as _,
         }
-    }
-}
-impl Default for ComponentMapping {
-    fn default() -> Self {
-        Self::IDENTITY
     }
 }
 impl ComponentMapping {
