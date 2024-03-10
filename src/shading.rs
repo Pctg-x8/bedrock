@@ -198,36 +198,69 @@ DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
 
 pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
-    /// Get the data store from a pipeline cache
+    /// Get the size of the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn data(&self) -> crate::Result<Vec<u8>> {
+    #[implements]
+    #[inline]
+    fn data_len(&self) -> crate::Result<usize> {
         let mut n = 0;
         unsafe {
             crate::vkresolve::get_pipeline_cache_data(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &mut n,
-                std::ptr::null_mut(),
+                core::ptr::null_mut(),
             )
             .into_result()?;
         }
-        let mut b: Vec<u8> = Vec::with_capacity(n as _);
-        unsafe { b.set_len(n as _) };
+
+        Ok(n)
+    }
+
+    /// Get the content of the data store from a pipeline cache
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    fn data_into(&self, store: &mut [u8]) -> crate::Result<()> {
+        let mut dl = store.len();
         unsafe {
             crate::vkresolve::get_pipeline_cache_data(
                 self.device().native_ptr(),
                 self.native_ptr(),
-                &mut n,
-                b.as_mut_ptr() as *mut _,
+                &mut dl,
+                store.as_mut_ptr() as _,
             )
-            .into_result()
-            .map(|_| b)
+            .into_result()?;
         }
+
+        Ok(())
+    }
+
+    /// Get the data store from a pipeline cache
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    fn data(&self) -> crate::Result<Vec<u8>> {
+        let len = self.data_len()?;
+        let mut b = Vec::with_capacity(len);
+        unsafe {
+            b.set_len(len);
+        }
+        self.data_into(&mut b[..])?;
+
+        Ok(b)
     }
 
     /// Combine the data stores of pipeline caches into `self`

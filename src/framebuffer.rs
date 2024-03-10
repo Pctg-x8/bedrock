@@ -2,16 +2,29 @@
 
 use derives::implements;
 
+#[implements]
+use crate::VkDeviceChildNonExtDestroyable;
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildTransferrable, Image, ImageLayout, VkHandle,
     VkObject, VkRawHandle, VulkanStructure,
 };
 use std::ops::*;
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a render pass object
-    RenderPassObject(VkRenderPass): RenderPass
+/// Opaque handle to a render pass object
+#[derive(VkHandle, VkObject, DeviceChild)]
+#[VkObject(type = VK_OBJECT_TYPE_RENDER_PASS)]
+pub struct RenderPassObject<Device: crate::Device>(pub(crate) VkRenderPass, #[parent] pub(crate) Device);
+unsafe impl<Device: crate::Device + Sync> Sync for RenderPassObject<Device> {}
+unsafe impl<Device: crate::Device + Send> Send for RenderPassObject<Device> {}
+#[implements]
+impl<Device: crate::Device> Drop for RenderPassObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
+impl<Device: crate::Device> RenderPass for RenderPassObject<Device> {}
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle, VkObject, DeviceChild)]
