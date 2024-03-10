@@ -639,3 +639,55 @@ pub fn implements(args: TokenStream, target: TokenStream) -> TokenStream {
 
     quote! { #[cfg(feature = "Implements")] #(#extra_feature_requirements)* #t2 }.into()
 }
+
+#[proc_macro_attribute]
+pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream {
+    let t2 = proc_macro2::TokenStream::from(target.clone());
+    let input = parse_macro_input!(target as syn::DeriveInput);
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+    quote! {
+        #t2
+        impl #impl_generics core::ops::BitOr for #name #ty_generics #where_clause {
+            type Output = Self;
+
+            fn bitor(self, rhs: Self) -> Self {
+                Self(self.0 | rhs.0)
+            }
+        }
+        impl #impl_generics core::ops::BitAnd for #name #ty_generics #where_clause {
+            type Output = Self;
+
+            fn bitand(self, rhs: Self) -> Self {
+                Self(self.0 & rhs.0)
+            }
+        }
+        impl #impl_generics core::ops::Not for #name #ty_generics #where_clause {
+            type Output = Self;
+
+            fn not(self) -> Self {
+                Self(!self.0)
+            }
+        }
+        impl #impl_generics core::ops::BitOrAssign for #name #ty_generics #where_clause {
+            fn bitor_assign(&mut self, rhs: Self) {
+                self.0 |= rhs.0;
+            }
+        }
+        impl #impl_generics core::ops::BitAndAssign for #name #ty_generics #where_clause {
+            fn bitand_assign(&mut self, rhs: Self) {
+                self.0 &= rhs.0;
+            }
+        }
+
+        impl #impl_generics #name #ty_generics #where_clause {
+            /// Returns true if specified bits are contained in this flag.
+            #[inline(always)]
+            pub const fn has(self, other: Self) -> bool {
+                (self.0 & other.0) != 0
+            }
+        }
+    }
+    .into()
+}

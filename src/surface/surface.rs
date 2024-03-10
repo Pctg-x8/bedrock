@@ -1,4 +1,4 @@
-use derives::implements;
+use derives::{bitflags_newtype, implements};
 
 use crate::{vk::*, Extends, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructureProvider};
 
@@ -109,5 +109,76 @@ impl CompositeAlpha {
     /// Does the value contains this bits
     pub const fn contains(self, value: u32) -> bool {
         (value | self as u32) != 0
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[bitflags_newtype]
+pub struct SurfaceTransformFlags(VkSurfaceTransformFlagsKHR);
+impl SurfaceTransformFlags {
+    /// The image content is presented without being transformed
+    pub const IDENTITY: Self = Self(VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR);
+    /// The image content is rotated 90 degrees clockwise
+    pub const ROTATE_90: Self = Self(VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR);
+    /// The image content is rotated 180 degrees clockwise
+    pub const ROTATE_180: Self = Self(VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR);
+    /// The image content is rotated 270 degrees clockwise
+    pub const ROTATE_270: Self = Self(VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR);
+    /// The image content is mirrored horizontally
+    pub const HORIZONTAL_MIRROR: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR);
+    /// The image content is mirrored horizontally, then rotated 90 degrees clockwise
+    pub const HORIZONTAL_MIRROR_ROTATE_90: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR);
+    /// The image content is mirrored horizontally, then rotated 180 degrees clockwise
+    pub const HORIZONTAL_MIRROR_ROTATE_180: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR);
+    /// The image content is mirrored horizontally, then rotated 270 degrees clockwise
+    pub const HORIZONTAL_MIRROR_ROTATE_270: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR);
+    /// The presentation transform is not specified, and is instead determined by platform-specific considerations and mechanisms outside Vulkan
+    pub const INHERIT: Self = Self(VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR);
+}
+
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[bitflags_newtype]
+pub struct CompositeAlphaFlags(VkCompositeAlphaFlagsKHR);
+impl CompositeAlphaFlags {
+    /// The alpha channel, if it exists, of the image is ignored in the compositing process
+    pub const OPAQUE: Self = Self(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR);
+    /// The alpha channel, if it exists, of the images is respected in the compositing process.
+    /// The non-alpha channels of the image are expected to already be multiplied by the alpha channel by the application
+    pub const PRE_MULTIPLIED: Self = Self(VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR);
+    /// The alpha channel, if it exists, of the images is respected in the compositing process.
+    /// The non-alpha channels of the image are not expected to already be multiplied by the alpha channel by the application;
+    /// instead, the compositor will multiply the non-alpha channels of the image by the alpha channel during compositing
+    pub const POST_MULTIPLIED: Self = Self(VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR);
+    /// The way in which the presentation engine treats the alpha channel in the images is unknown to the Vulkan API.
+    /// Instead, the application is responsible for setting the composite alpha blending mode using native window system commands
+    pub const INHERIT: Self = Self(VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR);
+}
+
+// specification extensions
+impl VkSurfaceCapabilitiesKHR {
+    /// Supported transform flags by the surface.
+    pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
+        SurfaceTransformFlags(self.supportedTransforms)
+    }
+
+    /// Supported composite-alpha flags by the surface.
+    pub const fn supported_composite_alpha(&self) -> CompositeAlphaFlags {
+        CompositeAlphaFlags(self.supportedCompositeAlpha)
+    }
+
+    /// returns (width, height), `None` if there is no value specified(=0xffff_ffff)
+    pub const fn current_extent(&self) -> (Option<u32>, Option<u32>) {
+        #[inline(always)]
+        const fn conv(x: u32) -> Option<u32> {
+            if x == 0xffff_ffff {
+                None
+            } else {
+                Some(x)
+            }
+        }
+
+        (conv(self.currentExtent.width), conv(self.currentExtent.height))
     }
 }
