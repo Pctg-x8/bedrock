@@ -4,7 +4,7 @@ use cfg_if::cfg_if;
 use derives::implements;
 
 #[cfg(feature = "Implements")]
-use crate::{fnconv::FnTransmute, ImageFlags, ImageUsage};
+use crate::{fnconv::FnTransmute, ImageFlags, ImageUsageFlags};
 use crate::{vk::*, VkHandle, VkObject, VulkanStructure};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
@@ -934,7 +934,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         format: VkFormat,
         itype: VkImageType,
         tiling: VkImageTiling,
-        usage: ImageUsage,
+        usage: ImageUsageFlags,
         flags: ImageFlags,
     ) -> crate::Result<VkImageFormatProperties> {
         let mut p = std::mem::MaybeUninit::uninit();
@@ -944,7 +944,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 format,
                 itype,
                 tiling,
-                usage.0,
+                usage.into(),
                 flags.0,
                 p.as_mut_ptr(),
             )
@@ -1000,7 +1000,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         format: VkFormat,
         itype: VkImageType,
         samples: VkSampleCountFlags,
-        usage: ImageUsage,
+        usage: ImageUsageFlags,
         tiling: VkImageTiling,
     ) -> Vec<VkSparseImageFormatProperties> {
         unsafe {
@@ -1010,7 +1010,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 format,
                 itype,
                 samples,
-                usage.0,
+                usage.into(),
                 tiling,
                 &mut n,
                 std::ptr::null_mut(),
@@ -1022,7 +1022,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 format,
                 itype,
                 samples,
-                usage.0,
+                usage.into(),
                 tiling,
                 &mut n,
                 v.as_mut_ptr(),

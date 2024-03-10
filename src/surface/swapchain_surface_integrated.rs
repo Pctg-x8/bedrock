@@ -1,5 +1,5 @@
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsage,
+    ffi_helper::ArrayFFIExtensions, vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsageFlags,
     PresentMode, SurfaceTransform, Swapchain, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
     VulkanStructure, VulkanStructureProvider,
 };
@@ -90,7 +90,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         min_image_count: u32,
         format: VkSurfaceFormatKHR,
         extent: VkExtent2D,
-        usage: ImageUsage,
+        usage: ImageUsageFlags,
     ) -> Self {
         Self(
             VkSwapchainCreateInfoKHR {
@@ -103,7 +103,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                 imageColorSpace: format.colorSpace,
                 imageExtent: extent,
                 imageArrayLayers: 1,
-                imageUsage: usage.0,
+                imageUsage: usage.into(),
                 imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
                 preTransform: SurfaceTransform::Inherit as _,
                 compositeAlpha: CompositeAlpha::Inherit as _,

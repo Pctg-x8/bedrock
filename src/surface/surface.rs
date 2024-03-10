@@ -1,6 +1,6 @@
 use derives::{bitflags_newtype, implements};
 
-use crate::{vk::*, Extends, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructureProvider};
+use crate::{vk::*, Extends, ImageUsageFlags, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructureProvider};
 
 /// Opaque handle to a surface object
 #[derive(VkHandle, VkObject, InstanceChild)]
@@ -158,30 +158,27 @@ impl CompositeAlphaFlags {
 
 // specification extensions
 impl VkSurfaceCapabilitiesKHR {
-    /// Supported transform flags by the surface.
+    /// The surface's current transform relative to the presentation engine's natural orientation.
+    #[inline(always)]
+    pub const fn current_transform(&self) -> SurfaceTransform {
+        unsafe { core::mem::transmute(self.currentTransform) }
+    }
+
+    /// The presentation transforms supported for the surface.
     #[inline(always)]
     pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
         SurfaceTransformFlags(self.supportedTransforms)
     }
 
-    /// Supported composite-alpha flags by the surface.
+    /// The alpha compositing modes supported by the presentation engine for the surface.
     #[inline(always)]
     pub const fn supported_composite_alpha(&self) -> CompositeAlphaFlags {
         CompositeAlphaFlags(self.supportedCompositeAlpha)
     }
 
-    /// returns (width, height), `None` if there is no value specified(=0xffff_ffff)
+    /// The ways the application can use the presentable images of a swapchain.
     #[inline(always)]
-    pub const fn current_extent(&self) -> (Option<u32>, Option<u32>) {
-        #[inline(always)]
-        const fn conv(x: u32) -> Option<u32> {
-            if x == 0xffff_ffff {
-                None
-            } else {
-                Some(x)
-            }
-        }
-
-        (conv(self.currentExtent.width), conv(self.currentExtent.height))
+    pub const fn supported_usage_flags(&self) -> ImageUsageFlags {
+        unsafe { core::mem::transmute(self.supportedUsageFlags) }
     }
 }

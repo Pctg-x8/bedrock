@@ -646,12 +646,14 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
     let input = parse_macro_input!(target as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let org_type = newtype_struct_org_type(&input.data);
 
     quote! {
         #t2
         impl #impl_generics core::ops::BitOr for #name #ty_generics #where_clause {
             type Output = Self;
 
+            #[inline(always)]
             fn bitor(self, rhs: Self) -> Self {
                 Self(self.0 | rhs.0)
             }
@@ -659,6 +661,7 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
         impl #impl_generics core::ops::BitAnd for #name #ty_generics #where_clause {
             type Output = Self;
 
+            #[inline(always)]
             fn bitand(self, rhs: Self) -> Self {
                 Self(self.0 & rhs.0)
             }
@@ -666,18 +669,28 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
         impl #impl_generics core::ops::Not for #name #ty_generics #where_clause {
             type Output = Self;
 
+            #[inline(always)]
             fn not(self) -> Self {
                 Self(!self.0)
             }
         }
         impl #impl_generics core::ops::BitOrAssign for #name #ty_generics #where_clause {
+            #[inline(always)]
             fn bitor_assign(&mut self, rhs: Self) {
                 self.0 |= rhs.0;
             }
         }
         impl #impl_generics core::ops::BitAndAssign for #name #ty_generics #where_clause {
+            #[inline(always)]
             fn bitand_assign(&mut self, rhs: Self) {
                 self.0 &= rhs.0;
+            }
+        }
+
+        impl #impl_generics From<#name #ty_generics> for #org_type #where_clause {
+            #[inline(always)]
+            fn from(value: #name #ty_generics) -> Self {
+                value.0
             }
         }
 
@@ -686,6 +699,12 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
             #[inline(always)]
             pub const fn has(self, other: Self) -> bool {
                 (self.0 & other.0) != 0
+            }
+
+            /// merge two flags (const alias of BitOr)
+            #[inline(always)]
+            pub const fn merge(self, other: Self) -> Self {
+                Self(self.0 | other.0)
             }
         }
     }

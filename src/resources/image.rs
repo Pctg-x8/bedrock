@@ -6,7 +6,7 @@ use crate::{
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
-use derives::implements;
+use derives::{bitflags_newtype, implements};
 
 pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
     /// The pixel format of an image
@@ -338,7 +338,12 @@ pub struct ImageDesc<'d>(
     core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
 );
 impl<'d> ImageDesc<'d> {
-    pub fn new<Size: ImageSize>(size: Size, format: VkFormat, usage: ImageUsage, initial_layout: ImageLayout) -> Self {
+    pub fn new<Size: ImageSize>(
+        size: Size,
+        format: VkFormat,
+        usage: ImageUsageFlags,
+        initial_layout: ImageLayout,
+    ) -> Self {
         ImageDesc(
             VkImageCreateInfo {
                 sType: VkImageCreateInfo::TYPE,
@@ -606,10 +611,40 @@ impl ImageLayout {
     }
 }
 
+/// Bitmask specifying intended usage of an image.
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[bitflags_newtype]
+pub struct ImageUsageFlags(VkImageUsageFlags);
+impl ImageUsageFlags {
+    /// The image can be used as the source of a transfer command
+    pub const TRANSFER_SRC: Self = Self(VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+    /// The image can be used as the destination of a transfer command
+    pub const TRANSFER_DEST: Self = Self(VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+    /// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot
+    /// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader
+    pub const SAMPLED: Self = Self(VK_IMAGE_USAGE_SAMPLED_BIT);
+    /// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`
+    pub const STORAGE: Self = Self(VK_IMAGE_USAGE_STORAGE_BIT);
+    /// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`
+    pub const COLOR_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
+    /// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`
+    pub const DEPTH_STENCIL_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+    /// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`
+    /// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,
+    /// or input attachment
+    pub const TRANSIENT_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
+    /// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;
+    /// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer
+    pub const INPUT_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT);
+}
+
 /// Bitmask specifying intended usage of an image
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[repr(transparent)]
+#[deprecated = "use [`ImageUsageFlags`]"]
 pub struct ImageUsage(pub VkImageUsageFlags);
+#[allow(deprecated)]
 impl ImageUsage {
     /// The image can be used as the source of a transfer command
     pub const TRANSFER_SRC: Self = Self(VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
@@ -674,17 +709,20 @@ impl ImageUsage {
         Self(self.0 | other.0)
     }
 }
+#[allow(deprecated)]
 impl BitOr for ImageUsage {
     type Output = ImageUsage;
     fn bitor(self, other: Self) -> Self {
         ImageUsage(self.0 | other.0)
     }
 }
+#[allow(deprecated)]
 impl BitOrAssign for ImageUsage {
     fn bitor_assign(&mut self, other: Self) {
         self.0 |= other.0;
     }
 }
+#[allow(deprecated)]
 impl From<ImageUsage> for VkImageUsageFlags {
     fn from(value: ImageUsage) -> Self {
         value.0
