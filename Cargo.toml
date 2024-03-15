@@ -1,3 +1,4 @@
+workspace = { members = ["bedrock-examples"] }
 [package]
 name = "bedrock"
 version = "0.1.0-vk1.1.70"
@@ -213,12 +214,3 @@ features = ["Win32_Foundation", "Win32_Graphics_Gdi"]
 
 [dev-dependencies]
 rusty-hook = "0.11.2"
-
-[target.'cfg(windows)'.dev-dependencies.windows]
-version = "0.51"
-features = [
-    "Win32_Foundation",
-    "Win32_Graphics_Gdi",
-    "Win32_UI_WindowsAndMessaging",
-    "Win32_System_LibraryLoader",
-]

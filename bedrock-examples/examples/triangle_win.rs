@@ -1,5 +1,3 @@
-#![cfg(windows)]
-
 use std::rc::Rc;
 
 use bedrock as br;
