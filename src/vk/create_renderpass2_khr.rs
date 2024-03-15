@@ -161,7 +161,7 @@ pub struct PFN_vkCmdNextSubpass2KHR(
     pub  unsafe extern "system" fn(
         commandBuffer: VkCommandBuffer,
         pSubpassBeginInfo: *const VkSubpassBeginInfoKHR,
-        pSubpassEndInfo: *const VkSubpassEndInfo,
+        pSubpassEndInfo: *const VkSubpassEndInfoKHR,
     ),
 );
 
@@ -171,7 +171,7 @@ pub struct PFN_vkCmdNextSubpass2KHR(
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdEndRenderPass2KHR)]
 pub struct PFN_vkCmdEndRenderPass2KHR(
-    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfo),
+    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR),
 );
 
 #[implements]
