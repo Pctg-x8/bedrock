@@ -949,12 +949,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         };
         let mut handle = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::VkResultBox(self.create_descriptor_update_template_khr_fn().0(
+            self.create_descriptor_update_template_khr_fn().0(
                 self.native_ptr(),
                 &cinfo,
                 std::ptr::null(),
                 handle.as_mut_ptr(),
-            ))
+            )
             .into_result()
             .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self))
         }

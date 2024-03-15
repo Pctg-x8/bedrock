@@ -179,7 +179,8 @@ Allow1_1APIs = [
 ]
 
 # 1.2 promoted extensions
-Allow1_2APIs = ["Allow1_1APIs"]
+VK_KHR_create_renderpass2 = []
+Allow1_2APIs = ["Allow1_1APIs", "VK_KHR_create_renderpass2"]
 
 # 1.3 promoted extensions
 VK_KHR_synchronization2 = []

@@ -78,6 +78,8 @@ let PlatformIndependent =
       , "VK_NV_viewport_array2"
       , "VK_NV_viewport_swizzle"
       , "VK_KHR_portability_enumeration"
+      , "VK_KHR_synchronization2"
+      , "VK_KHR_create_renderpass2"
       ]
 
 let Win32Specific =

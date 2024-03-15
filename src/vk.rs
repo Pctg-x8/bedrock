@@ -32,6 +32,7 @@ pub const fn VK_MAKE_VERSION(major: u16, minor: u16, patch: u16) -> u32 {
 
 /// Vulkan 1.0 version number
 pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(1, 0, 0);
+pub const VK_API_VERISON_1_3: u32 = VK_MAKE_VERSION(1, 3, 0);
 
 #[inline]
 pub const fn VK_MAJOR_VERSION(v: u32) -> u16 {
@@ -72,7 +73,13 @@ macro_rules! vk_bitmask {
         $(
             $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
         )*
-    }
+    };
+    ($(#[$ty_attr: meta])* $ty_vis: vis enum64 $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* $(,)? }) => {
+        $(#[$ty_attr])* $ty_vis type $ty_name = VkFlags64;
+        $(
+            $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
+        )*
+    };
 }
 
 // define macros end
@@ -81,6 +88,7 @@ macro_rules! vk_bitmask {
 pub const VK_HEADER_VERSION: u32 = 70;
 
 pub type VkFlags = u32;
+pub type VkFlags64 = u64;
 pub type VkBool32 = u32;
 pub type VkDeviceSize = u64;
 pub type VkSampleMask = u32;
@@ -5270,3 +5278,9 @@ ExportExtensions!("VK_KHR_sampler_ycbcr_conversion": sampler_ycbcr_conversion_kh
 ExportExtensions!("VK_KHR_bind_memory2": bind_memory2_khr);
 ExportExtensions!("VK_KHR_maintenance3": maintenance3_khr);
 ExportExtensions!("VK_KHR_portability_enumeration": portability_enumeration_khr);
+
+// Promoted Extensions (1.2)
+ExportExtensions!("VK_KHR_create_renderpass2": create_renderpass2_khr);
+
+// Promoted Extensions (1.3)
+ExportExtensions!("VK_KHR_synchronization2": synchronization2_khr);
