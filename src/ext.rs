@@ -28,18 +28,15 @@ pub trait StructureChainQuery {
             .map(|r| unsafe { r.cast_unchecked() })
     }
 }
-pub unsafe trait VulkanStructure: Sized {
+pub unsafe trait VulkanStructureAsRef {
+    /// Cast structure ref to generic. This is same as transmute but must be safe.
+    fn as_generic(&self) -> &GenericVulkanStructure;
+    /// Cast structure mutable ref to generic. This is same as transmute but must be safe.
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure;
+}
+pub unsafe trait VulkanStructure: VulkanStructureAsRef + Sized {
     /// sType of this structure
     const TYPE: crate::vk::VkStructureType;
-
-    /// Cast structure ref to generic. This is same as transmute but must be safe.
-    fn as_generic(&self) -> &GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
-    /// Cast structure mutable ref to generic. This is same as transmute but must be safe.
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
-        unsafe { core::mem::transmute(self) }
-    }
 
     /// Cast structure ref only if sType matches
     fn try_from_generic(g: &GenericVulkanStructure) -> Option<&Self> {

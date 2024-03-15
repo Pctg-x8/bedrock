@@ -1,7 +1,7 @@
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsageFlags,
     PresentMode, SurfaceTransform, Swapchain, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure, VulkanStructureProvider,
+    VulkanStructure, VulkanStructureAsRef, VulkanStructureProvider,
 };
 use derives::implements;
 

@@ -459,6 +459,56 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
 
         self
     }
+
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[inline]
+    pub fn begin_render_pass_2(
+        &mut self,
+        begin_info: &crate::RenderPassBeginInfo<'_, impl crate::RenderPass, impl crate::Framebuffer>,
+        subpass_begin_info: &crate::SubpassBeginInfo,
+    ) -> &mut Self {
+        cfg_if::cfg_if! {
+            if #[cfg(feature = "Allow1_3APIs")] {
+                unsafe { crate::vkresolve::cmd_begin_render_pass_2(self.ptr.native_ptr(), begin_info.as_ref(), subpass_begin_info.as_ref()); }
+            } else {
+                unimplemented!("needs device holding a pointer for vkCmdBeginRenderPass2KHR");
+            }
+        }
+
+        self
+    }
+
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[inline]
+    pub fn next_subpass_2(
+        &mut self,
+        subpass_begin_info: &crate::SubpassBeginInfo,
+        subpass_end_info: &crate::SubpassEndInfo,
+    ) -> &mut Self {
+        cfg_if::cfg_if! {
+            if #[cfg(feature = "Allow1_3APIs")] {
+                unsafe { crate::vkresolve::cmd_next_subpass_2(self.ptr.native_ptr(), subpass_begin_info.as_ref(), subpass_end_info.as_ref()); }
+            } else {
+                unimplemented!("needs device holding a pointer for vkCmdNextSubpass2KHR");
+            }
+        }
+
+        self
+    }
+
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[inline]
+    pub fn end_render_pass_2(&mut self, subpass_end_info: &crate::SubpassEndInfo) -> &mut Self {
+        cfg_if::cfg_if! {
+            if #[cfg(feature = "Allow1_3APIs")] {
+                unsafe { crate::vkresolve::cmd_end_render_pass_2(self.ptr.native_ptr(), subpass_end_info.as_ref()); }
+            } else {
+                unimplemented!("needs device holding a pointer for vkCmdEndRenderPass2KHR");
+            }
+        }
+
+        self
+    }
 }
 
 /// Graphics/Compute Commands: Pipeline Setup

@@ -91,6 +91,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = {
         let mut builder = br::InstanceBuilder::new("BedrockExampleTriangle", (0, 1, 0), "None", (0, 0, 1));
         builder
+            .set_api_version(1, 3, 0)
             .add_extensions(["VK_EXT_debug_utils", "VK_KHR_surface", "VK_KHR_win32_surface"])
             .add_layer("VK_LAYER_KHRONOS_validation");
         builder.create()?
@@ -159,34 +160,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut back_buffer_size = swapchain.size().clone();
 
     let render_pass = {
-        let attachment =
-            br::AttachmentDescription::new(fmt.format, br::ImageLayout::PresentSrc, br::ImageLayout::PresentSrc)
-                .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store);
-        let main_subpass = br::SubpassDescription::new().add_color_output(0, br::ImageLayout::ColorAttachmentOpt, None);
-        let enter_main_deps = br::vk::VkSubpassDependency {
-            srcSubpass: br::vk::VK_SUBPASS_EXTERNAL,
-            dstSubpass: 0,
-            srcStageMask: br::PipelineStageFlags::ALL_COMMANDS.0,
-            dstStageMask: br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT.0,
-            srcAccessMask: 0,
-            dstAccessMask: br::AccessFlags::COLOR_ATTACHMENT.write,
-            dependencyFlags: br::vk::VK_DEPENDENCY_BY_REGION_BIT,
-        };
-        let leave_main_deps = br::vk::VkSubpassDependency {
-            srcSubpass: 0,
-            dstSubpass: br::vk::VK_SUBPASS_EXTERNAL,
-            srcStageMask: br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT.0,
-            dstStageMask: br::PipelineStageFlags::ALL_COMMANDS.0,
-            srcAccessMask: br::AccessFlags::COLOR_ATTACHMENT.write,
-            dstAccessMask: 0,
-            dependencyFlags: br::vk::VK_DEPENDENCY_BY_REGION_BIT,
-        };
+        let attachments = [br::AttachmentDescription2::new(fmt.format)
+            .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store)
+            .layout_transition(br::ImageLayout::Undefined, br::ImageLayout::PresentSrc)];
+        let mainpass_color_outputs = [br::AttachmentReference2::color(0, br::ImageLayout::ColorAttachmentOpt)];
+        let subpasses = [br::SubpassDescription2::new().colors(&mainpass_color_outputs)];
+        let dependencies = [
+            br::SubpassDependency2::new(br::SubpassIndex::External, br::SubpassIndex::Internal(0))
+                .of_execution(
+                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                )
+                .of_memory(0, br::AccessFlags::COLOR_ATTACHMENT.write)
+                .by_region(),
+            br::SubpassDependency2::new(br::SubpassIndex::Internal(0), br::SubpassIndex::External)
+                .of_execution(
+                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                )
+                .of_memory(br::AccessFlags::COLOR_ATTACHMENT.write, 0)
+                .by_region(),
+        ];
 
-        br::RenderPassBuilder::new()
-            .add_attachment(attachment)
-            .add_subpass(main_subpass)
-            .add_dependencies([enter_main_deps, leave_main_deps])
-            .create(&device)?
+        br::RenderPassBuilder2::new(&attachments, &subpasses, &dependencies).create(&device)?
     };
 
     let descriptor_layout_ub1 = br::DescriptorSetLayoutBuilder::new()
@@ -345,19 +341,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
     for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
         let mut rec = unsafe { cb.begin()? };
-        rec.begin_render_pass(
-            &render_pass,
-            fb,
-            scissors[0].clone(),
-            &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
-            true,
+        rec.begin_render_pass_2(
+            &br::RenderPassBeginInfo::new(
+                &render_pass,
+                fb,
+                scissors[0].clone(),
+                &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
+            ),
+            &br::SubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
         )
         .bind_graphics_pipeline_pair(&pipeline, &pl)
         .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
         .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
         .bind_vertex_buffers(0, &[(&vbuf, 0)])
         .draw(3, 1, 0, 0)
-        .end_render_pass();
+        .end_render_pass_2(&br::SubpassEndInfo::new());
         rec.end()?;
     }
 

@@ -262,6 +262,17 @@ pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
     // TODO: some checks here......
 
     TokenStream::from(quote! {
+        unsafe impl #impl_generics crate::VulkanStructureAsRef for #name #ty_generics #where_clause {
+            #[inline(always)]
+            fn as_generic(&self) -> &crate::GenericVulkanStructure {
+                unsafe { core::mem::transmute(self) }
+            }
+
+            #[inline(always)]
+            fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+                unsafe { core::mem::transmute(self) }
+            }
+        }
         unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
@@ -731,4 +742,16 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
         }
     }
     .into()
+}
+
+struct ForeignFunctions(Vec<syn::ForeignItemFn>);
+impl syn::parse::Parse for ForeignFunctions {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let mut items = Vec::new();
+        while !input.is_empty() {
+            items.push(input.parse()?);
+        }
+
+        Ok(Self(items))
+    }
 }

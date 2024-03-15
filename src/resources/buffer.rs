@@ -1,6 +1,6 @@
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkObject, VkRawHandle, VulkanStructure,
+    VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};

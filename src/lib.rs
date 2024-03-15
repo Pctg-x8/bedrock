@@ -507,6 +507,8 @@ pub use resources::*;
 #[macro_use]
 mod descriptor;
 pub use descriptor::*;
+mod renderpass;
+pub use self::renderpass::*;
 mod framebuffer;
 pub use framebuffer::*;
 mod shading;

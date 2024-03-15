@@ -1264,6 +1264,34 @@ WrapAPI2!(
     ) -> VkResult;
 );
 
+#[cfg(feature = "Allow1_3APIs")]
+WrapAPI2!(
+    #[org = PFN_vkCreateRenderPass2]
+    pub fn create_render_pass_2(
+        device: VkDevice,
+        create_info: *const VkRenderPassCreateInfo2KHR,
+        allocator: *const VkAllocationCallbacks,
+        out: *mut VkRenderPass,
+    ) -> VkResult;
+
+    #[org = PFN_vkCmdBeginRenderPass2]
+    pub fn cmd_begin_render_pass_2(
+        command_buffer: VkCommandBuffer,
+        begin_info: *const VkRenderPassBeginInfo,
+        begin_subpass_info: *const VkSubpassBeginInfo,
+    );
+
+    #[org = PFN_vkCmdNextSubpass2]
+    pub fn cmd_next_subpass_2(
+        command_buffer: VkCommandBuffer,
+        begin_subpass_info: *const VkSubpassBeginInfo,
+        end_subpass_info: *const VkSubpassEndInfo,
+    );
+
+    #[org = PFN_vkCmdEndRenderPass2]
+    pub fn cmd_end_render_pass_2(command_buffer: VkCommandBuffer, end_subpass_info: *const VkSubpassEndInfo);
+);
+
 // TODO: translate follows
 pub trait OldResolverInterface {
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]

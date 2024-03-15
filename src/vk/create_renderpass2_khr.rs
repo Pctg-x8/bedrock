@@ -126,10 +126,9 @@ pub struct VkSubpassEndInfoKHR {
 }
 
 #[implements]
-#[promote_1_2(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateRenderPass2KHR)]
+#[pfn_of(vkCreateRenderPass2)]
 pub struct PFN_vkCreateRenderPass2KHR(
     pub  unsafe extern "system" fn(
         device: VkDevice,
@@ -140,7 +139,6 @@ pub struct PFN_vkCreateRenderPass2KHR(
 );
 
 #[implements]
-#[promote_1_2(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdBeginRenderPass2KHR)]
@@ -153,7 +151,6 @@ pub struct PFN_vkCmdBeginRenderPass2KHR(
 );
 
 #[implements]
-#[promote_1_2(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdNextSubpass2KHR)]
@@ -166,13 +163,55 @@ pub struct PFN_vkCmdNextSubpass2KHR(
 );
 
 #[implements]
-#[promote_1_2(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdEndRenderPass2KHR)]
 pub struct PFN_vkCmdEndRenderPass2KHR(
     pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR),
 );
+
+cfg_if! {
+    if #[cfg(feature = "Allow1_3APIs")] {
+        // TODO: いい感じにpromoteさせたい（pfn_ofがpromote_1_3を認識できないので静的呼び出しでサフィックスなしにしてくれない）
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCreateRenderPass2)]
+        pub struct PFN_vkCreateRenderPass2(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult);
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdBeginRenderPass2)]
+        pub struct PFN_vkCmdBeginRenderPass2(
+            pub  unsafe extern "system" fn(
+                commandBuffer: VkCommandBuffer,
+                pRenderPassBegin: *const VkRenderPassBeginInfo,
+                pSubpassBeginInfo: *const VkSubpassBeginInfoKHR,
+            ),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdNextSubpass2)]
+        pub struct PFN_vkCmdNextSubpass2(
+            pub  unsafe extern "system" fn(
+                commandBuffer: VkCommandBuffer,
+                pSubpassBeginInfo: *const VkSubpassBeginInfoKHR,
+                pSubpassEndInfo: *const VkSubpassEndInfoKHR,
+            ),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdEndRenderPass2)]
+        pub struct PFN_vkCmdEndRenderPass2(
+            pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR),
+        );
+    }
+}
 
 #[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
