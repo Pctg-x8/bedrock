@@ -33,6 +33,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         SetProcessDPIAware();
     }
 
+    let instance_version = br::enumerate_instance_version()?;
+    println!(
+        "vk instance version: {instance_version} {}.{}.{}",
+        br::vk::VK_MAJOR_VERSION(instance_version),
+        br::vk::VK_MINOR_VERSION(instance_version),
+        br::vk::VK_PATCH_VERSION(instance_version)
+    );
+
     let cls = WNDCLASSEXA {
         cbSize: core::mem::size_of::<WNDCLASSEXA>() as _,
         cbClsExtra: 0,

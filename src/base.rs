@@ -422,6 +422,21 @@ impl InstanceBuilder {
     }
 }
 
+/// Query instance-level version before instance creation
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+#[implements]
+pub fn enumerate_instance_version() -> crate::Result<u32> {
+    let mut sink = 0u32;
+    unsafe {
+        crate::vkresolve::enumerate_instance_version(&mut sink)
+            .into_result()
+            .map(move |_| sink)
+    }
+}
+
 /// Returns up to all of global layer properties
 /// # Failures
 /// On failure, this command returns

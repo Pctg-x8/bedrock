@@ -27,7 +27,7 @@ use std;
 
 #[inline]
 pub const fn VK_MAKE_VERSION(major: u16, minor: u16, patch: u16) -> u32 {
-    ((major as u32) << 22) | ((minor as u32) << 16) | patch as u32
+    ((major as u32) << 22) | ((minor as u32) << 12) | patch as u32
 }
 
 /// Vulkan 1.0 version number
@@ -41,7 +41,7 @@ pub const fn VK_MAJOR_VERSION(v: u32) -> u16 {
 
 #[inline]
 pub const fn VK_MINOR_VERSION(v: u32) -> u16 {
-    ((v >> 22) & 0x3ff) as _
+    ((v >> 12) & 0x3ff) as _
 }
 
 #[inline]
@@ -4442,6 +4442,12 @@ pub struct PFN_vkCmdExecuteCommands(
     ),
 );
 
+#[implements]
+#[repr(transparent)]
+#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+#[pfn_of(vkEnumerateInstanceVersion)]
+pub struct PFN_vkEnumerateInstanceVersion(pub unsafe extern "system" fn(pApiVersion: *mut u32) -> VkResult);
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(
     all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")),
@@ -5154,6 +5160,8 @@ extern "system" {
         discardRectangleCount: u32,
         pDiscardRectangles: *const VkRect2D,
     );
+
+    pub fn vkEnumerateInstanceVersion(pApiVersion: *mut u32) -> VkResult;
 }
 
 // --- Extension Definitions --- //

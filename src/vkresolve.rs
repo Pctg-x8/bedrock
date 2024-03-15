@@ -1034,6 +1034,12 @@ WrapAPI2!(
     );
 );
 
+// Vulkan 1.1 Baseline APIs
+WrapAPI2!(
+    #[org = PFN_vkEnumerateInstanceVersion]
+    pub fn enumerate_instance_version(api_version: *mut u32) -> VkResult;
+);
+
 // statically provided extension functions: VK_KHR_surface
 #[cfg(feature = "VK_KHR_surface")]
 WrapAPI2!(
