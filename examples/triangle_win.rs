@@ -1,4 +1,4 @@
-#![cfg(not(test))]
+#![cfg(windows)]
 
 use std::rc::Rc;
 
