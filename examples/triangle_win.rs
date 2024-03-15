@@ -1,3 +1,5 @@
+#![cfg(not(test))]
+
 use std::rc::Rc;
 
 use bedrock as br;
