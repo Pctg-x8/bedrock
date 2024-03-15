@@ -194,8 +194,8 @@ extern "system" {
     pub fn vkCmdNextSubpass2KHR(
         commandBuffer: VkCommandBuffer,
         pSubpassBeginInfo: *const VkSubpassBeginInfoKHR,
-        pSubpassEndInfo: *const VkSubpassEndInfo,
+        pSubpassEndInfo: *const VkSubpassEndInfoKHR,
     );
     #[promote_1_2(suffix = "KHR")]
-    pub fn vkCmdEndRenderPass2KHR(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfo);
+    pub fn vkCmdEndRenderPass2KHR(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
 }
