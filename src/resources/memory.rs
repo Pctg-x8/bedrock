@@ -122,13 +122,9 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
         let mut fd = 0;
 
         unsafe {
-            crate::VkResultBox(self.device().get_memory_fd_khr_fn().0(
-                self.device().native_ptr(),
-                &info,
-                &mut fd,
-            ))
-            .into_result()
-            .map(move |_| fd)
+            self.device().get_memory_fd_khr_fn().0(self.device().native_ptr(), &info, &mut fd)
+                .into_result()
+                .map(move |_| fd)
         }
     }
 }

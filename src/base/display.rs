@@ -69,13 +69,9 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
         use crate::Instance;
 
         unsafe {
-            crate::VkResultBox(self.1.instance().acquire_xlib_display_ext_fn().0(
-                self.1.native_ptr(),
-                dpy,
-                self.native_ptr(),
-            ))
-            .into_result()
-            .map(drop)
+            self.1.instance().acquire_xlib_display_ext_fn().0(self.1.native_ptr(), dpy, self.native_ptr())
+                .into_result()
+                .map(drop)
         }
     }
 

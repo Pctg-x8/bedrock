@@ -1647,14 +1647,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     {
         let mut d = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::VkResultBox(self.instance().get_randr_output_display_ext_fn().0(
-                self.native_ptr(),
-                dpy,
-                rr_output,
-                d.as_mut_ptr(),
-            ))
-            .into_result()
-            .map(move |_| Display(d.assume_init(), self))
+            self.instance().get_randr_output_display_ext_fn().0(self.native_ptr(), dpy, rr_output, d.as_mut_ptr())
+                .into_result()
+                .map(move |_| Display(d.assume_init(), self))
         }
     }
 

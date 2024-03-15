@@ -117,11 +117,11 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
             drmFormatModifier: 0,
         };
         unsafe {
-            crate::VkResultBox(self.device().get_image_drm_format_modifier_properties_ext_fn().0(
+            self.device().get_image_drm_format_modifier_properties_ext_fn().0(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &mut properties,
-            ))
+            )
             .into_result()
             .map(move |_| properties)
         }

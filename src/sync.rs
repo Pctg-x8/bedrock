@@ -80,13 +80,9 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
 
         let mut fd = 0;
         unsafe {
-            VkResultBox(self.device().get_fence_fd_khr_fn().0(
-                self.device().native_ptr(),
-                &info,
-                &mut fd,
-            ))
-            .into_result()
-            .map(move |_| fd)
+            self.device().get_fence_fd_khr_fn().0(self.device().native_ptr(), &info, &mut fd)
+                .into_result()
+                .map(move |_| fd)
         }
     }
 
@@ -113,12 +109,9 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         };
 
         unsafe {
-            VkResultBox(self.device().import_fence_fd_khr_fn().0(
-                self.device().native_ptr(),
-                &info,
-            ))
-            .into_result()
-            .map(drop)
+            self.device().import_fence_fd_khr_fn().0(self.device().native_ptr(), &info)
+                .into_result()
+                .map(drop)
         }
     }
 }

@@ -293,14 +293,9 @@ impl ExternalMemoryHandleFd {
         device: &(impl crate::Device + ?Sized),
         mut sink: core::mem::MaybeUninit<VkMemoryFdPropertiesKHR>,
     ) -> crate::Result<VkMemoryFdPropertiesKHR> {
-        crate::VkResultBox(device.get_memory_fd_properties_khr_fn().0(
-            device.native_ptr(),
-            self.0 as _,
-            self.1,
-            sink.as_mut_ptr(),
-        ))
-        .into_result()
-        .map(move |_| sink.assume_init())
+        device.get_memory_fd_properties_khr_fn().0(device.native_ptr(), self.0 as _, self.1, sink.as_mut_ptr())
+            .into_result()
+            .map(move |_| sink.assume_init())
     }
 
     pub fn into_import_request(self, memory_type_index: u32) -> crate::DeviceMemoryRequest {
