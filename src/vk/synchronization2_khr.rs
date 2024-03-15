@@ -80,7 +80,7 @@ vk_bitmask! {
     }
 }
 #[promote_1_3]
-pub const VK_PIPELINE_STAGE_2_NONE_KHR: VkPipelineStageFlagBits2 = 0;
+pub const VK_PIPELINE_STAGE_2_NONE_KHR: VkPipelineStageFlagBits2KHR = 0;
 
 #[promote_1_3(suffix = "KHR")]
 pub type VkAccessFlags2KHR = VkFlags64;
@@ -130,7 +130,7 @@ vk_bitmask! {
     }
 }
 #[promote_1_3]
-pub const VK_ACCESS_2_NONE: VkAccessFlagBits2 = 0;
+pub const VK_ACCESS_2_NONE: VkAccessFlagBits2KHR = 0;
 
 #[promote_1_3(suffix = "KHR")]
 pub type VkSubmitFlagsKHR = VkFlags;
@@ -150,9 +150,9 @@ pub struct VkMemoryBarrier2KHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub srcStageMask: VkPipelineStageFlags2KHR,
-    pub srcAccessMask: VkAccessFlags2,
+    pub srcAccessMask: VkAccessFlags2KHR,
     pub dstStageMask: VkPipelineStageFlags2KHR,
-    pub dstAccessMask: VkAccessFlags2,
+    pub dstAccessMask: VkAccessFlags2KHR,
 }
 
 #[repr(C)]
@@ -217,11 +217,11 @@ pub struct VkSubmitInfo2KHR {
     pub pNext: *const c_void,
     pub flags: VkSubmitFlagsKHR,
     pub waitSemaphoreInfoCount: u32,
-    pub pWaitSemaphoreInfos: *const VkSemaphoreSubmitInfo,
+    pub pWaitSemaphoreInfos: *const VkSemaphoreSubmitInfoKHR,
     pub commandBufferInfoCount: u32,
-    pub pCommandBufferInfos: *const VkCommandBufferSubmitInfo,
+    pub pCommandBufferInfos: *const VkCommandBufferSubmitInfoKHR,
     pub signalSemaphoreInfoCount: u32,
-    pub pSignalSemaphoreInfos: *const VkSemaphoreSubmitInfo,
+    pub pSignalSemaphoreInfos: *const VkSemaphoreSubmitInfoKHR,
 }
 
 #[repr(C)]
