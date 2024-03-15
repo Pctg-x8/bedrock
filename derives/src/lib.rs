@@ -287,10 +287,7 @@ fn promote_suffixed_ident(src: &syn::Ident, suffix: &str) -> Option<syn::Ident> 
         .map(|s| syn::Ident::new(s, src.span()))
 }
 
-#[proc_macro_attribute]
-pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
-    let item = parse_macro_input!(item as syn::Item);
-
+fn promote_macro_core(item: syn::Item, args: TokenStream, feature_name: syn::LitStr) -> TokenStream {
     let mut suffix: Option<syn::LitStr> = None;
     if !args.is_empty() {
         let argparser = syn::meta::parser(|ctx| {
@@ -321,7 +318,7 @@ pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
 
             quote! {
                 #item
-                #[cfg(feature = "Allow1_1APIs")]
+                #[cfg(feature = #feature_name)]
                 #(#attrs)* #vis const #promoted_ident #generics: #ty = #ident;
             }
             .into()
@@ -338,7 +335,7 @@ pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
 
             quote! {
                 #item
-                #[cfg(feature = "Allow1_1APIs")]
+                #[cfg(feature = #feature_name)]
                 #(#attrs)* #vis type #promoted_ident #generics = #ident;
             }
             .into()
@@ -354,7 +351,7 @@ pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
 
             quote! {
                 #item
-                #[cfg(feature = "Allow1_1APIs")]
+                #[cfg(feature = #feature_name)]
                 #vis type #promoted_ident #generics = #ident #generics;
             }
             .into()
@@ -374,7 +371,7 @@ pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
 
             quote! {
                 #item
-                #[cfg(feature = "Allow1_1APIs")]
+                #[cfg(feature = #feature_name)]
                 #(#attrs)* #vis #promoted_sig;
             }
             .into()
@@ -393,13 +390,38 @@ pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
 
             quote! {
                 #(#attrs)* #vis #sig;
-                #[cfg(feature = "Allow1_1APIs")]
+                #[cfg(feature = #feature_name)]
                 #(#attrs)* #vis #promoted_sig;
             }
             .into()
         }
-        _ => unreachable!("unsupported item to promote 1.1"),
+        _ => unreachable!("unsupported item to promote"),
     }
+}
+
+#[proc_macro_attribute]
+pub fn promote_1_1(args: TokenStream, item: TokenStream) -> TokenStream {
+    promote_macro_core(
+        parse_macro_input!(item as syn::Item),
+        args,
+        syn::LitStr::new("Allow1_1APIs", proc_macro2::Span::call_site()),
+    )
+}
+#[proc_macro_attribute]
+pub fn promote_1_2(args: TokenStream, item: TokenStream) -> TokenStream {
+    promote_macro_core(
+        parse_macro_input!(item as syn::Item),
+        args,
+        syn::LitStr::new("Allow1_2APIs", proc_macro2::Span::call_site()),
+    )
+}
+#[proc_macro_attribute]
+pub fn promote_1_3(args: TokenStream, item: TokenStream) -> TokenStream {
+    promote_macro_core(
+        parse_macro_input!(item as syn::Item),
+        args,
+        syn::LitStr::new("Allow1_3APIs", proc_macro2::Span::call_site()),
+    )
 }
 
 fn newtype_struct_org_type(d: &syn::Data) -> &syn::Type {
