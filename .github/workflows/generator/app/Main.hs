@@ -23,17 +23,21 @@ faultableJob job = GHA.jobModifySteps (<> steps) job
     jobName = fromMaybe "<unknown job>" $ GHA.nameOf job
     steps = GHA.withCondition "failure()" <$> SlackNotification.failureSteps jobName
 
+-- TODO: そのうちちゃんとlatest参照して引っ張ってくるとかしたい
+downloadCargoTranslator :: GHA.Step
+downloadCargoTranslator = GHA.runStep "curl -o ./cargo-json-gha-translator -L https://github.com/Pctg-x8/cargo-json-gha-translator/releases/download/v0.1.3/cargo-json-gha-translator && chmod +x ./cargo-json-gha-translator"
+
 useRepositoryContent :: GHA.Job -> GHA.Job
 useRepositoryContent = GHA.jobModifySteps (Checkout.step Nothing :)
 
 useRust :: String -> GHA.Job -> GHA.Job
-useRust toolchain = GHA.jobModifySteps ((RustToolchain.step & RustToolchain.useToolchain toolchain) :)
+useRust toolchain = GHA.jobModifySteps \x -> (RustToolchain.step & RustToolchain.useToolchain toolchain) : downloadCargoTranslator : x
 
 cargo :: String -> [String] -> GHA.Step
-cargo subcommand args = GHA.runStep $ unwords ("cargo" : subcommand : args)
+cargo subcommand args = GHA.runStep $ unwords ("cargo" : subcommand : "--message-format=json" : args) <> " | ./cargo-json-gha-translator"
 
 cargoNight :: String -> [String] -> GHA.Step
-cargoNight subcommand args = GHA.runStep $ unwords ("cargo" : "+nightly" : subcommand : args)
+cargoNight subcommand args = GHA.runStep $ unwords ("cargo" : "+nightly" : subcommand : "--message-format=json" : args) <> " | ./cargo-json-gha-translator"
 
 simpleTestRustWithFeaturesStep :: [String] -> GHA.Step
 simpleTestRustWithFeaturesStep features = cargo "test" ["--features", intercalate "," features]
