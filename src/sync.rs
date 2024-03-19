@@ -561,6 +561,7 @@ impl<'s> SemaphoreSubmitInfo<'s> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[bitflags_newtype]
 pub struct AccessFlags2(pub VkAccessFlags2KHR);
+#[cfg(feature = "VK_KHR_synchronization2")]
 impl AccessFlags2 {
     pub const NONE: Self = Self(VK_ACCESS_2_NONE_KHR);
 

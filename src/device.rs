@@ -3,10 +3,8 @@
 use cfg_if::cfg_if;
 use derives::implements;
 
-use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, InstanceChild, SemaphoreSubmitInfo, SparseBindingOpBatch, SubmissionBatch,
-    TemporalSubmissionBatchResources, VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
-};
+use crate::ffi_helper::ArrayFFIExtensions;
+use crate::*;
 #[cfg(feature = "Implements")]
 use crate::{
     fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle,

@@ -1769,7 +1769,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
 
     #[implements("VK_KHR_get_physical_device_properties2")]
     /// Reports capabilities of a physical device
-    fn features2(&self, sink: &mut VkPhysicalDeviceFeatures2, extras: &mut [&mut dyn crate::VulkanStructureAsRef]) {
+    fn features2(&self, sink: &mut VkPhysicalDeviceFeatures2KHR, extras: &mut [&mut dyn crate::VulkanStructureAsRef]) {
         crate::ext::chain2(sink, extras.iter_mut().map(crate::VulkanStructureAsRef::as_generic_mut));
         self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink)
     }
