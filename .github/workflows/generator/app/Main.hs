@@ -54,22 +54,22 @@ preconditions = GHA.jobForwardingStepOutput "begintime" "begintime" $ GHA.job [r
           GHA.runStep "echo \"begintime=$(date +%s)\" >> $GITHUB_OUTPUT"
 
 checkFormat :: GHA.Job
-checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRust "stable" $ useRepositoryContent $ GHA.job [GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
+checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRepositoryContent $ useRust "stable" $ GHA.job [GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
 
 platformIndependentTest :: GHA.Job
-platformIndependentTest = faultableJob $ GHA.namedAs "Run Tests (Platform Independent)" $ useRust "stable" $ useRepositoryContent $ GHA.job [simpleTestRustWithFeaturesStep Features.platformIndependent]
+platformIndependentTest = faultableJob $ GHA.namedAs "Run Tests (Platform Independent)" $ useRepositoryContent $ useRust "stable" $ GHA.job [simpleTestRustWithFeaturesStep Features.platformIndependent]
 
 win32DependentTest :: GHA.Job
-win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRust "stable" $ useRepositoryContent $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [simpleCheckRustWithFeaturesStep Features.win32Specific]
+win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRepositoryContent $ useRust "stable" $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [simpleCheckRustWithFeaturesStep Features.win32Specific]
 
 unixDependentTest :: GHA.Job
-unixDependentTest = faultableJob $ GHA.namedAs "Run Tests (Unix Specific)" $ useRust "stable" $ useRepositoryContent $ GHA.job [simpleCheckRustWithFeaturesStep Features.unixSpecific]
+unixDependentTest = faultableJob $ GHA.namedAs "Run Tests (Unix Specific)" $ useRepositoryContent $ useRust "stable" $ GHA.job [simpleCheckRustWithFeaturesStep Features.unixSpecific]
 
 macDependentTest :: GHA.Job
-macDependentTest = faultableJob $ GHA.namedAs "Run Tests (Mac Specific)" $ useRust "stable" $ useRepositoryContent $ GHA.jobRunsOn ["macos-latest"] $ GHA.job [simpleCheckRustWithFeaturesStep Features.macSpecific]
+macDependentTest = faultableJob $ GHA.namedAs "Run Tests (Mac Specific)" $ useRepositoryContent $ useRust "stable" $ GHA.jobRunsOn ["macos-latest"] $ GHA.job [simpleCheckRustWithFeaturesStep Features.macSpecific]
 
 documentDeploymentJob :: GHA.Job
-documentDeploymentJob = faultableJob $ GHA.namedAs "Deploy Latest Document" $ useRust "nightly" $ useRepositoryContent $ GHA.grantWritable GHA.IDTokenPermission $ GHA.job (buildDocument : deploymentSteps)
+documentDeploymentJob = faultableJob $ GHA.namedAs "Deploy Latest Document" $ useRepositoryContent $ useRust "nightly" $ GHA.grantWritable GHA.IDTokenPermission $ GHA.job (buildDocument : deploymentSteps)
   where
     buildDocument = cargoNight "rustdoc" ["--features", intercalate "," Features.forDocumentation, "--", "--cfg", "docsrs"]
     deploymentSteps =
