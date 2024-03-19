@@ -1979,6 +1979,7 @@ impl BitOrAssign for PipelineStageFlags {
 #[repr(transparent)]
 #[bitflags_newtype]
 pub struct PipelineStageFlags2(pub VkPipelineStageFlags2KHR);
+#[cfg(feature = "VK_KHR_synchronization2")]
 impl PipelineStageFlags2 {
     pub const TOP_OF_PIPE: Self = Self(VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT_KHR);
     pub const DRAW_INDIRECT: Self = Self(VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT_KHR);
