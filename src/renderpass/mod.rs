@@ -60,6 +60,7 @@ impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> AsRef<VkRend
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[repr(transparent)]
 pub struct SubpassBeginInfo(VkSubpassBeginInfoKHR);
+#[cfg(feature = "VK_KHR_create_renderpass2")]
 impl SubpassBeginInfo {
     #[inline]
     pub const fn new(contents: VkSubpassContents) -> Self {
@@ -80,6 +81,7 @@ impl AsRef<VkSubpassBeginInfoKHR> for SubpassBeginInfo {
 #[cfg(feature = "VK_KHR_create_renderpass2")]
 #[repr(transparent)]
 pub struct SubpassEndInfo(VkSubpassEndInfoKHR);
+#[cfg(feature = "VK_KHR_create_renderpass2")]
 impl SubpassEndInfo {
     #[inline]
     pub const fn new() -> Self {

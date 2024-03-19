@@ -466,7 +466,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
 
         enum Feature<'d> {
             Standard(&'d VkPhysicalDeviceFeatures),
-            Extensible(VkPhysicalDeviceFeatures2),
+            Extensible(VkPhysicalDeviceFeatures2KHR),
         }
 
         let Self { pdev_ref, .. } = self;
