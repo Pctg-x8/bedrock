@@ -1290,6 +1290,17 @@ WrapAPI2!(
 
     #[org = PFN_vkCmdEndRenderPass2]
     pub fn cmd_end_render_pass_2(command_buffer: VkCommandBuffer, end_subpass_info: *const VkSubpassEndInfo);
+
+    #[org = PFN_vkCmdPipelineBarrier2]
+    pub fn cmd_pipeline_barrier_2(command_buffer: VkCommandBuffer, dependency_info: *const VkDependencyInfoKHR);
+
+    #[org = PFN_vkQueueSubmit2]
+    pub fn queue_submit_2(
+        queue: VkQueue,
+        submit_count: u32,
+        submits: *const VkSubmitInfo2KHR,
+        fence: VkFence,
+    ) -> VkResult;
 );
 
 // TODO: translate follows

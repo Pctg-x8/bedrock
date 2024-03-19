@@ -28,11 +28,11 @@ impl<Device: crate::Device> Drop for RenderPassObject<Device> {
 impl<Device: crate::Device> RenderPass for RenderPassObject<Device> {}
 
 #[repr(transparent)]
-pub struct RenderPassBeginInfo<'d, R: RenderPass + 'd, F: Framebuffer + 'd>(
+pub struct RenderPassBeginInfo<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd>(
     VkRenderPassBeginInfo,
     core::marker::PhantomData<(&'d R, &'d F, &'d [ClearValue])>,
 );
-impl<'d, R: RenderPass + 'd, F: Framebuffer + 'd> RenderPassBeginInfo<'d, R, F> {
+impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> RenderPassBeginInfo<'d, R, F> {
     #[inline]
     pub fn new(render_pass: &'d R, framebuffer: &'d F, render_area: VkRect2D, clear_values: &'d [ClearValue]) -> Self {
         Self(
@@ -49,7 +49,9 @@ impl<'d, R: RenderPass + 'd, F: Framebuffer + 'd> RenderPassBeginInfo<'d, R, F> 
         )
     }
 }
-impl<'d, R: RenderPass + 'd, F: Framebuffer + 'd> AsRef<VkRenderPassBeginInfo> for RenderPassBeginInfo<'d, R, F> {
+impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> AsRef<VkRenderPassBeginInfo>
+    for RenderPassBeginInfo<'d, R, F>
+{
     fn as_ref(&self) -> &VkRenderPassBeginInfo {
         &self.0
     }

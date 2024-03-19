@@ -4,8 +4,8 @@ use cfg_if::cfg_if;
 use derives::implements;
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, InstanceChild, SparseBindingOpBatch, SubmissionBatch,
-    TemporalSubmissionBatchResources, VkHandle, VkObject, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, InstanceChild, SemaphoreSubmitInfo, SparseBindingOpBatch, SubmissionBatch,
+    TemporalSubmissionBatchResources, VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
 };
 #[cfg(feature = "Implements")]
 use crate::{
@@ -384,6 +384,7 @@ impl DeviceQueueCreateInfo {
     }
 }
 
+// TODO: これ作り直したい気もする（Featureの指定方法がきつい）
 /// Builder object for constructing a `Device`
 pub struct DeviceBuilder<PhysicalDevice: crate::PhysicalDevice + InstanceChild> {
     pdev_ref: PhysicalDevice,
@@ -391,6 +392,7 @@ pub struct DeviceBuilder<PhysicalDevice: crate::PhysicalDevice + InstanceChild> 
     layers: Vec<std::ffi::CString>,
     extensions: Vec<std::ffi::CString>,
     features: VkPhysicalDeviceFeatures,
+    extra_features: Vec<Box<dyn VulkanStructureAsRef>>,
 }
 impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<PhysicalDevice> {
     pub fn new(pdev: PhysicalDevice) -> Self {
@@ -400,6 +402,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             layers: Vec::new(),
             extensions: Vec::new(),
             features: Default::default(),
+            extra_features: Vec::new(),
         }
     }
     pub fn add_layer(&mut self, name: &str) -> &mut Self {
@@ -438,6 +441,10 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
     pub fn mod_features(&mut self) -> &mut VkPhysicalDeviceFeatures {
         &mut self.features
     }
+    pub fn add_extra_features(&mut self, ef: impl VulkanStructureAsRef + 'static) -> &mut Self {
+        self.extra_features.push(Box::new(ef) as _);
+        self
+    }
 
     /// Create a new device instance
     /// # Failures
@@ -459,10 +466,17 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             q.complete();
         }
 
+        enum Feature<'d> {
+            Standard(&'d VkPhysicalDeviceFeatures),
+            Extensible(VkPhysicalDeviceFeatures2),
+        }
+
+        let Self { pdev_ref, .. } = self;
+
         let queue_infos = self.queue_infos.iter().map(|q| q.0.clone()).collect::<Vec<_>>();
         let layers = self.layers.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
         let extensions = self.extensions.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
-        let cinfo = VkDeviceCreateInfo {
+        let mut cinfo = VkDeviceCreateInfo {
             sType: VkDeviceCreateInfo::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
@@ -472,14 +486,40 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             ppEnabledLayerNames: layers.as_ptr_empty_null(),
             enabledExtensionCount: extensions.len() as _,
             ppEnabledExtensionNames: extensions.as_ptr_empty_null(),
-            pEnabledFeatures: &self.features,
+            pEnabledFeatures: core::ptr::null(),
         };
+        let feature_type = if self.extra_features.is_empty() {
+            Feature::Standard(&self.features)
+        } else {
+            let mut x = VkPhysicalDeviceFeatures2KHR {
+                sType: VkPhysicalDeviceFeatures2KHR::TYPE,
+                pNext: core::ptr::null_mut(),
+                features: self.features,
+            };
+            crate::ext::chain(
+                &mut x,
+                self.extra_features
+                    .iter_mut()
+                    .map(crate::VulkanStructureAsRef::as_generic_mut),
+            );
+
+            Feature::Extensible(x)
+        };
+
+        match feature_type {
+            Feature::Standard(r) => {
+                cinfo.pEnabledFeatures = r;
+            }
+            Feature::Extensible(ref x) => {
+                cinfo.pNext = x as *const _ as _;
+            }
+        }
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_device(self.pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_device(pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
                 .into_result()
-                .map(|_| DeviceObject::wrap_handle(h.assume_init(), self.pdev_ref.transfer_instance()))
+                .map(move |_| DeviceObject::wrap_handle(h.assume_init(), pdev_ref.transfer_instance()))
         }
     }
 }
@@ -1466,6 +1506,30 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         }
     }
 
+    #[implements("VK_KHR_synchronization2")]
+    fn submit2(
+        &mut self,
+        batches: &[SubmitInfo2],
+        fence: Option<&mut (impl VkHandleMut<Handle = VkFence> + ?Sized)>,
+    ) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
+        #[cfg(feature = "Allow1_3APIs")]
+        unsafe {
+            crate::vkresolve::queue_submit_2(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr_empty_null() as _,
+                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+            )
+            .into_result()
+            .map(drop)
+        }
+        #[cfg(not(feature = "Allow1_3APIs"))]
+        todo!("cache loaded function in device object")
+    }
+
     /// Queue images for presentation
     /// # Failures
     /// On failure, this command returns
@@ -1509,5 +1573,72 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
                 .into_result()
                 .map(|_| res)
         }
+    }
+}
+
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct CommandBufferSubmitInfo<'r>(
+    VkCommandBufferSubmitInfoKHR,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkCommandBuffer>>,
+);
+#[cfg(feature = "VK_KHR_synchronization2")]
+impl<'r> CommandBufferSubmitInfo<'r> {
+    pub fn new(command_buffer: &'r (impl VkHandle<Handle = VkCommandBuffer> + ?Sized)) -> Self {
+        Self(
+            VkCommandBufferSubmitInfoKHR {
+                sType: VkCommandBufferSubmitInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                commandBuffer: command_buffer.native_ptr(),
+                deviceMask: 0,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const fn on_device(mut self, mask: u32) -> Self {
+        self.0.deviceMask = mask;
+        self
+    }
+}
+
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct SubmitInfo2<'b, 'r>(
+    VkSubmitInfo2KHR,
+    core::marker::PhantomData<(
+        &'b [SemaphoreSubmitInfo<'r>],
+        &'b [SemaphoreSubmitInfo<'r>],
+        &'b [CommandBufferSubmitInfo<'r>],
+    )>,
+);
+#[cfg(feature = "VK_KHR_synchronization2")]
+impl<'b, 'r> SubmitInfo2<'b, 'r> {
+    pub fn new(
+        wait_semaphores: &'b [SemaphoreSubmitInfo<'r>],
+        command_buffers: &'b [CommandBufferSubmitInfo<'r>],
+        signal_semaphores: &'b [SemaphoreSubmitInfo<'r>],
+    ) -> Self {
+        Self(
+            VkSubmitInfo2KHR {
+                sType: VkSubmitInfo2KHR::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                waitSemaphoreInfoCount: wait_semaphores.len() as _,
+                pWaitSemaphoreInfos: wait_semaphores.as_ptr_empty_null() as _,
+                commandBufferInfoCount: command_buffers.len() as _,
+                pCommandBufferInfos: command_buffers.as_ptr_empty_null() as _,
+                signalSemaphoreInfoCount: signal_semaphores.len() as _,
+                pSignalSemaphoreInfos: signal_semaphores.as_ptr_empty_null() as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const fn protected(mut self) -> Self {
+        self.0.flags |= VK_SUBMIT_PROTECTED_BIT_KHR;
+        self
     }
 }

@@ -8,6 +8,17 @@ pub(crate) fn chain<'s>(
 ) {
     extends.into_iter().fold(base.as_generic_mut(), |p, s| {
         p.pNext = s as *const _ as _;
+        s.pNext = core::ptr::null_mut();
+        s
+    });
+}
+pub(crate) fn chain2<'s>(
+    base: &'s mut impl VulkanStructure,
+    extends: impl Iterator<Item = &'s mut GenericVulkanStructure>,
+) {
+    extends.fold(base.as_generic_mut(), |p, s| {
+        p.pNext = s as *const _ as _;
+        s.pNext = core::ptr::null_mut();
         s
     });
 }
@@ -46,6 +57,30 @@ pub unsafe trait VulkanStructure: VulkanStructureAsRef + Sized {
             None
         }
     }
+}
+unsafe impl<S: VulkanStructureAsRef + ?Sized> VulkanStructureAsRef for &'_ mut S {
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        S::as_generic(*self)
+    }
+
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        S::as_generic_mut(*self)
+    }
+}
+unsafe impl<S: VulkanStructure + ?Sized> VulkanStructure for &'_ mut S {
+    const TYPE: crate::vk::VkStructureType = S::TYPE;
+}
+unsafe impl<S: VulkanStructureAsRef + ?Sized> VulkanStructureAsRef for Box<S> {
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        S::as_generic(&**self)
+    }
+
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        S::as_generic_mut(&mut **self)
+    }
+}
+unsafe impl<S: VulkanStructure + ?Sized> VulkanStructure for Box<S> {
+    const TYPE: crate::vk::VkStructureType = S::TYPE;
 }
 
 impl<S: VulkanStructure> StructureChainQuery for S {

@@ -518,6 +518,7 @@ pub use command::*;
 mod surface;
 pub use surface::*;
 mod debug;
+#[allow(unused_imports)]
 pub use debug::*;
 mod ext;
 pub use self::ext::*;
@@ -525,6 +526,9 @@ mod external;
 pub use external::*;
 mod batching;
 pub use self::batching::*;
+mod dependency;
+#[allow(unused_imports)]
+pub use self::dependency::*;
 
 mod fmt;
 pub use self::fmt::*;

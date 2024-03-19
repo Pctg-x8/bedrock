@@ -1972,3 +1972,36 @@ impl BitOrAssign for PipelineStageFlags {
         self.0 |= rhs.0;
     }
 }
+
+/// Bitmask specifying pipeline stages (extended)
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+#[bitflags_newtype]
+pub struct PipelineStageFlags2(pub VkPipelineStageFlags2KHR);
+impl PipelineStageFlags2 {
+    pub const TOP_OF_PIPE: Self = Self(VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT_KHR);
+    pub const DRAW_INDIRECT: Self = Self(VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT_KHR);
+    pub const VERTEX_INPUT: Self = Self(VK_PIPELINE_STAGE_2_VERTEX_INPUT_BIT_KHR);
+    pub const VERTEX_SHADER: Self = Self(VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT_KHR);
+    pub const TESSELLATION_CONTROL_SHADER: Self = Self(VK_PIPELINE_STAGE_2_TESSELLATION_CONTROL_SHADER_BIT_KHR);
+    pub const TESSELLATION_EVALUATION_SHADER: Self = Self(VK_PIPELINE_STAGE_2_TESSELLATION_EVALUATION_SHADER_BIT_KHR);
+    pub const GEOMETRY_SHADER: Self = Self(VK_PIPELINE_STAGE_2_GEOMETRY_SHADER_BIT_KHR);
+    pub const FRAGMENT_SHADER: Self = Self(VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT_KHR);
+    pub const EARLY_FRAGMENT_TESTS: Self = Self(VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT_KHR);
+    pub const LATE_FRAGMENT_TESTS: Self = Self(VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT_KHR);
+    pub const COLOR_ATTACHMENT_OUTPUT: Self = Self(VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR);
+    pub const COMPUTE_SHADER: Self = Self(VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT_KHR);
+    pub const ALL_TRANSFER: Self = Self(VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT_KHR);
+    pub const BOTTOM_OF_PIPE: Self = Self(VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT_KHR);
+    pub const HOST: Self = Self(VK_PIPELINE_STAGE_2_HOST_BIT_KHR);
+    pub const ALL_GRAPHICS: Self = Self(VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT_KHR);
+    pub const ALL_COMMANDS: Self = Self(VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT_KHR);
+    pub const COPY: Self = Self(VK_PIPELINE_STAGE_2_COPY_BIT_KHR);
+    pub const RESOLVE: Self = Self(VK_PIPELINE_STAGE_2_RESOLVE_BIT_KHR);
+    pub const BLIT: Self = Self(VK_PIPELINE_STAGE_2_BLIT_BIT_KHR);
+    pub const CLEAR: Self = Self(VK_PIPELINE_STAGE_2_CLEAR_BIT_KHR);
+    pub const INDEX_INPUT: Self = Self(VK_PIPELINE_STAGE_2_INDEX_INPUT_BIT_KHR);
+    pub const VERTEX_ATTRIBUTE_INPUT: Self = Self(VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT_KHR);
+    pub const PRE_RASTERIZATION_SHADERS: Self = Self(VK_PIPELINE_STAGE_2_PRE_RASTERIZATION_SHADERS_BIT_KHR);
+}

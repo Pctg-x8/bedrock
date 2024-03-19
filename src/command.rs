@@ -464,7 +464,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
     #[inline]
     pub fn begin_render_pass_2(
         &mut self,
-        begin_info: &crate::RenderPassBeginInfo<'_, impl crate::RenderPass, impl crate::Framebuffer>,
+        begin_info: &crate::RenderPassBeginInfo<'_, impl crate::RenderPass + ?Sized, impl crate::Framebuffer + ?Sized>,
         subpass_begin_info: &crate::SubpassBeginInfo,
     ) -> &mut Self {
         cfg_if::cfg_if! {
@@ -1341,6 +1341,19 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 image_memory_barriers.as_ptr_empty_null() as _,
             );
         }
+        self
+    }
+
+    /// Insert a memory dependency
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    pub fn pipeline_barrier_2(&mut self, dependency_info: &crate::DependencyInfo) -> &mut Self {
+        #[cfg(feature = "Allow1_3APIs")]
+        unsafe {
+            crate::vkresolve::cmd_pipeline_barrier_2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _)
+        }
+        #[cfg(not(feature = "Allow1_3APIs"))]
+        todo!("cache loaded function in device object");
+
         self
     }
 }

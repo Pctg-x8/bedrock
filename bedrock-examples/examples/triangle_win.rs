@@ -4,7 +4,7 @@ use bedrock as br;
 use br::{
     CommandBuffer, CommandPool, DescriptorPool, Device, DeviceMemory, Fence, GraphicsPipelineBuilder,
     ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, Status,
-    SubmissionBatch, Swapchain,
+    Swapchain, VulkanStructure,
 };
 use windows::{
     core::PCSTR,
@@ -101,6 +101,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .next()
         .expect("No suitable adapter found");
 
+    let _dbg = br::DebugUtilsMessengerCreateInfo::new(vk_debug)
+        .filter_severity(br::DebugUtilsMessageSeverityFlags::ERROR.and_warning())
+        .filter_type(
+            br::DebugUtilsMessageTypeFlags::GENERAL
+                .and_performance()
+                .and_validation(),
+        )
+        .create(&instance)?;
+
     let surface = (&adapter).new_surface_win32(cls.hInstance, w)?;
 
     let queue_families = adapter.queue_family_properties();
@@ -111,7 +120,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let qbinfo = br::DeviceQueueCreateInfo::new(graphics_queue_family).add(0.0);
 
         let mut builder = br::DeviceBuilder::new(&adapter);
-        builder.add_queue(qbinfo).add_extensions(["VK_KHR_swapchain"]);
+        builder
+            .add_queue(qbinfo)
+            .add_extensions(["VK_KHR_swapchain"])
+            .add_extra_features(br::vk::VkPhysicalDeviceSynchronization2Features {
+                sType: br::vk::VkPhysicalDeviceSynchronization2Features::TYPE,
+                pNext: core::ptr::null_mut(),
+                synchronization2: br::vk::VK_TRUE,
+            });
 
         builder.create()?
     };
@@ -362,27 +378,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut transfer_command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
     let mut transfer_command_buffers = transfer_command_pool.alloc(1, true)?;
     let mut rec = unsafe { transfer_command_buffers[0].begin()? };
-    let ubuf_transfer_barrier = br::BufferMemoryBarrier::new(
-        &ubuf,
-        0..core::mem::size_of::<f32>() as u64,
-        br::AccessFlags::UNIFORM_READ,
-        br::AccessFlags::TRANSFER.write,
-    );
-    let host_transfer_barrier = br::BufferMemoryBarrier::new(
-        &host_buffer,
-        ubuf_device_offset..ubuf_device_offset + core::mem::size_of::<f32>() as u64,
-        br::AccessFlags::HOST.write,
-        br::AccessFlags::TRANSFER.read,
-    );
-    rec.pipeline_barrier(
-        br::PipelineStageFlags::VERTEX_SHADER.host(),
-        br::PipelineStageFlags::TRANSFER,
-        false,
-        &[],
-        &[ubuf_transfer_barrier.clone(), host_transfer_barrier.clone()],
-        &[],
-    )
-    .copy_buffer(
+    rec.copy_buffer(
         &host_buffer,
         &ubuf,
         &[br::vk::VkBufferCopy {
@@ -391,14 +387,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             size: core::mem::size_of::<f32>() as _,
         }],
     )
-    .pipeline_barrier(
-        br::PipelineStageFlags::TRANSFER,
-        br::PipelineStageFlags::VERTEX_SHADER.host(),
-        false,
+    .pipeline_barrier_2(&br::DependencyInfo::new(
+        &[br::MemoryBarrier2::new()
+            .of_execution(br::PipelineStageFlags2::COPY, br::PipelineStageFlags2::VERTEX_SHADER)
+            .of_memory(br::AccessFlags2::TRANSFER.write, br::AccessFlags2::UNIFORM_READ)],
         &[],
-        &[ubuf_transfer_barrier.flip(), host_transfer_barrier.flip()],
         &[],
-    );
+    ));
     rec.end()?;
 
     let mut init_fence = br::FenceBuilder::new().create(&device)?;
@@ -407,44 +402,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .create(&device)?;
     let mut init_command_buffers = init_command_pool.alloc(1, true)?;
     let mut init_rec = unsafe { init_command_buffers[0].begin_once()? };
-    let vbuf_entire_barrier = br::BufferMemoryBarrier::new(
-        &vbuf,
-        0..core::mem::size_of::<Vertex>() as u64 * 3,
-        0,
-        br::AccessFlags::TRANSFER.write,
-    );
-    let ubuf_entire_barrier = br::BufferMemoryBarrier::new(
-        &ubuf,
-        0..core::mem::size_of::<f32>() as u64,
-        0,
-        br::AccessFlags::TRANSFER.write,
-    );
-    let back_buffer_init_transfers = swapchain
-        .get_images()?
-        .iter()
-        .map(|b| {
-            b.subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
-                .memory_barrier(br::ImageLayout::Undefined, br::ImageLayout::PresentSrc)
-        })
-        .collect::<Vec<_>>();
     init_rec
-        .pipeline_barrier(
-            br::PipelineStageFlags::BOTTOM_OF_PIPE.host(),
-            br::PipelineStageFlags::TRANSFER,
-            false,
-            &[],
-            &[
-                vbuf_entire_barrier.clone(),
-                ubuf_entire_barrier.clone(),
-                br::BufferMemoryBarrier::new(
-                    &host_buffer,
-                    0..host_buffer_size,
-                    br::AccessFlags::HOST.write,
-                    br::AccessFlags::TRANSFER.read,
-                ),
-            ],
-            &[],
-        )
         .copy_buffer(
             &host_buffer,
             &vbuf,
@@ -463,33 +421,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 size: core::mem::size_of::<f32>() as u64,
             }],
         )
-        .pipeline_barrier(
-            br::PipelineStageFlags::TRANSFER,
-            br::PipelineStageFlags::VERTEX_INPUT
-                .vertex_shader()
-                .color_attachment_output()
-                .host(),
-            false,
+        .pipeline_barrier_2(&br::DependencyInfo::new(
+            &[br::MemoryBarrier2::new()
+                .of_execution(
+                    br::PipelineStageFlags2::COPY,
+                    br::PipelineStageFlags2::VERTEX_ATTRIBUTE_INPUT | br::PipelineStageFlags2::VERTEX_SHADER,
+                )
+                .of_memory(
+                    br::AccessFlags2::TRANSFER.write,
+                    br::AccessFlags2::VERTEX_ATTRIBUTE_READ | br::AccessFlags2::UNIFORM_READ,
+                )],
             &[],
-            &[
-                vbuf_entire_barrier
-                    .flip()
-                    .dest_access_mask(br::AccessFlags::VERTEX_ATTRIBUTE_READ),
-                ubuf_entire_barrier
-                    .flip()
-                    .dest_access_mask(br::AccessFlags::UNIFORM_READ),
-                br::BufferMemoryBarrier::new(
-                    &host_buffer,
-                    ubuf_device_offset..ubuf_device_offset + core::mem::size_of::<f32>() as u64,
-                    br::AccessFlags::TRANSFER.read,
-                    br::AccessFlags::HOST.write,
-                ),
-            ],
-            &back_buffer_init_transfers,
-        );
+            &[],
+        ));
     init_rec.end()?;
-    queue.submit(
-        &[br::EmptySubmissionBatch.with_command_buffers(&init_command_buffers)],
+    queue.submit2(
+        &[br::SubmitInfo2::new(
+            &[],
+            &[br::CommandBufferSubmitInfo::new(&init_command_buffers[0])],
+            &[],
+        )],
         Some(&mut init_fence),
     )?;
     init_fence.wait()?;
@@ -629,35 +580,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 rec.end()?;
             }
 
-            let mut init_fence = br::FenceBuilder::new().create(&device)?;
-            let mut init_command_pool = br::CommandPoolBuilder::new(graphics_queue_family)
-                .transient()
-                .create(&device)?;
-            let mut init_command_buffers = init_command_pool.alloc(1, true)?;
-            let mut init_rec = unsafe { init_command_buffers[0].begin_once()? };
-            let back_buffer_init_transfers = swapchain
-                .get_images()?
-                .iter()
-                .map(|b| {
-                    b.subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
-                        .memory_barrier(br::ImageLayout::Undefined, br::ImageLayout::PresentSrc)
-                })
-                .collect::<Vec<_>>();
-            init_rec.pipeline_barrier(
-                br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                false,
-                &[],
-                &[],
-                &back_buffer_init_transfers,
-            );
-            init_rec.end()?;
-            queue.submit(
-                &[br::EmptySubmissionBatch.with_command_buffers(&init_command_buffers)],
-                Some(&mut init_fence),
-            )?;
-            init_fence.wait()?;
-
             resize_next = false;
         }
 
@@ -676,25 +598,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             host_memory.unmap();
         }
 
-        let transfer_commands = &[transfer_command_buffers[0]];
-        let transfer_ready_semaphores = &[&data_ready];
-        let render_commands = &[command_buffers[bb_index as usize]];
-        let render_wait_semaphores = &[
-            (&bb_ready, br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT),
-            (&data_ready, br::PipelineStageFlags::VERTEX_SHADER),
+        let transfer_commands = [br::CommandBufferSubmitInfo::new(&transfer_command_buffers[0])];
+        let transfer_done_semaphores = [br::SemaphoreSubmitInfo::new(&data_ready).on_vertex_shader()];
+        let render_commands = [br::CommandBufferSubmitInfo::new(&command_buffers[bb_index as usize])];
+        let render_wait_semaphores = [
+            br::SemaphoreSubmitInfo::new(&bb_ready).on_color_attachment_output(),
+            br::SemaphoreSubmitInfo::new(&data_ready).on_vertex_shader(),
         ];
-        let render_ready_semaphores = &[&present_ready];
-        let transfer_submission = br::EmptySubmissionBatch
-            .with_command_buffers(transfer_commands)
-            .with_signal_semaphores(transfer_ready_semaphores);
-        let render_submission = br::EmptySubmissionBatch
-            .with_command_buffers(render_commands)
-            .with_wait_semaphores(render_wait_semaphores)
-            .with_signal_semaphores(render_ready_semaphores);
-        queue.submit(
+        let render_done_semaphores = [br::SemaphoreSubmitInfo::new(&present_ready).on_color_attachment_output()];
+        queue.submit2(
             &[
-                Box::new(transfer_submission) as Box<dyn br::SubmissionBatch>,
-                Box::new(render_submission),
+                br::SubmitInfo2::new(&[], &transfer_commands, &transfer_done_semaphores),
+                br::SubmitInfo2::new(&render_wait_semaphores, &render_commands, &render_done_semaphores),
             ],
             Some(&mut last_render_fence),
         )?;
@@ -727,4 +642,19 @@ extern "system" fn wndproc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM) -> LRES
     }
 
     unsafe { DefWindowProcA(hwnd, msg, wp, lp) }
+}
+
+extern "system" fn vk_debug(
+    _message_severity: br::vk::VkDebugUtilsMessageSeverityFlagBitsEXT,
+    _message_types: br::vk::VkDebugUtilsMessageTypeFlagsEXT,
+    callback_data: *const br::vk::VkDebugUtilsMessengerCallbackDataEXT,
+    _user_data: *mut std::ffi::c_void,
+) -> br::vk::VkBool32 {
+    eprintln!("[vk_debug] {}", unsafe {
+        std::ffi::CStr::from_ptr(callback_data.as_ref().unwrap().pMessage)
+            .to_str()
+            .unwrap()
+    });
+
+    br::vk::VK_FALSE
 }

@@ -130,7 +130,7 @@ vk_bitmask! {
     }
 }
 #[promote_1_3]
-pub const VK_ACCESS_2_NONE: VkAccessFlagBits2KHR = 0;
+pub const VK_ACCESS_2_NONE_KHR: VkAccessFlagBits2KHR = 0;
 
 #[promote_1_3(suffix = "KHR")]
 pub type VkSubmitFlagsKHR = VkFlags;
@@ -259,7 +259,6 @@ pub struct VkPhysicalDeviceSynchronization2FeaturesKHR {
 }
 
 #[implements]
-#[promote_1_3(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdSetEvent2KHR)]
@@ -272,7 +271,6 @@ pub struct PFN_vkCmdSetEvent2KHR(
 );
 
 #[implements]
-#[promote_1_3(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdResetEvent2KHR)]
@@ -281,7 +279,6 @@ pub struct PFN_vkCmdResetEvent2KHR(
 );
 
 #[implements]
-#[promote_1_3(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdWaitEvents2KHR)]
@@ -295,7 +292,6 @@ pub struct PFN_vkCmdWaitEvents2KHR(
 );
 
 #[implements]
-#[promote_1_3(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdPipelineBarrier2KHR)]
@@ -304,7 +300,6 @@ pub struct PFN_vkCmdPipelineBarrier2KHR(
 );
 
 #[implements]
-#[promote_1_3(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdWriteTimestamp2KHR)]
@@ -318,7 +313,6 @@ pub struct PFN_vkCmdWriteTimestamp2KHR(
 );
 
 #[implements]
-#[promote_1_3(suffix = "KHR")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkQueueSubmit2KHR)]
@@ -330,6 +324,78 @@ pub struct PFN_vkQueueSubmit2KHR(
         fence: VkFence,
     ) -> VkResult,
 );
+
+cfg_if! {
+    if #[cfg(feature = "Allow1_3APIs")] {
+        // TODO: いい感じにpromoteさせたい（pfn_ofがpromote_1_3を認識できないので静的呼び出しでサフィックスなしにしてくれない）
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdSetEvent2)]
+        pub struct PFN_vkCmdSetEvent2(
+            pub  unsafe extern "system" fn(
+                commandBuffer: VkCommandBuffer,
+                event: VkEvent,
+                pDependencyInfo: *const VkDependencyInfo,
+            ),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdResetEvent2)]
+        pub struct PFN_vkCmdResetEvent2(
+            pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdWaitEvents2)]
+        pub struct PFN_vkCmdWaitEvents2(
+            pub  unsafe extern "system" fn(
+                commandBuffer: VkCommandBuffer,
+                eventCount: u32,
+                pEvents: *const VkEvent,
+                pDependencyInfos: *const VkDependencyInfo,
+            ),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdPipelineBarrier2)]
+        pub struct PFN_vkCmdPipelineBarrier2(
+            pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfo),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkCmdWriteTimestamp2)]
+        pub struct PFN_vkCmdWriteTimestamp2(
+            pub  unsafe extern "system" fn(
+                commandBuffer: VkCommandBuffer,
+                stage: VkPipelineStageFlags2,
+                queryPool: VkQueryPool,
+                query: u32,
+            ),
+        );
+
+        #[implements]
+        #[repr(transparent)]
+        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
+        #[pfn_of(vkQueueSubmit2)]
+        pub struct PFN_vkQueueSubmit2(
+            pub  unsafe extern "system" fn(
+                queue: VkQueue,
+                submitCount: u32,
+                pSubmits: *const VkSubmitInfo2,
+                fence: VkFence,
+            ) -> VkResult,
+        );
+    }
+}
 
 #[implements]
 #[cfg(not(feature = "DynamicLoaded"))]

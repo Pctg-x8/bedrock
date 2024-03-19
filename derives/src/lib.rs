@@ -743,15 +743,3 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
     }
     .into()
 }
-
-struct ForeignFunctions(Vec<syn::ForeignItemFn>);
-impl syn::parse::Parse for ForeignFunctions {
-    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
-        let mut items = Vec::new();
-        while !input.is_empty() {
-            items.push(input.parse()?);
-        }
-
-        Ok(Self(items))
-    }
-}
