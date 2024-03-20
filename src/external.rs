@@ -4,11 +4,11 @@ use cfg_if::cfg_if;
 use derives::implements;
 
 use crate::vk::*;
-#[allow(unused_imports)]
-use crate::VulkanStructure;
 #[implements]
 #[allow(unused_imports)]
 use crate::{ffi_helper::ArrayFFIExtensions, DeviceChild, VkHandle};
+#[allow(unused_imports)]
+use crate::{VulkanStructure, VulkanStructureAsRef};
 
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(C)]
@@ -162,6 +162,7 @@ cfg_if! {
                 Self(v, std::marker::PhantomData)
             }
         }
+        unsafe impl VulkanStructureAsRef for ExportSemasphoreWin32HandleInfo<'_> {}
         unsafe impl VulkanStructure for ExportSemaphoreWin32HandleInfo<'_> {
             const TYPE: crate::vk::VkStructureType = <VkExportSemaphoreWin32HandleInfoKHR as VulkanStructure>::TYPE;
         }
