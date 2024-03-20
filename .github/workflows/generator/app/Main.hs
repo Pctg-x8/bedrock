@@ -15,7 +15,6 @@ import qualified Workflow.GitHub.Actions as GHA
 import Workflow.GitHub.Actions.JobGroupComposer ((~=>))
 import qualified Workflow.GitHub.Actions.Predefined.Checkout as Checkout
 import qualified Workflow.GitHub.Actions.Predefined.Google.Auth as GoogleAuth
-import qualified Workflow.GitHub.Actions.Predefined.Rust.Toolchain as RustToolchain
 
 faultableJob :: GHA.Job -> GHA.Job
 faultableJob job = GHA.jobModifySteps (<> steps) job
@@ -36,7 +35,7 @@ useRepositoryContent :: GHA.Job -> GHA.Job
 useRepositoryContent = GHA.jobModifySteps (Checkout.step Nothing :)
 
 useRust :: String -> Platform -> GHA.Job -> GHA.Job
-useRust toolchain pf = GHA.jobModifySteps \x -> (RustToolchain.step & RustToolchain.useToolchain toolchain) : downloadCargoTranslator pf : x
+useRust toolchain pf = GHA.jobModifySteps \x -> GHA.runStep ("rustup set profile minimum && rustup install " <> toolchain <> " && rustup override set " <> toolchain) : downloadCargoTranslator pf : x
 
 data Cargo = Cargo {cargoSubcommand :: String, cargoFeatures :: [String], cargoToolchainOverriding :: Maybe String, cargoMessageFormat :: Maybe String, cargoSubcommandInternalArgs :: [String]}
 
