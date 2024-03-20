@@ -89,13 +89,30 @@ platformIndependentTest =
             ]
 
 win32DependentTest :: GHA.Job
-win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRepositoryContent $ useRust "stable" Win32 $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop' && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific)]
+win32DependentTest =
+  faultableJob $
+    GHA.namedAs "Run Tests (Win32 Specific)" $
+      useRepositoryContent $
+        useRust "stable" Win32 $
+          GHA.jobRunsOn ["windows-latest"] $
+            GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop' && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific)]
 
 unixDependentTest :: GHA.Job
-unixDependentTest = faultableJob $ GHA.namedAs "Run Tests (Unix Specific)" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.unixSpecific)]
+unixDependentTest =
+  faultableJob $
+    GHA.namedAs "Run Tests (Unix Specific)" $
+      useRepositoryContent $
+        useRust "stable" Unix $
+          GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.unixSpecific)]
 
 macDependentTest :: GHA.Job
-macDependentTest = faultableJob $ GHA.namedAs "Run Tests (Mac Specific)" $ useRepositoryContent $ useRust "stable" Mac $ GHA.jobRunsOn ["macos-latest"] $ GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.macSpecific)]
+macDependentTest =
+  faultableJob $
+    GHA.namedAs "Run Tests (Mac Specific)" $
+      useRepositoryContent $
+        useRust "stable" Mac $
+          GHA.jobRunsOn ["macos-latest"] $
+            GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.macSpecific)]
 
 documentDeploymentJob :: GHA.Job
 documentDeploymentJob = faultableJob $ GHA.namedAs "Deploy Latest Document" $ useRepositoryContent $ useRust "nightly" Unix $ GHA.grantWritable GHA.IDTokenPermission $ GHA.job (buildDocument : deploymentSteps)
