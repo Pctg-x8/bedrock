@@ -35,7 +35,7 @@ useRepositoryContent :: GHA.Job -> GHA.Job
 useRepositoryContent = GHA.jobModifySteps (Checkout.step Nothing :)
 
 useRust :: String -> Platform -> GHA.Job -> GHA.Job
-useRust toolchain pf = GHA.jobModifySteps \x -> GHA.runStep ("rustup set profile minimum && rustup install " <> toolchain <> " && rustup override set " <> toolchain) : downloadCargoTranslator pf : x
+useRust toolchain pf = GHA.jobModifySteps \x -> GHA.runStep ("rustup set profile minimal && rustup install " <> toolchain <> " && rustup override set " <> toolchain) : downloadCargoTranslator pf : x
 
 data Cargo = Cargo {cargoSubcommand :: String, cargoFeatures :: [String], cargoToolchainOverriding :: Maybe String, cargoMessageFormat :: Maybe String, cargoSubcommandInternalArgs :: [String]}
 
