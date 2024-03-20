@@ -84,8 +84,8 @@ platformIndependentTest =
       useRepositoryContent $
         useRust "stable" Unix $
           GHA.job
-            [ GHA.namedAs "test (baseline)" $ GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "test"),
-              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "test" & cargoWithFeatures Features.platformIndependent)
+            [ GHA.namedAs "test (baseline)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test"),
+              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & cargoWithFeatures Features.platformIndependent)
             ]
 
 win32DependentTest :: GHA.Job
@@ -95,7 +95,7 @@ win32DependentTest =
       useRepositoryContent $
         useRust "stable" Win32 $
           GHA.jobRunsOn ["windows-latest"] $
-            GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop' && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific)]
+            GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop'; " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific)]
 
 unixDependentTest :: GHA.Job
 unixDependentTest =
@@ -103,7 +103,7 @@ unixDependentTest =
     GHA.namedAs "Run Tests (Unix Specific)" $
       useRepositoryContent $
         useRust "stable" Unix $
-          GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.unixSpecific)]
+          GHA.job [GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.unixSpecific)]
 
 macDependentTest :: GHA.Job
 macDependentTest =
@@ -112,7 +112,7 @@ macDependentTest =
       useRepositoryContent $
         useRust "stable" Mac $
           GHA.jobRunsOn ["macos-latest"] $
-            GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.macSpecific)]
+            GHA.job [GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.macSpecific)]
 
 documentDeploymentJob :: GHA.Job
 documentDeploymentJob = faultableJob $ GHA.namedAs "Deploy Latest Document" $ useRepositoryContent $ useRust "nightly" Unix $ GHA.grantWritable GHA.IDTokenPermission $ GHA.job (buildDocument : deploymentSteps)
