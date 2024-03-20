@@ -65,7 +65,7 @@ platformIndependentTest :: GHA.Job
 platformIndependentTest = faultableJob $ GHA.namedAs "Run Tests (Platform Independent)" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.runStep $ "set -o pipefail && " <> simpleTestRustWithFeaturesStep Features.platformIndependent]
 
 win32DependentTest :: GHA.Job
-win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRepositoryContent $ useRust "stable" Win32 $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [GHA.runStep $ simpleCheckRustWithFeaturesStep Features.win32Specific]
+win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRepositoryContent $ useRust "stable" Win32 $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop' && " <> simpleCheckRustWithFeaturesStep Features.win32Specific]
 
 unixDependentTest :: GHA.Job
 unixDependentTest = faultableJob $ GHA.namedAs "Run Tests (Unix Specific)" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.runStep $ "set -o pipefail && " <> simpleCheckRustWithFeaturesStep Features.unixSpecific]
