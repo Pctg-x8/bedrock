@@ -466,6 +466,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
 
         enum Feature<'d> {
             Standard(&'d VkPhysicalDeviceFeatures),
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
             Extensible(VkPhysicalDeviceFeatures2KHR),
         }
 
@@ -486,6 +487,7 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             ppEnabledExtensionNames: extensions.as_ptr_empty_null(),
             pEnabledFeatures: core::ptr::null(),
         };
+        #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
         let feature_type = if self.extra_features.is_empty() {
             Feature::Standard(&self.features)
         } else {
@@ -503,11 +505,14 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
 
             Feature::Extensible(x)
         };
+        #[cfg(not(feature = "VK_KHR_get_physical_device_properties2"))]
+        let feature_type = Feature::Standard(&self.features);
 
         match feature_type {
             Feature::Standard(r) => {
                 cinfo.pEnabledFeatures = r;
             }
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
             Feature::Extensible(ref x) => {
                 cinfo.pNext = x as *const _ as _;
             }
