@@ -95,7 +95,7 @@ win32DependentTest =
       useRepositoryContent $
         useRust "stable" Win32 $
           GHA.jobRunsOn ["windows-latest"] $
-            GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop'; " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific)]
+            GHA.job [GHA.runStep $ cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific) <> " || $(throw)"]
 
 unixDependentTest :: GHA.Job
 unixDependentTest =
