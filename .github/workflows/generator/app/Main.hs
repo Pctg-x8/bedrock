@@ -38,17 +38,33 @@ useRepositoryContent = GHA.jobModifySteps (Checkout.step Nothing :)
 useRust :: String -> Platform -> GHA.Job -> GHA.Job
 useRust toolchain pf = GHA.jobModifySteps \x -> (RustToolchain.step & RustToolchain.useToolchain toolchain) : downloadCargoTranslator pf : x
 
-cargo :: String -> [String] -> String
-cargo subcommand args = unwords ("cargo" : subcommand : "--message-format=json" : args) <> " | ./cargo-json-gha-translator"
+data Cargo = Cargo {cargoSubcommand :: String, cargoFeatures :: [String], cargoToolchainOverriding :: Maybe String, cargoMessageFormat :: Maybe String, cargoSubcommandInternalArgs :: [String]}
 
-cargoNight :: String -> [String] -> String
-cargoNight subcommand args = unwords ("cargo" : "+nightly" : subcommand : "--message-format=json" : args) <> " | ./cargo-json-gha-translator"
+cargoRenderCommandline :: Cargo -> String
+cargoRenderCommandline Cargo {..} = unwords $ mconcat [["cargo"], toolchainOverriding, [cargoSubcommand], features, msgformat, subcommandExtraArgs]
+  where
+    toolchainOverriding = maybe [] (\t -> ["+" <> t]) cargoToolchainOverriding
+    features = if null cargoFeatures then [] else ["--features", intercalate "," cargoFeatures]
+    msgformat = maybe [] (\t -> ["--message-format=" <> t]) cargoMessageFormat
+    subcommandExtraArgs = if null cargoSubcommandInternalArgs then [] else "--" : cargoSubcommandInternalArgs
 
-simpleTestRustWithFeaturesStep :: [String] -> String
-simpleTestRustWithFeaturesStep features = cargo "test" ["--features", intercalate "," features]
+cargoRenderAnnotatedCommandline :: Cargo -> String
+cargoRenderAnnotatedCommandline c = cargoRenderCommandline (cargoOutputJson c) <> " | ./cargo-json-gha-translator"
 
-simpleCheckRustWithFeaturesStep :: [String] -> String
-simpleCheckRustWithFeaturesStep features = cargo "check" ["--features", intercalate "," features]
+cargo :: String -> Cargo
+cargo subcommand = Cargo {cargoSubcommand = subcommand, cargoFeatures = [], cargoToolchainOverriding = Nothing, cargoMessageFormat = Nothing, cargoSubcommandInternalArgs = []}
+
+cargoOnNightly :: Cargo -> Cargo
+cargoOnNightly c = c {cargoToolchainOverriding = Just "nightly"}
+
+cargoWithFeatures :: [String] -> Cargo -> Cargo
+cargoWithFeatures features c = c {cargoFeatures = features}
+
+cargoSubcommandExtraArgs :: [String] -> Cargo -> Cargo
+cargoSubcommandExtraArgs args c = c {cargoSubcommandInternalArgs = args}
+
+cargoOutputJson :: Cargo -> Cargo
+cargoOutputJson c = c {cargoMessageFormat = Just "json"}
 
 preconditions :: GHA.Job
 preconditions = GHA.jobForwardingStepOutput "begintime" "begintime" $ GHA.job [recordBeginTime]
@@ -62,21 +78,29 @@ checkFormat :: GHA.Job
 checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
 
 platformIndependentTest :: GHA.Job
-platformIndependentTest = faultableJob $ GHA.namedAs "Run Tests (Platform Independent)" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.runStep $ "set -o pipefail && " <> simpleTestRustWithFeaturesStep Features.platformIndependent]
+platformIndependentTest =
+  faultableJob $
+    GHA.namedAs "Run Tests (Platform Independent)" $
+      useRepositoryContent $
+        useRust "stable" Unix $
+          GHA.job
+            [ GHA.namedAs "test (baseline)" $ GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "test"),
+              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "test" & cargoWithFeatures Features.platformIndependent)
+            ]
 
 win32DependentTest :: GHA.Job
-win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRepositoryContent $ useRust "stable" Win32 $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop' && " <> simpleCheckRustWithFeaturesStep Features.win32Specific]
+win32DependentTest = faultableJob $ GHA.namedAs "Run Tests (Win32 Specific)" $ useRepositoryContent $ useRust "stable" Win32 $ GHA.jobRunsOn ["windows-latest"] $ GHA.job [GHA.runStep $ "$ErrorActionPreference='Stop' && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific)]
 
 unixDependentTest :: GHA.Job
-unixDependentTest = faultableJob $ GHA.namedAs "Run Tests (Unix Specific)" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.runStep $ "set -o pipefail && " <> simpleCheckRustWithFeaturesStep Features.unixSpecific]
+unixDependentTest = faultableJob $ GHA.namedAs "Run Tests (Unix Specific)" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.unixSpecific)]
 
 macDependentTest :: GHA.Job
-macDependentTest = faultableJob $ GHA.namedAs "Run Tests (Mac Specific)" $ useRepositoryContent $ useRust "stable" Mac $ GHA.jobRunsOn ["macos-latest"] $ GHA.job [GHA.runStep $ "set -o pipefail && " <> simpleCheckRustWithFeaturesStep Features.macSpecific]
+macDependentTest = faultableJob $ GHA.namedAs "Run Tests (Mac Specific)" $ useRepositoryContent $ useRust "stable" Mac $ GHA.jobRunsOn ["macos-latest"] $ GHA.job [GHA.runStep $ "set -o pipefail && " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.macSpecific)]
 
 documentDeploymentJob :: GHA.Job
 documentDeploymentJob = faultableJob $ GHA.namedAs "Deploy Latest Document" $ useRepositoryContent $ useRust "nightly" Unix $ GHA.grantWritable GHA.IDTokenPermission $ GHA.job (buildDocument : deploymentSteps)
   where
-    buildDocument = GHA.runStep $ cargoNight "rustdoc" ["--features", intercalate "," Features.forDocumentation, "--", "--cfg", "docsrs"]
+    buildDocument = GHA.runStep $ cargoRenderCommandline (cargo "rustdoc" & cargoOnNightly & cargoWithFeatures Features.forDocumentation & cargoSubcommandExtraArgs ["--cfg", "docsrs"])
     deploymentSteps =
       [ GHA.stepSetWithParam "audience" "https://github.com/Pctg-x8" $ GoogleAuth.viaWorkloadIdentityStep "projects/146152181631/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions" "github-actions-autodeployer@docs-541f3.iam.gserviceaccount.com",
         DocumentDeployment.step
