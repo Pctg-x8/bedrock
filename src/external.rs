@@ -162,7 +162,15 @@ cfg_if! {
                 Self(v, std::marker::PhantomData)
             }
         }
-        unsafe impl VulkanStructureAsRef for ExportSemaphoreWin32HandleInfo<'_> {}
+        unsafe impl VulkanStructureAsRef for ExportSemaphoreWin32HandleInfo<'_> {
+            fn as_generic(&self) -> &crate::GenericVulkanStructure {
+                unsafe { core::mem::transmute(self) }
+            }
+
+            fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+                unsafe { core::mem::transmute(self) }
+            }
+        }
         unsafe impl VulkanStructure for ExportSemaphoreWin32HandleInfo<'_> {
             const TYPE: crate::vk::VkStructureType = <VkExportSemaphoreWin32HandleInfoKHR as VulkanStructure>::TYPE;
         }
