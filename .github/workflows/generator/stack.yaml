@@ -30,7 +30,7 @@ resolver:
 #   - auto-update
 #   - wai
 packages:
-- .
+  - .
 # Dependency packages to be pulled from upstream that are not in the resolver.
 # These entries can reference officially published versions as well as
 # forks / in-progress versions pinned to a git hash. For example:
@@ -41,9 +41,8 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 extra-deps:
-- git: https://github.com/Pctg-x8/haskell-github-actions-workflow-generator
-  commit: fe9d2989bad7e0064aa3c39ca5fd690a90b5a708
-
+  - git: https://github.com/Pctg-x8/haskell-github-actions-workflow-generator
+    commit: 9c7cb88d03104e22f3eece595af949b75e8c60b9
 # Override default flag values for local packages and extra-deps
 # flags: {}
 

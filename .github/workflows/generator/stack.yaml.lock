@@ -5,15 +5,15 @@
 
 packages:
 - completed:
-    commit: fe9d2989bad7e0064aa3c39ca5fd690a90b5a708
+    commit: 9c7cb88d03104e22f3eece595af949b75e8c60b9
     git: https://github.com/Pctg-x8/haskell-github-actions-workflow-generator
     name: haskell-github-actions-workflow-generator
     pantry-tree:
-      sha256: c575bdc208116c042a539555a5aa2a090a422018b423a4708561eaa751394737
+      sha256: 8716cb8f067775bace81a6da7bb5afa8fd9767f59f3cfa25c1232f0bb13a490f
       size: 4011
     version: 0.1.0.0
   original:
-    commit: fe9d2989bad7e0064aa3c39ca5fd690a90b5a708
+    commit: 9c7cb88d03104e22f3eece595af949b75e8c60b9
     git: https://github.com/Pctg-x8/haskell-github-actions-workflow-generator
 snapshots:
 - completed:
