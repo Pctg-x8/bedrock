@@ -128,7 +128,7 @@ pub struct VkSubpassEndInfoKHR {
 #[implements]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateRenderPass2)]
+#[pfn_of(vkCreateRenderPass2KHR)]
 pub struct PFN_vkCreateRenderPass2KHR(
     pub  unsafe extern "system" fn(
         device: VkDevice,
