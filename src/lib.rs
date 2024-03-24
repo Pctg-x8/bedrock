@@ -533,6 +533,10 @@ pub use self::dependency::*;
 mod fmt;
 pub use self::fmt::*;
 
+pub unsafe trait Transparent {
+    type Target: Sized;
+}
+
 /// All of traits
 pub mod traits {
     pub use super::{AnalogNumRange, ClearColorValue, DeviceChild, ImageSize, PixelFormat, VkHandle};

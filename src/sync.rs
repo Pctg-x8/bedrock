@@ -231,28 +231,41 @@ pub trait Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn status(&self) -> crate::Result<bool>;
 }
 DerefContainerBracketImpl!(for Status {
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn status(&self) -> crate::Result<bool> {
         T::status(self)
     }
 });
 GuardsImpl!(for Status {
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn status(&self) -> crate::Result<bool> {
         T::status(&self)
     }
 });
+
+#[repr(transparent)]
+pub struct FenceRef<'r, R: crate::Fence + ?Sized>(VkFence, core::marker::PhantomData<&'r R>);
+unsafe impl<'r, R: crate::Fence + ?Sized> crate::Transparent for FenceRef<'r, R> {
+    type Target = VkFence;
+}
+impl<'r, R: crate::Fence + ?Sized> VkHandle for FenceRef<'r, R> {
+    type Handle = VkFence;
+
+    fn native_ptr(&self) -> Self::Handle {
+        self.0
+    }
+}
 
 DefineStdDeviceChildObject! {
     /// Opaque Handle to a fence object
     FenceObject(VkFence): Fence
 }
 impl<Device: crate::Device> Status for FenceObject<Device> {
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn status(&self) -> crate::Result<bool> {
         let vr = unsafe { crate::vkresolve::get_fence_status(self.device().native_ptr(), self.native_ptr()) };
         match vr {
@@ -262,10 +275,33 @@ impl<Device: crate::Device> Status for FenceObject<Device> {
         }
     }
 }
+impl<Device: crate::Device> FenceObject<Device> {
+    pub const fn as_transparent_ref(&self) -> FenceRef<Self> {
+        FenceRef(self.0, core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+pub struct SemaphoreRef<'r, R: crate::Semaphore + ?Sized>(VkSemaphore, core::marker::PhantomData<&'r R>);
+unsafe impl<'r, R: crate::Semaphore + ?Sized> crate::Transparent for SemaphoreRef<'r, R> {
+    type Target = VkSemaphore;
+}
+impl<'r, R: crate::Semaphore + ?Sized> VkHandle for SemaphoreRef<'r, R> {
+    type Handle = VkSemaphore;
+
+    fn native_ptr(&self) -> Self::Handle {
+        self.0
+    }
+}
 
 DefineStdDeviceChildObject! {
     /// Opaque handle to a semaphore object
     SemaphoreObject(VkSemaphore): Semaphore
+}
+impl<Device: crate::Device> SemaphoreObject<Device> {
+    pub const fn as_transparent_ref(&self) -> SemaphoreRef<Self> {
+        SemaphoreRef(self.0, core::marker::PhantomData)
+    }
 }
 
 DefineStdDeviceChildObject! {

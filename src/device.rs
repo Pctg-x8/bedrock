@@ -1481,6 +1481,20 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         self.submit_raw(&batches, fence)
     }
 
+    #[implements]
+    fn submit_alt<'r>(
+        &mut self,
+        batches: impl IntoIterator<Item = SubmissionBatch2<'r>>,
+        fence: Option<&mut (impl crate::Fence + VkHandleMut)>,
+    ) -> crate::Result<()>
+    where
+        Self: VkHandleMut,
+    {
+        let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
+
+        self.submit_raw(&batches, fence)
+    }
+
     /// Submits a sequence of semaphores or command buffers to a queue
     /// # Failure
     /// On failure, this command returns

@@ -1,3 +1,5 @@
+use derives::implements;
+
 use crate::{ffi_helper::ArrayFFIExtensions, vk::*, PipelineStageFlags, VkHandle, VulkanStructure};
 
 pub struct TemporalSubmissionBatchResources {
@@ -87,6 +89,51 @@ impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
     #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
         T::collect_resources(self, target)
+    }
+}
+
+#[repr(transparent)]
+pub struct SubmissionBatch2<'r>(
+    pub(crate) VkSubmitInfo,
+    core::marker::PhantomData<(
+        &'r [VkSemaphore],
+        &'r [VkPipelineStageFlags],
+        &'r [VkCommandBuffer],
+        &'r [VkSemaphore],
+    )>,
+);
+impl<'r> SubmissionBatch2<'r> {
+    pub fn new(
+        wait_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
+        wait_semaphore_dst_stages: &'r [VkPipelineStageFlags],
+        command_buffers: &'r [impl crate::Transparent<Target = VkCommandBuffer>],
+        signal_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
+    ) -> Self {
+        assert_eq!(wait_semaphores.len(), wait_semaphore_dst_stages.len());
+
+        Self(
+            VkSubmitInfo {
+                sType: VkSubmitInfo::TYPE,
+                pNext: core::ptr::null(),
+                waitSemaphoreCount: wait_semaphores.len() as _,
+                pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
+                pWaitDstStageMask: wait_semaphore_dst_stages.as_ptr_empty_null() as _,
+                commandBufferCount: command_buffers.len() as _,
+                pCommandBuffers: command_buffers.as_ptr_empty_null() as _,
+                signalSemaphoreCount: signal_semaphores.len() as _,
+                pSignalSemaphores: signal_semaphores.as_ptr_empty_null() as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[implements]
+    pub fn submit(
+        self,
+        queue: &mut (impl crate::Queue + crate::VkHandleMut + ?Sized),
+        wait_fence: Option<&mut (impl crate::Fence + crate::VkHandleMut)>,
+    ) -> crate::Result<()> {
+        queue.submit_raw(&[self.0], wait_fence)
     }
 }
 

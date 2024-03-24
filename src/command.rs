@@ -26,6 +26,9 @@ pub struct CommandBufferObject<Device: crate::Device>(VkCommandBuffer, std::mark
 unsafe impl<Device: crate::Device + Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
+unsafe impl<Device: crate::Device> crate::Transparent for CommandBufferObject<Device> {
+    type Target = VkCommandBuffer;
+}
 
 /// The recording state of command buffers
 #[implements]
