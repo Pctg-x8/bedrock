@@ -103,10 +103,10 @@ macro_rules! DefineStdDeviceChildObject {
 
 macro_rules! DerefContainerBracketImpl {
     (for $t: path { $($required: item)* }) => {
-        impl<'s, T> $t for &'s T where T: $t + ?Sized + 's {
+        impl<'s, T> $t for &'s T where T: $t + ?Sized {
             $($required)*
         }
-        impl<'s, T> $t for &'s mut T where T: $t + ?Sized + 's {
+        impl<'s, T> $t for &'s mut T where T: $t + ?Sized {
             $($required)*
         }
         impl<T> $t for std::rc::Rc<T> where T: $t + ?Sized {
