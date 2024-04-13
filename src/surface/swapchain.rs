@@ -1,7 +1,7 @@
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, CompletionHandler, DeviceChild, VkHandle, VkRawHandle, VulkanStructure,
 };
-use derives::implements;
+use derives::{implements, transparent_marked};
 
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn format(&self) -> VkFormat;
@@ -55,15 +55,14 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         &mut self,
         queue: &mut impl VkHandle<Handle = VkQueue>,
         index: u32,
-        wait_semaphores: &[impl VkHandle<Handle = VkSemaphore>],
+        wait_semaphores: &[impl crate::Transparent<Target = VkSemaphore>],
     ) -> crate::Result<()> {
         let mut res = VkResult(0);
-        let wait_semaphores = wait_semaphores.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let pinfo = VkPresentInfoKHR {
             sType: VkPresentInfoKHR::TYPE,
             pNext: std::ptr::null(),
             waitSemaphoreCount: wait_semaphores.len() as _,
-            pWaitSemaphores: wait_semaphores.as_ptr_empty_null(),
+            pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
             swapchainCount: 1,
             pSwapchains: &self.native_ptr(),
             pImageIndices: &index,
@@ -155,3 +154,16 @@ DerefContainerBracketImpl!(for Swapchain {
         T::size(self)
     }
 });
+
+#[transparent_marked]
+pub struct SwapchainRef<'r, R: crate::Swapchain + ?Sized>(
+    pub(crate) VkSwapchainKHR,
+    pub(crate) core::marker::PhantomData<&'r R>,
+);
+impl<'r, R: crate::Swapchain + ?Sized> VkHandle for SwapchainRef<'r, R> {
+    type Handle = VkSwapchainKHR;
+
+    fn native_ptr(&self) -> Self::Handle {
+        self.0
+    }
+}

@@ -10,6 +10,9 @@ impl<const L: usize> FixedCStrBuffer<L> {
 pub(crate) trait ArrayFFIExtensions<T> {
     /// pointer of the array, or null if the array is empty
     fn as_ptr_empty_null(&self) -> *const T;
+
+    /// pointer of the array, or null if the array is empty
+    fn as_mut_ptr_empty_null(&mut self) -> *mut T;
 }
 impl<T> ArrayFFIExtensions<T> for Vec<T> {
     fn as_ptr_empty_null(&self) -> *const T {
@@ -19,6 +22,14 @@ impl<T> ArrayFFIExtensions<T> for Vec<T> {
             self.as_ptr()
         }
     }
+
+    fn as_mut_ptr_empty_null(&mut self) -> *mut T {
+        if self.is_empty() {
+            core::ptr::null_mut()
+        } else {
+            self.as_mut_ptr()
+        }
+    }
 }
 impl<T> ArrayFFIExtensions<T> for [T] {
     fn as_ptr_empty_null(&self) -> *const T {
@@ -26,6 +37,14 @@ impl<T> ArrayFFIExtensions<T> for [T] {
             core::ptr::null()
         } else {
             self.as_ptr()
+        }
+    }
+
+    fn as_mut_ptr_empty_null(&mut self) -> *mut T {
+        if self.is_empty() {
+            core::ptr::null_mut()
+        } else {
+            self.as_mut_ptr()
         }
     }
 }

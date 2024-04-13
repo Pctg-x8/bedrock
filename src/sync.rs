@@ -9,6 +9,7 @@ use crate::{Device, VkHandleMut};
 use crate::{GenericVulkanStructure, VulkanStructure};
 use derives::bitflags_newtype;
 use derives::implements;
+use derives::transparent_marked;
 
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
@@ -247,11 +248,8 @@ GuardsImpl!(for Status {
     }
 });
 
-#[repr(transparent)]
+#[transparent_marked]
 pub struct FenceRef<'r, R: crate::Fence + ?Sized>(VkFence, core::marker::PhantomData<&'r R>);
-unsafe impl<'r, R: crate::Fence + ?Sized> crate::Transparent for FenceRef<'r, R> {
-    type Target = VkFence;
-}
 impl<'r, R: crate::Fence + ?Sized> VkHandle for FenceRef<'r, R> {
     type Handle = VkFence;
 
@@ -281,11 +279,8 @@ impl<Device: crate::Device> FenceObject<Device> {
     }
 }
 
-#[repr(transparent)]
+#[transparent_marked]
 pub struct SemaphoreRef<'r, R: crate::Semaphore + ?Sized>(VkSemaphore, core::marker::PhantomData<&'r R>);
-unsafe impl<'r, R: crate::Semaphore + ?Sized> crate::Transparent for SemaphoreRef<'r, R> {
-    type Target = VkSemaphore;
-}
 impl<'r, R: crate::Semaphore + ?Sized> VkHandle for SemaphoreRef<'r, R> {
     type Handle = VkSemaphore;
 

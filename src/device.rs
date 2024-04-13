@@ -1556,9 +1556,27 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_DEVICE_LOST`
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
+    #[implements("VK_KHR_swapchain")]
+    fn present<'r>(&mut self, info: PresentInfo<'r>) -> crate::Result<Vec<crate::Result<()>>>
+    where
+        Self: VkHandleMut,
+    {
+        info.submit(self)
+    }
+
+    /// Queue images for presentation
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
+    /// * `VK_ERROR_OUT_OF_DATE_KHR`
+    /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[cfg(feature = "Implements")]
     #[cfg(feature = "VK_KHR_swapchain")]
-    fn present(
+    #[deprecated = "use PresentInfo for more extensibiility"]
+    fn present1(
         &mut self,
         swapchains: &mut [(&mut (impl crate::Swapchain + VkHandleMut), u32)],
         wait_semaphores: &mut [impl VkHandleMut<Handle = VkSemaphore>],
@@ -1589,6 +1607,49 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
             crate::vkresolve::queue_present_khr(self.native_ptr_mut(), &pinfo)
                 .into_result()
                 .map(|_| res)
+        }
+    }
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+pub struct PresentInfo<'r>(
+    VkPresentInfoKHR,
+    core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32])>,
+);
+#[cfg(feature = "VK_KHR_swapchain")]
+impl<'r> PresentInfo<'r> {
+    pub fn new(
+        wait_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
+        swapchains: &'r [impl crate::Transparent<Target = VkSwapchainKHR>],
+        image_indices: &'r [u32],
+    ) -> Self {
+        assert_eq!(swapchains.len(), image_indices.len());
+
+        Self(
+            VkPresentInfoKHR {
+                sType: VkPresentInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                waitSemaphoreCount: wait_semaphores.len() as _,
+                pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
+                swapchainCount: swapchains.len() as _,
+                pSwapchains: swapchains.as_ptr_empty_null() as _,
+                pImageIndices: image_indices.as_ptr_empty_null(),
+                pResults: core::ptr::null_mut(),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[implements]
+    pub fn submit(mut self, queue: &mut (impl Queue + VkHandleMut + ?Sized)) -> crate::Result<Vec<crate::Result<()>>> {
+        let mut results = vec![VK_SUCCESS; self.0.swapchainCount as usize];
+        self.0.pResults = results.as_mut_ptr_empty_null();
+
+        unsafe {
+            crate::vkresolve::queue_present_khr(queue.native_ptr_mut(), &self.0)
+                .into_result()
+                .map(|_| results.into_iter().map(|r| r.into_result().map(drop)).collect())
         }
     }
 }

@@ -1,7 +1,7 @@
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsageFlags,
-    PresentMode, SurfaceTransform, Swapchain, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure, VulkanStructureAsRef, VulkanStructureProvider,
+    PresentMode, SurfaceTransform, Swapchain, SwapchainRef, VkDeviceChildNonExtDestroyable, VkHandle, VkObject,
+    VkRawHandle, VulkanStructure, VulkanStructureAsRef, VulkanStructureProvider,
 };
 use derives::implements;
 
@@ -59,6 +59,10 @@ where
     Device: crate::Device,
     Surface: crate::Surface,
 {
+    pub const fn as_transparent_ref(&self) -> SwapchainRef<Self> {
+        SwapchainRef(self.handle, core::marker::PhantomData)
+    }
+
     /// Deconstructs the swapchain and retrieves its parents
     #[implements]
     pub fn deconstruct(self) -> (Device, Surface) {

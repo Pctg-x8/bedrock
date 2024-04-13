@@ -1,6 +1,6 @@
 //! Vulkan Commands
 
-use derives::implements;
+use derives::{implements, transparent_marked};
 
 use crate::{ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
 #[implements]
@@ -19,16 +19,13 @@ DefineStdDeviceChildObject! {
 }
 
 /// Opaque handle to a command buffer object
-#[repr(transparent)]
+#[transparent_marked]
 #[derive(Clone, Copy, VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_COMMAND_BUFFER)]
 pub struct CommandBufferObject<Device: crate::Device>(VkCommandBuffer, std::marker::PhantomData<Device>);
 unsafe impl<Device: crate::Device + Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
-unsafe impl<Device: crate::Device> crate::Transparent for CommandBufferObject<Device> {
-    type Target = VkCommandBuffer;
-}
 
 /// The recording state of command buffers
 #[implements]
