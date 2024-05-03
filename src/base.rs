@@ -20,23 +20,97 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     }
 }
 
-cfg_if! {
-    if #[cfg(feature = "Implements")] {
-        type InstanceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkInstance>;
-        impl crate::vkresolve::ResolverInterface for VkInstance {
-            unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
-                T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
-                    *self,
-                    name.as_ptr() as _,
-                )))
-            }
+#[implements]
+type InstanceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkInstance>;
+#[implements]
+impl crate::vkresolve::ResolverInterface for VkInstance {
+    unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
+        T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
+            *self,
+            name.as_ptr() as _,
+        )))
+    }
 
-            unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &[u8]) -> F {
-                F::from_void_fn(
-                    crate::vkresolve::get_instance_proc_addr(*self, name.as_ptr() as _)
-                        .unwrap_or_else(|| panic!("function {:?} not found", name)),
-                )
-            }
+    unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &[u8]) -> F {
+        F::from_void_fn(
+            crate::vkresolve::get_instance_proc_addr(*self, name.as_ptr() as _)
+                .unwrap_or_else(|| panic!("function {:?} not found", name)),
+        )
+    }
+}
+
+#[implements]
+struct InstanceExtFunctions {
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceProperties2KHR>,
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_features2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFeatures2KHR>,
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_format_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
+    #[cfg(feature = "VK_EXT_debug_report")]
+    create_debug_report_callback_ext: InstanceResolvedFn<PFN_vkCreateDebugReportCallbackEXT>,
+    #[cfg(feature = "VK_EXT_debug_report")]
+    destroy_debug_report_callback_ext: InstanceResolvedFn<PFN_vkDestroyDebugReportCallbackEXT>,
+    #[cfg(feature = "VK_EXT_debug_report")]
+    debug_report_message_ext: InstanceResolvedFn<PFN_vkDebugReportMessageEXT>,
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    create_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkCreateDebugUtilsMessengerEXT>,
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkDestroyDebugUtilsMessengerEXT>,
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    set_debug_utils_object_name_ext: InstanceResolvedFn<PFN_vkSetDebugUtilsObjectNameEXT>,
+    #[cfg(feature = "VK_KHR_external_fence_capabilities")]
+    get_physical_device_external_fence_properties_khr:
+        InstanceResolvedFn<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
+    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+    get_randr_output_display_ext: InstanceResolvedFn<PFN_vkGetRandROutputDisplayEXT>,
+    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+    acquire_xlib_display_ext: InstanceResolvedFn<PFN_vkAcquireXlibDisplayEXT>,
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
+    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+    get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
+    #[cfg(feature = "VK_EXT_direct_mode_display")]
+    release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    get_physical_device_multisample_properties_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
+}
+#[implements]
+impl InstanceExtFunctions {
+    fn new(r: VkInstance) -> Self {
+        Self {
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_properties2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_features2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_report")]
+            create_debug_report_callback_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_report")]
+            destroy_debug_report_callback_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_report")]
+            debug_report_message_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_utils")]
+            create_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_utils")]
+            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_utils")]
+            set_debug_utils_object_name_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_external_fence_capabilities")]
+            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+            get_randr_output_display_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+            acquire_xlib_display_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_direct_mode_display")]
+            release_display_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_sample_locations")]
+            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(r),
         }
     }
 }
@@ -47,82 +121,21 @@ cfg_if! {
 pub struct InstanceObject {
     #[handle]
     handle: VkInstance,
-    #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
-    get_physical_device_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceProperties2KHR>,
-    #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
-    get_physical_device_features2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFeatures2KHR>,
-    #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
-    get_physical_device_format_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
-    #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-    create_debug_report_callback_ext: InstanceResolvedFn<PFN_vkCreateDebugReportCallbackEXT>,
-    #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-    destroy_debug_report_callback_ext: InstanceResolvedFn<PFN_vkDestroyDebugReportCallbackEXT>,
-    #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-    debug_report_message_ext: InstanceResolvedFn<PFN_vkDebugReportMessageEXT>,
-    #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-    create_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkCreateDebugUtilsMessengerEXT>,
-    #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-    destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkDestroyDebugUtilsMessengerEXT>,
-    #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-    set_debug_utils_object_name_ext: InstanceResolvedFn<PFN_vkSetDebugUtilsObjectNameEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))]
-    get_physical_device_external_fence_properties_khr:
-        InstanceResolvedFn<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
-    get_randr_output_display_ext: InstanceResolvedFn<PFN_vkGetRandROutputDisplayEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
-    acquire_xlib_display_ext: InstanceResolvedFn<PFN_vkAcquireXlibDisplayEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-    get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))]
-    get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
-    release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
-    get_physical_device_multisample_properties_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
+    #[cfg(feature = "Implements")]
+    ext: InstanceExtFunctions,
 }
 impl From<VkInstance> for InstanceObject {
     fn from(value: VkInstance) -> Self {
         Self {
             handle: value,
-            #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
-            get_physical_device_properties2_khr: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
-            get_physical_device_features2_khr: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
-            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-            create_debug_report_callback_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-            destroy_debug_report_callback_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))]
-            debug_report_message_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-            create_debug_utils_messenger_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))]
-            set_debug_utils_object_name_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))]
-            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
-            get_randr_output_display_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
-            acquire_xlib_display_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))]
-            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
-            release_display_ext: InstanceResolvedFn::new(value),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
-            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(value),
+            #[cfg(feature = "Implements")]
+            ext: InstanceExtFunctions::new(value),
         }
     }
 }
 unsafe impl Sync for InstanceObject {}
 unsafe impl Send for InstanceObject {}
-#[cfg(feature = "Implements")]
+#[implements]
 impl Drop for InstanceObject {
     fn drop(&mut self) {
         unsafe {
@@ -134,13 +147,13 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))] {
             fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
-                *self.get_physical_device_properties2_khr.resolve()
+                *self.ext.get_physical_device_properties2_khr.resolve()
             }
             fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR {
-                *self.get_physical_device_features2_khr.resolve()
+                *self.ext.get_physical_device_features2_khr.resolve()
             }
             fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
-                *self.get_physical_device_format_properties2_khr.resolve()
+                *self.ext.get_physical_device_format_properties2_khr.resolve()
             }
         }
     }
@@ -148,13 +161,13 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "VK_EXT_debug_report", feature = "Implements"))] {
             fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
-                *self.create_debug_report_callback_ext.resolve()
+                *self.ext.create_debug_report_callback_ext.resolve()
             }
             fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
-                *self.destroy_debug_report_callback_ext.resolve()
+                *self.ext.destroy_debug_report_callback_ext.resolve()
             }
             fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
-                *self.debug_report_message_ext.resolve()
+                *self.ext.debug_report_message_ext.resolve()
             }
         }
     }
@@ -162,13 +175,13 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "VK_EXT_debug_utils", feature = "Implements"))] {
             fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
-                *self.create_debug_utils_messenger_ext.resolve()
+                *self.ext.create_debug_utils_messenger_ext.resolve()
             }
             fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
-                *self.destroy_debug_utils_messenger_ext.resolve()
+                *self.ext.destroy_debug_utils_messenger_ext.resolve()
             }
             fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
-                *self.set_debug_utils_object_name_ext.resolve()
+                *self.ext.set_debug_utils_object_name_ext.resolve()
             }
         }
     }
@@ -176,7 +189,7 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_capabilities"))] {
             fn get_physical_device_external_fence_properties_khr_fn(&self) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
-                *self.get_physical_device_external_fence_properties_khr.resolve()
+                *self.ext.get_physical_device_external_fence_properties_khr.resolve()
             }
         }
     }
@@ -184,10 +197,10 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))] {
             fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
-                *self.get_randr_output_display_ext.resolve()
+                *self.ext.get_randr_output_display_ext.resolve()
             }
             fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
-                *self.acquire_xlib_display_ext.resolve()
+                *self.ext.acquire_xlib_display_ext.resolve()
             }
         }
     }
@@ -195,7 +208,7 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
             fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
-                *self.get_physical_device_surface_present_modes_2_ext.resolve()
+                *self.ext.get_physical_device_surface_present_modes_2_ext.resolve()
             }
         }
     }
@@ -203,7 +216,7 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_surface_capabilities2"))] {
             fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
-                *self.get_physical_device_surface_capabilities_2_khr.resolve()
+                *self.ext.get_physical_device_surface_capabilities_2_khr.resolve()
             }
         }
     }
@@ -211,7 +224,7 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))] {
             fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
-                *self.release_display_ext.resolve()
+                *self.ext.release_display_ext.resolve()
             }
         }
     }
@@ -219,7 +232,7 @@ impl Instance for InstanceObject {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))] {
             fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
-                *self.get_physical_device_multisample_properties_ext.resolve()
+                *self.ext.get_physical_device_multisample_properties_ext.resolve()
             }
         }
     }

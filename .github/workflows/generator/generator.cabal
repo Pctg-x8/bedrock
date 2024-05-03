@@ -43,6 +43,7 @@ library
 executable generator-exe
   main-is: Main.hs
   other-modules:
+      Cargo
       CustomAction.PostCINotification
       DocumentDeployment
       Features

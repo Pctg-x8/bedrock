@@ -1,8 +1,9 @@
 module Main (main) where
 
+import Cargo (Cargo, cargo)
+import qualified Cargo
 import qualified Data.ByteString.Lazy.Char8 as LBS8
 import Data.Function ((&))
-import Data.List (intercalate)
 import Data.Map (Map)
 import qualified Data.Map as M
 import Data.Maybe (fromMaybe)
@@ -37,33 +38,8 @@ useRepositoryContent = GHA.jobModifySteps (Checkout.step Nothing :)
 useRust :: String -> Platform -> GHA.Job -> GHA.Job
 useRust toolchain pf = GHA.jobModifySteps \x -> GHA.runStep ("rustup set profile minimal && rustup install " <> toolchain <> " && rustup override set " <> toolchain) : downloadCargoTranslator pf : x
 
-data Cargo = Cargo {cargoSubcommand :: String, cargoFeatures :: [String], cargoToolchainOverriding :: Maybe String, cargoMessageFormat :: Maybe String, cargoSubcommandInternalArgs :: [String]}
-
-cargoRenderCommandline :: Cargo -> String
-cargoRenderCommandline Cargo {..} = unwords $ mconcat [["cargo"], toolchainOverriding, [cargoSubcommand], features, msgformat, subcommandExtraArgs]
-  where
-    toolchainOverriding = maybe [] (\t -> ["+" <> t]) cargoToolchainOverriding
-    features = if null cargoFeatures then [] else ["--features", intercalate "," cargoFeatures]
-    msgformat = maybe [] (\t -> ["--message-format=" <> t]) cargoMessageFormat
-    subcommandExtraArgs = if null cargoSubcommandInternalArgs then [] else "--" : cargoSubcommandInternalArgs
-
 cargoRenderAnnotatedCommandline :: Cargo -> String
-cargoRenderAnnotatedCommandline c = cargoRenderCommandline (cargoOutputJson c) <> " | ./cargo-json-gha-translator"
-
-cargo :: String -> Cargo
-cargo subcommand = Cargo {cargoSubcommand = subcommand, cargoFeatures = [], cargoToolchainOverriding = Nothing, cargoMessageFormat = Nothing, cargoSubcommandInternalArgs = []}
-
-cargoOnNightly :: Cargo -> Cargo
-cargoOnNightly c = c {cargoToolchainOverriding = Just "nightly"}
-
-cargoWithFeatures :: [String] -> Cargo -> Cargo
-cargoWithFeatures features c = c {cargoFeatures = features}
-
-cargoSubcommandExtraArgs :: [String] -> Cargo -> Cargo
-cargoSubcommandExtraArgs args c = c {cargoSubcommandInternalArgs = args}
-
-cargoOutputJson :: Cargo -> Cargo
-cargoOutputJson c = c {cargoMessageFormat = Just "json"}
+cargoRenderAnnotatedCommandline c = Cargo.renderCommandline (Cargo.outputJson c) <> " | ./cargo-json-gha-translator"
 
 preconditions :: GHA.Job
 preconditions = GHA.jobForwardingStepOutput "begintime" "begintime" $ GHA.job [recordBeginTime]
@@ -84,7 +60,7 @@ platformIndependentTest =
         useRust "stable" Unix $
           GHA.job
             [ GHA.namedAs "test (baseline)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test"),
-              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & cargoWithFeatures Features.platformIndependent)
+              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & Cargo.withFeatures Features.platformIndependent)
             ]
 
 win32DependentTest :: GHA.Job
@@ -94,7 +70,7 @@ win32DependentTest =
       useRepositoryContent $
         useRust "stable" Win32 $
           GHA.jobRunsOn ["windows-latest"] $
-            GHA.job [GHA.runStep $ cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.win32Specific) <> " || $(throw)"]
+            GHA.job [GHA.runStep $ cargoRenderAnnotatedCommandline (cargo "check" & Cargo.withFeatures Features.win32Specific) <> " || $(throw)"]
 
 unixDependentTest :: GHA.Job
 unixDependentTest =
@@ -102,7 +78,7 @@ unixDependentTest =
     GHA.namedAs "Run Tests (Unix Specific)" $
       useRepositoryContent $
         useRust "stable" Unix $
-          GHA.job [GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.unixSpecific)]
+          GHA.job [GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "check" & Cargo.withFeatures Features.unixSpecific)]
 
 macDependentTest :: GHA.Job
 macDependentTest =
@@ -111,12 +87,12 @@ macDependentTest =
       useRepositoryContent $
         useRust "stable" Mac $
           GHA.jobRunsOn ["macos-latest"] $
-            GHA.job [GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "check" & cargoWithFeatures Features.macSpecific)]
+            GHA.job [GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "check" & Cargo.withFeatures Features.macSpecific)]
 
 documentDeploymentJob :: GHA.Job
 documentDeploymentJob = faultableJob $ GHA.namedAs "Deploy Latest Document" $ useRepositoryContent $ useRust "nightly" Unix $ GHA.grantWritable GHA.IDTokenPermission $ GHA.job (buildDocument : deploymentSteps)
   where
-    buildDocument = GHA.runStep $ cargoRenderCommandline (cargo "rustdoc" & cargoOnNightly & cargoWithFeatures Features.forDocumentation & cargoSubcommandExtraArgs ["--cfg", "docsrs"])
+    buildDocument = GHA.runStep $ Cargo.renderCommandline (cargo "rustdoc" & Cargo.onNightly & Cargo.withFeatures Features.forDocumentation & Cargo.subcommandExtraArgs ["--cfg", "docsrs"])
     deploymentSteps =
       [ GHA.stepSetWithParam "audience" "https://github.com/Pctg-x8" $ GoogleAuth.viaWorkloadIdentityStep "projects/146152181631/locations/global/workloadIdentityPools/github-actions-oidc-federation/providers/github-actions" "github-actions-autodeployer@docs-541f3.iam.gserviceaccount.com",
         DocumentDeployment.step

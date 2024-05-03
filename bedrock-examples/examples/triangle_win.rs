@@ -613,7 +613,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ],
             Some(&mut last_render_fence),
         )?;
-        match swapchain.queue_present(&mut queue, bb_index, &[&present_ready]) {
+        match swapchain.queue_present(&mut queue, bb_index, &[present_ready.as_transparent_ref()]) {
             Err(e) if e == br::vk::VK_ERROR_OUT_OF_DATE_KHR => {
                 resize_next = true;
             }
