@@ -1675,6 +1675,7 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
 pub struct NonDerivedGraphicPipelineBuilderExtraStorage<ShaderStages: PipelineShaderStageProvider> {
     pub stages: Vec<VkPipelineShaderStageCreateInfo>,
     pub shader_stage_extras: ShaderStages::ExtraStorage,
+    pub dynamic_state: Option<VkPipelineDynamicStateCreateInfo>,
 }
 impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
     GraphicsPipelineBuilder for NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
@@ -1684,11 +1685,6 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
     fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo {
         self.rasterizer_state
             .apply_dynamic_states(&mut self.dynamic_state_flags);
-        let ds = if !self.dynamic_state_flags.0.is_empty() {
-            unsafe { Some(Into::<LifetimeBound<_>>::into(&self.dynamic_state_flags).unbound()) }
-        } else {
-            None
-        };
         let rst = self.rasterizer_state.make_chained();
         let ms = if let Some(ref msr) = self.ms_state {
             Some(&msr.data)
@@ -1729,7 +1725,11 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
                 .as_ref()
                 .map(|&(ref x, _)| &**x as *const _)
                 .unwrap_or_else(std::ptr::null),
-            pDynamicState: ds.as_ref().map(|x| x as *const _).unwrap_or_else(std::ptr::null),
+            pDynamicState: extras
+                .dynamic_state
+                .as_ref()
+                .map(|x| x as *const _)
+                .unwrap_or_else(std::ptr::null),
             layout: self._layout.native_ptr(),
             renderPass: self.rp.native_ptr(),
             subpass: self.subpass,
@@ -1741,10 +1741,16 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
     fn make_extras(&self) -> Self::ExtraStorage {
         let shader_stage_extras = self.vp.shader_stages.make_extras();
         let stages = self.vp.shader_stages.base_struct(&shader_stage_extras);
+        let dynamic_state = if !self.dynamic_state_flags.0.is_empty() {
+            unsafe { Some(Into::<LifetimeBound<_>>::into(&self.dynamic_state_flags).unbound()) }
+        } else {
+            None
+        };
 
         NonDerivedGraphicPipelineBuilderExtraStorage {
             stages,
             shader_stage_extras,
+            dynamic_state,
         }
     }
 }
