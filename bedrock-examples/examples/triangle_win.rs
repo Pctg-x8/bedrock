@@ -356,53 +356,52 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
     let mut command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
     for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
-        let mut rec = unsafe { cb.begin()? };
-        rec.begin_render_pass_2(
-            &br::RenderPassBeginInfo::new(
-                &render_pass,
-                fb,
-                scissors[0].clone(),
-                &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
-            ),
-            &br::SubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
-        )
-        .bind_graphics_pipeline_pair(&pipeline, &pl)
-        .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
-        .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
-        .bind_vertex_buffers(0, &[(&vbuf, 0)])
-        .draw(3, 1, 0, 0)
-        .end_render_pass_2(&br::SubpassEndInfo::new());
-        rec.end()?;
+        unsafe { cb.begin()? }
+            .begin_render_pass_2(
+                &br::RenderPassBeginInfo::new(
+                    &render_pass,
+                    fb,
+                    scissors[0].clone(),
+                    &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
+                ),
+                &br::SubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
+            )
+            .bind_graphics_pipeline_pair(&pipeline, &pl)
+            .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
+            .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
+            .bind_vertex_buffers(0, &[(&vbuf, 0)])
+            .draw(3, 1, 0, 0)
+            .end_render_pass_2(&br::SubpassEndInfo::new())
+            .end()?;
     }
 
     let mut transfer_command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
     let mut transfer_command_buffers = transfer_command_pool.alloc(1, true)?;
-    let mut rec = unsafe { transfer_command_buffers[0].begin()? };
-    rec.copy_buffer(
-        &host_buffer,
-        &ubuf,
-        &[br::vk::VkBufferCopy {
-            srcOffset: ubuf_device_offset as _,
-            dstOffset: 0,
-            size: core::mem::size_of::<f32>() as _,
-        }],
-    )
-    .pipeline_barrier_2(&br::DependencyInfo::new(
-        &[br::MemoryBarrier2::new()
-            .of_execution(br::PipelineStageFlags2::COPY, br::PipelineStageFlags2::VERTEX_SHADER)
-            .of_memory(br::AccessFlags2::TRANSFER.write, br::AccessFlags2::UNIFORM_READ)],
-        &[],
-        &[],
-    ));
-    rec.end()?;
+    unsafe { transfer_command_buffers[0].begin()? }
+        .copy_buffer(
+            &host_buffer,
+            &ubuf,
+            &[br::vk::VkBufferCopy {
+                srcOffset: ubuf_device_offset as _,
+                dstOffset: 0,
+                size: core::mem::size_of::<f32>() as _,
+            }],
+        )
+        .pipeline_barrier_2(&br::DependencyInfo::new(
+            &[br::MemoryBarrier2::new()
+                .of_execution(br::PipelineStageFlags2::COPY, br::PipelineStageFlags2::VERTEX_SHADER)
+                .of_memory(br::AccessFlags2::TRANSFER.write, br::AccessFlags2::UNIFORM_READ)],
+            &[],
+            &[],
+        ))
+        .end()?;
 
     let mut init_fence = br::FenceBuilder::new().create(&device)?;
     let mut init_command_pool = br::CommandPoolBuilder::new(graphics_queue_family)
         .transient()
         .create(&device)?;
     let mut init_command_buffers = init_command_pool.alloc(1, true)?;
-    let mut init_rec = unsafe { init_command_buffers[0].begin_once()? };
-    init_rec
+    unsafe { init_command_buffers[0].begin_once()? }
         .copy_buffer(
             &host_buffer,
             &vbuf,
@@ -433,8 +432,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 )],
             &[],
             &[],
-        ));
-    init_rec.end()?;
+        ))
+        .end()?;
     queue.submit2(
         &[br::SubmitInfo2::new(
             &[],
@@ -563,21 +562,21 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
             for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
-                let mut rec = unsafe { cb.begin()? };
-                rec.begin_render_pass(
-                    &render_pass,
-                    fb,
-                    scissors[0].clone(),
-                    &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
-                    true,
-                )
-                .bind_graphics_pipeline_pair(&pipeline, &pl)
-                .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
-                .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
-                .bind_vertex_buffers(0, &[(&vbuf, 0)])
-                .draw(3, 1, 0, 0)
-                .end_render_pass();
-                rec.end()?;
+                unsafe { cb.begin()? }
+                    .begin_render_pass(
+                        &render_pass,
+                        fb,
+                        scissors[0].clone(),
+                        &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
+                        true,
+                    )
+                    .bind_graphics_pipeline_pair(&pipeline, &pl)
+                    .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
+                    .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
+                    .bind_vertex_buffers(0, &[(&vbuf, 0)])
+                    .draw(3, 1, 0, 0)
+                    .end_render_pass()
+                    .end()?;
             }
 
             resize_next = false;
