@@ -508,7 +508,8 @@ impl From<VertexInputBindingDescription> for VkVertexInputBindingDescription {
 }
 impl VertexInputBindingDescription {
     /// Consumed per vertex with stride
-    pub fn per_vertex(binding: u32, stride: u32) -> Self {
+    #[inline]
+    pub const fn per_vertex(binding: u32, stride: u32) -> Self {
         VertexInputBindingDescription(VkVertexInputBindingDescription {
             binding,
             stride,
@@ -516,7 +517,8 @@ impl VertexInputBindingDescription {
         })
     }
     /// Consumed per instance with stride
-    pub fn per_instance(binding: u32, stride: u32) -> Self {
+    #[inline]
+    pub const fn per_instance(binding: u32, stride: u32) -> Self {
         VertexInputBindingDescription(VkVertexInputBindingDescription {
             binding,
             stride,
@@ -525,12 +527,14 @@ impl VertexInputBindingDescription {
     }
 
     /// Consumed per vertex the structured data
-    pub fn per_vertex_typed<T>(binding: u32) -> Self {
-        Self::per_vertex(binding, std::mem::size_of::<T>() as _)
+    #[inline]
+    pub const fn per_vertex_typed<T>(binding: u32) -> Self {
+        Self::per_vertex(binding, core::mem::size_of::<T>() as _)
     }
     /// Consumed per instance the structured data
-    pub fn per_instance_typed<T>(binding: u32) -> Self {
-        Self::per_instance(binding, std::mem::size_of::<T>() as _)
+    #[inline]
+    pub const fn per_instance_typed<T>(binding: u32) -> Self {
+        Self::per_instance(binding, core::mem::size_of::<T>() as _)
     }
 }
 
