@@ -1,5 +1,5 @@
 [hooks]
-pre-commit = "make -C .github/workflows && git add .github"
+pre-commit = "cd .github/workflows/generator && stack run -- .. && git add ../.."
 
 [logging]
 verbose = true

@@ -80,7 +80,8 @@ platformIndependent =
     "VK_NV_viewport_swizzle",
     "VK_KHR_portability_enumeration",
     "VK_KHR_synchronization2",
-    "VK_KHR_create_renderpass2"
+    "VK_KHR_create_renderpass2",
+    "VK_KHR_line_rasterization"
   ]
 
 win32Specific :: [String]
