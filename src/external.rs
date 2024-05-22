@@ -277,7 +277,7 @@ impl ExternalMemoryHandleWin32 {
     pub fn into_import_request(
         self,
         memory_type_index: u32,
-        name: &widestring::WideCString,
+        name: Option<&widestring::WideCString>,
     ) -> crate::DeviceMemoryRequest {
         crate::DeviceMemoryRequest::import(memory_type_index, self, name)
     }
