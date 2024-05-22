@@ -3,7 +3,7 @@
 use crate::ffi_helper::ArrayFFIExtensions;
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, VkHandle, VulkanStructure};
+use crate::{vk::*, DeviceChild, GenericVulkanStructure, VkHandle, VulkanStructure, VulkanStructureAsRef};
 use crate::{LifetimeBound, VkRawHandle};
 use std::borrow::Cow;
 use std::ffi::CString;
@@ -833,6 +833,8 @@ pub struct RasterizationState {
     is_dynamic_line_width: bool,
     #[cfg(feature = "VK_EXT_conservative_rasterization")]
     conservative: Option<VkPipelineRasterizationConservativeStateCreateInfoEXT>,
+    #[cfg(feature = "VK_KHR_line_rasterization")]
+    line_rasterization: Option<RasterizationLineState>,
 }
 impl Default for RasterizationState {
     fn default() -> Self {
@@ -856,6 +858,8 @@ impl Default for RasterizationState {
             is_dynamic_line_width: false,
             #[cfg(feature = "VK_EXT_conservative_rasterization")]
             conservative: None,
+            #[cfg(feature = "VK_KHR_line_rasterization")]
+            line_rasterization: None,
         }
     }
 }
@@ -864,10 +868,20 @@ impl RasterizationState {
         st.set(VK_DYNAMIC_STATE_DEPTH_BIAS, self.is_dynamic_depth_bias);
         st.set(VK_DYNAMIC_STATE_LINE_WIDTH, self.is_dynamic_line_width);
     }
+    #[allow(unused_assignments)]
     fn make_chained(&mut self) -> &VkPipelineRasterizationStateCreateInfo {
+        #[allow(unused_mut)]
+        let mut base: &mut GenericVulkanStructure = self.base.as_generic_mut();
+
         #[cfg(feature = "VK_EXT_conservative_rasterization")]
-        if let Some(ref c) = self.conservative {
-            self.base.pNext = c as *const _ as _;
+        if let Some(ref mut c) = self.conservative {
+            base.pNext = c as *const _ as _;
+            base = c.as_generic_mut();
+        }
+        #[cfg(feature = "VK_KHR_line_rasterization")]
+        if let Some(ref mut c) = self.line_rasterization {
+            base.pNext = &c.0 as *const _ as _;
+            base = c.0.as_generic_mut();
         }
 
         &self.base
@@ -951,6 +965,53 @@ impl RasterizationState {
         self.conservative = None;
         self
     }
+
+    #[cfg(feature = "VK_KHR_line_rasterization")]
+    /// Sets line rasterization state
+    pub fn line_state(&mut self, state: RasterizationLineState) -> &mut Self {
+        self.line_rasterization = Some(state);
+        self
+    }
+    #[cfg(feature = "VK_KHR_line_rasterization")]
+    /// Clears line rasterization state
+    pub fn clear_line_state(&mut self) -> &mut Self {
+        self.line_rasterization = None;
+        self
+    }
+}
+
+#[cfg(feature = "VK_KHR_line_rasterization")]
+#[repr(transparent)]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RasterizationLineState(VkPipelineRasterizationLineStateCreateInfoKHR);
+impl RasterizationLineState {
+    pub const fn new(mode: LineRasterizationMode) -> Self {
+        Self(VkPipelineRasterizationLineStateCreateInfoKHR {
+            sType: VkPipelineRasterizationLineStateCreateInfoKHR::TYPE,
+            pNext: core::ptr::null(),
+            lineRasterizationMode: mode as _,
+            stippledLineEnable: false as _,
+            lineStippleFactor: 0,
+            lineStipplePattern: 0,
+        })
+    }
+
+    pub fn stippled(mut self, factor: u32, pattern: u16) -> Self {
+        self.0.stippledLineEnable = true as _;
+        self.0.lineStippleFactor = factor;
+        self.0.lineStipplePattern = pattern;
+
+        self
+    }
+}
+
+#[cfg(feature = "VK_KHR_line_rasterization")]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
+pub enum LineRasterizationMode {
+    Default = VK_LINE_RASTERIZATION_MODE_DEFAULT_KHR as _,
+    Rectangular = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_KHR as _,
+    Bresenham = VK_LINE_RASTERIZATION_MODE_BRESENHAM_KHR as _,
+    RectangularSmooth = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR as _,
 }
 
 /// PipelineStateDesc: Multisample State

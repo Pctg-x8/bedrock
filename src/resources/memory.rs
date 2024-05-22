@@ -18,7 +18,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     {
         unsafe {
             self.map_raw(range.start as _..range.end as _)
-                .map(move |p| MappedMemoryRange(range, p as _, self))
+                .map(move |p| MappedMemoryRange(p as _, self))
         }
     }
 
@@ -278,7 +278,6 @@ impl DeviceMemoryRequest {
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
 pub struct MappedMemoryRange<'m, DeviceMemory: crate::DeviceMemory + VkHandleMut + ?Sized + 'm>(
-    std::ops::Range<usize>,
     *mut u8,
     &'m mut DeviceMemory,
 );
@@ -288,26 +287,26 @@ impl<'m, DeviceMemory: crate::DeviceMemory + VkHandleMut + ?Sized + 'm> MappedMe
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn get<T>(&self, offset: usize) -> &T {
-        &*(self.1.add(offset) as *const T)
+        &*(self.0.add(offset) as *const T)
     }
     /// Get a mutable reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub unsafe fn get_mut<T>(&self, offset: usize) -> &mut T {
-        &mut *(self.1.add(offset) as *mut T)
+        &mut *(self.0.add(offset) as *mut T)
     }
 
     /// Get a slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn slice<T>(&self, offset: usize, count: usize) -> &[T] {
-        std::slice::from_raw_parts(self.1.add(offset) as *const T, count)
+        std::slice::from_raw_parts(self.0.add(offset) as *const T, count)
     }
     /// Get a mutable slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T] {
-        std::slice::from_raw_parts_mut(self.1.add(offset) as *mut T, count)
+        std::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count)
     }
 
     /// Clone data from slice at the specified offset in mapped memory.
@@ -327,7 +326,7 @@ impl<'m, DeviceMemory: crate::DeviceMemory + VkHandleMut + ?Sized + 'm> MappedMe
     /// [feature = "Implements"] Unmap region
     pub fn end(self) {
         unsafe {
-            self.2.unmap();
+            self.1.unmap();
         }
     }
 }

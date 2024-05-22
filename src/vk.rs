@@ -5260,6 +5260,7 @@ ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ex
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
+ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
 
 // Promoted Extensions
 ExportExtensions!("VK_KHR_multiview": multiview_khr);

@@ -1770,14 +1770,15 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 
-    #[cfg(all(feature = "VK_KHR_get_physical_device_properties2", feature = "Implements"))]
+    #[implements("VK_KHR_get_physical_device_properties2")]
     /// Returns properties of a physical device
-    fn properties2(&self) -> VkPhysicalDeviceProperties2KHR {
-        let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), p.as_mut_ptr());
-            p.assume_init()
-        }
+    fn properties2(
+        &self,
+        sink: &mut VkPhysicalDeviceProperties2KHR,
+        extras: &mut [&mut dyn crate::VulkanStructureAsRef],
+    ) {
+        crate::ext::chain2(sink, extras.iter_mut().map(crate::VulkanStructureAsRef::as_generic_mut));
+        self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink)
     }
 
     #[implements("VK_KHR_get_physical_device_properties2")]
