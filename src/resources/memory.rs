@@ -154,7 +154,7 @@ impl DeviceMemoryRequest {
     pub fn import(
         memory_type_index: u32,
         handle: crate::ExternalMemoryHandleWin32,
-        name: &widestring::WideCString,
+        name: Option<&widestring::WideCString>,
     ) -> Self {
         unsafe {
             // Note: size is ignored by specification(but 0 is not allowed by validation layer...)
@@ -163,7 +163,9 @@ impl DeviceMemoryRequest {
                 pNext: std::ptr::null(),
                 handleType: handle.0 as _,
                 handle: handle.1,
-                name: windows::core::PCWSTR::from_raw(name.as_ptr()),
+                name: name.map_or_else(windows::core::PCWSTR::null, |x| {
+                    windows::core::PCWSTR::from_raw(x.as_ptr())
+                }),
             })
         }
     }
