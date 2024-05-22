@@ -32,6 +32,17 @@ pub struct VkPhysicalDeviceLineRasterizationFeaturesKHR {
     pub stippledBresenhamLines: VkBool32,
     pub stippledSmoothLines: VkBool32,
 }
+impl VkPhysicalDeviceLineRasterizationFeaturesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut sink = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            (*sink.as_mut_ptr()).sType = Self::TYPE;
+            (*sink.as_mut_ptr()).pNext = core::ptr::null_mut();
+        }
+
+        sink
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
@@ -40,6 +51,17 @@ pub struct VkPhysicalDeviceLineRasterizationPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
     pub lineSubPixelPrecisionBits: u32,
+}
+impl VkPhysicalDeviceLineRasterizationPropertiesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut sink = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            (*sink.as_mut_ptr()).sType = Self::TYPE;
+            (*sink.as_mut_ptr()).pNext = core::ptr::null_mut();
+        }
+
+        sink
+    }
 }
 
 #[repr(C)]
