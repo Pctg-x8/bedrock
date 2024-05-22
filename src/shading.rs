@@ -984,6 +984,7 @@ impl RasterizationState {
 #[repr(transparent)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct RasterizationLineState(VkPipelineRasterizationLineStateCreateInfoKHR);
+#[cfg(feature = "VK_KHR_line_rasterization")]
 impl RasterizationLineState {
     pub const fn new(mode: LineRasterizationMode) -> Self {
         Self(VkPipelineRasterizationLineStateCreateInfoKHR {
