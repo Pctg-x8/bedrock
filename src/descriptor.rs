@@ -52,6 +52,12 @@ impl std::ops::Deref for DescriptorSet {
 }
 unsafe impl Sync for DescriptorSet {}
 unsafe impl Send for DescriptorSet {}
+impl DescriptorSet {
+    #[inline]
+    pub const fn binding_at(&self, b: u32) -> DescriptorPointer {
+        DescriptorPointer::new(self.0, b)
+    }
+}
 
 /// Specified the type of a descriptor in a descriptor set
 #[repr(u32)]
