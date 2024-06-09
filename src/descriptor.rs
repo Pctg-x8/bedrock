@@ -89,11 +89,25 @@ impl DescriptorType {
 
 #[repr(transparent)]
 #[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
+pub struct DescriptorSetLayoutObjectRef<'s>(
+    VkDescriptorSetLayout,
+    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkDescriptorSetLayout>>,
+);
+impl<'s> DescriptorSetLayoutObjectRef<'s> {
+    #[inline]
+    pub fn new(x: &'s (impl VkHandle<Handle = VkDescriptorSetLayout> + ?Sized)) -> Self {
+        Self(x.native_ptr(), core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
 pub struct SamplerObjectRef<'s>(
     VkSampler,
     core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
 );
 impl<'s> SamplerObjectRef<'s> {
+    #[inline]
     pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
         Self(x.native_ptr(), core::marker::PhantomData)
     }
@@ -106,6 +120,7 @@ pub struct ImageViewObjectRef<'s>(
     core::marker::PhantomData<&'s dyn VkHandle<Handle = VkImageView>>,
 );
 impl<'s> ImageViewObjectRef<'s> {
+    #[inline]
     pub fn new(r: &'s (impl VkHandle<Handle = VkImageView> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
     }
@@ -115,6 +130,7 @@ impl<'s> ImageViewObjectRef<'s> {
 #[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
 pub struct BufferObjectRef<'s>(VkBuffer, core::marker::PhantomData<&'s dyn VkHandle<Handle = VkBuffer>>);
 impl<'s> BufferObjectRef<'s> {
+    #[inline]
     pub fn new(r: &'s (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
     }
@@ -350,6 +366,38 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
             crate::vkresolve::allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| std::mem::transmute(hs))
+        }
+    }
+
+    /// Allocate one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - VK_ERROR_FRAGMENTED_POOL
+    #[implements]
+    fn alloc_array<const N: usize>(
+        &mut self,
+        layouts: &[DescriptorSetLayoutObjectRef; N],
+    ) -> crate::Result<[DescriptorSet; N]>
+    where
+        Self: VkHandleMut,
+    {
+        let ainfo = VkDescriptorSetAllocateInfo {
+            sType: VkDescriptorSetAllocateInfo::TYPE,
+            pNext: core::ptr::null(),
+            descriptorPool: self.native_ptr_mut(),
+            descriptorSetCount: N as _,
+            pSetLayouts: layouts.as_ptr_empty_null() as _,
+        };
+        let mut hs = [VkDescriptorSet::NULL; N];
+        unsafe {
+            crate::vkresolve::allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
+                .into_result()
+                .map(|_| {
+                    // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
+                    *(&hs as *const _ as *const [DescriptorSet; N])
+                })
         }
     }
 
