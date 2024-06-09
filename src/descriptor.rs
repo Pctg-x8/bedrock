@@ -570,7 +570,7 @@ pub enum DescriptorContents<'r> {
     UniformTexelBuffer(Vec<VkHandleRef<'r, VkBufferView>>),
     StorageTexelBuffer(Vec<VkHandleRef<'r, VkBufferView>>),
 }
-impl DescriptorContents<'_> {
+impl<'d> DescriptorContents<'d> {
     pub fn type_count(&self) -> (DescriptorType, usize) {
         match self {
             Self::Sampler(rs) => (DescriptorType::Sampler, rs.len()),
@@ -585,6 +585,68 @@ impl DescriptorContents<'_> {
             Self::UniformTexelBuffer(rs) => (DescriptorType::UniformTexelBuffer, rs.len()),
             Self::StorageTexelBuffer(rs) => (DescriptorType::StorageTexelBuffer, rs.len()),
         }
+    }
+
+    // single content utilities
+
+    #[inline(always)]
+    pub fn sampler(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+        Self::Sampler(vec![DescriptorImageRef::new(obj, layout)])
+    }
+    #[inline(always)]
+    pub fn combined_image_sampler(
+        obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized),
+        layout: ImageLayout,
+    ) -> Self {
+        Self::CombinedImageSampler(vec![DescriptorImageRef::new(obj, layout)])
+    }
+    #[inline(always)]
+    pub fn sampled_image(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+        Self::SampledImage(vec![DescriptorImageRef::new(obj, layout)])
+    }
+    #[inline(always)]
+    pub fn storage_image(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+        Self::StorageImage(vec![DescriptorImageRef::new(obj, layout)])
+    }
+    #[inline(always)]
+    pub fn input_attachment(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+        Self::InputAttachment(vec![DescriptorImageRef::new(obj, layout)])
+    }
+    #[inline(always)]
+    pub fn uniform_buffer(
+        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
+        range: core::ops::Range<VkDeviceSize>,
+    ) -> Self {
+        Self::UniformBuffer(vec![DescriptorBufferRef::new(obj, range)])
+    }
+    #[inline(always)]
+    pub fn storage_buffer(
+        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
+        range: core::ops::Range<VkDeviceSize>,
+    ) -> Self {
+        Self::StorageBuffer(vec![DescriptorBufferRef::new(obj, range)])
+    }
+    #[inline(always)]
+    pub fn uniform_buffer_dynamic(
+        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
+        range: core::ops::Range<VkDeviceSize>,
+    ) -> Self {
+        Self::UniformBufferDynamic(vec![DescriptorBufferRef::new(obj, range)])
+    }
+    #[inline(always)]
+    pub fn storage_buffer_dynamic(
+        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
+        range: core::ops::Range<VkDeviceSize>,
+    ) -> Self {
+        Self::StorageBufferDynamic(vec![DescriptorBufferRef::new(obj, range)])
+    }
+    #[inline(always)]
+    pub fn uniform_texel_buffer(obj: &'d (impl VkHandle<Handle = VkBufferView> + ?Sized)) -> Self {
+        Self::UniformTexelBuffer(vec![VkHandleRef::new(obj)])
+    }
+    #[inline(always)]
+    pub fn storage_texel_buffer(obj: &'d (impl VkHandle<Handle = VkBufferView> + ?Sized)) -> Self {
+        Self::StorageTexelBuffer(vec![VkHandleRef::new(obj)])
     }
 }
 
