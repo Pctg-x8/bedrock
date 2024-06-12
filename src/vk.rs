@@ -1577,7 +1577,7 @@ pub struct VkFormatProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct VkExtent3D {
     pub width: u32,
     pub height: u32,
@@ -1957,7 +1957,7 @@ pub struct VkImageSubresource {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VkOffset3D {
     pub x: i32,
     pub y: i32,
@@ -2277,7 +2277,7 @@ pub struct VkViewport {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VkOffset2D {
     pub x: i32,
     pub y: i32,
@@ -2289,7 +2289,7 @@ impl From<VkOffset3D> for VkOffset2D {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VkExtent2D {
     pub width: u32,
     pub height: u32,
@@ -2304,7 +2304,7 @@ impl From<VkExtent3D> for VkExtent2D {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct VkRect2D {
     pub offset: VkOffset2D,
     pub extent: VkExtent2D,
