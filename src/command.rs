@@ -1008,7 +1008,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
         self,
         src: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        regions: &[VkBufferCopy],
+        regions: &[BufferCopy],
     ) -> Self {
         unsafe {
             crate::vkresolve::cmd_copy_buffer(
@@ -1016,7 +1016,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd> Cmd
                 src.native_ptr(),
                 dst.native_ptr(),
                 regions.len() as _,
-                regions.as_ptr_empty_null(),
+                regions.as_ptr_empty_null() as _,
             );
         }
         self
@@ -1707,5 +1707,42 @@ impl From<BufferMemoryBarrier> for VkBufferMemoryBarrier {
     #[inline]
     fn from(v: BufferMemoryBarrier) -> Self {
         v.0
+    }
+}
+
+#[transparent_marked]
+pub struct BufferCopy(pub VkBufferCopy);
+impl BufferCopy {
+    #[inline(always)]
+    pub const fn mirror(offset: VkDeviceSize, size: VkDeviceSize) -> Self {
+        Self(VkBufferCopy {
+            srcOffset: offset,
+            dstOffset: offset,
+            size,
+        })
+    }
+
+    #[inline(always)]
+    pub const fn mirror_data<T>(offset: VkDeviceSize) -> Self {
+        Self::mirror(offset, core::mem::size_of::<T>() as _)
+    }
+
+    #[inline(always)]
+    pub const fn copy_data<T>(src_offset: VkDeviceSize, dst_offset: VkDeviceSize) -> Self {
+        Self(VkBufferCopy {
+            srcOffset: src_offset,
+            dstOffset: dst_offset,
+            size: core::mem::size_of::<T>() as _,
+        })
+    }
+}
+impl From<VkBufferCopy> for BufferCopy {
+    fn from(value: VkBufferCopy) -> Self {
+        Self(value)
+    }
+}
+impl From<BufferCopy> for VkBufferCopy {
+    fn from(value: BufferCopy) -> Self {
+        value.0
     }
 }
