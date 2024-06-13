@@ -338,12 +338,7 @@ pub struct ImageDesc<'d>(
     core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
 );
 impl<'d> ImageDesc<'d> {
-    pub fn new<Size: ImageSize>(
-        size: Size,
-        format: VkFormat,
-        usage: ImageUsageFlags,
-        initial_layout: ImageLayout,
-    ) -> Self {
+    pub fn new<Size: ImageSize>(size: Size, format: VkFormat) -> Self {
         ImageDesc(
             VkImageCreateInfo {
                 sType: VkImageCreateInfo::TYPE,
@@ -352,11 +347,11 @@ impl<'d> ImageDesc<'d> {
                 imageType: Size::DIMENSION,
                 extent: size.conv(),
                 format,
-                usage: usage.0,
+                usage: 0,
                 mipLevels: 1,
                 arrayLayers: 1,
                 samples: 1,
-                initialLayout: initial_layout as _,
+                initialLayout: VK_IMAGE_LAYOUT_UNDEFINED,
                 tiling: VK_IMAGE_TILING_OPTIMAL,
                 sharingMode: VK_SHARING_MODE_EXCLUSIVE,
                 queueFamilyIndexCount: 0,
@@ -367,6 +362,7 @@ impl<'d> ImageDesc<'d> {
         )
     }
 
+    #[inline(always)]
     pub unsafe fn with_extension(mut self, ext: impl VulkanStructure) -> Self {
         self.1.push(core::mem::transmute(Box::new(ext)));
         self
@@ -375,6 +371,7 @@ impl<'d> ImageDesc<'d> {
     /// Wraps raw vulkan structure
     /// # Safety
     /// This function does not check any references/constraints
+    #[inline(always)]
     pub const unsafe fn from_raw(s: VkImageCreateInfo) -> Self {
         Self(s, Vec::new(), core::marker::PhantomData)
     }
@@ -382,8 +379,17 @@ impl<'d> ImageDesc<'d> {
     /// Unwraps raw vulkan structure
     /// # Safety
     /// Lifetime constraints are removed
+    #[inline(always)]
     pub unsafe fn into_raw(self) -> VkImageCreateInfo {
         self.0
+    }
+
+    /// Sets an initial layout for the created image.
+    /// default: Undefined layout
+    #[inline(always)]
+    pub const fn init_layout(mut self, layout: ImageLayout) -> Self {
+        self.0.initialLayout = layout as _;
+        self
     }
 
     /// A list of queue families that will access this image,
@@ -402,39 +408,80 @@ impl<'d> ImageDesc<'d> {
 
     /// The number of sub-data element samples in the image  
     /// bitmask of 1(default), 2, 4, 8, 16, 32, 64
-    pub fn sample_counts(mut self, count_bits: u32) -> Self {
+    #[inline(always)]
+    pub const fn sample_counts(mut self, count_bits: u32) -> Self {
         self.0.samples = count_bits;
         self
     }
 
     /// Sets the tiling arrangement of the data elements in memory as "linear tiling"  
     /// default: optimal tiling
-    pub fn use_linear_tiling(mut self) -> Self {
+    #[inline(always)]
+    pub const fn use_linear_tiling(mut self) -> Self {
         self.0.tiling = VK_IMAGE_TILING_LINEAR;
         self
     }
 
     /// A bitmask of `ImageFlags`describing additional parameters of the image  
     /// default: none
-    pub fn flags(mut self, opt: ImageFlags) -> Self {
+    #[inline(always)]
+    pub const fn flags(mut self, opt: ImageFlags) -> Self {
         self.0.flags = opt.0;
         self
     }
 
     /// The number of layers in the image  
     /// default: 1
-    pub fn array_layers(mut self, layers: u32) -> Self {
+    #[inline(always)]
+    pub const fn array_layers(mut self, layers: u32) -> Self {
         self.0.arrayLayers = layers;
         self
     }
 
     /// The number of levels of detail available for minified sampling of the image  
     /// default: 1
-    pub fn mip_levels(mut self, levels: u32) -> Self {
+    #[inline(always)]
+    pub const fn mip_levels(mut self, levels: u32) -> Self {
         self.0.mipLevels = levels;
         self
     }
 
+    /// Sets the created image will be sampled.
+    #[inline(always)]
+    pub const fn sampled(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+        self
+    }
+
+    /// Sets the created resource will be the destination of transferring operation.
+    #[inline(always)]
+    pub const fn transfer_dest(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        self
+    }
+
+    /// Sets the created image can be used as a Storage Image.
+    #[inline(always)]
+    pub const fn use_as_storage(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
+        self
+    }
+
+    /// Merges some custom usage flag bits.
+    #[inline(always)]
+    pub const fn usage_with(mut self, bits: ImageUsageFlags) -> Self {
+        self.0.usage |= bits.0;
+        self
+    }
+
+    /// Overwrites all of custom usage flag bits.
+    #[inline(always)]
+    pub const fn set_usage(mut self, bits: ImageUsageFlags) -> Self {
+        self.0.usage = bits.0;
+        self
+    }
+
+    #[inline(always)]
     #[cfg(feature = "VK_KHR_external_memory")]
     pub fn exportable_as(self, types: crate::ExternalMemoryHandleTypes) -> Self {
         unsafe {
