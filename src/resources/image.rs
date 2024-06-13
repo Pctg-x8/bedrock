@@ -467,6 +467,27 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
+    /// Sets the created image can be used as a color attachment.
+    #[inline(always)]
+    pub const fn as_color_attachment(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+        self
+    }
+
+    /// Sets the created image can be used as an input attachment.
+    #[inline(always)]
+    pub const fn as_input_attachment(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
+        self
+    }
+
+    /// Sets the created image cn be used as a depth stencil attachment.
+    #[inline(always)]
+    pub const fn as_depth_stencil_attachment(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        self
+    }
+
     /// Merges some custom usage flag bits.
     #[inline(always)]
     pub const fn usage_with(mut self, bits: ImageUsageFlags) -> Self {
