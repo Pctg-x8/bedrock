@@ -707,8 +707,8 @@ impl ImageLayout {
     }
     /// Constructs the transition between image layouts (in reverse order).
     #[inline(always)]
-    pub const fn from(self, after: Self) -> LayoutTransition {
-        LayoutTransition { from: self, to: after }
+    pub const fn from(self, before: Self) -> LayoutTransition {
+        LayoutTransition { from: before, to: self }
     }
     /// Constructed the transition from undefined layout to this layout (convenient function).
     #[inline(always)]
