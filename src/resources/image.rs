@@ -1,4 +1,7 @@
-use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
+use std::{
+    borrow::Cow,
+    ops::{BitOr, BitOrAssign, Deref, DerefMut, Range},
+};
 
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound,
@@ -335,6 +338,7 @@ where
 pub struct ImageDesc<'d>(
     VkImageCreateInfo,
     Vec<Box<GenericVulkanStructure>>,
+    Option<Cow<'d, [u32]>>,
     core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
 );
 impl<'d> ImageDesc<'d> {
@@ -358,6 +362,7 @@ impl<'d> ImageDesc<'d> {
                 pQueueFamilyIndices: core::ptr::null(),
             },
             Vec::new(),
+            None,
             core::marker::PhantomData,
         )
     }
@@ -373,7 +378,7 @@ impl<'d> ImageDesc<'d> {
     /// This function does not check any references/constraints
     #[inline(always)]
     pub const unsafe fn from_raw(s: VkImageCreateInfo) -> Self {
-        Self(s, Vec::new(), core::marker::PhantomData)
+        Self(s, Vec::new(), None, core::marker::PhantomData)
     }
 
     /// Unwraps raw vulkan structure
@@ -403,7 +408,7 @@ impl<'d> ImageDesc<'d> {
 
     /// A list of queue families that will access this image,
     /// or an empty list if no queue families can access this image simultaneously
-    pub fn sharing_queue_families(mut self, indices: &[u32]) -> Self {
+    pub fn sharing_queue_families(mut self, indices: &'d [u32]) -> Self {
         self.0.sharingMode = if indices.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
         } else {
@@ -411,6 +416,7 @@ impl<'d> ImageDesc<'d> {
         };
         self.0.queueFamilyIndexCount = indices.len() as _;
         self.0.pQueueFamilyIndices = indices.as_ptr_empty_null();
+        self.2 = Some(Cow::Borrowed(indices));
 
         self
     }
