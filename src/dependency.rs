@@ -19,6 +19,18 @@ impl MemoryBarrier2 {
         })
     }
 
+    pub fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+        self.0.srcStageMask = stage.0;
+        self.0.srcAccessMask = access.0;
+        self
+    }
+
+    pub fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+        self.0.dstStageMask = stage.0;
+        self.0.dstAccessMask = access.0;
+        self
+    }
+
     pub const fn of_execution(mut self, src: PipelineStageFlags2, dst: PipelineStageFlags2) -> Self {
         self.0.srcStageMask = src.0;
         self.0.dstStageMask = dst.0;
@@ -62,6 +74,18 @@ impl<'b> BufferMemoryBarrier2<'b> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+        self.0.srcStageMask = stage.0;
+        self.0.srcAccessMask = access.0;
+        self
+    }
+
+    pub fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+        self.0.dstStageMask = stage.0;
+        self.0.dstAccessMask = access.0;
+        self
     }
 
     pub const fn of_execution(mut self, src: PipelineStageFlags2, dst: PipelineStageFlags2) -> Self {
@@ -113,6 +137,18 @@ impl<'r> ImageMemoryBarrier2<'r> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+        self.0.srcStageMask = stage.0;
+        self.0.srcAccessMask = access.0;
+        self
+    }
+
+    pub fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+        self.0.dstStageMask = stage.0;
+        self.0.dstAccessMask = access.0;
+        self
     }
 
     pub const fn of_execution(mut self, src: PipelineStageFlags2, dst: PipelineStageFlags2) -> Self {
