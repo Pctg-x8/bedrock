@@ -4,8 +4,8 @@ use std::{
 };
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier,
-    ImageMemoryBarrier2, MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -612,8 +612,8 @@ impl<'r, S: Image> ImageSubresourceRange<&'r S> {
 
     #[cfg(feature = "VK_KHR_synchronization2")]
     #[inline]
-    pub fn memory_barrier2(self) -> ImageMemoryBarrier2<'r> {
-        ImageMemoryBarrier2::new(self.0, self.1)
+    pub fn memory_barrier2(self) -> crate::ImageMemoryBarrier2<'r> {
+        crate::ImageMemoryBarrier2::new(self.0, self.1)
     }
 }
 impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
