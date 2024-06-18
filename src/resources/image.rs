@@ -384,6 +384,15 @@ impl<'d> ImageDesc<'d> {
         self.0
     }
 
+    /// Sets an size and a dimension of the created image.
+    #[inline(always)]
+    pub fn size<Size: ImageSize>(mut self, size: Size) -> Self {
+        self.0.extent = size.conv();
+        self.0.imageType = Size::DIMENSION;
+
+        self
+    }
+
     /// Sets an initial layout for the created image.
     /// default: Undefined layout
     #[inline(always)]
