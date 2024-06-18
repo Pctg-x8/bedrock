@@ -3,7 +3,8 @@
 use derives::{implements, transparent_marked};
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, LayoutTransition, VkHandleMut, VkObject, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, LayoutTransition, VkHandleMut, VkObject, VkRawHandle,
+    VulkanStructure,
 };
 #[implements]
 use crate::{
@@ -22,9 +23,15 @@ DefineStdDeviceChildObject! {
 
 /// Opaque handle to a command buffer object
 #[transparent_marked]
-#[derive(Clone, Copy, VkHandle, VkObject)]
+#[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_COMMAND_BUFFER)]
 pub struct CommandBufferObject<Device: crate::Device>(VkCommandBuffer, std::marker::PhantomData<Device>);
+impl<Device: crate::Device> Clone for CommandBufferObject<Device> {
+    fn clone(&self) -> Self {
+        Self(self.0, core::marker::PhantomData)
+    }
+}
+impl<Device: crate::Device> Copy for CommandBufferObject<Device> {}
 unsafe impl<Device: crate::Device + Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: crate::Device + Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
@@ -116,6 +123,39 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {
             crate::vkresolve::allocate_command_buffers(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| transmute(hs))
+        }
+    }
+
+    /// Allocate a static amount of command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    fn alloc_array<const N: usize>(
+        &mut self,
+        primary: bool,
+    ) -> crate::Result<[CommandBufferObject<Self::ConcreteDevice>; N]>
+    where
+        Self: VkHandleMut,
+    {
+        let ainfo = VkCommandBufferAllocateInfo {
+            sType: VkCommandBufferAllocateInfo::TYPE,
+            pNext: std::ptr::null(),
+            commandBufferCount: N as _,
+            level: if primary {
+                VK_COMMAND_BUFFER_LEVEL_PRIMARY
+            } else {
+                VK_COMMAND_BUFFER_LEVEL_SECONDARY
+            },
+            commandPool: self.native_ptr_mut(),
+        };
+        let mut hs = [CommandBufferObject::<Self::ConcreteDevice>(VkCommandBuffer::NULL, core::marker::PhantomData); N];
+        unsafe {
+            crate::vkresolve::allocate_command_buffers(self.device().native_ptr(), &ainfo, hs.as_mut_ptr() as _)
+                .into_result()
+                .map(|_| hs)
         }
     }
 
