@@ -286,7 +286,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let device_local_memory_index = memory_properties
         .find_device_local_index(vbuf_requirements.memoryTypeBits & ubuf_requirements.memoryTypeBits)
         .expect("No suitable memory for device local buffers");
-    let vbuf_device_offset = 0;
+    let vbuf_device_offset = 0u64;
     let ubuf_device_offset = (vbuf_requirements.size + (ubuf_requirements.alignment - 1)) / ubuf_requirements.alignment
         * ubuf_requirements.alignment;
     let device_memory = br::DeviceMemoryRequest::allocate(
@@ -294,7 +294,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         device_local_memory_index,
     )
     .execute(&device)?;
-    vbuf.bind(&device_memory, vbuf_device_offset)?;
+    vbuf.bind(&device_memory, vbuf_device_offset as _)?;
     ubuf.bind(&device_memory, ubuf_device_offset as _)?;
     device.update_descriptor_sets(
         &[
@@ -317,7 +317,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let p = host_memory.map(0..host_buffer_requirements.size as _)?;
     unsafe {
         p.clone_from_slice_at(
-            vbuf_device_offset,
+            vbuf_device_offset as _,
             &[
                 Vertex {
                     pos: [
@@ -381,11 +381,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .copy_buffer(
             &host_buffer,
             &ubuf,
-            &[br::vk::VkBufferCopy {
-                srcOffset: ubuf_device_offset as _,
-                dstOffset: 0,
-                size: core::mem::size_of::<f32>() as _,
-            }],
+            &[br::BufferCopy::copy_data::<f32>(ubuf_device_offset, 0)],
         )
         .pipeline_barrier_2(&br::DependencyInfo::new(
             &[br::MemoryBarrier2::new()
@@ -405,20 +401,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .copy_buffer(
             &host_buffer,
             &vbuf,
-            &[br::vk::VkBufferCopy {
-                srcOffset: vbuf_device_offset as _,
-                dstOffset: 0,
-                size: core::mem::size_of::<Vertex>() as u64 * 3,
-            }],
+            &[br::BufferCopy::copy_data::<[Vertex; 3]>(vbuf_device_offset, 0)],
         )
         .copy_buffer(
             &host_buffer,
             &ubuf,
-            &[br::vk::VkBufferCopy {
-                srcOffset: ubuf_device_offset as _,
-                dstOffset: 0,
-                size: core::mem::size_of::<f32>() as u64,
-            }],
+            &[br::BufferCopy::copy_data::<f32>(ubuf_device_offset, 0)],
         )
         .pipeline_barrier_2(&br::DependencyInfo::new(
             &[br::MemoryBarrier2::new()
