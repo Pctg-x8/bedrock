@@ -285,7 +285,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     unsafe fn begin_inherit(
         &mut self,
         renderpass: Option<(
-            &(impl crate::Framebuffer + ?Sized),
+            Option<&(impl crate::Framebuffer + ?Sized)>,
             &(impl crate::RenderPass + ?Sized),
             u32,
         )>,
@@ -418,7 +418,7 @@ impl<'p, 'b: 'p, Pool: crate::CommandPool + VkHandleMut + 'p, Buffer: crate::Com
     pub fn begin_inherit(
         &mut self,
         renderpass: Option<(
-            &(impl crate::Framebuffer + ?Sized),
+            Option<&(impl crate::Framebuffer + ?Sized)>,
             &(impl crate::RenderPass + ?Sized),
             u32,
         )>,
