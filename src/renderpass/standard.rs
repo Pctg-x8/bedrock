@@ -66,6 +66,9 @@ impl AttachmentDescription {
     pub const fn image_layout_transition(self, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
         self.init_layout(init_layout).fin_layout(fin_layout)
     }
+    pub const fn with_layout_from(self, trans: LayoutTransition) -> Self {
+        self.init_layout(trans.from).fin_layout(trans.to)
+    }
 
     pub const fn may_alias(mut self) -> Self {
         self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;

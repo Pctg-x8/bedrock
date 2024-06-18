@@ -2,7 +2,9 @@
 
 use derives::{implements, transparent_marked};
 
-use crate::{ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, VkHandleMut, VkObject, VulkanStructure};
+use crate::{
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, LayoutTransition, VkHandleMut, VkObject, VulkanStructure,
+};
 #[implements]
 use crate::{
     FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
@@ -1585,18 +1587,17 @@ impl ImageMemoryBarrier {
     pub fn new(
         res: &(impl VkHandle<Handle = VkImage> + ?Sized),
         subres: impl Into<VkImageSubresourceRange>,
-        old: ImageLayout,
-        new: ImageLayout,
+        trans: LayoutTransition,
     ) -> Self {
         Self(VkImageMemoryBarrier {
             sType: VkImageMemoryBarrier::TYPE,
             pNext: std::ptr::null(),
             image: res.native_ptr(),
             subresourceRange: subres.into(),
-            oldLayout: old as _,
-            newLayout: new as _,
-            srcAccessMask: old.default_access_mask(),
-            dstAccessMask: new.default_access_mask(),
+            oldLayout: trans.from as _,
+            newLayout: trans.to as _,
+            srcAccessMask: trans.from.default_access_mask(),
+            dstAccessMask: trans.to.default_access_mask(),
             srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
             dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
         })

@@ -1,9 +1,9 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, AspectMask, ImageLayout, LoadOp, PipelineStageFlags, RenderPassObject, StoreOp,
-    SubpassIndex, VkAccessFlags, VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat,
-    VkRenderPassCreateInfo2KHR, VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR,
+    ffi_helper::ArrayFFIExtensions, AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags,
+    RenderPassObject, StoreOp, SubpassIndex, VkAccessFlags, VkAttachmentDescription2KHR, VkAttachmentReference2KHR,
+    VkFormat, VkRenderPassCreateInfo2KHR, VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR,
     VulkanStructure, VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT,
     VK_PIPELINE_BIND_POINT_GRAPHICS, VK_SAMPLE_COUNT_1_BIT,
 };
@@ -52,6 +52,11 @@ impl AttachmentDescription2 {
         self.0.initialLayout = init as _;
         self.0.finalLayout = fini as _;
         self
+    }
+
+    #[inline]
+    pub fn with_layout_from(self, trans: LayoutTransition) -> Self {
+        self.layout_transition(trans.from, trans.to)
     }
 
     #[inline]

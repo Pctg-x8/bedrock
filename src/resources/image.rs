@@ -606,8 +606,8 @@ impl<S: Image> ImageSubresourceRange<S> {
 }
 impl<'r, S: Image> ImageSubresourceRange<&'r S> {
     #[inline]
-    pub fn memory_barrier(self, from_layout: ImageLayout, to_layout: ImageLayout) -> ImageMemoryBarrier {
-        ImageMemoryBarrier::new(self.0, self.1, from_layout, to_layout)
+    pub fn memory_barrier(self, trans: LayoutTransition) -> ImageMemoryBarrier {
+        ImageMemoryBarrier::new(self.0, self.1, trans)
     }
 
     #[cfg(feature = "VK_KHR_synchronization2")]
@@ -699,6 +699,19 @@ impl ImageLayout {
             Self::PresentSrc => VK_ACCESS_MEMORY_READ_BIT,
         }
     }
+
+    /// Constructs the transition between image layouts.
+    #[inline(always)]
+    pub const fn to(self, after: Self) -> LayoutTransition {
+        LayoutTransition { from: self, to: after }
+    }
+}
+
+/// Represents the transition between image layouts.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct LayoutTransition {
+    pub from: ImageLayout,
+    pub to: ImageLayout,
 }
 
 /// Bitmask specifying intended usage of an image.

@@ -132,6 +132,9 @@ impl<'r> ImageMemoryBarrier2<'r> {
         self.0.newLayout = to as _;
         self
     }
+    pub const fn transit_from(self, trans: LayoutTransition) -> Self {
+        self.transferring_layout(trans.from, trans.to)
+    }
 
     pub const fn transferring_queue_family(mut self, from: u32, to: u32) -> Self {
         self.0.srcQueueFamilyIndex = from;
