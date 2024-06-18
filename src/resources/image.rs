@@ -705,6 +705,16 @@ impl ImageLayout {
     pub const fn to(self, after: Self) -> LayoutTransition {
         LayoutTransition { from: self, to: after }
     }
+    /// Constructs the transition between image layouts (in reverse order).
+    #[inline(always)]
+    pub const fn from(self, after: Self) -> LayoutTransition {
+        LayoutTransition { from: self, to: after }
+    }
+    /// Constructed the transition from undefined layout to this layout (convenient function).
+    #[inline(always)]
+    pub const fn from_undefined(self) -> LayoutTransition {
+        self.from(Self::Undefined)
+    }
 }
 
 /// Represents the transition between image layouts.
