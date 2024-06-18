@@ -152,7 +152,7 @@ impl SamplerBuilder {
 
 /// Specify behavior of sampling with texture coordinates outside an image
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum AddressingMode {
     /// The repeat wrap mode
     Repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT as _,
@@ -169,7 +169,7 @@ pub enum AddressingMode {
 
 /// Specify filter used for texture lookups
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum FilterMode {
     /// Nearest filtering
     Nearest = VK_FILTER_NEAREST as _,
@@ -179,7 +179,7 @@ pub enum FilterMode {
 
 /// Specify mipmap mode used for texture lookups
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum MipmapFilterMode {
     /// Nearest filtering
     Nearest = VK_SAMPLER_MIPMAP_MODE_NEAREST as _,
@@ -189,7 +189,7 @@ pub enum MipmapFilterMode {
 
 /// Specify border color used for texture lookups
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum BorderColor {
     /// A transparent, floating-point format, black color
     TransparentBlackF = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK as _,
