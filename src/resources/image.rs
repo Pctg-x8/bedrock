@@ -610,6 +610,7 @@ impl<'r, S: Image> ImageSubresourceRange<&'r S> {
         ImageMemoryBarrier::new(self.0, self.1, from_layout, to_layout)
     }
 
+    #[cfg(feature = "VK_KHR_synchronization2")]
     #[inline]
     pub fn memory_barrier2(self) -> ImageMemoryBarrier2<'r> {
         ImageMemoryBarrier2::new(self.0, self.1)
