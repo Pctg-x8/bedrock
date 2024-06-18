@@ -41,7 +41,7 @@ impl ShaderStage {
 
 /// Stencil comparison function
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum CompareOp {
     /// The test never passes
     Never = VK_COMPARE_OP_NEVER as _,
