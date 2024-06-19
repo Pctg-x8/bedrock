@@ -123,6 +123,7 @@ impl<Buffer: crate::Buffer> Deref for BufferViewObject<Buffer> {
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct BufferDesc<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
 impl<'s> BufferDesc<'s> {
+    /// Creates a new buffer description with provided byte-size and usage flags
     pub const fn new(byte_size: usize, usage: BufferUsage) -> Self {
         Self(
             VkBufferCreateInfo {
@@ -137,6 +138,12 @@ impl<'s> BufferDesc<'s> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    /// Creates a new buffer description which fits for a type
+    #[inline(always)]
+    pub const fn new_for_type<T>(usage: BufferUsage) -> Self {
+        Self::new(core::mem::size_of::<T>(), usage)
     }
 
     /// Wraps raw vulkan structure
