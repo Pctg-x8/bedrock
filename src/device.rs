@@ -741,7 +741,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[cfg(feature = "Implements")]
-    fn new_shader_module_ref<'d>(&'d self, code: &(impl AsRef<[u8]> + ?Sized)) -> crate::Result<crate::ShaderModuleObject<&'d Self>> {
+    fn new_shader_module_ref<'d>(
+        &'d self,
+        code: &(impl AsRef<[u8]> + ?Sized),
+    ) -> crate::Result<crate::ShaderModuleObject<&'d Self>> {
         #[allow(clippy::cast_ptr_alignment)]
         let cinfo = VkShaderModuleCreateInfo {
             sType: VkShaderModuleCreateInfo::TYPE,
