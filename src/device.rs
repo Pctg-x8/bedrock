@@ -778,6 +778,33 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
+    /// Creates a new shader module object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
+    fn new_shader_module_ref<'d>(
+        &'d self,
+        code: &(impl AsRef<[u8]> + ?Sized),
+    ) -> crate::Result<crate::ShaderModuleObject<&'d Self>> {
+        #[allow(clippy::cast_ptr_alignment)]
+        let cinfo = VkShaderModuleCreateInfo {
+            sType: VkShaderModuleCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            codeSize: code.as_ref().len() as _,
+            pCode: code.as_ref().as_ptr_empty_null() as *const _,
+        };
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
+        }
+    }
+
     /// Creates a new pipeline cache
     /// # Failures
     /// On failure, this command returns
