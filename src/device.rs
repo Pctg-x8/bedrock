@@ -85,6 +85,14 @@ pub struct DeviceObject<Instance: crate::Instance> {
     get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
     #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
     get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+    create_render_pass_2_khr: DeviceResolvedFn<PFN_vkCreateRenderPass2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+    cmd_begin_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdBeginRenderPass2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+    cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+    cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
@@ -133,6 +141,14 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
             get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))]
             get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            create_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -263,6 +279,26 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
+            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
+                *self.create_render_pass_2_khr.resolve()
+            }
+
+            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
+                *self.cmd_begin_render_pass_2_khr.resolve()
+            }
+
+            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
+                *self.cmd_end_render_pass_2_khr.resolve()
+            }
+
+            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
+                *self.cmd_next_subpass_2_khr.resolve()
+            }
+        }
+    }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
@@ -333,6 +369,14 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
             get_image_sparse_memory_requirements_2_khr: unsafe {
                 core::ptr::read(&self.get_image_sparse_memory_requirements_2_khr)
             },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            create_render_pass_2_khr: unsafe { core::ptr::read(&self.create_render_pass_2_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            cmd_begin_render_pass_2_khr: unsafe { core::ptr::read(&self.cmd_begin_render_pass_2_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            cmd_end_render_pass_2_khr: unsafe { core::ptr::read(&self.cmd_end_render_pass_2_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
+            cmd_next_subpass_2_khr: unsafe { core::ptr::read(&self.cmd_next_subpass_2_khr) },
         };
         // disable running VkDevice destruction
         std::mem::forget(self);
@@ -1116,6 +1160,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
+            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
+            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
+            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
+            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1234,6 +1287,26 @@ DerefContainerBracketImpl!(for Device {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
+            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
+                (**self).create_render_pass_2_khr_fn()
+            }
+
+            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
+                (**self).cmd_begin_render_pass_2_khr_fn()
+            }
+
+            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
+                (**self).cmd_end_render_pass_2_khr_fn()
+            }
+
+            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
+                (**self).cmd_next_subpass_2_khr_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1349,6 +1422,26 @@ GuardsImpl!(for Device {
 
             fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
                 (**self).get_image_sparse_memory_requirements_2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
+            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
+                (**self).create_render_pass_2_khr_fn()
+            }
+
+            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
+                (**self).cmd_begin_render_pass_2_khr_fn()
+            }
+
+            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
+                (**self).cmd_end_render_pass_2_khr_fn()
+            }
+
+            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
+                (**self).cmd_next_subpass_2_khr_fn()
             }
         }
     }
