@@ -251,14 +251,14 @@ impl<'d> RenderPassBuilder2<'d> {
         let mut h = core::mem::MaybeUninit::uninit();
         #[cfg(feature = "Allow1_3APIs")]
         unsafe {
-            (device.create_render_pass_2_khr_fn().0)(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_render_pass_2(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| RenderPassObject(h.assume_init(), device))
         }
 
         #[cfg(not(feature = "Allow1_3APIs"))]
         unsafe {
-            crate::vkresolve::create_render_pass_2_khr(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
+            (device.create_render_pass_2_khr_fn().0)(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| RenderPassObject(h.assume_init(), device))
         }
