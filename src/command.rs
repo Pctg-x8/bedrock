@@ -1510,6 +1510,17 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     }
 }
 
+/// Graphics/Compute Commands: Miscellaneous
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+    CmdRecord<'d, CommandBuffer, Device>
+{
+    /// Inject imperative command generation in method-chaining
+    #[inline(always)]
+    pub fn inject(self, op: impl FnOnce(Self) -> Self) -> Self {
+        op(self)
+    }
+}
+
 /// A color value representation for clearing operations.
 /// Constructable from RGBA values using `From::from`.
 pub type ClearColorValue = VkClearColorValue;
