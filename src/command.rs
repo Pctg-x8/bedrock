@@ -1511,6 +1511,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 }
 
 /// Graphics/Compute Commands: Miscellaneous
+#[implements]
 impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
