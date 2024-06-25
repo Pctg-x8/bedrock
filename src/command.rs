@@ -39,14 +39,17 @@ impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
 /// The recording state of command buffers
 #[implements]
 #[must_use = "CmdRecord must be consumed by end() (not closed automatically in drop)"]
-pub struct CmdRecord<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
-{
+pub struct CmdRecord<
+    'd,
+    CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd,
+    Device: crate::Device + ?Sized + 'd,
+> {
     ptr: &'d mut CommandBuffer,
     device: &'d Device,
     layout: [Option<VkPipelineLayout>; 2],
 }
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     pub fn as_dyn_ref<'r>(&'r mut self) -> CmdRecord<'r, dyn VkHandleMut<Handle = VkCommandBuffer> + 'r, Device> {
@@ -231,7 +234,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     /// # Safety
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
     #[implements]
-    unsafe fn begin<'d, Device: crate::Device>(
+    unsafe fn begin<'d, Device: crate::Device + ?Sized + 'd>(
         &'d mut self,
         device: &'d Device,
     ) -> crate::Result<CmdRecord<'d, Self, Device>>
@@ -263,7 +266,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     /// # Safety
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
     #[implements]
-    unsafe fn begin_once<'d, Device: crate::Device + 'd>(
+    unsafe fn begin_once<'d, Device: crate::Device + ?Sized + 'd>(
         &'d mut self,
         device: &'d Device,
     ) -> crate::Result<CmdRecord<'d, Self, Device>>
@@ -295,7 +298,7 @@ pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {
     /// # Safety
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
     #[implements]
-    unsafe fn begin_inherit<'d, Device: crate::Device + 'd>(
+    unsafe fn begin_inherit<'d, Device: crate::Device + ?Sized + 'd>(
         &'d mut self,
         device: &'d Device,
         renderpass: Option<(
@@ -451,7 +454,7 @@ impl<'p, 'b: 'p, Pool: crate::CommandPool + VkHandleMut + 'p, Buffer: crate::Com
 
 /// Common Commands: End Recording
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Finish recording a command buffer
@@ -466,7 +469,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Manipulating with Render Passes
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Begin a new render pass
@@ -574,7 +577,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Pipeline Setup
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Bind a pipeline object to a command buffer
@@ -835,7 +838,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Updating dynamic states
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Set the viewport on a command buffer
@@ -924,7 +927,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Binding Buffers
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Bind an index buffer to a command buffer
@@ -969,7 +972,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Inside a Render Pass
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Draw primitives
@@ -1048,7 +1051,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Compute Commands: Dispatching kernels
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Dispatch compute work items
@@ -1070,7 +1073,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Transfer Commands: Copying resources
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Copy data between buffer regions
@@ -1206,7 +1209,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Transfer-like(clearing/filling) commands
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Fill a region of a buffer with a fixed value.  
@@ -1292,7 +1295,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Executing Subcommands
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Execute a secondary command buffer from a primary command buffer
@@ -1311,7 +1314,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Resolving an image to another image
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Resolve regions of an image
@@ -1340,7 +1343,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Synchronization between command buffers/queues
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Set an event object to signaled state
@@ -1431,7 +1434,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Querying
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Begin a query
@@ -1512,7 +1515,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Miscellaneous
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + 'd>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: crate::Device + ?Sized + 'd>
     CmdRecord<'d, CommandBuffer, Device>
 {
     /// Inject imperative command generation in method-chaining

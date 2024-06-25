@@ -356,7 +356,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
     let mut command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
     for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
-        unsafe { cb.begin()? }
+        unsafe { cb.begin(&device)? }
             .begin_render_pass_2(
                 &br::RenderPassBeginInfo::new(
                     &render_pass,
@@ -377,7 +377,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut transfer_command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
     let mut transfer_command_buffers = transfer_command_pool.alloc(1, true)?;
-    unsafe { transfer_command_buffers[0].begin()? }
+    unsafe { transfer_command_buffers[0].begin(&device)? }
         .copy_buffer(
             &host_buffer,
             &ubuf,
@@ -397,7 +397,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .transient()
         .create(&device)?;
     let mut init_command_buffers = init_command_pool.alloc(1, true)?;
-    unsafe { init_command_buffers[0].begin_once()? }
+    unsafe { init_command_buffers[0].begin_once(&device)? }
         .copy_buffer(
             &host_buffer,
             &vbuf,
@@ -550,7 +550,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
             for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
-                unsafe { cb.begin()? }
+                unsafe { cb.begin(&device)? }
                     .begin_render_pass(
                         &render_pass,
                         fb,
