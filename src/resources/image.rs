@@ -496,10 +496,17 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
-    /// Sets the created image cn be used as a depth stencil attachment.
+    /// Sets the created image can be used as a depth stencil attachment.
     #[inline(always)]
     pub const fn as_depth_stencil_attachment(mut self) -> Self {
         self.0.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        self
+    }
+
+    /// Sets the created image as transient-used attachment.
+    #[inline(always)]
+    pub const fn as_transient_attachment(mut self) -> Self {
+        self.0.usage |= VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT;
         self
     }
 
