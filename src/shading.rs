@@ -568,10 +568,10 @@ DerefContainerBracketImpl!(for PipelineShaderProvider {
     }
 });
 
-pub struct PipelineShader2<M: ShaderModule>(M, std::ffi::CString);
+pub struct PipelineShader2<M: ShaderModule>(M, Cow<'static, std::ffi::CStr>);
 impl<M: ShaderModule> PipelineShader2<M> {
-    pub const fn new(module: M, entry_point: std::ffi::CString) -> Self {
-        Self(module, entry_point)
+    pub fn new(module: M, entry_point: impl Into<Cow<'static, std::ffi::CStr>>) -> Self {
+        Self(module, entry_point.into())
     }
 
     pub const fn specialize<T: SpecializationConstants>(self, value: T) -> SpecializedPipelineShader<Self, T> {
