@@ -93,6 +93,8 @@ pub struct DeviceObject<Instance: crate::Instance> {
     cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
     #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
     cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))]
+    cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
@@ -149,6 +151,8 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
             cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
             cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))]
+            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -299,6 +303,14 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
+            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
+                *self.cmd_pipeline_barrier_2_khr.resolve()
+            }
+        }
+    }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
@@ -377,6 +389,8 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
             cmd_end_render_pass_2_khr: unsafe { core::ptr::read(&self.cmd_end_render_pass_2_khr) },
             #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))]
             cmd_next_subpass_2_khr: unsafe { core::ptr::read(&self.cmd_next_subpass_2_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))]
+            cmd_pipeline_barrier_2_khr: unsafe { core::ptr::read(&self.cmd_pipeline_barrier_2_khr) },
         };
         // disable running VkDevice destruction
         std::mem::forget(self);
@@ -1196,6 +1210,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
+            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
+        }
+    }
 }
 DerefContainerBracketImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1334,6 +1354,14 @@ DerefContainerBracketImpl!(for Device {
             }
         }
     }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
+            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
+                (**self).cmd_pipeline_barrier_2_khr_fn()
+            }
+        }
+    }
 });
 GuardsImpl!(for Device {
     #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
@@ -1469,6 +1497,14 @@ GuardsImpl!(for Device {
 
             fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
                 (**self).cmd_next_subpass_2_khr_fn()
+            }
+        }
+    }
+
+    cfg_if! {
+        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
+            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
+                (**self).cmd_pipeline_barrier_2_khr_fn()
             }
         }
     }

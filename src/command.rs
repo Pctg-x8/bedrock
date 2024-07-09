@@ -1426,7 +1426,9 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
             crate::vkresolve::cmd_pipeline_barrier_2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _)
         }
         #[cfg(not(feature = "Allow1_3APIs"))]
-        todo!("cache loaded function in device object");
+        unsafe {
+            (self.device.cmd_pipeline_barrier_2_khr_fn().0)(self.ptr.native_ptr_mut(), dependency_info as *const _ as _)
+        }
 
         self
     }
