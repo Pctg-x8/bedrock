@@ -1133,7 +1133,7 @@ pub trait GraphicsPipelineBuilder {
 pub struct NonDerivedGraphicsPipelineBuilder<
     'd,
     Layout: PipelineLayout,
-    RenderPass: crate::RenderPass,
+    RenderPass: 'd + crate::RenderPass + ?Sized,
     ShaderStages: PipelineShaderStageProvider,
 > {
     flags: VkPipelineCreateFlags,
@@ -1153,8 +1153,12 @@ pub struct NonDerivedGraphicsPipelineBuilder<
     dynamic_state_flags: PipelineDynamicStates,
 }
 
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Initialize the builder object
     pub fn new(

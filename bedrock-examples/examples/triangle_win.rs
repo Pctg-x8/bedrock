@@ -3,8 +3,8 @@ use std::rc::Rc;
 use bedrock as br;
 use br::{
     CommandBuffer, CommandPool, DescriptorPool, Device, DeviceMemory, Fence, GraphicsPipelineBuilder,
-    ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, Status,
-    Swapchain, VulkanStructure,
+    ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, RenderPass,
+    Status, Swapchain, VulkanStructure,
 };
 use windows::{
     core::PCSTR,
@@ -243,7 +243,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &vi_attributes,
             br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
         );
-        let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, (&render_pass, 0), vps);
+        let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, render_pass.subpass(0), vps);
         builder
             .viewport_scissors(
                 br::DynamicArrayState::Static(&viewports),
@@ -533,7 +533,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     &vi_attributes,
                     br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
                 );
-                let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, (&render_pass, 0), vps);
+                let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, render_pass.subpass(0), vps);
                 builder
                     .viewport_scissors(
                         br::DynamicArrayState::Static(&viewports),
