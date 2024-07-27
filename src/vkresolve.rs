@@ -1370,10 +1370,10 @@ pub trait OldResolverInterface {
         maxDrawCount: u32,
         stride: u32,
     );
-    #[cfg(feature = "VK_KHX_device_group")]
-    unsafe fn cmd_set_device_mask_khx(&self, commandBuffer: VkCommandBuffer, deviceMask: u32);
-    #[cfg(feature = "VK_KHX_device_group")]
-    unsafe fn cmd_dispatch_base_khx(
+    #[cfg(feature = "VK_KHR_device_group")]
+    unsafe fn cmd_set_device_mask_khr(&self, commandBuffer: VkCommandBuffer, deviceMask: u32);
+    #[cfg(feature = "VK_KHR_device_group")]
+    unsafe fn cmd_dispatch_base_khr(
         &self,
         commandBuffer: VkCommandBuffer,
         baseGroupX: u32,

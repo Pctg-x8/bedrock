@@ -5124,10 +5124,10 @@ extern "system" {
         maxDrawCount: u32,
         stride: u32,
     );
-    #[cfg(feature = "VK_KHX_device_group")]
-    pub fn vkCmdSetDeviceMaskKHX(commandBuffer: VkCommandBuffer, deviceMask: u32);
-    #[cfg(feature = "VK_KHX_device_group")]
-    pub fn vkCmdDispatchBaseKHX(
+    #[cfg(feature = "VK_KHR_device_group")]
+    pub fn vkCmdSetDeviceMaskKHR(commandBuffer: VkCommandBuffer, deviceMask: u32);
+    #[cfg(feature = "VK_KHR_device_group")]
+    pub fn vkCmdDispatchBaseKHR(
         commandBuffer: VkCommandBuffer,
         baseGroupX: u32,
         baseGroupY: u32,
