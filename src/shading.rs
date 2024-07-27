@@ -1183,8 +1183,12 @@ impl<
     }
 }
 /// Shading State and Input Configuration
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Set the vertex processing stages in this pipeline
     pub fn vertex_processing(&mut self, vp: VertexProcessingStages<'d, ShaderStages>) -> &mut Self {
@@ -1212,8 +1216,12 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
 }
 
 /// Viewport / Scissor State
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// # Safety
     /// Application must guarantee that the number of viewports and scissors are identical
@@ -1269,8 +1277,12 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
     }
 }
 
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Rasterization State
     pub fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
@@ -1285,8 +1297,12 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
 }
 
 /// Depth/Stencil State
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Clear depth/stencil state
     pub fn clear_depth_stencil_state(&mut self) -> &mut Self {
@@ -1562,8 +1578,12 @@ impl AttachmentColorBlendState {
 }
 
 /// Color Blending
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     fn cb_ref(
         &mut self,
@@ -1639,8 +1659,12 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
 }
 
 /// Misc Configurations
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// The base pipeline handle to derive from
     pub const fn derive<BP: Pipeline>(self, b: BP) -> DerivedGraphicsPipelineBuilder<BP, Self> {
@@ -1687,8 +1711,12 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
 }
 
 /// Unsafe Utilities
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Set the `VkPipelineTessellationStateCreateInfo` structure directly
     /// # Safety
@@ -1751,8 +1779,12 @@ pub struct NonDerivedGraphicPipelineBuilderExtraStorage<ShaderStages: PipelineSh
     pub shader_stage_extras: ShaderStages::ExtraStorage,
     pub dynamic_state: Option<VkPipelineDynamicStateCreateInfo>,
 }
-impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: PipelineShaderStageProvider>
-    GraphicsPipelineBuilder for NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
+impl<
+        'd,
+        Layout: PipelineLayout,
+        RenderPass: 'd + crate::RenderPass + ?Sized,
+        ShaderStages: PipelineShaderStageProvider,
+    > GraphicsPipelineBuilder for NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     type ExtraStorage = NonDerivedGraphicPipelineBuilderExtraStorage<ShaderStages>;
 
