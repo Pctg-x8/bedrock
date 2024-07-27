@@ -69,7 +69,7 @@ cfg_if! {
 
         #[inline(always)]
         pub fn get_resolver<'a>() -> &'a Resolver {
-            &*GLOBAL_RESOLVER.
+            &*GLOBAL_RESOLVER
         }
     }
 }
