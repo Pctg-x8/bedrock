@@ -163,7 +163,7 @@ pub enum AddressingMode {
     /// The clamp to border wrap mode
     ClampToBorder = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER as _,
     /// The mirror clamp to edge wrap mode
-    #[cfg(feature = "VK_KHR_mirror_clamp_to_edge")]
+    #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
     MirrorClampToEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as _,
 }
 

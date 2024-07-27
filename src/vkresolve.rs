@@ -26,7 +26,7 @@ cfg_if! {
             GLOBAL_RESOLVER.get().expect("no global resolver set")
         }
     } else if #[cfg(feature = "DynamicLoaded")] {
-        static GLOBAL_RESOLVER: std::sync::OnceLock<Box<Resolver>> = std::sync::OnceLock::new();
+        static GLOBAL_RESOLVER: std::sync::LazyLock<Box<Resolver>> = std::sync::LazyLock::new(|| Box::new(Resolver::new()));
 
         pub struct Resolver(Library);
         impl Resolver {
@@ -67,8 +67,9 @@ cfg_if! {
             }
         }
 
-        pub fn get_resolver() -> &'static Resolver {
-            GLOBAL_RESOLVER.get_or_init(|| Box::new(Resolver::new()))
+        #[inline(always)]
+        pub fn get_resolver<'a>() -> &'a Resolver {
+            &*GLOBAL_RESOLVER.
         }
     }
 }
