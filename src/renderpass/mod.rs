@@ -11,6 +11,30 @@ cfg_if! {
 
 use crate::*;
 
+pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
+    /// Returns the granularity for optimal render area
+    #[cfg(feature = "Implements")]
+    fn optimal_granularity(&self) -> VkExtent2D {
+        let mut e = std::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::get_render_area_granularity(
+                self.device().native_ptr(),
+                self.native_ptr(),
+                e.as_mut_ptr(),
+            );
+
+            e.assume_init()
+        }
+    }
+
+    #[inline(always)]
+    fn subpass(&self, index: u32) -> SubpassRef<Self> {
+        SubpassRef(self, index)
+    }
+}
+DerefContainerBracketImpl!(for RenderPass {});
+GuardsImpl!(for RenderPass {});
+
 /// Opaque handle to a render pass object
 #[derive(VkHandle, VkObject, DeviceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_RENDER_PASS)]
@@ -115,6 +139,10 @@ impl SubpassIndex {
         }
     }
 }
+
+/// A reference to a subpass in a render pass object.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct SubpassRef<'r, RenderPass: 'r + ?Sized + crate::RenderPass>(pub &'r RenderPass, pub u32);
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

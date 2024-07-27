@@ -31,13 +31,13 @@ impl<Device: crate::Device> Drop for FramebufferObject<'_, Device> {
 }
 impl<Device: crate::Device> Framebuffer for FramebufferObject<'_, Device> {}
 
-pub struct FramebufferBuilder<'r, RenderPass: self::RenderPass> {
+pub struct FramebufferBuilder<'r, RenderPass: crate::RenderPass> {
     info: VkFramebufferCreateInfo,
     init_size: Option<VkExtent2D>,
     render_pass: RenderPass,
     under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'r>>,
 }
-impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
+impl<'r, RenderPass: crate::RenderPass> FramebufferBuilder<'r, RenderPass> {
     pub const fn new(render_pass: RenderPass) -> Self {
         Self {
             info: VkFramebufferCreateInfo {
@@ -206,25 +206,6 @@ impl<'r, RenderPass: self::RenderPass> FramebufferBuilder<'r, RenderPass> {
         }
     }
 }
-
-pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
-    /// Returns the granularity for optimal render area
-    #[cfg(feature = "Implements")]
-    fn optimal_granularity(&self) -> VkExtent2D {
-        let mut e = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::get_render_area_granularity(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                e.as_mut_ptr(),
-            );
-
-            e.assume_init()
-        }
-    }
-}
-DerefContainerBracketImpl!(for RenderPass {});
-GuardsImpl!(for RenderPass {});
 
 pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> + DeviceChild {}
 DerefContainerBracketImpl!(for Framebuffer {});

@@ -3,7 +3,7 @@
 use crate::ffi_helper::ArrayFFIExtensions;
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, GenericVulkanStructure, VkHandle, VulkanStructure, VulkanStructureAsRef};
+use crate::{vk::*, DeviceChild, GenericVulkanStructure, SubpassRef, VkHandle, VulkanStructure, VulkanStructureAsRef};
 use crate::{LifetimeBound, VkRawHandle};
 use std::borrow::Cow;
 use std::ffi::CString;
@@ -1157,12 +1157,16 @@ impl<'d, Layout: PipelineLayout, RenderPass: crate::RenderPass, ShaderStages: Pi
     NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Initialize the builder object
-    pub fn new(layout: Layout, rpsp: (&'d RenderPass, u32), vp: VertexProcessingStages<'d, ShaderStages>) -> Self {
+    pub fn new(
+        layout: Layout,
+        subpass: SubpassRef<'d, RenderPass>,
+        vp: VertexProcessingStages<'d, ShaderStages>,
+    ) -> Self {
         Self {
             flags: 0,
             _layout: layout,
-            rp: rpsp.0,
-            subpass: rpsp.1,
+            rp: subpass.0,
+            subpass: subpass.1,
             vp,
             rasterizer_state: Default::default(),
             tess_state: None,
