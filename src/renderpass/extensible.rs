@@ -8,6 +8,8 @@ use crate::{
     VK_PIPELINE_BIND_POINT_GRAPHICS, VK_SAMPLE_COUNT_1_BIT,
 };
 
+use super::VK_ATTACHMENT_UNUSED;
+
 #[repr(transparent)]
 pub struct AttachmentDescription2(VkAttachmentDescription2KHR);
 impl AttachmentDescription2 {
@@ -79,14 +81,43 @@ impl AttachmentReference2 {
         })
     }
 
+    /// An unused attachment
+    pub const UNUSED: Self = Self::new(VK_ATTACHMENT_UNUSED, AspectMask(0), ImageLayout::Undefined);
+
+    /// Represents an attachment reference that references color aspect of the attachment.
     #[inline(always)]
     pub const fn color(index: u32, layout: ImageLayout) -> Self {
         Self::new(index, AspectMask::COLOR, layout)
     }
 
+    /// Represents an attachment reference that references depth and stencil aspect of the attachment.
     #[inline(always)]
     pub const fn depth_stencil(index: u32, layout: ImageLayout) -> Self {
         Self::new(index, AspectMask::DEPTH.stencil(), layout)
+    }
+
+    /// Optimal constructor for ShaderReadOnlyOpt reference.
+    #[inline(always)]
+    pub const fn shader_color_readonly_opt(index: u32) -> Self {
+        Self::color(index, ImageLayout::ShaderReadOnlyOpt)
+    }
+
+    /// Optimal constructor for ColorAttachmentOpt reference.
+    #[inline(always)]
+    pub const fn color_attachment_opt(index: u32) -> Self {
+        Self::color(index, ImageLayout::ColorAttachmentOpt)
+    }
+
+    /// Optimal constructor for DepthStencilAttachmentOpt reference.
+    #[inline(always)]
+    pub const fn depth_stencil_attachment_opt(index: u32) -> Self {
+        Self::depth_stencil(index, ImageLayout::DepthStencilAttachmentOpt)
+    }
+
+    /// Optimal constructor for DepthStencilReadOnlyOpt reference.
+    #[inline(always)]
+    pub const fn depth_stencil_readonly_opt(index: u32) -> Self {
+        Self::depth_stencil(index, ImageLayout::DepthStencilReadOnlyOpt)
     }
 }
 
