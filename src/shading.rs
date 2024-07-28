@@ -1275,6 +1275,15 @@ impl<
         assert_eq!(vps.count(), scissor.count());
         unsafe { self.viewports(vps).scissors(scissor) }
     }
+
+    /// Shortcut for dynamic viewport/scissor setting
+    #[inline]
+    pub fn dynamic_viewport_scissors(&mut self, count: usize) -> &mut Self {
+        unsafe {
+            self.viewports(DynamicArrayState::Dynamic(count))
+                .scissors(DynamicArrayState::Dynamic(count))
+        }
+    }
 }
 
 impl<
