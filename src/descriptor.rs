@@ -104,6 +104,12 @@ impl<'s> DescriptorSetLayoutObjectRef<'s> {
     pub fn new(x: &'s (impl VkHandle<Handle = VkDescriptorSetLayout> + ?Sized)) -> Self {
         Self(x.native_ptr(), core::marker::PhantomData)
     }
+
+    /// Lifetime unbound constructor
+    #[inline]
+    pub const unsafe fn unbound(x: VkDescriptorSetLayout) -> Self {
+        Self(x, core::marker::PhantomData)
+    }
 }
 
 #[repr(transparent)]
@@ -116,6 +122,12 @@ impl<'s> SamplerObjectRef<'s> {
     #[inline]
     pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
         Self(x.native_ptr(), core::marker::PhantomData)
+    }
+
+    /// Lifetime unbound constructor
+    #[inline]
+    pub const unsafe fn unbound(x: VkSampler) -> Self {
+        Self(x, core::marker::PhantomData)
     }
 }
 
