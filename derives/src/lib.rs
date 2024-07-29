@@ -602,13 +602,14 @@ pub fn derive_pfn(input: TokenStream) -> TokenStream {
         .get_ident()
         .or_else(|| org_fn.segments.last().map(|l| &l.ident))
         .expect("invalid pfn_of fn path");
-    let mut org_fn_nulbytes = org_fn_name.to_string().into_bytes();
-    org_fn_nulbytes.push(0);
-    let org_fn_nulbytes = syn::LitByteStr::new(&org_fn_nulbytes, proc_macro2::Span::call_site().into());
+    let org_fn_cstr = syn::LitCStr::new(
+        &unsafe { std::ffi::CString::from_vec_unchecked(org_fn_name.to_string().into_bytes()) },
+        proc_macro2::Span::call_site().into(),
+    );
 
     quote! {
         unsafe impl #impl_generics crate::vkresolve::PFN for #impl_name #ty_generics #where_clause {
-            const NAME_NUL: &'static [u8] = #org_fn_nulbytes;
+            const NAME_CSTR: &'static core::ffi::CStr = #org_fn_cstr;
 
             unsafe fn from_ptr(p: *const libc::c_void) -> Self {
                 core::mem::transmute(p)

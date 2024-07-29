@@ -75,19 +75,19 @@ cfg_if! {
 }
 
 pub trait ResolverInterface {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T;
-    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F;
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T;
+    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F;
 }
 
 cfg_if! {
     if #[cfg(feature = "DynamicLoaded")] {
         pub struct DefaultGlobalResolver;
         impl ResolverInterface for DefaultGlobalResolver {
-            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
+            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T {
                 get_resolver().load_symbol_unconstrainted(name)
             }
 
-            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
+            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F {
                 get_resolver().load_function_unconstrainted(name)
             }
         }
@@ -98,7 +98,7 @@ pub unsafe trait FromPtr {
     unsafe fn from_ptr(p: *const c_void) -> Self;
 }
 pub unsafe trait PFN {
-    const NAME_NUL: &'static [u8];
+    const NAME_CSTR: &'static core::ffi::CStr;
 
     unsafe fn from_ptr(p: *const c_void) -> Self;
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self;
@@ -115,7 +115,7 @@ impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
 
     pub fn resolve(&self) -> &F {
         self.1
-            .get_or_init(|| unsafe { self.0.load_function_unconstrainted::<F>(F::NAME_NUL) })
+            .get_or_init(|| unsafe { self.0.load_function_unconstrainted::<F>(F::NAME_CSTR) })
     }
 }
 

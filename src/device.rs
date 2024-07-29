@@ -18,14 +18,14 @@ cfg_if! {
     if #[cfg(feature = "Implements")] {
         type DeviceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkDevice>;
         impl crate::vkresolve::ResolverInterface for VkDevice {
-            unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &[u8]) -> T {
+            unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &core::ffi::CStr) -> T {
                 T::from_ptr(core::mem::transmute(crate::vkresolve::get_device_proc_addr(
                     *self,
                     name.as_ptr() as _,
                 )))
             }
 
-            unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &[u8]) -> F {
+            unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &core::ffi::CStr) -> F {
                 F::from_void_fn(
                     crate::vkresolve::get_device_proc_addr(*self, name.as_ptr() as _)
                         .unwrap_or_else(|| panic!("function {:?} not found", name))
