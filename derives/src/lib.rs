@@ -39,13 +39,13 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
     let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let (handle_field_ref, handle_ty) = if let syn::Data::Struct(syn::DataStruct { fields, .. }) = &input.data {
-        find_vkhandle_source(fields).expect("No suitable field representing handle source")
-    } else {
+    let syn::Data::Struct(syn::DataStruct { ref fields, .. }) = input.data else {
         panic!("AutoDerive VkHandle can only be applied for structs");
     };
+    let (handle_field_ref, handle_ty) =
+        find_vkhandle_source(fields).expect("No suitable field representing handle source");
 
-    let implement = quote! {
+    quote! {
         impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
             type Handle = #handle_ty;
 
@@ -60,9 +60,8 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
                 #handle_field_ref
             }
         }
-    };
-
-    implement.into()
+    }
+    .into()
 }
 
 #[proc_macro_derive(VkObject, attributes(VkObject))]
@@ -88,11 +87,12 @@ pub fn derive_object(tok: TokenStream) -> TokenStream {
     let object_type = object_type.expect("No object type specified");
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
-    TokenStream::from(quote! {
+    quote! {
         impl #impl_generics crate::VkObject for #name #ty_generics #where_clause {
             const TYPE: crate::vk::VkObjectType = #object_type;
         }
-    })
+    }
+    .into()
 }
 
 fn find_parent_field(fields: &syn::Fields) -> (usize, &syn::Field) {
@@ -140,10 +140,10 @@ pub fn derive_instance_child(tok: TokenStream) -> TokenStream {
     let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let (parent_index, parent_field) = match input.data {
-        syn::Data::Struct(ref s) => find_parent_field(&s.fields),
-        _ => panic!("no type except structure can derive InstanceChild"),
+    let syn::Data::Struct(ref s) = input.data else {
+        panic!("no type except structure can derive InstanceChild");
     };
+    let (parent_index, parent_field) = find_parent_field(&s.fields);
     let parent_ty = &parent_field.ty;
     let parent_field = match parent_field.ident {
         Some(ref f) => quote! { &self.#f },
@@ -153,13 +153,14 @@ pub fn derive_instance_child(tok: TokenStream) -> TokenStream {
         }
     };
 
-    TokenStream::from(quote! {
+    quote! {
         impl #impl_generics crate::InstanceChild for #name #ty_generics #where_clause {
             type ConcreteInstance = #parent_ty;
 
             fn instance(&self) -> &Self::ConcreteInstance { #parent_field }
         }
-    })
+    }
+    .into()
 }
 
 #[proc_macro_derive(InstanceChildTransferrable, attributes(parent))]
@@ -167,10 +168,10 @@ pub fn derive_instance_child_transferrable(tok: TokenStream) -> TokenStream {
     let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let (parent_index, parent_field) = match input.data {
-        syn::Data::Struct(ref s) => find_parent_field(&s.fields),
-        _ => panic!("no type except structure can derive InstanceChild"),
+    let syn::Data::Struct(ref s) = input.data else {
+        panic!("no type except structure can derive InstanceChild");
     };
+    let (parent_index, parent_field) = find_parent_field(&s.fields);
     let parent_field = match parent_field.ident {
         Some(ref f) => quote! { self.#f },
         None => {
@@ -179,22 +180,23 @@ pub fn derive_instance_child_transferrable(tok: TokenStream) -> TokenStream {
         }
     };
 
-    TokenStream::from(quote! {
+    quote! {
         impl #impl_generics crate::InstanceChildTransferrable for #name #ty_generics #where_clause {
             fn transfer_instance(self) -> Self::ConcreteInstance { #parent_field }
         }
-    })
+    }
+    .into()
 }
 
 #[proc_macro_derive(DeviceChild, attributes(parent))]
 pub fn derive_device_child(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let (parent_index, parent_field) = match input.data {
-        syn::Data::Struct(ref s) => find_parent_field(&s.fields),
-        _ => panic!("no type except structure can derive DeviceChild"),
+    let syn::Data::Struct(ref s) = input.data else {
+        panic!("no type except structure can derive DeviceChild");
     };
+    let (parent_index, parent_field) = find_parent_field(&s.fields);
     let parent_ty = &parent_field.ty;
     let parent_field = match parent_field.ident {
         Some(ref f) => quote! { &self.#f },
@@ -204,24 +206,25 @@ pub fn derive_device_child(tok: TokenStream) -> TokenStream {
         }
     };
 
-    TokenStream::from(quote! {
+    quote! {
         impl #impl_generics crate::DeviceChild for #name #ty_generics #where_clause {
             type ConcreteDevice = #parent_ty;
 
             fn device(&self) -> &Self::ConcreteDevice { #parent_field }
         }
-    })
+    }
+    .into()
 }
 
 #[proc_macro_derive(DeviceChildTransferrable, attributes(parent))]
 pub fn derive_device_child_transferrable(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let (parent_index, parent_field) = match input.data {
-        syn::Data::Struct(ref s) => find_parent_field(&s.fields),
-        _ => panic!("no type except structure can derive DeviceChild"),
+    let syn::Data::Struct(ref s) = input.data else {
+        panic!("no type except structure can derive DeviceChild");
     };
+    let (parent_index, parent_field) = find_parent_field(&s.fields);
     let parent_field = match parent_field.ident {
         Some(ref f) => quote! { self.#f },
         None => {
@@ -230,16 +233,17 @@ pub fn derive_device_child_transferrable(tok: TokenStream) -> TokenStream {
         }
     };
 
-    TokenStream::from(quote! {
+    quote! {
         impl #impl_generics crate::DeviceChildTransferrable for #name #ty_generics #where_clause {
             fn transfer_device(self) -> Self::ConcreteDevice { #parent_field }
         }
-    })
+    }
+    .into()
 }
 
 #[proc_macro_derive(VulkanStructure, attributes(VulkanStructure))]
 pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
-    let input: syn::DeriveInput = syn::parse(tok).expect("Parsing failed");
+    let input = parse_macro_input!(tok as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let attrs = input
@@ -261,7 +265,7 @@ pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
     let ty = ty.expect("No type specified");
     // TODO: some checks here......
 
-    TokenStream::from(quote! {
+    quote! {
         unsafe impl #impl_generics crate::VulkanStructureAsRef for #name #ty_generics #where_clause {
             #[inline(always)]
             fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -276,7 +280,8 @@ pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
         unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
-    })
+    }
+    .into()
 }
 
 fn promote_ext_ident(src: &syn::Ident) -> Option<syn::Ident> {
@@ -288,13 +293,7 @@ fn promote_ext_ident(src: &syn::Ident) -> Option<syn::Ident> {
 fn promote_suffixed_ident(src: &syn::Ident, suffix: &str) -> Option<syn::Ident> {
     Some(src.to_string())
         .as_deref()
-        .and_then(|s| {
-            if s.ends_with(&suffix) {
-                Some(&s[..s.len() - suffix.len()])
-            } else {
-                None
-            }
-        })
+        .and_then(|s| s.strip_suffix(suffix))
         .map(|s| syn::Ident::new(s, src.span()))
 }
 
@@ -435,23 +434,11 @@ pub fn promote_1_3(args: TokenStream, item: TokenStream) -> TokenStream {
     )
 }
 
-fn newtype_struct_org_type(d: &syn::Data) -> &syn::Type {
-    match d {
-        syn::Data::Struct(s) => match &s.fields {
-            syn::Fields::Unnamed(f) => match f.unnamed.first() {
-                Some(fst) => {
-                    if f.unnamed.len() > 1 {
-                        panic!("tuple struct has more than one elements");
-                    }
-
-                    &fst.ty
-                }
-                None => panic!("unit struct?"),
-            },
-            syn::Fields::Named(_) => panic!("named struct is not allowed for deriving VkRawHandle"),
-            syn::Fields::Unit => panic!("unit struct is not allowed for deriving VkRawHandle"),
-        },
-        _ => panic!("other than struct data cannot be derived VkRawHandle"),
+#[inline]
+fn newtype_struct_org_type(d: &syn::DataStruct) -> &syn::Type {
+    match d.fields {
+        syn::Fields::Unnamed(ref f) if f.unnamed.len() == 1 => &unsafe { f.unnamed.first().unwrap_unchecked() }.ty,
+        _ => panic!("not a newtype struct"),
     }
 }
 
@@ -460,12 +447,8 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-
-    let is_dispatchable = matches!(newtype_struct_org_type(&input.data), syn::Type::Ptr(_));
-    let null_def = if is_dispatchable {
-        quote! { Self(std::ptr::null_mut()) }
-    } else {
-        quote! { Self(0) }
+    let syn::Data::Struct(ref s) = input.data else {
+        panic!("cannot derive VkRawHandle from this type");
     };
 
     let mut object_type = None::<Expr>;
@@ -479,11 +462,15 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
     });
     parse_macro_input!(args with parser);
 
-    let raw_handle_conversion = if is_dispatchable {
-        quote! { self.0 as usize as _ }
+    let dispatchable = matches!(newtype_struct_org_type(s), syn::Type::Ptr(_));
+    let (null_def, raw_handle_conversion);
+    if dispatchable {
+        null_def = quote! { Self(std::ptr::null_mut()) };
+        raw_handle_conversion = quote! { self.0 as usize as _ };
     } else {
-        quote! { self.0 }
-    };
+        null_def = quote! { Self(0) };
+        raw_handle_conversion = quote! { self.0 };
+    }
 
     quote! {
         #input
@@ -679,7 +666,10 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
     let input = parse_macro_input!(target as syn::DeriveInput);
     let name = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let org_type = newtype_struct_org_type(&input.data);
+    let syn::Data::Struct(ref s) = input.data else {
+        panic!("cannot use as bitflags struct");
+    };
+    let org_type = newtype_struct_org_type(s);
 
     quote! {
         #t2
