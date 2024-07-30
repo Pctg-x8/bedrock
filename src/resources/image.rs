@@ -717,10 +717,16 @@ impl ImageLayout {
     pub const fn from(self, before: Self) -> LayoutTransition {
         LayoutTransition { from: before, to: self }
     }
-    /// Constructed the transition from undefined layout to this layout (convenient function).
+    /// Constructs the transition from undefined layout to this layout (convenient function).
     #[inline(always)]
     pub const fn from_undefined(self) -> LayoutTransition {
         self.from(Self::Undefined)
+    }
+
+    /// Constructs the empty transition.
+    #[inline(always)]
+    pub const fn keep(self) -> LayoutTransition {
+        LayoutTransition { from: self, to: self }
     }
 }
 
