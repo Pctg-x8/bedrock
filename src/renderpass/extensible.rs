@@ -58,7 +58,17 @@ impl AttachmentDescription2 {
     }
 
     #[inline]
+    pub fn layout(self, layout: ImageLayout) -> Self {
+        self.layout_transition(layout, layout)
+    }
+
+    #[inline]
     pub fn with_layout_from(self, trans: LayoutTransition) -> Self {
+        self.layout_transition(trans.from, trans.to)
+    }
+
+    #[inline]
+    pub fn with_layout_to(self, trans: LayoutTransition) -> Self {
         self.layout_transition(trans.from, trans.to)
     }
 
