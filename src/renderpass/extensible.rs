@@ -11,6 +11,7 @@ use crate::{
 use super::VK_ATTACHMENT_UNUSED;
 
 #[repr(transparent)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct AttachmentDescription2(VkAttachmentDescription2KHR);
 impl AttachmentDescription2 {
     pub const fn new(format: VkFormat) -> Self {
@@ -69,6 +70,7 @@ impl AttachmentDescription2 {
 }
 
 #[repr(transparent)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct AttachmentReference2(VkAttachmentReference2KHR);
 impl AttachmentReference2 {
     pub const fn new(index: u32, aspect_mask: AspectMask, layout: ImageLayout) -> Self {
@@ -122,6 +124,7 @@ impl AttachmentReference2 {
 }
 
 #[repr(transparent)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct SubpassDescription2<'d>(
     VkSubpassDescription2KHR,
     core::marker::PhantomData<&'d [AttachmentReference2]>,
@@ -198,6 +201,7 @@ impl<'d> SubpassDescription2<'d> {
 }
 
 #[repr(transparent)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct SubpassDependency2(VkSubpassDependency2KHR);
 impl SubpassDependency2 {
     #[inline]
