@@ -141,8 +141,30 @@ impl SubpassIndex {
 }
 
 /// A reference to a subpass in a render pass object.
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub struct SubpassRef<'r, RenderPass: 'r + ?Sized + crate::RenderPass>(pub &'r RenderPass, pub u32);
+impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Clone for SubpassRef<'r, RenderPass> {
+    #[inline(always)]
+    fn clone(&self) -> Self {
+        Self(self.0, self.1)
+    }
+}
+impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Copy for SubpassRef<'r, RenderPass> {}
+impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> PartialEq for SubpassRef<'r, RenderPass> {
+    fn eq(&self, other: &Self) -> bool {
+        core::ptr::eq(self.0, other.0) && self.1 == other.1
+    }
+}
+impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Eq for SubpassRef<'r, RenderPass> {}
+impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> core::hash::Hash for SubpassRef<'r, RenderPass> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        (self.0 as *const RenderPass, self.1).hash(state)
+    }
+}
+impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> core::fmt::Debug for SubpassRef<'r, RenderPass> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "RenderPass({:p}).{}", self.0, self.1)
+    }
+}
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
