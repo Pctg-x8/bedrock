@@ -1,4 +1,4 @@
-use crate::{vk::*, DeviceChild, Image, VkHandle, VkObject, VkRawHandle};
+use crate::{vk::*, DeviceChild, DeviceChildHandle, Image, VkHandle, VkObject, VkRawHandle};
 
 /// Opaque handle to a image object, backed by Swapchain.
 #[derive(VkHandle, VkObject)]
@@ -6,6 +6,12 @@ use crate::{vk::*, DeviceChild, Image, VkHandle, VkObject, VkRawHandle};
 pub struct SwapchainImage<Swapchain: crate::Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkExtent3D);
 unsafe impl<Swapchain: crate::Swapchain + Sync> Sync for SwapchainImage<Swapchain> {}
 unsafe impl<Swapchain: crate::Swapchain + Send> Send for SwapchainImage<Swapchain> {}
+impl<Swapchain: crate::Swapchain> DeviceChildHandle for SwapchainImage<Swapchain> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.device_handle()
+    }
+}
 impl<Swapchain: crate::Swapchain> DeviceChild for SwapchainImage<Swapchain> {
     type ConcreteDevice = Swapchain::ConcreteDevice;
 

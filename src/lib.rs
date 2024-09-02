@@ -1,7 +1,7 @@
 //! Glue library between Vulkan and Rust
 //!
 //! # Copyright
-//! Some documentation comments are from Vulkan Manual Page.  
+//! Some documentation comments are from Vulkan Manual Page.
 //! Copyright (c) 2014-2017 Khronos Group.
 //!
 //! # Compile Options
@@ -43,93 +43,33 @@ cfg_if! {
 #[cfg(feature = "Implements")]
 mod fnconv;
 
-macro_rules! DefineStdDeviceChildObject {
-    { $(#[$m: meta])* $name: ident($vkh: ty, $ot: expr): $i: ty { drop $dropper: ident } } => {
-        #[derive(VkHandle, $crate::DeviceChild)]
-        $(#[$m])*
-        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, #[parent] pub(crate) Device);
-        impl<Device: $crate::Device> $crate::VkObject for $name<Device> {
-            const TYPE: VkObjectType = $ot;
-        }
-        unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
-        unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
-        #[derives::implements]
-        impl<Device: $crate::Device> Drop for $name<Device> {
-            fn drop(&mut self) {
-                unsafe {
-                    $crate::vkresolve::$dropper(self.1.native_ptr(), self.0, std::ptr::null());
-                }
-            }
-        }
-        impl<Device: crate::Device> $i for $name<Device> {}
-    };
-    { $(#[$m: meta])* $name: ident($vkh: ty): $i: ty { drop $dropper: ident } } => {
-        #[derive($crate::VkHandle, $crate::DeviceChild, $crate::VkObject)]
-        #[VkObject(type = <$vkh as $crate::VkRawHandle>::OBJECT_TYPE)]
-        $(#[$m])*
-        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, #[parent] pub(crate) Device);
-        unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
-        unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
-        #[derives::implements]
-        impl<Device: $crate::Device> Drop for $name<Device> {
-            fn drop(&mut self) {
-                unsafe {
-                    $crate::vkresolve::$dropper(self.1.native_ptr(), self.0, std::ptr::null());
-                }
-            }
-        }
-        impl<Device: crate::Device> $i for $name<Device> {}
-    };
-    { $(#[$m: meta])* $name: ident($vkh: ty): $i: ty } => {
-        #[derive($crate::VkHandle, $crate::DeviceChild, $crate::VkObject)]
-        #[VkObject(type = <$vkh as $crate::VkRawHandle>::OBJECT_TYPE)]
-        $(#[$m])*
-        pub struct $name<Device: $crate::Device>(pub(crate) $vkh, #[parent] pub(crate) Device);
-        unsafe impl<Device: $crate::Device + Send> Send for $name<Device> {}
-        unsafe impl<Device: $crate::Device + Sync> Sync for $name<Device> {}
-        #[derives::implements]
-        impl<Device: $crate::Device> Drop for $name<Device> {
-            fn drop(&mut self) {
-                use $crate::handle::VkDeviceChildNonExtDestroyable;
-
-                unsafe {
-                    self.0.destroy(self.1.native_ptr(), core::ptr::null());
-                }
-            }
-        }
-        impl<Device: crate::Device> $i for $name<Device> {}
-    };
-}
-
 macro_rules! DerefContainerBracketImpl {
+    (for mut $t: path { $($required: item)* }) => {
+        impl<'s, T> $t for &'s mut T where T: $t + ?Sized { $($required)* }
+        impl<T> $t for Box<T> where T: $t + ?Sized { $($required)* }
+    };
     (for $t: path { $($required: item)* }) => {
-        impl<'s, T> $t for &'s T where T: $t + ?Sized {
-            $($required)*
-        }
-        impl<'s, T> $t for &'s mut T where T: $t + ?Sized {
-            $($required)*
-        }
-        impl<T> $t for std::rc::Rc<T> where T: $t + ?Sized {
-            $($required)*
-        }
-        impl<T> $t for std::sync::Arc<T> where T: $t + ?Sized {
-            $($required)*
-        }
-        impl<T> $t for Box<T> where T: $t + ?Sized {
-            $($required)*
-        }
+        impl<'s, T> $t for &'s T where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::rc::Rc<T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::sync::Arc<T> where T: $t + ?Sized { $($required)* }
+
+        DerefContainerBracketImpl!(for mut $t { $($required)* });
     }
 }
 macro_rules! GuardsImpl {
-    (for $t: path { $($required: item)* }) => {
-        impl<T> $t for std::cell::Ref<'_, T> where T: $t + ?Sized { $($required)* }
+    (for mut $t: path { $($required: item)* }) => {
         impl<T> $t for std::cell::RefMut<'_, T> where T: $t + ?Sized { $($required)* }
-        impl<T> $t for std::sync::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for std::sync::RwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for std::sync::MutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for parking_lot::MutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
-        impl<T> $t for parking_lot::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for parking_lot::RwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
+    };
+    (for $t: path { $($required: item)* }) => {
+        impl<T> $t for std::cell::Ref<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for std::sync::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
+
+        GuardsImpl!(for mut $t { $($required)* });
     };
 }
 
@@ -545,22 +485,36 @@ pub mod traits {
 }
 
 /// Opaque handle to a query pool object
-#[derive(VkHandle)]
-pub struct QueryPool<Device: crate::Device>(VkQueryPool, Device);
-impl<Device: crate::Device> VkObject for QueryPool<Device> {
-    const TYPE: VkObjectType = VK_OBJECT_TYPE_QUERY_POOL;
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkQueryPool::OBJECT_TYPE)]
+pub struct QueryPool<Device: VkHandle<Handle = VkDevice>>(VkQueryPool, Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for QueryPool<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
-unsafe impl<Device: crate::Device + Sync> Sync for QueryPool<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for QueryPool<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for QueryPool<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for QueryPool<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueryPool<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
 impl<Device: crate::Device> DeviceChild for QueryPool<Device> {
     type ConcreteDevice = Device;
 
-    fn device(&self) -> &Device {
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
         &self.1
     }
 }
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> QueryPool<Device> {
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> QueryPool<Device> {
     /// Create a new query pool object
     /// # Failure
     /// On failure, this command returns
@@ -639,14 +593,6 @@ impl<Device: crate::Device> QueryPool<Device> {
         }
         .into_result()
         .map(|_| v)
-    }
-}
-#[cfg(feature = "Implements")]
-impl<Device: crate::Device> Drop for QueryPool<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            vkresolve::destroy_query_pool(self.1.native_ptr(), self.0, std::ptr::null());
-        }
     }
 }
 

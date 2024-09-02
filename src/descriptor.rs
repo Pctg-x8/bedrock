@@ -1,36 +1,82 @@
 //! Vulkan Descriptors
 
 use cfg_if::cfg_if;
-use derives::implements;
+use derives::{implements, transparent_marked};
 
 use crate::ffi_helper::ArrayFFIExtensions;
 #[cfg(feature = "Implements")]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, VkHandleRef, VkObject, VkRawHandle};
+use crate::{
+    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandleRef, VkObject, VkRawHandle,
+};
 use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a descriptor set layout object
-    DescriptorSetLayoutObject(VkDescriptorSetLayout): DescriptorSetLayout
-}
-impl<Device: crate::Device> std::cmp::PartialEq for DescriptorSetLayoutObject<Device> {
-    fn eq(&self, other: &Self) -> bool {
-        self.0 == other.0
+/// Opaque handle to a descriptor set layout object
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkDescriptorSetLayout::OBJECT_TYPE)]
+pub struct DescriptorSetLayoutObject<Device: VkHandle<Handle = VkDevice>>(
+    pub(crate) VkDescriptorSetLayout,
+    pub(crate) Device,
+);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for DescriptorSetLayoutObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
     }
 }
-impl<Device: crate::Device> std::cmp::Eq for DescriptorSetLayoutObject<Device> {}
-impl<Device: crate::Device> std::hash::Hash for DescriptorSetLayoutObject<Device> {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.0.hash(state)
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for DescriptorSetLayoutObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for DescriptorSetLayoutObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DescriptorSetLayoutObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
     }
 }
+impl<Device: crate::Device> DeviceChild for DescriptorSetLayoutObject<Device> {
+    type ConcreteDevice = Device;
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a descriptor pool object
-    DescriptorPoolObject(VkDescriptorPool): DescriptorPool
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
 }
+impl<Device: crate::Device> DescriptorSetLayout for DescriptorSetLayoutObject<Device> {}
 
-#[repr(transparent)]
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkDescriptorPool::OBJECT_TYPE)]
+pub struct DescriptorPoolObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkDescriptorPool, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for DescriptorPoolObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
+}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for DescriptorPoolObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for DescriptorPoolObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DescriptorPoolObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for DescriptorPoolObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> DescriptorPool for DescriptorPoolObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DescriptorPoolMut for DescriptorPoolObject<Device> {}
+
+#[transparent_marked]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct DescriptorSet(pub VkDescriptorSet);
 impl From<DescriptorSet> for VkDescriptorSet {
@@ -144,7 +190,7 @@ impl<'s> ImageViewObjectRef<'s> {
     }
 }
 
-#[repr(transparent)]
+#[transparent_marked]
 #[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
 pub struct BufferObjectRef<'s>(VkBuffer, core::marker::PhantomData<&'s dyn VkHandle<Handle = VkBuffer>>);
 impl<'s> BufferObjectRef<'s> {
@@ -341,10 +387,7 @@ impl DescriptorPoolBuilder {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<DescriptorPoolObject<Device>>
-    where
-        Self: Sized,
-    {
+    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<DescriptorPoolObject<Device>> {
         self.0.poolSizeCount = self.1.len() as _;
         self.0.pPoolSizes = self.1.as_ptr_empty_null() as *const _;
 
@@ -357,7 +400,11 @@ impl DescriptorPoolBuilder {
     }
 }
 
-pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
+pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> {}
+DerefContainerBracketImpl!(for DescriptorPool {});
+GuardsImpl!(for DescriptorPool {});
+
+pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// Allocate one or more descriptor sets
     /// # Failures
     /// On failure, this command returns
@@ -365,23 +412,17 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
     #[implements]
-    fn alloc(&mut self, layouts: &[&(impl DescriptorSetLayout + ?Sized)]) -> crate::Result<Vec<DescriptorSet>>
-    where
-        Self: VkHandleMut,
-    {
-        use crate::VkRawHandle;
-
-        let layout_ptrs = layouts.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
+    fn alloc(&mut self, layouts: &[DescriptorSetLayoutObjectRef]) -> crate::Result<Vec<DescriptorSet>> {
         let ainfo = VkDescriptorSetAllocateInfo {
             sType: VkDescriptorSetAllocateInfo::TYPE,
-            pNext: std::ptr::null(),
+            pNext: core::ptr::null(),
             descriptorPool: self.native_ptr_mut(),
-            descriptorSetCount: layout_ptrs.len() as _,
-            pSetLayouts: layout_ptrs.as_ptr_empty_null(),
+            descriptorSetCount: layouts.len() as _,
+            pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
-        let mut hs = vec![VkDescriptorSet::NULL; layout_ptrs.len()];
+        let mut hs = vec![VkDescriptorSet::NULL; layouts.len()];
         unsafe {
-            crate::vkresolve::allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
+            crate::vkresolve::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| std::mem::transmute(hs))
         }
@@ -397,10 +438,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     fn alloc_array<const N: usize>(
         &mut self,
         layouts: &[DescriptorSetLayoutObjectRef; N],
-    ) -> crate::Result<[DescriptorSet; N]>
-    where
-        Self: VkHandleMut,
-    {
+    ) -> crate::Result<[DescriptorSet; N]> {
         let ainfo = VkDescriptorSetAllocateInfo {
             sType: VkDescriptorSetAllocateInfo::TYPE,
             pNext: core::ptr::null(),
@@ -410,7 +448,7 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
         };
         let mut hs = [VkDescriptorSet::NULL; N];
         unsafe {
-            crate::vkresolve::allocate_descriptor_sets(self.device().native_ptr(), &ainfo, hs.as_mut_ptr())
+            crate::vkresolve::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
@@ -427,11 +465,8 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    unsafe fn reset(&mut self) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
-        crate::vkresolve::reset_descriptor_pool(self.device().native_ptr(), self.native_ptr_mut(), 0)
+    unsafe fn reset(&mut self) -> crate::Result<()> {
+        crate::vkresolve::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), 0)
             .into_result()
             .map(drop)
     }
@@ -444,22 +479,19 @@ pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> + DeviceChild {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    unsafe fn free(&mut self, sets: &[VkDescriptorSet]) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    unsafe fn free(&mut self, sets: &[DescriptorSet]) -> crate::Result<()> {
         crate::vkresolve::free_descriptor_sets(
-            self.device().native_ptr(),
+            self.device_handle(),
             self.native_ptr(),
             sets.len() as _,
-            sets.as_ptr_empty_null(),
+            sets.as_ptr_empty_null() as _,
         )
         .into_result()
         .map(drop)
     }
 }
-DerefContainerBracketImpl!(for DescriptorPool {});
-GuardsImpl!(for DescriptorPool {});
+DerefContainerBracketImpl!(for mut DescriptorPoolMut {});
+GuardsImpl!(for mut DescriptorPoolMut {});
 
 /// Pointer for descriptor array in set
 #[derive(Clone)]
@@ -742,24 +774,38 @@ macro_rules! DescriptorUpdateTemplateEntries
 
 cfg_if! {
     if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
-        #[derive(VkHandle, VkObject, DeviceChild)]
+        #[derive(VkHandle, VkObject)]
         #[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]
         pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
             pub(crate) VkDescriptorUpdateTemplateKHR,
-            #[parent] pub(crate) Device,
+            pub(crate) Device,
         );
-        unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
-        unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
-        #[cfg(feature = "Implements")]
+        #[implements]
         impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
             fn drop(&mut self) {
-                unsafe { self.1.destroy_descriptor_update_template_khr_fn().0(self.1.native_ptr(), self.0, std::ptr::null()); }
+                unsafe { self.1.destroy_descriptor_update_template_khr_fn().0(self.1.native_ptr(), self.0, core::ptr::null()); }
+            }
+        }
+        unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
+        unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
+        impl<Device: crate::Device> DeviceChildHandle for DescriptorUpdateTemplateObject<Device> {
+            #[inline(always)]
+            fn device_handle(&self) -> VkDevice {
+                self.1.native_ptr()
+            }
+        }
+        impl<Device: crate::Device> DeviceChild for DescriptorUpdateTemplateObject<Device> {
+            type ConcreteDevice = Device;
+
+            #[inline(always)]
+            fn device(&self) -> &Self::ConcreteDevice {
+                &self.1
             }
         }
         impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
 
         pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplateKHR> + DeviceChild {
-            #[cfg(feature = "Implements")]
+            #[implements]
             fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
                 use crate::Device;
 

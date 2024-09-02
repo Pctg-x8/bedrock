@@ -2,55 +2,24 @@ pub const VK_KHR_BIND_MEMORY_2_SPEC_VERSION: usize = 1;
 pub const VK_KHR_BIND_MEMORY_2_EXTENSION_NAME: &str = "VK_KHR_bind_memory2";
 
 use super::*;
-use crate::PFN;
-use derives::promote_1_1;
+use derives::{promote_1_1, vk_ext_command};
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 0) as _;
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 1) as _;
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkBindBufferMemory2KHR)]
-pub struct PFN_vkBindBufferMemory2KHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        bindInfoCount: u32,
-        pBindInfos: *const VkBindBufferMemoryInfoKHR,
-    ) -> VkResult,
-);
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkBindImageMemory2KHR)]
-pub struct PFN_vkBindImageMemory2KHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        bindInfoCount: u32,
-        pBindInfos: *const VkBindImageMemoryInfoKHR,
-    ) -> VkResult,
+vk_ext_command!(
+    pub fn vkBindBufferMemory2KHR(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
+    suffix = "KHR";
+    promote = "1.1";
 );
 
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkBindBufferMemory2KHR(
-        device: VkDevice,
-        bindInfoCount: u32,
-        pBindInfos: *const VkBindBufferMemoryInfoKHR,
-    ) -> VkResult;
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkBindImageMemory2KHR(
-        device: VkDevice,
-        bindInfoCount: u32,
-        pBindInfos: *const VkBindImageMemoryInfoKHR,
-    ) -> VkResult;
-}
+vk_ext_command!(
+    pub fn vkBindImageMemory2KHR(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult;
+    suffix = "KHR";
+    promote = "1.1";
+);
 
 vk_bitmask! {
     extending enum VkImageCreateFlagBits {

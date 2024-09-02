@@ -3,15 +3,21 @@
 use crate::chain;
 use crate::vk::*;
 use crate::DeviceChild;
-use crate::VkHandle;
+use crate::DeviceChildHandle;
+use crate::VkDeviceChildNonExtDestroyable;
 #[implements]
-use crate::{Device, VkHandleMut};
+use crate::VkHandleMut;
+use crate::VkRawHandle;
 use crate::{GenericVulkanStructure, VulkanStructure};
-use derives::bitflags_newtype;
+use crate::{VkHandle, VkObject};
 use derives::implements;
 use derives::transparent_marked;
 
-pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
+///
+/// ```
+/// let _fo: Option<Box<dyn bedrock::Fence<ConcreteDevice = Box<dyn bedrock::Device<ConcreteInstance = Box<dyn bedrock::Instance>>>>>> = None;
+/// ```
+pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
     /// On failure, this command returns
@@ -23,7 +29,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
     #[inline(always)]
     fn wait_timeout(&self, timeout: u64) -> crate::Result<bool> {
         let vr = unsafe {
-            crate::vkresolve::wait_for_fences(self.device().native_ptr(), 1, &self.native_ptr(), false as _, timeout)
+            crate::vkresolve::wait_for_fences(self.device_handle(), 1, &self.native_ptr(), false as _, timeout)
         };
         match vr {
             VK_SUCCESS => Ok(false),
@@ -45,25 +51,6 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         self.wait_timeout(std::u64::MAX).map(drop)
     }
 
-    /// Resets a fence object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline(always)]
-    fn reset(&mut self) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
-        unsafe {
-            crate::vkresolve::reset_fences(self.device().native_ptr(), 1, &self.native_ptr_mut())
-                .into_result()
-                .map(drop)
-        }
-    }
-
     /// Get a POSIX file descriptor handle for a type
     /// # Failures
     /// On failure, this command returns
@@ -82,7 +69,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
 
         let mut fd = 0;
         unsafe {
-            self.device().get_fence_fd_khr_fn().0(self.device().native_ptr(), &info, &mut fd)
+            self.device().get_fence_fd_khr_fn().0(self.device_handle(), &info, &mut fd)
                 .into_result()
                 .map(move |_| fd)
         }
@@ -111,7 +98,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
         };
 
         unsafe {
-            self.device().import_fence_fd_khr_fn().0(self.device().native_ptr(), &info)
+            self.device().import_fence_fd_khr_fn().0(self.device_handle(), &info)
                 .into_result()
                 .map(drop)
         }
@@ -119,6 +106,30 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChild + Status {
 }
 DerefContainerBracketImpl!(for Fence {});
 GuardsImpl!(for Fence {});
+
+///
+/// ```
+/// let _fo: Option<Box<dyn bedrock::FenceMut<ConcreteDevice = Box<dyn bedrock::Device<ConcreteInstance = Box<dyn bedrock::Instance>>>>>> = None;
+/// ```
+pub trait FenceMut: Fence + VkHandleMut {
+    /// Resets a fence object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline(always)]
+    fn reset(&mut self) -> crate::Result<()> {
+        unsafe {
+            crate::vkresolve::reset_fences(self.device_handle(), 1, &self.native_ptr_mut())
+                .into_result()
+                .map(drop)
+        }
+    }
+}
+DerefContainerBracketImpl!(for mut FenceMut {});
+GuardsImpl!(for mut FenceMut {});
 
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     /// Get a Windows HANDLE for a semaphore
@@ -248,40 +259,68 @@ GuardsImpl!(for Status {
     }
 });
 
+/// A handle reference to a fence
 #[transparent_marked]
-pub struct FenceRef<'r, R: crate::Fence + ?Sized>(VkFence, core::marker::PhantomData<&'r R>);
+pub struct FenceRef<'r, R: 'r + ?Sized>(VkFence, core::marker::PhantomData<&'r R>);
 impl<'r, R: crate::Fence + ?Sized> VkHandle for FenceRef<'r, R> {
     type Handle = VkFence;
 
+    #[inline(always)]
     fn native_ptr(&self) -> Self::Handle {
         self.0
     }
 }
 
-DefineStdDeviceChildObject! {
-    /// Opaque Handle to a fence object
-    FenceObject(VkFence): Fence
-}
-impl<Device: crate::Device> Status for FenceObject<Device> {
-    #[implements]
-    fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { crate::vkresolve::get_fence_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr {
-            VK_SUCCESS => Ok(true),
-            VK_NOT_READY => Ok(false),
-            _ => Err(vr),
+#[derive(VkHandle)]
+pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkFence, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for FenceObject<Device> {
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
         }
     }
 }
-impl<Device: crate::Device> FenceObject<Device> {
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for FenceObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for FenceObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for FenceObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for FenceObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> Fence for FenceObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> FenceMut for FenceObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
+    #[inline(always)]
+    #[implements]
+    fn status(&self) -> crate::Result<bool> {
+        match unsafe { crate::vkresolve::get_fence_status(self.1.native_ptr(), self.0) } {
+            VK_SUCCESS => Ok(true),
+            VK_NOT_READY => Ok(false),
+            vr => Err(vr),
+        }
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
+    #[inline(always)]
     pub const fn as_transparent_ref(&self) -> FenceRef<Self> {
         FenceRef(self.0, core::marker::PhantomData)
     }
 }
 
+/// A handle reference to a semaphore
 #[transparent_marked]
-pub struct SemaphoreRef<'r, R: crate::Semaphore + ?Sized>(VkSemaphore, core::marker::PhantomData<&'r R>);
-impl<'r, R: crate::Semaphore + ?Sized> VkHandle for SemaphoreRef<'r, R> {
+pub struct SemaphoreRef<'r, R: 'r + ?Sized>(VkSemaphore, core::marker::PhantomData<&'r R>);
+impl<'r, R: 'r + ?Sized> VkHandle for SemaphoreRef<'r, R> {
     type Handle = VkSemaphore;
 
     fn native_ptr(&self) -> Self::Handle {
@@ -289,28 +328,77 @@ impl<'r, R: crate::Semaphore + ?Sized> VkHandle for SemaphoreRef<'r, R> {
     }
 }
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a semaphore object
-    SemaphoreObject(VkSemaphore): Semaphore
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkSemaphore::OBJECT_TYPE)]
+pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkSemaphore, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for SemaphoreObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
-impl<Device: crate::Device> SemaphoreObject<Device> {
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for SemaphoreObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for SemaphoreObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for SemaphoreObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
+    #[inline(always)]
     pub const fn as_transparent_ref(&self) -> SemaphoreRef<Self> {
         SemaphoreRef(self.0, core::marker::PhantomData)
     }
 }
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a event object
-    EventObject(VkEvent): Event
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkEvent::OBJECT_TYPE)]
+pub struct EventObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkEvent, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for EventObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
-impl<Device: crate::Device> Status for EventObject<Device> {
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for EventObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for EventObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for EventObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for EventObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
     #[implements]
     fn status(&self) -> crate::Result<bool> {
-        let vr = unsafe { crate::vkresolve::get_event_status(self.device().native_ptr(), self.native_ptr()) };
-        match vr {
+        match unsafe { crate::vkresolve::get_event_status(self.1.native_ptr(), self.0) } {
             VK_EVENT_SET => Ok(true),
             VK_EVENT_RESET => Ok(false),
-            _ => Err(vr),
+            vr => Err(vr),
         }
     }
 }
@@ -590,7 +678,7 @@ impl<'s> SemaphoreSubmitInfo<'s> {
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[bitflags_newtype]
+#[derives::bitflags_newtype]
 pub struct AccessFlags2(pub VkAccessFlags2KHR);
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl AccessFlags2 {

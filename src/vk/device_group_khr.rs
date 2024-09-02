@@ -1,7 +1,7 @@
 pub const VK_KHR_DEVICE_GROUP_SPEC_VERSION: usize = 4;
 pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME: &str = "VK_KHR_device_group";
 
-use derives::promote_1_1;
+use derives::{promote_1_1, vk_ext_command};
 
 use super::*;
 use crate::PFN;
@@ -104,71 +104,25 @@ pub struct VkDeviceGroupBindSparseInfoKHR {
     pub memoryDeviceIndex: u32,
 }
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetDeviceGroupPeerMemoryFeaturesKHR)]
-pub struct PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        heapIndex: u32,
-        localDeviceIndex: u32,
-        remoteDeviceIndex: u32,
-        pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlagsKHR,
-    ),
+vk_ext_command!(
+    pub fn vkGetDeviceGroupPeerMemoryFeaturesKHR(device: VkDevice, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32, pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlagsKHR);
+    suffix = "KHR";
+    promote = "1.1";
 );
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdSetDeviceMaskKHR)]
-pub struct PFN_vkCmdSetDeviceMaskKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, deviceMask: u32));
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdDispatchBaseKHR)]
-pub struct PFN_vkCmdDispatchBaseKHR(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        baseGroupX: u32,
-        baseGroupY: u32,
-        baseGroupZ: u32,
-        groupCountX: u32,
-        groupCountY: u32,
-        groupCountZ: u32,
-    ),
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetDeviceGroupPeerMemoryFeaturesKHR(
-        device: VkDevice,
-        heapIndex: u32,
-        localDeviceIndex: u32,
-        remoteDeviceIndex: u32,
-        pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlagsKHR,
-    );
-
-    #[promote_1_1(suffix = "KHR")]
+vk_ext_command!(
     pub fn vkCmdSetDeviceMaskKHR(commandBuffer: VkCommandBuffer, deviceMask: u32);
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkCmdDispatchBaseKHR(
-        commandBuffer: VkCommandBuffer,
-        baseGroupX: u32,
-        baseGroupY: u32,
-        baseGroupZ: u32,
-        groupCountX: u32,
-        groupCountY: u32,
-        groupCountZ: u32,
-    );
-}
+    suffix = "KHR";
+    promote = "1.1";
+);
 
-cfg_if! {
+vk_ext_command!(
+    pub fn vkCmdDispatchBaseKHR(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
+    suffix = "KHR";
+    promote = "1.1";
+);
+
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_bind_memory2")] {
         #[promote_1_1]
         pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO_KHR: VkStructureType = ext_enum_value(61, 13) as _;
@@ -208,7 +162,7 @@ cfg_if! {
     }
 }
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_surface")] {
         pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR: VkStructureType = ext_enum_value(61, 7) as _;
 
@@ -237,7 +191,7 @@ cfg_if! {
             }
         }
 
-        #[cfg(feature = "Implements")]
+        #[implements]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetDeviceGroupPresentCapabilitiesKHR)]
@@ -247,7 +201,7 @@ cfg_if! {
                 pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR
             ) -> VkResult
         );
-        #[cfg(feature = "Implements")]
+        #[implements]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetDeviceGroupSurfacePresentModesKHR)]
@@ -258,7 +212,7 @@ cfg_if! {
                 pModes: *mut VkDeviceGroupPresentModeFlagsKHR
             ) -> VkResult
         );
-        #[cfg(feature = "Implements")]
+        #[implements]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetPhysicalDevicePresentRectanglesKHR)]
@@ -271,7 +225,7 @@ cfg_if! {
             ) -> VkResult
         );
 
-        #[cfg(feature = "Implements")]
+        #[implements]
         #[cfg(not(feature = "DynamicLoaded"))]
         extern "system" {
             pub fn vkGetDeviceGroupPresentCapabilitiesKHR(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult;
@@ -281,7 +235,7 @@ cfg_if! {
     }
 }
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_swapchain")] {
         pub const VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = ext_enum_value(61, 8) as _;
         pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR: VkStructureType = ext_enum_value(61, 9) as _;

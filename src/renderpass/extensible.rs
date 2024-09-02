@@ -2,13 +2,31 @@ use derives::implements;
 
 use crate::{
     ffi_helper::ArrayFFIExtensions, AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags,
-    RenderPassObject, StoreOp, SubpassIndex, VkAccessFlags, VkAttachmentDescription2KHR, VkAttachmentReference2KHR,
-    VkFormat, VkRenderPassCreateInfo2KHR, VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR,
+    RenderPassObject, StoreOp, VkAccessFlags, VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat,
+    VkRenderPassCreateInfo2KHR, VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR,
     VulkanStructure, VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT,
-    VK_PIPELINE_BIND_POINT_GRAPHICS, VK_SAMPLE_COUNT_1_BIT,
+    VK_PIPELINE_BIND_POINT_GRAPHICS, VK_SAMPLE_COUNT_1_BIT, VK_SUBPASS_EXTERNAL,
 };
 
 use super::VK_ATTACHMENT_UNUSED;
+
+/// Index specifying a subpass
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum SubpassIndex {
+    /// Out of the render pass
+    External,
+    /// In the render pass
+    Internal(u32),
+}
+impl SubpassIndex {
+    #[inline(always)]
+    pub(crate) const fn as_api_value(self) -> u32 {
+        match self {
+            Self::External => VK_SUBPASS_EXTERNAL,
+            Self::Internal(x) => x,
+        }
+    }
+}
 
 #[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Hash)]

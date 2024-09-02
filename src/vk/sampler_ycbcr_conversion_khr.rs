@@ -298,7 +298,7 @@ pub const VK_CHROMA_LOCATION_COSITED_EVEN_KHR: VkChromaLocationKHR = 0;
 #[promote_1_1]
 pub const VK_CHROMA_LOCATION_MIDPOINT_KHR: VkChromaLocationKHR = 1;
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_report")] {
         pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR_EXT: VkDebugReportObjectTypeEXT = ext_enum_value(157, 0) as _;
         #[cfg(feature = "Allow1_1APIs")]

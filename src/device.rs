@@ -400,12 +400,26 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
 }
 
 /// Opaque handle to a queue object
-#[derive(Clone, VkHandle, VkObject, crate::DeviceChild)]
+#[derive(Clone, VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_QUEUE)]
-pub struct QueueObject<Device: crate::Device>(VkQueue, #[parent] Device);
-unsafe impl<Device: crate::Device + Sync> Sync for QueueObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for QueueObject<Device> {}
+pub struct QueueObject<Device>(VkQueue, Device);
+unsafe impl<Device: Sync> Sync for QueueObject<Device> {}
+unsafe impl<Device: Send> Send for QueueObject<Device> {}
 impl<Device: crate::Device> Queue for QueueObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueueObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
 
 /// Family Index, Queue Priorities
 pub struct DeviceQueueCreateInfo(VkDeviceQueueCreateInfo, Vec<f32>);
@@ -609,25 +623,14 @@ impl<PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Physic
     }
 }
 
+pub trait ExtraProcedureProvider {
+    #[cfg(feature = "Implements")]
+    unsafe fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F>;
+}
+
 pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
-    /// Return a function pointer for a command
-    /// # Failures
-    /// If function is not provided by instance or `name` is empty, returns `None`
-    #[deprecated = "do not use this directly(this does not provide caching)"]
-    #[cfg(feature = "Implements")]
-    fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F> {
-        if name.is_empty() {
-            return None;
-        }
-
-        unsafe {
-            let fn_cstr = std::ffi::CString::new(name).unwrap();
-            crate::vkresolve::get_device_proc_addr(self.native_ptr(), fn_cstr.as_ptr()).map(|f| FnTransmute::from_fn(f))
-        }
-    }
-
     /// Get a queue handle from a device
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn queue(self, family_index: u32, queue_index: u32) -> QueueObject<Self>
     where
         Self: Sized,
@@ -639,79 +642,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Invalidate `MappedMemoryRange`s
-    /// Invalidating the memory range allows that device writes to the memory ranges
-    /// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
-    /// are made visible to the host
-    /// # Safety
-    /// Memory object in `ranges` must be currently host mapped
-    #[implements]
-    unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkresolve::invalidate_mapped_memory_ranges(
-            self.native_ptr(),
-            ranges.len() as _,
-            ranges.as_ptr_empty_null(),
-        )
-        .into_result()
-        .map(drop)
-    }
-
-    /// Flush `MappedMemoryRange`s
-    /// Flushing the memory range allows that host writes to the memory ranges can
-    /// be made available to device access
-    /// # Safety
-    /// Memory object in `ranges` must be currently host mapped
-    #[implements]
-    unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkresolve::flush_mapped_memory_ranges(
-            self.native_ptr(),
-            ranges.len() as _,
-            ranges.as_ptr_empty_null() as *const _,
-        )
-        .into_result()
-        .map(drop)
-    }
-
-    /// Update the contents of descriptor set objects
-    #[implements]
-    fn update_descriptor_sets(&self, writes: &[DescriptorSetWriteInfo], copies: &[DescriptorSetCopyInfo]) {
-        let writes = writes
-            .iter()
-            .map(DescriptorSetWriteInfo::make_structure)
-            .collect::<Vec<_>>();
-        let copies = copies
-            .iter()
-            .map(DescriptorSetCopyInfo::make_structure)
-            .collect::<Vec<_>>();
-
-        unsafe {
-            crate::vkresolve::update_descriptor_sets(
-                self.native_ptr(),
-                writes.len() as _,
-                writes.as_ptr_empty_null(),
-                copies.len() as _,
-                copies.as_ptr_empty_null(),
-            );
-        }
-    }
-
-    /// Wait for a object to become idle
-    /// # Safety
-    /// All VkQueue objects created from this device must be externally synchronized.
-    #[cfg(feature = "Implements")]
-    unsafe fn wait(&self) -> crate::Result<()> {
-        crate::vkresolve::device_wait_idle(self.native_ptr())
-            .into_result()
-            .map(drop)
-    }
-
     /// Create a new buffer object
     /// # Failure
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_buffer(
         self,
         mut create_info: impl VulkanStructureProvider<RootStructure = VkBufferCreateInfo>,
@@ -730,79 +667,17 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Multiple Binding for Buffers
-    #[implements("VK_KHR_bind_memory2")]
-    fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
-        tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
-
-        unsafe {
-            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
-        }
-    }
-
-    /// Multiple Binding for Images
-    #[implements("VK_KHR_bind_memory2")]
-    fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
-        tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
-
-        unsafe {
-            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
-        }
-    }
-
-    /// Multiple Binding for both resources
-    #[implements("VK_KHR_bind_memory2")]
-    fn bind_resources(
-        &self,
-        buf_bounds: &[VkBindBufferMemoryInfoKHR],
-        img_bounds: &[VkBindImageMemoryInfoKHR],
-    ) -> crate::Result<()> {
-        // 必ず両方実行されるようにする
-        self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
-    }
-
     /// Creates a new shader module object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_shader_module(self, code: &(impl AsRef<[u8]> + ?Sized)) -> crate::Result<crate::ShaderModuleObject<Self>>
     where
         Self: Sized,
     {
-        #[allow(clippy::cast_ptr_alignment)]
-        let cinfo = VkShaderModuleCreateInfo {
-            sType: VkShaderModuleCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            codeSize: code.as_ref().len() as _,
-            pCode: code.as_ref().as_ptr_empty_null() as *const _,
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkresolve::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
-        }
-    }
-
-    /// Creates a new shader module object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn new_shader_module_ref<'d>(
-        &'d self,
-        code: &(impl AsRef<[u8]> + ?Sized),
-    ) -> crate::Result<crate::ShaderModuleObject<&'d Self>> {
         #[allow(clippy::cast_ptr_alignment)]
         let cinfo = VkShaderModuleCreateInfo {
             sType: VkShaderModuleCreateInfo::TYPE,
@@ -825,7 +700,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_pipeline_cache(
         self,
         initial: &(impl AsRef<[u8]> + ?Sized),
@@ -979,7 +854,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_event(self) -> crate::Result<crate::EventObject<Self>>
     where
         Self: Sized,
@@ -998,6 +873,134 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             )
             .into_result()
             .map(|_| crate::EventObject(h.assume_init(), self))
+        }
+    }
+
+    /// Invalidate `MappedMemoryRange`s
+    /// Invalidating the memory range allows that device writes to the memory ranges
+    /// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
+    /// are made visible to the host
+    /// # Safety
+    /// Memory object in `ranges` must be currently host mapped
+    #[implements]
+    unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+        crate::vkresolve::invalidate_mapped_memory_ranges(
+            self.native_ptr(),
+            ranges.len() as _,
+            ranges.as_ptr_empty_null(),
+        )
+        .into_result()
+        .map(drop)
+    }
+
+    /// Flush `MappedMemoryRange`s
+    /// Flushing the memory range allows that host writes to the memory ranges can
+    /// be made available to device access
+    /// # Safety
+    /// Memory object in `ranges` must be currently host mapped
+    #[implements]
+    unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+        crate::vkresolve::flush_mapped_memory_ranges(
+            self.native_ptr(),
+            ranges.len() as _,
+            ranges.as_ptr_empty_null() as *const _,
+        )
+        .into_result()
+        .map(drop)
+    }
+
+    /// Update the contents of descriptor set objects
+    #[implements]
+    fn update_descriptor_sets(&self, writes: &[DescriptorSetWriteInfo], copies: &[DescriptorSetCopyInfo]) {
+        let writes = writes
+            .iter()
+            .map(DescriptorSetWriteInfo::make_structure)
+            .collect::<Vec<_>>();
+        let copies = copies
+            .iter()
+            .map(DescriptorSetCopyInfo::make_structure)
+            .collect::<Vec<_>>();
+
+        unsafe {
+            crate::vkresolve::update_descriptor_sets(
+                self.native_ptr(),
+                writes.len() as _,
+                writes.as_ptr_empty_null(),
+                copies.len() as _,
+                copies.as_ptr_empty_null(),
+            );
+        }
+    }
+
+    /// Wait for a object to become idle
+    /// # Safety
+    /// All VkQueue objects created from this device must be externally synchronized.
+    #[cfg(feature = "Implements")]
+    unsafe fn wait(&self) -> crate::Result<()> {
+        crate::vkresolve::device_wait_idle(self.native_ptr())
+            .into_result()
+            .map(drop)
+    }
+
+    /// Multiple Binding for Buffers
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
+        tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
+
+        unsafe {
+            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Multiple Binding for Images
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
+        tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
+
+        unsafe {
+            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Multiple Binding for both resources
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_resources(
+        &self,
+        buf_bounds: &[VkBindBufferMemoryInfoKHR],
+        img_bounds: &[VkBindImageMemoryInfoKHR],
+    ) -> crate::Result<()> {
+        // 必ず両方実行されるようにする
+        self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
+    }
+
+    /// Creates a new shader module object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[cfg(feature = "Implements")]
+    fn new_shader_module_ref<'d>(
+        &'d self,
+        code: &(impl AsRef<[u8]> + ?Sized),
+    ) -> crate::Result<crate::ShaderModuleObject<&'d Self>> {
+        #[allow(clippy::cast_ptr_alignment)]
+        let cinfo = VkShaderModuleCreateInfo {
+            sType: VkShaderModuleCreateInfo::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            codeSize: code.as_ref().len() as _,
+            pCode: code.as_ref().as_ptr_empty_null() as *const _,
+        };
+        let mut h = std::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkresolve::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
         }
     }
 
@@ -1510,8 +1513,22 @@ GuardsImpl!(for Device {
     }
 });
 
+/// Child of a device object(raw handle)
+pub trait DeviceChildHandle {
+    /// Retrieve a reference to a device handle that creates this objecs
+    fn device_handle(&self) -> VkDevice;
+}
+DerefContainerBracketImpl!(for DeviceChildHandle {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice { T::device_handle(self) }
+});
+GuardsImpl!(for DeviceChildHandle {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice { T::device_handle(&self) }
+});
+
 /// Child of a device object
-pub trait DeviceChild {
+pub trait DeviceChild: DeviceChildHandle {
     /// A concrete type of the parent device object.
     type ConcreteDevice: Device;
 

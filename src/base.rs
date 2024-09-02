@@ -1359,8 +1359,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "Implements")]
     fn new_surface_wayland(
         self,
-        display: *mut wayland_client::sys::wl_display,
-        surface: *mut wayland_client::sys::wl_proxy,
+        display: *mut core::ffi::c_void,
+        surface: *mut core::ffi::c_void,
     ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
         Self: Sized + InstanceChildTransferrable,
@@ -1369,8 +1369,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             sType: VkWaylandSurfaceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
-            display,
-            surface,
+            display: display as _,
+            surface: surface as _,
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -1778,14 +1778,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         extras: &mut [&mut dyn crate::VulkanStructureAsRef],
     ) {
         crate::ext::chain2(sink, extras.iter_mut().map(crate::VulkanStructureAsRef::as_generic_mut));
-        self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink)
+        unsafe { self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink) }
     }
 
     #[implements("VK_KHR_get_physical_device_properties2")]
     /// Reports capabilities of a physical device
     fn features2(&self, sink: &mut VkPhysicalDeviceFeatures2KHR, extras: &mut [&mut dyn crate::VulkanStructureAsRef]) {
         crate::ext::chain2(sink, extras.iter_mut().map(crate::VulkanStructureAsRef::as_generic_mut));
-        self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink)
+        unsafe { self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink) }
     }
 
     #[cfg(feature = "VK_EXT_full_screen_exclusive")]

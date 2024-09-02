@@ -3,10 +3,9 @@
 pub const VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION: usize = 1;
 pub static VK_KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME: &str = "VK_KHR_descriptor_update_template";
 
-use derives::promote_1_1;
+use derives::{promote_1_1, vk_ext_command};
 
 use super::*;
-use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR: VkStructureType = ext_enum_value(86, 0) as _;
@@ -70,46 +69,39 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
     pub set: u32,
 }
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateDescriptorUpdateTemplateKHR)]
-pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(
-    pub  unsafe extern "system" fn(
+vk_ext_command!(
+    pub fn vkCreateDescriptorUpdateTemplateKHR(
         device: VkDevice,
         pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
-        pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR,
-    ) -> VkResult,
+        pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR
+    ) -> VkResult;
+    suffix = "KHR";
+    promote = "1.1";
 );
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDestroyDescriptorUpdateTemplateKHR)]
-pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(
-    pub  unsafe extern "system" fn(
+
+vk_ext_command!(
+    pub fn vkDestroyDescriptorUpdateTemplateKHR(
         device: VkDevice,
         descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-        pAllocator: *const VkAllocationCallbacks,
-    ),
+        pAllocator: *const VkAllocationCallbacks
+    );
+    suffix = "KHR";
+    promote = "1.1";
 );
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkUpdateDescriptorSetWithTemplateKHR)]
-pub struct PFN_vkUpdateDescriptorSetWithTemplateKHR(
-    pub  unsafe extern "system" fn(
+
+vk_ext_command!(
+    pub fn vkUpdateDescriptorSetWithTemplateKHR(
         device: VkDevice,
         descriptorSet: VkDescriptorSet,
         descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
         pData: *const c_void,
-    ),
+    );
+    suffix = "KHR";
+    promote = "1.1";
 );
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_report")] {
         pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT: VkDebugReportObjectTypeEXT = ext_enum_value(86, 0) as _;
         #[cfg(feature = "Allow1_1APIs")]

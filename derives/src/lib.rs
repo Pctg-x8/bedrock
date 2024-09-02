@@ -49,13 +49,13 @@ pub fn derive_handle(tok: TokenStream) -> TokenStream {
         impl #impl_generics crate::VkHandle for #name #ty_generics #where_clause {
             type Handle = #handle_ty;
 
-            #[inline]
+            #[inline(always)]
             fn native_ptr(&self) -> Self::Handle {
                 #handle_field_ref
             }
         }
         impl #impl_generics crate::VkHandleMut for #name #ty_generics #where_clause {
-            #[inline]
+            #[inline(always)]
             fn native_ptr_mut(&mut self) -> Self::Handle {
                 #handle_field_ref
             }
@@ -770,6 +770,188 @@ pub fn transparent_marked(_args: TokenStream, target: TokenStream) -> TokenStrea
         unsafe impl #impl_generics crate::Transparent for #name #ty_generics #where_clause {
             type Target = #transparent_target;
         }
+    }
+    .into()
+}
+
+struct VkExtCommandInput {
+    base_define: syn::ForeignItemFn,
+    suffix: syn::LitStr,
+    promote: Option<syn::LitStr>,
+}
+impl syn::parse::Parse for VkExtCommandInput {
+    fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let base_define = syn::ForeignItemFn::parse(input)?;
+
+        let (mut suffix, mut promote) = (None, None);
+        while input.peek(syn::Ident) {
+            let extra_ident = syn::Ident::parse(input)?;
+
+            match &extra_ident.to_string() as &str {
+                "suffix" => {
+                    if suffix.is_some() {
+                        return Err(syn::Error::new(input.span(), "duplicated suffix extra"));
+                    }
+
+                    input.parse::<syn::Token![=]>()?;
+                    suffix = Some(input.parse()?);
+                    input.parse::<syn::Token![;]>()?;
+                }
+                "promote" => {
+                    if promote.is_some() {
+                        return Err(syn::Error::new(input.span(), "duplicated promote extra"));
+                    }
+
+                    input.parse::<syn::Token![=]>()?;
+                    promote = Some(input.parse()?);
+                    input.parse::<syn::Token![;]>()?;
+                }
+                unknown => return Err(syn::Error::new(input.span(), &format!("unknown extra: {unknown}"))),
+            }
+        }
+
+        Ok(Self {
+            base_define,
+            suffix: suffix.ok_or_else(|| syn::Error::new(input.span(), "suffix extra required"))?,
+            promote,
+        })
+    }
+}
+
+#[proc_macro]
+pub fn vk_ext_command(input: TokenStream) -> TokenStream {
+    let VkExtCommandInput {
+        base_define,
+        suffix,
+        promote,
+    } = parse_macro_input!(input as VkExtCommandInput);
+
+    let base_vis = &base_define.vis;
+    let pfn_name = syn::Ident::new(
+        &format!("PFN_{}", base_define.sig.ident.to_string()),
+        base_define.sig.ident.span(),
+    );
+    let pfn_ty = syn::TypeBareFn {
+        lifetimes: None,
+        unsafety: Some(syn::Token![unsafe](proc_macro2::Span::call_site())),
+        abi: Some(syn::Abi {
+            extern_token: syn::Token![extern](proc_macro2::Span::call_site()),
+            name: Some(syn::LitStr::new("system", proc_macro2::Span::call_site())),
+        }),
+        fn_token: base_define.sig.fn_token.clone(),
+        paren_token: base_define.sig.paren_token.clone(),
+        inputs: base_define
+            .sig
+            .inputs
+            .iter()
+            .map(|a| match a {
+                syn::FnArg::Receiver(_) => unreachable!("vk command cannot have receivers"),
+                syn::FnArg::Typed(t) => syn::BareFnArg {
+                    attrs: t.attrs.clone(),
+                    name: match *t.pat {
+                        syn::Pat::Ident(ref x) => Some((x.ident.clone(), t.colon_token.clone())),
+                        _ => None,
+                    },
+                    ty: *t.ty.clone(),
+                },
+            })
+            .collect(),
+        variadic: base_define.sig.variadic.as_ref().map(|v| syn::BareVariadic {
+            attrs: v.attrs.clone(),
+            name: match v.pat {
+                Some((ref p, c)) => match &**p {
+                    &syn::Pat::Ident(ref x) => Some((x.ident.clone(), c.clone())),
+                    _ => None,
+                },
+                _ => None,
+            },
+            dots: v.dots.clone(),
+            comma: v.comma.clone(),
+        }),
+        output: base_define.sig.output.clone(),
+    };
+    let fname_cstr = syn::LitCStr::new(
+        &unsafe { std::ffi::CString::from_vec_unchecked(base_define.sig.ident.to_string().into_bytes()) },
+        proc_macro2::Span::call_site().into(),
+    );
+
+    let promoted_pfn_impl = if let Some(ref p) = promote {
+        let base_fn_name = base_define.sig.ident.to_string();
+        let promoted_fn_name = base_fn_name.strip_suffix(&suffix.value()).expect("not suffixed");
+        let pfn_name = syn::Ident::new(&format!("PFN_{promoted_fn_name}"), base_define.sig.ident.span());
+        let promoted_fn_cstr = syn::LitCStr::new(
+            &unsafe { std::ffi::CString::from_vec_unchecked(promoted_fn_name.as_bytes().to_vec()) },
+            proc_macro2::Span::call_site().into(),
+        );
+
+        let promote_feature_name = syn::LitStr::new(&format!("Allow{}APIs", p.value().replace('.', "_")), p.span());
+
+        Some(quote! {
+            #[cfg(feature = #promote_feature_name)]
+            #[repr(transparent)]
+            #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+            #base_vis struct #pfn_name(pub #pfn_ty);
+            unsafe impl crate::vkresolve::PFN for #pfn_name {
+                const NAME_CSTR: &'static core::ffi::CStr = #promoted_fn_cstr;
+
+                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                    core::mem::transmute(p)
+                }
+                unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
+                    core::mem::transmute(p)
+                }
+            }
+        })
+    } else {
+        None
+    };
+    let static_link_impl = if let Some(ref p) = promote {
+        let base_fn_name = base_define.sig.ident.to_string();
+        let promoted_fn_name = base_fn_name.strip_suffix(&suffix.value()).expect("not suffixed");
+        let promoted_fn_ident = syn::Ident::new(promoted_fn_name.into(), base_define.sig.ident.span());
+        let promoted_pfn_ident = syn::Ident::new(&format!("PFN_{promoted_fn_name}"), proc_macro2::Span::call_site());
+
+        let promoted_fn = syn::ForeignItemFn {
+            sig: syn::Signature {
+                ident: promoted_fn_ident.clone(),
+                ..base_define.sig.clone()
+            },
+            ..base_define.clone()
+        };
+        let promote_feature_name = syn::LitStr::new(&format!("Allow{}APIs", p.value().replace('.', "_")), p.span());
+
+        Some(quote! {
+            #[cfg(all(feature = "Implements", feature = #promote_feature_name, not(feature = "DynamicLoaded")))]
+            impl crate::vkresolve::StaticCallable for #promoted_pfn_ident {
+                const STATIC: Self = Self(#promoted_fn_ident);
+            }
+
+            #[cfg(all(feature = "Implements", feature = #promote_feature_name, not(feature = "DynamicLoaded")))]
+            extern "system" {
+                #promoted_fn
+            }
+        })
+    } else {
+        None
+    };
+
+    quote! {
+        #[repr(transparent)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+        #base_vis struct #pfn_name(pub #pfn_ty);
+        unsafe impl crate::vkresolve::PFN for #pfn_name {
+            const NAME_CSTR: &'static core::ffi::CStr = #fname_cstr;
+
+            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                core::mem::transmute(p)
+            }
+            unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
+                core::mem::transmute(p)
+            }
+        }
+
+        #promoted_pfn_impl
+        #static_link_impl
     }
     .into()
 }

@@ -5,40 +5,63 @@ use crate::{
 };
 use derives::implements;
 
+use super::DeviceChildHandle;
+
 /// Opaque handle to as swapchain object, backed with specific surface
-#[derive(VkHandle, VkObject, DeviceChild)]
+#[derive(VkHandle, VkObject)]
 #[VkObject(type = VkSwapchainKHR::OBJECT_TYPE)]
-pub struct SurfaceSwapchainObject<Device: crate::Device, Surface: crate::Surface> {
+pub struct SurfaceSwapchainObject<Device: VkHandle<Handle = VkDevice>, Surface: crate::Surface> {
     #[handle]
     pub(crate) handle: VkSwapchainKHR,
-    #[parent]
     pub(crate) device: Device,
     pub(crate) surface: Surface,
     pub(crate) format: VkFormat,
     pub(crate) extent: VkExtent2D,
 }
-unsafe impl<Device, Surface> Sync for SurfaceSwapchainObject<Device, Surface>
-where
-    Device: crate::Device + Sync,
-    Surface: crate::Surface + Sync,
-{
-}
-unsafe impl<Device, Surface> Send for SurfaceSwapchainObject<Device, Surface>
-where
-    Device: crate::Device + Send,
-    Surface: crate::Surface + Send,
-{
-}
 #[implements]
 impl<Device, Surface> Drop for SurfaceSwapchainObject<Device, Surface>
 where
-    Device: crate::Device,
+    Device: VkHandle<Handle = VkDevice>,
     Surface: crate::Surface,
 {
     fn drop(&mut self) {
         unsafe {
             self.handle.destroy(self.device.native_ptr(), core::ptr::null());
         }
+    }
+}
+unsafe impl<Device, Surface> Sync for SurfaceSwapchainObject<Device, Surface>
+where
+    Device: VkHandle<Handle = VkDevice> + Sync,
+    Surface: crate::Surface + Sync,
+{
+}
+unsafe impl<Device, Surface> Send for SurfaceSwapchainObject<Device, Surface>
+where
+    Device: VkHandle<Handle = VkDevice> + Send,
+    Surface: crate::Surface + Send,
+{
+}
+impl<Device, Surface> DeviceChildHandle for SurfaceSwapchainObject<Device, Surface>
+where
+    Device: VkHandle<Handle = VkDevice>,
+    Surface: crate::Surface,
+{
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.device.native_ptr()
+    }
+}
+impl<Device, Surface> DeviceChild for SurfaceSwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: crate::Surface,
+{
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.device
     }
 }
 impl<Device, Surface> Swapchain for SurfaceSwapchainObject<Device, Surface>

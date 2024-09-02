@@ -3,41 +3,55 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildTransferrable, Image, VkHandle, VkObject,
-    VkRawHandle, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildHandle, DeviceChildTransferrable, Image, VkHandle,
+    VkObject, VkRawHandle, VulkanStructure,
 };
 use std::ops::*;
 
 /// Opaque handle to a framebuffer object
-#[derive(VkHandle, VkObject, DeviceChild)]
-#[VkObject(type = VK_OBJECT_TYPE_FRAMEBUFFER)]
-pub struct FramebufferObject<'r, Device: crate::Device> {
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkFramebuffer::OBJECT_TYPE)]
+pub struct FramebufferObject<'r, Device: VkHandle<Handle = VkDevice>> {
     #[handle]
     pub(crate) handle: VkFramebuffer,
-    #[parent]
     pub(crate) parent: Device,
-    pub(crate) _under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = Device> + 'r>>,
+    pub(crate) _under_resources: Vec<Box<dyn crate::ImageView + 'r>>,
     pub(crate) size: VkExtent2D,
 }
-unsafe impl<Device> Sync for FramebufferObject<'_, Device> where Device: crate::Device + Sync {}
-unsafe impl<Device> Send for FramebufferObject<'_, Device> where Device: crate::Device + Send {}
 #[implements]
-impl<Device: crate::Device> Drop for FramebufferObject<'_, Device> {
+impl<Device: VkHandle<Handle = VkDevice>> Drop for FramebufferObject<'_, Device> {
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe {
             crate::vkresolve::destroy_framebuffer(self.parent.native_ptr(), self.handle, std::ptr::null());
         }
     }
 }
-impl<Device: crate::Device> Framebuffer for FramebufferObject<'_, Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for FramebufferObject<'_, Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for FramebufferObject<'_, Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for FramebufferObject<'_, Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.parent.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for FramebufferObject<'_, Device> {
+    type ConcreteDevice = Device;
 
-pub struct FramebufferBuilder<'r, RenderPass: crate::RenderPass> {
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.parent
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> Framebuffer for FramebufferObject<'_, Device> {}
+
+pub struct FramebufferBuilder<'r, RenderPass: crate::RenderPass + crate::DeviceChild> {
     info: VkFramebufferCreateInfo,
     init_size: Option<VkExtent2D>,
     render_pass: RenderPass,
-    under_resources: Vec<Box<dyn crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + 'r>>,
+    under_resources: Vec<Box<dyn crate::ImageView + 'r>>,
 }
-impl<'r, RenderPass: crate::RenderPass> FramebufferBuilder<'r, RenderPass> {
+impl<'r, RenderPass: crate::RenderPass + crate::DeviceChild> FramebufferBuilder<'r, RenderPass> {
     pub const fn new(render_pass: RenderPass) -> Self {
         Self {
             info: VkFramebufferCreateInfo {
@@ -63,14 +77,19 @@ impl<'r, RenderPass: crate::RenderPass> FramebufferBuilder<'r, RenderPass> {
 
     pub fn new_with_attachment(
         render_pass: RenderPass,
-        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
+        attachment: impl crate::ImageView
+            + crate::DeviceChild<ConcreteDevice = RenderPass::ConcreteDevice>
+            + crate::ImageChild
+            + 'r,
     ) -> Self {
         Self::new_with_attachments(render_pass, vec![attachment])
     }
 
     pub fn new_with_attachments(
         render_pass: RenderPass,
-        attachments: Vec<impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r>,
+        attachments: Vec<
+            impl crate::ImageView + crate::DeviceChild<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
+        >,
     ) -> Self {
         let size = attachments[0].image().size().wh();
 
@@ -94,7 +113,10 @@ impl<'r, RenderPass: crate::RenderPass> FramebufferBuilder<'r, RenderPass> {
 
     pub fn with_attachment(
         mut self,
-        attachment: impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
+        attachment: impl crate::ImageView
+            + crate::DeviceChild<ConcreteDevice = RenderPass::ConcreteDevice>
+            + crate::ImageChild
+            + 'r,
     ) -> Self {
         if self.under_resources.is_empty() && self.init_size.is_none() {
             self.init_size = Some(attachment.image().size().wh());
@@ -108,7 +130,10 @@ impl<'r, RenderPass: crate::RenderPass> FramebufferBuilder<'r, RenderPass> {
     pub fn with_attachments(
         mut self,
         attachments: impl IntoIterator<
-            Item = impl crate::ImageView<ConcreteDevice = RenderPass::ConcreteDevice> + crate::ImageChild + 'r,
+            Item = impl crate::ImageView
+                       + crate::DeviceChild<ConcreteDevice = RenderPass::ConcreteDevice>
+                       + crate::ImageChild
+                       + 'r,
         >,
     ) -> Self {
         let mut attachments_iter = attachments.into_iter();
@@ -207,11 +232,12 @@ impl<'r, RenderPass: crate::RenderPass> FramebufferBuilder<'r, RenderPass> {
     }
 }
 
-pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> + DeviceChild {}
+pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> {}
 DerefContainerBracketImpl!(for Framebuffer {});
 GuardsImpl!(for Framebuffer {});
 
-impl<Device: crate::Device> FramebufferObject<'_, Device> {
+impl<Device: VkHandle<Handle = VkDevice>> FramebufferObject<'_, Device> {
+    #[inline(always)]
     pub const fn size(&self) -> &VkExtent2D {
         &self.size
     }

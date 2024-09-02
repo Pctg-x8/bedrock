@@ -1,7 +1,7 @@
 //! VK_KHR_synchronization2
 
 use super::*;
-use derives::promote_1_3;
+use derives::{promote_1_3, vk_ext_command};
 
 pub const VK_KHR_SYNCHRONIZATION_2_SPEC_VERSION: usize = 1;
 pub const VK_KHR_SYNCHRONIZATION_2_EXTENSION_NAME: &str = "VK_KHR_synchronization2";
@@ -258,177 +258,38 @@ pub struct VkPhysicalDeviceSynchronization2FeaturesKHR {
     pub synchronization2: VkBool32,
 }
 
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdSetEvent2KHR)]
-pub struct PFN_vkCmdSetEvent2KHR(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        event: VkEvent,
-        pDependencyInfo: *const VkDependencyInfoKHR,
-    ),
+vk_ext_command!(
+    pub fn vkCmdSetEvent2KHR(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR);
+    suffix = "KHR";
+    promote = "1.3";
 );
 
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdResetEvent2KHR)]
-pub struct PFN_vkCmdResetEvent2KHR(
-    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR),
-);
-
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdWaitEvents2KHR)]
-pub struct PFN_vkCmdWaitEvents2KHR(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        eventCount: u32,
-        pEvents: *const VkEvent,
-        pDependencyInfos: *const VkDependencyInfoKHR,
-    ),
-);
-
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdPipelineBarrier2KHR)]
-pub struct PFN_vkCmdPipelineBarrier2KHR(
-    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR),
-);
-
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdWriteTimestamp2KHR)]
-pub struct PFN_vkCmdWriteTimestamp2KHR(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        stage: VkPipelineStageFlags2KHR,
-        queryPool: VkQueryPool,
-        query: u32,
-    ),
-);
-
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkQueueSubmit2KHR)]
-pub struct PFN_vkQueueSubmit2KHR(
-    pub  unsafe extern "system" fn(
-        queue: VkQueue,
-        submitCount: u32,
-        pSubmits: *const VkSubmitInfo2KHR,
-        fence: VkFence,
-    ) -> VkResult,
-);
-
-cfg_if! {
-    if #[cfg(feature = "Allow1_3APIs")] {
-        // TODO: いい感じにpromoteさせたい（pfn_ofがpromote_1_3を認識できないので静的呼び出しでサフィックスなしにしてくれない）
-        #[implements]
-        #[repr(transparent)]
-        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkCmdSetEvent2)]
-        pub struct PFN_vkCmdSetEvent2(
-            pub  unsafe extern "system" fn(
-                commandBuffer: VkCommandBuffer,
-                event: VkEvent,
-                pDependencyInfo: *const VkDependencyInfo,
-            ),
-        );
-
-        #[implements]
-        #[repr(transparent)]
-        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkCmdResetEvent2)]
-        pub struct PFN_vkCmdResetEvent2(
-            pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2),
-        );
-
-        #[implements]
-        #[repr(transparent)]
-        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkCmdWaitEvents2)]
-        pub struct PFN_vkCmdWaitEvents2(
-            pub  unsafe extern "system" fn(
-                commandBuffer: VkCommandBuffer,
-                eventCount: u32,
-                pEvents: *const VkEvent,
-                pDependencyInfos: *const VkDependencyInfo,
-            ),
-        );
-
-        #[implements]
-        #[repr(transparent)]
-        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkCmdPipelineBarrier2)]
-        pub struct PFN_vkCmdPipelineBarrier2(
-            pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfo),
-        );
-
-        #[implements]
-        #[repr(transparent)]
-        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkCmdWriteTimestamp2)]
-        pub struct PFN_vkCmdWriteTimestamp2(
-            pub  unsafe extern "system" fn(
-                commandBuffer: VkCommandBuffer,
-                stage: VkPipelineStageFlags2,
-                queryPool: VkQueryPool,
-                query: u32,
-            ),
-        );
-
-        #[implements]
-        #[repr(transparent)]
-        #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkQueueSubmit2)]
-        pub struct PFN_vkQueueSubmit2(
-            pub  unsafe extern "system" fn(
-                queue: VkQueue,
-                submitCount: u32,
-                pSubmits: *const VkSubmitInfo2,
-                fence: VkFence,
-            ) -> VkResult,
-        );
-    }
-}
-
-#[implements]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_3(suffix = "KHR")]
-    pub fn vkCmdSetEvent2KHR(
-        commandBuffer: VkCommandBuffer,
-        event: VkEvent,
-        pDependencyInfo: *const VkDependencyInfoKHR,
-    );
-    #[promote_1_3(suffix = "KHR")]
+vk_ext_command!(
     pub fn vkCmdResetEvent2KHR(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR);
-    #[promote_1_3(suffix = "KHR")]
-    pub fn vkCmdWaitEvents2KHR(
-        commandBuffer: VkCommandBuffer,
-        eventCount: u32,
-        pEvents: *const VkEvent,
-        pDependencyInfos: *const VkDependencyInfoKHR,
-    );
-    #[promote_1_3(suffix = "KHR")]
+    suffix = "KHR";
+    promote = "1.3";
+);
+
+vk_ext_command!(
+    pub fn vkCmdWaitEvents2KHR(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR);
+    suffix = "KHR";
+    promote = "1.3";
+);
+
+vk_ext_command!(
     pub fn vkCmdPipelineBarrier2KHR(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR);
-    #[promote_1_3(suffix = "KHR")]
-    pub fn vkCmdWriteTimestamp2KHR(
-        commandBuffer: VkCommandBuffer,
-        stage: VkPipelineStageFlags2KHR,
-        queryPool: VkQueryPool,
-        query: u32,
-    );
-    #[promote_1_3(suffix = "KHR")]
-    pub fn vkQueueSubmit2KHR(
-        queue: VkQueue,
-        submitCount: u32,
-        pSubmits: *const VkSubmitInfo2KHR,
-        fence: VkFence,
-    ) -> VkResult;
-}
+    suffix = "KHR";
+    promote = "1.3";
+);
+
+vk_ext_command!(
+    pub fn vkCmdWriteTimestamp2KHR(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32);
+    suffix = "KHR";
+    promote = "1.3";
+);
+
+vk_ext_command!(
+    pub fn vkQueueSubmit2KHR(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult;
+    suffix = "KHR";
+    promote = "1.3";
+);

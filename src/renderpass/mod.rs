@@ -11,17 +11,13 @@ cfg_if! {
 
 use crate::*;
 
-pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
+pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChildHandle {
     /// Returns the granularity for optimal render area
     #[cfg(feature = "Implements")]
     fn optimal_granularity(&self) -> VkExtent2D {
         let mut e = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_render_area_granularity(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                e.as_mut_ptr(),
-            );
+            crate::vkresolve::get_render_area_granularity(self.device_handle(), self.native_ptr(), e.as_mut_ptr());
 
             e.assume_init()
         }
@@ -35,21 +31,39 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChild {
 DerefContainerBracketImpl!(for RenderPass {});
 GuardsImpl!(for RenderPass {});
 
+pub trait ConcreteDeviceRenderPass: RenderPass + DeviceChild {}
+DerefContainerBracketImpl!(for ConcreteDeviceRenderPass {});
+GuardsImpl!(for ConcreteDeviceRenderPass {});
+
 /// Opaque handle to a render pass object
-#[derive(VkHandle, VkObject, DeviceChild)]
-#[VkObject(type = VK_OBJECT_TYPE_RENDER_PASS)]
-pub struct RenderPassObject<Device: crate::Device>(pub(crate) VkRenderPass, #[parent] pub(crate) Device);
-unsafe impl<Device: crate::Device + Sync> Sync for RenderPassObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for RenderPassObject<Device> {}
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkRenderPass::OBJECT_TYPE)]
+pub struct RenderPassObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkRenderPass, pub(crate) Device);
 #[implements]
-impl<Device: crate::Device> Drop for RenderPassObject<Device> {
+impl<Device: VkHandle<Handle = VkDevice>> Drop for RenderPassObject<Device> {
     fn drop(&mut self) {
         unsafe {
             self.0.destroy(self.1.native_ptr(), core::ptr::null());
         }
     }
 }
-impl<Device: crate::Device> RenderPass for RenderPassObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for RenderPassObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for RenderPassObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for RenderPassObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for RenderPassObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> RenderPass for RenderPassObject<Device> {}
 
 #[repr(transparent)]
 pub struct RenderPassBeginInfo<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd>(
@@ -76,6 +90,7 @@ impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> RenderPassBe
 impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> AsRef<VkRenderPassBeginInfo>
     for RenderPassBeginInfo<'d, R, F>
 {
+    #[inline(always)]
     fn as_ref(&self) -> &VkRenderPassBeginInfo {
         &self.0
     }
@@ -119,24 +134,6 @@ impl SubpassEndInfo {
 impl AsRef<VkSubpassEndInfoKHR> for SubpassEndInfo {
     fn as_ref(&self) -> &VkSubpassEndInfoKHR {
         &self.0
-    }
-}
-
-/// Index specifying a subpass
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub enum SubpassIndex {
-    /// Out of the render pass
-    External,
-    /// In the render pass
-    Internal(u32),
-}
-impl SubpassIndex {
-    #[inline(always)]
-    pub(crate) const fn as_api_value(self) -> u32 {
-        match self {
-            Self::External => VK_SUBPASS_EXTERNAL,
-            Self::Internal(x) => x,
-        }
     }
 }
 

@@ -1,9 +1,12 @@
-use crate::{vk::*, DeviceChild, GenericVulkanStructure, VkHandle, VkHandleMut, VulkanStructure};
+use crate::{
+    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
+    VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+};
 use derives::implements;
 #[implements]
 use std::ops::Range;
 
-pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
+pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     /// Map a memory object into application address space
     /// # Failure
     /// On failure, this command returns
@@ -39,7 +42,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
         let mut p = core::mem::MaybeUninit::uninit();
 
         crate::vkresolve::map_memory(
-            self.device().native_ptr(),
+            self.device_handle(),
             self.native_ptr_mut(),
             range.start,
             range.end - range.start,
@@ -52,14 +55,14 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
 
     /// Unmap a previously mapped memory object
     /// # Safety
-    /// Caller must guarantee that there is no `MappedMemoryRange` alives.  
+    /// Caller must guarantee that there is no `MappedMemoryRange` alives.
     /// Accessing the mapped memory after this call has undefined behavior
     #[implements]
     unsafe fn unmap(&mut self)
     where
         Self: VkHandleMut,
     {
-        crate::vkresolve::unmap_memory(self.device().native_ptr(), self.native_ptr_mut());
+        crate::vkresolve::unmap_memory(self.device_handle(), self.native_ptr_mut());
     }
 
     /// Query the current commitment for a `DeviceMemory`
@@ -67,7 +70,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
     fn commitment_bytes(&self) -> VkDeviceSize {
         let mut b = 0;
         unsafe {
-            crate::vkresolve::get_device_memory_commitment(self.device().native_ptr(), self.native_ptr(), &mut b);
+            crate::vkresolve::get_device_memory_commitment(self.device_handle(), self.native_ptr(), &mut b);
         }
 
         b
@@ -90,14 +93,14 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
 
         let info = VkMemoryGetWin32HandleInfoKHR {
             sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
-            pNext: std::ptr::null(),
+            pNext: core::ptr::null(),
             memory: self.native_ptr(),
             handleType: handle_type as _,
         };
         let mut h = windows::Win32::Foundation::HANDLE(0);
 
         unsafe {
-            self.device().get_memory_win32_handle_khr_fn().0(self.device().native_ptr(), &info, &mut h)
+            self.device().get_memory_win32_handle_khr_fn().0(self.device_handle(), &info, &mut h)
                 .into_result()
                 .map(move |_| h)
         }
@@ -115,14 +118,14 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
 
         let info = VkMemoryGetFdInfoKHR {
             sType: VkMemoryGetFdInfoKHR::TYPE,
-            pNext: std::ptr::null(),
+            pNext: core::ptr::null(),
             memory: self.native_ptr(),
             handleType: handle_type as _,
         };
         let mut fd = 0;
 
         unsafe {
-            self.device().get_memory_fd_khr_fn().0(self.device().native_ptr(), &info, &mut fd)
+            self.device().get_memory_fd_khr_fn().0(self.device_handle(), &info, &mut fd)
                 .into_result()
                 .map(move |_| fd)
         }
@@ -131,10 +134,35 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChild {
 DerefContainerBracketImpl!(for DeviceMemory {});
 GuardsImpl!(for DeviceMemory {});
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a device memory object
-    DeviceMemoryObject(VkDeviceMemory): DeviceMemory
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkDeviceMemory::OBJECT_TYPE)]
+pub struct DeviceMemoryObject<Device: VkHandle<Handle = VkDevice>>(VkDeviceMemory, Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for DeviceMemoryObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for DeviceMemoryObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for DeviceMemoryObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DeviceMemoryObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceMemory for DeviceMemoryObject<Device> {}
 
 pub struct DeviceMemoryRequest(VkMemoryAllocateInfo, Vec<Box<GenericVulkanStructure>>);
 impl DeviceMemoryRequest {
@@ -148,6 +176,11 @@ impl DeviceMemoryRequest {
             },
             Vec::new(),
         )
+    }
+
+    pub unsafe fn with_additional_info(mut self, x: impl VulkanStructure) -> Self {
+        self.1.push(core::mem::transmute(Box::new(x)));
+        self
     }
 
     #[cfg(feature = "VK_KHR_external_memory_win32")]
@@ -248,11 +281,6 @@ impl DeviceMemoryRequest {
         })
     }
 
-    pub unsafe fn with_additional_info(mut self, x: impl VulkanStructure) -> Self {
-        self.1.push(core::mem::transmute(Box::new(x)));
-        self
-    }
-
     /// Execute requests for Device Memory Acquisition
     /// # Failures
     /// On failure, this command returns
@@ -261,10 +289,7 @@ impl DeviceMemoryRequest {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     #[implements]
-    pub fn execute<Device: crate::Device>(mut self, device: Device) -> crate::Result<DeviceMemoryObject<Device>>
-    where
-        Self: Sized,
-    {
+    pub fn execute<Device: crate::Device>(mut self, device: Device) -> crate::Result<DeviceMemoryObject<Device>> {
         crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
         let mut h = core::mem::MaybeUninit::uninit();

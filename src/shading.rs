@@ -1,9 +1,12 @@
 //! Vulkan Shading(Shader/Pipeline)
 
 use crate::ffi_helper::ArrayFFIExtensions;
-#[cfg(feature = "Implements")]
+#[implements]
 use crate::VkHandleMut;
-use crate::{vk::*, DeviceChild, GenericVulkanStructure, SubpassRef, VkHandle, VulkanStructure, VulkanStructureAsRef};
+use crate::{
+    vk::*, DeviceChildHandle, GenericVulkanStructure, SubpassRef, VkDeviceChildNonExtDestroyable, VkHandle, VkObject,
+    VulkanStructure, VulkanStructureAsRef,
+};
 use crate::{LifetimeBound, VkRawHandle};
 use std::borrow::Cow;
 use std::ffi::CString;
@@ -130,31 +133,64 @@ pub enum StencilFaceMask {
     Both = VK_STENCIL_FRONT_AND_BACK as _,
 }
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a shader module object
-    ShaderModuleObject(VkShaderModule): ShaderModule
+/// Opaque handle to a shader module object
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkShaderModule::OBJECT_TYPE)]
+pub struct ShaderModuleObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkShaderModule, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for ShaderModuleObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
-
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a pipeline cache object
-    PipelineCacheObject(VkPipelineCache): PipelineCache
-}
-
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a pipeline layout object
-    PipelineLayoutObject(VkPipelineLayout): PipelineLayout
-}
-
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a pipeline object
-    PipelineObject(VkPipeline): Pipeline
-}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ShaderModuleObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ShaderModuleObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<Device> {}
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}
 DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
 
-pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
+/// Opaque handle to a pipeline cache object
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkPipelineCache::OBJECT_TYPE)]
+pub struct PipelineCacheObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkPipelineCache, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineCacheObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
+}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineCacheObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineCacheObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineCacheObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> PipelineCache for PipelineCacheObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheMut for PipelineCacheObject<Device> {}
+
+#[transparent_marked]
+pub struct PipelineCacheObjectRef<'r>(
+    VkPipelineCache,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkPipelineCache>>,
+);
+impl<'r> PipelineCacheObjectRef<'r> {
+    #[inline(always)]
+    pub fn new(res: &'r (impl VkHandle<Handle = VkPipelineCache> + ?Sized)) -> Self {
+        Self(res.native_ptr(), core::marker::PhantomData)
+    }
+}
+
+pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle {
     /// Get the size of the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
@@ -167,7 +203,7 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
         let mut n = 0;
         unsafe {
             crate::vkresolve::get_pipeline_cache_data(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr(),
                 &mut n,
                 core::ptr::null_mut(),
@@ -190,7 +226,7 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
         let mut dl = store.len();
         unsafe {
             crate::vkresolve::get_pipeline_cache_data(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr(),
                 &mut dl,
                 store.as_mut_ptr() as _,
@@ -219,7 +255,11 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
 
         Ok(b)
     }
+}
+DerefContainerBracketImpl!(for PipelineCache {});
+GuardsImpl!(for PipelineCache {});
 
+pub trait PipelineCacheMut: PipelineCache + VkHandleMut {
     /// Combine the data stores of pipeline caches into `self`
     /// # Failures
     /// On failure, this command returns
@@ -227,25 +267,38 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn merge(&mut self, src: &[impl PipelineCache]) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
-        let srcs = src.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
+    fn merge(&mut self, srcs: &[PipelineCacheObjectRef]) -> crate::Result<()> {
         unsafe {
             crate::vkresolve::merge_pipeline_caches(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr_mut(),
                 srcs.len() as _,
-                srcs.as_ptr_empty_null(),
+                srcs.as_ptr_empty_null() as _,
             )
             .into_result()
             .map(drop)
         }
     }
 }
-DerefContainerBracketImpl!(for PipelineCache {});
-GuardsImpl!(for PipelineCache {});
+DerefContainerBracketImpl!(for mut PipelineCacheMut {});
+GuardsImpl!(for mut PipelineCacheMut {});
+
+/// Opaque handle to a pipeline layout object
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkPipelineLayout::OBJECT_TYPE)]
+pub struct PipelineLayoutObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkPipelineLayout, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineLayoutObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
+}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineLayoutObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineLayoutObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
 
 /// Builder struct for PipelineLayout object
 pub struct PipelineLayoutBuilder<'l, D: crate::Device> {
@@ -335,6 +388,23 @@ pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
 DerefContainerBracketImpl!(for PipelineLayout {});
 GuardsImpl!(for PipelineLayout {});
 
+/// Opaque handle to a pipeline object
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkPipeline::OBJECT_TYPE)]
+pub struct PipelineObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkPipeline, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
+}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> Pipeline for PipelineObject<Device> {}
+
 pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
 DerefContainerBracketImpl!(for Pipeline {});
 GuardsImpl!(for Pipeline {});
@@ -359,7 +429,7 @@ impl<T> SwitchOrDynamicState<T> {
         }
     }
 }
-use derives::{bitflags_newtype, implements};
+use derives::{bitflags_newtype, implements, transparent_marked};
 use libc::c_void;
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
@@ -870,7 +940,7 @@ impl RasterizationState {
     }
     #[allow(unused_assignments)]
     fn make_chained(&mut self) -> &VkPipelineRasterizationStateCreateInfo {
-        #[allow(unused_mut)]
+        #[allow(unused_variables, unused_mut)]
         let mut base: &mut GenericVulkanStructure = self.base.as_generic_mut();
 
         #[cfg(feature = "VK_EXT_conservative_rasterization")]
@@ -913,7 +983,7 @@ impl RasterizationState {
         self.base.frontFace = face;
         self
     }
-    /// Specify `None` to disable to bias fragment depth values.  
+    /// Specify `None` to disable to bias fragment depth values.
     /// Tuple Member: (`ConstantFactor`, `Clamp`, `SlopeFactor`)
     ///
     /// - `ConstantFactor`: A scalar factor controlling the constant depth value added to each fragment
@@ -1695,13 +1765,13 @@ impl<
         self.subpass = subpass;
         self
     }
-    /// The created pipeline will be optimized.  
+    /// The created pipeline will be optimized.
     /// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
     pub fn enable_optimization(&mut self) -> &mut Self {
         self.flags &= !VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
         self
     }
-    /// The created pipeline will not be optimized.  
+    /// The created pipeline will not be optimized.
     /// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
     pub fn disable_optimization(&mut self) -> &mut Self {
         self.flags |= VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;

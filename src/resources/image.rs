@@ -4,14 +4,14 @@ use std::{
 };
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, GenericVulkanStructure, ImageMemoryBarrier, MemoryBound,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, ImageMemoryBarrier,
+    MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
 use derives::{bitflags_newtype, implements};
 
-pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
+pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     /// The pixel format of an image
     fn format(&self) -> VkFormat;
 
@@ -49,13 +49,13 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_image_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_image_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| ImageViewObject(h.assume_init(), self))
         }
     }
 
-    /// Retrieve information about an image subresource  
+    /// Retrieve information about an image subresource
     /// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
     #[implements]
     #[deprecated = "use ImageSubresource"]
@@ -73,7 +73,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         let mut s = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::get_image_subresource_layout(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr(),
                 &subres,
                 s.as_mut_ptr(),
@@ -84,12 +84,12 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
     }
 
     /// Query the memory requirements for a sparse image
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
         let mut n = 0;
         unsafe {
             crate::vkresolve::get_image_sparse_memory_requirements(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr(),
                 &mut n,
                 std::ptr::null_mut(),
@@ -99,7 +99,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         unsafe {
             v.set_len(n as _);
             crate::vkresolve::get_image_sparse_memory_requirements(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr(),
                 &mut n,
                 v.as_mut_ptr(),
@@ -110,7 +110,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
     }
 
     /// Returns an image's DRM format modifier
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_image_drm_format_modifier"))]
+    #[implements("VK_EXT_image_drm_format_modifier")]
     fn drm_format_modifier_properties(&self) -> crate::Result<VkImageDrmFormatModifierPropertiesEXT> {
         use crate::Device;
 
@@ -121,7 +121,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChild {
         };
         unsafe {
             self.device().get_image_drm_format_modifier_properties_ext_fn().0(
-                self.device().native_ptr(),
+                self.device_handle(),
                 self.native_ptr(),
                 &mut properties,
             )
@@ -220,9 +220,13 @@ GuardsImpl!(for ImageChild {
     fn image(&self) -> &Self::ConcreteImage { T::image(&self) }
 });
 
-pub trait ImageView: VkHandle<Handle = VkImageView> + DeviceChild {}
+pub trait ImageView: VkHandle<Handle = VkImageView> {}
 DerefContainerBracketImpl!(for ImageView {});
 GuardsImpl!(for ImageView {});
+
+pub trait ConcreteDeviceImageView: ImageView + DeviceChild {}
+DerefContainerBracketImpl!(for ConcreteDeviceImageView {});
+GuardsImpl!(for ConcreteDeviceImageView {});
 
 /// Image Dimension by corresponding extent type
 pub trait ImageSize {
@@ -257,20 +261,35 @@ impl ImageSize for VkExtent3D {
 }
 
 /// Opaque handle to a image object(constructed via `ImageDesc`)
-#[derive(VkHandle, VkObject, DeviceChild)]
+#[derive(VkHandle, VkObject)]
 #[VkObject(type = VkImage::OBJECT_TYPE)]
-pub struct ImageObject<Device: crate::Device>(VkImage, #[parent] Device, VkImageType, VkFormat, VkExtent3D);
-unsafe impl<Device: crate::Device + Sync> Sync for ImageObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for ImageObject<Device> {}
+pub struct ImageObject<Device: VkHandle<Handle = VkDevice>>(VkImage, Device, VkImageType, VkFormat, VkExtent3D);
 #[implements]
-impl<Device: crate::Device> Drop for ImageObject<Device> {
+impl<Device: VkHandle<Handle = VkDevice>> Drop for ImageObject<Device> {
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe {
             self.0.destroy(self.1.native_ptr(), core::ptr::null());
         }
     }
 }
-impl<Device: crate::Device> Image for ImageObject<Device> {
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ImageObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ImageObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for ImageObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for ImageObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> Image for ImageObject<Device> {
     fn format(&self) -> VkFormat {
         self.3
     }
@@ -288,10 +307,7 @@ impl<Device: crate::Device> Image for ImageObject<Device> {
         }
     }
 }
-impl<Device: crate::Device> MemoryBound for ImageObject<Device>
-where
-    Self: VkHandle<Handle = VkImage>,
-{
+impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     type MemoryRequirementsInfo2<'b> = ImageMemoryRequirementsInfo2<'b, Self> where Device: 'b;
 
@@ -299,18 +315,13 @@ where
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_image_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                p.as_mut_ptr(),
-            );
+            crate::vkresolve::get_image_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
 
             p.assume_init()
         }
     }
 
-    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-    #[implements]
+    #[implements("VK_KHR_get_memory_requirements2")]
     fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b> {
         ImageMemoryRequirementsInfo2::new(self)
     }
@@ -321,14 +332,9 @@ where
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkresolve::bind_image_memory(
-                self.device().native_ptr(),
-                self.native_ptr_mut(),
-                memory.native_ptr(),
-                offset as _,
-            )
-            .into_result()
-            .map(drop)
+            crate::vkresolve::bind_image_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
+                .into_result()
+                .map(drop)
         }
     }
 }
@@ -421,7 +427,7 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
-    /// The number of sub-data element samples in the image  
+    /// The number of sub-data element samples in the image
     /// bitmask of 1(default), 2, 4, 8, 16, 32, 64
     #[inline(always)]
     pub const fn sample_counts(mut self, count_bits: u32) -> Self {
@@ -429,7 +435,7 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
-    /// Sets the tiling arrangement of the data elements in memory as "linear tiling"  
+    /// Sets the tiling arrangement of the data elements in memory as "linear tiling"
     /// default: optimal tiling
     #[inline(always)]
     pub const fn use_linear_tiling(mut self) -> Self {
@@ -437,7 +443,7 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
-    /// A bitmask of `ImageFlags`describing additional parameters of the image  
+    /// A bitmask of `ImageFlags`describing additional parameters of the image
     /// default: none
     #[inline(always)]
     pub const fn flags(mut self, opt: ImageFlags) -> Self {
@@ -445,7 +451,7 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
-    /// The number of layers in the image  
+    /// The number of layers in the image
     /// default: 1
     #[inline(always)]
     pub const fn array_layers(mut self, layers: u32) -> Self {
@@ -453,7 +459,7 @@ impl<'d> ImageDesc<'d> {
         self
     }
 
-    /// The number of levels of detail available for minified sampling of the image  
+    /// The number of levels of detail available for minified sampling of the image
     /// default: 1
     #[inline(always)]
     pub const fn mip_levels(mut self, levels: u32) -> Self {
@@ -567,7 +573,7 @@ impl<S: Image> ImageSubresource<S> {
         let mut s = core::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkresolve::get_image_subresource_layout(
-                self.0.device().native_ptr(),
+                self.0.device_handle(),
                 self.0.native_ptr(),
                 &self.1,
                 s.as_mut_ptr(),
@@ -647,7 +653,7 @@ impl<'b, Image: self::Image + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
     #[implements]
     pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
     where
-        <Image as crate::DeviceChild>::ConcreteDevice: crate::Device,
+        Image: crate::DeviceChild,
     {
         use crate::Device;
 
@@ -974,25 +980,33 @@ impl From<AspectMask> for VkImageAspectFlags {
 /// Opaque handle to a image view object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkImageView::OBJECT_TYPE)]
-pub struct ImageViewObject<Image: self::Image>(VkImageView, Image);
-unsafe impl<Image: self::Image + Sync> Sync for ImageViewObject<Image> {}
-unsafe impl<Image: self::Image + Send> Send for ImageViewObject<Image> {}
-impl<Image: self::Image> DeviceChild for ImageViewObject<Image> {
+pub struct ImageViewObject<Image: DeviceChildHandle>(VkImageView, Image);
+#[implements]
+impl<Image: DeviceChildHandle> Drop for ImageViewObject<Image> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.device_handle(), core::ptr::null());
+        }
+    }
+}
+unsafe impl<Image: DeviceChildHandle + Sync> Sync for ImageViewObject<Image> {}
+unsafe impl<Image: DeviceChildHandle + Send> Send for ImageViewObject<Image> {}
+impl<Image: DeviceChildHandle> DeviceChildHandle for ImageViewObject<Image> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.device_handle()
+    }
+}
+impl<Image: DeviceChild> DeviceChild for ImageViewObject<Image> {
     type ConcreteDevice = Image::ConcreteDevice;
 
+    #[inline(always)]
     fn device(&self) -> &Self::ConcreteDevice {
         self.1.device()
     }
 }
-#[implements]
-impl<Image: self::Image> Drop for ImageViewObject<Image> {
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.device().native_ptr(), core::ptr::null());
-        }
-    }
-}
-impl<Image: self::Image> ImageView for ImageViewObject<Image> {}
+impl<Image: DeviceChildHandle> ImageView for ImageViewObject<Image> {}
 impl<Image: self::Image> Deref for ImageViewObject<Image> {
     type Target = Image;
 
@@ -1052,7 +1066,7 @@ impl<I: Image> ImageViewBuilder<I> {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_image_view(self.1.device().native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_image_view(self.1.device_handle(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| ImageViewObject(h.assume_init(), self.1))
         }

@@ -1,6 +1,6 @@
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildHandle, MemoryBound, VkDeviceChildNonExtDestroyable,
+    VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -9,7 +9,7 @@ use derives::implements;
 use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
 
-pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
+pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {
     /// Create a buffer view
     #[implements]
     fn create_view(self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferViewObject<Self>>
@@ -27,7 +27,7 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_buffer_view(self.device().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_buffer_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| BufferViewObject(h.assume_init(), self))
         }
@@ -36,18 +36,26 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChild {
 DerefContainerBracketImpl!(for Buffer {});
 GuardsImpl!(for Buffer {});
 
-pub trait BufferView: VkHandle<Handle = VkBufferView> + DeviceChild {}
+pub trait BufferView: VkHandle<Handle = VkBufferView> {}
 DerefContainerBracketImpl!(for BufferView {});
 GuardsImpl!(for BufferView {});
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a buffer object(constructed via [`BufferDesc`])
-    BufferObject(VkBuffer): Buffer
+/// Opaque handle to a buffer object(constructed via [`BufferDesc`])
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkBuffer::OBJECT_TYPE)]
+pub struct BufferObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkBuffer, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for BufferObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
-impl<Device: crate::Device> MemoryBound for BufferObject<Device>
-where
-    Self: VkHandle<Handle = VkBuffer>,
-{
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for BufferObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for BufferObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     type MemoryRequirementsInfo2<'b> = BufferMemoryRequirementsInfo2<'b, Self> where Device: 'b;
 
@@ -55,11 +63,7 @@ where
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_buffer_memory_requirements(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                p.as_mut_ptr(),
-            );
+            crate::vkresolve::get_buffer_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -76,14 +80,9 @@ where
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkresolve::bind_buffer_memory(
-                self.device().native_ptr(),
-                self.native_ptr_mut(),
-                memory.native_ptr(),
-                offset as _,
-            )
-            .into_result()
-            .map(drop)
+            crate::vkresolve::bind_buffer_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
+                .into_result()
+                .map(drop)
         }
     }
 }
@@ -91,28 +90,36 @@ where
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkBufferView::OBJECT_TYPE)]
 /// Opaque handle to a buffer view object
-pub struct BufferViewObject<Buffer: crate::Buffer>(VkBufferView, Buffer);
-unsafe impl<Buffer: crate::Buffer + Sync> Sync for BufferViewObject<Buffer> {}
-unsafe impl<Buffer: crate::Buffer + Send> Send for BufferViewObject<Buffer> {}
-impl<Buffer: crate::Buffer> DeviceChild for BufferViewObject<Buffer> {
+pub struct BufferViewObject<Buffer: DeviceChildHandle>(VkBufferView, Buffer);
+#[implements]
+impl<Buffer: DeviceChildHandle> Drop for BufferViewObject<Buffer> {
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.device_handle(), core::ptr::null());
+        }
+    }
+}
+unsafe impl<Buffer: DeviceChildHandle + Sync> Sync for BufferViewObject<Buffer> {}
+unsafe impl<Buffer: DeviceChildHandle + Send> Send for BufferViewObject<Buffer> {}
+impl<Buffer: DeviceChildHandle> DeviceChildHandle for BufferViewObject<Buffer> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.device_handle()
+    }
+}
+impl<Buffer: DeviceChild> DeviceChild for BufferViewObject<Buffer> {
     type ConcreteDevice = Buffer::ConcreteDevice;
 
+    #[inline(always)]
     fn device(&self) -> &Self::ConcreteDevice {
         self.1.device()
     }
 }
-#[implements]
-impl<Buffer: crate::Buffer> Drop for BufferViewObject<Buffer> {
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.device().native_ptr(), core::ptr::null());
-        }
-    }
-}
-impl<Buffer: crate::Buffer> BufferView for BufferViewObject<Buffer> {}
-impl<Buffer: crate::Buffer> Deref for BufferViewObject<Buffer> {
+impl<Buffer: DeviceChildHandle> BufferView for BufferViewObject<Buffer> {}
+impl<Buffer: DeviceChildHandle> Deref for BufferViewObject<Buffer> {
     type Target = Buffer;
 
+    #[inline(always)]
     fn deref(&self) -> &Buffer {
         &self.1
     }
@@ -199,6 +206,7 @@ impl<'s> BufferDesc<'s> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
+    #[inline(always)]
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<BufferObject<Device>> {
         device.new_buffer(self)
     }
@@ -213,9 +221,12 @@ impl crate::VulkanStructureProvider for BufferDesc<'_> {
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-pub struct BufferMemoryRequirementsInfo2<'b, Buffer: self::Buffer + 'b>(VkBufferMemoryRequirementsInfo2KHR, &'b Buffer);
+pub struct BufferMemoryRequirementsInfo2<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b>(
+    VkBufferMemoryRequirementsInfo2KHR,
+    &'b Buffer,
+);
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-impl<'b, Buffer: self::Buffer + 'b> BufferMemoryRequirementsInfo2<'b, Buffer> {
+impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2<'b, Buffer> {
     pub fn new(buffer: &'b Buffer) -> Self {
         Self(
             VkBufferMemoryRequirementsInfo2KHR {
@@ -230,7 +241,7 @@ impl<'b, Buffer: self::Buffer + 'b> BufferMemoryRequirementsInfo2<'b, Buffer> {
     #[implements]
     pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
     where
-        <Buffer as crate::DeviceChild>::ConcreteDevice: crate::Device,
+        Buffer: crate::DeviceChild,
     {
         use crate::Device;
 

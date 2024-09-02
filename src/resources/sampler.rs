@@ -1,15 +1,43 @@
 use derives::implements;
 
-use crate::{vk::*, CompareOp, DeviceChild, VkHandle, VkObject, VulkanStructure};
+use crate::{
+    vk::*, CompareOp, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
+    VulkanStructure,
+};
 
-pub trait Sampler: VkHandle<Handle = VkSampler> + DeviceChild {}
+pub trait Sampler: VkHandle<Handle = VkSampler> {}
 DerefContainerBracketImpl!(for Sampler {});
 GuardsImpl!(for Sampler {});
 
-DefineStdDeviceChildObject! {
-    /// Opaque handle to a sampler object
-    SamplerObject(VkSampler): Sampler
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkSampler::OBJECT_TYPE)]
+pub struct SamplerObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkSampler, pub(crate) Device);
+#[implements]
+impl<Device: VkHandle<Handle = VkDevice>> Drop for SamplerObject<Device> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+        }
+    }
 }
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for SamplerObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for SamplerObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for SamplerObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for SamplerObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> Sampler for SamplerObject<Device> {}
 
 /// Builder object for constructing the sampler object
 #[repr(transparent)]
@@ -49,7 +77,7 @@ impl SamplerBuilder {
         })
     }
 
-    /// The magnification and the minification filters to apply to lookups.  
+    /// The magnification and the minification filters to apply to lookups.
     /// Default: Magnification=`FilterMode::Linear`, Minification=`FilterMode::Linear`
     pub const fn filter(mut self, mag: FilterMode, min: FilterMode) -> Self {
         self.0.magFilter = mag as _;
@@ -58,7 +86,7 @@ impl SamplerBuilder {
         self
     }
 
-    /// The mipmap filter to apply to lookups.  
+    /// The mipmap filter to apply to lookups.
     /// Default: `MipmapFilterMode::Linear`
     pub const fn mip_filter(mut self, f: MipmapFilterMode) -> Self {
         self.0.mipmapMode = f as _;
@@ -66,7 +94,7 @@ impl SamplerBuilder {
         self
     }
 
-    /// The addressing mode for outside [0..1] range for U, V and W coordinates.  
+    /// The addressing mode for outside [0..1] range for U, V and W coordinates.
     /// Default: U=`AddressingMode::Repeat`, V=`AddressinMode::Repeat`, W=`AddressingMode::Repeat`
     pub const fn addressing(mut self, u: AddressingMode, v: AddressingMode, w: AddressingMode) -> Self {
         self.0.addressModeU = u as _;
@@ -77,7 +105,7 @@ impl SamplerBuilder {
     }
 
     /// The bias to be added to mipmap LOD calculation and bias provided by image sampling functions in SPIR-V,
-    /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  
+    /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.
     /// Default: 0.0
     pub const fn lod_bias(mut self, bias: f32) -> Self {
         self.0.mipLodBias = bias;
@@ -85,7 +113,7 @@ impl SamplerBuilder {
         self
     }
 
-    /// The anisotropy value clamp. Specifying `None` switches off the anisotropic filtering  
+    /// The anisotropy value clamp. Specifying `None` switches off the anisotropic filtering
     /// Default: `None`
     pub const fn max_anisotropy(mut self, level: Option<f32>) -> Self {
         self.0.anisotropyEnable = level.is_some() as _;
@@ -98,7 +126,7 @@ impl SamplerBuilder {
 
     /// The comparison function to apply to fetched data before filtering
     /// as described in the `Depth Compare Operation` section in Vulkan Specification.
-    /// Specifying `None` switches off the comparison against a reference value during lookups.  
+    /// Specifying `None` switches off the comparison against a reference value during lookups.
     /// Default: `None`
     pub const fn comparison(mut self, op: Option<CompareOp>) -> Self {
         self.0.compareEnable = op.is_some() as _;
@@ -110,7 +138,7 @@ impl SamplerBuilder {
     }
 
     /// The values used to clamp the computed level-of-detail value,
-    /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.  
+    /// as described in the `Level-of-Detail Operation` section in Vulkan Specification.
     /// Default: min_lod=0.0, max_lod=0.0
     /// # Panics
     /// `max_lod` must be greater than or equal to `min_lod`
@@ -122,7 +150,7 @@ impl SamplerBuilder {
         self
     }
 
-    /// Whether to use unnormalized or normalized texel coordinates to address texels of the image.  
+    /// Whether to use unnormalized or normalized texel coordinates to address texels of the image.
     /// Default: `false`
     /// # Safety
     /// User must meet the constraints as described in the "Valid Usage" section in the `VkSamplerCreateInfo` manual page
@@ -143,7 +171,7 @@ impl SamplerBuilder {
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<SamplerObject<Device>> {
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_sampler(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkresolve::create_sampler(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| SamplerObject(h.assume_init(), device))
         }

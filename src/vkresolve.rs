@@ -1265,7 +1265,7 @@ WrapAPI2!(
     ) -> VkResult;
 );
 
-#[cfg(feature = "Allow1_3APIs")]
+#[cfg(feature = "Allow1_2APIs")]
 WrapAPI2!(
     #[org = PFN_vkCreateRenderPass2]
     pub fn create_render_pass_2(
@@ -1291,7 +1291,10 @@ WrapAPI2!(
 
     #[org = PFN_vkCmdEndRenderPass2]
     pub fn cmd_end_render_pass_2(command_buffer: VkCommandBuffer, end_subpass_info: *const VkSubpassEndInfo);
+);
 
+#[cfg(feature = "Allow1_3APIs")]
+WrapAPI2!(
     #[org = PFN_vkCmdPipelineBarrier2]
     pub fn cmd_pipeline_barrier_2(command_buffer: VkCommandBuffer, dependency_info: *const VkDependencyInfoKHR);
 
