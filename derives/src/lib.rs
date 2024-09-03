@@ -891,6 +891,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             #[repr(transparent)]
             #[derive(Clone, Copy, Debug, PartialEq, Eq)]
             #base_vis struct #pfn_name(pub #pfn_ty);
+            #[cfg(feature = #promote_feature_name)]
             unsafe impl crate::vkresolve::PFN for #pfn_name {
                 const NAME_CSTR: &'static core::ffi::CStr = #promoted_fn_cstr;
 
