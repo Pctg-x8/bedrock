@@ -1,6 +1,5 @@
 //! Vulkan Function Resolver
 
-#![cfg(feature = "Implements")]
 #![allow(non_snake_case)]
 
 use crate::vk::*;
@@ -15,6 +14,7 @@ use xcb::ffi::xcb_connection_t;
 
 use libc::*;
 
+#[cfg(feature = "Implements")]
 cfg_if! {
     if #[cfg(feature = "CustomResolver")] {
         static GLOBAL_RESOLVER: std::sync::OnceLock<Box<dyn ResolverInterface>> = std::sync::OnceLock::new();
@@ -74,11 +74,13 @@ cfg_if! {
     }
 }
 
+#[cfg(feature = "Implements")]
 pub trait ResolverInterface {
     unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T;
     unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F;
 }
 
+#[cfg(feature = "Implements")]
 cfg_if! {
     if #[cfg(feature = "DynamicLoaded")] {
         pub struct DefaultGlobalResolver;
@@ -107,7 +109,9 @@ pub trait StaticCallable: PFN {
     const STATIC: Self;
 }
 
+#[cfg(feature = "Implements")]
 pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
+#[cfg(feature = "Implements")]
 impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
     pub const fn new(resolver: R) -> Self {
         Self(resolver, std::sync::OnceLock::new())
@@ -196,6 +200,7 @@ macro_rules! WrapAPI2 {
 }
 
 // Vulkan 1.0 Baseline APIs
+#[cfg(feature = "Implements")]
 WrapAPI2!(
     #[org = PFN_vkCreateInstance]
     pub fn create_instance(
@@ -723,6 +728,7 @@ WrapAPI2!(
 );
 
 // Vulkan 1.0 Commands
+#[cfg(feature = "Implements")]
 WrapAPI2!(
     #[org = PFN_vkCmdBindPipeline]
     pub fn cmd_bind_pipeline(
@@ -1036,12 +1042,14 @@ WrapAPI2!(
 );
 
 // Vulkan 1.1 Baseline APIs
+#[cfg(feature = "Implements")]
 WrapAPI2!(
     #[org = PFN_vkEnumerateInstanceVersion]
     pub fn enumerate_instance_version(api_version: *mut u32) -> VkResult;
 );
 
 // statically provided extension functions: VK_KHR_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 WrapAPI2!(
     #[org = PFN_vkDestroySurfaceKHR]
@@ -1077,6 +1085,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_swapchain
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 WrapAPI2!(
     #[org = PFN_vkCreateSwapchainKHR]
@@ -1111,6 +1120,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_xlib_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 WrapAPI2!(
     #[org = PFN_vkCreateXlibSurfaceKHR]
@@ -1130,6 +1140,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_xcb_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 WrapAPI2!(
     #[org = PFN_vkCreateXcbSurfaceKHR]
@@ -1149,6 +1160,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_wayland_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 WrapAPI2!(
     #[org = PFN_vkCreateWaylandSurfaceKHR]
@@ -1167,6 +1179,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_android_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_android_surface")]
 WrapAPI2!(
     #[org = PFN_vkCreateAndroidSurfaceKHR]
@@ -1179,6 +1192,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_win32_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 WrapAPI2!(
     #[org = PFN_vkCreateWin32SurfaceKHR]
@@ -1196,6 +1210,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_MVK_macos_surface
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_MVK_macos_surface")]
 WrapAPI2!(
     #[org = PFN_vkCreateMacOSSurfaceMVK]
@@ -1208,6 +1223,7 @@ WrapAPI2!(
 );
 
 // statically provided extension functions: VK_KHR_display
+#[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 WrapAPI2!(
     #[org = PFN_vkGetPhysicalDeviceDisplayPropertiesKHR]
@@ -1265,6 +1281,7 @@ WrapAPI2!(
     ) -> VkResult;
 );
 
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 WrapAPI2!(
     #[org = PFN_vkCreateRenderPass2]
@@ -1293,6 +1310,7 @@ WrapAPI2!(
     pub fn cmd_end_render_pass_2(command_buffer: VkCommandBuffer, end_subpass_info: *const VkSubpassEndInfo);
 );
 
+#[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 WrapAPI2!(
     #[org = PFN_vkCmdPipelineBarrier2]
@@ -1308,6 +1326,7 @@ WrapAPI2!(
 );
 
 // TODO: translate follows
+#[cfg(feature = "Implements")]
 pub trait OldResolverInterface {
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
     unsafe fn get_physical_device_surface_capabilities2_khr(

@@ -32,11 +32,12 @@ use derives::*;
 pub mod vk;
 use vk::*;
 pub mod error;
-pub(crate) mod vkresolve;
-pub use vkresolve::PFN;
-#[implements]
-pub use vkresolve::{ResolverInterface, StaticCallable};
+mod vkresolve;
+#[cfg(feature = "Implements")]
+pub use vkresolve::ResolverInterface;
+pub use vkresolve::{StaticCallable, PFN};
 
+#[cfg(feature = "Implements")]
 mod fnconv;
 
 macro_rules! DerefContainerBracketImpl {
@@ -471,13 +472,6 @@ pub use self::fmt::*;
 
 pub unsafe trait Transparent {
     type Target: Sized;
-}
-
-/// All of traits
-pub mod traits {
-    pub use super::{AnalogNumRange, ClearColorValue, DeviceChild, ImageSize, PixelFormat, VkHandle};
-    #[derives::implements]
-    pub use super::{MemoryBound, Status};
 }
 
 /// Opaque handle to a query pool object
