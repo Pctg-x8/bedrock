@@ -53,7 +53,10 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[implements("VK_KHR_external_fence_fd")]
     #[cfg(unix)]
-    fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd> {
+    fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd>
+    where
+        Self: DeviceChild,
+    {
         let info = VkFenceGetFdInfoKHR {
             sType: VkFenceGetFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -77,7 +80,10 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[implements("VK_KHR_external_fence_fd")]
     #[cfg(unix)]
-    fn import(&self, handle: crate::ExternalFenceFd, temporary: bool) -> crate::Result<()> {
+    fn import(&self, handle: crate::ExternalFenceFd, temporary: bool) -> crate::Result<()>
+    where
+        Self: DeviceChild,
+    {
         let info = VkImportFenceFdInfoKHR {
             sType: VkImportFenceFdInfoKHR::TYPE,
             pNext: std::ptr::null(),

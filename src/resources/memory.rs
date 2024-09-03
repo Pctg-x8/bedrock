@@ -88,7 +88,10 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     fn get_win32_handle(
         &self,
         handle_type: crate::ExternalMemoryHandleTypeWin32,
-    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE>
+    where
+        Self: DeviceChild,
+    {
         use crate::Device;
 
         let info = VkMemoryGetWin32HandleInfoKHR {
@@ -113,7 +116,10 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     #[implements("VK_KHR_external_memory_fd")]
-    fn get_fd(&self, handle_type: crate::ExternalMemoryHandleTypeFd) -> crate::Result<std::os::unix::io::RawFd> {
+    fn get_fd(&self, handle_type: crate::ExternalMemoryHandleTypeFd) -> crate::Result<std::os::unix::io::RawFd>
+    where
+        Self: DeviceChild,
+    {
         use crate::Device;
 
         let info = VkMemoryGetFdInfoKHR {
