@@ -17,8 +17,8 @@ pub struct VkShaderResourceUsageAMD {
     pub numUsageVgprs: u32,
     pub numUsedSgprs: u32,
     pub ldsSizePerLocalWorkGroup: u32,
-    pub ldsUsageSizeInBytes: size_t,
-    pub scratchMemUsageInBytes: size_t,
+    pub ldsUsageSizeInBytes: usize,
+    pub scratchMemUsageInBytes: usize,
 }
 
 #[repr(C)]
@@ -43,7 +43,7 @@ pub struct PFN_vkGetShaderInfoKHR(
         pipeline: VkPipeline,
         shaderStage: VkShaderStageFlags,
         infoType: VkShaderInfoTypeAMD,
-        pInfoSize: *mut size_t,
+        pInfoSize: *mut usize,
         pInfo: *mut c_void,
     ) -> VkResult,
 );
@@ -56,7 +56,7 @@ extern "system" {
         pipeline: VkPipeline,
         shaderStage: VkShaderStageFlags,
         infoType: VkShaderInfoTypeAMD,
-        pInfoSize: *mut size_t,
+        pInfoSize: *mut usize,
         pInfo: *mut c_void,
     ) -> VkResult;
 }

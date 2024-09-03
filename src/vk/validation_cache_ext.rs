@@ -87,7 +87,7 @@ pub struct PFN_vkGetValidationCacheDataEXT(
     pub  unsafe extern "system" fn(
         device: VkDevice,
         validationCache: VkValidationCacheEXT,
-        pDataSize: *mut size_t,
+        pDataSize: *mut usize,
         pData: *mut c_void,
     ) -> VkResult,
 );
@@ -115,7 +115,7 @@ extern "system" {
     pub fn vkGetValidationCacheDataEXT(
         device: VkDevice,
         validationCache: VkValidationCacheEXT,
-        pDataSize: *mut size_t,
+        pDataSize: *mut usize,
         pData: *mut c_void,
     ) -> VkResult;
 }
