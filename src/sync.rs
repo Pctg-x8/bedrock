@@ -150,6 +150,8 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
         &self,
         handle_type: crate::ExternalSemaphoreHandleTypeWin32,
     ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        use crate::Device;
+
         let info = VkSemaphoreGetWin32HandleInfoKHR {
             sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
             pNext: core::ptr::null(),
@@ -173,6 +175,8 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
     #[implements("VK_KHR_external_semaphore_win32")]
     fn import(&self, handle: crate::ExternalSemaphoreHandleWin32, name: &widestring::WideCString) -> crate::Result<()> {
+        use crate::Device;
+
         let info = VkImportSemaphoreWin32HandleInfoKHR {
             sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
             pNext: core::ptr::null(),
