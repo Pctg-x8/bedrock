@@ -111,7 +111,10 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
 
     /// Returns an image's DRM format modifier
     #[implements("VK_EXT_image_drm_format_modifier")]
-    fn drm_format_modifier_properties(&self) -> crate::Result<VkImageDrmFormatModifierPropertiesEXT> {
+    fn drm_format_modifier_properties(&self) -> crate::Result<VkImageDrmFormatModifierPropertiesEXT>
+    where
+        Self: DeviceChild,
+    {
         use crate::Device;
 
         let mut properties = VkImageDrmFormatModifierPropertiesEXT {

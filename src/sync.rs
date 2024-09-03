@@ -57,6 +57,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     where
         Self: DeviceChild,
     {
+        use crate::Device;
+
         let info = VkFenceGetFdInfoKHR {
             sType: VkFenceGetFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -84,6 +86,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     where
         Self: DeviceChild,
     {
+        use crate::Device;
+
         let info = VkImportFenceFdInfoKHR {
             sType: VkImportFenceFdInfoKHR::TYPE,
             pNext: std::ptr::null(),
