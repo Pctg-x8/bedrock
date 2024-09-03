@@ -31,7 +31,7 @@ pub struct VkValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkValidationCacheCreateFlagsEXT,
-    pub initialDataSize: size_t,
+    pub initialDataSize: usize,
     pub pInitialData: *const c_void,
 }
 
