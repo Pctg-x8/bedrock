@@ -2,6 +2,7 @@
 
 use super::*;
 use crate::{StaticCallable, PFN};
+use derives::implements;
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
 pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
@@ -21,7 +22,7 @@ pub struct VkWin32SurfaceCreateInfoKHR {
     pub hwnd: windows::Win32::Foundation::HWND,
 }
 
-#[cfg(feature = "Implements")]
+#[implements]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateWin32SurfaceKHR)]
@@ -33,7 +34,7 @@ pub struct PFN_vkCreateWin32SurfaceKHR(
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
+#[implements]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceWin32PresentationSupportKHR)]
@@ -41,7 +42,7 @@ pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(
     pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32,
 );
 
-#[cfg(feature = "Implements")]
+#[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkCreateWin32SurfaceKHR(

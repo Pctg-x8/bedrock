@@ -100,7 +100,7 @@ extern "system" {
     pub fn vkReleaseFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 }
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_win32_surface")] {
         pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_WIN32_INFO_EXT: VkStructureType = ext_enum_value(256, 1) as _;
 
@@ -115,7 +115,7 @@ cfg_if! {
     }
 }
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_device_group")] {
         #[cfg(feature = "Implements")]
         #[repr(transparent)]

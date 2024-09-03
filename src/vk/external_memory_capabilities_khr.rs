@@ -1,10 +1,9 @@
 pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION: usize = 1;
 pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_external_memory_capabilities";
 
-use derives::promote_1_1;
+use derives::{promote_1_1, vk_ext_command};
 
 use super::*;
-use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR: VkStructureType =
@@ -158,26 +157,8 @@ impl VkPhysicalDeviceIDPropertiesKHR {
     }
 }
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceExternalBufferPropertiesKHR)]
-pub struct PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR,
-        pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR,
-    ),
+vk_ext_command!(
+    pub fn vkGetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR);
+    suffix = "KHR";
+    promote = "1.1";
 );
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkGetPhysicalDeviceExternalBufferPropertiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR,
-        pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR,
-    );
-}

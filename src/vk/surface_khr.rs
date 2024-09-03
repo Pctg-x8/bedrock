@@ -87,14 +87,12 @@ pub struct VkSurfaceFormatKHR {
     pub colorSpace: VkColorSpaceKHR,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroySurfaceKHR)]
 pub struct PFN_vkDestroySurfaceKHR(
     pub unsafe extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks),
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceSupportKHR)]
@@ -106,7 +104,6 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(
         pSupported: *mut VkBool32,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceCapabilitiesKHR)]
@@ -117,7 +114,6 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
         pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceFormatsKHR)]
@@ -129,7 +125,6 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(
         pSurfaceFormats: *mut VkSurfaceFormatKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfacePresentModesKHR)]
@@ -142,7 +137,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(
     ) -> VkResult,
 );
 
-#[cfg(feature = "Implements")]
+#[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);

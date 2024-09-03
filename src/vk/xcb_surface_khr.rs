@@ -2,6 +2,7 @@
 
 use super::*;
 use crate::PFN;
+use derives::implements;
 use xcb::ffi::*;
 
 pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
@@ -22,7 +23,7 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub window: xcb::x::Window,
 }
 
-#[cfg(feature = "Implements")]
+#[implements]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateXcbSurfaceKHR)]
@@ -34,7 +35,7 @@ pub struct PFN_vkCreateXcbSurfaceKHR(
         pSurface: *mut VkSurfaceKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
+#[implements]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceXcbPresentationSupportKHR)]
@@ -47,7 +48,7 @@ pub struct PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR(
     ) -> VkBool32,
 );
 
-#[cfg(feature = "Implements")]
+#[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
 extern "system" {
     pub fn vkCreateXcbSurfaceKHR(
