@@ -32,15 +32,11 @@ use derives::*;
 pub mod vk;
 use vk::*;
 pub mod error;
+pub mod vkresolve;
+pub use self::vkresolve::PFN;
+#[implements]
+pub use self::vkresolve::{ResolverInterface, StaticCallable};
 
-cfg_if! {
-    if #[cfg(feature = "Implements")] {
-        pub mod vkresolve;
-        pub use self::vkresolve::{ResolverInterface, PFN, StaticCallable};
-    }
-}
-
-#[cfg(feature = "Implements")]
 mod fnconv;
 
 macro_rules! DerefContainerBracketImpl {

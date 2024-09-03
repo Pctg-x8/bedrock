@@ -48,7 +48,7 @@ pub struct PFN_vkCmdPushDescriptorSetKHR(
     ),
 );
 
-cfg_if! {
+cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
         pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
 
