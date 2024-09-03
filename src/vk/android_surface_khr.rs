@@ -3,7 +3,7 @@
 use super::*;
 use crate::PFN;
 use android::*;
-use libc::*;
+use core::ffi::*;
 
 pub const VK_KHR_ANDROID_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_ANDROID_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_android_surface";

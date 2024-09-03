@@ -585,7 +585,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         flags: VkDebugReportFlagsEXT,
         object_type: crate::DebugReportObjectType,
         object: u64,
-        location: libc::size_t,
+        location: usize,
         message_count: i32,
         layer_prefix: &str,
         message: &str,
@@ -1354,8 +1354,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_wayland_surface")]
     fn new_surface_wayland(
         self,
         display: *mut core::ffi::c_void,
@@ -1368,8 +1367,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             sType: VkWaylandSurfaceCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
-            display: display as _,
-            surface: surface as _,
+            display,
+            surface,
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
@@ -1390,8 +1389,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_android_surface")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_android_surface")]
     fn new_surface_android(
         self,
         window: *mut android::ANativeWindow,
@@ -1424,8 +1422,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_win32_surface")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_win32_surface")]
     fn new_surface_win32(
         self,
         hinstance: windows::Win32::Foundation::HINSTANCE,
@@ -1460,11 +1457,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_MVK_macos_surface")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_MVK_macos_surface")]
     fn new_surface_macos(
         self,
-        view_ptr: *const libc::c_void,
+        view_ptr: *const core::ffi::c_void,
     ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
     where
         Self: Sized + InstanceChildTransferrable,
@@ -1494,8 +1490,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_display")]
     fn display_mode_properties(&self, display: VkDisplayKHR) -> crate::Result<Vec<VkDisplayModePropertiesKHR>> {
         unsafe {
             let mut n = 0;
@@ -1516,8 +1511,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_display")]
     fn new_display_mode(
         &self,
         display: VkDisplayKHR,
@@ -1553,8 +1547,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_display")]
     fn display_plane_capabilities(
         &self,
         mode: VkDisplayModeKHR,
@@ -1574,8 +1567,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_display")]
     fn display_properties(&self) -> crate::Result<Vec<DisplayProperties<&Self>>> {
         unsafe {
             let mut n = 0;
@@ -1603,8 +1595,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_display")]
     fn display_plane_properties(&self) -> crate::Result<Vec<DisplayPlaneProperties<&Self>>> {
         unsafe {
             let mut n = 0;
@@ -1632,8 +1623,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_KHR_display")]
     fn display_plane_supported_displays(&self, plane_index: u32) -> crate::Result<Vec<Display<&Self>>> {
         unsafe {
             let mut n = 0;
@@ -1661,8 +1651,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-    #[cfg(feature = "Implements")]
+    #[implements("VK_EXT_acquire_xlib_display")]
     fn get_randr_output_display(
         self,
         dpy: *mut x11::xlib::Display,
@@ -1685,9 +1674,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_display")]
-    #[cfg(feature = "VK_KHR_surface")]
+    #[implements("VK_KHR_display", "VK_KHR_surface")]
     #[allow(clippy::too_many_arguments)]
     fn new_display_plane(
         self,
