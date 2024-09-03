@@ -8,7 +8,8 @@ use derives::{implements, transparent_marked};
 
 ///
 /// ```
-/// let _fo: Option<Box<dyn bedrock::Fence<ConcreteDevice = Box<dyn bedrock::Device<ConcreteInstance = Box<dyn bedrock::Instance>>>>>> = None;
+/// // Fence is object-safe
+/// let _fo: Option<Box<dyn bedrock::Fence>> = None;
 /// ```
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
@@ -102,7 +103,8 @@ GuardsImpl!(for Fence {});
 
 ///
 /// ```
-/// let _fo: Option<Box<dyn bedrock::FenceMut<ConcreteDevice = Box<dyn bedrock::Device<ConcreteInstance = Box<dyn bedrock::Instance>>>>>> = None;
+/// // FenceMut is object-safe
+/// let _fo: Option<Box<dyn bedrock::FenceMut>> = None;
 /// ```
 pub trait FenceMut: Fence + VkHandleMut {
     /// Resets a fence object
