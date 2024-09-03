@@ -12,7 +12,7 @@ use x11::xlib::{Display, VisualID};
 #[cfg(feature = "VK_KHR_xcb_surface")]
 use xcb::ffi::xcb_connection_t;
 
-use libc::*;
+use core::ffi::*;
 
 #[cfg(feature = "Implements")]
 cfg_if! {
@@ -465,7 +465,7 @@ WrapAPI2!(
         query_pool: VkQueryPool,
         first_query: u32,
         query_count: u32,
-        data_size: size_t,
+        data_size: usize,
         data_out: *mut c_void,
         stride: VkDeviceSize,
         flags: VkQueryResultFlags,
@@ -551,7 +551,7 @@ WrapAPI2!(
     pub fn get_pipeline_cache_data(
         device: VkDevice,
         pipeline_cache: VkPipelineCache,
-        data_size_out: *mut size_t,
+        data_size_out: *mut usize,
         data_out: *mut c_void,
     ) -> VkResult;
     #[org = PFN_vkMergePipelineCaches]
@@ -1174,7 +1174,7 @@ WrapAPI2!(
     pub fn get_physical_device_wayland_presentation_support_khr(
         phyiscal_device: VkPhysicalDevice,
         queue_family_index: u32,
-        display: *mut wayland_client::sys::wl_display,
+        display: *mut c_void,
     ) -> VkBool32;
 );
 

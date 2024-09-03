@@ -426,8 +426,8 @@ impl<T> SwitchOrDynamicState<T> {
         }
     }
 }
+use core::ffi::c_void;
 use derives::{bitflags_newtype, implements, transparent_marked};
-use libc::c_void;
 pub use SwitchOrDynamicState::*;
 /// Untyped data cell
 #[allow(dead_code)]

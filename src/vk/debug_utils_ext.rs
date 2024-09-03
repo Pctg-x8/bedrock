@@ -91,7 +91,7 @@ pub struct VkDebugUtilsObjectTagInfoEXT {
     pub objectType: VkObjectType,
     pub objectHandle: u64,
     pub tagName: u64,
-    pub tagSize: size_t,
+    pub tagSize: usize,
     pub pTag: *const c_void,
 }
 

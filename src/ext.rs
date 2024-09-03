@@ -97,7 +97,7 @@ impl<S: VulkanStructure> StructureChainQuery for S {
 #[derive(Clone, Debug)]
 pub struct GenericVulkanStructure {
     pub sType: crate::vk::VkStructureType,
-    pub pNext: *const libc::c_void,
+    pub pNext: *const core::ffi::c_void,
     pub _rest: [u8; 0],
 }
 impl GenericVulkanStructure {

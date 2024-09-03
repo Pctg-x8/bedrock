@@ -12,14 +12,11 @@
 #![warn(clippy::all)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
-extern crate libc;
 // Platform Extras
 #[cfg(feature = "VK_KHR_android_surface")]
 extern crate android;
 #[cfg(feature = "DynamicLoaded")]
 extern crate libloading;
-#[cfg(feature = "VK_KHR_wayland_surface")]
-extern crate wayland_client;
 #[cfg(any(feature = "VK_KHR_xlib_surface", feature = "VK_EXT_acquire_xlib_display"))]
 extern crate x11;
 #[cfg(feature = "VK_KHR_xcb_surface")]

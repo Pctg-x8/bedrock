@@ -5,8 +5,6 @@ pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
 
 use super::*;
 use crate::PFN;
-#[allow(unused_imports)]
-use libc::*;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

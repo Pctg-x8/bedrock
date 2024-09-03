@@ -14,7 +14,7 @@ VK_KHR_display = []
 VK_KHR_display_swapchain = []
 VK_KHR_xlib_surface = ["x11"]
 VK_KHR_xcb_surface = ["xcb"]
-VK_KHR_wayland_surface = ["wayland-client"]
+VK_KHR_wayland_surface = []
 VK_KHR_android_surface = ["android"]
 VK_KHR_win32_surface = ["windows"]
 VK_KHR_sampler_mirror_clamp_to_edge = []
@@ -196,10 +196,8 @@ DynamicLoaded = ["Implements", "libloading"]
 CustomResolver = []
 
 [dependencies]
-libc = "0.2"
 x11 = { version = "^2.15", optional = true }
 xcb = { version = "^1.1", optional = true }
-wayland-client = { version = "~0.9", optional = true }
 android = { git = "https://github.com/Pctg-x8/android-defs-rs", optional = true }
 libloading = { version = "0.5", optional = true }
 widestring = { version = "0.4", optional = true }

@@ -1256,9 +1256,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     }
 
     /// [feature = "VK_KHR_wayland_surface"] Query physical device for presentation to Wayland
-    #[cfg(feature = "VK_KHR_wayland_surface")]
-    #[cfg(feature = "Implements")]
-    fn wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool {
+    #[implements("VK_KHR_wayland_surface")]
+    fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
         unsafe {
             crate::vkresolve::get_physical_device_wayland_presentation_support_khr(
                 self.native_ptr(),

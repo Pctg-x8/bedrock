@@ -20,8 +20,8 @@
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
 use crate::{ffi_helper::FixedCStrBuffer, StaticCallable, VulkanStructure, PFN};
+use core::ffi::*;
 use derives::{implements, vk_raw_handle};
-use libc::*;
 use std;
 
 #[inline]
@@ -1438,27 +1438,27 @@ pub const VK_STENCIL_FRONT_AND_BACK: VkStencilFaceFlags = VK_STENCIL_FACE_FRONT_
 
 pub type PFN_vkAllocationFunction = extern "system" fn(
     pUserData: *mut c_void,
-    size: size_t,
-    alignment: size_t,
+    size: usize,
+    alignment: usize,
     allocationScope: VkSystemAllocationScope,
 ) -> *mut c_void;
 pub type PFN_vkReallocationFunction = extern "system" fn(
     pUserData: *mut c_void,
     pOriginal: *mut c_void,
-    size: size_t,
-    alignment: size_t,
+    size: usize,
+    alignment: usize,
     allocationScope: VkSystemAllocationScope,
 ) -> *mut c_void;
 pub type PFN_vkFreeFunction = extern "system" fn(pUserData: *mut c_void, pMemory: *mut c_void);
 pub type PFN_vkInternalAllocationNotification = extern "system" fn(
     pUserData: *mut c_void,
-    size: size_t,
+    size: usize,
     allocationType: VkInternalAllocationType,
     allocationScope: VkSystemAllocationScope,
 );
 pub type PFN_vkInternalFreeNotification = extern "system" fn(
     pUserData: *mut c_void,
-    size: size_t,
+    size: usize,
     allocationType: VkInternalAllocationType,
     allocationScope: VkSystemAllocationScope,
 );
@@ -1691,7 +1691,7 @@ pub struct VkPhysicalDeviceLimits {
     pub maxViewportDimensions: [u32; 2],
     pub viewportBoundsRange: [c_float; 2],
     pub viewportSubPixelBits: u32,
-    pub minMemoryMapAlignment: size_t,
+    pub minMemoryMapAlignment: usize,
     pub minTexelBufferOffsetAlignment: VkDeviceSize,
     pub minUniformBufferOffsetAlignment: VkDeviceSize,
     pub minStorageBufferOffsetAlignment: VkDeviceSize,
@@ -2168,7 +2168,7 @@ pub struct VkShaderModuleCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkShaderModuleCreateFlags,
-    pub codeSize: size_t,
+    pub codeSize: usize,
     pub pCode: *const u32,
 }
 
@@ -2179,7 +2179,7 @@ pub struct VkPipelineCacheCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkPipelineCacheCreateFlags,
-    pub initialDataSize: size_t,
+    pub initialDataSize: usize,
     pub pInitialData: *const c_void,
 }
 
@@ -2188,7 +2188,7 @@ pub struct VkPipelineCacheCreateInfo {
 pub struct VkSpecializationMapEntry {
     pub constantID: u32,
     pub offset: u32,
-    pub size: size_t,
+    pub size: usize,
 }
 
 #[repr(C)]
@@ -2196,7 +2196,7 @@ pub struct VkSpecializationMapEntry {
 pub struct VkSpecializationInfo {
     pub mapEntryCount: u32,
     pub pMapEntries: *const VkSpecializationMapEntry,
-    pub dataSize: size_t,
+    pub dataSize: usize,
     pub pData: *const c_void,
 }
 
@@ -3471,7 +3471,7 @@ pub struct PFN_vkGetQueryPoolResults(
         queryPool: VkQueryPool,
         firstQuery: u32,
         queryCount: u32,
-        dataSize: size_t,
+        dataSize: usize,
         pData: *mut c_void,
         stride: VkDeviceSize,
         flags: VkQueryResultFlags,
@@ -3619,7 +3619,7 @@ pub struct PFN_vkGetPipelineCacheData(
     pub  unsafe extern "system" fn(
         device: VkDevice,
         pipelineCache: VkPipelineCache,
-        pDataSize: *mut size_t,
+        pDataSize: *mut usize,
         pData: *mut c_void,
     ) -> VkResult,
 );
@@ -4646,7 +4646,7 @@ extern "system" {
         queryPool: VkQueryPool,
         firstQuery: u32,
         queryCount: u32,
-        dataSize: size_t,
+        dataSize: usize,
         pData: *mut c_void,
         stride: VkDeviceSize,
         flags: VkQueryResultFlags,
@@ -4710,7 +4710,7 @@ extern "system" {
     pub fn vkGetPipelineCacheData(
         device: VkDevice,
         pipelineCache: VkPipelineCache,
-        pDataSize: *mut size_t,
+        pDataSize: *mut usize,
         pData: *mut c_void,
     ) -> VkResult;
     pub fn vkMergePipelineCaches(

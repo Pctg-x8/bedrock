@@ -525,7 +525,7 @@ impl NewtypePFNInput {
 
         quote! {
             unsafe impl crate::vkresolve::FromPtr for #newtype_name {
-                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                     core::mem::transmute(p)
                 }
             }
@@ -540,7 +540,7 @@ impl NewtypePFNInput {
             unsafe impl crate::vkresolve::PFN for #newtype_name {
                 const NAME_NUL: &'static [u8] = #fname;
 
-                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                     core::mem::transmute(p)
                 }
                 unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
@@ -611,7 +611,7 @@ pub fn derive_pfn(input: TokenStream) -> TokenStream {
         unsafe impl #impl_generics crate::vkresolve::PFN for #impl_name #ty_generics #where_clause {
             const NAME_CSTR: &'static core::ffi::CStr = #org_fn_cstr;
 
-            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+            unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                 core::mem::transmute(p)
             }
             unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
@@ -895,7 +895,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             unsafe impl crate::vkresolve::PFN for #pfn_name {
                 const NAME_CSTR: &'static core::ffi::CStr = #promoted_fn_cstr;
 
-                unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+                unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                     core::mem::transmute(p)
                 }
                 unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
@@ -943,7 +943,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         unsafe impl crate::vkresolve::PFN for #pfn_name {
             const NAME_CSTR: &'static core::ffi::CStr = #fname_cstr;
 
-            unsafe fn from_ptr(p: *const libc::c_void) -> Self {
+            unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                 core::mem::transmute(p)
             }
             unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {

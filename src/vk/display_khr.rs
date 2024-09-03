@@ -5,8 +5,6 @@ pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
 
 use super::*;
 use crate::PFN;
-#[allow(unused_imports)]
-use libc::*;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

@@ -35,7 +35,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
-    unsafe fn map_raw(&mut self, range: Range<VkDeviceSize>) -> crate::Result<*mut libc::c_void>
+    unsafe fn map_raw(&mut self, range: Range<VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void>
     where
         Self: VkHandleMut,
     {

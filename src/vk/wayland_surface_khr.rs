@@ -2,7 +2,6 @@
 
 use super::*;
 use crate::PFN;
-use wayland_client::sys::*;
 
 pub const VK_KHR_WAYLAND_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_wayland_surface";
@@ -18,8 +17,10 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
     pub flags: VkWaylandSurfaceCreateFlagsKHR,
-    pub display: *mut wl_display,
-    pub surface: *mut wl_proxy, /*wl_surface*/
+    /// `*mut wl_display`
+    pub display: *mut c_void,
+    /// `*mut wl_surface`
+    pub surface: *mut c_void,
 }
 
 #[implements]
@@ -42,7 +43,7 @@ pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(
     pub  unsafe extern "system" fn(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
-        display: *mut wl_display,
+        display: *mut c_void,
     ) -> VkBool32,
 );
 
@@ -58,6 +59,6 @@ extern "system" {
     pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
-        display: *mut wayland_client::sys::wl_display,
+        display: *mut c_void,
     ) -> VkBool32;
 }
