@@ -32,7 +32,7 @@ fn main() {
     let registry = display.get_registry();
     struct RegistryListenerInstance {
         interfaces: WaylandInterfaces,
-    };
+    }
     impl RegistryListener for RegistryListenerInstance {
         fn global(&mut self, obj: &mut WlRegistry, name: u32, interface: &core::ffi::CStr, version: u32) {
             let interface_name = interface.to_str().unwrap();
@@ -595,12 +595,12 @@ fn main() {
 }
 
 extern "system" fn vk_debug_msg(
-    messageSeverity: br::vk::VkDebugUtilsMessageSeverityFlagBitsEXT,
-    messageTypes: br::vk::VkDebugUtilsMessageTypeFlagsEXT,
-    pCallbackData: *const br::vk::VkDebugUtilsMessengerCallbackDataEXT,
-    pUserData: *mut c_void,
+    _message_severity: br::vk::VkDebugUtilsMessageSeverityFlagBitsEXT,
+    _message_types: br::vk::VkDebugUtilsMessageTypeFlagsEXT,
+    callback_data: *const br::vk::VkDebugUtilsMessengerCallbackDataEXT,
+    _user_data: *mut c_void,
 ) -> br::vk::VkBool32 {
-    let msg = unsafe { core::ffi::CStr::from_ptr((*pCallbackData).pMessage).to_str().unwrap() };
+    let msg = unsafe { core::ffi::CStr::from_ptr((*callback_data).pMessage).to_str().unwrap() };
 
     eprintln!("*vk_debug_msg* {msg}");
 
