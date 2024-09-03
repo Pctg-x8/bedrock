@@ -1,13 +1,10 @@
 //! Vulkan Shading(Shader/Pipeline)
 
 use crate::ffi_helper::ArrayFFIExtensions;
-#[implements]
-use crate::VkHandleMut;
 use crate::{
-    vk::*, DeviceChildHandle, GenericVulkanStructure, SubpassRef, VkDeviceChildNonExtDestroyable, VkHandle, VkObject,
-    VulkanStructure, VulkanStructureAsRef,
+    vk::*, DeviceChildHandle, GenericVulkanStructure, LifetimeBound, SubpassRef, VkDeviceChildNonExtDestroyable,
+    VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
-use crate::{LifetimeBound, VkRawHandle};
 use std::borrow::Cow;
 use std::ffi::CString;
 use std::marker::PhantomData;

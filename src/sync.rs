@@ -1,17 +1,10 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
-use crate::chain;
-use crate::vk::*;
-use crate::DeviceChild;
-use crate::DeviceChildHandle;
-use crate::VkDeviceChildNonExtDestroyable;
-#[implements]
-use crate::VkHandleMut;
-use crate::VkRawHandle;
-use crate::{GenericVulkanStructure, VulkanStructure};
-use crate::{VkHandle, VkObject};
-use derives::implements;
-use derives::transparent_marked;
+use crate::{
+    chain, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
+    VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+};
+use derives::{implements, transparent_marked};
 
 ///
 /// ```

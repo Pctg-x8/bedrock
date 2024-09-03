@@ -4,12 +4,10 @@ use cfg_if::cfg_if;
 use derives::{implements, transparent_marked};
 
 use crate::ffi_helper::ArrayFFIExtensions;
-#[cfg(feature = "Implements")]
-use crate::VkHandleMut;
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandleRef, VkObject, VkRawHandle,
+    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, ShaderStage, VkDeviceChildNonExtDestroyable, VkHandle,
+    VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
 };
-use crate::{ImageLayout, ShaderStage, VkHandle, VulkanStructure};
 
 /// Opaque handle to a descriptor set layout object
 #[derive(VkHandle, VkObject)]
