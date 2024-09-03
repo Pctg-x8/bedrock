@@ -32,10 +32,10 @@ use derives::*;
 pub mod vk;
 use vk::*;
 pub mod error;
-pub mod vkresolve;
-pub use self::vkresolve::PFN;
+pub(crate) mod vkresolve;
+pub use vkresolve::PFN;
 #[implements]
-pub use self::vkresolve::{ResolverInterface, StaticCallable};
+pub use vkresolve::{ResolverInterface, StaticCallable};
 
 mod fnconv;
 
