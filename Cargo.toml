@@ -1,4 +1,4 @@
-workspace = { members = ["bedrock-examples", "wayland_examples"] }
+workspace = { members = ["bedrock-examples", "vk_entrypoint_builder", "wayland_examples"] }
 [package]
 name = "bedrock"
 version = "0.1.0-vk1.1.70"

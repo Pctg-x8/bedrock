@@ -49,44 +49,44 @@ impl AttachmentDescription2 {
     }
 
     #[inline]
-    pub fn samples(mut self, samples: VkSampleCountFlagBits) -> Self {
+    pub const fn samples(mut self, samples: VkSampleCountFlagBits) -> Self {
         self.0.samples = samples;
         self
     }
 
     #[inline]
-    pub fn color_memory_op(mut self, load: LoadOp, store: StoreOp) -> Self {
+    pub const fn color_memory_op(mut self, load: LoadOp, store: StoreOp) -> Self {
         self.0.loadOp = load as _;
         self.0.storeOp = store as _;
         self
     }
 
     #[inline]
-    pub fn stencil_memory_op(mut self, load: LoadOp, store: StoreOp) -> Self {
+    pub const fn stencil_memory_op(mut self, load: LoadOp, store: StoreOp) -> Self {
         self.0.stencilLoadOp = load as _;
         self.0.stencilStoreOp = store as _;
         self
     }
 
     #[inline]
-    pub fn layout_transition(mut self, init: ImageLayout, fini: ImageLayout) -> Self {
+    pub const fn layout_transition(mut self, init: ImageLayout, fini: ImageLayout) -> Self {
         self.0.initialLayout = init as _;
         self.0.finalLayout = fini as _;
         self
     }
 
     #[inline]
-    pub fn layout(self, layout: ImageLayout) -> Self {
+    pub const fn layout(self, layout: ImageLayout) -> Self {
         self.layout_transition(layout, layout)
     }
 
     #[inline]
-    pub fn with_layout_from(self, trans: LayoutTransition) -> Self {
+    pub const fn with_layout_from(self, trans: LayoutTransition) -> Self {
         self.layout_transition(trans.from, trans.to)
     }
 
     #[inline]
-    pub fn with_layout_to(self, trans: LayoutTransition) -> Self {
+    pub const fn with_layout_to(self, trans: LayoutTransition) -> Self {
         self.layout_transition(trans.from, trans.to)
     }
 
@@ -314,7 +314,7 @@ impl<'d> RenderPassBuilder2<'d> {
         let mut h = core::mem::MaybeUninit::uninit();
         #[cfg(feature = "Allow1_3APIs")]
         unsafe {
-            crate::vkresolve::create_render_pass_2(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_render_pass2(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| RenderPassObject(h.assume_init(), device))
         }

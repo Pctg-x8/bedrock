@@ -49,7 +49,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_image_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_image_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| ImageViewObject(h.assume_init(), self))
         }
@@ -72,12 +72,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
         };
         let mut s = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_image_subresource_layout(
-                self.device_handle(),
-                self.native_ptr(),
-                &subres,
-                s.as_mut_ptr(),
-            );
+            crate::vkfn::get_image_subresource_layout(self.device_handle(), self.native_ptr(), &subres, s.as_mut_ptr());
 
             s.assume_init()
         }
@@ -88,7 +83,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
         let mut n = 0;
         unsafe {
-            crate::vkresolve::get_image_sparse_memory_requirements(
+            crate::vkfn::get_image_sparse_memory_requirements(
                 self.device_handle(),
                 self.native_ptr(),
                 &mut n,
@@ -98,7 +93,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
         let mut v = Vec::with_capacity(n as _);
         unsafe {
             v.set_len(n as _);
-            crate::vkresolve::get_image_sparse_memory_requirements(
+            crate::vkfn::get_image_sparse_memory_requirements(
                 self.device_handle(),
                 self.native_ptr(),
                 &mut n,
@@ -318,7 +313,7 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_image_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
+            crate::vkfn::get_image_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -335,7 +330,7 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkresolve::bind_image_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
+            crate::vkfn::bind_image_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
                 .into_result()
                 .map(drop)
         }
@@ -552,7 +547,7 @@ impl<'d> ImageDesc<'d> {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     ImageObject(
@@ -575,7 +570,7 @@ impl<S: Image> ImageSubresource<S> {
     pub fn layout_info(&self) -> VkSubresourceLayout {
         let mut s = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_image_subresource_layout(
+            crate::vkfn::get_image_subresource_layout(
                 self.0.device_handle(),
                 self.0.native_ptr(),
                 &self.1,
@@ -1069,7 +1064,7 @@ impl<I: Image> ImageViewBuilder<I> {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_image_view(self.1.device_handle(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_image_view(self.1.device_handle(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| ImageViewObject(h.assume_init(), self.1))
         }

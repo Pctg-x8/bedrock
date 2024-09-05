@@ -12,7 +12,7 @@ unsafe impl<Instance: crate::Instance + Send> Send for SurfaceObject<Instance> {
 impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkfn::destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
         }
     }
 }

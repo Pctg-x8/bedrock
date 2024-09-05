@@ -215,7 +215,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         let structure = unsafe { structure.assume_init() };
 
         unsafe {
-            crate::vkresolve::create_swapchain_khr(device.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_swapchain_khr(device.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| SurfaceSwapchainObject {
                     handle: h.assume_init(),

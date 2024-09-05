@@ -171,7 +171,7 @@ impl SamplerBuilder {
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<SamplerObject<Device>> {
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_sampler(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_sampler(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| SamplerObject(h.assume_init(), device))
         }

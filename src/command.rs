@@ -117,7 +117,7 @@ impl CommandPoolBuilder {
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<CommandPoolObject<Device>> {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_command_pool(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_command_pool(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| CommandPoolObject(h.assume_init(), device))
         }
@@ -152,7 +152,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
         };
         let mut hs = vec![VkCommandBuffer::NULL; count as _];
         unsafe {
-            crate::vkresolve::allocate_command_buffers(self.device_handle(), &ainfo, hs.as_mut_ptr())
+            crate::vkfn::allocate_command_buffers(self.device_handle(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| transmute(hs))
         }
@@ -182,7 +182,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
         };
         let mut hs = [CommandBufferObject::<Self::ConcreteDevice>(VkCommandBuffer::NULL, core::marker::PhantomData); N];
         unsafe {
-            crate::vkresolve::allocate_command_buffers(self.device_handle(), &ainfo, hs.as_mut_ptr() as _)
+            crate::vkfn::allocate_command_buffers(self.device_handle(), &ainfo, hs.as_mut_ptr() as _)
                 .into_result()
                 .map(|_| hs)
         }
@@ -204,7 +204,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
             0
         };
         unsafe {
-            crate::vkresolve::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
+            crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
                 .into_result()
                 .map(drop)
         }
@@ -215,7 +215,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// Each member of `buffers` must be externally synchronized
     #[implements]
     unsafe fn free(&mut self, buffers: &[impl CommandBuffer]) {
-        crate::vkresolve::free_command_buffers(
+        crate::vkfn::free_command_buffers(
             self.device().native_ptr(),
             self.native_ptr_mut(),
             buffers.len() as _,
@@ -261,7 +261,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             pInheritanceInfo: core::ptr::null(),
         };
 
-        crate::vkresolve::begin_command_buffer(self.native_ptr_mut(), &info)
+        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), &info)
             .into_result()
             .map(move |_| CmdRecord { ptr: self, device })
     }
@@ -286,7 +286,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             pInheritanceInfo: std::ptr::null(),
         };
 
-        crate::vkresolve::begin_command_buffer(self.native_ptr_mut(), &info)
+        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), &info)
             .into_result()
             .map(move |_| CmdRecord { ptr: self, device })
     }
@@ -343,7 +343,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             pInheritanceInfo: &inherit,
         };
 
-        crate::vkresolve::begin_command_buffer(self.native_ptr_mut(), &binfo)
+        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), &binfo)
             .into_result()
             .map(move |_| CmdRecord { ptr: self, device })
     }
@@ -363,7 +363,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             0
         };
 
-        crate::vkresolve::reset_command_buffer(self.native_ptr_mut(), flags)
+        crate::vkfn::reset_command_buffer(self.native_ptr_mut(), flags)
             .into_result()
             .map(drop)
     }
@@ -450,7 +450,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     /// Finish recording a command buffer
     pub fn end(self) -> crate::Result<()> {
         unsafe {
-            crate::vkresolve::end_command_buffer(self.ptr.native_ptr())
+            crate::vkfn::end_command_buffer(self.ptr.native_ptr())
                 .into_result()
                 .map(drop)
         }
@@ -487,7 +487,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
             VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
         };
         unsafe {
-            crate::vkresolve::cmd_begin_render_pass(self.ptr.native_ptr_mut(), &binfo, contents);
+            crate::vkfn::cmd_begin_render_pass(self.ptr.native_ptr_mut(), &binfo, contents);
         }
 
         self
@@ -502,7 +502,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
             VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS
         };
         unsafe {
-            crate::vkresolve::cmd_next_subpass(self.ptr.native_ptr_mut(), contents);
+            crate::vkfn::cmd_next_subpass(self.ptr.native_ptr_mut(), contents);
         }
 
         self
@@ -511,7 +511,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     /// End the current render pass
     #[inline]
     pub fn end_render_pass(self) -> Self {
-        unsafe { crate::vkresolve::cmd_end_render_pass(self.ptr.native_ptr_mut()) };
+        unsafe { crate::vkfn::cmd_end_render_pass(self.ptr.native_ptr_mut()) };
 
         self
     }
@@ -545,7 +545,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         subpass_begin_info: &crate::SubpassBeginInfo,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_begin_render_pass_2(
+            crate::vkfn::cmd_begin_render_pass2(
                 self.ptr.native_ptr(),
                 begin_info.as_ref(),
                 subpass_begin_info.as_ref(),
@@ -584,7 +584,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         subpass_end_info: &crate::SubpassEndInfo,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_next_subpass_2(
+            crate::vkfn::cmd_next_subpass2(
                 self.ptr.native_ptr(),
                 subpass_begin_info.as_ref(),
                 subpass_end_info.as_ref(),
@@ -611,7 +611,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline]
     pub fn end_render_pass_2(self, subpass_end_info: &crate::SubpassEndInfo) -> Self {
         unsafe {
-            crate::vkresolve::cmd_end_render_pass_2(self.ptr.native_ptr(), subpass_end_info.as_ref());
+            crate::vkfn::cmd_end_render_pass2(self.ptr.native_ptr(), subpass_end_info.as_ref());
         }
 
         self
@@ -626,7 +626,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     /// Bind a pipeline object to a command buffer
     pub fn bind_graphics_pipeline(self, pipeline: &(impl VkHandle<Handle = VkPipeline> + ?Sized)) -> Self {
         unsafe {
-            crate::vkresolve::cmd_bind_pipeline(
+            crate::vkfn::cmd_bind_pipeline(
                 self.ptr.native_ptr_mut(),
                 VK_PIPELINE_BIND_POINT_GRAPHICS,
                 pipeline.native_ptr(),
@@ -638,7 +638,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     /// Bind a pipeline object to a command buffer
     pub fn bind_compute_pipeline(self, pipeline: &(impl VkHandle<Handle = VkPipeline> + ?Sized)) -> Self {
         unsafe {
-            crate::vkresolve::cmd_bind_pipeline(
+            crate::vkfn::cmd_bind_pipeline(
                 self.ptr.native_ptr_mut(),
                 VK_PIPELINE_BIND_POINT_COMPUTE,
                 pipeline.native_ptr(),
@@ -656,7 +656,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         dynamic_offsets: &[u32],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_bind_descriptor_sets(
+            crate::vkfn::cmd_bind_descriptor_sets(
                 self.ptr.native_ptr_mut(),
                 VK_PIPELINE_BIND_POINT_GRAPHICS,
                 pipeline_layout.native_ptr(),
@@ -680,7 +680,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         dynamic_offsets: &[u32],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_bind_descriptor_sets(
+            crate::vkfn::cmd_bind_descriptor_sets(
                 self.ptr.native_ptr_mut(),
                 VK_PIPELINE_BIND_POINT_COMPUTE,
                 pipeline_layout.native_ptr(),
@@ -703,7 +703,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         value: &T,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_push_constants(
+            crate::vkfn::cmd_push_constants(
                 self.ptr.native_ptr_mut(),
                 pipeline_layout.native_ptr(),
                 stage.0,
@@ -855,7 +855,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_viewport(self, first: u32, viewports: &[VkViewport]) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_viewport(
+            crate::vkfn::cmd_set_viewport(
                 self.ptr.native_ptr_mut(),
                 first,
                 viewports.len() as _,
@@ -869,7 +869,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_scissor(self, first: u32, scissors: &[VkRect2D]) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_scissor(
+            crate::vkfn::cmd_set_scissor(
                 self.ptr.native_ptr_mut(),
                 first,
                 scissors.len() as _,
@@ -883,7 +883,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_line_width(self, w: f32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_line_width(self.ptr.native_ptr_mut(), w);
+            crate::vkfn::cmd_set_line_width(self.ptr.native_ptr_mut(), w);
         }
         self
     }
@@ -892,7 +892,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_depth_bias(self, constant_factor: f32, clamp: f32, slope_factor: f32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_depth_bias(self.ptr.native_ptr_mut(), constant_factor, clamp, slope_factor);
+            crate::vkfn::cmd_set_depth_bias(self.ptr.native_ptr_mut(), constant_factor, clamp, slope_factor);
         }
         self
     }
@@ -901,7 +901,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_blend_constants(self, blend_constants: &[f32; 4]) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_blend_constants(self.ptr.native_ptr_mut(), blend_constants.as_ptr());
+            crate::vkfn::cmd_set_blend_constants(self.ptr.native_ptr_mut(), blend_constants.as_ptr());
         }
         self
     }
@@ -910,7 +910,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_depth_bounds(self, bounds: Range<f32>) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
+            crate::vkfn::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
         }
         self
     }
@@ -919,7 +919,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_stencil_compare_mask(self, face_mask: StencilFaceMask, compare_mask: u32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_stencil_compare_mask(self.ptr.native_ptr_mut(), face_mask as _, compare_mask);
+            crate::vkfn::cmd_set_stencil_compare_mask(self.ptr.native_ptr_mut(), face_mask as _, compare_mask);
         }
         self
     }
@@ -928,7 +928,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_stencil_write_mask(self, face_mask: StencilFaceMask, write_mask: u32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_stencil_write_mask(self.ptr.native_ptr_mut(), face_mask as _, write_mask);
+            crate::vkfn::cmd_set_stencil_write_mask(self.ptr.native_ptr_mut(), face_mask as _, write_mask);
         }
         self
     }
@@ -937,7 +937,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     #[inline(always)]
     pub fn set_stencil_reference(self, face_mask: StencilFaceMask, reference: u32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_stencil_reference(self.ptr.native_ptr_mut(), face_mask as _, reference);
+            crate::vkfn::cmd_set_stencil_reference(self.ptr.native_ptr_mut(), face_mask as _, reference);
         }
         self
     }
@@ -968,7 +968,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         index_type: IndexType,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_bind_index_buffer(
+            crate::vkfn::cmd_bind_index_buffer(
                 self.ptr.native_ptr_mut(),
                 buffer.native_ptr(),
                 offset as _,
@@ -984,7 +984,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         assert_eq!(buffers.len(), offsets.len());
 
         unsafe {
-            crate::vkresolve::cmd_bind_vertex_buffers(
+            crate::vkfn::cmd_bind_vertex_buffers(
                 self.ptr.native_ptr_mut(),
                 first,
                 buffers.len() as _,
@@ -1005,7 +1005,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[inline(always)]
     pub fn draw(self, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_draw(
+            crate::vkfn::cmd_draw(
                 self.ptr.native_ptr_mut(),
                 vertex_count,
                 instance_count,
@@ -1027,7 +1027,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         first_instance: u32,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_draw_indexed(
+            crate::vkfn::cmd_draw_indexed(
                 self.ptr.native_ptr_mut(),
                 index_count,
                 instance_count,
@@ -1049,7 +1049,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         stride: u32,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_draw_indirect(
+            crate::vkfn::cmd_draw_indirect(
                 self.ptr.native_ptr_mut(),
                 buffer.native_ptr(),
                 offset,
@@ -1070,7 +1070,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         stride: u32,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_draw_indexed_indirect(
+            crate::vkfn::cmd_draw_indexed_indirect(
                 self.ptr.native_ptr_mut(),
                 buffer.native_ptr(),
                 offset,
@@ -1091,7 +1091,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[inline(always)]
     pub fn dispatch(self, group_count_x: u32, group_count_y: u32, group_count_z: u32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_dispatch(self.ptr.native_ptr_mut(), group_count_x, group_count_y, group_count_z);
+            crate::vkfn::cmd_dispatch(self.ptr.native_ptr_mut(), group_count_x, group_count_y, group_count_z);
         }
         self
     }
@@ -1104,7 +1104,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         offset: VkDeviceSize,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_dispatch_indirect(self.ptr.native_ptr_mut(), buffer.native_ptr(), offset);
+            crate::vkfn::cmd_dispatch_indirect(self.ptr.native_ptr_mut(), buffer.native_ptr(), offset);
         }
         self
     }
@@ -1124,7 +1124,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         regions: &[BufferCopy],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_copy_buffer(
+            crate::vkfn::cmd_copy_buffer(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 dst.native_ptr(),
@@ -1146,7 +1146,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         regions: &[VkImageCopy],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_copy_image(
+            crate::vkfn::cmd_copy_image(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 src_layout as _,
@@ -1171,7 +1171,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         filter: FilterMode,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_blit_image(
+            crate::vkfn::cmd_blit_image(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 src_layout as _,
@@ -1195,7 +1195,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         regions: &[VkBufferImageCopy],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_copy_buffer_to_image(
+            crate::vkfn::cmd_copy_buffer_to_image(
                 self.ptr.native_ptr_mut(),
                 src_buffer.native_ptr(),
                 dst_image.native_ptr(),
@@ -1217,7 +1217,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         regions: &[VkBufferImageCopy],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_copy_image_to_buffer(
+            crate::vkfn::cmd_copy_image_to_buffer(
                 self.ptr.native_ptr_mut(),
                 src_image.native_ptr(),
                 src_layout as _,
@@ -1244,7 +1244,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         );
 
         unsafe {
-            crate::vkresolve::cmd_update_buffer(
+            crate::vkfn::cmd_update_buffer(
                 self.ptr.native_ptr_mut(),
                 dst.native_ptr(),
                 dst_offset,
@@ -1272,7 +1272,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         data: u32,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_fill_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
+            crate::vkfn::cmd_fill_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
         }
         self
     }
@@ -1289,7 +1289,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         assert_eq!(colors.len(), ranges.len());
 
         unsafe {
-            crate::vkresolve::cmd_clear_color_image(
+            crate::vkfn::cmd_clear_color_image(
                 self.ptr.native_ptr_mut(),
                 image.native_ptr(),
                 layout as _,
@@ -1312,7 +1312,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         ranges: &[VkImageSubresourceRange],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_clear_depth_stencil_image(
+            crate::vkfn::cmd_clear_depth_stencil_image(
                 self.ptr.native_ptr_mut(),
                 image.native_ptr(),
                 layout as _,
@@ -1328,7 +1328,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[inline(always)]
     pub fn clear_attachments(self, attachments: &[VkClearAttachment], rects: &[VkClearRect]) -> Self {
         unsafe {
-            crate::vkresolve::cmd_clear_attachments(
+            crate::vkfn::cmd_clear_attachments(
                 self.ptr.native_ptr_mut(),
                 attachments.len() as _,
                 attachments.as_ptr_empty_null(),
@@ -1351,7 +1351,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     /// Caller must be primary buffer and in the render pass when executing secondary command buffer
     #[inline(always)]
     pub unsafe fn execute_commands(self, buffers: &[VkCommandBuffer]) -> Self {
-        crate::vkresolve::cmd_execute_commands(
+        crate::vkfn::cmd_execute_commands(
             self.ptr.native_ptr_mut(),
             buffers.len() as _,
             buffers.as_ptr_empty_null(),
@@ -1376,7 +1376,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         regions: &[VkImageResolve],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_resolve_image(
+            crate::vkfn::cmd_resolve_image(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 src_layout as _,
@@ -1399,7 +1399,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[inline(always)]
     pub fn set_event(self, event: &(impl VkHandle<Handle = VkEvent> + ?Sized), stage_mask: PipelineStageFlags) -> Self {
         unsafe {
-            crate::vkresolve::cmd_set_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
+            crate::vkfn::cmd_set_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
         }
         self
     }
@@ -1412,7 +1412,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         stage_mask: PipelineStageFlags,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_reset_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
+            crate::vkfn::cmd_reset_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
         }
         self
     }
@@ -1430,7 +1430,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     ) -> Self {
         let evs = events.iter().map(|e| e.native_ptr()).collect::<Vec<_>>();
         unsafe {
-            crate::vkresolve::cmd_wait_events(
+            crate::vkfn::cmd_wait_events(
                 self.ptr.native_ptr_mut(),
                 evs.len() as _,
                 evs.as_ptr_empty_null(),
@@ -1459,7 +1459,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         image_memory_barriers: &[ImageMemoryBarrier],
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_pipeline_barrier(
+            crate::vkfn::cmd_pipeline_barrier(
                 self.ptr.native_ptr_mut(),
                 src_stage_mask.0,
                 dst_stage_mask.0,
@@ -1493,7 +1493,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[cfg(feature = "Allow1_3APIs")]
     #[inline(always)]
     pub fn pipeline_barrier_2(self, dependency_info: &crate::DependencyInfo) -> Self {
-        unsafe { crate::vkresolve::cmd_pipeline_barrier_2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _) }
+        unsafe { crate::vkfn::cmd_pipeline_barrier2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _) }
 
         self
     }
@@ -1514,7 +1514,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     ) -> Self {
         let flags = if precise_query { VK_QUERY_CONTROL_PRECISE_BIT } else { 0 };
         unsafe {
-            crate::vkresolve::cmd_begin_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query, flags);
+            crate::vkfn::cmd_begin_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query, flags);
         }
         self
     }
@@ -1523,7 +1523,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[inline(always)]
     pub fn end_query(self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), query: u32) -> Self {
         unsafe {
-            crate::vkresolve::cmd_end_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query);
+            crate::vkfn::cmd_end_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query);
         }
         self
     }
@@ -1532,7 +1532,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     #[inline(always)]
     pub fn reset_query_pool(self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), range: Range<u32>) -> Self {
         unsafe {
-            crate::vkresolve::cmd_reset_query_pool(
+            crate::vkfn::cmd_reset_query_pool(
                 self.ptr.native_ptr_mut(),
                 pool.native_ptr(),
                 range.start,
@@ -1551,7 +1551,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         query: u32,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_write_timestamp(self.ptr.native_ptr_mut(), stage.0, pool.native_ptr(), query);
+            crate::vkfn::cmd_write_timestamp(self.ptr.native_ptr_mut(), stage.0, pool.native_ptr(), query);
         }
         self
     }
@@ -1570,7 +1570,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
         flags: QueryResultFlags,
     ) -> Self {
         unsafe {
-            crate::vkresolve::cmd_copy_query_pool_results(
+            crate::vkfn::cmd_copy_query_pool_results(
                 self.ptr.native_ptr_mut(),
                 pool.native_ptr(),
                 range.start,

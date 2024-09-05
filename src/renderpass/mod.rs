@@ -2,22 +2,20 @@ mod standard;
 use self::ffi_helper::ArrayFFIExtensions;
 pub use self::standard::*;
 
-cfg_if! {
-    if #[cfg(feature = "VK_KHR_create_renderpass2")] {
-        mod extensible;
-        pub use self::extensible::*;
-    }
-}
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+mod extensible;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+pub use self::extensible::*;
 
 use crate::*;
 
 pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChildHandle {
     /// Returns the granularity for optimal render area
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn optimal_granularity(&self) -> VkExtent2D {
         let mut e = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_render_area_granularity(self.device_handle(), self.native_ptr(), e.as_mut_ptr());
+            crate::vkfn::get_render_area_granularity(self.device_handle(), self.native_ptr(), e.as_mut_ptr());
 
             e.assume_init()
         }

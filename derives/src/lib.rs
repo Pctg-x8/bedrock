@@ -524,7 +524,7 @@ impl NewtypePFNInput {
         let Self { newtype_name, .. } = self;
 
         quote! {
-            unsafe impl crate::vkresolve::FromPtr for #newtype_name {
+            unsafe impl crate::resolver::FromPtr for #newtype_name {
                 unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                     core::mem::transmute(p)
                 }
@@ -537,7 +537,7 @@ impl NewtypePFNInput {
         let fname = self.original_function_name_nulbytes();
 
         quote! {
-            unsafe impl crate::vkresolve::PFN for #newtype_name {
+            unsafe impl crate::resolver::PFN for #newtype_name {
                 const NAME_NUL: &'static [u8] = #fname;
 
                 unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
@@ -608,7 +608,7 @@ pub fn derive_pfn(input: TokenStream) -> TokenStream {
     );
 
     quote! {
-        unsafe impl #impl_generics crate::vkresolve::PFN for #impl_name #ty_generics #where_clause {
+        unsafe impl #impl_generics crate::resolver::PFN for #impl_name #ty_generics #where_clause {
             const NAME_CSTR: &'static core::ffi::CStr = #org_fn_cstr;
 
             unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
@@ -637,7 +637,7 @@ pub fn derive_static_callable(input: TokenStream) -> TokenStream {
 
     quote! {
         #[cfg(all(not(feature = "DynamicLoaded"), feature = "Implements"))]
-        impl #impl_generics crate::vkresolve::StaticCallable for #impl_name #ty_generics #where_clause {
+        impl #impl_generics crate::resolver::StaticCallable for #impl_name #ty_generics #where_clause {
             const STATIC: Self = Self(#org_fn);
         }
     }
@@ -892,7 +892,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             #[derive(Clone, Copy, Debug, PartialEq, Eq)]
             #base_vis struct #pfn_name(pub #pfn_ty);
             #[cfg(feature = #promote_feature_name)]
-            unsafe impl crate::vkresolve::PFN for #pfn_name {
+            unsafe impl crate::resolver::PFN for #pfn_name {
                 const NAME_CSTR: &'static core::ffi::CStr = #promoted_fn_cstr;
 
                 unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
@@ -923,7 +923,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
 
         Some(quote! {
             #[cfg(all(feature = "Implements", feature = #promote_feature_name, not(feature = "DynamicLoaded")))]
-            impl crate::vkresolve::StaticCallable for #promoted_pfn_ident {
+            impl crate::resolver::StaticCallable for #promoted_pfn_ident {
                 const STATIC: Self = Self(#promoted_fn_ident);
             }
 
@@ -940,7 +940,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         #[repr(transparent)]
         #[derive(Clone, Copy, Debug, PartialEq, Eq)]
         #base_vis struct #pfn_name(pub #pfn_ty);
-        unsafe impl crate::vkresolve::PFN for #pfn_name {
+        unsafe impl crate::resolver::PFN for #pfn_name {
             const NAME_CSTR: &'static core::ffi::CStr = #fname_cstr;
 
             unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {

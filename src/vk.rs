@@ -119,7 +119,7 @@ pub struct VkSemaphore(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkSemaphore {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_semaphore(device, self, allocator);
+        crate::vkfn::destroy_semaphore(device, self, allocator);
     }
 }
 
@@ -135,7 +135,7 @@ pub struct VkFence(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkFence {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_fence(device, self, allocator)
+        crate::vkfn::destroy_fence(device, self, allocator)
     }
 }
 
@@ -146,7 +146,7 @@ pub struct VkDeviceMemory(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkDeviceMemory {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::free_memory(device, self, allocator);
+        crate::vkfn::free_memory(device, self, allocator);
     }
 }
 
@@ -157,7 +157,7 @@ pub struct VkBuffer(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkBuffer {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_buffer(device, self, allocator);
+        crate::vkfn::destroy_buffer(device, self, allocator);
     }
 }
 
@@ -168,7 +168,7 @@ pub struct VkImage(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkImage {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_image(device, self, allocator);
+        crate::vkfn::destroy_image(device, self, allocator);
     }
 }
 
@@ -179,7 +179,7 @@ pub struct VkEvent(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkEvent {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_event(device, self, allocator);
+        crate::vkfn::destroy_event(device, self, allocator);
     }
 }
 
@@ -190,7 +190,7 @@ pub struct VkQueryPool(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkQueryPool {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_query_pool(device, self, allocator);
+        crate::vkfn::destroy_query_pool(device, self, allocator);
     }
 }
 
@@ -201,7 +201,7 @@ pub struct VkBufferView(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkBufferView {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_buffer_view(device, self, allocator);
+        crate::vkfn::destroy_buffer_view(device, self, allocator);
     }
 }
 
@@ -212,7 +212,7 @@ pub struct VkImageView(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkImageView {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_image_view(device, self, allocator);
+        crate::vkfn::destroy_image_view(device, self, allocator);
     }
 }
 
@@ -223,7 +223,7 @@ pub struct VkShaderModule(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkShaderModule {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_shader_module(device, self, allocator);
+        crate::vkfn::destroy_shader_module(device, self, allocator);
     }
 }
 
@@ -234,7 +234,7 @@ pub struct VkPipelineCache(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkPipelineCache {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_pipeline_cache(device, self, allocator);
+        crate::vkfn::destroy_pipeline_cache(device, self, allocator);
     }
 }
 
@@ -245,7 +245,7 @@ pub struct VkPipelineLayout(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkPipelineLayout {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_pipeline_layout(device, self, allocator);
+        crate::vkfn::destroy_pipeline_layout(device, self, allocator);
     }
 }
 
@@ -256,7 +256,7 @@ pub struct VkRenderPass(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkRenderPass {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_render_pass(device, self, allocator);
+        crate::vkfn::destroy_render_pass(device, self, allocator);
     }
 }
 
@@ -267,7 +267,7 @@ pub struct VkPipeline(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkPipeline {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_pipeline(device, self, allocator);
+        crate::vkfn::destroy_pipeline(device, self, allocator);
     }
 }
 
@@ -278,7 +278,7 @@ pub struct VkDescriptorSetLayout(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkDescriptorSetLayout {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_descriptor_set_layout(device, self, allocator);
+        crate::vkfn::destroy_descriptor_set_layout(device, self, allocator);
     }
 }
 
@@ -289,7 +289,7 @@ pub struct VkSampler(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkSampler {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_sampler(device, self, allocator);
+        crate::vkfn::destroy_sampler(device, self, allocator);
     }
 }
 
@@ -300,7 +300,7 @@ pub struct VkDescriptorPool(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkDescriptorPool {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_descriptor_pool(device, self, allocator);
+        crate::vkfn::destroy_descriptor_pool(device, self, allocator);
     }
 }
 
@@ -316,7 +316,7 @@ pub struct VkFramebuffer(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkFramebuffer {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_framebuffer(device, self, allocator);
+        crate::vkfn::destroy_framebuffer(device, self, allocator);
     }
 }
 
@@ -327,7 +327,7 @@ pub struct VkCommandPool(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkCommandPool {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_command_pool(device, self, allocator);
+        crate::vkfn::destroy_command_pool(device, self, allocator);
     }
 }
 

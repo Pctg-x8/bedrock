@@ -28,23 +28,13 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn mode_properties(&self) -> crate::Result<Vec<DisplayModeProperties>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_display_mode_properties_khr(
-                self.1.native_ptr(),
-                self.0,
-                &mut n,
-                std::ptr::null_mut(),
-            )
-            .into_result()?;
+            crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
+                .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::get_display_mode_properties_khr(
-                self.1.native_ptr(),
-                self.0,
-                &mut n,
-                v.as_mut_ptr() as *mut _,
-            )
-            .into_result()
-            .map(move |_| v)
+            crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, v.as_mut_ptr() as *mut _)
+                .into_result()
+                .map(move |_| v)
         }
     }
 
@@ -91,7 +81,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
                 parameters: params,
             };
             let mut h = std::mem::MaybeUninit::uninit();
-            crate::vkresolve::create_display_mode_khr(
+            crate::vkfn::create_display_mode_khr(
                 self.1.native_ptr(),
                 self.native_ptr(),
                 &cinfo,

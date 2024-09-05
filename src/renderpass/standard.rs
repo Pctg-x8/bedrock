@@ -1,8 +1,6 @@
 use crate::vk::*;
 use crate::*;
 
-use self::ffi_helper::ArrayFFIExtensions;
-
 /// Builder structure to construct the `VkAttachmentDescription`
 #[repr(transparent)]
 #[derive(Clone)]
@@ -82,47 +80,6 @@ impl AttachmentDescription {
         self.0.samples = count;
         self
     }
-
-    pub fn mod_format(&mut self, fmt: VkFormat) -> &mut Self {
-        self.0.format = fmt;
-        self
-    }
-    pub fn mod_load_op(&mut self, op: LoadOp) -> &mut Self {
-        self.0.loadOp = op as _;
-        self
-    }
-    pub fn mod_store_op(&mut self, op: StoreOp) -> &mut Self {
-        self.0.storeOp = op as _;
-        self
-    }
-    pub fn mod_stencil_load_op(&mut self, op: LoadOp) -> &mut Self {
-        self.0.stencilLoadOp = op as _;
-        self
-    }
-    pub fn mod_stencil_store_op(&mut self, op: StoreOp) -> &mut Self {
-        self.0.stencilStoreOp = op as _;
-        self
-    }
-    pub fn mod_init_layout(&mut self, layout: ImageLayout) -> &mut Self {
-        self.0.initialLayout = layout as _;
-        self
-    }
-    pub fn mod_fin_layout(&mut self, layout: ImageLayout) -> &mut Self {
-        self.0.finalLayout = layout as _;
-        self
-    }
-    pub fn mod_may_alias(&mut self) -> &mut Self {
-        self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
-        self
-    }
-    pub fn mod_no_alias(&mut self) -> &mut Self {
-        self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
-        self
-    }
-    pub fn mod_samples(&mut self, count: u32) -> &mut Self {
-        self.0.samples = count;
-        self
-    }
 }
 impl AsRef<VkAttachmentDescription> for AttachmentDescription {
     fn as_ref(&self) -> &VkAttachmentDescription {
@@ -141,6 +98,24 @@ impl From<AttachmentDescription> for VkAttachmentDescription {
     }
 }
 
+#[repr(transparent)]
+#[derive(Clone)]
+pub struct AttachmentReference(VkAttachmentReference);
+impl AttachmentReference {
+    pub const UNUSED: Self = Self(VkAttachmentReference {
+        attachment: VK_ATTACHMENT_UNUSED,
+        layout: 0,
+    });
+
+    #[inline(always)]
+    pub const fn new(attachment_index: u32, layout: ImageLayout) -> Self {
+        Self(VkAttachmentReference {
+            attachment: attachment_index,
+            layout: layout as _,
+        })
+    }
+}
+
 /// Builder structure to construct the `VkSubpassDescription`
 ///
 /// ## The `layout` parameter of each attachment
@@ -149,224 +124,161 @@ impl From<AttachmentDescription> for VkAttachmentDescription {
 ///
 /// ## How *input attachments* work
 ///
-/// * Each element of the array corresponds to an input attachment unit number in the shader.  
+/// * Each element of the array corresponds to an input attachment unit number in the shader.
 ///   * i. e. if the shader declares an input variable `layout(input_attachment_index=X, set=Y, binding=Z)`
-///     then it uses the attachment provided in `input_attachments[X]`.  
+///     then it uses the attachment provided in `input_attachments[X]`.
 /// * Input attachments *must* also be bound to the pipeline with a descriptor set, with the input attachment descriptor
 ///   written in the location (set=Y, binding=Z).
 /// * Fragment shaders *can* use subpass input variables to access the contents of an input attachment at the fragment's
 ///   (x, y, layer) framebuffer coordinates.
 ///
-pub struct SubpassDescription {
-    input_attachments: Vec<VkAttachmentReference>,
-    color_attachments: Vec<VkAttachmentReference>,
-    resolve_attachments: Vec<VkAttachmentReference>,
-    depth_stencil_attachment: Option<VkAttachmentReference>,
-    preserve_attachments: Vec<u32>,
+#[repr(transparent)]
+#[derive(Clone)]
+pub struct SubpassDescription<'r> {
+    base: VkSubpassDescription,
+    input_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    color_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    resolve_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r AttachmentReference>>,
+    preserve_lifetime: core::marker::PhantomData<&'r [u32]>,
+}
+impl<'r> SubpassDescription<'r> {
+    pub const fn new() -> Self {
+        Self {
+            base: VkSubpassDescription {
+                pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
+                flags: 0,
+                inputAttachmentCount: 0,
+                pInputAttachments: core::ptr::null(),
+                colorAttachmentCount: 0,
+                pColorAttachments: core::ptr::null(),
+                pResolveAttachments: core::ptr::null(),
+                pDepthStencilAttachment: core::ptr::null(),
+                preserveAttachmentCount: 0,
+                pPreserveAttachments: core::ptr::null(),
+            },
+            input_lifetime: core::marker::PhantomData,
+            color_lifetime: core::marker::PhantomData,
+            resolve_lifetime: core::marker::PhantomData,
+            depth_stencil_lifetime: core::marker::PhantomData,
+            preserve_lifetime: core::marker::PhantomData,
+        }
+    }
+
+    #[inline]
+    pub const fn input_attachments(mut self, inputs: &'r [AttachmentReference]) -> Self {
+        self.base.inputAttachmentCount = inputs.len() as _;
+        self.base.pInputAttachments = if inputs.is_empty() {
+            core::ptr::null()
+        } else {
+            inputs.as_ptr() as _
+        };
+
+        self
+    }
+
+    #[inline]
+    pub const fn color_attachments(
+        mut self,
+        colors: &'r [AttachmentReference],
+        resolves: &'r [AttachmentReference],
+    ) -> Self {
+        assert!(resolves.is_empty() || resolves.len() == colors.len());
+
+        self.base.colorAttachmentCount = colors.len() as _;
+        self.base.pColorAttachments = if colors.is_empty() {
+            core::ptr::null()
+        } else {
+            colors.as_ptr() as _
+        };
+        self.base.pResolveAttachments = if resolves.is_empty() {
+            core::ptr::null()
+        } else {
+            resolves.as_ptr() as _
+        };
+
+        self
+    }
+
+    #[inline]
+    pub const fn depth_stencil_attachment(mut self, a: &'r AttachmentReference) -> Self {
+        self.base.pDepthStencilAttachment = a as *const _ as _;
+
+        self
+    }
+
+    #[inline]
+    pub const fn preserved_attachments(mut self, a: &'r [u32]) -> Self {
+        self.base.preserveAttachmentCount = a.len() as _;
+        self.base.pPreserveAttachments = if a.is_empty() { core::ptr::null() } else { a.as_ptr() };
+
+        self
+    }
 }
 
 /// Builder structure to construct the `RenderPass`
-pub struct RenderPassBuilder {
-    attachments: Vec<VkAttachmentDescription>,
-    subpasses: Vec<SubpassDescription>,
-    dependencies: Vec<VkSubpassDependency>,
+#[repr(transparent)]
+#[derive(Clone)]
+pub struct RenderPassBuilder<'r> {
+    base: VkRenderPassCreateInfo,
+    attachments: core::marker::PhantomData<&'r [AttachmentDescription]>,
+    subpasses: core::marker::PhantomData<&'r [SubpassDescription<'r>]>,
+    dependencies: core::marker::PhantomData<&'r [VkSubpassDependency]>,
 }
-impl RenderPassBuilder {
-    #[allow(clippy::new_without_default)]
-    pub const fn new() -> Self {
-        Self {
-            attachments: Vec::new(),
-            subpasses: Vec::new(),
-            dependencies: Vec::new(),
-        }
-    }
-
-    pub fn add_attachment(mut self, desc: impl Into<VkAttachmentDescription>) -> Self {
-        self.attachments.push(desc.into());
-        self
-    }
-    pub fn add_subpass(mut self, desc: SubpassDescription) -> Self {
-        self.subpasses.push(desc);
-        self
-    }
-    pub fn add_dependency(mut self, desc: VkSubpassDependency) -> Self {
-        self.dependencies.push(desc);
-        self
-    }
-
-    pub fn add_attachments<A: Into<VkAttachmentDescription>>(
-        mut self,
-        collection: impl IntoIterator<Item = A>,
+impl<'r> RenderPassBuilder<'r> {
+    pub const fn new(
+        attachments: &'r [AttachmentDescription],
+        subpasses: &'r [SubpassDescription<'r>],
+        dependencies: &'r [VkSubpassDependency],
     ) -> Self {
-        self.attachments.extend(collection.into_iter().map(Into::into));
-        self
-    }
-    pub fn add_subpasses(mut self, collection: impl IntoIterator<Item = SubpassDescription>) -> Self {
-        self.subpasses.extend(collection);
-        self
-    }
-    pub fn add_dependencies(mut self, collection: impl IntoIterator<Item = VkSubpassDependency>) -> Self {
-        self.dependencies.extend(collection);
-        self
-    }
-
-    pub fn attachment_mut(&mut self, index: usize) -> &mut AttachmentDescription {
-        unsafe { &mut *(&mut self.attachments[index] as *mut _ as *mut _) }
-    }
-    pub fn subpass_mut(&mut self, index: usize) -> &mut SubpassDescription {
-        &mut self.subpasses[index]
-    }
-    pub fn dependency_mut(&mut self, index: usize) -> &mut VkSubpassDependency {
-        &mut self.dependencies[index]
-    }
-}
-
-impl SubpassDescription {
-    #[allow(clippy::new_without_default)]
-    pub const fn new() -> Self {
         Self {
-            input_attachments: Vec::new(),
-            color_attachments: Vec::new(),
-            resolve_attachments: Vec::new(),
-            depth_stencil_attachment: None,
-            preserve_attachments: Vec::new(),
+            base: VkRenderPassCreateInfo {
+                sType: VkRenderPassCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                attachmentCount: attachments.len() as _,
+                pAttachments: if attachments.is_empty() {
+                    core::ptr::null()
+                } else {
+                    attachments.as_ptr() as _
+                },
+                subpassCount: subpasses.len() as _,
+                pSubpasses: if subpasses.is_empty() {
+                    core::ptr::null()
+                } else {
+                    subpasses.as_ptr() as _
+                },
+                dependencyCount: dependencies.len() as _,
+                pDependencies: if dependencies.is_empty() {
+                    core::ptr::null()
+                } else {
+                    dependencies.as_ptr()
+                },
+            },
+            attachments: core::marker::PhantomData,
+            subpasses: core::marker::PhantomData,
+            dependencies: core::marker::PhantomData,
         }
     }
 
-    pub fn add_input(mut self, index: u32, layout: ImageLayout) -> Self {
-        self.input_attachments.push(VkAttachmentReference {
-            attachment: index,
-            layout: layout as _,
-        });
-        self
-    }
-    pub fn add_color_output(mut self, index: u32, layout: ImageLayout, resolve: Option<(u32, ImageLayout)>) -> Self {
-        if let Some((i, l)) = resolve {
-            while self.resolve_attachments.len() < self.color_attachments.len() {
-                self.resolve_attachments.push(VkAttachmentReference {
-                    attachment: VK_ATTACHMENT_UNUSED,
-                    layout: 0 as _,
-                });
-            }
-            self.resolve_attachments.push(VkAttachmentReference {
-                attachment: i,
-                layout: l as _,
-            });
-        }
-        self.color_attachments.push(VkAttachmentReference {
-            attachment: index,
-            layout: layout as _,
-        });
-        self
-    }
-    pub fn depth_stencil(mut self, index: u32, layout: ImageLayout) -> Self {
-        self.depth_stencil_attachment = Some(VkAttachmentReference {
-            attachment: index,
-            layout: layout as _,
-        });
-        self
-    }
-    pub fn add_preserve(mut self, index: u32) -> Self {
-        self.preserve_attachments.push(index);
-        self
-    }
-    pub fn add_preserves(mut self, indices: impl IntoIterator<Item = u32>) -> Self {
-        self.preserve_attachments.extend(indices);
-        self
-    }
-
-    pub fn add_input_borrow(&mut self, index: u32, layout: ImageLayout) -> &mut Self {
-        self.input_attachments.push(VkAttachmentReference {
-            attachment: index,
-            layout: layout as _,
-        });
-        self
-    }
-    pub fn add_color_output_borrow(
-        &mut self,
-        index: u32,
-        layout: ImageLayout,
-        resolve: Option<(u32, ImageLayout)>,
-    ) -> &mut Self {
-        if let Some((i, l)) = resolve {
-            while self.resolve_attachments.len() < self.color_attachments.len() {
-                self.resolve_attachments.push(VkAttachmentReference {
-                    attachment: VK_ATTACHMENT_UNUSED,
-                    layout: 0 as _,
-                });
-            }
-            self.resolve_attachments.push(VkAttachmentReference {
-                attachment: i,
-                layout: l as _,
-            });
-        }
-        self.color_attachments.push(VkAttachmentReference {
-            attachment: index,
-            layout: layout as _,
-        });
-        self
-    }
-    pub fn depth_stencil_borrow(&mut self, index: u32, layout: ImageLayout) -> &mut Self {
-        self.depth_stencil_attachment = Some(VkAttachmentReference {
-            attachment: index,
-            layout: layout as _,
-        });
-        self
-    }
-    pub fn add_preserve_borrow(&mut self, index: u32) -> &mut Self {
-        self.preserve_attachments.push(index);
-        self
-    }
-    pub fn add_preserves_borrow(&mut self, indices: impl IntoIterator<Item = u32>) -> &mut Self {
-        self.preserve_attachments.extend(indices);
-        self
-    }
-}
-#[cfg(feature = "Implements")]
-impl RenderPassBuilder {
     /// Create a new render pass object
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
     pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<RenderPassObject<Device>> {
-        let subpasses = self
-            .subpasses
-            .iter()
-            .map(|x| VkSubpassDescription {
-                flags: 0,
-                pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
-                inputAttachmentCount: x.input_attachments.len() as _,
-                pInputAttachments: x.input_attachments.as_ptr_empty_null(),
-                colorAttachmentCount: x.color_attachments.len() as _,
-                pColorAttachments: x.color_attachments.as_ptr_empty_null(),
-                pResolveAttachments: x.resolve_attachments.as_ptr_empty_null(),
-                pDepthStencilAttachment: x
-                    .depth_stencil_attachment
-                    .as_ref()
-                    .map_or(core::ptr::null(), |p| p as *const _),
-                preserveAttachmentCount: x.preserve_attachments.len() as _,
-                pPreserveAttachments: x.preserve_attachments.as_ptr_empty_null(),
-            })
-            .collect::<Vec<_>>();
-        let cinfo = VkRenderPassCreateInfo {
-            sType: VkRenderPassCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            attachmentCount: self.attachments.len() as _,
-            pAttachments: self.attachments.as_ptr_empty_null(),
-            subpassCount: subpasses.len() as _,
-            pSubpasses: subpasses.as_ptr_empty_null(),
-            dependencyCount: self.dependencies.len() as _,
-            pDependencies: self.dependencies.as_ptr_empty_null(),
-        };
-
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_render_pass(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| RenderPassObject(h.assume_init(), device))
+            crate::vkfn::create_render_pass(
+                device.native_ptr(),
+                self as *const _ as _,
+                std::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| RenderPassObject(h.assume_init(), device))
         }
     }
 }

@@ -27,7 +27,7 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_buffer_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_buffer_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| BufferViewObject(h.assume_init(), self))
         }
@@ -63,7 +63,7 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
     fn requirements(&self) -> VkMemoryRequirements {
         let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_buffer_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
+            crate::vkfn::get_buffer_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -80,7 +80,7 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkresolve::bind_buffer_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
+            crate::vkfn::bind_buffer_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
                 .into_result()
                 .map(drop)
         }

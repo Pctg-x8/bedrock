@@ -305,14 +305,9 @@ impl<'s> DescriptorSetLayoutBuilder<'s> {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_descriptor_set_layout(
-                device.native_ptr(),
-                &self.0,
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| DescriptorSetLayoutObject(h.assume_init(), device))
+            crate::vkfn::create_descriptor_set_layout(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| DescriptorSetLayoutObject(h.assume_init(), device))
         }
     }
 }
@@ -391,7 +386,7 @@ impl DescriptorPoolBuilder {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_descriptor_pool(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_descriptor_pool(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| DescriptorPoolObject(h.assume_init(), device))
         }
@@ -420,7 +415,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         };
         let mut hs = vec![VkDescriptorSet::NULL; layouts.len()];
         unsafe {
-            crate::vkresolve::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
+            crate::vkfn::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| std::mem::transmute(hs))
         }
@@ -446,7 +441,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         };
         let mut hs = [VkDescriptorSet::NULL; N];
         unsafe {
-            crate::vkresolve::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
+            crate::vkfn::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
@@ -464,7 +459,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
     unsafe fn reset(&mut self) -> crate::Result<()> {
-        crate::vkresolve::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), 0)
+        crate::vkfn::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), 0)
             .into_result()
             .map(drop)
     }
@@ -478,7 +473,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
     unsafe fn free(&mut self, sets: &[DescriptorSet]) -> crate::Result<()> {
-        crate::vkresolve::free_descriptor_sets(
+        crate::vkfn::free_descriptor_sets(
             self.device_handle(),
             self.native_ptr(),
             sets.len() as _,

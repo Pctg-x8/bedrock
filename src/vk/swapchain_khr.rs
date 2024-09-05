@@ -13,7 +13,7 @@ pub struct VkSwapchainKHR(pub u64);
 #[implements]
 impl crate::VkDeviceChildNonExtDestroyable for VkSwapchainKHR {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkresolve::destroy_swapchain_khr(device, self, allocator);
+        crate::vkfn::destroy_swapchain_khr(device, self, allocator);
     }
 }
 

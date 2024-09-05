@@ -29,10 +29,13 @@ use derives::*;
 pub mod vk;
 use vk::*;
 pub mod error;
-mod vkresolve;
+mod resolver;
 #[cfg(feature = "Implements")]
-pub use vkresolve::ResolverInterface;
-pub use vkresolve::{StaticCallable, PFN};
+pub use resolver::ResolverInterface;
+pub use resolver::{StaticCallable, PFN};
+
+#[cfg(feature = "Implements")]
+mod vkfn;
 
 #[cfg(feature = "Implements")]
 mod fnconv;
@@ -524,7 +527,7 @@ impl<Device: VkHandle<Handle = VkDevice>> QueryPool<Device> {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            vkresolve::create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+            vkfn::create_query_pool(device.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| Self(h.assume_init(), device))
         }
@@ -541,7 +544,7 @@ impl<Device: VkHandle<Handle = VkDevice>> QueryPool<Device> {
         let mut v = Vec::with_capacity(query_range.len());
         unsafe { v.set_len(query_range.len()) };
         unsafe {
-            vkresolve::get_query_pool_results(
+            vkfn::get_query_pool_results(
                 self.1.native_ptr(),
                 self.0,
                 query_range.start,
@@ -567,7 +570,7 @@ impl<Device: VkHandle<Handle = VkDevice>> QueryPool<Device> {
         let mut v = Vec::with_capacity(query_range.len());
         unsafe { v.set_len(query_range.len()) };
         unsafe {
-            vkresolve::get_query_pool_results(
+            vkfn::get_query_pool_results(
                 self.1.native_ptr(),
                 self.0,
                 query_range.start,

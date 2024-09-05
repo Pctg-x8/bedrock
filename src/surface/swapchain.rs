@@ -28,7 +28,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         };
         let mut n = 0;
         unsafe {
-            crate::vkresolve::acquire_next_image_khr(
+            crate::vkfn::acquire_next_image_khr(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 timeout.unwrap_or(std::u64::MAX),
@@ -69,7 +69,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             pResults: &mut res,
         };
         unsafe {
-            crate::vkresolve::queue_present_khr(queue.native_ptr(), &pinfo)
+            crate::vkfn::queue_present_khr(queue.native_ptr(), &pinfo)
                 .into_result()
                 .and_then(|x| if x == VK_SUCCESS { Ok(()) } else { Err(x) })
         }
@@ -119,7 +119,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     {
         let mut n = 0;
         unsafe {
-            crate::vkresolve::get_swapchain_images_khr(
+            crate::vkfn::get_swapchain_images_khr(
                 self.device().native_ptr(),
                 self.native_ptr(),
                 &mut n,
@@ -130,18 +130,13 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         let mut v = Vec::with_capacity(n as _);
         unsafe {
             v.set_len(n as _);
-            crate::vkresolve::get_swapchain_images_khr(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                &mut n,
-                v.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| {
-                v.into_iter()
-                    .map(|r| crate::SwapchainImage(r, self, self.size().clone().with_depth(1)))
-                    .collect()
-            })
+            crate::vkfn::get_swapchain_images_khr(self.device().native_ptr(), self.native_ptr(), &mut n, v.as_mut_ptr())
+                .into_result()
+                .map(|_| {
+                    v.into_iter()
+                        .map(|r| crate::SwapchainImage(r, self, self.size().clone().with_depth(1)))
+                        .collect()
+                })
         }
     }
 }

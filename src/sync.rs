@@ -22,9 +22,8 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     #[implements]
     #[inline(always)]
     fn wait_timeout(&self, timeout: u64) -> crate::Result<bool> {
-        let vr = unsafe {
-            crate::vkresolve::wait_for_fences(self.device_handle(), 1, &self.native_ptr(), false as _, timeout)
-        };
+        let vr =
+            unsafe { crate::vkfn::wait_for_fences(self.device_handle(), 1, &self.native_ptr(), false as _, timeout) };
         match vr {
             VK_SUCCESS => Ok(false),
             VK_TIMEOUT => Ok(true),
@@ -127,7 +126,7 @@ pub trait FenceMut: Fence + VkHandleMut {
     #[inline(always)]
     fn reset(&mut self) -> crate::Result<()> {
         unsafe {
-            crate::vkresolve::reset_fences(self.device_handle(), 1, &self.native_ptr_mut())
+            crate::vkfn::reset_fences(self.device_handle(), 1, &self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -217,7 +216,7 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkresolve::set_event(self.device().native_ptr(), self.native_ptr_mut())
+            crate::vkfn::set_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -235,7 +234,7 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkresolve::reset_event(self.device().native_ptr(), self.native_ptr_mut())
+            crate::vkfn::reset_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
                 .map(drop)
         }
@@ -312,7 +311,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
     #[inline(always)]
     #[implements]
     fn status(&self) -> crate::Result<bool> {
-        match unsafe { crate::vkresolve::get_fence_status(self.1.native_ptr(), self.0) } {
+        match unsafe { crate::vkfn::get_fence_status(self.1.native_ptr(), self.0) } {
             VK_SUCCESS => Ok(true),
             VK_NOT_READY => Ok(false),
             vr => Err(vr),
@@ -404,7 +403,7 @@ impl<Device: crate::Device> DeviceChild for EventObject<Device> {
 impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
     #[implements]
     fn status(&self) -> crate::Result<bool> {
-        match unsafe { crate::vkresolve::get_event_status(self.1.native_ptr(), self.0) } {
+        match unsafe { crate::vkfn::get_event_status(self.1.native_ptr(), self.0) } {
             VK_EVENT_SET => Ok(true),
             VK_EVENT_RESET => Ok(false),
             vr => Err(vr),
@@ -464,7 +463,7 @@ impl FenceBuilder {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_fence(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_fence(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| FenceObject(h.assume_init(), device))
         }
@@ -521,7 +520,7 @@ impl SemaphoreBuilder {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_semaphore(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_semaphore(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| SemaphoreObject(h.assume_init(), device))
         }

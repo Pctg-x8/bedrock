@@ -21,19 +21,19 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
 }
 
 #[implements]
-type InstanceResolvedFn<F> = crate::vkresolve::ResolvedFnCell<F, VkInstance>;
+type InstanceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, VkInstance>;
 #[implements]
-impl crate::vkresolve::ResolverInterface for VkInstance {
-    unsafe fn load_symbol_unconstrainted<T: crate::vkresolve::FromPtr>(&self, name: &core::ffi::CStr) -> T {
-        T::from_ptr(core::mem::transmute(crate::vkresolve::get_instance_proc_addr(
+impl crate::resolver::ResolverInterface for VkInstance {
+    unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
+        T::from_ptr(core::mem::transmute(crate::vkfn::get_instance_proc_addr(
             *self,
             name.as_ptr() as _,
         )))
     }
 
-    unsafe fn load_function_unconstrainted<F: crate::vkresolve::PFN>(&self, name: &core::ffi::CStr) -> F {
+    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self, name: &core::ffi::CStr) -> F {
         F::from_void_fn(
-            crate::vkresolve::get_instance_proc_addr(*self, name.as_ptr() as _)
+            crate::vkfn::get_instance_proc_addr(*self, name.as_ptr() as _)
                 .unwrap_or_else(|| panic!("function {:?} not found", name)),
         )
     }
@@ -139,7 +139,7 @@ unsafe impl Send for InstanceObject {}
 impl Drop for InstanceObject {
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_instance(self.handle, std::ptr::null());
+            crate::vkfn::destroy_instance(self.handle, core::ptr::null());
         }
     }
 }
@@ -435,7 +435,7 @@ impl InstanceBuilder {
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| InstanceObject::from(h.assume_init()))
         }
@@ -447,11 +447,11 @@ impl InstanceBuilder {
 /// On failure, this command returns
 ///
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-#[implements]
+#[implements("Allow1_1APis")]
 pub fn enumerate_instance_version() -> crate::Result<u32> {
     let mut sink = 0u32;
     unsafe {
-        crate::vkresolve::enumerate_instance_version(&mut sink)
+        crate::vkfn::enumerate_instance_version(&mut sink)
             .into_result()
             .map(move |_| sink)
     }
@@ -467,12 +467,12 @@ pub fn enumerate_instance_version() -> crate::Result<u32> {
 pub fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>> {
     let mut n = 0;
     unsafe {
-        crate::vkresolve::enumerate_instance_layer_properties(&mut n, std::ptr::null_mut()).into_result()?;
+        crate::vkfn::enumerate_instance_layer_properties(&mut n, std::ptr::null_mut()).into_result()?;
     }
     let mut v = Vec::with_capacity(n as _);
     unsafe { v.set_len(n as _) };
     unsafe {
-        crate::vkresolve::enumerate_instance_layer_properties(&mut n, v.as_mut_ptr())
+        crate::vkfn::enumerate_instance_layer_properties(&mut n, v.as_mut_ptr())
             .into_result()
             .map(|_| v)
     }
@@ -493,11 +493,10 @@ pub fn enumerate_extension_properties_cstr(
 
     unsafe {
         let mut n = 0;
-        crate::vkresolve::enumerate_instance_extension_properties(ln_ptr, &mut n, core::ptr::null_mut())
-            .into_result()?;
+        crate::vkfn::enumerate_instance_extension_properties(ln_ptr, &mut n, core::ptr::null_mut()).into_result()?;
         let mut v = Vec::with_capacity(n as _);
         v.set_len(n as _);
-        crate::vkresolve::enumerate_instance_extension_properties(ln_ptr, &mut n, v.as_mut_ptr()).into_result()?;
+        crate::vkfn::enumerate_instance_extension_properties(ln_ptr, &mut n, v.as_mut_ptr()).into_result()?;
 
         Ok(v)
     }
@@ -531,8 +530,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 
         unsafe {
             let fn_cstr = std::ffi::CString::new(name).unwrap();
-            crate::vkresolve::get_instance_proc_addr(self.native_ptr(), fn_cstr.as_ptr())
-                .map(|f| FnTransmute::from_fn(f))
+            crate::vkfn::get_instance_proc_addr(self.native_ptr(), fn_cstr.as_ptr()).map(|f| FnTransmute::from_fn(f))
         }
     }
 
@@ -567,11 +565,10 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::enumerate_physical_devices(self.native_ptr(), &mut n, std::ptr::null_mut())
-                .into_result()?;
+            crate::vkfn::enumerate_physical_devices(self.native_ptr(), &mut n, std::ptr::null_mut()).into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::enumerate_physical_devices(self.native_ptr(), &mut n, v.as_mut_ptr())
+            crate::vkfn::enumerate_physical_devices(self.native_ptr(), &mut n, v.as_mut_ptr())
                 .into_result()
                 .map(move |_| IterPhysicalDevices(v, 0, self))
         }
@@ -873,7 +870,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn enumerate_layer_properties(&self) -> crate::Result<Vec<VkLayerProperties>> {
         let mut count = 0;
         unsafe {
-            crate::vkresolve::enumerate_device_layer_properties(self.native_ptr(), &mut count, std::ptr::null_mut())
+            crate::vkfn::enumerate_device_layer_properties(self.native_ptr(), &mut count, std::ptr::null_mut())
                 .into_result()?;
         }
         let mut v = Vec::with_capacity(count as _);
@@ -881,7 +878,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             v.set_len(count as _);
         }
         unsafe {
-            crate::vkresolve::enumerate_device_layer_properties(self.native_ptr(), &mut count, v.as_mut_ptr())
+            crate::vkfn::enumerate_device_layer_properties(self.native_ptr(), &mut count, v.as_mut_ptr())
                 .into_result()
                 .map(move |_| v)
         }
@@ -903,7 +900,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
 
         unsafe {
             let mut n = 0;
-            crate::vkresolve::enumerate_device_extension_properties(
+            crate::vkfn::enumerate_device_extension_properties(
                 self.native_ptr(),
                 ln_ptr,
                 &mut n,
@@ -912,7 +909,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::enumerate_device_extension_properties(self.native_ptr(), ln_ptr, &mut n, v.as_mut_ptr())
+            crate::vkfn::enumerate_device_extension_properties(self.native_ptr(), ln_ptr, &mut n, v.as_mut_ptr())
                 .into_result()?;
 
             Ok(v)
@@ -938,7 +935,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn features(&self) -> VkPhysicalDeviceFeatures {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_physical_device_features(self.native_ptr(), p.as_mut_ptr());
+            crate::vkfn::get_physical_device_features(self.native_ptr(), p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -949,7 +946,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn format_properties(&self, format: VkFormat) -> VkFormatProperties {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_physical_device_format_properties(self.native_ptr(), format, p.as_mut_ptr());
+            crate::vkfn::get_physical_device_format_properties(self.native_ptr(), format, p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -981,7 +978,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> crate::Result<VkImageFormatProperties> {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_physical_device_image_format_properties(
+            crate::vkfn::get_physical_device_image_format_properties(
                 self.native_ptr(),
                 format,
                 itype,
@@ -1000,7 +997,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn properties(&self) -> VkPhysicalDeviceProperties {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_physical_device_properties(self.native_ptr(), p.as_mut_ptr());
+            crate::vkfn::get_physical_device_properties(self.native_ptr(), p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -1011,14 +1008,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn queue_family_properties(&self) -> QueueFamilies {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_physical_device_queue_family_properties(
-                self.native_ptr(),
-                &mut n,
-                std::ptr::null_mut(),
-            );
+            crate::vkfn::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, std::ptr::null_mut());
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, v.as_mut_ptr());
+            crate::vkfn::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, v.as_mut_ptr());
 
             QueueFamilies(v)
         }
@@ -1029,7 +1022,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn memory_properties(&self) -> MemoryProperties {
         let mut p = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_physical_device_memory_properties(self.native_ptr(), p.as_mut_ptr());
+            crate::vkfn::get_physical_device_memory_properties(self.native_ptr(), p.as_mut_ptr());
 
             MemoryProperties(p.assume_init())
         }
@@ -1047,7 +1040,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> Vec<VkSparseImageFormatProperties> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_physical_device_sparse_image_format_properties(
+            crate::vkfn::get_physical_device_sparse_image_format_properties(
                 self.native_ptr(),
                 format,
                 itype,
@@ -1059,7 +1052,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             );
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::get_physical_device_sparse_image_format_properties(
+            crate::vkfn::get_physical_device_sparse_image_format_properties(
                 self.native_ptr(),
                 format,
                 itype,
@@ -1122,7 +1115,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn surface_support(&self, queue_family: u32, surface: &impl Surface) -> crate::Result<bool> {
         let mut f = false as _;
         unsafe {
-            crate::vkresolve::get_physical_device_surface_support_khr(
+            crate::vkfn::get_physical_device_surface_support_khr(
                 self.native_ptr(),
                 queue_family,
                 surface.native_ptr(),
@@ -1144,7 +1137,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn surface_capabilities(&self, surface: &impl Surface) -> crate::Result<VkSurfaceCapabilitiesKHR> {
         let mut s = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_physical_device_surface_capabilities_khr(
+            crate::vkfn::get_physical_device_surface_capabilities_khr(
                 self.native_ptr(),
                 surface.native_ptr(),
                 s.as_mut_ptr(),
@@ -1165,7 +1158,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn surface_formats(&self, surface: &impl Surface) -> crate::Result<Vec<VkSurfaceFormatKHR>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_physical_device_surface_formats_khr(
+            crate::vkfn::get_physical_device_surface_formats_khr(
                 self.native_ptr(),
                 surface.native_ptr(),
                 &mut n,
@@ -1174,7 +1167,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::get_physical_device_surface_formats_khr(
+            crate::vkfn::get_physical_device_surface_formats_khr(
                 self.native_ptr(),
                 surface.native_ptr(),
                 &mut n,
@@ -1197,7 +1190,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn surface_present_modes(&self, surface: &impl Surface) -> crate::Result<Vec<PresentMode>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_physical_device_surface_present_modes_khr(
+            crate::vkfn::get_physical_device_surface_present_modes_khr(
                 self.native_ptr(),
                 surface.native_ptr(),
                 &mut n,
@@ -1206,7 +1199,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::get_physical_device_surface_present_modes_khr(
+            crate::vkfn::get_physical_device_surface_present_modes_khr(
                 self.native_ptr(),
                 surface.native_ptr(),
                 &mut n,
@@ -1259,11 +1252,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[implements("VK_KHR_wayland_surface")]
     fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
         unsafe {
-            crate::vkresolve::get_physical_device_wayland_presentation_support_khr(
-                self.native_ptr(),
-                queue_family,
-                display,
-            ) != 0
+            crate::vkfn::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display)
+                != 0
         }
     }
 
@@ -1372,7 +1362,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_wayland_surface_khr(
+            crate::vkfn::create_wayland_surface_khr(
                 self.instance().native_ptr(),
                 &cinfo,
                 std::ptr::null(),
@@ -1494,11 +1484,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn display_mode_properties(&self, display: VkDisplayKHR) -> crate::Result<Vec<VkDisplayModePropertiesKHR>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_display_mode_properties_khr(self.native_ptr(), display, &mut n, std::ptr::null_mut())
+            crate::vkfn::get_display_mode_properties_khr(self.native_ptr(), display, &mut n, std::ptr::null_mut())
                 .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
-            crate::vkresolve::get_display_mode_properties_khr(self.native_ptr(), display, &mut n, v.as_mut_ptr())
+            crate::vkfn::get_display_mode_properties_khr(self.native_ptr(), display, &mut n, v.as_mut_ptr())
                 .into_result()
                 .map(move |_| v)
         }
@@ -1529,15 +1519,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_display_mode_khr(
-                self.native_ptr(),
-                display,
-                &cinfo,
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| h.assume_init())
+            crate::vkfn::create_display_mode_khr(self.native_ptr(), display, &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(move |_| h.assume_init())
         }
     }
 
@@ -1555,7 +1539,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> crate::Result<VkDisplayPlaneCapabilitiesKHR> {
         let mut s = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::get_display_plane_capabilities_khr(self.native_ptr(), mode, plane_index, s.as_mut_ptr())
+            crate::vkfn::get_display_plane_capabilities_khr(self.native_ptr(), mode, plane_index, s.as_mut_ptr())
                 .into_result()
                 .map(move |_| s.assume_init())
         }
@@ -1571,21 +1555,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn display_properties(&self) -> crate::Result<Vec<DisplayProperties<&Self>>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_physical_device_display_properties_khr(
-                self.native_ptr(),
-                &mut n,
-                std::ptr::null_mut(),
-            )
-            .into_result()?;
+            crate::vkfn::get_physical_device_display_properties_khr(self.native_ptr(), &mut n, std::ptr::null_mut())
+                .into_result()?;
             let mut v = Vec::with_capacity(n as usize);
             v.set_len(n as usize);
-            crate::vkresolve::get_physical_device_display_properties_khr(
-                self.native_ptr(),
-                &mut n,
-                v.as_mut_ptr() as *mut _,
-            )
-            .into_result()
-            .map(move |_| v.into_iter().map(|x| DisplayProperties(x, self)).collect())
+            crate::vkfn::get_physical_device_display_properties_khr(self.native_ptr(), &mut n, v.as_mut_ptr() as *mut _)
+                .into_result()
+                .map(move |_| v.into_iter().map(|x| DisplayProperties(x, self)).collect())
         }
     }
 
@@ -1599,7 +1575,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn display_plane_properties(&self) -> crate::Result<Vec<DisplayPlaneProperties<&Self>>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_physical_device_display_plane_properties_khr(
+            crate::vkfn::get_physical_device_display_plane_properties_khr(
                 self.native_ptr(),
                 &mut n,
                 std::ptr::null_mut(),
@@ -1607,7 +1583,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .into_result()?;
             let mut v = Vec::with_capacity(n as usize);
             v.set_len(n as usize);
-            crate::vkresolve::get_physical_device_display_plane_properties_khr(
+            crate::vkfn::get_physical_device_display_plane_properties_khr(
                 self.native_ptr(),
                 &mut n,
                 v.as_mut_ptr() as *mut _,
@@ -1627,7 +1603,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn display_plane_supported_displays(&self, plane_index: u32) -> crate::Result<Vec<Display<&Self>>> {
         unsafe {
             let mut n = 0;
-            crate::vkresolve::get_display_plane_supported_displays_khr(
+            crate::vkfn::get_display_plane_supported_displays_khr(
                 self.native_ptr(),
                 plane_index,
                 &mut n,
@@ -1636,7 +1612,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             .into_result()?;
             let mut v = Vec::with_capacity(n as usize);
             v.set_len(n as usize);
-            crate::vkresolve::get_display_plane_supported_displays_khr(
+            crate::vkfn::get_display_plane_supported_displays_khr(
                 self.native_ptr(),
                 plane_index,
                 &mut n,
@@ -1704,7 +1680,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let mut h = std::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkresolve::create_display_plane_surface_khr(
+            crate::vkfn::create_display_plane_surface_khr(
                 self.instance().native_ptr(),
                 &cinfo,
                 std::ptr::null(),

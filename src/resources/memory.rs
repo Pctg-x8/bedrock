@@ -41,7 +41,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     {
         let mut p = core::mem::MaybeUninit::uninit();
 
-        crate::vkresolve::map_memory(
+        crate::vkfn::map_memory(
             self.device_handle(),
             self.native_ptr_mut(),
             range.start,
@@ -62,7 +62,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     where
         Self: VkHandleMut,
     {
-        crate::vkresolve::unmap_memory(self.device_handle(), self.native_ptr_mut());
+        crate::vkfn::unmap_memory(self.device_handle(), self.native_ptr_mut());
     }
 
     /// Query the current commitment for a `DeviceMemory`
@@ -70,7 +70,7 @@ pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     fn commitment_bytes(&self) -> VkDeviceSize {
         let mut b = 0;
         unsafe {
-            crate::vkresolve::get_device_memory_commitment(self.device_handle(), self.native_ptr(), &mut b);
+            crate::vkfn::get_device_memory_commitment(self.device_handle(), self.native_ptr(), &mut b);
         }
 
         b
@@ -300,7 +300,7 @@ impl DeviceMemoryRequest {
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::allocate_memory(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::allocate_memory(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| DeviceMemoryObject(h.assume_init(), device))
         }

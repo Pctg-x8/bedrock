@@ -259,9 +259,12 @@ fn main() {
             offset: core::mem::offset_of!(Vertex, col) as _,
         },
     ];
-    let pl = br::PipelineLayoutBuilder::new(vec![&dsl_ub1], vec![(br::ShaderStage::VERTEX, 0..8)])
-        .create(&vk_device)
-        .unwrap();
+    let pl = br::PipelineLayoutBuilder::new(
+        &[br::DescriptorSetLayoutObjectRef::new(&dsl_ub1)],
+        &[(br::ShaderStage::VERTEX, 0..8)],
+    )
+    .create(&vk_device)
+    .unwrap();
     let mut pipeline = br::NonDerivedGraphicsPipelineBuilder::new(
         &pl,
         renderpass.subpass(0),

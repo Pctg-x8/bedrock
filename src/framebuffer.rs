@@ -23,7 +23,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for FramebufferObject<'_, Device>
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkresolve::destroy_framebuffer(self.parent.native_ptr(), self.handle, std::ptr::null());
+            crate::vkfn::destroy_framebuffer(self.parent.native_ptr(), self.handle, std::ptr::null());
         }
     }
 }
@@ -182,7 +182,7 @@ impl<'r, RenderPass: crate::RenderPass + crate::DeviceChild> FramebufferBuilder<
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_framebuffer(
+            crate::vkfn::create_framebuffer(
                 self.render_pass.device().native_ptr(),
                 &self.info,
                 core::ptr::null(),
@@ -217,7 +217,7 @@ impl<'r, RenderPass: crate::RenderPass + crate::DeviceChild> FramebufferBuilder<
 
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_framebuffer(device.native_ptr(), &self.info, core::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_framebuffer(device.native_ptr(), &self.info, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| FramebufferObject {
                     handle: h.assume_init(),

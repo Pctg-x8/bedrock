@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use bedrock as br;
+use bedrock::{self as br, CommandPoolMut, DescriptorPoolMut};
 use br::{
     CommandBuffer, CommandPool, DescriptorPool, Device, DeviceMemory, Fence, GraphicsPipelineBuilder,
     ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, RenderPass,
