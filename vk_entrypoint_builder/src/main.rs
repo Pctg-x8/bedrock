@@ -177,7 +177,7 @@ impl Entrypoint {
 
         write!(
             sink,
-            r#"#[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+            r#"#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn {}({})"#,
             StubNameWriter(self),
             EntrypointFunctionInputFormatter(self.inputs)
@@ -213,7 +213,7 @@ unsafe extern "system" fn {}({})"#,
 
         write!(
             sink,
-            r#"#[inline(always)]
+            r#"#[rustfmt::skip] #[inline(always)]
 pub unsafe fn {}({})"#,
             ExportNameWriter(self),
             EntrypointFunctionInputFormatter(self.inputs)
@@ -1982,12 +1982,12 @@ fn main() {
     let mut function_pointer_table = String::with_capacity(8192);
     let mut fptbl_init = String::with_capacity(8192);
     function_pointer_table.push_str(
-        r#"#[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+        r#"#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 struct FunctionPointerTable {
 "#,
     );
     fptbl_init.push_str(
-        r#"#[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+        r#"#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 impl FunctionPointerTable {
     const INIT: Self = Self {
 "#,
@@ -2010,16 +2010,17 @@ impl FunctionPointerTable {
     function_pointer_table.push_str(
         r#"
 }
+#[rustfmt::skip]
 #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 static mut FPTBL: FunctionPointerTable = FunctionPointerTable::INIT;
 "#,
     );
     fptbl_init
-        .push_str("\n    };\n    #[inline(always)] pub(crate) fn reset() { unsafe { FPTBL = Self::INIT; } }\n}\n");
+        .push_str("\n    };\n    #[inline(always)] #[rustfmt::skip] pub(crate) fn reset() { unsafe { FPTBL = Self::INIT; } }\n}\n");
 
     println!("use crate::vk::*;\nuse core::ffi::*;\n");
     println!("{eps}");
     println!("{function_pointer_table}");
     println!("{fptbl_init}");
-    println!("{stubs}");
+    print!("{stubs}");
 }
