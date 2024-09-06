@@ -1220,7 +1220,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         visual: x11::xlib::VisualID,
     ) -> bool {
         unsafe {
-            crate::vkresolve::get_physical_device_xlib_presentation_support_khr(
+            crate::vkfn::get_physical_device_xlib_presentation_support_khr(
                 self.native_ptr(),
                 queue_family,
                 display,
@@ -1239,7 +1239,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         visual: xcb::x::Visualid,
     ) -> bool {
         unsafe {
-            crate::vkresolve::get_physical_device_xcb_presentation_support_khr(
+            crate::vkfn::get_physical_device_xcb_presentation_support_khr(
                 self.native_ptr(),
                 queue_family,
                 connection,
@@ -1261,9 +1261,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "VK_KHR_win32_surface")]
     #[cfg(feature = "Implements")]
     fn win32_presentation_support(&self, queue_family: u32) -> bool {
-        unsafe {
-            crate::vkresolve::get_physical_device_win32_presentation_support_khr(self.native_ptr(), queue_family) != 0
-        }
+        unsafe { crate::vkfn::get_physical_device_win32_presentation_support_khr(self.native_ptr(), queue_family) != 0 }
     }
 
     /// Create a `Surface` object for an X11 window, using the Xlib client-side library
@@ -1291,14 +1289,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_xlib_surface_khr(
-                self.instance().native_ptr(),
-                &cinfo,
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
+            crate::vkfn::create_xlib_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -1327,14 +1320,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_xcb_surface_khr(
-                self.instance().native_ptr(),
-                &cinfo,
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
+            crate::vkfn::create_xcb_surface_khr(self.instance().native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
+                .into_result()
+                .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
         }
     }
 
@@ -1395,7 +1383,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_android_surface_khr(
+            crate::vkfn::create_android_surface_khr(
                 self.instance().native_ptr(),
                 &cinfo,
                 std::ptr::null(),
@@ -1430,7 +1418,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_win32_surface_khr(
+            crate::vkfn::create_win32_surface_khr(
                 self.instance().native_ptr(),
                 &cinfo,
                 std::ptr::null(),
@@ -1463,7 +1451,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         };
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkresolve::create_macos_surface_mvk(
+            crate::vkfn::create_macos_surface_mvk(
                 self.instance().native_ptr(),
                 &cinfo,
                 std::ptr::null(),

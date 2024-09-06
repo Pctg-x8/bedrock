@@ -772,7 +772,7 @@ pub unsafe fn create_xcb_surface_khr(instance: VkInstance, create_info: *const V
 }
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn get_physical_device_xcb_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::VisualId) -> VkBool32 {
+pub unsafe fn get_physical_device_xcb_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32 {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_xcb_presentation_support_khr.0)(physical_device, queue_family_index, connection, visual_id) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceXcbPresentationSupportKHR(physical_device, queue_family_index, connection, visual_id) }
 }
@@ -808,7 +808,7 @@ pub unsafe fn get_physical_device_win32_presentation_support_khr(physical_device
 }
 #[cfg(feature = "VK_MVK_macos_surface")]
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn create_macos_surface_mvk(instance: VkInstance, create_info: *const VkMacOSSurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
+pub unsafe fn create_macos_surface_mvk(instance: VkInstance, create_info: *const VkMacOSSurfaceCreateInfoMVK, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.create_macos_surface_mvk.0)(instance, create_info, allocator, surface_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCreateMacOSSurfaceMVK(instance, create_info, allocator, surface_out) }
 }
@@ -2237,7 +2237,7 @@ unsafe extern "system" fn stub_create_xcb_surface_khr(instance: VkInstance, crea
 }
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_get_physical_device_xcb_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::VisualId) -> VkBool32 {
+unsafe extern "system" fn stub_get_physical_device_xcb_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32 {
     let fp: PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR>::NAME_CSTR);
     FPTBL.get_physical_device_xcb_presentation_support_khr = fp;
     (fp.0)(physical_device, queue_family_index, connection, visual_id)
@@ -2279,7 +2279,7 @@ unsafe extern "system" fn stub_get_physical_device_win32_presentation_support_kh
 }
 #[cfg(feature = "VK_MVK_macos_surface")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_create_macos_surface_mvk(instance: VkInstance, create_info: *const VkMacOSSurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
+unsafe extern "system" fn stub_create_macos_surface_mvk(instance: VkInstance, create_info: *const VkMacOSSurfaceCreateInfoMVK, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     let fp: PFN_vkCreateMacOSSurfaceMVK = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateMacOSSurfaceMVK>::NAME_CSTR);
     FPTBL.create_macos_surface_mvk = fp;
     (fp.0)(instance, create_info, allocator, surface_out)

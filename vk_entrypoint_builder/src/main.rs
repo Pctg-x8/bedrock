@@ -1645,7 +1645,7 @@ const CATALOG: &'static [Entrypoint] = &[
             ("physical_device", "VkPhysicalDevice"),
             ("queue_family_index", "u32"),
             ("connection", "*mut xcb::ffi::xcb_connection_t"),
-            ("visual_id", "xcb::x::VisualId"),
+            ("visual_id", "xcb::x::Visualid"),
         ],
     )
     .with_return("VkBool32")
@@ -1707,7 +1707,7 @@ const CATALOG: &'static [Entrypoint] = &[
         "create_macos_surface",
         &[
             ("instance", "VkInstance"),
-            ("create_info", "*const VkMacOSSurfaceCreateInfoKHR"),
+            ("create_info", "*const VkMacOSSurfaceCreateInfoMVK"),
             ("allocator", "*const VkAllocationCallbacks"),
             ("surface_out", "*mut VkSurfaceKHR"),
         ],
