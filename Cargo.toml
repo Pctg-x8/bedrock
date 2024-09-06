@@ -1,4 +1,8 @@
-workspace = { members = ["bedrock-examples", "vk_entrypoint_builder", "wayland_examples"] }
+workspace = { members = [
+    "bedrock-examples",
+    "vk_entrypoint_builder",
+    "wayland_examples",
+] }
 [package]
 name = "bedrock"
 version = "0.1.0-vk1.1.70"
@@ -197,7 +201,7 @@ CustomResolver = []
 
 [dependencies]
 x11 = { version = "^2.15", optional = true }
-xcb = { version = "^1.1", optional = true }
+xcb = { version = "^1.4", optional = true }
 android = { git = "https://github.com/Pctg-x8/android-defs-rs", optional = true }
 libloading = { version = "0.5", optional = true }
 widestring = { version = "0.4", optional = true }
