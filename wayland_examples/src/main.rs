@@ -1,7 +1,7 @@
 use bedrock::{
     self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemory, Fence, FenceMut,
     GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider,
-    Queue, RenderPass, Swapchain, VulkanStructure,
+    QueueMut, RenderPass, ShaderModule, Swapchain, VulkanStructure,
 };
 use core::ffi::*;
 use std::{
@@ -123,11 +123,14 @@ fn main() {
 
     surface.commit();
 
-    let mut vk_instance = br::InstanceBuilder::new("Bedrock Examples Wayland Native", (0, 1, 0), "", (0, 1, 0));
-    vk_instance
-        .add_layer("VK_LAYER_KHRONOS_validation")
-        .add_extensions(["VK_KHR_surface", "VK_KHR_wayland_surface", "VK_EXT_debug_utils"])
-        .set_api_version(1, 3, 0);
+    let app =
+        br::ApplicationInfo::new(c"Bedrock Examples Wayland Native", (0, 1, 0), c"", (0, 1, 0)).api_version(1, 3, 0);
+    let mut vk_instance = br::InstanceBuilder::new(&app);
+    vk_instance.add_layer(c"VK_LAYER_KHRONOS_validation").add_extensions([
+        c"VK_KHR_surface",
+        c"VK_KHR_wayland_surface",
+        c"VK_EXT_debug_utils",
+    ]);
     let vk_instance = Rc::new(vk_instance.create().unwrap());
     let _vk_debugger = br::DebugUtilsMessengerCreateInfo::new(vk_debug_msg)
         .filter_type(br::DebugUtilsMessageTypeFlags::VALIDATION.and_performance())
@@ -146,8 +149,8 @@ fn main() {
         .unwrap();
     let mut vk_device = br::DeviceBuilder::new(&vk_pdev);
     vk_device
-        .add_extensions(["VK_KHR_swapchain"])
-        .add_queue(br::DeviceQueueCreateInfo::new(vk_graphics_queue_family_index).add(0.0))
+        .add_extensions([c"VK_KHR_swapchain"])
+        .add_queue(br::DeviceQueueCreateInfo::new(vk_graphics_queue_family_index, &[0.0]))
         .add_extra_features(br::vk::VkPhysicalDeviceSynchronization2Features {
             sType: br::vk::VkPhysicalDeviceSynchronization2Features::TYPE,
             pNext: core::ptr::null_mut(),
@@ -233,10 +236,9 @@ fn main() {
     .into_rect(br::vk::VkOffset2D::ZERO);
     let viewport = rect.make_viewport(0.0..1.0);
 
-    let dsl_ub1 =
-        br::DescriptorSetLayoutBuilder::with_bindings(vec![br::DescriptorType::UniformBuffer.make_binding(1)])
-            .create(&vk_device)
-            .unwrap();
+    let dsl_ub1 = br::DescriptorSetLayoutBuilder::new(&[br::DescriptorType::UniformBuffer.make_binding(0, 1)])
+        .create(&vk_device)
+        .unwrap();
 
     let vsh = vk_device
         .new_shader_module_ref(&std::fs::read("./shaders/triangle.vspv").unwrap())
@@ -261,7 +263,7 @@ fn main() {
     ];
     let pl = br::PipelineLayoutBuilder::new(
         &[br::DescriptorSetLayoutObjectRef::new(&dsl_ub1)],
-        &[(br::ShaderStage::VERTEX, 0..8)],
+        &[br::PushConstantRange::for_type::<[f32; 2]>(br::ShaderStage::VERTEX, 0)],
     )
     .create(&vk_device)
     .unwrap();
@@ -269,8 +271,8 @@ fn main() {
         &pl,
         renderpass.subpass(0),
         br::VertexProcessingStages::new(
-            br::VertexShaderStage::new(br::PipelineShader2::new(&vsh, c"main"))
-                .with_fragment_shader_stage(br::PipelineShader2::new(&fsh, c"main")),
+            br::VertexShaderStage::new(vsh.with_entry_point(c"main"))
+                .with_fragment_shader_stage(fsh.with_entry_point(c"main")),
             &vi_bindings,
             &vi_attrs,
             br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -388,13 +390,12 @@ fn main() {
                 &[br::CommandBufferSubmitInfo::new(&init_cb)],
                 &[],
             )],
-            None::<&mut br::FenceObject<Rc<br::DeviceObject<&Rc<br::InstanceObject>>>>>,
+            None,
         )
         .unwrap();
     vk_queue.wait().unwrap();
 
-    let mut dp = br::DescriptorPoolBuilder::new(1)
-        .reserve(br::DescriptorType::UniformBuffer.with_count(1))
+    let mut dp = br::DescriptorPoolBuilder::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)])
         .create(&vk_device)
         .unwrap();
     let [object_descriptor] = dp
@@ -468,10 +469,7 @@ fn main() {
 
     let mut fence = br::FenceBuilder::new().create(vk_device.clone()).unwrap();
     let bb_index = vk_swapchain
-        .acquire_next(
-            None,
-            br::CompletionHandler::<_, &br::SemaphoreObject<Rc<br::DeviceObject<&br::InstanceObject>>>>::Host(&fence),
-        )
+        .acquire_next(None, br::CompletionHandlerMut::Host(fence.as_transparent_mut_ref()))
         .unwrap();
     fence.wait().unwrap();
     fence.reset().unwrap();
@@ -482,14 +480,14 @@ fn main() {
                 &[br::CommandBufferSubmitInfo::new(&cb[bb_index as usize])],
                 &[],
             )],
-            Some(&mut fence),
+            Some(fence.as_transparent_mut_ref()),
         )
         .unwrap();
     fence.wait().unwrap();
     fence.reset().unwrap();
     vk_queue
         .present(br::PresentInfo::new(
-            &[] as &[br::SemaphoreRef<br::SemaphoreObject<Rc<br::DeviceObject<&br::InstanceObject>>>>],
+            &[] as &[br::SemaphoreRef],
             &[vk_swapchain.as_transparent_ref()],
             &[bb_index],
         ))
@@ -537,9 +535,7 @@ fn main() {
                 .swapchain
                 .acquire_next(
                     None,
-                    br::CompletionHandler::<_, &br::SemaphoreObject<Rc<br::DeviceObject<&br::InstanceObject>>>>::Host(
-                        &self.fence,
-                    ),
+                    br::CompletionHandlerMut::Host(self.fence.as_transparent_mut_ref()),
                 )
                 .unwrap();
             self.fence.wait().unwrap();
@@ -554,14 +550,14 @@ fn main() {
                         ],
                         &[],
                     )],
-                    Some(&mut self.fence),
+                    Some(self.fence.as_transparent_mut_ref()),
                 )
                 .unwrap();
             self.fence.wait().unwrap();
             self.fence.reset().unwrap();
             self.queue
                 .present(br::PresentInfo::new(
-                    &[] as &[br::SemaphoreRef<br::SemaphoreObject<Rc<br::DeviceObject<&br::InstanceObject>>>>],
+                    &[] as &[br::SemaphoreRef],
                     &[self.swapchain.as_transparent_ref()],
                     &[bb_index],
                 ))

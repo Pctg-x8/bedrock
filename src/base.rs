@@ -8,7 +8,10 @@ use crate::{fnconv::FnTransmute, ImageFlags, ImageUsageFlags};
 use crate::{vk::*, VkHandle, VkObject, VulkanStructure};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
-use std::ops::*;
+use std::{
+    ffi::{c_char, CStr},
+    ops::*,
+};
 
 #[cfg(feature = "Multithreaded")]
 struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
@@ -17,6 +20,26 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     type Target = T;
     fn deref(&self) -> &T {
         self.0.as_ref().unwrap()
+    }
+}
+
+/// Query instance-level version before instance creation
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+#[inline]
+pub fn instance_version() -> crate::Result<(u16, u16, u16)> {
+    #[cfg(feature = "Allow1_1APIs")]
+    unsafe {
+        let mut sink = 0;
+        crate::vkfn::enumerate_instance_version(&mut sink).into_result()?;
+        Ok(crate::vk::vk_deserialize_version(sink))
+    }
+    #[cfg(not(feature = "Allow1_1APIs"))]
+    {
+        // fixed to v1.0.0
+        Ok((1, 0, 0))
     }
 }
 
@@ -296,75 +319,80 @@ impl<'i, Source: Instance + 'i> DoubleEndedIterator for IterPhysicalDevices<'i, 
     }
 }
 
-/// Builder object for constructing a `Instance`
-pub struct InstanceBuilder {
-    _app_name: std::ffi::CString,
-    _engine_name: std::ffi::CString,
-    extensions: Vec<std::ffi::CString>,
-    layers: Vec<std::ffi::CString>,
-    ext_structures: Vec<Box<dyn std::any::Any>>,
-    appinfo: VkApplicationInfo,
-    cinfo: VkInstanceCreateInfo,
-}
-impl InstanceBuilder {
-    pub fn new(
-        app_name: &str,
-        app_version: (u32, u32, u32),
-        engine_name: &str,
-        engine_version: (u32, u32, u32),
+#[repr(transparent)]
+pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
+impl<'d> ApplicationInfo<'d> {
+    #[inline(always)]
+    pub const fn new(
+        app_name: &'d CStr,
+        app_version: (u16, u16, u16),
+        engine_name: &'d CStr,
+        engine_version: (u16, u16, u16),
     ) -> Self {
+        Self(
+            VkApplicationInfo {
+                sType: VkApplicationInfo::TYPE,
+                pNext: core::ptr::null(),
+                apiVersion: VK_API_VERSION_1_0,
+                pApplicationName: app_name.as_ptr(),
+                applicationVersion: VK_MAKE_VERSION(app_version.0, app_version.1, app_version.2),
+                pEngineName: engine_name.as_ptr(),
+                engineVersion: VK_MAKE_VERSION(engine_version.0, engine_version.1, engine_version.2),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline(always)]
+    pub const fn api_version(mut self, major: u16, minor: u16, patch: u16) -> Self {
+        self.0.apiVersion = VK_MAKE_VERSION(major, minor, patch);
+        self
+    }
+}
+
+/// Builder object for constructing a `Instance`
+pub struct InstanceBuilder<'d> {
+    extensions: Vec<*const c_char>,
+    layers: Vec<*const c_char>,
+    ext_structures: Vec<Box<dyn std::any::Any>>,
+    cinfo: VkInstanceCreateInfo,
+    _refs: core::marker::PhantomData<(&'d CStr, &'d ApplicationInfo<'d>)>,
+}
+impl<'d> InstanceBuilder<'d> {
+    #[inline]
+    pub const fn new(app_info: &'d ApplicationInfo) -> Self {
         Self {
-            _app_name: std::ffi::CString::new(app_name).unwrap(),
-            _engine_name: std::ffi::CString::new(engine_name).unwrap(),
             extensions: Vec::new(),
             layers: Vec::new(),
             ext_structures: Vec::new(),
-            appinfo: VkApplicationInfo {
-                sType: VkApplicationInfo::TYPE,
-                pNext: std::ptr::null(),
-                apiVersion: VK_API_VERSION_1_0,
-                pApplicationName: std::ptr::null(),
-                pEngineName: std::ptr::null(),
-                applicationVersion: VK_MAKE_VERSION(app_version.0 as _, app_version.1 as _, app_version.2 as _),
-                engineVersion: VK_MAKE_VERSION(engine_version.0 as _, engine_version.1 as _, engine_version.2 as _),
-            },
             cinfo: VkInstanceCreateInfo {
                 sType: VkInstanceCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
-                pApplicationInfo: std::ptr::null(),
+                pApplicationInfo: app_info as *const _ as _,
                 enabledLayerCount: 0,
-                ppEnabledLayerNames: std::ptr::null(),
+                ppEnabledLayerNames: core::ptr::null(),
                 enabledExtensionCount: 0,
-                ppEnabledExtensionNames: std::ptr::null(),
+                ppEnabledExtensionNames: core::ptr::null(),
             },
+            _refs: core::marker::PhantomData,
         }
     }
-    pub fn set_api_version(&mut self, major: u16, minor: u16, patch: u16) -> &mut Self {
-        self.appinfo.apiVersion = VK_MAKE_VERSION(major, minor, patch);
+
+    pub fn add_extension(&mut self, extension: &'d CStr) -> &mut Self {
+        self.extensions.push(extension.as_ptr());
         self
     }
-    pub fn add_extension(&mut self, extension: &str) -> &mut Self {
-        self.extensions.push(std::ffi::CString::new(extension).unwrap());
+    pub fn add_extensions(&mut self, extensions: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
+        self.extensions.extend(extensions.into_iter().map(CStr::as_ptr));
         self
     }
-    pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(
-        &mut self,
-        extensions: Extensions,
-    ) -> &mut Self {
-        for ex in extensions {
-            self.add_extension(ex);
-        }
+    pub fn add_layer(&mut self, layer: &'d CStr) -> &mut Self {
+        self.layers.push(layer.as_ptr());
         self
     }
-    pub fn add_layer(&mut self, layer: &str) -> &mut Self {
-        self.layers.push(std::ffi::CString::new(layer).unwrap());
-        self
-    }
-    pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self {
-        for l in layers {
-            self.add_layer(l);
-        }
+    pub fn add_layers(&mut self, layers: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
+        self.layers.extend(layers.into_iter().map(CStr::as_ptr));
         self
     }
 
@@ -380,13 +408,6 @@ impl InstanceBuilder {
         self
     }
 
-    pub fn create_info(&self) -> &VkInstanceCreateInfo {
-        &self.cinfo
-    }
-    pub fn application_info(&self) -> &VkApplicationInfo {
-        &self.appinfo
-    }
-
     /// Create a new Vulkan instance
     /// # Failures
     /// On failure, this command returns
@@ -397,11 +418,11 @@ impl InstanceBuilder {
     /// * `VK_ERROR_LAYER_NOT_PRESENT`
     /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
     /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
-    #[cfg(feature = "Implements")]
+    #[implements]
     pub fn create(mut self) -> crate::Result<InstanceObject> {
         // construct ext chains
 
-        use crate::ffi_helper::ArrayFFIExtensions;
+        use crate::ffi_helper::slice_as_ptr_empty_null;
 
         if !self.ext_structures.is_empty() {
             for n in 0..self.ext_structures.len() - 1 {
@@ -423,37 +444,17 @@ impl InstanceBuilder {
             .first()
             .map_or_else(std::ptr::null, |s| s.as_ref() as *const _ as _);
 
-        let layers: Vec<_> = self.layers.iter().map(|x| x.as_ptr()).collect();
-        let extensions: Vec<_> = self.extensions.iter().map(|x| x.as_ptr()).collect();
-        self.appinfo.pApplicationName = self._app_name.as_ptr();
-        self.appinfo.pEngineName = self._engine_name.as_ptr();
-        self.cinfo.enabledLayerCount = layers.len() as _;
-        self.cinfo.enabledExtensionCount = extensions.len() as _;
-        self.cinfo.ppEnabledLayerNames = layers.as_ptr_empty_null();
-        self.cinfo.ppEnabledExtensionNames = extensions.as_ptr_empty_null();
-        self.cinfo.pApplicationInfo = &self.appinfo;
+        self.cinfo.enabledLayerCount = self.layers.len() as _;
+        self.cinfo.enabledExtensionCount = self.extensions.len() as _;
+        self.cinfo.ppEnabledLayerNames = slice_as_ptr_empty_null(&self.layers);
+        self.cinfo.ppEnabledExtensionNames = slice_as_ptr_empty_null(&self.extensions);
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::create_instance(&self.cinfo, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_instance(&self.cinfo, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| InstanceObject::from(h.assume_init()))
         }
-    }
-}
-
-/// Query instance-level version before instance creation
-/// # Failures
-/// On failure, this command returns
-///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-#[implements("Allow1_1APis")]
-pub fn enumerate_instance_version() -> crate::Result<u32> {
-    let mut sink = 0u32;
-    unsafe {
-        crate::vkfn::enumerate_instance_version(&mut sink)
-            .into_result()
-            .map(move |_| sink)
     }
 }
 
@@ -463,7 +464,7 @@ pub fn enumerate_instance_version() -> crate::Result<u32> {
 ///
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-#[cfg(feature = "Implements")]
+#[implements]
 pub fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>> {
     let mut n = 0;
     unsafe {
@@ -486,10 +487,8 @@ pub fn enumerate_layer_properties() -> crate::Result<Vec<VkLayerProperties>> {
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 /// * `VK_ERROR_LAYER_NOT_PRESENT`
 #[implements]
-pub fn enumerate_extension_properties_cstr(
-    layer_name: Option<&core::ffi::CStr>,
-) -> crate::Result<Vec<VkExtensionProperties>> {
-    let ln_ptr = layer_name.map_or_else(core::ptr::null, |x| x.as_ptr());
+pub fn enumerate_extension_properties_cstr(layer_name: Option<&CStr>) -> crate::Result<Vec<VkExtensionProperties>> {
+    let ln_ptr = layer_name.map_or_else(core::ptr::null, CStr::as_ptr);
 
     unsafe {
         let mut n = 0;
@@ -509,7 +508,7 @@ pub fn enumerate_extension_properties_cstr(
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 /// * `VK_ERROR_LAYER_NOT_PRESENT`
-#[cfg(feature = "Implements")]
+#[implements]
 pub fn enumerate_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
     let cn = layer_name.map(|s| std::ffi::CString::new(s).unwrap());
 
@@ -522,7 +521,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// # Failures
     /// If function is not provided by instance or `name` is empty, returns `None`
     #[deprecated = "do not use this directly(this does not provide caching)"]
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F> {
         if name.is_empty() {
             return None;
@@ -541,7 +540,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn enumerate_physical_devices(&self) -> crate::Result<Vec<PhysicalDeviceObject<&Self>>>
     where
         Self: Sized,
@@ -558,7 +557,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn iter_physical_devices(&self) -> crate::Result<IterPhysicalDevices<Self>>
     where
         Self: Sized,
@@ -866,11 +865,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn enumerate_layer_properties(&self) -> crate::Result<Vec<VkLayerProperties>> {
         let mut count = 0;
         unsafe {
-            crate::vkfn::enumerate_device_layer_properties(self.native_ptr(), &mut count, std::ptr::null_mut())
+            crate::vkfn::enumerate_device_layer_properties(self.native_ptr(), &mut count, core::ptr::null_mut())
                 .into_result()?;
         }
         let mut v = Vec::with_capacity(count as _);
@@ -894,9 +893,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[implements]
     fn enumerate_extension_properties_cstr(
         &self,
-        layer_name: Option<&core::ffi::CStr>,
+        layer_name: Option<&CStr>,
     ) -> crate::Result<Vec<VkExtensionProperties>> {
-        let ln_ptr = layer_name.map_or_else(core::ptr::null, |x| x.as_ptr());
+        let ln_ptr = layer_name.map_or_else(core::ptr::null, CStr::as_ptr);
 
         unsafe {
             let mut n = 0;
@@ -1905,20 +1904,28 @@ pub use self::external_fence_capabilities_khr::*;
 #[repr(transparent)]
 pub struct MemoryProperties(VkPhysicalDeviceMemoryProperties);
 impl MemoryProperties {
+    #[inline(always)]
+    pub fn types(&self) -> &[VkMemoryType] {
+        &self.0.memoryTypes[..self.0.memoryTypeCount as _]
+    }
+    #[inline(always)]
+    pub fn heaps(&self) -> &[VkMemoryHeap] {
+        &self.0.memoryHeaps[..self.0.memoryHeapCount as _]
+    }
+
+    #[inline]
     pub fn find_type_index(
         &self,
         mask: MemoryPropertyFlags,
         exclude: MemoryPropertyFlags,
         index_mask: u32,
     ) -> Option<u32> {
-        self.0.memoryTypes[..self.0.memoryTypeCount as usize]
-            .iter()
-            .enumerate()
-            .filter(|(i, _)| (index_mask & (1u32 << i)) != 0)
-            .filter(|(_, mt)| (mt.propertyFlags & mask.0) != 0 && (mt.propertyFlags & exclude.0) == 0)
-            .map(|(x, _)| x as u32)
-            .next()
+        self.types().iter().enumerate().find_map(|(i, mt)| {
+            (index_mask & (1u32 << i) != 0 && (mt.propertyFlags & mask.0) != 0 && (mt.propertyFlags & exclude.0) == 0)
+                .then_some(i as _)
+        })
     }
+
     pub fn find_device_local_index(&self, index_mask: u32) -> Option<u32> {
         self.find_type_index(
             MemoryPropertyFlags::DEVICE_LOCAL,
@@ -1940,48 +1947,12 @@ impl MemoryProperties {
             index_mask,
         )
     }
+
     pub fn is_coherent(&self, index: u32) -> bool {
         (self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_COHERENT.0) != 0
     }
     pub fn is_cached(&self, index: u32) -> bool {
         (self.0.memoryTypes[index as usize].propertyFlags & MemoryPropertyFlags::HOST_CACHED.0) != 0
-    }
-
-    pub fn types(&self) -> MemoryTypeIter {
-        MemoryTypeIter(&self.0, 0)
-    }
-    pub fn heaps(&self) -> MemoryHeapIter {
-        MemoryHeapIter(&self.0, 0)
-    }
-}
-
-/// Iterating each elements of memory types
-pub struct MemoryTypeIter<'d>(&'d VkPhysicalDeviceMemoryProperties, usize);
-impl<'d> Iterator for MemoryTypeIter<'d> {
-    type Item = &'d VkMemoryType;
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.1 < self.0.memoryTypeCount as usize {
-            let r = &self.0.memoryTypes[self.1];
-            self.1 += 1;
-            Some(r)
-        } else {
-            None
-        }
-    }
-}
-
-/// Iterating each elements of memory heaps
-pub struct MemoryHeapIter<'d>(&'d VkPhysicalDeviceMemoryProperties, usize);
-impl<'d> Iterator for MemoryHeapIter<'d> {
-    type Item = &'d VkMemoryHeap;
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.1 < self.0.memoryHeapCount as usize {
-            let r = &self.0.memoryHeaps[self.1];
-            self.1 += 1;
-            Some(r)
-        } else {
-            None
-        }
     }
 }
 
@@ -2054,36 +2025,38 @@ impl BitOrAssign for MemoryPropertyFlags {
 pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);
 impl QueueFamilies {
     /// Find a queue family index containing specified bitflags
-    #[allow(non_snake_case)]
     pub fn find_matching_index(&self, flags: QueueFlags) -> Option<u32> {
         self.0
             .iter()
             .position(|q| (q.queueFlags & flags.0) != 0)
             .map(|x| x as _)
     }
+
     /// Find a queue family index containing specified bitflags
-    #[allow(non_snake_case)]
     pub fn find_another_matching_index(&self, flags: QueueFlags, exclude: u32) -> Option<u32> {
         self.0
             .iter()
             .enumerate()
-            .find(|&(n, &VkQueueFamilyProperties { queueFlags, .. })| {
-                (queueFlags & flags.0) != 0 && exclude != n as u32
+            .find_map(|(n, &VkQueueFamilyProperties { queueFlags, .. })| {
+                ((queueFlags & flags.0) != 0 && exclude != n as u32).then_some(n as _)
             })
-            .map(|(n, _)| n as _)
     }
+
     /// Number of queue families
     pub fn count(&self) -> u32 {
         self.0.len() as _
     }
+
     /// Number of queues in selected queue family
     pub fn queue_count(&self, family_index: u32) -> u32 {
         self.0[family_index as usize].queueCount
     }
+
     /// Unsigned integer count of meaningful bits in the timestamps written via `vkCmdWriteTimestamp`
     pub fn timestamp_valid_bits(&self, family_index: u32) -> u32 {
         self.0[family_index as usize].timestampValidBits
     }
+
     /// Minimum granularity supported for image transfer operations on the queues in selected queue family
     pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &VkExtent3D {
         &self.0[family_index as usize].minImageTransferGranularity

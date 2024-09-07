@@ -3,10 +3,10 @@
 use cfg_if::cfg_if;
 use derives::{implements, transparent_marked};
 
-use crate::ffi_helper::ArrayFFIExtensions;
+use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, ShaderStage, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
+    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, SamplerObjectRef, ShaderStage, VkDeviceChildNonExtDestroyable,
+    VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
 };
 
 /// Opaque handle to a descriptor set layout object
@@ -120,20 +120,15 @@ pub enum DescriptorType {
     InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _,
 }
 impl DescriptorType {
-    pub const fn with_count(self, count: u32) -> VkDescriptorPoolSize {
+    pub const fn make_size(self, count: u32) -> VkDescriptorPoolSize {
         VkDescriptorPoolSize {
             _type: self as _,
             descriptorCount: count,
         }
     }
 
-    pub const fn make_binding<'a>(self, count: u32) -> DescriptorSetLayoutBinding<'a> {
-        DescriptorSetLayoutBinding {
-            ty: self,
-            count,
-            shader_stage_mask: ShaderStage::ALL,
-            immutable_samplers: Vec::new(),
-        }
+    pub const fn make_binding<'a>(self, binding: u32, count: u32) -> DescriptorSetLayoutBinding<'a> {
+        DescriptorSetLayoutBinding::new(binding, self, count, ShaderStage::ALL)
     }
 }
 
@@ -152,25 +147,6 @@ impl<'s> DescriptorSetLayoutObjectRef<'s> {
     /// Lifetime unbound constructor
     #[inline]
     pub const unsafe fn unbound(x: VkDescriptorSetLayout) -> Self {
-        Self(x, core::marker::PhantomData)
-    }
-}
-
-#[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
-pub struct SamplerObjectRef<'s>(
-    VkSampler,
-    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
-);
-impl<'s> SamplerObjectRef<'s> {
-    #[inline]
-    pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
-        Self(x.native_ptr(), core::marker::PhantomData)
-    }
-
-    /// Lifetime unbound constructor
-    #[inline]
-    pub const unsafe fn unbound(x: VkSampler) -> Self {
         Self(x, core::marker::PhantomData)
     }
 }
@@ -198,90 +174,100 @@ impl<'s> BufferObjectRef<'s> {
     }
 }
 
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+#[repr(transparent)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub struct DescriptorSetLayoutBinding<'s> {
-    pub ty: DescriptorType,
-    pub count: u32,
-    pub shader_stage_mask: ShaderStage,
-    pub immutable_samplers: Vec<SamplerObjectRef<'s>>,
+    raw: VkDescriptorSetLayoutBinding,
+    immutable_samplers: core::marker::PhantomData<&'s [SamplerObjectRef<'s>]>,
 }
 impl<'s> DescriptorSetLayoutBinding<'s> {
-    pub fn with_immutable_samplers(self, samplers: Vec<SamplerObjectRef<'s>>) -> Self {
+    #[inline(always)]
+    pub const fn new(binding: u32, r#type: DescriptorType, count: u32, shader_stage: ShaderStage) -> Self {
         Self {
-            immutable_samplers: samplers,
-            ..self
+            raw: VkDescriptorSetLayoutBinding {
+                binding,
+                descriptorType: r#type as _,
+                descriptorCount: count,
+                stageFlags: shader_stage.0,
+                pImmutableSamplers: core::ptr::null(),
+            },
+            immutable_samplers: core::marker::PhantomData,
         }
     }
 
-    pub fn for_shader_stage(self, mask: ShaderStage) -> Self {
-        Self {
-            shader_stage_mask: mask,
-            ..self
-        }
+    #[inline(always)]
+    pub fn with_immutable_samplers(self, samplers: &'s [SamplerObjectRef<'s>]) -> Self {
+        assert_eq!(samplers.len(), self.raw.descriptorCount as usize);
+        unsafe { self.with_immutable_samplers_unchecked(samplers) }
     }
 
-    pub fn only_for_vertex(self) -> Self {
+    #[inline(always)]
+    pub const unsafe fn with_immutable_samplers_unchecked(mut self, samplers: &'s [SamplerObjectRef<'s>]) -> Self {
+        self.raw.pImmutableSamplers = slice_as_ptr_empty_null(samplers) as _;
+        self
+    }
+
+    #[inline(always)]
+    pub const fn for_shader_stage(mut self, mask: ShaderStage) -> Self {
+        self.raw.stageFlags = mask.0;
+        self
+    }
+
+    #[inline(always)]
+    pub const fn only_for_vertex(self) -> Self {
         self.for_shader_stage(ShaderStage::VERTEX)
     }
 
-    pub fn only_for_tess_control(self) -> Self {
+    #[inline(always)]
+    pub const fn only_for_tess_control(self) -> Self {
         self.for_shader_stage(ShaderStage::TESSELLATION_CONTROL)
     }
 
-    pub fn only_for_tess_evaluation(self) -> Self {
+    #[inline(always)]
+    pub const fn only_for_tess_evaluation(self) -> Self {
         self.for_shader_stage(ShaderStage::TESSELLATION_EVALUATION)
     }
 
-    pub fn only_for_tessellation(self) -> Self {
+    #[inline(always)]
+    pub const fn only_for_tessellation(self) -> Self {
         self.for_shader_stage(ShaderStage::TESSELLATION)
     }
 
-    pub fn only_for_geometry(self) -> Self {
+    #[inline(always)]
+    pub const fn only_for_geometry(self) -> Self {
         self.for_shader_stage(ShaderStage::GEOMETRY)
     }
 
-    pub fn only_for_fragment(self) -> Self {
+    #[inline(always)]
+    pub const fn only_for_fragment(self) -> Self {
         self.for_shader_stage(ShaderStage::FRAGMENT)
     }
 
-    pub fn only_for_compute(self) -> Self {
+    #[inline(always)]
+    pub const fn only_for_compute(self) -> Self {
         self.for_shader_stage(ShaderStage::COMPUTE)
-    }
-
-    fn make_structure_with_binding_index(&self, binding: u32) -> VkDescriptorSetLayoutBinding {
-        VkDescriptorSetLayoutBinding {
-            binding,
-            descriptorType: self.ty as _,
-            descriptorCount: self.count,
-            stageFlags: self.shader_stage_mask.0,
-            pImmutableSamplers: self.immutable_samplers.as_ptr_empty_null() as *const _,
-        }
     }
 }
 
+#[repr(transparent)]
 #[derive(Clone, Debug)]
-pub struct DescriptorSetLayoutBuilder<'s>(VkDescriptorSetLayoutCreateInfo, Vec<DescriptorSetLayoutBinding<'s>>);
-impl<'s> DescriptorSetLayoutBuilder<'s> {
-    pub const fn new() -> Self {
-        Self::with_bindings(Vec::new())
-    }
-
-    pub const fn with_bindings(bindings: Vec<DescriptorSetLayoutBinding<'s>>) -> Self {
+pub struct DescriptorSetLayoutBuilder<'d, 's>(
+    VkDescriptorSetLayoutCreateInfo,
+    core::marker::PhantomData<&'d [DescriptorSetLayoutBinding<'s>]>,
+);
+impl<'d, 's> DescriptorSetLayoutBuilder<'d, 's> {
+    #[inline(always)]
+    pub const fn new(bindings: &'d [DescriptorSetLayoutBinding<'s>]) -> Self {
         Self(
             VkDescriptorSetLayoutCreateInfo {
                 sType: VkDescriptorSetLayoutCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
-                bindingCount: 0,
-                pBindings: core::ptr::null(),
+                bindingCount: bindings.len() as _,
+                pBindings: slice_as_ptr_empty_null(bindings) as _,
             },
-            bindings,
+            core::marker::PhantomData,
         )
-    }
-
-    pub fn bind(mut self, binding: DescriptorSetLayoutBinding<'s>) -> Self {
-        self.1.push(binding);
-        self
     }
 
     /// Create a new descriptor set layout
@@ -290,22 +276,17 @@ impl<'s> DescriptorSetLayoutBuilder<'s> {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<DescriptorSetLayoutObject<Device>>
+    #[inline]
+    pub fn create<Device: VkHandle<Handle = VkDevice>>(
+        self,
+        device: Device,
+    ) -> crate::Result<DescriptorSetLayoutObject<Device>>
     where
         Self: Sized,
     {
-        let bindings = self
-            .1
-            .iter()
-            .enumerate()
-            .map(|(n, b)| b.make_structure_with_binding_index(n as _))
-            .collect::<Vec<_>>();
-        self.0.bindingCount = bindings.len() as _;
-        self.0.pBindings = bindings.as_ptr_empty_null();
-
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::create_descriptor_set_layout(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_descriptor_set_layout(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(move |_| DescriptorSetLayoutObject(h.assume_init(), device))
         }
@@ -317,7 +298,7 @@ DerefContainerBracketImpl!(for DescriptorSetLayout {});
 GuardsImpl!(for DescriptorSetLayout {});
 
 /*
-# DescriptorPoolのフラグメンテーションについて(from `VkDescriptorPoolCreateInfo` Manual)
+# DescriptorPoolのフラグメンテーションについてメモ(from `VkDescriptorPoolCreateInfo` Manual)
 
 `VkDescriptorPoolSize`構造体が`pPoolSizes`配列内に複数ある場合、プールはそれぞれのタイプの合計分のデスクリプタが十分入るように確保されます。
 
@@ -337,40 +318,29 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 もしフラグメンテーションによって確保が失敗した場合、アプリケーションは続けてDescriptorSetの確保を行うために追加のDescriptorPoolを生成することができます
 */
 
+#[repr(transparent)]
 #[derive(Clone, Debug)]
-pub struct DescriptorPoolBuilder(VkDescriptorPoolCreateInfo, Vec<VkDescriptorPoolSize>);
-impl DescriptorPoolBuilder {
-    pub const fn new(max_sets: u32) -> Self {
+pub struct DescriptorPoolBuilder<'d>(
+    VkDescriptorPoolCreateInfo,
+    core::marker::PhantomData<&'d [VkDescriptorPoolSize]>,
+);
+impl<'d> DescriptorPoolBuilder<'d> {
+    pub const fn new(max_sets: u32, sizes: &'d [VkDescriptorPoolSize]) -> Self {
         Self(
             VkDescriptorPoolCreateInfo {
                 sType: VkDescriptorPoolCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 maxSets: max_sets,
-                poolSizeCount: 0,
-                pPoolSizes: std::ptr::null(),
+                poolSizeCount: sizes.len() as _,
+                pPoolSizes: slice_as_ptr_empty_null(sizes),
             },
-            Vec::new(),
+            core::marker::PhantomData,
         )
     }
 
     pub const fn allow_individual_free(mut self) -> Self {
         self.0.flags |= VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        self
-    }
-
-    pub fn with_reservations(mut self, new_sizes: Vec<VkDescriptorPoolSize>) -> Self {
-        self.1 = new_sizes;
-        self
-    }
-
-    pub fn reserve(mut self, size: VkDescriptorPoolSize) -> Self {
-        self.1.push(size);
-        self
-    }
-
-    pub fn reserve_all(mut self, size: impl IntoIterator<Item = VkDescriptorPoolSize>) -> Self {
-        self.1.extend(size);
         self
     }
 
@@ -380,13 +350,11 @@ impl DescriptorPoolBuilder {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<DescriptorPoolObject<Device>> {
-        self.0.poolSizeCount = self.1.len() as _;
-        self.0.pPoolSizes = self.1.as_ptr_empty_null() as *const _;
-
+    #[inline]
+    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<DescriptorPoolObject<Device>> {
         let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::create_descriptor_pool(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_descriptor_pool(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| DescriptorPoolObject(h.assume_init(), device))
         }
@@ -517,7 +485,7 @@ impl DescriptorPointer {
         DescriptorSetCopyInfo(self, dest, count)
     }
 
-    pub fn write_multiple<'r>(
+    pub fn write_continuous_bindings<'r>(
         self,
         contents: impl IntoIterator<Item = DescriptorContents<'r>>,
     ) -> impl Iterator<Item = DescriptorSetWriteInfo<'r>> {
@@ -534,26 +502,13 @@ impl DescriptorPointer {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
-pub struct OptionalSamplerObjectRef<'s>(
-    VkSampler,
-    core::marker::PhantomData<Option<&'s dyn VkHandle<Handle = VkSampler>>>,
-);
-impl<'s> OptionalSamplerObjectRef<'s> {
-    pub const NONE: Self = Self(VkSampler::NULL, core::marker::PhantomData);
-
-    pub fn new(r: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
-        Self(r.native_ptr(), core::marker::PhantomData)
-    }
-}
-
-#[repr(transparent)]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct DescriptorBufferRef<'r>(
     VkDescriptorBufferInfo,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkBuffer>>,
 );
 impl<'r> DescriptorBufferRef<'r> {
+    #[inline(always)]
     pub fn new(r: &'r (impl VkHandle<Handle = VkBuffer> + ?Sized), range: core::ops::Range<VkDeviceSize>) -> Self {
         Self(
             VkDescriptorBufferInfo {
@@ -576,6 +531,7 @@ pub struct DescriptorImageRef<'r>(
     )>,
 );
 impl<'r> DescriptorImageRef<'r> {
+    #[inline(always)]
     pub fn new(r: &'r (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
         Self(
             VkDescriptorImageInfo {
@@ -587,6 +543,7 @@ impl<'r> DescriptorImageRef<'r> {
         )
     }
 
+    #[inline(always)]
     pub fn with_sampler(mut self, sampler: &'r (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
         self.0.sampler = sampler.native_ptr();
         self

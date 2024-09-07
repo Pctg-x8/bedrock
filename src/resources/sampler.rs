@@ -9,6 +9,39 @@ pub trait Sampler: VkHandle<Handle = VkSampler> {}
 DerefContainerBracketImpl!(for Sampler {});
 GuardsImpl!(for Sampler {});
 
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
+pub struct SamplerObjectRef<'s>(
+    VkSampler,
+    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
+);
+impl<'s> SamplerObjectRef<'s> {
+    #[inline]
+    pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
+        Self(x.native_ptr(), core::marker::PhantomData)
+    }
+
+    /// Lifetime unbound constructor
+    #[inline]
+    pub const unsafe fn unbound(x: VkSampler) -> Self {
+        Self(x, core::marker::PhantomData)
+    }
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct OptionalSamplerObjectRef<'s>(
+    VkSampler,
+    core::marker::PhantomData<Option<&'s dyn VkHandle<Handle = VkSampler>>>,
+);
+impl<'s> OptionalSamplerObjectRef<'s> {
+    pub const NONE: Self = Self(VkSampler::NULL, core::marker::PhantomData);
+
+    pub fn new(r: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
+        Self(r.native_ptr(), core::marker::PhantomData)
+    }
+}
+
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkSampler::OBJECT_TYPE)]
 pub struct SamplerObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkSampler, pub(crate) Device);

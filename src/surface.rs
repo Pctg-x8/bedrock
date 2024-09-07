@@ -10,6 +10,14 @@ pub enum CompletionHandler<Fence: crate::Fence, Semaphore: crate::Semaphore> {
     Queue(Semaphore),
 }
 
+/// A semaphore or a fence, externally synchronized on host access
+pub enum CompletionHandlerMut<'d> {
+    /// A Host synchronizer(aka Fence)
+    Host(FenceMutRef<'d>),
+    /// A Queue synchronizer(aka Semaphore)
+    Queue(SemaphoreMutRef<'d>),
+}
+
 cfg_if! {
     if #[cfg(feature = "VK_KHR_surface")] {
         mod surface;

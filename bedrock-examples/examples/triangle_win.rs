@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use bedrock::{self as br, CommandPoolMut, DescriptorPoolMut, ShaderModule};
+use bedrock::{self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, FenceMut, QueueMut, ShaderModule};
 use br::{
     CommandBuffer, CommandPool, DescriptorPool, Device, DeviceMemory, Fence, GraphicsPipelineBuilder,
     ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, RenderPass,
@@ -33,13 +33,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         SetProcessDPIAware();
     }
 
-    let instance_version = br::enumerate_instance_version()?;
-    println!(
-        "vk instance version: {instance_version} {}.{}.{}",
-        br::vk::VK_MAJOR_VERSION(instance_version),
-        br::vk::VK_MINOR_VERSION(instance_version),
-        br::vk::VK_PATCH_VERSION(instance_version)
-    );
+    let (instance_version_major, instance_version_minor, instance_version_patch) = br::instance_version()?;
+    println!("vk instance version: {instance_version_major}.{instance_version_minor}.{instance_version_patch}",);
 
     let cls = WNDCLASSEXA {
         cbSize: core::mem::size_of::<WNDCLASSEXA>() as _,
@@ -89,11 +84,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let instance = {
-        let mut builder = br::InstanceBuilder::new("BedrockExampleTriangle", (0, 1, 0), "None", (0, 0, 1));
+        let app =
+            br::ApplicationInfo::new(c"BedrockExampleTriangle", (0, 1, 0), c"None", (0, 0, 1)).api_version(1, 3, 0);
+        let mut builder = br::InstanceBuilder::new(&app);
         builder
-            .set_api_version(1, 3, 0)
-            .add_extensions(["VK_EXT_debug_utils", "VK_KHR_surface", "VK_KHR_win32_surface"])
-            .add_layer("VK_LAYER_KHRONOS_validation");
+            .add_extensions([c"VK_EXT_debug_utils", c"VK_KHR_surface", c"VK_KHR_win32_surface"])
+            .add_layer(c"VK_LAYER_KHRONOS_validation");
         builder.create()?
     };
     let adapter = instance
@@ -117,12 +113,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .find_matching_index(br::QueueFlags::GRAPHICS)
         .expect("No graphics queue available");
     let device = {
-        let qbinfo = br::DeviceQueueCreateInfo::new(graphics_queue_family).add(0.0);
+        let qbinfo = br::DeviceQueueCreateInfo::new(graphics_queue_family, &[0.0]);
 
         let mut builder = br::DeviceBuilder::new(&adapter);
         builder
             .add_queue(qbinfo)
-            .add_extensions(["VK_KHR_swapchain"])
+            .add_extensions([c"VK_KHR_swapchain"])
             .add_extra_features(br::vk::VkPhysicalDeviceSynchronization2Features {
                 sType: br::vk::VkPhysicalDeviceSynchronization2Features::TYPE,
                 pNext: core::ptr::null_mut(),
@@ -201,13 +197,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         br::RenderPassBuilder2::new(&attachments, &subpasses, &dependencies).create(&device)?
     };
 
-    let descriptor_layout_ub1 = br::DescriptorSetLayoutBuilder::new()
-        .bind(br::DescriptorType::UniformBuffer.make_binding(1).only_for_vertex())
-        .create(&device)?;
-    let mut descriptor_pool = br::DescriptorPoolBuilder::new(1)
-        .reserve(br::DescriptorType::UniformBuffer.with_count(1))
-        .create(&device)?;
-    let descriptors = descriptor_pool.alloc(&[&descriptor_layout_ub1])?;
+    let descriptor_layout_ub1 =
+        br::DescriptorSetLayoutBuilder::new(&[br::DescriptorType::UniformBuffer.make_binding(0, 1).only_for_vertex()])
+            .create(&device)?;
+    let mut descriptor_pool =
+        br::DescriptorPoolBuilder::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)]).create(&device)?;
+    let descriptors = descriptor_pool.alloc(&[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)])?;
 
     let vsh = (&device).new_shader_module(&std::fs::read("./examples/shaders/triangle.vspv")?)?;
     let fsh = (&device).new_shader_module(&std::fs::read("./examples/shaders/triangle.fspv")?)?;
@@ -430,7 +425,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[br::CommandBufferSubmitInfo::new(&init_command_buffers[0])],
             &[],
         )],
-        Some(&mut init_fence),
+        Some(init_fence.as_transparent_mut_ref()),
     )?;
     init_fence.wait()?;
 
@@ -596,7 +591,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 br::SubmitInfo2::new(&[], &transfer_commands, &transfer_done_semaphores),
                 br::SubmitInfo2::new(&render_wait_semaphores, &render_commands, &render_done_semaphores),
             ],
-            Some(&mut last_render_fence),
+            Some(last_render_fence.as_transparent_mut_ref()),
         )?;
         match swapchain.queue_present(&mut queue, bb_index, &[present_ready.as_transparent_ref()]) {
             Err(e) if e == br::vk::VK_ERROR_OUT_OF_DATE_KHR => {

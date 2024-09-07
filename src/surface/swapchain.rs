@@ -1,7 +1,7 @@
-use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, CompletionHandler, DeviceChild, VkHandle, VkRawHandle, VulkanStructure,
-};
+use crate::{ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, VkHandle, VkRawHandle, VulkanStructure};
 use derives::{implements, transparent_marked};
+
+use super::CompletionHandlerMut;
 
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn format(&self) -> VkFormat;
@@ -17,15 +17,12 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements]
-    fn acquire_next(
-        &mut self,
-        timeout: Option<u64>,
-        completion: CompletionHandler<impl crate::Fence, impl crate::Semaphore>,
-    ) -> crate::Result<u32> {
+    fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandlerMut) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
-            CompletionHandler::Host(f) => (VkSemaphore::NULL, f.native_ptr()),
-            CompletionHandler::Queue(s) => (s.native_ptr(), VkFence::NULL),
+            CompletionHandlerMut::Host(f) => (VkSemaphore::NULL, f.0),
+            CompletionHandlerMut::Queue(s) => (s.0, VkFence::NULL),
         };
+
         let mut n = 0;
         unsafe {
             crate::vkfn::acquire_next_image_khr(
@@ -60,7 +57,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         let mut res = VkResult(0);
         let pinfo = VkPresentInfoKHR {
             sType: VkPresentInfoKHR::TYPE,
-            pNext: std::ptr::null(),
+            pNext: core::ptr::null(),
             waitSemaphoreCount: wait_semaphores.len() as _,
             pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
             swapchainCount: 1,

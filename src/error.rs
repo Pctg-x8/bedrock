@@ -1,7 +1,7 @@
 use crate::vk::*;
 
-impl std::fmt::Debug for VkResult {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Debug for VkResult {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         let msg = match *self {
             // Success Codes //
             VK_SUCCESS => "Command successfully completed",
@@ -44,23 +44,23 @@ impl std::fmt::Debug for VkResult {
             _ => "Unknown or extension-specific error"
         };
 
-        write!(fmt, "[{:?}] {}", self.0, msg)
+        write!(fmt, "[{:?}] {msg}", self.0)
     }
 }
-impl std::fmt::Display for VkResult {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-        std::fmt::Debug::fmt(self, fmt)
+impl core::fmt::Display for VkResult {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
+        core::fmt::Debug::fmt(self, fmt)
     }
 }
-impl std::error::Error for VkResult {}
+impl core::error::Error for VkResult {}
 impl VkResult {
     #[inline]
-    pub fn is_err(&self) -> bool {
+    pub const fn is_err(&self) -> bool {
         self.0 < 0
     }
 
     #[inline]
-    pub fn into_result(self) -> Result<Self, Self> {
+    pub const fn into_result(self) -> Result<Self, Self> {
         if self.is_err() {
             Err(self)
         } else {

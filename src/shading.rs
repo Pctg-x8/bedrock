@@ -1084,10 +1084,11 @@ pub enum LineRasterizationMode {
 }
 
 /// PipelineStateDesc: Multisample State
+#[repr(transparent)]
 #[derive(Clone)]
 pub struct MultisampleState<'d> {
     data: VkPipelineMultisampleStateCreateInfo,
-    _samplemask_lifetime_binder: PhantomData<&'d [VkSampleMask]>,
+    samplemask_lifetime_binder: PhantomData<&'d [VkSampleMask]>,
 }
 impl<'d> MultisampleState<'d> {
     #[allow(clippy::new_without_default)]
@@ -1095,16 +1096,16 @@ impl<'d> MultisampleState<'d> {
         MultisampleState {
             data: VkPipelineMultisampleStateCreateInfo {
                 sType: VkPipelineMultisampleStateCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 rasterizationSamples: 1,
                 sampleShadingEnable: VK_FALSE,
                 minSampleShading: 1.0,
-                pSampleMask: std::ptr::null(),
+                pSampleMask: core::ptr::null(),
                 alphaToCoverageEnable: VK_FALSE,
                 alphaToOneEnable: VK_FALSE,
             },
-            _samplemask_lifetime_binder: PhantomData,
+            samplemask_lifetime_binder: PhantomData,
         }
     }
 

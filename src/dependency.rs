@@ -1,6 +1,7 @@
-use crate::*;
+#[cfg(feature = "VK_KHR_synchronization2")]
+use ffi_helper::slice_as_ptr_empty_null;
 
-use self::ffi_helper::ArrayFFIExtensions;
+use crate::*;
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
@@ -19,13 +20,13 @@ impl MemoryBarrier2 {
         })
     }
 
-    pub fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+    pub const fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
         self.0.srcStageMask = stage.0;
         self.0.srcAccessMask = access.0;
         self
     }
 
-    pub fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+    pub const fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
         self.0.dstStageMask = stage.0;
         self.0.dstAccessMask = access.0;
         self
@@ -76,13 +77,13 @@ impl<'b> BufferMemoryBarrier2<'b> {
         )
     }
 
-    pub fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+    pub const fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
         self.0.srcStageMask = stage.0;
         self.0.srcAccessMask = access.0;
         self
     }
 
-    pub fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+    pub const fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
         self.0.dstStageMask = stage.0;
         self.0.dstAccessMask = access.0;
         self
@@ -139,13 +140,13 @@ impl<'r> ImageMemoryBarrier2<'r> {
         )
     }
 
-    pub fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+    pub const fn from(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
         self.0.srcStageMask = stage.0;
         self.0.srcAccessMask = access.0;
         self
     }
 
-    pub fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
+    pub const fn to(mut self, stage: PipelineStageFlags2, access: AccessFlags2) -> Self {
         self.0.dstStageMask = stage.0;
         self.0.dstAccessMask = access.0;
         self
@@ -195,7 +196,7 @@ pub struct DependencyInfo<'b, 'r>(
 );
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'b, 'r> DependencyInfo<'b, 'r> {
-    pub fn new(
+    pub const fn new(
         memory_barriers: &'b [MemoryBarrier2],
         buffer_memory_barriers: &'b [BufferMemoryBarrier2<'r>],
         image_memory_barriers: &'b [ImageMemoryBarrier2<'r>],
@@ -206,11 +207,11 @@ impl<'b, 'r> DependencyInfo<'b, 'r> {
                 pNext: core::ptr::null(),
                 dependencyFlags: 0,
                 memoryBarrierCount: memory_barriers.len() as _,
-                pMemoryBarriers: memory_barriers.as_ptr_empty_null() as _,
+                pMemoryBarriers: slice_as_ptr_empty_null(memory_barriers) as _,
                 bufferMemoryBarrierCount: buffer_memory_barriers.len() as _,
-                pBufferMemoryBarriers: buffer_memory_barriers.as_ptr_empty_null() as _,
+                pBufferMemoryBarriers: slice_as_ptr_empty_null(buffer_memory_barriers) as _,
                 imageMemoryBarrierCount: image_memory_barriers.len() as _,
-                pImageMemoryBarriers: image_memory_barriers.as_ptr_empty_null() as _,
+                pImageMemoryBarriers: slice_as_ptr_empty_null(image_memory_barriers) as _,
             },
             core::marker::PhantomData,
         )

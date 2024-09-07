@@ -2,6 +2,7 @@
 
 use cfg_if::cfg_if;
 use derives::implements;
+use ffi_helper::slice_as_ptr_empty_null;
 
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
@@ -13,27 +14,27 @@ use crate::{
 
 #[implements]
 use core::convert::TryInto;
+use std::ffi::{c_char, CStr};
 
 #[implements]
+#[allow(dead_code)]
 type DeviceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, VkDevice>;
+#[implements]
+impl crate::resolver::ResolverInterface for VkDevice {
+    #[inline(always)]
+    unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
+        T::from_ptr(core::mem::transmute(crate::vkfn::get_device_proc_addr(
+            *self,
+            name.as_ptr() as _,
+        )))
+    }
 
-cfg_if! {
-    if #[cfg(feature = "Implements")] {
-        impl crate::resolver::ResolverInterface for VkDevice {
-            unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
-                T::from_ptr(core::mem::transmute(crate::vkfn::get_device_proc_addr(
-                    *self,
-                    name.as_ptr() as _,
-                )))
-            }
-
-            unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self, name: &core::ffi::CStr) -> F {
-                F::from_void_fn(
-                    crate::vkfn::get_device_proc_addr(*self, name.as_ptr() as _)
-                        .unwrap_or_else(|| panic!("function {name:?} not found"))
-                )
-            }
-        }
+    #[inline(always)]
+    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self, name: &core::ffi::CStr) -> F {
+        F::from_void_fn(
+            crate::vkfn::get_device_proc_addr(*self, name.as_ptr() as _)
+                .unwrap_or_else(|| panic!("function {name:?} not found")),
+        )
     }
 }
 
@@ -175,7 +176,7 @@ impl<Instance: crate::Instance> InstanceChild for DeviceObject<Instance> {
     }
 }
 impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
-    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    #[implements("VK_KHR_maintenance1")]
     fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
         *self.trim_command_pool_khr.resolve()
     }
@@ -414,6 +415,7 @@ pub struct QueueObject<Device>(VkQueue, Device);
 unsafe impl<Device: Sync> Sync for QueueObject<Device> {}
 unsafe impl<Device: Send> Send for QueueObject<Device> {}
 impl<Device: crate::Device> Queue for QueueObject<Device> {}
+impl<Device: crate::Device> QueueMut for QueueObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueueObject<Device> {
     #[inline(always)]
     fn device_handle(&self) -> VkDevice {
@@ -430,49 +432,36 @@ impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
 }
 
 /// Family Index, Queue Priorities
-pub struct DeviceQueueCreateInfo(VkDeviceQueueCreateInfo, Vec<f32>);
-impl DeviceQueueCreateInfo {
-    pub const fn new(family_index: u32) -> Self {
+#[repr(transparent)]
+pub struct DeviceQueueCreateInfo<'d>(VkDeviceQueueCreateInfo, core::marker::PhantomData<&'d [f32]>);
+impl<'d> DeviceQueueCreateInfo<'d> {
+    pub const fn new(family_index: u32, priorities: &'d [f32]) -> Self {
         Self(
             VkDeviceQueueCreateInfo {
                 sType: VkDeviceQueueCreateInfo::TYPE,
                 pNext: std::ptr::null(),
                 flags: 0,
                 queueFamilyIndex: family_index,
-                queueCount: 0,
-                pQueuePriorities: core::ptr::null(),
+                queueCount: priorities.len() as _,
+                pQueuePriorities: slice_as_ptr_empty_null(priorities),
             },
-            Vec::new(),
+            core::marker::PhantomData,
         )
-    }
-
-    pub fn add(mut self, priority: f32) -> Self {
-        self.1.push(priority);
-        self
-    }
-
-    pub fn priorities(mut self, priorities: impl IntoIterator<Item = f32>) -> Self {
-        self.1.extend(priorities);
-        self
-    }
-
-    fn complete(&mut self) {
-        self.0.queueCount = self.1.len() as _;
-        self.0.pQueuePriorities = self.1.as_ptr_empty_null();
     }
 }
 
 // TODO: これ作り直したい気もする（Featureの指定方法がきつい）
 /// Builder object for constructing a `Device`
-pub struct DeviceBuilder<PhysicalDevice: crate::PhysicalDevice + InstanceChild> {
+pub struct DeviceBuilder<'d, PhysicalDevice: crate::PhysicalDevice + InstanceChild> {
     pdev_ref: PhysicalDevice,
-    queue_infos: Vec<DeviceQueueCreateInfo>,
-    layers: Vec<std::ffi::CString>,
-    extensions: Vec<std::ffi::CString>,
+    queue_infos: Vec<DeviceQueueCreateInfo<'d>>,
+    layers: Vec<*const c_char>,
+    extensions: Vec<*const c_char>,
     features: VkPhysicalDeviceFeatures,
     extra_features: Vec<Box<dyn VulkanStructureAsRef>>,
+    _cstr: core::marker::PhantomData<&'d CStr>,
 }
-impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<PhysicalDevice> {
+impl<'p, 'd, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<'d, PhysicalDevice> {
     pub fn new(pdev: PhysicalDevice) -> Self {
         Self {
             pdev_ref: pdev,
@@ -481,41 +470,38 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
             extensions: Vec::new(),
             features: Default::default(),
             extra_features: Vec::new(),
+            _cstr: core::marker::PhantomData,
         }
     }
-    pub fn add_layer(&mut self, name: &str) -> &mut Self {
-        self.layers.push(std::ffi::CString::new(name).unwrap());
+
+    pub fn add_layer(&mut self, name: &'d CStr) -> &mut Self {
+        self.layers.push(name.as_ptr());
         self
     }
-    pub fn add_extension(&mut self, name: &str) -> &mut Self {
-        self.extensions.push(std::ffi::CString::new(name).unwrap());
+    pub fn add_extension(&mut self, name: &'d CStr) -> &mut Self {
+        self.extensions.push(name.as_ptr());
         self
     }
-    pub fn add_layers<'s, Layers: IntoIterator<Item = &'s str>>(&mut self, layers: Layers) -> &mut Self {
-        for l in layers {
-            self.add_layer(l);
-        }
+    pub fn add_layers(&mut self, layers: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
+        self.layers.extend(layers.into_iter().map(|x| x.as_ptr()));
         self
     }
-    pub fn add_extensions<'s, Extensions: IntoIterator<Item = &'s str>>(
-        &mut self,
-        extensions: Extensions,
-    ) -> &mut Self {
-        for e in extensions {
-            self.add_extension(e);
-        }
+    pub fn add_extensions(&mut self, extensions: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
+        self.extensions.extend(extensions.into_iter().map(|x| x.as_ptr()));
         self
     }
-    pub fn add_queue(&mut self, info: DeviceQueueCreateInfo) -> &mut Self {
+
+    pub fn add_queue(&mut self, info: DeviceQueueCreateInfo<'d>) -> &mut Self {
         self.queue_infos.push(info);
         self
     }
-    pub fn add_queues<Queues: IntoIterator<Item = DeviceQueueCreateInfo>>(&mut self, queues: Queues) -> &mut Self {
+    pub fn add_queues<Queues: IntoIterator<Item = DeviceQueueCreateInfo<'d>>>(&mut self, queues: Queues) -> &mut Self {
         for q in queues {
             self.add_queue(q);
         }
         self
     }
+
     pub fn mod_features(&mut self) -> &mut VkPhysicalDeviceFeatures {
         &mut self.features
     }
@@ -535,15 +521,11 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
     /// * `VK_ERROR_FEATURE_NOT_PRESENT`
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
+    #[implements]
     pub fn create(mut self) -> crate::Result<DeviceObject<PhysicalDevice::ConcreteInstance>>
     where
         PhysicalDevice: crate::InstanceChildTransferrable,
     {
-        for q in &mut self.queue_infos {
-            q.complete();
-        }
-
         enum Feature<'d> {
             Standard(&'d VkPhysicalDeviceFeatures),
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
@@ -552,19 +534,16 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
 
         let Self { pdev_ref, .. } = self;
 
-        let queue_infos = self.queue_infos.iter().map(|q| q.0.clone()).collect::<Vec<_>>();
-        let layers = self.layers.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
-        let extensions = self.extensions.iter().map(|x| x.as_ptr()).collect::<Vec<_>>();
         let mut cinfo = VkDeviceCreateInfo {
             sType: VkDeviceCreateInfo::TYPE,
-            pNext: std::ptr::null(),
+            pNext: core::ptr::null(),
             flags: 0,
-            queueCreateInfoCount: queue_infos.len() as _,
-            pQueueCreateInfos: queue_infos.as_ptr_empty_null(),
-            enabledLayerCount: layers.len() as _,
-            ppEnabledLayerNames: layers.as_ptr_empty_null(),
-            enabledExtensionCount: extensions.len() as _,
-            ppEnabledExtensionNames: extensions.as_ptr_empty_null(),
+            queueCreateInfoCount: self.queue_infos.len() as _,
+            pQueueCreateInfos: self.queue_infos.as_ptr_empty_null() as _,
+            enabledLayerCount: self.layers.len() as _,
+            ppEnabledLayerNames: slice_as_ptr_empty_null(&self.layers),
+            enabledExtensionCount: self.extensions.len() as _,
+            ppEnabledExtensionNames: slice_as_ptr_empty_null(&self.extensions),
             pEnabledFeatures: core::ptr::null(),
         };
         #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
@@ -608,23 +587,27 @@ impl<'p, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Ph
 }
 
 /// Tweaking features
-impl<PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<'_, PhysicalDevice> {
     pub fn enable_fill_mode_nonsolid(&mut self) -> &mut Self {
         self.features.fillModeNonSolid = true as _;
         self
     }
+
     pub fn enable_sample_rate_shading(&mut self) -> &mut Self {
         self.features.sampleRateShading = true as _;
         self
     }
+
     pub fn enable_geometry_shader(&mut self) -> &mut Self {
         self.features.geometryShader = true as _;
         self
     }
+
     pub fn enable_tessellation_shader(&mut self) -> &mut Self {
         self.features.tessellationShader = true as _;
         self
     }
+
     pub fn enable_vertex_pipeline_stores_and_atomics(&mut self) -> &mut Self {
         self.features.vertexPipelineStoresAndAtomics = true as _;
         self
@@ -632,7 +615,7 @@ impl<PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<Physic
 }
 
 pub trait ExtraProcedureProvider {
-    #[cfg(feature = "Implements")]
+    #[implements]
     unsafe fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F>;
 }
 
@@ -1561,13 +1544,15 @@ where
     }
 }
 
-pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
+pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {}
+DerefContainerBracketImpl!(for Queue {});
+GuardsImpl!(for Queue {});
+
+pub trait QueueMut: Queue + VkHandleMut {
     /// Wait for a object to become idle
-    #[cfg(feature = "Implements")]
-    fn wait(&mut self) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    #[inline(always)]
+    fn wait(&mut self) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_wait_idle(self.native_ptr_mut())
                 .into_result()
@@ -1582,15 +1567,8 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
-    fn bind_sparse(
-        &mut self,
-        batches: &[impl SparseBindingOpBatch],
-        fence: Option<&mut (impl crate::Fence + VkHandleMut)>,
-    ) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    fn bind_sparse(&mut self, batches: &[impl SparseBindingOpBatch], fence: Option<FenceMutRef>) -> crate::Result<()> {
         let batches: Vec<_> = batches.iter().map(SparseBindingOpBatch::make_info_struct).collect();
 
         self.bind_sparse_raw(&batches, fence)
@@ -1603,21 +1581,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
-    fn bind_sparse_raw(
-        &mut self,
-        batches: &[VkBindSparseInfo],
-        fence: Option<&mut (impl crate::Fence + VkHandleMut)>,
-    ) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    fn bind_sparse_raw(&mut self, batches: &[VkBindSparseInfo], fence: Option<FenceMutRef>) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_bind_sparse(
                 self.native_ptr_mut(),
                 batches.len() as _,
                 batches.as_ptr_empty_null(),
-                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+                fence.unwrap_or(FenceMutRef::NULL).0,
             )
             .into_result()
             .map(drop)
@@ -1631,15 +1602,8 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
-    fn submit(
-        &mut self,
-        batches: &[impl SubmissionBatch],
-        fence: Option<&mut (impl crate::Fence + VkHandleMut)>,
-    ) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    fn submit(&mut self, batches: &[impl SubmissionBatch], fence: Option<FenceMutRef>) -> crate::Result<()> {
         let batch_resources: Vec<_> = batches
             .iter()
             .map(|b| {
@@ -1660,14 +1624,30 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     fn submit_alt<'r>(
         &mut self,
         batches: impl IntoIterator<Item = SubmissionBatch2<'r>>,
-        fence: Option<&mut (impl crate::Fence + VkHandleMut)>,
-    ) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+        fence: Option<FenceMutRef>,
+    ) -> crate::Result<()> {
         let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
 
         self.submit_raw(&batches, fence)
+    }
+
+    #[implements]
+    #[inline]
+    fn submit_alt3<'r>(
+        &mut self,
+        batches: &'r [SubmissionBatch3<'r>],
+        fence: Option<FenceMutRef>,
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::queue_submit(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                slice_as_ptr_empty_null(batches) as _,
+                fence.unwrap_or(FenceMutRef::NULL).0,
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Submits a sequence of semaphores or command buffers to a queue
@@ -1677,21 +1657,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
-    fn submit_raw(
-        &mut self,
-        batches: &[VkSubmitInfo],
-        fence: Option<&mut (impl crate::Fence + VkHandleMut)>,
-    ) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<FenceMutRef>) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_submit(
                 self.native_ptr_mut(),
                 batches.len() as _,
                 batches.as_ptr_empty_null(),
-                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+                fence.unwrap_or(FenceMutRef::NULL).0,
             )
             .into_result()
             .map(drop)
@@ -1699,21 +1672,14 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     }
 
     #[implements("VK_KHR_synchronization2")]
-    fn submit2(
-        &mut self,
-        batches: &[SubmitInfo2],
-        fence: Option<&mut (impl VkHandleMut<Handle = VkFence> + ?Sized)>,
-    ) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<FenceMutRef>) -> crate::Result<()> {
         #[cfg(feature = "Allow1_3APIs")]
         unsafe {
             crate::vkfn::queue_submit2(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr_empty_null() as _,
-                fence.map_or(VkFence::NULL, VkHandleMut::native_ptr_mut),
+                slice_as_ptr_empty_null(batches) as _,
+                fence.unwrap_or(FenceMutRef::NULL).0,
             )
             .into_result()
             .map(drop)
@@ -1732,10 +1698,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
     /// * `VK_ERROR_OUT_OF_DATE_KHR`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_swapchain")]
-    fn present<'r>(&mut self, info: PresentInfo<'r>) -> crate::Result<Vec<crate::Result<()>>>
-    where
-        Self: VkHandleMut,
-    {
+    fn present<'r>(&mut self, info: PresentInfo<'r>) -> crate::Result<Vec<crate::Result<()>>> {
         info.submit(self)
     }
 
@@ -1755,10 +1718,7 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         &mut self,
         swapchains: &mut [(&mut (impl crate::Swapchain + VkHandleMut), u32)],
         wait_semaphores: &mut [impl VkHandleMut<Handle = VkSemaphore>],
-    ) -> crate::Result<Vec<VkResult>>
-    where
-        Self: VkHandleMut,
-    {
+    ) -> crate::Result<Vec<VkResult>> {
         let mut res = vec![VkResult(0); swapchains.len()];
         let wait_semaphores = wait_semaphores
             .iter_mut()
@@ -1785,6 +1745,8 @@ pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {
         }
     }
 }
+DerefContainerBracketImpl!(for mut QueueMut {});
+GuardsImpl!(for mut QueueMut {});
 
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
@@ -1794,6 +1756,7 @@ pub struct PresentInfo<'r>(
 );
 #[cfg(feature = "VK_KHR_swapchain")]
 impl<'r> PresentInfo<'r> {
+    #[inline(always)]
     pub fn new(
         wait_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
         swapchains: &'r [impl crate::Transparent<Target = VkSwapchainKHR>],
@@ -1838,6 +1801,7 @@ pub struct CommandBufferSubmitInfo<'r>(
 );
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'r> CommandBufferSubmitInfo<'r> {
+    #[inline(always)]
     pub fn new(command_buffer: &'r (impl VkHandle<Handle = VkCommandBuffer> + ?Sized)) -> Self {
         Self(
             VkCommandBufferSubmitInfoKHR {
@@ -1869,7 +1833,7 @@ pub struct SubmitInfo2<'b, 'r>(
 );
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'b, 'r> SubmitInfo2<'b, 'r> {
-    pub fn new(
+    pub const fn new(
         wait_semaphores: &'b [SemaphoreSubmitInfo<'r>],
         command_buffers: &'b [CommandBufferSubmitInfo<'r>],
         signal_semaphores: &'b [SemaphoreSubmitInfo<'r>],
@@ -1880,11 +1844,11 @@ impl<'b, 'r> SubmitInfo2<'b, 'r> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 waitSemaphoreInfoCount: wait_semaphores.len() as _,
-                pWaitSemaphoreInfos: wait_semaphores.as_ptr_empty_null() as _,
+                pWaitSemaphoreInfos: slice_as_ptr_empty_null(wait_semaphores) as _,
                 commandBufferInfoCount: command_buffers.len() as _,
-                pCommandBufferInfos: command_buffers.as_ptr_empty_null() as _,
+                pCommandBufferInfos: slice_as_ptr_empty_null(command_buffers) as _,
                 signalSemaphoreInfoCount: signal_semaphores.len() as _,
-                pSignalSemaphoreInfos: signal_semaphores.as_ptr_empty_null() as _,
+                pSignalSemaphoreInfos: slice_as_ptr_empty_null(signal_semaphores) as _,
             },
             core::marker::PhantomData,
         )

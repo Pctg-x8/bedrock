@@ -47,6 +47,12 @@ impl<Device: crate::Device> DeviceChild for CommandPoolObject<Device> {
 impl<Device: crate::Device> CommandPool for CommandPoolObject<Device> {}
 impl<Device: crate::Device> CommandPoolMut for CommandPoolObject<Device> {}
 
+#[transparent_marked]
+pub struct CommandBufferRef<'r>(
+    VkCommandBuffer,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkCommandBuffer>>,
+);
+
 /// Opaque handle to a command buffer object
 #[transparent_marked]
 #[derive(VkHandle, VkObject)]
@@ -63,6 +69,12 @@ unsafe impl<Device: Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBufferMut for CommandBufferObject<Device> {}
+impl<Device> CommandBufferObject<Device> {
+    #[inline(always)]
+    pub const fn as_transparent_ref(&self) -> CommandBufferRef {
+        CommandBufferRef(self.0, core::marker::PhantomData)
+    }
+}
 
 /// The recording state of command buffers
 #[implements]
