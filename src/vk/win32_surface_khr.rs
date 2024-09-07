@@ -27,7 +27,7 @@ vk_ext_command!(
     static_callable;
 );
 vk_ext_command!(
-    pub fn vkGetPhysicalDEviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
+    pub fn vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
     suffix = "KHR";
     static_callable;
 );
