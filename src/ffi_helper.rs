@@ -7,6 +7,16 @@ impl<const L: usize> FixedCStrBuffer<L> {
     }
 }
 
+/// pointer of the slice, or null if the slice is empty
+#[inline(always)]
+pub(crate) const fn slice_as_ptr_empty_null<T>(slice: &[T]) -> *const T {
+    if slice.is_empty() {
+        core::ptr::null()
+    } else {
+        slice.as_ptr()
+    }
+}
+
 pub(crate) trait ArrayFFIExtensions<T> {
     /// pointer of the array, or null if the array is empty
     fn as_ptr_empty_null(&self) -> *const T;
@@ -15,14 +25,12 @@ pub(crate) trait ArrayFFIExtensions<T> {
     fn as_mut_ptr_empty_null(&mut self) -> *mut T;
 }
 impl<T> ArrayFFIExtensions<T> for Vec<T> {
+    #[inline(always)]
     fn as_ptr_empty_null(&self) -> *const T {
-        if self.is_empty() {
-            core::ptr::null()
-        } else {
-            self.as_ptr()
-        }
+        slice_as_ptr_empty_null(self)
     }
 
+    #[inline(always)]
     fn as_mut_ptr_empty_null(&mut self) -> *mut T {
         if self.is_empty() {
             core::ptr::null_mut()
@@ -32,14 +40,12 @@ impl<T> ArrayFFIExtensions<T> for Vec<T> {
     }
 }
 impl<T> ArrayFFIExtensions<T> for [T] {
+    #[inline(always)]
     fn as_ptr_empty_null(&self) -> *const T {
-        if self.is_empty() {
-            core::ptr::null()
-        } else {
-            self.as_ptr()
-        }
+        slice_as_ptr_empty_null(self)
     }
 
+    #[inline(always)]
     fn as_mut_ptr_empty_null(&mut self) -> *mut T {
         if self.is_empty() {
             core::ptr::null_mut()

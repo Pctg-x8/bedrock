@@ -1,9 +1,12 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use crate::ffi_helper::ArrayFFIExtensions;
+use derives::implements;
+
+use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DeviceChildHandle, GenericVulkanStructure, LifetimeBound, SubpassRef, VkDeviceChildNonExtDestroyable,
-    VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    vk::*, DescriptorSetLayoutObjectRef, DeviceChildHandle, GenericVulkanStructure, LifetimeBound, SubpassRef,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+    VulkanStructureAsRef,
 };
 use std::borrow::Cow;
 use std::ffi::CString;
@@ -297,21 +300,51 @@ unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineLayoutO
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineLayoutObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
 
+/// A range of a push constant, with visible shader stage mask
+#[repr(transparent)]
+pub struct PushConstantRange(VkPushConstantRange);
+impl PushConstantRange {
+    #[inline(always)]
+    pub const fn new(shader_stage: ShaderStage, byte_range: Range<u32>) -> Self {
+        Self(VkPushConstantRange {
+            stageFlags: shader_stage.0,
+            offset: byte_range.start,
+            size: byte_range.end - byte_range.start,
+        })
+    }
+
+    #[inline(always)]
+    pub const fn for_type<T>(shader_stage: ShaderStage, offset: u32) -> Self {
+        Self::new(shader_stage, offset..offset + core::mem::size_of::<T>() as u32)
+    }
+}
+
 /// Builder struct for PipelineLayout object
+#[repr(transparent)]
 pub struct PipelineLayoutBuilder<'l> {
-    descriptor_set_layouts: &'l [crate::DescriptorSetLayoutObjectRef<'l>],
-    push_constant_ranges: &'l [(ShaderStage, std::ops::Range<u32>)],
+    raw: VkPipelineLayoutCreateInfo,
+    descriptor_set_layouts: core::marker::PhantomData<&'l [DescriptorSetLayoutObjectRef<'l>]>,
+    push_constant_ranges: core::marker::PhantomData<&'l [PushConstantRange]>,
 }
 impl<'l> PipelineLayoutBuilder<'l> {
     /// Creates a new builder struct and initialize it with given parameters
     #[inline(always)]
     pub const fn new(
         descriptor_set_layouts: &'l [crate::DescriptorSetLayoutObjectRef<'l>],
-        push_constant_ranges: &'l [(ShaderStage, std::ops::Range<u32>)],
+        push_constant_ranges: &'l [PushConstantRange],
     ) -> Self {
         Self {
-            descriptor_set_layouts,
-            push_constant_ranges,
+            raw: VkPipelineLayoutCreateInfo {
+                sType: VkPipelineLayoutCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                setLayoutCount: descriptor_set_layouts.len() as _,
+                pSetLayouts: slice_as_ptr_empty_null(descriptor_set_layouts) as _,
+                pushConstantRangeCount: push_constant_ranges.len() as _,
+                pPushConstantRanges: slice_as_ptr_empty_null(push_constant_ranges) as _,
+            },
+            descriptor_set_layouts: core::marker::PhantomData,
+            push_constant_ranges: core::marker::PhantomData,
         }
     }
 
@@ -328,37 +361,13 @@ impl<'l> PipelineLayoutBuilder<'l> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
+    #[inline]
     pub fn create<D: crate::Device>(&self, device: D) -> crate::Result<PipelineLayoutObject<D>> {
-        let push_constant_ranges = self
-            .push_constant_ranges
-            .iter()
-            .map(|(s, r)| VkPushConstantRange {
-                stageFlags: s.0,
-                offset: r.start,
-                size: r.end - r.start,
-            })
-            .collect::<Vec<_>>();
-
-        let create_info = VkPipelineLayoutCreateInfo {
-            sType: VkPipelineLayoutCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            setLayoutCount: self.descriptor_set_layouts.len() as _,
-            pSetLayouts: self.descriptor_set_layouts.as_ptr_empty_null() as _,
-            pushConstantRangeCount: push_constant_ranges.len() as _,
-            pPushConstantRanges: push_constant_ranges.as_ptr_empty_null(),
-        };
-
         let mut handle = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::create_pipeline_layout(
-                device.native_ptr(),
-                &create_info,
-                core::ptr::null(),
-                handle.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| PipelineLayoutObject(handle.assume_init(), device))
+            crate::vkfn::create_pipeline_layout(device.native_ptr(), &self.raw, core::ptr::null(), handle.as_mut_ptr())
+                .into_result()
+                .map(move |_| PipelineLayoutObject(handle.assume_init(), device))
         }
     }
 }
@@ -395,22 +404,17 @@ pub enum SwitchOrDynamicState<T> {
     Static(T),
 }
 impl<T> SwitchOrDynamicState<T> {
-    fn is_dynamic(&self) -> bool {
-        match self {
-            Self::Dynamic => true,
-            _ => false,
-        }
+    #[inline(always)]
+    const fn is_dynamic(&self) -> bool {
+        matches!(self, Self::Dynamic)
     }
-    fn is_enabled(&self) -> bool {
-        match self {
-            Self::Disabled => false,
-            _ => true,
-        }
+
+    #[inline(always)]
+    const fn is_enabled(&self) -> bool {
+        !matches!(self, Self::Disabled)
     }
 }
-use core::ffi::c_void;
-use derives::{bitflags_newtype, implements, transparent_marked};
-pub use SwitchOrDynamicState::*;
+
 /// Untyped data cell
 #[allow(dead_code)]
 #[derive(Clone)]
@@ -420,9 +424,10 @@ pub struct DynamicDataCell<'d> {
     ph: PhantomData<&'d ()>,
 }
 impl<'d, T> From<&'d T> for DynamicDataCell<'d> {
+    #[inline(always)]
     fn from(d: &'d T) -> Self {
-        DynamicDataCell {
-            size: std::mem::size_of::<T>(),
+        Self {
+            size: core::mem::size_of::<T>(),
             data: d as *const T as *const _,
             ph: PhantomData,
         }
@@ -430,10 +435,11 @@ impl<'d, T> From<&'d T> for DynamicDataCell<'d> {
 }
 impl<'d> DynamicDataCell<'d> {
     /// Construct borrowing a slice
-    pub fn from_slice<T>(s: &'d [T]) -> Self {
-        DynamicDataCell {
+    #[inline(always)]
+    pub const fn from_slice<T>(s: &'d [T]) -> Self {
+        Self {
             size: std::mem::size_of::<T>() * s.len(),
-            data: s.as_ptr_empty_null() as *const _,
+            data: slice_as_ptr_empty_null(s) as *const _,
             ph: PhantomData,
         }
     }

@@ -216,8 +216,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let scissors = [back_buffer_size.clone().into_rect(br::vk::VkOffset2D::ZERO)];
     let viewports = [scissors[0].make_viewport(0.0..1.0)];
 
-    let pl = br::PipelineLayoutBuilder::new(vec![&descriptor_layout_ub1], vec![(br::ShaderStage::VERTEX, 0..4 * 2)])
-        .create(&device)?;
+    let pl = br::PipelineLayoutBuilder::new(
+        &[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)],
+        &[br::PushConstantRange::for_type::<[f32; 2]>(br::ShaderStage::VERTEX, 0)],
+    )
+    .create(&device)?;
     let vi_bindings = [br::VertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
     let vi_attributes = [
         br::vk::VkVertexInputAttributeDescription {
