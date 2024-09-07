@@ -5212,9 +5212,6 @@ ExportExtensions!("VK_AMD_texture_gather_bias_lod": texture_gather_bias_lod_amd)
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
 ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_lod_amd);
 ExportExtensions!("VK_IMG_format_pvrtc": format_pvrtc_img);
-ExportExtensions!("VK_NV_external_memory_capabilities": external_memory_capabilities_nv);
-ExportExtensions!("VK_NV_external_memory": external_memory_nv);
-ExportExtensions!("VK_NV_external_memory_win32": external_memory_win32_nv);
 ExportExtensions!("VK_NV_win32_keyed_mutex": win32_keyed_mutex_nv);
 ExportExtensions!("VK_EXT_validation_flags": validation_flags_ext);
 ExportExtensions!("VK_NN_vi_surface": vi_surface_nn);
