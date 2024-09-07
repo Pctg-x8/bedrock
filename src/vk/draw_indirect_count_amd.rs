@@ -6,7 +6,6 @@ pub static VK_AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME: &'static str = "VK_AMD_dra
 use super::*;
 use crate::PFN;
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdDrawIndirectCountAMD)]
@@ -21,7 +20,6 @@ pub struct PFN_vkCmdDrawIndirectCountAMD(
         stride: u32,
     ),
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdDrawIndexedIndirectCountAMD)]

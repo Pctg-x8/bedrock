@@ -103,7 +103,6 @@ pub struct VkDisplaySurfaceCreateInfoKHR {
     pub imageExtent: VkExtent2D,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceDisplayPropertiesKHR)]
@@ -114,7 +113,6 @@ pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(
         pProperties: *mut VkDisplayPropertiesKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceDisplayPlanePropertiesKHR)]
@@ -125,7 +123,6 @@ pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
         pProperties: *mut VkDisplayPlanePropertiesKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetDisplayPlaneSupportedDisplaysKHR)]
@@ -137,7 +134,6 @@ pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(
         pDisplays: *mut VkDisplayKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetDisplayModePropertiesKHR)]
@@ -149,7 +145,6 @@ pub struct PFN_vkGetDisplayModePropertiesKHR(
         pProperties: *mut VkDisplayModePropertiesKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDisplayModeKHR)]
@@ -162,7 +157,6 @@ pub struct PFN_vkCreateDisplayModeKHR(
         pMode: *mut VkDisplayModeKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetDisplayPlaneCapabilitiesKHR)]
@@ -174,7 +168,6 @@ pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(
         pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateDisplayPlaneSurfaceKHR)]

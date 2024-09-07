@@ -60,7 +60,6 @@ impl VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     }
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfacePresentModes2EXT)]
@@ -72,14 +71,12 @@ pub struct PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT(
         pPresentModes: *mut VkPresentModeKHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkAcquireFullScreenExclusiveModeEXT)]
 pub struct PFN_vkAcquireFullScreenExclusiveModeEXT(
     pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkReleaseFullScreenExclusiveModeEXT)]
@@ -117,7 +114,6 @@ cfg_if::cfg_if! {
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_device_group")] {
-        #[cfg(feature = "Implements")]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetDeviceGroupSurfacePresentModes2EXT)]

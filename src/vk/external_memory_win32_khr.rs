@@ -64,7 +64,6 @@ pub struct VkMemoryGetWin32HandleInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetMemoryWin32HandleKHR)]
@@ -75,7 +74,6 @@ pub struct PFN_vkGetMemoryWin32HandleKHR(
         pHandle: *mut windows::Win32::Foundation::HANDLE,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetMemoryWin32HandlePropertiesKHR)]

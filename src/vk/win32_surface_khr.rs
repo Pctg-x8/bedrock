@@ -1,8 +1,7 @@
 //! VK_KHR_win32_surface extensions
 
 use super::*;
-use crate::{StaticCallable, PFN};
-use derives::implements;
+use derives::{implements, vk_ext_command};
 
 pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
 pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &str = "VK_KHR_win32_surface";
@@ -22,37 +21,13 @@ pub struct VkWin32SurfaceCreateInfoKHR {
     pub hwnd: windows::Win32::Foundation::HWND,
 }
 
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateWin32SurfaceKHR)]
-pub struct PFN_vkCreateWin32SurfaceKHR(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
+vk_ext_command!(
+    pub fn vkCreateWin32SurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    suffix = "KHR";
+    static_callable;
 );
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceWin32PresentationSupportKHR)]
-pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(
-    pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32,
+vk_ext_command!(
+    pub fn vkGetPhysicalDEviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
+    suffix = "KHR";
+    static_callable;
 );
-
-#[implements]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateWin32SurfaceKHR(
-        instance: VkInstance,
-        pCreateInfo: *const VkWin32SurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
-    pub fn vkGetPhysicalDeviceWin32PresentationSupportKHR(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-    ) -> VkBool32;
-}

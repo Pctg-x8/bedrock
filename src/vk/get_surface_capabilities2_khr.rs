@@ -59,7 +59,6 @@ impl VkSurfaceFormat2KHR {
     }
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceCapabilities2KHR)]
@@ -70,7 +69,6 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR(
         pSurfaceCapabilities: *mut VkSurfaceCapabilities2KHR,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceSurfaceFormats2KHR)]

@@ -2,8 +2,7 @@ pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION: usize = 14;
 pub const VK_KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME: &str = "VK_KHR_sampler_ycbcr_conversion";
 
 use super::*;
-use crate::PFN;
-use derives::promote_1_1;
+use derives::{promote_1_1, vk_ext_command};
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR: VkStructureType = ext_enum_value(157, 0) as _;
@@ -221,49 +220,16 @@ impl VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     }
 }
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateSamplerYcbcrConversionKHR)]
-pub struct PFN_vkCreateSamplerYcbcrConversionKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pCreateInfo: *const VkSamplerYcbcrConversionCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR,
-    ) -> VkResult,
+vk_ext_command!(
+    pub fn vkCreateSamplerYcbcrConversionKHR(device: VkDevice, pCreateInfo: *const VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult;
+    suffix = "KHR";
+    promote = "1.1";
 );
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDestroySamplerYcbcrConversionKHR)]
-pub struct PFN_vkDestroySamplerYcbcrConversionKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        ycbcrConversion: VkSamplerYcbcrConversion,
-        pAllocator: *const VkAllocationCallbacks,
-    ),
+vk_ext_command!(
+    pub fn vkDestroySamplerYcbcrConversionKHR(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks);
+    suffix = "KHR";
+    promote = "1.1";
 );
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkCreateSamplerYcbcrConversionKHR(
-        device: VkDevice,
-        pCreateInfo: *const VkSamplerYcbcrConversionCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR,
-    ) -> VkResult;
-    #[promote_1_1(suffix = "KHR")]
-    pub fn vkDestroySamplerYcbcrConversionKHR(
-        device: VkDevice,
-        ycbcrConversion: VkSamplerYcbcrConversion,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

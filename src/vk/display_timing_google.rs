@@ -39,7 +39,6 @@ pub struct VkPresentTimesInfoGOOGLE {
     pTimes: *const VkPresentTimeGOOGLE,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetRefreshCycleDurationGOOGLE)]
@@ -50,7 +49,6 @@ pub struct PFN_vkGetRefreshCycleDurationGOOGLE(
         pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPastPresentationTimingGOOGLE)]

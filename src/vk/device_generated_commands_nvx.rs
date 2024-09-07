@@ -206,7 +206,6 @@ pub struct VkObjectTablePushConstantEntryNVX {
     pub stageFlags: VkShaderStageFlags,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdProcessCommandsNVX)]
@@ -216,7 +215,6 @@ pub struct PFN_vkCmdProcessCommandsNVX(
         pProcessCommandsInfo: *const VkCmdProcessCommandsInfoNVX,
     ),
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCmdReserveSpaceForCommandsNVX)]
@@ -226,7 +224,6 @@ pub struct PFN_vkCmdReserveSpaceForCommandsNVX(
         pReserveSpaceInfo: *const VkCmdReserveSpaceForCommandsInfoNVX,
     ),
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateIndirectCommandsLayoutNVX)]
@@ -238,7 +235,6 @@ pub struct PFN_vkCreateIndirectCommandsLayoutNVX(
         pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyIndirectCommandsLayoutNVX)]
@@ -249,7 +245,6 @@ pub struct PFN_vkDestroyIndirectCommandsLayoutNVX(
         pAllocator: *const VkAllocationCallbacks,
     ),
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateObjectTableNVX)]
@@ -261,7 +256,6 @@ pub struct PFN_vkCreateObjectTableNVX(
         pObjectTable: *mut VkObjectTableNVX,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkDestroyObjectTableNVX)]
@@ -272,7 +266,6 @@ pub struct PFN_vkDestroyObjectTableNVX(
         pAllocator: *const VkAllocationCallbacks,
     ),
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkRegisterObjectsNVX)]
@@ -285,7 +278,6 @@ pub struct PFN_vkRegisterObjectsNVX(
         pObjectIndices: *const u32,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkUnregisterObjectsNVX)]
@@ -298,7 +290,6 @@ pub struct PFN_vkUnregisterObjectsNVX(
         pObjectIndices: *const u32,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX)]

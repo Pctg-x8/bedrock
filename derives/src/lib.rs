@@ -778,12 +778,13 @@ struct VkExtCommandInput {
     base_define: syn::ForeignItemFn,
     suffix: syn::LitStr,
     promote: Option<syn::LitStr>,
+    static_callable: bool,
 }
 impl syn::parse::Parse for VkExtCommandInput {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
         let base_define = syn::ForeignItemFn::parse(input)?;
 
-        let (mut suffix, mut promote) = (None, None);
+        let (mut suffix, mut promote, mut static_callable) = (None, None, false);
         while input.peek(syn::Ident) {
             let extra_ident = syn::Ident::parse(input)?;
 
@@ -806,6 +807,11 @@ impl syn::parse::Parse for VkExtCommandInput {
                     promote = Some(input.parse()?);
                     input.parse::<syn::Token![;]>()?;
                 }
+                "static_callable" => {
+                    input.parse::<syn::Token![;]>()?;
+
+                    static_callable = true;
+                }
                 unknown => return Err(syn::Error::new(input.span(), &format!("unknown extra: {unknown}"))),
             }
         }
@@ -814,6 +820,7 @@ impl syn::parse::Parse for VkExtCommandInput {
             base_define,
             suffix: suffix.ok_or_else(|| syn::Error::new(input.span(), "suffix extra required"))?,
             promote,
+            static_callable,
         })
     }
 }
@@ -824,6 +831,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         base_define,
         suffix,
         promote,
+        static_callable,
     } = parse_macro_input!(input as VkExtCommandInput);
 
     let base_vis = &base_define.vis;
@@ -935,6 +943,23 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
     } else {
         None
     };
+    let ext_static_link_impl = if static_callable {
+        let fn_ident = &base_define.sig.ident;
+
+        Some(quote! {
+            #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
+            impl crate::resolver::StaticCallable for #pfn_name {
+                const STATIC: Self = Self(#fn_ident);
+            }
+
+            #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
+            extern "system" {
+                #base_define
+            }
+        })
+    } else {
+        None
+    };
 
     quote! {
         #[repr(transparent)]
@@ -953,6 +978,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
 
         #promoted_pfn_impl
         #static_link_impl
+        #ext_static_link_impl
     }
     .into()
 }

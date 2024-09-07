@@ -1,8 +1,7 @@
 //! VK_KHR_xcb_surface extensions
 
 use super::*;
-use crate::PFN;
-use derives::implements;
+use derives::{implements, vk_ext_command};
 use xcb::ffi::*;
 
 pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
@@ -23,44 +22,13 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub window: xcb::x::Window,
 }
 
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateXcbSurfaceKHR)]
-pub struct PFN_vkCreateXcbSurfaceKHR(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkXcbSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
+vk_ext_command!(
+    pub fn vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    suffix = "KHR";
+    static_callable;
 );
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceXcbPresentationSupportKHR)]
-pub struct PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        connection: *mut xcb_connection_t,
-        visual_id: xcb::x::Visualid,
-    ) -> VkBool32,
+vk_ext_command!(
+    pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32;
+    suffix = "KHR";
+    static_callable;
 );
-
-#[implements]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateXcbSurfaceKHR(
-        instance: VkInstance,
-        pCreateInfo: *const VkXcbSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
-    pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        connection: *mut xcb_connection_t,
-        visual_id: xcb::x::Visualid,
-    ) -> VkBool32;
-}

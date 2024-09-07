@@ -5,6 +5,7 @@ pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &'static str = "VK_KHR_push_de
 
 use super::*;
 use crate::PFN;
+use derives::vk_ext_command;
 
 vk_bitmask! {
     extending enum VkDescriptorSetLayoutCreateFlagBits {
@@ -33,26 +34,15 @@ impl VkPhysicalDevicePushDescriptorPropertiesKHR {
     }
 }
 
-#[cfg(feature = "Implements")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdPushDescriptorSetKHR)]
-pub struct PFN_vkCmdPushDescriptorSetKHR(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        pipelineBindPoint: VkPipelineBindPoint,
-        layout: VkPipelineLayout,
-        set: u32,
-        descriptorWriteCount: u32,
-        pDescriptorWrites: *const VkWriteDescriptorSet,
-    ),
+vk_ext_command!(
+    pub fn vkCmdPushDescriptorSetKHR(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet);
+    suffix = "KHR";
 );
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
         pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
 
-        #[cfg(feature = "Implements")]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkCmdPushDescriptorSetWithTemplateKHR)]

@@ -158,7 +158,6 @@ pub struct VkDrmFormatModifierPropertiesList2EXT {
     pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierProperties2EXT,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetImageDrmFormatModifierPropertiesEXT)]

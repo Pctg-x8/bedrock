@@ -20,7 +20,6 @@ pub struct VkViSurfaceCreateInfoNN {
     pub window: *mut c_void,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkCreateViSurfaceNN)]

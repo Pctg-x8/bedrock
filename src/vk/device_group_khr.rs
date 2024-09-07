@@ -191,7 +191,6 @@ cfg_if::cfg_if! {
             }
         }
 
-        #[implements]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetDeviceGroupPresentCapabilitiesKHR)]
@@ -201,7 +200,6 @@ cfg_if::cfg_if! {
                 pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR
             ) -> VkResult
         );
-        #[implements]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetDeviceGroupSurfacePresentModesKHR)]
@@ -212,7 +210,6 @@ cfg_if::cfg_if! {
                 pModes: *mut VkDeviceGroupPresentModeFlagsKHR
             ) -> VkResult
         );
-        #[implements]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkGetPhysicalDevicePresentRectanglesKHR)]
@@ -301,7 +298,6 @@ cfg_if::cfg_if! {
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
-        #[cfg(feature = "Implements")]
         #[repr(transparent)]
         #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
         #[pfn_of(vkAcquireNextImage2KHR)]

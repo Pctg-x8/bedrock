@@ -1,8 +1,7 @@
 //! VK_KHR_xlib_surface extensions
 
 use super::*;
-use crate::PFN;
-use derives::implements;
+use derives::{implements, vk_ext_command};
 use x11::xlib::*;
 
 pub const VK_KHR_XLIB_SURFACE_SPEC_VERSION: usize = 6;
@@ -23,44 +22,13 @@ pub struct VkXlibSurfaceCreateInfoKHR {
     pub window: Window,
 }
 
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateXlibSurfaceKHR)]
-pub struct PFN_vkCreateXlibSurfaceKHR(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
+vk_ext_command!(
+    pub fn vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfo, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    suffix = "KHR";
+    static_callable;
 );
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceXlibPresentationSupportKHR)]
-pub struct PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        dpy: *mut Display,
-        visualID: VisualID,
-    ) -> VkBool32,
+vk_ext_command!(
+    pub fn vkGetPhysicalDEviceXlibPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut Display, visualID: VisualID) -> VkBool32;
+    suffix = "KHR";
+    static_callable;
 );
-
-#[implements]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateXlibSurfaceKHR(
-        instance: VkInstance,
-        pCreateInfo: *const VkXlibSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
-    pub fn vkGetPhysicalDeviceXlibPresentationSupportKHR(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        dpy: *mut Display,
-        visualID: VisualID,
-    ) -> VkBool32;
-}

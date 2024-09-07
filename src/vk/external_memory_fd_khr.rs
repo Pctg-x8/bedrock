@@ -51,7 +51,6 @@ pub struct VkMemoryGetFdInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetMemoryFdKHR)]
@@ -62,7 +61,6 @@ pub struct PFN_vkGetMemoryFdKHR(
         pFd: *mut c_int,
     ) -> VkResult,
 );
-#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
 #[pfn_of(vkGetMemoryFdPropertiesKHR)]

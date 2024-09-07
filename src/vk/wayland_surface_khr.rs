@@ -1,7 +1,8 @@
 //! VK_KHR_wayland_surface extensions
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 pub const VK_KHR_WAYLAND_SURFACE_SPEC_VERSION: usize = 6;
 pub static VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_wayland_surface";
@@ -23,42 +24,13 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
     pub surface: *mut c_void,
 }
 
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateWaylandSurfaceKHR)]
-pub struct PFN_vkCreateWaylandSurfaceKHR(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
+vk_ext_command!(
+    pub fn vkCreateWaylandSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    suffix = "KHR";
+    static_callable;
 );
-#[implements]
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceWaylandPresentationSupportKHR)]
-pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        display: *mut c_void,
-    ) -> VkBool32,
+vk_ext_command!(
+    pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut c_void) -> VkBool32;
+    suffix = "KHR";
+    static_callable;
 );
-
-#[implements]
-#[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateWaylandSurfaceKHR(
-        instance: VkInstance,
-        pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
-    pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(
-        physicalDevice: VkPhysicalDevice,
-        queueFamilyIndex: u32,
-        display: *mut c_void,
-    ) -> VkBool32;
-}

@@ -2,8 +2,7 @@ pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_SPEC_VERSION: usize = 1;
 pub const VK_KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME: &str = "VK_KHR_external_fence_capabilities";
 
 use super::*;
-use crate::PFN;
-use derives::promote_1_1;
+use derives::{promote_1_1, vk_ext_command};
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR: VkStructureType = ext_enum_value(113, 0) as _;
@@ -72,15 +71,8 @@ impl VkExternalFencePropertiesKHR {
     }
 }
 
-#[cfg(feature = "Implements")]
-#[promote_1_1(suffix = "KHR")]
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceExternalFencePropertiesKHR)]
-pub struct PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR,
-        pExternalFenceProperties: *mut VkExternalFencePropertiesKHR,
-    ),
+vk_ext_command!(
+    pub fn vkGetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR);
+    suffix = "KHR";
+    promote = "1.1";
 );
