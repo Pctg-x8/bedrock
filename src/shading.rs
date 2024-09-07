@@ -1,6 +1,6 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use derives::implements;
+use derives::{bitflags_newtype, implements, transparent_marked};
 
 use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
@@ -9,7 +9,7 @@ use crate::{
     VulkanStructureAsRef,
 };
 use std::borrow::Cow;
-use std::ffi::CString;
+use std::ffi::{c_void, CString};
 use std::marker::PhantomData;
 use std::ops::*;
 
@@ -510,7 +510,7 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d Pipel
 impl PipelineDynamicStates {
     /// Creates an empty PipelineDynamicStates
     #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         PipelineDynamicStates(Vec::new())
     }
 
@@ -520,12 +520,14 @@ impl PipelineDynamicStates {
             self.0.insert(n, v);
         }
     }
+
     /// Disables using a dynamic state
     pub fn disable(&mut self, v: VkDynamicState) {
         if let Ok(n) = self.0.binary_search(&v) {
             self.0.remove(n);
         }
     }
+
     /// Sets enable or disable state of a dynamic state
     pub fn set(&mut self, v: VkDynamicState, enable: bool) {
         if enable {
