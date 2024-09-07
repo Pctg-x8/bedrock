@@ -9,7 +9,7 @@ use crate::{
     VulkanStructureAsRef,
 };
 use std::borrow::Cow;
-use std::ffi::{c_void, CString};
+use std::ffi::{c_void, CStr, CString};
 use std::marker::PhantomData;
 use std::ops::*;
 
@@ -150,7 +150,11 @@ unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ShaderModuleObj
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ShaderModuleObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<Device> {}
 
-pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {}
+pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
+    fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m, Self> {
+        PipelineShader::new(self, entry_point)
+    }
+}
 DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
 
@@ -625,17 +629,22 @@ DerefContainerBracketImpl!(for PipelineShaderProvider {
     }
 });
 
-pub struct PipelineShader2<M: ShaderModule>(M, Cow<'static, std::ffi::CStr>);
-impl<M: ShaderModule> PipelineShader2<M> {
-    pub fn new(module: M, entry_point: impl Into<Cow<'static, std::ffi::CStr>>) -> Self {
-        Self(module, entry_point.into())
+pub struct PipelineShader<'m, M: 'm + ShaderModule + ?Sized>(&'m M, &'m CStr);
+impl<'m, M: 'm + ShaderModule + ?Sized> PipelineShader<'m, M> {
+    #[inline(always)]
+    pub const fn new(module: &'m M, entry_point: &'m CStr) -> Self {
+        Self(module, entry_point)
     }
 
-    pub const fn specialize<T: SpecializationConstants>(self, value: T) -> SpecializedPipelineShader<Self, T> {
+    #[inline(always)]
+    pub const fn specialize<'t, T: 't + SpecializationConstants>(
+        self,
+        value: &'t T,
+    ) -> SpecializedPipelineShader<'t, Self, T> {
         SpecializedPipelineShader(self, value)
     }
 }
-impl<M: ShaderModule> PipelineShaderProvider for PipelineShader2<M> {
+impl<M: ShaderModule + ?Sized> PipelineShaderProvider for PipelineShader<'_, M> {
     type ExtraStorage = ();
 
     fn base_struct(&self, stage: ShaderStage, _extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo {
@@ -652,8 +661,10 @@ impl<M: ShaderModule> PipelineShaderProvider for PipelineShader2<M> {
     fn make_extras(&self) -> Self::ExtraStorage {}
 }
 
-pub struct SpecializedPipelineShader<P: PipelineShaderProvider, T: SpecializationConstants>(P, T);
-impl<P: PipelineShaderProvider, T: SpecializationConstants> PipelineShaderProvider for SpecializedPipelineShader<P, T> {
+pub struct SpecializedPipelineShader<'t, P: PipelineShaderProvider, T: 't + SpecializationConstants>(P, &'t T);
+impl<P: PipelineShaderProvider, T: SpecializationConstants> PipelineShaderProvider
+    for SpecializedPipelineShader<'_, P, T>
+{
     type ExtraStorage = (P::ExtraStorage, VkSpecializationInfo);
 
     fn base_struct(&self, stage: ShaderStage, extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo {

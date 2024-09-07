@@ -1,6 +1,6 @@
 use std::rc::Rc;
 
-use bedrock::{self as br, CommandPoolMut, DescriptorPoolMut};
+use bedrock::{self as br, CommandPoolMut, DescriptorPoolMut, ShaderModule};
 use br::{
     CommandBuffer, CommandPool, DescriptorPool, Device, DeviceMemory, Fence, GraphicsPipelineBuilder,
     ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, RenderPass,
@@ -237,9 +237,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     ];
     let mut pipeline = {
-        let shader_stages =
-            br::VertexShaderStage::new(br::PipelineShader2::new(&vsh, std::ffi::CString::new("main").unwrap()))
-                .with_fragment_shader_stage(br::PipelineShader2::new(&fsh, std::ffi::CString::new("main").unwrap()));
+        let shader_stages = br::VertexShaderStage::new(br::PipelineShader::new(&vsh, c"main"))
+            .with_fragment_shader_stage(br::PipelineShader::new(&fsh, c"main"));
         let vps = br::VertexProcessingStages::new(
             shader_stages,
             &vi_bindings,
@@ -524,12 +523,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let viewports = [scissors[0].make_viewport(0.0..1.0)];
 
             pipeline = {
-                let shader_stages =
-                    br::VertexShaderStage::new(br::PipelineShader2::new(&vsh, std::ffi::CString::new("main").unwrap()))
-                        .with_fragment_shader_stage(br::PipelineShader2::new(
-                            &fsh,
-                            std::ffi::CString::new("main").unwrap(),
-                        ));
+                let shader_stages = br::VertexShaderStage::new(vsh.with_entry_point(c"main"))
+                    .with_fragment_shader_stage(fsh.with_entry_point(c"main"));
                 let vps = br::VertexProcessingStages::new(
                     shader_stages,
                     &vi_bindings,
