@@ -4,8 +4,8 @@ use derives::{bitflags_newtype, implements, transparent_marked};
 
 use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DescriptorSetLayoutObjectRef, DeviceChildHandle, GenericVulkanStructure, LifetimeBound, SubpassRef,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+    vk::*, DescriptorSetLayoutObjectRef, DeviceChild, DeviceChildHandle, GenericVulkanStructure, LifetimeBound,
+    SubpassRef, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
     VulkanStructureAsRef,
 };
 use std::borrow::Cow;
@@ -395,6 +395,20 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineObject<Device> {
 }
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineObject<Device> {}
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineObject<Device> {
+    #[inline]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for PipelineObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
 impl<Device: VkHandle<Handle = VkDevice>> Pipeline for PipelineObject<Device> {}
 
 pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
