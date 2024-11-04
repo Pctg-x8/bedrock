@@ -302,6 +302,20 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineLayoutObject<Device> 
 }
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineLayoutObject<Device> {}
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineLayoutObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineLayoutObject<Device> {
+    #[inline]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
 impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
 
 /// A range of a push constant, with visible shader stage mask
