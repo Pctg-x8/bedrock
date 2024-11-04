@@ -155,6 +155,9 @@ GuardsImpl!(for Image {
     }
 });
 
+pub trait DeviceChildImage: Image + DeviceChild {}
+impl<T: Image + DeviceChild> DeviceChildImage for T {}
+
 pub trait ImageSubresourceSlice: Image {
     /// method chaining helper
     fn by_ref(&self) -> &Self {
