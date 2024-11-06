@@ -161,7 +161,7 @@ impl Entrypoint {
         write!(
             sink,
             r#"        {}: {}({})"#,
-            self.export_name,
+            ExportNameWriter(self),
             PFNNameWriter(self),
             StubNameWriter(self)
         )
@@ -187,6 +187,8 @@ unsafe extern "system" fn {}({})"#,
         }
         sink.write_str(" {\n")?;
 
+        writeln!(sink, "    use crate::resolver::ResolverInterface;")?;
+        writeln!(sink, "    use crate::resolver::PFN;\n")?;
         writeln!(
             sink,
             r#"    let fp: {pfn} = crate::resolver::get_resolver().load_function_unconstrainted(<{pfn}>::NAME_CSTR);"#,

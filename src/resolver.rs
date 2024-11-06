@@ -55,12 +55,12 @@ cfg_if! {
             }
         }
         impl ResolverInterface for Resolver {
-            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &[u8]) -> T {
-                T::from_ptr(self.0.get::<T>(name).unwrap().into_raw().into_raw() as _)
+            unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T {
+                T::from_ptr(self.0.get::<T>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
             }
 
-            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &[u8]) -> F {
-                F::from_ptr(self.0.get::<F>(name).unwrap().into_raw().into_raw() as _)
+            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F {
+                F::from_ptr(self.0.get::<F>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
             }
         }
 

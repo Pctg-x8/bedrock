@@ -145,6 +145,9 @@ pub trait FenceMut: Fence + VkHandleMut {
 DerefContainerBracketImpl!(for mut FenceMut {});
 GuardsImpl!(for mut FenceMut {});
 
+pub trait DeviceChildFence: DeviceChild + Fence {}
+impl<T: DeviceChild + Fence> DeviceChildFence for T {}
+
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     #[inline(always)]
     fn as_transparent_ref(&self) -> SemaphoreRef {

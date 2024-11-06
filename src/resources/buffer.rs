@@ -55,6 +55,21 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for BufferObject<Device> {
 }
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for BufferObject<Device> {}
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for BufferObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for BufferObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for BufferObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> Buffer for BufferObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     type MemoryRequirementsInfo2<'b> = BufferMemoryRequirementsInfo2<'b, Self> where Device: 'b;

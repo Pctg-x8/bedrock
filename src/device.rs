@@ -927,6 +927,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         crate::vkfn::device_wait_idle(self.native_ptr()).into_result().map(drop)
     }
 
+    /// Single binding for buffer
+    #[implements]
+    fn bind_buffer_raw(&self, buffer: VkBuffer, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::bind_buffer_memory(self.native_ptr(), buffer, memory, offset)
+                .into_result()
+                .map(drop)
+        }
+    }
+
     /// Multiple Binding for Buffers
     #[implements("VK_KHR_bind_memory2")]
     fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
@@ -934,6 +944,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         unsafe {
             self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Single binding for image
+    #[implements]
+    fn bind_image_raw(&self, image: VkImage, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::bind_image_memory(self.native_ptr(), image, memory, offset)
                 .into_result()
                 .map(drop)
         }
