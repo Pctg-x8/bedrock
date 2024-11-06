@@ -70,6 +70,12 @@ pub struct VkDebugUtilsLabelEXT {
     pub pLabelName: *const c_char,
     pub color: [c_float; 4],
 }
+impl VkDebugUtilsLabelEXT {
+    #[inline]
+    pub const unsafe fn label_name_cstr(&self) -> &core::ffi::CStr {
+        core::ffi::CStr::from_ptr(self.pLabelName)
+    }
+}
 
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
@@ -80,6 +86,16 @@ pub struct VkDebugUtilsObjectNameInfoEXT {
     pub objectType: VkObjectType,
     pub objectHandle: u64,
     pub pObjectName: *const c_char,
+}
+impl VkDebugUtilsObjectNameInfoEXT {
+    #[inline]
+    pub unsafe fn object_name_cstr(&self) -> Option<&core::ffi::CStr> {
+        if self.pObjectName.is_null() {
+            None
+        } else {
+            Some(core::ffi::CStr::from_ptr(self.pObjectName))
+        }
+    }
 }
 
 #[repr(C)]
@@ -111,6 +127,34 @@ pub struct VkDebugUtilsMessengerCallbackDataEXT {
     pub pCmdBufLabels: *const VkDebugUtilsLabelEXT,
     pub objectCount: u32,
     pub pObjects: *const VkDebugUtilsObjectNameInfoEXT,
+}
+impl VkDebugUtilsMessengerCallbackDataEXT {
+    #[inline]
+    pub const unsafe fn queue_labels(&self) -> &[VkDebugUtilsLabelEXT] {
+        if self.queueLabelCount == 0 {
+            &[]
+        } else {
+            core::slice::from_raw_parts(self.pQueueLabels, self.queueLabelCount as _)
+        }
+    }
+
+    #[inline]
+    pub const unsafe fn cmd_buf_labels(&self) -> &[VkDebugUtilsLabelEXT] {
+        if self.cmdBufLabelCount == 0 {
+            &[]
+        } else {
+            core::slice::from_raw_parts(self.pCmdBufLabels, self.cmdBufLabelCount as _)
+        }
+    }
+
+    #[inline]
+    pub const unsafe fn objects(&self) -> &[VkDebugUtilsObjectNameInfoEXT] {
+        if self.objectCount == 0 {
+            &[]
+        } else {
+            core::slice::from_raw_parts(self.pObjects, self.objectCount as _)
+        }
+    }
 }
 
 #[allow(non_camel_case_types)]
