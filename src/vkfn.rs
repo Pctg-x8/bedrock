@@ -812,6 +812,12 @@ pub unsafe fn create_macos_surface_mvk(instance: VkInstance, create_info: *const
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.create_macos_surface_mvk.0)(instance, create_info, allocator, surface_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCreateMacOSSurfaceMVK(instance, create_info, allocator, surface_out) }
 }
+#[cfg(feature = "VK_EXT_metal_surface")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn create_metal_surface_ext(instance: VkInstance, create_info: *const VkMetalSurfaceCreateInfoEXT, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.create_metal_surface_ext.0)(instance, create_info, allocator, surface_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCreateMetalSurfaceEXT(instance, create_info, allocator, surface_out) }
+}
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip] #[inline(always)]
 pub unsafe fn get_physical_device_display_properties_khr(physical_device: VkPhysicalDevice, property_count_out: *mut u32, properties_out: *mut VkDisplayPropertiesKHR) -> VkResult {
@@ -1072,6 +1078,8 @@ struct FunctionPointerTable {
     get_physical_device_win32_presentation_support_khr: PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR,
     #[cfg(feature = "VK_MVK_macos_surface")]
     create_macos_surface_mvk: PFN_vkCreateMacOSSurfaceMVK,
+    #[cfg(feature = "VK_EXT_metal_surface")]
+    create_metal_surface_ext: PFN_vkCreateMetalSurfaceEXT,
     #[cfg(feature = "VK_KHR_display")]
     get_physical_device_display_properties_khr: PFN_vkGetPhysicalDeviceDisplayPropertiesKHR,
     #[cfg(feature = "VK_KHR_display")]
@@ -1285,6 +1293,8 @@ impl FunctionPointerTable {
         get_physical_device_win32_presentation_support_khr: PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(stub_get_physical_device_win32_presentation_support_khr),
         #[cfg(feature = "VK_MVK_macos_surface")]
         create_macos_surface_mvk: PFN_vkCreateMacOSSurfaceMVK(stub_create_macos_surface_mvk),
+        #[cfg(feature = "VK_EXT_metal_surface")]
+        create_metal_surface_ext: PFN_vkCreateMetalSurfaceEXT(stub_create_metal_surface_ext),
         #[cfg(feature = "VK_KHR_display")]
         get_physical_device_display_properties_khr: PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(stub_get_physical_device_display_properties_khr),
         #[cfg(feature = "VK_KHR_display")]
@@ -2756,6 +2766,16 @@ unsafe extern "system" fn stub_create_macos_surface_mvk(instance: VkInstance, cr
 
     let fp: PFN_vkCreateMacOSSurfaceMVK = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateMacOSSurfaceMVK>::NAME_CSTR);
     FPTBL.create_macos_surface_mvk = fp;
+    (fp.0)(instance, create_info, allocator, surface_out)
+}
+#[cfg(feature = "VK_EXT_metal_surface")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_create_metal_surface_ext(instance: VkInstance, create_info: *const VkMetalSurfaceCreateInfoEXT, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkCreateMetalSurfaceEXT = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateMetalSurfaceEXT>::NAME_CSTR);
+    FPTBL.create_metal_surface_ext = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
 #[cfg(feature = "VK_KHR_display")]

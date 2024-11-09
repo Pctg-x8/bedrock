@@ -1717,6 +1717,18 @@ const CATALOG: &'static [Entrypoint] = &[
     .with_result()
     .for_extensions(&["VK_MVK_macos_surface"], "MVK")
     .canonical_name("vkCreateMacOSSurfaceMVK"),
+    // platform surface extension: metal
+    Entrypoint::new(
+        "create_metal_surface",
+        &[
+            ("instance", "VkInstance"),
+            ("create_info", "*const VkMetalSurfaceCreateInfoEXT"),
+            ("allocator", "*const VkAllocationCallbacks"),
+            ("surface_out", "*mut VkSurfaceKHR"),
+        ],
+    )
+    .with_result()
+    .for_extensions(&["VK_EXT_metal_surface"], "EXT"),
     // display extension
     Entrypoint::new(
         "get_physical_device_display_properties",

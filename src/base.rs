@@ -1461,6 +1461,40 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 
+    /// Create a `Surface` object for `CAMetalLayer`
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
+    #[implements("VK_EXT_metal_surface")]
+    fn new_surface_metal(
+        self,
+        layer: *const core::ffi::c_void,
+    ) -> crate::Result<crate::SurfaceObject<Self::ConcreteInstance>>
+    where
+        Self: Sized + InstanceChildTransferrable,
+    {
+        let cinfo = VkMetalSurfaceCreateInfoEXT {
+            sType: VkMetalSurfaceCreateInfoEXT::TYPE,
+            pNext: core::ptr::null(),
+            flags: 0,
+            pLayer: layer,
+        };
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_metal_surface_ext(
+                self.instance().native_ptr(),
+                &cinfo,
+                core::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(|_| crate::SurfaceObject(h.assume_init(), self.transfer_instance()))
+        }
+    }
+
     /// Query the set of mode properties supported by the display
     /// # Failures
     /// On failure, this command returns
