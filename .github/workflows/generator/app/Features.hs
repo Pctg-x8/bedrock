@@ -118,6 +118,8 @@ macSpecific :: [String]
 macSpecific =
   [ "VK_MVK_ios_surface",
     "VK_MVK_macos_surface",
+    "VK_EXT_metal_surface",
+    "VK_EXT_metal_objects",
     "VK_KHR_surface",
     "Implements"
   ]
