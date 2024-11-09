@@ -21,6 +21,7 @@ VK_KHR_xcb_surface = ["xcb"]
 VK_KHR_wayland_surface = []
 VK_KHR_android_surface = ["android"]
 VK_KHR_win32_surface = ["windows"]
+VK_EXT_metal_surface = []
 VK_KHR_sampler_mirror_clamp_to_edge = []
 VK_KHR_external_memory_win32 = [
     "windows",
@@ -181,6 +182,7 @@ Allow1_1APIs = [
     "VK_KHR_bind_memory2",
     "VK_KHR_maintenance3",
 ]
+VK_EXT_metal_objects = []
 
 # 1.2 promoted extensions
 VK_KHR_create_renderpass2 = []

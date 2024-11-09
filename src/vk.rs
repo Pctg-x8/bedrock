@@ -5183,6 +5183,7 @@ ExportExtensions!("VK_KHR_wayland_surface": wayland_surface_khr);
 // TODO: Mir support
 ExportExtensions!("VK_KHR_android_surface": android_surface_khr);
 ExportExtensions!("VK_KHR_win32_surface": win32_surface_khr);
+ExportExtensions!("VK_EXT_metal_surface": metal_surface_ext);
 ExportExtensions!("VK_KHR_sampler_mirror_clamp_to_edge": sampler_mirror_clamp_to_edge_khr);
 ExportExtensions!("VK_KHR_external_memory_win32": external_memory_win32_khr);
 ExportExtensions!("VK_KHR_external_memory_fd": external_memory_fd_khr);
@@ -5257,6 +5258,7 @@ ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
 ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
+ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
 
 // Promoted Extensions
 ExportExtensions!("VK_KHR_multiview": multiview_khr);
