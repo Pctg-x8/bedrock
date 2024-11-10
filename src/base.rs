@@ -1554,7 +1554,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// no guarantee will be provided (simply calls under api)
     #[implements("VK_EXT_metal_surface")]
     #[inline]
-    unsafe fn new_surface_metal(
+    unsafe fn new_surface_metal_raw(
         &self,
         info: &VkMetalSurfaceCreateInfoEXT,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
