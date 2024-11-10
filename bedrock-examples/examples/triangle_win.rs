@@ -1,10 +1,11 @@
 use std::rc::Rc;
 
-use bedrock::{self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, FenceMut, QueueMut, ShaderModule};
+use bedrock::{
+    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, FenceMut, QueueMut, SemaphoreMut, ShaderModule,
+};
 use br::{
-    CommandBuffer, CommandPool, DescriptorPool, Device, DeviceMemory, Fence, GraphicsPipelineBuilder,
-    ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider, Queue, RenderPass,
-    Status, Swapchain, VulkanStructure,
+    Device, DeviceMemory, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice,
+    PipelineShaderStageProvider, RenderPass, Status, Swapchain, VulkanStructure,
 };
 use windows::{
     core::PCSTR,
@@ -363,10 +364,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ),
                 &br::SubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
             )
-            .bind_graphics_pipeline_pair(&pipeline, &pl)
-            .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
-            .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
-            .bind_vertex_buffers(0, &[(&vbuf, 0)])
+            .bind_graphics_pipeline(&pipeline)
+            .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
+            .push_constant(
+                &pl,
+                br::ShaderStage::VERTEX,
+                0,
+                &[viewports[0].width, viewports[0].height],
+            )
+            .bind_vertex_buffers(0, &[br::BufferObjectRef::new(&vbuf)], &[0])
             .draw(3, 1, 0, 0)
             .end_render_pass_2(&br::SubpassEndInfo::new())
             .end()?;
@@ -429,7 +435,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     init_fence.wait()?;
 
-    let bb_ready = br::SemaphoreBuilder::new().create(&device)?;
+    let mut bb_ready = br::SemaphoreBuilder::new().create(&device)?;
     let data_ready = br::SemaphoreBuilder::new().create(&device)?;
     let present_ready = br::SemaphoreBuilder::new().create(&device)?;
     let mut last_render_fence = br::FenceBuilder::new().create(&device)?;
@@ -551,10 +557,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
                         true,
                     )
-                    .bind_graphics_pipeline_pair(&pipeline, &pl)
-                    .bind_graphics_descriptor_sets(0, &[descriptors[0].0], &[])
-                    .push_graphics_constant(br::ShaderStage::VERTEX, 0, &[viewports[0].width, viewports[0].height])
-                    .bind_vertex_buffers(0, &[(&vbuf, 0)])
+                    .bind_graphics_pipeline(&pipeline)
+                    .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
+                    .push_constant(
+                        &pl,
+                        br::ShaderStage::VERTEX,
+                        0,
+                        &[viewports[0].width, viewports[0].height],
+                    )
+                    .bind_vertex_buffers(0, &[br::BufferObjectRef::new(&vbuf)], &[0])
                     .draw(3, 1, 0, 0)
                     .end_render_pass()
                     .end()?;
@@ -563,10 +574,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             resize_next = false;
         }
 
-        let bb_index = swapchain.acquire_next(
-            None,
-            br::CompletionHandler::<br::FenceObject<br::DeviceObject<br::InstanceObject>>, _>::Queue(&bb_ready),
-        )?;
+        let bb_index =
+            swapchain.acquire_next(None, br::CompletionHandlerMut::Queue(bb_ready.as_transparent_mut_ref()))?;
 
         let dt = t.elapsed().as_secs_f32();
         rot += dt * 120.0;
