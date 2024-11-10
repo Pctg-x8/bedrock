@@ -211,6 +211,16 @@ impl SamplerBuilder {
     }
 }
 
+impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
+    pub unsafe fn new_raw(device: Device, info: &VkSamplerCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_sampler(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(h.assume_init(), device))
+    }
+}
+
 /// Specify behavior of sampling with texture coordinates outside an image
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]

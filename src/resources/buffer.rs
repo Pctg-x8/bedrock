@@ -10,7 +10,12 @@ use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
 
 pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {
-    /// Create a buffer view
+    /// Create a new buffer view object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     fn create_view(self, format: VkFormat, range: Range<u64>) -> crate::Result<BufferViewObject<Self>>
     where
@@ -25,16 +30,32 @@ pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {
             offset: range.start,
             range: range.end - range.start,
         };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_buffer_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| BufferViewObject(h.assume_init(), self))
-        }
+
+        unsafe { BufferViewObject::new_raw(self, &cinfo) }
     }
 }
 DerefContainerBracketImpl!(for Buffer {});
 GuardsImpl!(for Buffer {});
+
+impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
+    /// Create a new buffer view object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls the under api)
+    pub unsafe fn new_raw(buffer: Buffer, info: &VkBufferViewCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_buffer_view(buffer.device_handle(), info, core::ptr::null(), h.as_mut_ptr())
+            .into_result()?;
+
+        Ok(Self(h.assume_init(), buffer))
+    }
+}
 
 pub trait BufferView: VkHandle<Handle = VkBufferView> {}
 DerefContainerBracketImpl!(for BufferView {});
@@ -232,6 +253,25 @@ impl crate::VulkanStructureProvider for BufferDesc<'_> {
     fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut crate::GenericVulkanStructure {
         *root = self.0.clone();
         root.as_generic_mut()
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
+    /// Create a new buffer object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantee will be provided (simply calls the under api)
+    pub unsafe fn new_raw(device: Device, info: &VkBufferCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_buffer(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(h.assume_init(), device))
     }
 }
 

@@ -541,25 +541,46 @@ impl<'d> ImageDesc<'d> {
         }
     }
 
-    /// Create an image
+    /// Create a new image object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
+    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
     #[implements]
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<ImageObject<Device>> {
         crate::ext::chain(&mut self.info, self.extensions.iter_mut().map(AsMut::as_mut));
 
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_image(device.native_ptr(), &self.info, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| {
-                    ImageObject(
-                        h.assume_init(),
-                        device,
-                        self.info.imageType,
-                        self.info.format,
-                        self.info.extent,
-                    )
-                })
-        }
+        unsafe { ImageObject::new_raw(device, &self.info) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
+    /// Create a new image object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
+    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls the under api)
+    pub unsafe fn new_raw(device: Device, info: &VkImageCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_image(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(
+            h.assume_init(),
+            device,
+            info.imageType,
+            info.format,
+            info.extent.clone(),
+        ))
     }
 }
 
@@ -1059,15 +1080,37 @@ impl<I: Image> ImageViewBuilder<I> {
         self
     }
 
+    /// Create a new image view from an existing image
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
     #[implements]
     pub fn create(mut self) -> crate::Result<ImageViewObject<I>> {
         self.0.image = self.1.native_ptr();
 
+        unsafe { ImageViewObject::new_raw(self.1, &self.0) }
+    }
+}
+
+impl<Image: DeviceChildHandle> ImageViewObject<Image> {
+    /// Create a new image view from an existing image
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls the under api)
+    pub unsafe fn new_raw(image: Image, info: &VkImageViewCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_image_view(self.1.device_handle(), &self.0, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| ImageViewObject(h.assume_init(), self.1))
-        }
+
+        crate::vkfn::create_image_view(image.device_handle(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(h.assume_init(), image))
     }
 }
