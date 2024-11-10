@@ -1,10 +1,11 @@
 use std::rc::Rc;
 
 use bedrock::{
-    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, FenceMut, QueueMut, SemaphoreMut, ShaderModule,
+    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, SemaphoreMut,
+    ShaderModule,
 };
 use br::{
-    Device, DeviceMemory, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice,
+    Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice,
     PipelineShaderStageProvider, RenderPass, Status, Swapchain, VulkanStructure,
 };
 use windows::{

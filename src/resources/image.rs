@@ -342,16 +342,16 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
 
 /// Builder structure specifying the parameters of a newly created image object
 #[derive(Clone, Debug)]
-pub struct ImageDesc<'d>(
-    VkImageCreateInfo,
-    Vec<Box<GenericVulkanStructure>>,
-    Option<Cow<'d, [u32]>>,
-    core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
-);
+pub struct ImageDesc<'d> {
+    info: VkImageCreateInfo,
+    extensions: Vec<Box<GenericVulkanStructure>>,
+    shared_queue_families: Option<Cow<'d, [u32]>>,
+    _marker: core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
+}
 impl<'d> ImageDesc<'d> {
     pub fn new<Size: ImageSize>(size: Size, format: VkFormat) -> Self {
-        ImageDesc(
-            VkImageCreateInfo {
+        ImageDesc {
+            info: VkImageCreateInfo {
                 sType: VkImageCreateInfo::TYPE,
                 pNext: std::ptr::null(),
                 flags: 0,
@@ -368,15 +368,15 @@ impl<'d> ImageDesc<'d> {
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
             },
-            Vec::new(),
-            None,
-            core::marker::PhantomData,
-        )
+            extensions: Vec::new(),
+            shared_queue_families: None,
+            _marker: core::marker::PhantomData,
+        }
     }
 
     #[inline(always)]
     pub unsafe fn with_extension(mut self, ext: impl VulkanStructure) -> Self {
-        self.1.push(core::mem::transmute(Box::new(ext)));
+        self.extensions.push(core::mem::transmute(Box::new(ext)));
         self
     }
 
@@ -385,7 +385,12 @@ impl<'d> ImageDesc<'d> {
     /// This function does not check any references/constraints
     #[inline(always)]
     pub const unsafe fn from_raw(s: VkImageCreateInfo) -> Self {
-        Self(s, Vec::new(), None, core::marker::PhantomData)
+        Self {
+            info: s,
+            extensions: Vec::new(),
+            shared_queue_families: None,
+            _marker: core::marker::PhantomData,
+        }
     }
 
     /// Unwraps raw vulkan structure
@@ -393,14 +398,14 @@ impl<'d> ImageDesc<'d> {
     /// Lifetime constraints are removed
     #[inline(always)]
     pub unsafe fn into_raw(self) -> VkImageCreateInfo {
-        self.0
+        self.info
     }
 
     /// Sets an size and a dimension of the created image.
     #[inline(always)]
     pub fn size<Size: ImageSize>(mut self, size: Size) -> Self {
-        self.0.extent = size.conv();
-        self.0.imageType = Size::DIMENSION;
+        self.info.extent = size.conv();
+        self.info.imageType = Size::DIMENSION;
 
         self
     }
@@ -409,21 +414,21 @@ impl<'d> ImageDesc<'d> {
     /// default: Undefined layout
     #[inline(always)]
     pub const fn init_layout(mut self, layout: ImageLayout) -> Self {
-        self.0.initialLayout = layout as _;
+        self.info.initialLayout = layout as _;
         self
     }
 
     /// A list of queue families that will access this image,
     /// or an empty list if no queue families can access this image simultaneously
     pub fn sharing_queue_families(mut self, indices: &'d [u32]) -> Self {
-        self.0.sharingMode = if indices.is_empty() {
+        self.info.sharingMode = if indices.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
         } else {
             VK_SHARING_MODE_CONCURRENT
         };
-        self.0.queueFamilyIndexCount = indices.len() as _;
-        self.0.pQueueFamilyIndices = indices.as_ptr_empty_null();
-        self.2 = Some(Cow::Borrowed(indices));
+        self.info.queueFamilyIndexCount = indices.len() as _;
+        self.info.pQueueFamilyIndices = indices.as_ptr_empty_null();
+        self.shared_queue_families = Some(Cow::Borrowed(indices));
 
         self
     }
@@ -432,7 +437,7 @@ impl<'d> ImageDesc<'d> {
     /// bitmask of 1(default), 2, 4, 8, 16, 32, 64
     #[inline(always)]
     pub const fn sample_counts(mut self, count_bits: u32) -> Self {
-        self.0.samples = count_bits;
+        self.info.samples = count_bits;
         self
     }
 
@@ -440,7 +445,7 @@ impl<'d> ImageDesc<'d> {
     /// default: optimal tiling
     #[inline(always)]
     pub const fn use_linear_tiling(mut self) -> Self {
-        self.0.tiling = VK_IMAGE_TILING_LINEAR;
+        self.info.tiling = VK_IMAGE_TILING_LINEAR;
         self
     }
 
@@ -448,7 +453,7 @@ impl<'d> ImageDesc<'d> {
     /// default: none
     #[inline(always)]
     pub const fn flags(mut self, opt: ImageFlags) -> Self {
-        self.0.flags = opt.0;
+        self.info.flags = opt.0;
         self
     }
 
@@ -456,7 +461,7 @@ impl<'d> ImageDesc<'d> {
     /// default: 1
     #[inline(always)]
     pub const fn array_layers(mut self, layers: u32) -> Self {
-        self.0.arrayLayers = layers;
+        self.info.arrayLayers = layers;
         self
     }
 
@@ -464,70 +469,63 @@ impl<'d> ImageDesc<'d> {
     /// default: 1
     #[inline(always)]
     pub const fn mip_levels(mut self, levels: u32) -> Self {
-        self.0.mipLevels = levels;
+        self.info.mipLevels = levels;
         self
     }
 
     /// Sets the created image will be sampled.
     #[inline(always)]
-    pub const fn sampled(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
-        self
+    pub const fn sampled(self) -> Self {
+        self.usage_with(ImageUsageFlags::SAMPLED)
     }
 
     /// Sets the created resource will be the destination of transferring operation.
     #[inline(always)]
-    pub const fn transfer_dest(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-        self
+    pub const fn transfer_dest(self) -> Self {
+        self.usage_with(ImageUsageFlags::TRANSFER_DEST)
     }
 
     /// Sets the created image can be used as a Storage Image.
     #[inline(always)]
-    pub const fn use_as_storage(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_STORAGE_BIT;
-        self
+    pub const fn use_as_storage(self) -> Self {
+        self.usage_with(ImageUsageFlags::STORAGE)
     }
 
     /// Sets the created image can be used as a color attachment.
     #[inline(always)]
-    pub const fn as_color_attachment(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-        self
+    pub const fn as_color_attachment(self) -> Self {
+        self.usage_with(ImageUsageFlags::COLOR_ATTACHMENT)
     }
 
     /// Sets the created image can be used as an input attachment.
     #[inline(always)]
-    pub const fn as_input_attachment(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
-        self
+    pub const fn as_input_attachment(self) -> Self {
+        self.usage_with(ImageUsageFlags::INPUT_ATTACHMENT)
     }
 
     /// Sets the created image can be used as a depth stencil attachment.
     #[inline(always)]
-    pub const fn as_depth_stencil_attachment(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-        self
+    pub const fn as_depth_stencil_attachment(self) -> Self {
+        self.usage_with(ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT)
     }
 
     /// Sets the created image as transient-used attachment.
     #[inline(always)]
-    pub const fn as_transient_attachment(mut self) -> Self {
-        self.0.usage |= VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT;
-        self
+    pub const fn as_transient_attachment(self) -> Self {
+        self.usage_with(ImageUsageFlags::TRANSIENT_ATTACHMENT)
     }
 
     /// Merges some custom usage flag bits.
     #[inline(always)]
     pub const fn usage_with(mut self, bits: ImageUsageFlags) -> Self {
-        self.0.usage |= bits.0;
+        self.info.usage |= bits.0;
         self
     }
 
     /// Overwrites all of custom usage flag bits.
     #[inline(always)]
     pub const fn set_usage(mut self, bits: ImageUsageFlags) -> Self {
-        self.0.usage = bits.0;
+        self.info.usage = bits.0;
         self
     }
 
@@ -546,19 +544,19 @@ impl<'d> ImageDesc<'d> {
     /// Create an image
     #[implements]
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<ImageObject<Device>> {
-        crate::ext::chain(&mut self.0, self.1.iter_mut().map(AsMut::as_mut));
+        crate::ext::chain(&mut self.info, self.extensions.iter_mut().map(AsMut::as_mut));
 
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::create_image(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
+            crate::vkfn::create_image(device.native_ptr(), &self.info, std::ptr::null(), h.as_mut_ptr())
                 .into_result()
                 .map(|_| {
                     ImageObject(
                         h.assume_init(),
                         device,
-                        self.0.imageType,
-                        self.0.format,
-                        self.0.extent.clone(),
+                        self.info.imageType,
+                        self.info.format,
+                        self.info.extent,
                     )
                 })
         }
