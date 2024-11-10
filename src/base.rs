@@ -977,7 +977,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("VK_EXT_sample_locations")]
     #[inline]
-    unsafe fn multisample_properties_raw(&self, samples: VkSampleCountFlags, sink: &mut VkMultismplePropertiesEXT) {
+    unsafe fn multisample_properties_raw(&self, samples: VkSampleCountFlags, sink: &mut VkMultisamplePropertiesEXT) {
         self.instance().get_physical_device_multisample_properties_ext_fn().0(self.native_ptr(), samples, sink);
     }
 
