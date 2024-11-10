@@ -253,6 +253,26 @@ DerefContainerBracketImpl!(for CommandBuffer {});
 GuardsImpl!(for CommandBuffer {});
 
 pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
+    /// Start recording a command buffer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
+    #[implements]
+    unsafe fn begin_raw<'d, Device: 'd + crate::Device + ?Sized>(
+        &'d mut self,
+        info: &VkCommandBufferBeginInfo,
+        device: &'d Device,
+    ) -> crate::Result<CmdRecord<'d, Self, Device>> {
+        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), info)
+            .into_result()
+            .map(move |_| CmdRecord { ptr: self, device })
+    }
+
     /// Start recording a primary command buffer
     /// # Failures
     /// On failure, this command returns
@@ -273,9 +293,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             pInheritanceInfo: core::ptr::null(),
         };
 
-        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), &info)
-            .into_result()
-            .map(move |_| CmdRecord { ptr: self, device })
+        self.begin_raw(&info, device)
     }
 
     /// Start recording a primary command buffer that will be submitted once
@@ -298,9 +316,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             pInheritanceInfo: std::ptr::null(),
         };
 
-        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), &info)
-            .into_result()
-            .map(move |_| CmdRecord { ptr: self, device })
+        self.begin_raw(&info, device)
     }
 
     /// Start recording a secondary command buffer
@@ -355,9 +371,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             pInheritanceInfo: &inherit,
         };
 
-        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), &binfo)
-            .into_result()
-            .map(move |_| CmdRecord { ptr: self, device })
+        self.begin_raw(&binfo, device)
     }
 
     /// Reset a command buffer to the initial state
@@ -406,6 +420,19 @@ pub struct SynchronizedCommandBuffer<
 impl<'p, 'b: 'p, Pool: crate::CommandPoolMut + 'p, Buffer: crate::CommandBufferMut + 'b>
     SynchronizedCommandBuffer<'p, 'b, Pool, Buffer>
 {
+    /// Start recording a command buffer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    pub fn begin_raw(
+        &mut self,
+        info: &VkCommandBufferBeginInfo,
+    ) -> crate::Result<CmdRecord<Buffer, Pool::ConcreteDevice>> {
+        unsafe { self.buffer.begin_raw(info, self.pool.device()) }
+    }
+
     /// Start recording a primary command buffer
     /// # Failures
     /// On failure, this command returns
