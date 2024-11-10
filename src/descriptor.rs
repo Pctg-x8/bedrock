@@ -273,6 +273,7 @@ impl<'d, 's> DescriptorSetLayoutBuilder<'d, 's> {
     /// Create a new descriptor set layout
     /// # Failures
     /// On failure, this command returns
+    ///
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
@@ -284,12 +285,44 @@ impl<'d, 's> DescriptorSetLayoutBuilder<'d, 's> {
     where
         Self: Sized,
     {
+        unsafe { DescriptorSetLayoutObject::new_raw(device, &self.0) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> DescriptorSetLayoutObject<Device> {
+    /// Create a new descriptor set layout
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    pub unsafe fn new_raw(device: Device, info: &VkDescriptorSetLayoutCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_descriptor_set_layout(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| DescriptorSetLayoutObject(h.assume_init(), device))
-        }
+
+        crate::vkfn::create_descriptor_set_layout(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr())
+            .into_result()?;
+
+        Ok(Self(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkDescriptorSetLayout, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkDescriptorSetLayout, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 
@@ -347,17 +380,50 @@ impl<'d> DescriptorPoolBuilder<'d> {
     /// Creates a descriptor pool object
     /// # Failures
     /// On failure, this command returns
+    ///
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
     #[inline]
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<DescriptorPoolObject<Device>> {
+        unsafe { DescriptorPoolObject::new_raw(device, &self.0) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> DescriptorPoolObject<Device> {
+    /// Creates a descriptor pool object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    pub unsafe fn new_raw(device: Device, info: &VkDescriptorPoolCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_descriptor_pool(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| DescriptorPoolObject(h.assume_init(), device))
-        }
+
+        crate::vkfn::create_descriptor_pool(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr())
+            .into_result()?;
+
+        Ok(Self(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkDescriptorPool, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkDescriptorPool, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 
@@ -366,6 +432,27 @@ DerefContainerBracketImpl!(for DescriptorPool {});
 GuardsImpl!(for DescriptorPool {});
 
 pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
+    /// Allocate one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - VK_ERROR_FRAGMENTED_POOL
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    #[inline]
+    unsafe fn alloc_raw(
+        &mut self,
+        info: &VkDescriptorSetAllocateInfo,
+        objects: &mut [VkDescriptorSet],
+    ) -> crate::Result<()> {
+        crate::vkfn::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr())
+            .into_result()
+            .map(drop)
+    }
+
     /// Allocate one or more descriptor sets
     /// # Failures
     /// On failure, this command returns
@@ -382,10 +469,11 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
         let mut hs = vec![VkDescriptorSet::NULL; layouts.len()];
+
         unsafe {
-            crate::vkfn::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
-                .into_result()
-                .map(|_| std::mem::transmute(hs))
+            self.alloc_raw(&ainfo, &mut hs)?;
+
+            Ok(core::mem::transmute(hs))
         }
     }
 
@@ -408,13 +496,12 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
         let mut hs = [VkDescriptorSet::NULL; N];
+
         unsafe {
-            crate::vkfn::allocate_descriptor_sets(self.device_handle(), &ainfo, hs.as_mut_ptr())
-                .into_result()
-                .map(|_| {
-                    // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
-                    *(&hs as *const _ as *const [DescriptorSet; N])
-                })
+            self.alloc_raw(&ainfo, &mut hs)?;
+
+            // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
+            Ok(*(&hs as *const _ as *const [DescriptorSet; N]))
         }
     }
 
@@ -426,8 +513,9 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    unsafe fn reset(&mut self) -> crate::Result<()> {
-        crate::vkfn::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), 0)
+    #[inline]
+    unsafe fn reset(&mut self, flags: VkDescriptorPoolResetFlags) -> crate::Result<()> {
+        crate::vkfn::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), flags)
             .into_result()
             .map(drop)
     }
@@ -440,6 +528,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// - VK_ERROR_OUT_OF_HOST_MEMORY
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
+    #[inline]
     unsafe fn free(&mut self, sets: &[DescriptorSet]) -> crate::Result<()> {
         crate::vkfn::free_descriptor_sets(
             self.device_handle(),
@@ -519,6 +608,18 @@ impl<'r> DescriptorBufferRef<'r> {
             core::marker::PhantomData,
         )
     }
+
+    #[inline(always)]
+    pub const fn unbounded(h: VkBuffer, range: core::ops::Range<VkDeviceSize>) -> Self {
+        Self(
+            VkDescriptorBufferInfo {
+                buffer: h,
+                offset: range.start,
+                range: range.end - range.start,
+            },
+            core::marker::PhantomData,
+        )
+    }
 }
 
 #[repr(transparent)]
@@ -544,8 +645,26 @@ impl<'r> DescriptorImageRef<'r> {
     }
 
     #[inline(always)]
+    pub const fn unbounded(h: VkImageView, layout: ImageLayout) -> Self {
+        Self(
+            VkDescriptorImageInfo {
+                imageView: h,
+                imageLayout: layout as _,
+                sampler: VkSampler::NULL,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline(always)]
     pub fn with_sampler(mut self, sampler: &'r (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
         self.0.sampler = sampler.native_ptr();
+        self
+    }
+
+    #[inline(always)]
+    pub const fn with_unbounded_sampler(mut self, sampler: VkSampler) -> Self {
+        self.0.sampler = sampler;
         self
     }
 }
@@ -702,10 +821,8 @@ impl DescriptorSetCopyInfo {
 }
 
 #[macro_export]
-macro_rules! DescriptorUpdateTemplateEntry
-{
-    { ($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr } =>
-    {
+macro_rules! DescriptorUpdateTemplateEntry {
+    { ($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr } => {
         VkDescriptorUpdateTemplateEntry
         {
             descriptorType: $ty, descriptorCount: $c,
@@ -714,10 +831,8 @@ macro_rules! DescriptorUpdateTemplateEntry
     };
 }
 #[macro_export]
-macro_rules! DescriptorUpdateTemplateEntries
-{
-    { { $(($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr),* } } =>
-    { {
+macro_rules! DescriptorUpdateTemplateEntries {
+    { { $(($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr),* } } => { {
         $(DescriptorUpdateTemplateEntry! { ($b, $a) ..: [$ty; $c] = $o, $s }),*
     } };
 }
@@ -753,6 +868,24 @@ cfg_if! {
             }
         }
         impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
+
+        impl<Device: crate::Device> DescriptorUpdateTemplateObject<Device> {
+            /// Constructs from raw values
+            /// # Safety
+            /// the resource must be created from the device and not freed anywhere
+            pub const unsafe fn manage(handle: VkDescriptorUpdateTemplateKHR, parent: Device) -> Self {
+                Self(handle, parent)
+            }
+
+            /// Purges the construct (Drop will not be called for this resource)
+            pub fn unmanage(self) -> (VkDescriptorUpdateTemplateKHR, Device) {
+                let h = self.0;
+                let p = unsafe { core::ptr::read(&self.1) };
+                core::mem::forget(self);
+
+                (h, p)
+            }
+        }
 
         pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplateKHR> + DeviceChild {
             #[implements]

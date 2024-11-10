@@ -136,7 +136,7 @@ pub enum StencilFaceMask {
 /// Opaque handle to a shader module object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkShaderModule::OBJECT_TYPE)]
-pub struct ShaderModuleObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkShaderModule, pub(crate) Device);
+pub struct ShaderModuleObject<Device: VkHandle<Handle = VkDevice>>(VkShaderModule, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for ShaderModuleObject<Device> {
     #[inline(always)]
@@ -150,6 +150,24 @@ unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ShaderModuleObj
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ShaderModuleObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<Device> {}
 
+impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkShaderModule, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkShaderModule, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
+
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
     fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m, Self> {
         PipelineShader::new(self, entry_point)
@@ -161,7 +179,7 @@ GuardsImpl!(for ShaderModule {});
 /// Opaque handle to a pipeline cache object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkPipelineCache::OBJECT_TYPE)]
-pub struct PipelineCacheObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkPipelineCache, pub(crate) Device);
+pub struct PipelineCacheObject<Device: VkHandle<Handle = VkDevice>>(VkPipelineCache, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineCacheObject<Device> {
     #[inline(always)]
@@ -182,6 +200,24 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineCacheObj
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCache for PipelineCacheObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheMut for PipelineCacheObject<Device> {}
 
+impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkPipelineCache, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkPipelineCache, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
+
 #[transparent_marked]
 pub struct PipelineCacheObjectRef<'r>(
     VkPipelineCache,
@@ -191,6 +227,11 @@ impl<'r> PipelineCacheObjectRef<'r> {
     #[inline(always)]
     pub fn new(res: &'r (impl VkHandle<Handle = VkPipelineCache> + ?Sized)) -> Self {
         Self(res.native_ptr(), core::marker::PhantomData)
+    }
+
+    #[inline(always)]
+    pub const fn unbounded(h: VkPipelineCache) -> Self {
+        Self(h, core::marker::PhantomData)
     }
 }
 
@@ -271,6 +312,7 @@ pub trait PipelineCacheMut: PipelineCache + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
+    #[inline]
     fn merge(&mut self, srcs: &[PipelineCacheObjectRef]) -> crate::Result<()> {
         unsafe {
             crate::vkfn::merge_pipeline_caches(
@@ -290,7 +332,7 @@ GuardsImpl!(for mut PipelineCacheMut {});
 /// Opaque handle to a pipeline layout object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkPipelineLayout::OBJECT_TYPE)]
-pub struct PipelineLayoutObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkPipelineLayout, pub(crate) Device);
+pub struct PipelineLayoutObject<Device: VkHandle<Handle = VkDevice>>(VkPipelineLayout, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineLayoutObject<Device> {
     #[inline(always)]
@@ -381,12 +423,45 @@ impl<'l> PipelineLayoutBuilder<'l> {
     #[implements]
     #[inline]
     pub fn create<D: crate::Device>(&self, device: D) -> crate::Result<PipelineLayoutObject<D>> {
-        let mut handle = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_pipeline_layout(device.native_ptr(), &self.raw, core::ptr::null(), handle.as_mut_ptr())
-                .into_result()
-                .map(move |_| PipelineLayoutObject(handle.assume_init(), device))
-        }
+        unsafe { PipelineLayoutObject::new_raw(device, &self.raw) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
+    /// Creates a new pipeline layout object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    #[inline]
+    pub unsafe fn new_raw(device: Device, info: &VkPipelineLayoutCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_pipeline_layout(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr())
+            .into_result()?;
+
+        Ok(Self::manage(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkPipelineLayout, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkPipelineLayout, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 
@@ -397,7 +472,7 @@ GuardsImpl!(for PipelineLayout {});
 /// Opaque handle to a pipeline object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkPipeline::OBJECT_TYPE)]
-pub struct PipelineObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkPipeline, pub(crate) Device);
+pub struct PipelineObject<Device: VkHandle<Handle = VkDevice>>(VkPipeline, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineObject<Device> {
     #[inline(always)]
@@ -424,6 +499,24 @@ impl<Device: crate::Device> DeviceChild for PipelineObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> Pipeline for PipelineObject<Device> {}
+
+impl<Device: VkHandle<Handle = VkDevice>> PipelineObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkPipeline, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkPipeline, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
 
 pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
 DerefContainerBracketImpl!(for Pipeline {});

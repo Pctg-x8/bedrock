@@ -212,12 +212,39 @@ impl SamplerBuilder {
 }
 
 impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
+    /// Create a new sampler object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    ///
+    /// # Safety
+    /// no guarantee will be provided (simply calls the under api)
+    #[implements]
     pub unsafe fn new_raw(device: Device, info: &VkSamplerCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         crate::vkfn::create_sampler(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
 
         Ok(Self(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkSampler, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkSampler, Device) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
     }
 }
 

@@ -54,3 +54,16 @@ impl<T> ArrayFFIExtensions<T> for [T] {
         }
     }
 }
+
+#[inline(always)]
+pub(crate) const fn opt_pointer<T>(x: Option<&T>) -> *const T {
+    match x {
+        Some(x) => pointerify(x),
+        None => core::ptr::null(),
+    }
+}
+
+#[inline(always)]
+pub(crate) const fn pointerify<T>(x: &T) -> *const T {
+    x as _
+}

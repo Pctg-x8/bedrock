@@ -569,6 +569,7 @@ impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls the under api)
+    #[implements]
     pub unsafe fn new_raw(device: Device, info: &VkImageCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
@@ -581,6 +582,29 @@ impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
             info.format,
             info.extent.clone(),
         ))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(
+        handle: VkImage,
+        parent: Device,
+        image_type: VkImageType,
+        format: VkFormat,
+        extent: VkExtent3D,
+    ) -> Self {
+        Self(handle, parent, image_type, format, extent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkImage, Device, VkImageType, VkFormat, VkExtent3D) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        let (t, f, x) = (self.2, self.3, self.4);
+        core::mem::forget(self);
+
+        (v, p, t, f, x)
     }
 }
 
@@ -1106,11 +1130,28 @@ impl<Image: DeviceChildHandle> ImageViewObject<Image> {
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls the under api)
+    #[implements]
     pub unsafe fn new_raw(image: Image, info: &VkImageViewCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         crate::vkfn::create_image_view(image.device_handle(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
 
         Ok(Self(h.assume_init(), image))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkImageView, parent: Image) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkImageView, Image) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
     }
 }

@@ -163,6 +163,43 @@ impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemory for DeviceMemoryObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryMut for DeviceMemoryObject<Device> {}
 
+impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
+    /// Execute requests for Device Memory Acquisition
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    ///
+    /// # Safety
+    /// no guarantee will be provided (simply calls the under api)
+    #[implements]
+    pub unsafe fn new_raw(device: Device, info: &VkMemoryAllocateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::allocate_memory(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkDeviceMemory, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkDeviceMemory, Device) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
+    }
+}
+
 pub struct DeviceMemoryRequest(VkMemoryAllocateInfo, Vec<Box<GenericVulkanStructure>>);
 impl DeviceMemoryRequest {
     pub const fn allocate(size: usize, memory_type_index: u32) -> Self {
@@ -291,12 +328,7 @@ impl DeviceMemoryRequest {
     pub fn execute<Device: crate::Device>(mut self, device: Device) -> crate::Result<DeviceMemoryObject<Device>> {
         crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::allocate_memory(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| DeviceMemoryObject(h.assume_init(), device))
-        }
+        unsafe { DeviceMemoryObject::new_raw(device, &self.0) }
     }
 }
 

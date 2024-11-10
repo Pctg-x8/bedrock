@@ -12,6 +12,7 @@ pub(crate) fn chain<'s>(
         s
     });
 }
+#[allow(dead_code)]
 pub(crate) fn chain2<'s>(
     base: &'s mut impl VulkanStructure,
     extends: impl Iterator<Item = &'s mut GenericVulkanStructure>,

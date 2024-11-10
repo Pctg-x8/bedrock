@@ -126,13 +126,45 @@ impl CommandPoolBuilder {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
+    #[inline]
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<CommandPoolObject<Device>> {
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_command_pool(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| CommandPoolObject(h.assume_init(), device))
-        }
+        unsafe { CommandPoolObject::new_raw(device, &self.0) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> CommandPoolObject<Device> {
+    /// Create a new command pool object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    pub unsafe fn new_raw(device: Device, info: &VkCommandPoolCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_command_pool(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkCommandPool, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkCommandPool, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 

@@ -47,6 +47,7 @@ impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls the under api)
+    #[implements]
     pub unsafe fn new_raw(buffer: Buffer, info: &VkBufferViewCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
@@ -54,6 +55,22 @@ impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
             .into_result()?;
 
         Ok(Self(h.assume_init(), buffer))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkBufferView, parent: Buffer) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkBufferView, Buffer) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
     }
 }
 
@@ -266,12 +283,29 @@ impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
     ///
     /// # Safety
     /// no guarantee will be provided (simply calls the under api)
+    #[implements]
     pub unsafe fn new_raw(device: Device, info: &VkBufferCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         crate::vkfn::create_buffer(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
 
         Ok(Self(h.assume_init(), device))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkBuffer, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkBuffer, Device) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
     }
 }
 

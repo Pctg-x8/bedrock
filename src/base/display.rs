@@ -8,14 +8,16 @@ use crate::{vk::*, VkObject, VulkanStructure};
 use derives::*;
 use std::ops::Deref;
 
+use super::opt_pointer;
+
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DISPLAY_KHR)]
-pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub(crate) VkDisplayKHR, pub(crate) PhysicalDevice);
+pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub VkDisplayKHR, pub PhysicalDevice);
 
 #[repr(transparent)]
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DISPLAY_MODE_KHR)]
-pub struct DisplayMode(pub(crate) VkDisplayModeKHR);
+pub struct DisplayMode(pub VkDisplayModeKHR);
 
 impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// Query the set of mode properties supported by the display.
@@ -24,7 +26,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "Implements")]
+    #[implements]
     pub fn mode_properties(&self) -> crate::Result<Vec<DisplayModeProperties>> {
         unsafe {
             let mut n = 0;
@@ -33,13 +35,14 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
             crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, v.as_mut_ptr() as *mut _)
-                .into_result()
-                .map(move |_| v)
+                .into_result()?;
+
+            Ok(v)
         }
     }
 
     /// Release access to an acquired VkDisplayKHR
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_direct_mode_display"))]
+    #[implements("VK_EXT_direct_mode_display")]
     pub fn release(&self) {
         use crate::Instance;
 
@@ -54,7 +57,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_acquire_xlib_display"))]
+    #[implements("VK_EXT_acquire_xlib_display")]
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
         use crate::Instance;
 
@@ -71,26 +74,46 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[cfg(feature = "Implements")]
+    ///
+    /// # Safety
+    /// no guarantee will be provided (simply calls under api)
+    #[implements]
+    #[inline]
+    pub unsafe fn create_display_mode_raw(
+        &self,
+        info: &VkDisplayModeCreateInfoKHR,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkDisplayModeKHR> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_display_mode_khr(
+            self.1.native_ptr(),
+            self.native_ptr(),
+            info,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
+    }
+
+    /// Create a display mode
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    #[implements]
     pub fn create_display_mode(&self, params: VkDisplayModeParametersKHR) -> crate::Result<DisplayMode> {
-        unsafe {
-            let cinfo = VkDisplayModeCreateInfoKHR {
-                sType: VkDisplayModeCreateInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                flags: 0,
-                parameters: params,
-            };
-            let mut h = std::mem::MaybeUninit::uninit();
-            crate::vkfn::create_display_mode_khr(
-                self.1.native_ptr(),
-                self.native_ptr(),
-                &cinfo,
-                std::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| DisplayMode(h.assume_init()))
-        }
+        let cinfo = VkDisplayModeCreateInfoKHR {
+            sType: VkDisplayModeCreateInfoKHR::TYPE,
+            pNext: std::ptr::null(),
+            flags: 0,
+            parameters: params,
+        };
+
+        Ok(DisplayMode(unsafe { self.create_display_mode_raw(&cinfo, None)? }))
     }
 }
 

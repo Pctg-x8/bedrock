@@ -55,26 +55,40 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     ///
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
     #[implements("VK_KHR_external_fence_fd")]
-    #[cfg(unix)]
-    fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd>
+    unsafe fn get_external_handle_raw(&self, info: &VkFenceGetFdInfoKHR) -> crate::Result<std::os::unix::io::RawFd>
     where
         Self: DeviceChild,
     {
         use crate::Device;
 
-        let info = VkFenceGetFdInfoKHR {
-            sType: VkFenceGetFdInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            fence: self.native_ptr(),
-            handleType: ty as _,
-        };
-
         let mut fd = 0;
+        self.device().get_fence_fd_khr_fn().0(self.device_handle(), info, &mut fd).into_result()?;
+        Ok(fd)
+    }
+
+    /// Get a POSIX file descriptor handle for a type
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements("VK_KHR_external_fence_fd")]
+    #[inline]
+    fn get_external_handle(&self, ty: crate::ExternalFenceFdType) -> crate::Result<std::os::unix::io::RawFd>
+    where
+        Self: DeviceChild,
+    {
         unsafe {
-            self.device().get_fence_fd_khr_fn().0(self.device_handle(), &info, &mut fd)
-                .into_result()
-                .map(move |_| fd)
+            self.get_external_handle_raw(&VkFenceGetFdInfoKHR {
+                sType: VkFenceGetFdInfoKHR::TYPE,
+                pNext: std::ptr::null(),
+                fence: self.native_ptr(),
+                handleType: ty as _,
+            })
         }
     }
 
@@ -84,31 +98,46 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
     #[implements("VK_KHR_external_fence_fd")]
-    #[cfg(unix)]
-    fn import(&self, handle: crate::ExternalFenceFd, temporary: bool) -> crate::Result<()>
+    unsafe fn import_fd_raw(&self, info: &VkImportFenceFdInfoKHR) -> crate::Result<()>
     where
         Self: DeviceChild,
     {
         use crate::Device;
 
-        let info = VkImportFenceFdInfoKHR {
-            sType: VkImportFenceFdInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            fence: self.native_ptr(),
-            flags: if temporary {
-                VK_FENCE_IMPORT_TEMPORARY_BIT_KHR
-            } else {
-                0
-            },
-            handleType: handle.0 as _,
-            fd: handle.1,
-        };
+        self.device().import_fence_fd_khr_fn().0(self.device_handle(), info)
+            .into_result()
+            .map(drop)
+    }
 
+    /// Import a fence from a POSIX file descriptor
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements("VK_KHR_external_fence_fd")]
+    #[inline]
+    fn import_fd(&self, handle: crate::ExternalFenceFd, temporary: bool) -> crate::Result<()>
+    where
+        Self: DeviceChild,
+    {
         unsafe {
-            self.device().import_fence_fd_khr_fn().0(self.device_handle(), &info)
-                .into_result()
-                .map(drop)
+            self.import_fd_raw(&VkImportFenceFdInfoKHR {
+                sType: VkImportFenceFdInfoKHR::TYPE,
+                pNext: std::ptr::null(),
+                fence: self.native_ptr(),
+                flags: if temporary {
+                    VK_FENCE_IMPORT_TEMPORARY_BIT_KHR
+                } else {
+                    0
+                },
+                handleType: handle.0 as _,
+                fd: handle.1,
+            })
         }
     }
 }
@@ -162,25 +191,45 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     ///
     /// * VK_ERROR_TOO_MANY_OBJECTS
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
     #[implements("VK_KHR_external_semaphore_win32")]
+    unsafe fn request_external_handle_raw(
+        &self,
+        info: &VkSemaphoreGetWin32HandleInfoKHR,
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        use crate::Device;
+
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        self.device().get_semaphore_win32_handle_khr_fn().0(self.device().native_ptr(), info, h.as_mut_ptr())
+            .into_result()?;
+
+        Ok(h.assume_init())
+    }
+
+    /// Get a Windows HANDLE for a semaphore
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_TOO_MANY_OBJECTS
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    #[implements("VK_KHR_external_semaphore_win32")]
+    #[inline]
     fn request_external_handle(
         &self,
         handle_type: crate::ExternalSemaphoreHandleTypeWin32,
     ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
-        use crate::Device;
-
-        let info = VkSemaphoreGetWin32HandleInfoKHR {
-            sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            semaphore: self.native_ptr(),
-            handleType: handle_type as _,
-        };
-
-        let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
-            self.device().get_semaphore_win32_handle_khr_fn().0(self.device().native_ptr(), &info, h.as_mut_ptr())
-                .into_result()
-                .map(move |_| h.assume_init())
+            self.request_external_handle_raw(&VkSemaphoreGetWin32HandleInfoKHR {
+                sType: VkSemaphoreGetWin32HandleInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                semaphore: self.native_ptr(),
+                handleType: handle_type as _,
+            })
         }
     }
 
@@ -191,23 +240,33 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
     #[implements("VK_KHR_external_semaphore_win32")]
-    fn import(&self, handle: crate::ExternalSemaphoreHandleWin32, name: &widestring::WideCString) -> crate::Result<()> {
+    unsafe fn import_raw(&self, info: &VkImportSemaphoreWin32HandleInfoKHR) -> crate::Result<()> {
         use crate::Device;
 
-        let info = VkImportSemaphoreWin32HandleInfoKHR {
-            sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            flags: 0,
-            semaphore: self.native_ptr(),
-            handleType: handle.0 as _,
-            handle: handle.1,
-            name: windows::core::PCWSTR(name.as_ptr()),
-        };
+        self.device().import_semaphore_win32_handle_khr_fn().0(self.device().native_ptr(), info)
+            .into_result()
+            .map(drop)
+    }
 
+    /// Import a semaphore from a Windows HANDLE
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
+    #[implements("VK_KHR_external_semaphore_win32")]
+    #[inline]
+    fn import(&self, handle: crate::ExternalSemaphoreHandleWin32, name: &widestring::WideCString) -> crate::Result<()> {
         unsafe {
-            self.device().import_semaphore_win32_handle_khr_fn().0(self.device().native_ptr(), &info)
-                .into_result()
-                .map(drop)
+            self.import_raw(&VkImportSemaphoreWin32HandleInfoKHR {
+                sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                semaphore: self.native_ptr(),
+                handleType: handle.0 as _,
+                handle: handle.1,
+                name: windows::core::PCWSTR(name.as_ptr()),
+            })
         }
     }
 
@@ -230,18 +289,19 @@ pub trait SemaphoreMut: Semaphore + VkHandleMut {
 DerefContainerBracketImpl!(for mut SemaphoreMut {});
 GuardsImpl!(for mut SemaphoreMut {});
 
-pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
+pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {}
+DerefContainerBracketImpl!(for Event {});
+GuardsImpl!(for Event {});
+
+pub trait EventMut: Event + VkHandleMut {
     /// Set an event to signaled state
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn set(&mut self) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    fn set(&mut self) -> crate::Result<()> {
         unsafe {
             crate::vkfn::set_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
@@ -255,11 +315,8 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn reset(&mut self) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
+    #[implements]
+    fn reset(&mut self) -> crate::Result<()> {
         unsafe {
             crate::vkfn::reset_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
@@ -267,8 +324,8 @@ pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {
         }
     }
 }
-DerefContainerBracketImpl!(for Event {});
-GuardsImpl!(for Event {});
+DerefContainerBracketImpl!(for mut EventMut {});
+GuardsImpl!(for mut EventMut {});
 
 pub trait Status {
     /// Retrieve the status(whether is signaled or not) of a synchronize object
@@ -300,6 +357,12 @@ pub struct FenceRef<'r>(
     pub(crate) VkFence,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkFence>>,
 );
+impl<'r> FenceRef<'r> {
+    #[inline(always)]
+    pub const fn unbounded(h: VkFence) -> Self {
+        Self(h, core::marker::PhantomData)
+    }
+}
 impl<'r> VkHandle for FenceRef<'r> {
     type Handle = VkFence;
 
@@ -317,10 +380,15 @@ pub struct FenceMutRef<'r>(
 );
 impl<'r> FenceMutRef<'r> {
     pub const NULL: Self = Self(VkFence::NULL, core::marker::PhantomData);
+
+    #[inline(always)]
+    pub fn unbounded(h: VkFence) -> Self {
+        Self(h, core::marker::PhantomData)
+    }
 }
 
 #[derive(VkHandle)]
-pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkFence, pub(crate) Device);
+pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for FenceObject<Device> {
     fn drop(&mut self) {
@@ -359,12 +427,35 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
     }
 }
 
+impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkFence, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkFence, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
+
 /// A handle reference to a semaphore
 #[transparent_marked]
 pub struct SemaphoreRef<'r>(
     pub(crate) VkSemaphore,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkSemaphore>>,
 );
+impl<'r> SemaphoreRef<'r> {
+    pub const fn unbounded(h: VkSemaphore) -> Self {
+        Self(h, core::marker::PhantomData)
+    }
+}
 impl<'r> VkHandle for SemaphoreRef<'r> {
     type Handle = VkSemaphore;
 
@@ -379,10 +470,15 @@ pub struct SemaphoreMutRef<'r>(
     pub(crate) VkSemaphore,
     core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkSemaphore>>,
 );
+impl<'r> SemaphoreMutRef<'r> {
+    pub fn unbounded(h: VkSemaphore) -> Self {
+        Self(h, core::marker::PhantomData)
+    }
+}
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkSemaphore::OBJECT_TYPE)]
-pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkSemaphore, pub(crate) Device);
+pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(VkSemaphore, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for SemaphoreObject<Device> {
     #[inline(always)]
@@ -417,9 +513,27 @@ impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
     }
 }
 
+impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkSemaphore, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkSemaphore, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
+
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkEvent::OBJECT_TYPE)]
-pub struct EventObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkEvent, pub(crate) Device);
+pub struct EventObject<Device: VkHandle<Handle = VkDevice>>(VkEvent, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for EventObject<Device> {
     #[inline(always)]
@@ -453,6 +567,24 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
             VK_EVENT_RESET => Ok(false),
             vr => Err(vr),
         }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkEvent, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(self) -> (VkEvent, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 
@@ -506,12 +638,28 @@ impl FenceBuilder {
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<FenceObject<Device>> {
         crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
+        unsafe { FenceObject::new_raw(device, &self.0) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
+    /// Create a new fence object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    #[inline]
+    pub unsafe fn new_raw(device: Device, info: &VkFenceCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_fence(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| FenceObject(h.assume_init(), device))
-        }
+
+        crate::vkfn::create_fence(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self::manage(h.assume_init(), device))
     }
 }
 
@@ -563,12 +711,28 @@ impl SemaphoreBuilder {
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
         chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
+        unsafe { SemaphoreObject::new_raw(device, &self.0) }
+    }
+}
+
+impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
+    /// Create a new queue semaphore object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    #[inline]
+    pub unsafe fn new_raw(device: Device, info: &VkSemaphoreCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_semaphore(device.native_ptr(), &self.0, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| SemaphoreObject(h.assume_init(), device))
-        }
+
+        crate::vkfn::create_semaphore(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self::manage(h.assume_init(), device))
     }
 }
 

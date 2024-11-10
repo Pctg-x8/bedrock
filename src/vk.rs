@@ -5180,7 +5180,6 @@ ExportExtensions!("VK_KHR_display_swapchain": display_swapchain_khr);
 ExportExtensions!("VK_KHR_xlib_surface": xlib_surface_khr);
 ExportExtensions!("VK_KHR_xcb_surface": xcb_surface_khr);
 ExportExtensions!("VK_KHR_wayland_surface": wayland_surface_khr);
-// TODO: Mir support
 ExportExtensions!("VK_KHR_android_surface": android_surface_khr);
 ExportExtensions!("VK_KHR_win32_surface": win32_surface_khr);
 ExportExtensions!("VK_EXT_metal_surface": metal_surface_ext);

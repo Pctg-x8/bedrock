@@ -69,6 +69,14 @@ macro_rules! GuardsImpl {
         GuardsImpl!(for mut $t { $($required)* });
     };
 }
+macro_rules! ForwardFnPtr {
+    (deref $name: ident -> $t: ty) => {
+        #[inline(always)]
+        fn $name(&self) -> $t {
+            (**self).$name()
+        }
+    };
+}
 
 pub type Result<T> = std::result::Result<T, VkResult>;
 

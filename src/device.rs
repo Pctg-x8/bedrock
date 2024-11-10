@@ -2,7 +2,7 @@
 
 use cfg_if::cfg_if;
 use derives::implements;
-use ffi_helper::slice_as_ptr_empty_null;
+use ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
 
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
@@ -12,8 +12,6 @@ use crate::{
     VulkanStructureProvider,
 };
 
-#[implements]
-use core::convert::TryInto;
 use std::ffi::{c_char, CStr};
 
 #[implements]
@@ -639,6 +637,34 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    unsafe fn new_buffer_raw(
+        &self,
+        create_info: &VkBufferCreateInfo,
+        allocation_callback: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkBuffer> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_buffer(
+            self.native_ptr(),
+            create_info,
+            opt_pointer(allocation_callback),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
+    }
+
+    /// Create a new buffer object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     fn new_buffer(
         self,
@@ -647,15 +673,42 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = std::mem::MaybeUninit::uninit();
         let mut s = std::mem::MaybeUninit::uninit();
         create_info.build(unsafe { &mut *s.as_mut_ptr() });
         let s = unsafe { s.assume_init_ref() };
+
         unsafe {
-            crate::vkfn::create_buffer(self.native_ptr(), s, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| crate::BufferObject(h.assume_init(), self))
+            self.new_buffer_raw(s, None)
+                .map(move |h| crate::BufferObject::manage(h, self))
         }
+    }
+
+    /// Creates a new shader module object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    unsafe fn new_shader_module_raw(
+        &self,
+        info: &VkShaderModuleCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkShaderModule> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_shader_module(
+            self.native_ptr(),
+            info,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
     }
 
     /// Creates a new shader module object
@@ -677,12 +730,41 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             codeSize: code.as_ref().len() as _,
             pCode: code.as_ref().as_ptr_empty_null() as *const _,
         };
-        let mut h = std::mem::MaybeUninit::uninit();
+
         unsafe {
-            crate::vkfn::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
+            Ok(crate::ShaderModuleObject::manage(
+                self.new_shader_module_raw(&cinfo, None)?,
+                self,
+            ))
         }
+    }
+
+    /// Creates a new pipeline cache
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    unsafe fn new_pipeline_cache_raw(
+        &self,
+        info: &VkPipelineCacheCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkPipelineCache> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_pipeline_cache(
+            self.native_ptr(),
+            info,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
     }
 
     /// Creates a new pipeline cache
@@ -706,12 +788,42 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             initialDataSize: initial.as_ref().len() as _,
             pInitialData: initial.as_ref().as_ptr_empty_null() as *const _,
         };
-        let mut h = std::mem::MaybeUninit::uninit();
+
         unsafe {
-            crate::vkfn::create_pipeline_cache(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::PipelineCacheObject(h.assume_init(), self))
+            Ok(crate::PipelineCacheObject::manage(
+                self.new_pipeline_cache_raw(&cinfo, None)?,
+                self,
+            ))
         }
+    }
+
+    /// Create graphics pipelines
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    unsafe fn new_graphics_pipelines_raw(
+        &self,
+        infos: &[VkGraphicsPipelineCreateInfo],
+        cache: Option<VkPipelineCache>,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        objects: &mut [VkPipeline],
+    ) -> crate::Result<()> {
+        crate::vkfn::create_graphics_pipelines(
+            self.native_ptr(),
+            cache.unwrap_or(VkPipelineCache::NULL),
+            infos.len() as _,
+            infos.as_ptr_empty_null(),
+            opt_pointer(allocation_callbacks),
+            objects.as_mut_ptr(),
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Create graphics pipelines
@@ -730,19 +842,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Self: Clone,
     {
         let mut hs = vec![VkPipeline::NULL; infos.len()];
-        let r = unsafe {
-            crate::vkfn::create_graphics_pipelines(
-                self.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                infos.len() as _,
-                infos.as_ptr_empty_null(),
-                std::ptr::null(),
-                hs.as_mut_ptr(),
-            )
-        };
 
-        r.into_result()
-            .map(|_| hs.into_iter().map(|h| crate::PipelineObject(h, self.clone())).collect())
+        unsafe {
+            self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
+        }
+
+        Ok(hs
+            .into_iter()
+            .map(|h| unsafe { crate::PipelineObject::manage(h, self.clone()) })
+            .collect())
     }
 
     /// Create graphics pipelines
@@ -760,8 +868,44 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Clone,
     {
-        self.new_graphics_pipelines(infos, cache)
-            .map(|xs| unsafe { xs.try_into().unwrap_unchecked() })
+        let mut hs = [VkPipeline::NULL; N];
+
+        unsafe {
+            self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
+        }
+
+        Ok(core::array::from_fn(|n| unsafe {
+            crate::PipelineObject::manage(hs[n], self.clone())
+        }))
+    }
+
+    /// Create compute pipelines
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    unsafe fn new_compute_pipelines_raw(
+        &self,
+        infos: &[VkComputePipelineCreateInfo],
+        cache: Option<VkPipelineCache>,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        objects: &mut [VkPipeline],
+    ) -> crate::Result<()> {
+        crate::vkfn::create_compute_pipelines(
+            self.native_ptr(),
+            cache.unwrap_or(VkPipelineCache::NULL),
+            infos.len() as _,
+            infos.as_ptr_empty_null(),
+            opt_pointer(allocation_callbacks),
+            objects.as_mut_ptr(),
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Create compute pipelines
@@ -799,25 +943,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 )
             })
             .unzip();
-
         let mut pipelines = vec![VkPipeline::NULL; builders.len()];
+
         unsafe {
-            crate::vkfn::create_compute_pipelines(
-                self.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
-                cinfos.len() as _,
-                cinfos.as_ptr_empty_null(),
-                std::ptr::null(),
-                pipelines.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| {
-                pipelines
-                    .into_iter()
-                    .map(|h| crate::PipelineObject(h, self.clone()))
-                    .collect()
-            })
+            self.new_compute_pipelines_raw(&cinfos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
+
+        Ok(pipelines
+            .into_iter()
+            .map(|h| unsafe { crate::PipelineObject::manage(h, self.clone()) })
+            .collect())
     }
 
     /// Create compute pipelines
@@ -835,8 +970,63 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Clone,
     {
-        self.new_compute_pipelines(info, cache)
-            .map(|xs| unsafe { xs.try_into().unwrap_unchecked() })
+        let (cinfos, _extras): (Vec<_>, Vec<_>) = info
+            .iter()
+            .map(|b| {
+                let extras = Box::pin(b.shader.make_extras());
+                let stage = b.shader.base_struct(crate::ShaderStage::COMPUTE, &extras);
+
+                (
+                    VkComputePipelineCreateInfo {
+                        sType: VkComputePipelineCreateInfo::TYPE,
+                        pNext: std::ptr::null(),
+                        flags: 0,
+                        basePipelineHandle: VkPipeline::NULL,
+                        basePipelineIndex: -1,
+                        stage,
+                        layout: b.layout.native_ptr(),
+                    },
+                    extras,
+                )
+            })
+            .unzip();
+        let mut pipelines = [VkPipeline::NULL; N];
+
+        unsafe {
+            self.new_compute_pipelines_raw(&cinfos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
+        }
+
+        Ok(core::array::from_fn(|n| unsafe {
+            crate::PipelineObject::manage(pipelines[n], self.clone())
+        }))
+    }
+
+    /// Create a new event object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements]
+    unsafe fn new_event_raw(
+        &self,
+        info: &VkEventCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkEvent> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_event(
+            self.native_ptr(),
+            info,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
     }
 
     /// Create a new event object
@@ -850,20 +1040,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     where
         Self: Sized,
     {
-        let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::create_event(
-                self.native_ptr(),
+            self.new_event_raw(
                 &VkEventCreateInfo {
                     sType: VkEventCreateInfo::TYPE,
-                    pNext: std::ptr::null(),
+                    pNext: core::ptr::null(),
                     flags: 0,
                 },
-                std::ptr::null(),
-                h.as_mut_ptr(),
+                None,
             )
-            .into_result()
-            .map(|_| crate::EventObject(h.assume_init(), self))
+            .map(|h| crate::EventObject::manage(h, self))
         }
     }
 
@@ -922,7 +1108,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Wait for a object to become idle
     /// # Safety
     /// All VkQueue objects created from this device must be externally synchronized.
-    #[cfg(feature = "Implements")]
+    #[implements]
     unsafe fn wait(&self) -> crate::Result<()> {
         crate::vkfn::device_wait_idle(self.native_ptr()).into_result().map(drop)
     }
@@ -988,7 +1174,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn new_shader_module_ref<'d>(
         &'d self,
         code: &(impl AsRef<[u8]> + ?Sized),
@@ -1001,11 +1187,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             codeSize: code.as_ref().len() as _,
             pCode: code.as_ref().as_ptr_empty_null() as *const _,
         };
-        let mut h = std::mem::MaybeUninit::uninit();
+
         unsafe {
-            crate::vkfn::create_shader_module(self.native_ptr(), &cinfo, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::ShaderModuleObject(h.assume_init(), self))
+            Ok(crate::ShaderModuleObject::manage(
+                self.new_shader_module_raw(&cinfo, None)?,
+                self,
+            ))
         }
     }
 
@@ -1016,23 +1203,23 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[cfg(feature = "Implements")]
+    #[implements]
     fn wait_multiple_fences(
         &self,
-        objects: &[impl crate::Fence],
+        objects: &[crate::FenceRef],
         wait_all: bool,
         timeout: Option<u64>,
     ) -> crate::Result<bool> {
-        let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
         let vr = unsafe {
             crate::vkfn::wait_for_fences(
                 self.native_ptr(),
-                objects_ptr.len() as _,
-                objects_ptr.as_ptr_empty_null(),
+                objects.len() as _,
+                objects.as_ptr_empty_null() as _,
                 wait_all as _,
                 timeout.unwrap_or(std::u64::MAX),
             )
         };
+
         match vr {
             VK_SUCCESS => Ok(false),
             VK_TIMEOUT => Ok(true),
@@ -1046,21 +1233,50 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[cfg(feature = "Implements")]
-    fn reset_multiple_fences(&self, objects: &[&mut impl crate::Fence]) -> crate::Result<()> {
-        let objects_ptr = objects.iter().map(VkHandle::native_ptr).collect::<Vec<_>>();
+    #[implements]
+    fn reset_multiple_fences(&self, objects: &[crate::FenceMutRef]) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::reset_fences(
-                self.native_ptr(),
-                objects_ptr.len() as _,
-                objects_ptr.as_ptr_empty_null(),
-            )
-            .into_result()
-            .map(drop)
+            crate::vkfn::reset_fences(self.native_ptr(), objects.len() as _, objects.as_ptr_empty_null() as _)
+                .into_result()
+                .map(drop)
         }
     }
 
-    #[cfg(feature = "Implements")]
+    /// Create a new descriptor update template
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[implements("VK_KHR_descriptor_update_template")]
+    unsafe fn new_descriptor_update_template_raw(
+        &self,
+        info: &VkDescriptorUpdateTemplateCreateInfoKHR,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkDescriptorUpdateTemplateKHR> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        self.create_descriptor_update_template_khr_fn().0(
+            self.native_ptr(),
+            info,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
+    }
+
+    /// Create a new descriptor update template
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(not(feature = "VK_KHR_push_descriptor"))]
     fn new_descriptor_update_template(
@@ -1083,21 +1299,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             templateType: VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
             descriptorSetLayout: dsl.native_ptr(),
         };
-        let mut handle = std::mem::MaybeUninit::uninit();
-        unsafe {
-            self.create_descriptor_update_template_khr_fn().0(
-                self.native_ptr(),
-                &cinfo,
-                std::ptr::null(),
-                handle.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self))
-        }
+
+        Ok(crate::DescriptorUpdateTemplateObject(
+            unsafe { self.new_descriptor_update_template_raw(&cinfo, None)? },
+            self,
+        ))
     }
 
+    /// Create a new descriptor update template
+    /// # Bedrock extension
     /// dsl: NoneにするとPushDescriptors向けのテンプレートを作成できる
-    #[cfg(feature = "Implements")]
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(feature = "VK_KHR_push_descriptor")]
     fn new_descriptor_update_template(
@@ -1126,396 +1343,211 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             },
             descriptorSetLayout: dsl.map_or(VkDescriptorSetLayout::NULL, VkHandle::native_ptr),
         };
-        let mut handle = std::mem::MaybeUninit::uninit();
-        unsafe {
-            self.instance()
-                .create_descriptor_update_template(self.native_ptr(), &cinfo, std::ptr::null(), handle.as_mut_ptr())
-                .into_result()
-                .map(|_| crate::DescriptorUpdateTemplateObject(handle.assume_init(), self))
-        }
+
+        Ok(crate::DescriptorUpdateTemplateObject(
+            unsafe { self.new_descriptor_update_template_raw(&cinfo, None)? },
+            self,
+        ))
     }
 
     // Extension Function Providers
 
-    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
+    #[implements("VK_KHR_maintenance1")]
     fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
-            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR;
-            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR;
-            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR;
-        }
-    }
+    #[implements("VK_KHR_descriptor_update_template")]
+    fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR;
+    #[implements("VK_KHR_descriptor_update_template")]
+    fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR;
+    #[implements("VK_KHR_descriptor_update_template")]
+    fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
-            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR;
-            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR;
-        }
-    }
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR;
+    #[implements("VK_KHR_bind_memory2")]
+    fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
-            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
-        }
-    }
+    #[implements("VK_EXT_image_drm_format_modifier")]
+    fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
-            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR;
-            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR;
-        }
-    }
+    #[implements("VK_KHR_external_fence_fd")]
+    fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR;
+    #[implements("VK_KHR_external_fence_fd")]
+    fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
-            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
-            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
-        }
-    }
+    #[implements("VK_EXT_full_screen_exclusive")]
+    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
+    #[implements("VK_EXT_full_screen_exclusive")]
+    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
-            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR;
-            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR;
-        }
-    }
+    #[implements("VK_KHR_external_memory_fd")]
+    fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR;
+    #[implements("VK_KHR_external_memory_fd")]
+    fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
-            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
-        }
-    }
+    #[implements("VK_EXT_external_memory_host")]
+    fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
-            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
-            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
-        }
-    }
+    #[implements("VK_KHR_external_semaphore_win32")]
+    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
+    #[implements("VK_KHR_external_semaphore_win32")]
+    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
-            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
-            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
-        }
-    }
+    #[implements("VK_KHR_external_memory_win32")]
+    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
+    #[implements("VK_KHR_external_memory_win32")]
+    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
-            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR;
-            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR;
-            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
-        }
-    }
+    #[implements("VK_KHR_get_memory_requirements2")]
+    fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR;
+    #[implements("VK_KHR_get_memory_requirements2")]
+    fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR;
+    #[implements("VK_KHR_get_memory_requirements2")]
+    fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
-            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
-            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
-            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
-            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
-        }
-    }
+    #[implements("VK_KHR_create_renderpass2")]
+    fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
+    #[implements("VK_KHR_create_renderpass2")]
+    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
+    #[implements("VK_KHR_create_renderpass2")]
+    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
+    #[implements("VK_KHR_create_renderpass2")]
+    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
-            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
-        }
-    }
+    #[implements("VK_KHR_synchronization2")]
+    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
 }
 DerefContainerBracketImpl!(for Device {
-    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
-    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
-        (**self).get_trim_command_pool_khr_fn()
-    }
+    #[implements("VK_KHR_maintenance1")]
+    ForwardFnPtr!(deref get_trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
-            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
-                (**self).create_descriptor_update_template_khr_fn()
-            }
-            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
-                (**self).destroy_descriptor_update_template_khr_fn()
-            }
-            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
-                (**self).update_descriptor_set_with_template_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_descriptor_update_template")]
+    ForwardFnPtr!(deref create_descriptor_update_template_khr_fn -> PFN_vkCreateDescriptorUpdateTemplateKHR);
+    #[implements("VK_KHR_descriptor_update_template")]
+    ForwardFnPtr!(deref destroy_descriptor_update_template_khr_fn -> PFN_vkDestroyDescriptorUpdateTemplateKHR);
+    #[implements("VK_KHR_descriptor_update_template")]
+    ForwardFnPtr!(deref update_descriptor_set_with_template_khr_fn -> PFN_vkUpdateDescriptorSetWithTemplateKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
-            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
-                (**self).bind_buffer_memory2_khr_fn()
-            }
-            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
-                (**self).bind_image_memory2_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_bind_memory2")]
+    ForwardFnPtr!(deref bind_buffer_memory2_khr_fn -> PFN_vkBindBufferMemory2KHR);
+    #[implements("VK_KHR_bind_memory2")]
+    ForwardFnPtr!(deref bind_image_memory2_khr_fn -> PFN_vkBindImageMemory2KHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
-            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
-                (**self).get_image_drm_format_modifier_properties_ext_fn()
-            }
-        }
-    }
+    #[implements("VK_EXT_image_drm_format_modifier")]
+    ForwardFnPtr!(deref get_image_drm_format_modifier_properties_ext_fn -> PFN_vkGetImageDrmFormatModifierPropertiesEXT);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
-            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
-                (**self).get_fence_fd_khr_fn()
-            }
-            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
-                (**self).import_fence_fd_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_fence_fd")]
+    ForwardFnPtr!(deref get_fence_fd_khr_fn -> PFN_vkGetFenceFdKHR);
+    #[implements("VK_KHR_external_fence_fd")]
+    ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
-            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
-                (**self).acquire_full_screen_exclusive_mode_ext_fn()
-            }
-            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
-                (**self).release_full_screen_exclusive_mode_ext_fn()
-            }
-        }
-    }
+    #[implements("VK_EXT_full_screen_exclusive")]
+    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
+    #[implements("VK_EXT_full_screen_exclusive")]
+    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
-            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
-                (**self).get_memory_fd_khr_fn()
-            }
-            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
-                (**self).get_memory_fd_properties_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_memory_fd")]
+    ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
+    #[implements("VK_KHR_external_memory_fd")]
+    ForwardFnPtr!(deref get_memory_fd_properties_khr_fn -> PFN_vkGetMemoryFdPropertiesKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
-            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
-                (**self).get_memory_host_pointer_properties_ext_fn()
-            }
-        }
-    }
+    #[implements("VK_EXT_external_memory_host")]
+    ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
-            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
-                (**self).import_semaphore_win32_handle_khr_fn()
-            }
-            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
-                (**self).get_semaphore_win32_handle_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_semaphore_win32")]
+    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
+    #[implements("VK_KHR_external_semaphore_win32")]
+    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
-            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
-                (**self).get_memory_win32_handle_khr_fn()
-            }
-            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
-                (**self).get_memory_win32_handle_properties_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_memory_win32")]
+    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
+    #[implements("VK_KHR_external_memory_win32")]
+    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
-            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
-                (**self).get_buffer_memory_requirements_2_khr_fn()
-            }
+    #[implements("VK_KHR_get_memory_requirements2")]
+    ForwardFnPtr!(deref get_buffer_memory_requirements_2_khr_fn -> PFN_vkGetBufferMemoryRequirements2KHR);
+    #[implements("VK_KHR_get_memory_requirements2")]
+    ForwardFnPtr!(deref get_image_memory_requirements_2_khr_fn -> PFN_vkGetImageMemoryRequirements2KHR);
+    #[implements("VK_KHR_get_memory_requirements2")]
+    ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
 
-            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
-                (**self).get_image_memory_requirements_2_khr_fn()
-            }
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
 
-            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
-                (**self).get_image_sparse_memory_requirements_2_khr_fn()
-            }
-        }
-    }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
-            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
-                (**self).create_render_pass_2_khr_fn()
-            }
-
-            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
-                (**self).cmd_begin_render_pass_2_khr_fn()
-            }
-
-            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
-                (**self).cmd_end_render_pass_2_khr_fn()
-            }
-
-            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
-                (**self).cmd_next_subpass_2_khr_fn()
-            }
-        }
-    }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
-            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
-                (**self).cmd_pipeline_barrier_2_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_synchronization2")]
+    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
 });
 GuardsImpl!(for Device {
-    #[cfg(all(feature = "VK_KHR_maintenance1", feature = "Implements"))]
-    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
-        (**self).get_trim_command_pool_khr_fn()
-    }
+    #[implements("VK_KHR_maintenance1")]
+    ForwardFnPtr!(deref get_trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements"))] {
-            fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
-                (**self).create_descriptor_update_template_khr_fn()
-            }
-            fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
-                (**self).destroy_descriptor_update_template_khr_fn()
-            }
-            fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
-                (**self).update_descriptor_set_with_template_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_descriptor_update_template")]
+    ForwardFnPtr!(deref create_descriptor_update_template_khr_fn -> PFN_vkCreateDescriptorUpdateTemplateKHR);
+    #[implements("VK_KHR_descriptor_update_template")]
+    ForwardFnPtr!(deref destroy_descriptor_update_template_khr_fn -> PFN_vkDestroyDescriptorUpdateTemplateKHR);
+    #[implements("VK_KHR_descriptor_update_template")]
+    ForwardFnPtr!(deref update_descriptor_set_with_template_khr_fn -> PFN_vkUpdateDescriptorSetWithTemplateKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements"))] {
-            fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
-                (**self).bind_buffer_memory2_khr_fn()
-            }
-            fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
-                (**self).bind_image_memory2_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_bind_memory2")]
+    ForwardFnPtr!(deref bind_buffer_memory2_khr_fn -> PFN_vkBindBufferMemory2KHR);
+    #[implements("VK_KHR_bind_memory2")]
+    ForwardFnPtr!(deref bind_image_memory2_khr_fn -> PFN_vkBindImageMemory2KHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
-            fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
-                (**self).get_image_drm_format_modifier_properties_ext_fn()
-            }
-        }
-    }
+    #[implements("VK_EXT_image_drm_format_modifier")]
+    ForwardFnPtr!(deref get_image_drm_format_modifier_properties_ext_fn -> PFN_vkGetImageDrmFormatModifierPropertiesEXT);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
-            fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
-                (**self).get_fence_fd_khr_fn()
-            }
-            fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
-                (**self).import_fence_fd_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_fence_fd")]
+    ForwardFnPtr!(deref get_fence_fd_khr_fn -> PFN_vkGetFenceFdKHR);
+    #[implements("VK_KHR_external_fence_fd")]
+    ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
-            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
-                (**self).acquire_full_screen_exclusive_mode_ext_fn()
-            }
-            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
-                (**self).release_full_screen_exclusive_mode_ext_fn()
-            }
-        }
-    }
+    #[implements("VK_EXT_full_screen_exclusive")]
+    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
+    #[implements("VK_EXT_full_screen_exclusive")]
+    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
-            fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
-                (**self).get_memory_fd_khr_fn()
-            }
-            fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
-                (**self).get_memory_fd_properties_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_memory_fd")]
+    ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
+    #[implements("VK_KHR_external_memory_fd")]
+    ForwardFnPtr!(deref get_memory_fd_properties_khr_fn -> PFN_vkGetMemoryFdPropertiesKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
-            fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
-                (**self).get_memory_host_pointer_properties_ext_fn()
-            }
-        }
-    }
+    #[implements("VK_EXT_external_memory_host")]
+    ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
-            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
-                (**self).import_semaphore_win32_handle_khr_fn()
-            }
-            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
-                (**self).get_semaphore_win32_handle_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_semaphore_win32")]
+    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
+    #[implements("VK_KHR_external_semaphore_win32")]
+    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
-            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
-                (**self).get_memory_win32_handle_khr_fn()
-            }
-            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
-                (**self).get_memory_win32_handle_properties_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_external_memory_win32")]
+    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
+    #[implements("VK_KHR_external_memory_win32")]
+    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
 
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2"))] {
-            fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
-                (**self).get_buffer_memory_requirements_2_khr_fn()
-            }
+    #[implements("VK_KHR_get_memory_requirements2")]
+    ForwardFnPtr!(deref get_buffer_memory_requirements_2_khr_fn -> PFN_vkGetBufferMemoryRequirements2KHR);
+    #[implements("VK_KHR_get_memory_requirements2")]
+    ForwardFnPtr!(deref get_image_memory_requirements_2_khr_fn -> PFN_vkGetImageMemoryRequirements2KHR);
+    #[implements("VK_KHR_get_memory_requirements2")]
+    ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
 
-            fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
-                (**self).get_image_memory_requirements_2_khr_fn()
-            }
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
+    #[implements("VK_KHR_create_renderpass2")]
+    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
 
-            fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
-                (**self).get_image_sparse_memory_requirements_2_khr_fn()
-            }
-        }
-    }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2"))] {
-            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
-                (**self).create_render_pass_2_khr_fn()
-            }
-
-            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
-                (**self).cmd_begin_render_pass_2_khr_fn()
-            }
-
-            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
-                (**self).cmd_end_render_pass_2_khr_fn()
-            }
-
-            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
-                (**self).cmd_next_subpass_2_khr_fn()
-            }
-        }
-    }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_synchronization2"))] {
-            fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
-                (**self).cmd_pipeline_barrier_2_khr_fn()
-            }
-        }
-    }
+    #[implements("VK_KHR_synchronization2")]
+    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
 });
 
 /// Child of a device object(raw handle)
@@ -1591,7 +1623,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     fn bind_sparse(&mut self, batches: &[impl SparseBindingOpBatch], fence: Option<FenceMutRef>) -> crate::Result<()> {
         let batches: Vec<_> = batches.iter().map(SparseBindingOpBatch::make_info_struct).collect();
 
-        self.bind_sparse_raw(&batches, fence)
+        unsafe { self.bind_sparse_raw(&batches, fence) }
     }
 
     /// Bind device memory to a sparse resource object
@@ -1601,18 +1633,23 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
     #[implements]
-    fn bind_sparse_raw(&mut self, batches: &[VkBindSparseInfo], fence: Option<FenceMutRef>) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_bind_sparse(
-                self.native_ptr_mut(),
-                batches.len() as _,
-                batches.as_ptr_empty_null(),
-                fence.unwrap_or(FenceMutRef::NULL).0,
-            )
-            .into_result()
-            .map(drop)
-        }
+    unsafe fn bind_sparse_raw(
+        &mut self,
+        batches: &[VkBindSparseInfo],
+        fence: Option<FenceMutRef>,
+    ) -> crate::Result<()> {
+        crate::vkfn::queue_bind_sparse(
+            self.native_ptr_mut(),
+            batches.len() as _,
+            batches.as_ptr_empty_null(),
+            fence.unwrap_or(FenceMutRef::NULL).0,
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Submits a sequence of semaphores or command buffers to a queue
@@ -1637,7 +1674,7 @@ pub trait QueueMut: Queue + VkHandleMut {
             .map(TemporalSubmissionBatchResources::make_info_struct)
             .collect();
 
-        self.submit_raw(&batches, fence)
+        unsafe { self.submit_raw(&batches, fence) }
     }
 
     #[implements]
@@ -1648,7 +1685,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     ) -> crate::Result<()> {
         let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
 
-        self.submit_raw(&batches, fence)
+        unsafe { self.submit_raw(&batches, fence) }
     }
 
     #[implements]
@@ -1677,20 +1714,28 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
     #[implements]
-    fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<FenceMutRef>) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_submit(
-                self.native_ptr_mut(),
-                batches.len() as _,
-                batches.as_ptr_empty_null(),
-                fence.unwrap_or(FenceMutRef::NULL).0,
-            )
-            .into_result()
-            .map(drop)
-        }
+    unsafe fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<FenceMutRef>) -> crate::Result<()> {
+        crate::vkfn::queue_submit(
+            self.native_ptr_mut(),
+            batches.len() as _,
+            batches.as_ptr_empty_null(),
+            fence.unwrap_or(FenceMutRef::NULL).0,
+        )
+        .into_result()
+        .map(drop)
     }
 
+    /// Submits command buffers to a queue
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
     #[implements("VK_KHR_synchronization2")]
     fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<FenceMutRef>) -> crate::Result<()> {
         #[cfg(feature = "Allow1_3APIs")]
@@ -1769,7 +1814,7 @@ DerefContainerBracketImpl!(for mut QueueMut {});
 GuardsImpl!(for mut QueueMut {});
 
 #[cfg(feature = "VK_KHR_swapchain")]
-#[repr(transparent)]
+#[transparent_marked]
 pub struct PresentInfo<'r>(
     VkPresentInfoKHR,
     core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32])>,
@@ -1799,8 +1844,13 @@ impl<'r> PresentInfo<'r> {
         )
     }
 
+    #[inline(always)]
+    pub const unsafe fn from_raw(raw: VkPresentInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
     #[implements]
-    pub fn submit(mut self, queue: &mut (impl Queue + VkHandleMut + ?Sized)) -> crate::Result<Vec<crate::Result<()>>> {
+    pub fn submit(mut self, queue: &mut (impl QueueMut + ?Sized)) -> crate::Result<Vec<crate::Result<()>>> {
         let mut results = vec![VK_SUCCESS; self.0.swapchainCount as usize];
         self.0.pResults = results.as_mut_ptr_empty_null();
 
@@ -1834,6 +1884,11 @@ impl<'r> CommandBufferSubmitInfo<'r> {
         )
     }
 
+    #[inline(always)]
+    pub const unsafe fn from_raw(raw: VkCommandBufferSubmitInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
     pub const fn on_device(mut self, mask: u32) -> Self {
         self.0.deviceMask = mask;
         self
@@ -1841,7 +1896,7 @@ impl<'r> CommandBufferSubmitInfo<'r> {
 }
 
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[repr(transparent)]
+#[transparent_marked]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SubmitInfo2<'b, 'r>(
     VkSubmitInfo2KHR,
@@ -1872,6 +1927,10 @@ impl<'b, 'r> SubmitInfo2<'b, 'r> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub const unsafe fn from_raw(raw: VkSubmitInfo2KHR) -> Self {
+        Self(raw, core::marker::PhantomData)
     }
 
     pub const fn protected(mut self) -> Self {

@@ -204,10 +204,10 @@ impl<'r> SubmissionBatch2<'r> {
     #[implements]
     pub fn submit(
         self,
-        queue: &mut (impl crate::QueueMut + crate::VkHandleMut + ?Sized),
+        queue: &mut (impl crate::QueueMut + ?Sized),
         wait_fence: Option<FenceMutRef>,
     ) -> crate::Result<()> {
-        queue.submit_raw(&[self.0], wait_fence)
+        unsafe { queue.submit_raw(&[self.0], wait_fence) }
     }
 }
 
