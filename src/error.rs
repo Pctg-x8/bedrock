@@ -41,6 +41,10 @@ impl core::fmt::Debug for VkResult {
             VK_ERROR_OUT_OF_POOL_MEMORY_KHR => "A pool memory allocation has failed",
             #[cfg(feature = "VK_KHR_external_memory_capabilities")]
             VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR => "An external handle is not a valid handle of ths specified type",
+            #[cfg(feature = "VK_KHR_buffer_device_address")]
+            VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR => "A buffer creation or memory allocation failed because the requested address is not available",
+            #[cfg(feature = "VK_EXT_descriptor_indexing")]
+            VK_ERROR_FRAGMENTATION_EXT => "A descriptor pool creation has failed due to fragmentation",
             _ => "Unknown or extension-specific error"
         };
 

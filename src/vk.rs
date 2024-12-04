@@ -1,5 +1,5 @@
 #![allow(clippy::inconsistent_digit_grouping)]
-//! Vulkan API Definitions 1.1.70.1
+//! Vulkan API Definitions 1.3.283 with some extensions
 
 /*
 ** Copyright (c) 2015-2018 The Khronos Group Inc.
@@ -91,6 +91,7 @@ pub type VkFlags64 = u64;
 pub type VkBool32 = u32;
 pub type VkDeviceSize = u64;
 pub type VkSampleMask = u32;
+pub type VkDeviceAddress = u64;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -2109,7 +2110,7 @@ pub struct VkImageCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkSubresourceLayout {
     pub offset: VkDeviceSize,
     pub size: VkDeviceSize,
@@ -2276,7 +2277,7 @@ pub struct VkViewport {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VkOffset2D {
     pub x: i32,
     pub y: i32,
@@ -2288,7 +2289,7 @@ impl From<VkOffset3D> for VkOffset2D {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VkExtent2D {
     pub width: u32,
     pub height: u32,
@@ -2303,7 +2304,7 @@ impl From<VkExtent3D> for VkExtent2D {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VkRect2D {
     pub offset: VkOffset2D,
     pub extent: VkExtent2D,
@@ -5258,6 +5259,9 @@ ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
 ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
 ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
+ExportExtensions!("VK_KHR_maintenance5": maintenance5_khr);
+ExportExtensions!("VK_KHR_maintenance6": maintenance6_khr);
+ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
 
 // Promoted Extensions
 ExportExtensions!("VK_KHR_multiview": multiview_khr);
@@ -5287,6 +5291,11 @@ ExportExtensions!("VK_KHR_portability_enumeration": portability_enumeration_khr)
 
 // Promoted Extensions (1.2)
 ExportExtensions!("VK_KHR_create_renderpass2": create_renderpass2_khr);
+ExportExtensions!("VK_KHR_depth_stencil_resolve": depth_stencil_resolve_khr);
+ExportExtensions!("VK_KHR_buffer_device_address": buffer_device_address_khr);
+ExportExtensions!("VK_EXT_descriptor_indexing": descriptor_indexing_ext);
 
 // Promoted Extensions (1.3)
 ExportExtensions!("VK_KHR_synchronization2": synchronization2_khr);
+ExportExtensions!("VK_KHR_maintenance4": maintenance4_khr);
+ExportExtensions!("VK_KHR_dynamic_rendering": dynamic_rendering_khr);

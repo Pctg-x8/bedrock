@@ -79,7 +79,15 @@ platformIndependent =
     "VK_KHR_portability_enumeration",
     "VK_KHR_synchronization2",
     "VK_KHR_create_renderpass2",
-    "VK_KHR_line_rasterization"
+    "VK_KHR_line_rasterization",
+    "VK_KHR_maintenance4",
+    "VK_KHR_maintenance5",
+    "VK_KHR_maintenance6",
+    "VK_EXT_descriptor_buffer",
+    "VK_EXT_descriptor_indexing",
+    "VK_KHR_depth_stencil_resolve",
+    "VK_KHR_buffer_device_address",
+    "VK_KHR_dynamic_rendering"
   ]
 
 win32Specific :: [String]
