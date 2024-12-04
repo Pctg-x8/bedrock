@@ -6,7 +6,7 @@ use bedrock::{
 };
 use br::{
     Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice,
-    PipelineShaderStageProvider, RenderPass, Status, Swapchain, VulkanStructure,
+    PipelineShaderStageProvider, RenderPass, Status, Swapchain, VulkanSinkStructure,
 };
 use windows::{
     core::PCSTR,

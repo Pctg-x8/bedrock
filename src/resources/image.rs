@@ -341,7 +341,6 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
 }
 
 /// Builder structure specifying the parameters of a newly created image object
-#[derive(Clone, Debug)]
 pub struct ImageDesc<'d> {
     info: VkImageCreateInfo,
     extensions: Vec<Box<GenericVulkanStructure>>,
@@ -371,6 +370,22 @@ impl<'d> ImageDesc<'d> {
             extensions: Vec::new(),
             shared_queue_families: None,
             _marker: core::marker::PhantomData,
+        }
+    }
+
+    pub fn clone_without_extensions(&self) -> Self {
+        let mut info = self.info.clone();
+        info.pNext = core::ptr::null();
+        let shared_queue_families = self.shared_queue_families.clone();
+        if let Some(x) = shared_queue_families.as_deref() {
+            info.pQueueFamilyIndices = x.as_ptr_empty_null();
+        }
+
+        Self {
+            info,
+            extensions: Vec::new(),
+            shared_queue_families,
+            _marker: self._marker,
         }
     }
 

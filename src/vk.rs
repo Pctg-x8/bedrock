@@ -19,7 +19,7 @@
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
-use crate::{ffi_helper::FixedCStrBuffer, StaticCallable, VulkanStructure, PFN};
+use crate::{ffi_helper::FixedCStrBuffer, StaticCallable, VulkanSinkStructure, VulkanStructure, PFN};
 use core::ffi::*;
 use derives::{implements, vk_raw_handle};
 use std;

@@ -31,8 +31,8 @@ pub const VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL_KHR: VkImag
 pub const VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL_KHR: VkImageLayout = ext_enum_value(118, 1) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDevicePointClippingPropertiesKHR {
     pub sType: VkStructureType,
@@ -43,9 +43,9 @@ impl VkPhysicalDevicePointClippingPropertiesKHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p

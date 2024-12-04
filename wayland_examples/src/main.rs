@@ -1,7 +1,7 @@
 use bedrock::{
-    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemory, Fence, FenceMut,
+    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut,
     GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider,
-    QueueMut, RenderPass, ShaderModule, Swapchain, VulkanStructure,
+    QueueMut, RenderPass, ShaderModule, Swapchain, VulkanSinkStructure,
 };
 use core::ffi::*;
 use std::{

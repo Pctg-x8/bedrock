@@ -19,8 +19,8 @@ pub const VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT: VkFullScreenExclusiveEXT = 2;
 pub const VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT: VkFullScreenExclusiveEXT = 3;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT)]
 pub struct VkSurfaceFullScreenExclusiveInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -30,9 +30,9 @@ impl VkSurfaceFullScreenExclusiveInfoEXT {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p
@@ -40,8 +40,8 @@ impl VkSurfaceFullScreenExclusiveInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT)]
 pub struct VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -51,9 +51,9 @@ impl VkSurfaceCapabilitiesFullScreenExclusiveEXT {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p

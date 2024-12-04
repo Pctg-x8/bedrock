@@ -46,8 +46,8 @@ pub struct VkImageSparseMemoryRequirementsInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkMemoryRequirements2KHR {
     pub sType: VkStructureType,
@@ -58,9 +58,9 @@ impl VkMemoryRequirements2KHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p
@@ -68,8 +68,8 @@ impl VkMemoryRequirements2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkSparseImageMemoryRequirements2KHR {
     pub sType: VkStructureType,
@@ -80,9 +80,9 @@ impl VkSparseImageMemoryRequirements2KHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p

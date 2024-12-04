@@ -263,7 +263,48 @@ pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
         })
         .expect("Failed to parse VulkanStructure inner meta");
     let ty = ty.expect("No type specified");
-    // TODO: some checks here......
+
+    let syn::DeriveInput {
+        data:
+            syn::Data::Struct(syn::DataStruct {
+                fields: syn::Fields::Named(ref fields),
+                ..
+            }),
+        ..
+    } = input
+    else {
+        return syn::Error::new(
+            proc_macro2::Span::call_site(),
+            "VulkanStructure can be derived only from named-field structs",
+        )
+        .into_compile_error()
+        .into();
+    };
+
+    let (Some(first_field), Some(second_field)) = (fields.named.first(), fields.named.get(1)) else {
+        return syn::Error::new(
+            fields.span(),
+            "VulkanStructure requires at least 2 fields in the struct",
+        )
+        .into_compile_error()
+        .into();
+    };
+    if !first_field.ident.as_ref().is_some_and(|x| x == "sType") {
+        return syn::Error::new(
+            first_field.span(),
+            "VulkanStructure requires `sType` field at first position",
+        )
+        .into_compile_error()
+        .into();
+    }
+    if !second_field.ident.as_ref().is_some_and(|x| x == "pNext") {
+        return syn::Error::new(
+            second_field.span(),
+            "VulkanStructure requires `pNext` field at second position",
+        )
+        .into_compile_error()
+        .into();
+    }
 
     quote! {
         unsafe impl #impl_generics crate::VulkanStructureAsRef for #name #ty_generics #where_clause {
@@ -278,6 +319,102 @@ pub fn derive_vulkan_structure(tok: TokenStream) -> TokenStream {
             }
         }
         unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
+            const TYPE: VkStructureType = #ty;
+        }
+    }
+    .into()
+}
+
+#[proc_macro_derive(VulkanSinkStructure, attributes(VulkanSinkStructure))]
+pub fn derive_vulkan_sink_structure(tok: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(tok as syn::DeriveInput);
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+    let attrs = input
+        .attrs
+        .iter()
+        .find(|a| a.path().is_ident("VulkanSinkStructure"))
+        .expect("VulkanSinkStructure required");
+    let mut ty = None;
+    attrs
+        .parse_nested_meta(|meta| {
+            if meta.path.is_ident("type") {
+                ty = Some(meta.value()?.parse::<Expr>()?);
+                return Ok(());
+            }
+
+            Err(meta.error("unknown attribute"))
+        })
+        .expect("Failed to parse VulkanSinkStructure inner meta");
+    let ty = ty.expect("No type specified");
+
+    let syn::DeriveInput {
+        data:
+            syn::Data::Struct(syn::DataStruct {
+                fields: syn::Fields::Named(ref fields),
+                ..
+            }),
+        ..
+    } = input
+    else {
+        return syn::Error::new(
+            proc_macro2::Span::call_site(),
+            "VulkanStructure can be derived only from named-field structs",
+        )
+        .into_compile_error()
+        .into();
+    };
+
+    let (Some(first_field), Some(second_field)) = (fields.named.first(), fields.named.get(1)) else {
+        return syn::Error::new(
+            fields.span(),
+            "VulkanStructure requires at least 2 fields in the struct",
+        )
+        .into_compile_error()
+        .into();
+    };
+    if !first_field.ident.as_ref().is_some_and(|x| x == "sType") {
+        return syn::Error::new(
+            first_field.span(),
+            "VulkanStructure requires `sType` field at first position",
+        )
+        .into_compile_error()
+        .into();
+    }
+    if !second_field.ident.as_ref().is_some_and(|x| x == "pNext") {
+        return syn::Error::new(
+            second_field.span(),
+            "VulkanStructure requires `pNext` field at second position",
+        )
+        .into_compile_error()
+        .into();
+    }
+    if !matches!(
+        second_field.ty,
+        syn::Type::Ptr(syn::TypePtr {
+            mutability: Some(_),
+            const_token: None,
+            ..
+        })
+    ) {
+        return syn::Error::new(second_field.ty.span(), "`pNext` field must be a mutable pointer type")
+            .into_compile_error()
+            .into();
+    }
+
+    quote! {
+        unsafe impl #impl_generics crate::VulkanSinkStructureAsRef for #name #ty_generics #where_clause {
+            #[inline(always)]
+            fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+                unsafe { core::mem::transmute(self) }
+            }
+
+            #[inline(always)]
+            fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+                unsafe { core::mem::transmute(self) }
+            }
+        }
+        unsafe impl #impl_generics crate::VulkanSinkStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
     }

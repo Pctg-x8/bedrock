@@ -549,7 +549,7 @@ impl<'p, 'd, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilde
             Feature::Standard(&self.features)
         } else {
             let mut x = VkPhysicalDeviceFeatures2KHR {
-                sType: VkPhysicalDeviceFeatures2KHR::TYPE,
+                sType: <VkPhysicalDeviceFeatures2KHR as VulkanStructure>::TYPE,
                 pNext: core::ptr::null_mut(),
                 features: self.features,
             };

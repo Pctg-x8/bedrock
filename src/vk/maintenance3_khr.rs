@@ -10,8 +10,8 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR: VkStru
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR: VkStructureType = ext_enum_value(169, 1) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance3PropertiesKHR {
     pub sType: VkStructureType,
@@ -23,9 +23,9 @@ impl VkPhysicalDeviceMaintenance3PropertiesKHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p
@@ -33,8 +33,8 @@ impl VkPhysicalDeviceMaintenance3PropertiesKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDescriptorSetLayoutSupportKHR {
     pub sType: VkStructureType,
@@ -45,9 +45,9 @@ impl VkDescriptorSetLayoutSupportKHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p

@@ -249,13 +249,26 @@ pub struct VkCommandBufferSubmitInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkPhysicalDeviceSynchronization2FeaturesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub synchronization2: VkBool32,
+}
+impl VkPhysicalDeviceSynchronization2FeaturesKHR {
+    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
+        }
+
+        p
+    }
 }
 
 vk_ext_command!(

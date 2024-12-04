@@ -20,8 +20,8 @@ pub const VK_LINE_RASTERIZATION_MODE_BRESENHAM_KHR: VkLineRasterizationModeKHR =
 pub const VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR: VkLineRasterizationModeKHR = 3;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR)]
 pub struct VkPhysicalDeviceLineRasterizationFeaturesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -36,8 +36,9 @@ impl VkPhysicalDeviceLineRasterizationFeaturesKHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut sink = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            (*sink.as_mut_ptr()).sType = Self::TYPE;
-            (*sink.as_mut_ptr()).pNext = core::ptr::null_mut();
+            let x = sink.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         sink
@@ -45,8 +46,8 @@ impl VkPhysicalDeviceLineRasterizationFeaturesKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR)]
 pub struct VkPhysicalDeviceLineRasterizationPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -56,8 +57,9 @@ impl VkPhysicalDeviceLineRasterizationPropertiesKHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut sink = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            (*sink.as_mut_ptr()).sType = Self::TYPE;
-            (*sink.as_mut_ptr()).pNext = core::ptr::null_mut();
+            let x = sink.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         sink

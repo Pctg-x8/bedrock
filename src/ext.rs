@@ -6,22 +6,12 @@ pub(crate) fn chain<'s>(
     base: &'s mut impl VulkanStructure,
     extends: impl IntoIterator<Item = &'s mut GenericVulkanStructure>,
 ) {
-    extends.into_iter().fold(base.as_generic_mut(), |p, s| {
+    let term = extends.into_iter().fold(base.as_generic_mut(), |p, s| {
         p.pNext = s as *const _ as _;
-        s.pNext = core::ptr::null_mut();
         s
     });
-}
-#[allow(dead_code)]
-pub(crate) fn chain2<'s>(
-    base: &'s mut impl VulkanStructure,
-    extends: impl Iterator<Item = &'s mut GenericVulkanStructure>,
-) {
-    extends.fold(base.as_generic_mut(), |p, s| {
-        p.pNext = s as *const _ as _;
-        s.pNext = core::ptr::null_mut();
-        s
-    });
+
+    term.pNext = core::ptr::null();
 }
 
 pub trait Chainable<'d, T> {
@@ -40,9 +30,11 @@ pub trait StructureChainQuery {
             .map(|r| unsafe { r.cast_unchecked() })
     }
 }
+
 pub unsafe trait VulkanStructureAsRef {
     /// Cast structure ref to generic. This is same as transmute but must be safe.
     fn as_generic(&self) -> &GenericVulkanStructure;
+
     /// Cast structure mutable ref to generic. This is same as transmute but must be safe.
     fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure;
 }
@@ -84,6 +76,67 @@ unsafe impl<S: VulkanStructure + ?Sized> VulkanStructure for Box<S> {
     const TYPE: crate::vk::VkStructureType = S::TYPE;
 }
 
+pub unsafe trait VulkanSinkStructureAsRef {
+    /// Cast this structure ref to generic one. This is same as transmute but must be safe.
+    fn as_generic(&self) -> &GenericVulkanSinkStructure;
+
+    /// Cast this structure mutable ref to generic one. This is same as transmute but must be safe.
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure;
+}
+pub unsafe trait VulkanSinkStructure: VulkanSinkStructureAsRef + Sized {
+    /// `sType` constant for this structure.
+    const TYPE: crate::vk::VkStructureType;
+
+    /// Cast structure ref only if sType matches
+    fn try_from_generic(g: &GenericVulkanSinkStructure) -> Option<&Self> {
+        if g.sType == Self::TYPE {
+            Some(unsafe { g.cast_ref_unchecked() })
+        } else {
+            None
+        }
+    }
+}
+unsafe impl<T> VulkanSinkStructureAsRef for &'_ mut T
+where
+    T: VulkanSinkStructureAsRef,
+{
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        T::as_generic(*self)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        T::as_generic_mut(*self)
+    }
+}
+unsafe impl<T> VulkanSinkStructure for &'_ mut T
+where
+    T: VulkanSinkStructure,
+{
+    const TYPE: crate::vk::VkStructureType = T::TYPE;
+}
+unsafe impl<T> VulkanSinkStructureAsRef for Box<T>
+where
+    T: VulkanSinkStructureAsRef + ?Sized,
+{
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        T::as_generic(&*self)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        T::as_generic_mut(&mut *self)
+    }
+}
+unsafe impl<T> VulkanSinkStructure for Box<T>
+where
+    T: VulkanSinkStructure,
+{
+    const TYPE: crate::vk::VkStructureType = T::TYPE;
+}
+
 impl<S: VulkanStructure> StructureChainQuery for S {
     fn iter_chain(&self) -> StructureChainIterator {
         StructureChainIterator {
@@ -95,7 +148,6 @@ impl<S: VulkanStructure> StructureChainQuery for S {
 
 #[repr(C)]
 #[allow(non_snake_case)]
-#[derive(Clone, Debug)]
 pub struct GenericVulkanStructure {
     pub sType: crate::vk::VkStructureType,
     pub pNext: *const core::ffi::c_void,
@@ -104,6 +156,23 @@ pub struct GenericVulkanStructure {
 impl GenericVulkanStructure {
     pub unsafe fn cast_unchecked<T>(&self) -> &T {
         std::mem::transmute(self)
+    }
+}
+
+#[repr(C)]
+#[allow(non_snake_case)]
+pub struct GenericVulkanSinkStructure {
+    pub sType: crate::vk::VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    _rest: [u8; 0],
+}
+impl GenericVulkanSinkStructure {
+    pub unsafe fn cast_ref_unchecked<T>(&self) -> &T {
+        core::mem::transmute(self)
+    }
+
+    pub unsafe fn cast_mut_unchecked<T>(&mut self) -> &mut T {
+        core::mem::transmute(self)
     }
 }
 
@@ -146,5 +215,21 @@ pub trait Extendable<T>: Sized + VulkanStructureProvider {
     #[inline]
     fn extends(self, next: T) -> Extends<Self, T> {
         Extends(self, next)
+    }
+}
+
+pub unsafe trait UninitVulkanStructureOps {
+    fn set_next(&mut self, next: &(impl VulkanStructure + ?Sized));
+}
+unsafe impl<T> UninitVulkanStructureOps for core::mem::MaybeUninit<T>
+where
+    T: VulkanStructure,
+{
+    #[inline(always)]
+    fn set_next(&mut self, next: &(impl VulkanStructure + ?Sized)) {
+        let p = self.as_mut_ptr() as *mut GenericVulkanStructure;
+        unsafe {
+            core::ptr::addr_of_mut!((*p).pNext).write(next.as_generic() as *const _ as _);
+        }
     }
 }

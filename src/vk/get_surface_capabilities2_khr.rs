@@ -3,7 +3,7 @@
 pub const VK_KHR_GET_SURFACE_CAPABILITIES_2_SPEC_VERSION: usize = 1;
 pub static VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME: &'static str = "VK_KHR_get_surface_capabilities2";
 
-use crate::VulkanStructure;
+use crate::{VulkanSinkStructure, VulkanStructure};
 
 use super::*;
 use crate::PFN;
@@ -18,8 +18,8 @@ pub struct VkPhysicalDeviceSurfaceInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR)]
 pub struct VkSurfaceCapabilities2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -29,9 +29,9 @@ impl VkSurfaceCapabilities2KHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p
@@ -39,8 +39,8 @@ impl VkSurfaceCapabilities2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR)]
 pub struct VkSurfaceFormat2KHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

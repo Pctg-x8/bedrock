@@ -48,8 +48,8 @@ pub struct VkPhysicalDeviceExternalFenceInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExternalFencePropertiesKHR {
     pub sType: VkStructureType,
@@ -62,9 +62,9 @@ impl VkExternalFencePropertiesKHR {
     pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
+            let x = p.as_mut_ptr();
+            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
+            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
         }
 
         p

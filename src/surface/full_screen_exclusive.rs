@@ -1,4 +1,4 @@
-use crate::{vk::*, Extendable, VulkanStructure, VulkanStructureProvider};
+use crate::{vk::*, Extendable, VulkanSinkStructure, VulkanStructure, VulkanStructureProvider};
 
 /// Wraps VkSurfaceFullScreenExclusiveInfoEXT structure: Specifying the preferred full-screen transition behavior
 #[repr(transparent)]
