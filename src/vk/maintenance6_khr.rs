@@ -120,7 +120,7 @@ pub struct VkPushDescriptorSetInfoKHR {
 pub struct VkPushDescriptorSetWithTemplateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub descriptorUpdateTemplate: VkDescriptorUpdateTemplate,
+    pub descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
     pub layout: VkPipelineLayout,
     pub set: u32,
     pub pData: *const core::ffi::c_void,

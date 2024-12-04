@@ -39,7 +39,7 @@ vk_bitmask! {
 }
 
 vk_bitmask! {
-    extending enum VkMemoryAllocateFlagBits {
+    extending enum VkMemoryAllocateFlagBitsKHR {
         #[promote_1_2]
         pub VK_MEMORY_ALLOCATE_DEVICE_ADDRESS_BIT_KHR: 1,
         #[promote_1_2]

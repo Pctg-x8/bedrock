@@ -17,7 +17,7 @@ pub const VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR: VkStructureTyp
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES)]
+#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_FEATURES_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance4FeaturesKHR {
@@ -40,7 +40,7 @@ impl VkPhysicalDeviceMaintenance4FeaturesKHR {
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
-#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_4_PROPERTIES_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance4PropertiesKHR {
     pub sType: VkStructureType,
