@@ -310,7 +310,10 @@ impl<Device: VkHandle<Handle = VkDevice>> Image for ImageObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-    type MemoryRequirementsInfo2<'b> = ImageMemoryRequirementsInfo2<'b, Self> where Device: 'b;
+    type MemoryRequirementsInfo2<'b>
+        = ImageMemoryRequirementsInfo2<'b, Self>
+    where
+        Device: 'b;
 
     #[implements]
     fn requirements(&self) -> VkMemoryRequirements {

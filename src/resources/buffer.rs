@@ -110,7 +110,10 @@ impl<Device: crate::Device> DeviceChild for BufferObject<Device> {
 impl<Device: VkHandle<Handle = VkDevice>> Buffer for BufferObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-    type MemoryRequirementsInfo2<'b> = BufferMemoryRequirementsInfo2<'b, Self> where Device: 'b;
+    type MemoryRequirementsInfo2<'b>
+        = BufferMemoryRequirementsInfo2<'b, Self>
+    where
+        Device: 'b;
 
     #[implements]
     fn requirements(&self) -> VkMemoryRequirements {
