@@ -18,6 +18,15 @@ pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub VkDisplayKHR, pub 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DISPLAY_MODE_KHR)]
 pub struct DisplayMode(pub VkDisplayModeKHR);
+impl DisplayMode {
+    #[implements]
+    pub unsafe fn new(
+        display: &Display<impl crate::PhysicalDevice>,
+        create_info: &VkDisplayModeCreateInfoKHR,
+    ) -> crate::Result<Self> {
+        Ok(Self(display.create_display_mode_raw(create_info, None)?))
+    }
+}
 
 impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// Query the set of mode properties supported by the display.
@@ -30,7 +39,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     pub fn mode_properties(&self) -> crate::Result<Vec<DisplayModeProperties>> {
         unsafe {
             let mut n = 0;
-            crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, std::ptr::null_mut())
+            crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, core::ptr::null_mut())
                 .into_result()?;
             let mut v = Vec::with_capacity(n as _);
             v.set_len(n as _);
@@ -241,4 +250,15 @@ pub enum DisplayPlaneAlpha {
     PerPixel = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR as _,
     /// This is equivalent to `PerPixel` except the source alpha values are assumed to be premultiplied into the source image's other color channels
     PrePixelPremultiplied = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR as _,
+}
+
+impl VkDisplayModeCreateInfoKHR {
+    pub const fn new(parameters: VkDisplayModeParametersKHR) -> Self {
+        Self {
+            sType: Self::TYPE,
+            pNext: core::ptr::null(),
+            flags: 0,
+            parameters,
+        }
+    }
 }

@@ -15,25 +15,30 @@ impl<Swapchain: crate::Swapchain> DeviceChildHandle for SwapchainImage<Swapchain
 impl<Swapchain: crate::Swapchain> DeviceChild for SwapchainImage<Swapchain> {
     type ConcreteDevice = Swapchain::ConcreteDevice;
 
+    #[inline(always)]
     fn device(&self) -> &Self::ConcreteDevice {
         self.1.device()
     }
 }
 impl<Swapchain: crate::Swapchain> Image for SwapchainImage<Swapchain> {
+    #[inline(always)]
     fn format(&self) -> VkFormat {
         self.1.format()
     }
 
+    #[inline(always)]
     fn size(&self) -> &VkExtent3D {
         &self.2
     }
 
+    #[inline(always)]
     fn dimension(&self) -> VkImageViewType {
         VK_IMAGE_VIEW_TYPE_2D
     }
 }
 impl<Swapchain: crate::Swapchain + Clone> SwapchainImage<&'_ Swapchain> {
     /// Clones parent reference
+    #[inline(always)]
     pub fn clone_parent(self) -> SwapchainImage<Swapchain> {
         let r = SwapchainImage(self.0, self.1.clone(), self.2.clone());
         // disable dropping self.0

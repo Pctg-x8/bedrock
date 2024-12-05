@@ -108,7 +108,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .create(&instance)?;
 
-    let surface = (&adapter).new_surface_win32(cls.hInstance, w)?;
+    let surface =
+        unsafe { br::SurfaceObject::new(&adapter, &br::vk::VkWin32SurfaceCreateInfoKHR::new(cls.hInstance, w))? };
 
     let queue_families = adapter.queue_family_properties();
     let graphics_queue_family = queue_families
@@ -166,8 +167,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             surface_caps.currentExtent.clone(),
             br::ImageUsageFlags::COLOR_ATTACHMENT,
         )
-        .pre_transform(br::SurfaceTransform::Identity)
-        .composite_alpha(br::CompositeAlpha::Opaque)
+        .pre_transform(br::vk::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
+        .composite_alpha(br::vk::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
         .present_mode(present_mode)
         .create(&device)?,
     );
@@ -215,10 +216,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let pl = br::PipelineLayoutBuilder::new(
         &[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)],
-        &[br::PushConstantRange::for_type::<[f32; 2]>(br::ShaderStage::VERTEX, 0)],
+        &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
+            br::ShaderStage::VERTEX,
+            0,
+        )],
     )
     .create(&device)?;
-    let vi_bindings = [br::VertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
+    let vi_bindings = [br::vk::VkVertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
     let vi_attributes = [
         br::vk::VkVertexInputAttributeDescription {
             location: 0,
@@ -249,7 +253,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 br::DynamicArrayState::Static(&scissors),
             )
             .multisample_state(Some(br::MultisampleState::new()))
-            .add_attachment_blend(br::AttachmentColorBlendState::premultiplied());
+            .add_attachment_blend(br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED);
 
         builder.create(&device, Some(&pc))?
     };
@@ -363,7 +367,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     scissors[0].clone(),
                     &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
                 ),
-                &br::SubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
+                &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
             )
             .bind_graphics_pipeline(&pipeline)
             .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
@@ -375,7 +379,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )
             .bind_vertex_buffers(0, &[br::BufferObjectRef::new(&vbuf)], &[0])
             .draw(3, 1, 0, 0)
-            .end_render_pass_2(&br::SubpassEndInfo::new())
+            .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
             .end()?;
     }
 
@@ -499,8 +503,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     surface_caps.currentExtent.clone(),
                     br::ImageUsageFlags::COLOR_ATTACHMENT,
                 )
-                .pre_transform(br::SurfaceTransform::Identity)
-                .composite_alpha(br::CompositeAlpha::Opaque)
+                .pre_transform(br::vk::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
+                .composite_alpha(br::vk::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR)
                 .present_mode(present_mode)
                 .create(&device)?,
             );
@@ -540,7 +544,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         br::DynamicArrayState::Static(&scissors),
                     )
                     .multisample_state(Some(br::MultisampleState::new()))
-                    .add_attachment_blend(br::AttachmentColorBlendState::premultiplied());
+                    .add_attachment_blend(br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED);
 
                 builder.create(&device, Some(&pc))?
             };
@@ -603,11 +607,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ],
             Some(last_render_fence.as_transparent_mut_ref()),
         )?;
-        match swapchain.queue_present(&mut queue, bb_index, &[present_ready.as_transparent_ref()]) {
+        match queue.present(br::PresentInfo::new(
+            &[present_ready.as_transparent_ref()],
+            &[swapchain.as_transparent_ref()],
+            &[bb_index],
+        )) {
             Err(e) if e == br::vk::VK_ERROR_OUT_OF_DATE_KHR => {
                 resize_next = true;
             }
-            x => x?,
+            x => {
+                x?;
+            }
         };
         last_render_occured = true;
     }

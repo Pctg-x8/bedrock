@@ -436,7 +436,7 @@ impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkFence, Device) {
+    pub const fn unmanage(self) -> (VkFence, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -522,7 +522,7 @@ impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkSemaphore, Device) {
+    pub const fn unmanage(self) -> (VkSemaphore, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -579,7 +579,7 @@ impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkEvent, Device) {
+    pub const fn unmanage(self) -> (VkEvent, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -893,7 +893,6 @@ impl<'s> SemaphoreSubmitInfo<'s> {
 }
 
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[derives::bitflags_newtype]
 pub struct AccessFlags2(pub VkAccessFlags2KHR);

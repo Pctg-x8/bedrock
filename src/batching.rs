@@ -67,7 +67,7 @@ impl<'d> SubmissionBatch3<'d> {
     }
 
     #[inline(always)]
-    pub fn new_wait_semaphore_array<const N: usize>(
+    pub const fn new_wait_semaphore_array<const N: usize>(
         wait_semaphores: &'d [SemaphoreRef<'d>; N],
         wait_dst_stage_masks: &'d [PipelineStageFlags; N],
         command_buffers: &'d [CommandBufferRef<'d>],
@@ -190,18 +190,19 @@ impl<'r> SubmissionBatch2<'r> {
                 sType: VkSubmitInfo::TYPE,
                 pNext: core::ptr::null(),
                 waitSemaphoreCount: wait_semaphores.len() as _,
-                pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
-                pWaitDstStageMask: wait_semaphore_dst_stages.as_ptr_empty_null() as _,
+                pWaitSemaphores: slice_as_ptr_empty_null(wait_semaphores) as _,
+                pWaitDstStageMask: slice_as_ptr_empty_null(wait_semaphore_dst_stages) as _,
                 commandBufferCount: command_buffers.len() as _,
-                pCommandBuffers: command_buffers.as_ptr_empty_null() as _,
+                pCommandBuffers: slice_as_ptr_empty_null(command_buffers) as _,
                 signalSemaphoreCount: signal_semaphores.len() as _,
-                pSignalSemaphores: signal_semaphores.as_ptr_empty_null() as _,
+                pSignalSemaphores: slice_as_ptr_empty_null(signal_semaphores) as _,
             },
             core::marker::PhantomData,
         )
     }
 
     #[implements]
+    #[inline(always)]
     pub fn submit(
         self,
         queue: &mut (impl crate::QueueMut + ?Sized),

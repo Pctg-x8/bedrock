@@ -1,7 +1,7 @@
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, CompositeAlpha, DeviceChild, GenericVulkanStructure, ImageUsageFlags,
-    PresentMode, SurfaceTransform, Swapchain, SwapchainRef, VkDeviceChildNonExtDestroyable, VkHandle, VkObject,
-    VkRawHandle, VulkanStructure, VulkanStructureAsRef, VulkanStructureProvider,
+    ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, GenericVulkanStructure, ImageUsageFlags, PresentMode,
+    Swapchain, SwapchainRef, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    VulkanStructureAsRef, VulkanStructureProvider,
 };
 use derives::implements;
 
@@ -24,6 +24,7 @@ where
     Device: VkHandle<Handle = VkDevice>,
     Surface: crate::Surface,
 {
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe {
             self.handle.destroy(self.device.native_ptr(), core::ptr::null());
@@ -69,10 +70,12 @@ where
     Device: crate::Device,
     Surface: crate::Surface,
 {
+    #[inline(always)]
     fn format(&self) -> VkFormat {
         self.format
     }
 
+    #[inline(always)]
     fn size(&self) -> &VkExtent2D {
         &self.extent
     }
@@ -82,6 +85,7 @@ where
     Device: crate::Device,
     Surface: crate::Surface,
 {
+    #[inline(always)]
     pub const fn as_transparent_ref(&self) -> SwapchainRef<Self> {
         SwapchainRef(self.handle, core::marker::PhantomData)
     }
@@ -92,7 +96,7 @@ where
         let d = unsafe { core::ptr::read(&self.device) };
         let s = unsafe { core::ptr::read(&self.surface) };
 
-        // Note: DeviceとSurfaceをdropさせたくない
+        // Note: DeviceとSurfaceをdropさせない（Swapchainだけ消す）
         unsafe {
             self.handle.destroy(self.device.native_ptr(), core::ptr::null());
         }
@@ -104,6 +108,7 @@ where
 impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<Surface> {
     type ConcreteSurface = Surface;
 
+    #[inline(always)]
     fn transfer_surface(self) -> Self::ConcreteSurface {
         self.1
     }
@@ -122,7 +127,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         Self(
             VkSwapchainCreateInfoKHR {
                 sType: VkSwapchainCreateInfoKHR::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 surface: surface.native_ptr(),
                 minImageCount: min_image_count,
@@ -130,13 +135,13 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                 imageColorSpace: format.colorSpace,
                 imageExtent: extent,
                 imageArrayLayers: 1,
-                imageUsage: usage.into(),
+                imageUsage: usage.bits(),
                 imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
-                preTransform: SurfaceTransform::Inherit as _,
-                compositeAlpha: CompositeAlpha::Inherit as _,
+                preTransform: VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR,
+                compositeAlpha: VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
                 presentMode: PresentMode::FIFO as _,
                 queueFamilyIndexCount: 0,
-                pQueueFamilyIndices: std::ptr::null(),
+                pQueueFamilyIndices: core::ptr::null(),
                 clipped: false as _,
                 oldSwapchain: VkSwapchainKHR::NULL,
             },
@@ -149,7 +154,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         self
     }
 
-    pub fn shared(mut self, queue_families: &[u32]) -> Self {
+    pub const fn shared(mut self, queue_families: &[u32]) -> Self {
         assert!(queue_families.len() > 0, "empty families not allowed");
 
         self.0.imageSharingMode = if queue_families.is_empty() {
@@ -158,7 +163,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
             VK_SHARING_MODE_CONCURRENT
         };
         self.0.queueFamilyIndexCount = queue_families.len() as _;
-        self.0.pQueueFamilyIndices = queue_families.as_ptr_empty_null();
+        self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(queue_families);
         self
     }
 
@@ -171,13 +176,13 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
     }
 
     /// Default: Inherit
-    pub const fn pre_transform(mut self, tf: SurfaceTransform) -> Self {
+    pub const fn pre_transform(mut self, tf: VkSurfaceTransformFlagsKHR) -> Self {
         self.0.preTransform = tf as _;
         self
     }
 
     /// Default: Inherit
-    pub const fn composite_alpha(mut self, a: CompositeAlpha) -> Self {
+    pub const fn composite_alpha(mut self, a: VkCompositeAlphaFlagsKHR) -> Self {
         self.0.compositeAlpha = a as _;
         self
     }
@@ -230,6 +235,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
 impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surface> {
     type RootStructure = VkSwapchainCreateInfoKHR;
 
+    #[inline(always)]
     fn build<'r, 's: 'r>(&'s mut self, root: &'s mut VkSwapchainCreateInfoKHR) -> &'r mut GenericVulkanStructure {
         *root = self.0.clone();
         root.as_generic_mut()

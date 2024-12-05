@@ -52,6 +52,7 @@ impl core::fmt::Debug for VkResult {
     }
 }
 impl core::fmt::Display for VkResult {
+    #[inline(always)]
     fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         core::fmt::Debug::fmt(self, fmt)
     }

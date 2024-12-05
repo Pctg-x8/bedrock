@@ -1,14 +1,14 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags,
-    RenderPassObject, StoreOp, VkAccessFlags, VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat,
-    VkRenderPassCreateInfo2KHR, VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR,
-    VulkanStructure, VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT,
-    VK_PIPELINE_BIND_POINT_GRAPHICS, VK_SAMPLE_COUNT_1_BIT, VK_SUBPASS_EXTERNAL,
+    AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags, RenderPassObject, StoreOp, VkAccessFlags,
+    VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat, VkRenderPassCreateInfo2KHR,
+    VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR, VulkanStructure,
+    VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT, VK_PIPELINE_BIND_POINT_GRAPHICS,
+    VK_SAMPLE_COUNT_1_BIT, VK_SUBPASS_EXTERNAL,
 };
 
-use super::VK_ATTACHMENT_UNUSED;
+use super::{ffi_helper::slice_as_ptr_empty_null, VK_ATTACHMENT_UNUSED};
 
 /// Index specifying a subpass
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -181,16 +181,16 @@ impl<'d> SubpassDescription2<'d> {
     }
 
     #[inline]
-    pub fn inputs(mut self, xs: &'d [AttachmentReference2]) -> Self {
+    pub const fn inputs(mut self, xs: &'d [AttachmentReference2]) -> Self {
         self.0.inputAttachmentCount = xs.len() as _;
-        self.0.pInputAttachments = xs.as_ptr_empty_null() as _;
+        self.0.pInputAttachments = slice_as_ptr_empty_null(xs) as _;
         self
     }
 
     #[inline]
-    pub fn colors(mut self, xs: &'d [AttachmentReference2]) -> Self {
+    pub const fn colors(mut self, xs: &'d [AttachmentReference2]) -> Self {
         self.0.colorAttachmentCount = xs.len() as _;
-        self.0.pColorAttachments = xs.as_ptr_empty_null() as _;
+        self.0.pColorAttachments = slice_as_ptr_empty_null(xs) as _;
         self
     }
 
@@ -204,7 +204,7 @@ impl<'d> SubpassDescription2<'d> {
             );
         }
 
-        self.0.pResolveAttachments = xs.as_ptr_empty_null() as _;
+        self.0.pResolveAttachments = slice_as_ptr_empty_null(xs) as _;
         self
     }
 
@@ -215,9 +215,9 @@ impl<'d> SubpassDescription2<'d> {
     }
 
     #[inline]
-    pub fn preserves(mut self, xs: &'d [u32]) -> Self {
+    pub const fn preserves(mut self, xs: &'d [u32]) -> Self {
         self.0.preserveAttachmentCount = xs.len() as _;
-        self.0.pPreserveAttachments = xs.as_ptr_empty_null();
+        self.0.pPreserveAttachments = slice_as_ptr_empty_null(xs);
         self
     }
 
@@ -286,7 +286,7 @@ pub struct RenderPassBuilder2<'d>(
 );
 impl<'d> RenderPassBuilder2<'d> {
     #[inline]
-    pub fn new(
+    pub const fn new(
         attachments: &'d [AttachmentDescription2],
         subpasses: &'d [SubpassDescription2<'d>],
         dependencies: &'d [SubpassDependency2],
@@ -297,11 +297,11 @@ impl<'d> RenderPassBuilder2<'d> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 attachmentCount: attachments.len() as _,
-                pAttachments: attachments.as_ptr_empty_null() as _,
+                pAttachments: slice_as_ptr_empty_null(attachments) as _,
                 subpassCount: subpasses.len() as _,
-                pSubpasses: subpasses.as_ptr_empty_null() as _,
+                pSubpasses: slice_as_ptr_empty_null(subpasses) as _,
                 dependencyCount: dependencies.len() as _,
-                pDependencies: dependencies.as_ptr_empty_null() as _,
+                pDependencies: slice_as_ptr_empty_null(dependencies) as _,
                 correlatedViewMaskCount: 0,
                 pCorrelatedViewMasks: core::ptr::null(),
             },
@@ -312,18 +312,19 @@ impl<'d> RenderPassBuilder2<'d> {
     #[implements]
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<RenderPassObject<Device>> {
         let mut h = core::mem::MaybeUninit::uninit();
+
         #[cfg(feature = "Allow1_3APIs")]
         unsafe {
             crate::vkfn::create_render_pass2(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| RenderPassObject(h.assume_init(), device))
+                .into_result()?;
         }
 
         #[cfg(not(feature = "Allow1_3APIs"))]
         unsafe {
             (device.create_render_pass_2_khr_fn().0)(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| RenderPassObject(h.assume_init(), device))
+                .into_result()?;
         }
+
+        Ok(RenderPassObject(unsafe { h.assume_init() }, device))
     }
 }

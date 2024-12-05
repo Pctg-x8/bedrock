@@ -1,4 +1,4 @@
-use crate::{ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, VkHandle, VkRawHandle, VulkanStructure};
+use crate::{vk::*, DeviceChild, VkHandle, VkRawHandle};
 use derives::{implements, transparent_marked};
 
 use super::CompletionHandlerMut;
@@ -6,6 +6,11 @@ use super::CompletionHandlerMut;
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn format(&self) -> VkFormat;
     fn size(&self) -> &VkExtent2D;
+
+    #[inline(always)]
+    fn as_transparent_ref(&self) -> SwapchainRef<Self> {
+        SwapchainRef(self.native_ptr(), core::marker::PhantomData)
+    }
 
     /// Retrieve the index of the next available presentation image
     /// # Failures
@@ -35,40 +40,6 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             )
             .into_result()
             .map(|_| n)
-        }
-    }
-
-    /// Queue an image for presentation
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements]
-    fn queue_present(
-        &mut self,
-        queue: &mut impl VkHandle<Handle = VkQueue>,
-        index: u32,
-        wait_semaphores: &[impl crate::Transparent<Target = VkSemaphore>],
-    ) -> crate::Result<()> {
-        let mut res = VkResult(0);
-        let pinfo = VkPresentInfoKHR {
-            sType: VkPresentInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            waitSemaphoreCount: wait_semaphores.len() as _,
-            pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
-            swapchainCount: 1,
-            pSwapchains: &self.native_ptr(),
-            pImageIndices: &index,
-            pResults: &mut res,
-        };
-        unsafe {
-            crate::vkfn::queue_present_khr(queue.native_ptr(), &pinfo)
-                .into_result()
-                .and_then(|x| if x == VK_SUCCESS { Ok(()) } else { Err(x) })
         }
     }
 
@@ -138,10 +109,12 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     }
 }
 DerefContainerBracketImpl!(for Swapchain {
+    #[inline(always)]
     fn format(&self) -> VkFormat {
         T::format(self)
     }
 
+    #[inline(always)]
     fn size(&self) -> &VkExtent2D {
         T::size(self)
     }
@@ -155,6 +128,7 @@ pub struct SwapchainRef<'r, R: crate::Swapchain + ?Sized>(
 impl<'r, R: crate::Swapchain + ?Sized> VkHandle for SwapchainRef<'r, R> {
     type Handle = VkSwapchainKHR;
 
+    #[inline(always)]
     fn native_ptr(&self) -> Self::Handle {
         self.0
     }

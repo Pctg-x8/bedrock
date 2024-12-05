@@ -1,6 +1,6 @@
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildHandle, MemoryBound, VkDeviceChildNonExtDestroyable,
-    VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, DeviceChildHandle, MemoryBound,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
@@ -65,7 +65,7 @@ impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkBufferView, Buffer) {
+    pub const fn unmanage(self) -> (VkBufferView, Buffer) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -224,14 +224,14 @@ impl<'s> BufferDesc<'s> {
     }
 
     /// A list of queue families that will access this buffer
-    pub fn sharing_queue_families(mut self, indices: &'s [u32]) -> Self {
+    pub const fn sharing_queue_families(mut self, indices: &'s [u32]) -> Self {
         self.0.sharingMode = if indices.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
         } else {
             VK_SHARING_MODE_CONCURRENT
         };
         self.0.queueFamilyIndexCount = indices.len() as _;
-        self.0.pQueueFamilyIndices = indices.as_ptr_empty_null();
+        self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(indices);
 
         self
     }
@@ -303,7 +303,7 @@ impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkBuffer, Device) {
+    pub const fn unmanage(self) -> (VkBuffer, Device) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -467,16 +467,20 @@ impl BufferUsage {
 }
 impl BitOr for BufferUsage {
     type Output = Self;
+
+    #[inline(always)]
     fn bitor(self, other: Self) -> Self {
         BufferUsage(self.0 | other.0)
     }
 }
 impl BitOrAssign for BufferUsage {
+    #[inline(always)]
     fn bitor_assign(&mut self, other: Self) {
         self.0 |= other.0;
     }
 }
 impl From<BufferUsage> for VkBufferUsageFlags {
+    #[inline(always)]
     fn from(value: BufferUsage) -> Self {
         value.0
     }

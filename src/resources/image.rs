@@ -20,64 +20,6 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
 
     fn dimension(&self) -> VkImageViewType;
 
-    /// Create an image view
-    #[implements]
-    #[deprecated = "use ImageViewBuilder which can be omit some default arguments"]
-    fn create_view(
-        self,
-        format: Option<VkFormat>,
-        vtype: Option<VkImageViewType>,
-        cmap: &super::ComponentMapping,
-        subresource_range: &VkImageSubresourceRange,
-    ) -> crate::Result<ImageViewObject<Self>>
-    where
-        Self: Sized,
-    {
-        let (format, vtype) = (
-            format.unwrap_or_else(|| self.format()),
-            vtype.unwrap_or_else(|| self.dimension()),
-        );
-        let cinfo = VkImageViewCreateInfo {
-            sType: VkImageViewCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            image: self.native_ptr(),
-            viewType: vtype,
-            format,
-            components: cmap.clone().into(),
-            subresourceRange: subresource_range.clone(),
-        };
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_image_view(self.device_handle(), &cinfo, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| ImageViewObject(h.assume_init(), self))
-        }
-    }
-
-    /// Retrieve information about an image subresource
-    /// Subresource: (`aspect`, `mipLevel`, `arrayLayer`)
-    #[implements]
-    #[deprecated = "use ImageSubresource"]
-    fn image_subresource_layout(
-        &self,
-        subres_aspect: AspectMask,
-        subres_mip_level: u32,
-        subres_array_layer: u32,
-    ) -> VkSubresourceLayout {
-        let subres = VkImageSubresource {
-            aspectMask: subres_aspect.0,
-            mipLevel: subres_mip_level,
-            arrayLayer: subres_array_layer,
-        };
-        let mut s = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_image_subresource_layout(self.device_handle(), self.native_ptr(), &subres, s.as_mut_ptr());
-
-            s.assume_init()
-        }
-    }
-
     /// Query the memory requirements for a sparse image
     #[implements]
     fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
@@ -616,7 +558,7 @@ impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkImage, Device, VkImageType, VkFormat, VkExtent3D) {
+    pub const fn unmanage(self) -> (VkImage, Device, VkImageType, VkFormat, VkExtent3D) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         let (t, f, x) = (self.2, self.3, self.4);
@@ -806,7 +748,6 @@ pub struct LayoutTransition {
 }
 
 /// Bitmask specifying intended usage of an image.
-#[repr(transparent)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[bitflags_newtype]
 pub struct ImageUsageFlags(VkImageUsageFlags);
@@ -1107,17 +1048,17 @@ impl<I: Image> ImageViewBuilder<I> {
         )
     }
 
-    pub fn with_format_mutation(mut self, format: VkFormat) -> Self {
+    pub const fn with_format_mutation(mut self, format: VkFormat) -> Self {
         self.0.format = format;
         self
     }
 
-    pub fn with_mapping(mut self, mapping: impl Into<VkComponentMapping>) -> Self {
-        self.0.components = mapping.into();
+    pub const fn with_mapping(mut self, mapping: VkComponentMapping) -> Self {
+        self.0.components = mapping;
         self
     }
 
-    pub fn with_dimension(mut self, dimension: VkImageViewType) -> Self {
+    pub const fn with_dimension(mut self, dimension: VkImageViewType) -> Self {
         self.0.viewType = dimension;
         self
     }
@@ -1165,7 +1106,7 @@ impl<Image: DeviceChildHandle> ImageViewObject<Image> {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkImageView, Image) {
+    pub const fn unmanage(self) -> (VkImageView, Image) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);

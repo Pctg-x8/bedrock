@@ -1502,6 +1502,15 @@ const CATALOG: &'static [Entrypoint] = &[
     Entrypoint::new("enumerate_instance_version", &[("api_version", "*mut u32")])
         .with_result()
         .promoted_at(1, 1),
+    Entrypoint::new(
+        "trim_command_pool",
+        &[
+            ("device", "VkDevice"),
+            ("command_pool", "VkCommandPool"),
+            ("flags", "VkCommandPoolTrimFlags"),
+        ],
+    )
+    .promoted_at(1, 1),
     // surface extension
     Entrypoint::new(
         "destroy_surface",

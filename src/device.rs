@@ -97,7 +97,7 @@ pub struct DeviceObject<Instance> {
     cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
 }
 impl<Instance> DeviceObject<Instance> {
-    pub fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
+    pub const fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
         Self {
             handle,
             parent,
@@ -160,6 +160,7 @@ unsafe impl<Instance: Sync> Sync for DeviceObject<Instance> {}
 unsafe impl<Instance: Send> Send for DeviceObject<Instance> {}
 #[implements]
 impl<Instance> Drop for DeviceObject<Instance> {
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe {
             crate::vkfn::destroy_device(self.handle, std::ptr::null());
@@ -169,6 +170,7 @@ impl<Instance> Drop for DeviceObject<Instance> {
 impl<Instance: crate::Instance> InstanceChild for DeviceObject<Instance> {
     type ConcreteInstance = Instance;
 
+    #[inline(always)]
     fn instance(&self) -> &Self::ConcreteInstance {
         &self.parent
     }

@@ -175,7 +175,7 @@ impl SamplerBuilder {
     /// Default: min_lod=0.0, max_lod=0.0
     /// # Panics
     /// `max_lod` must be greater than or equal to `min_lod`
-    pub fn lod_clamp(mut self, min_lod: f32, max_lod: f32) -> Self {
+    pub const fn lod_clamp(mut self, min_lod: f32, max_lod: f32) -> Self {
         assert!(max_lod >= min_lod);
         self.0.minLod = min_lod;
         self.0.maxLod = max_lod;
@@ -239,7 +239,7 @@ impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkSampler, Device) {
+    pub const fn unmanage(self) -> (VkSampler, Device) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);

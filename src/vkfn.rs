@@ -692,6 +692,12 @@ pub unsafe fn enumerate_instance_version(api_version: *mut u32) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.enumerate_instance_version.0)(api_version) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkEnumerateInstanceVersion(api_version) }
 }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn trim_command_pool(device: VkDevice, command_pool: VkCommandPool, flags: VkCommandPoolTrimFlags) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.trim_command_pool.0)(device, command_pool, flags) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkTrimCommandPool(device, command_pool, flags) }
+}
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip] #[inline(always)]
 pub unsafe fn destroy_surface_khr(instance: VkInstance, surface: VkSurfaceKHR, allocator: *const VkAllocationCallbacks) {
@@ -1038,6 +1044,8 @@ struct FunctionPointerTable {
     cmd_execute_commands: PFN_vkCmdExecuteCommands,
     #[cfg(feature = "Allow1_1APIs")]
     enumerate_instance_version: PFN_vkEnumerateInstanceVersion,
+    #[cfg(feature = "Allow1_1APIs")]
+    trim_command_pool: PFN_vkTrimCommandPool,
     #[cfg(feature = "VK_KHR_surface")]
     destroy_surface_khr: PFN_vkDestroySurfaceKHR,
     #[cfg(feature = "VK_KHR_surface")]
@@ -1253,6 +1261,8 @@ impl FunctionPointerTable {
         cmd_execute_commands: PFN_vkCmdExecuteCommands(stub_cmd_execute_commands),
         #[cfg(feature = "Allow1_1APIs")]
         enumerate_instance_version: PFN_vkEnumerateInstanceVersion(stub_enumerate_instance_version),
+        #[cfg(feature = "Allow1_1APIs")]
+        trim_command_pool: PFN_vkTrimCommandPool(stub_trim_command_pool),
         #[cfg(feature = "VK_KHR_surface")]
         destroy_surface_khr: PFN_vkDestroySurfaceKHR(stub_destroy_surface_khr),
         #[cfg(feature = "VK_KHR_surface")]
@@ -2567,6 +2577,16 @@ unsafe extern "system" fn stub_enumerate_instance_version(api_version: *mut u32)
     let fp: PFN_vkEnumerateInstanceVersion = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumerateInstanceVersion>::NAME_CSTR);
     FPTBL.enumerate_instance_version = fp;
     (fp.0)(api_version)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_trim_command_pool(device: VkDevice, command_pool: VkCommandPool, flags: VkCommandPoolTrimFlags) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkTrimCommandPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkTrimCommandPool>::NAME_CSTR);
+    FPTBL.trim_command_pool = fp;
+    (fp.0)(device, command_pool, flags)
 }
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]

@@ -317,7 +317,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DescriptorSetLayoutObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkDescriptorSetLayout, Device) {
+    pub const fn unmanage(self) -> (VkDescriptorSetLayout, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -326,7 +326,12 @@ impl<Device: VkHandle<Handle = VkDevice>> DescriptorSetLayoutObject<Device> {
     }
 }
 
-pub trait DescriptorSetLayout: VkHandle<Handle = VkDescriptorSetLayout> + DeviceChild {}
+pub trait DescriptorSetLayout: VkHandle<Handle = VkDescriptorSetLayout> + DeviceChild {
+    #[inline(always)]
+    fn as_transparent_ref(&self) -> DescriptorSetLayoutObjectRef {
+        DescriptorSetLayoutObjectRef::new(self)
+    }
+}
 DerefContainerBracketImpl!(for DescriptorSetLayout {});
 GuardsImpl!(for DescriptorSetLayout {});
 
@@ -418,7 +423,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DescriptorPoolObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkDescriptorPool, Device) {
+    pub const fn unmanage(self) -> (VkDescriptorPool, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);

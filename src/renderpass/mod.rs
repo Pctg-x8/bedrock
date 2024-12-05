@@ -1,5 +1,6 @@
 mod standard;
-use self::ffi_helper::ArrayFFIExtensions;
+use ffi_helper::slice_as_ptr_empty_null;
+
 pub use self::standard::*;
 
 #[cfg(feature = "VK_KHR_create_renderpass2")]
@@ -13,7 +14,7 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChildHandle {
     /// Returns the granularity for optimal render area
     #[implements]
     fn optimal_granularity(&self) -> VkExtent2D {
-        let mut e = std::mem::MaybeUninit::uninit();
+        let mut e = core::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkfn::get_render_area_granularity(self.device_handle(), self.native_ptr(), e.as_mut_ptr());
 
@@ -39,6 +40,7 @@ GuardsImpl!(for ConcreteDeviceRenderPass {});
 pub struct RenderPassObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkRenderPass, pub(crate) Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for RenderPassObject<Device> {
+    #[inline(always)]
     fn drop(&mut self) {
         unsafe {
             self.0.destroy(self.1.native_ptr(), core::ptr::null());
@@ -79,7 +81,7 @@ impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> RenderPassBe
                 framebuffer: framebuffer.native_ptr(),
                 renderArea: render_area,
                 clearValueCount: clear_values.len() as _,
-                pClearValues: clear_values.as_ptr_empty_null(),
+                pClearValues: slice_as_ptr_empty_null(clear_values),
             },
             core::marker::PhantomData,
         )
@@ -95,43 +97,23 @@ impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> AsRef<VkRend
 }
 
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[repr(transparent)]
-pub struct SubpassBeginInfo(VkSubpassBeginInfoKHR);
-#[cfg(feature = "VK_KHR_create_renderpass2")]
-impl SubpassBeginInfo {
-    #[inline]
+impl VkSubpassBeginInfoKHR {
     pub const fn new(contents: VkSubpassContents) -> Self {
-        Self(VkSubpassBeginInfoKHR {
-            sType: VkSubpassBeginInfoKHR::TYPE,
+        Self {
+            sType: Self::TYPE,
             pNext: core::ptr::null(),
             contents,
-        })
-    }
-}
-#[cfg(feature = "VK_KHR_create_renderpass2")]
-impl AsRef<VkSubpassBeginInfoKHR> for SubpassBeginInfo {
-    fn as_ref(&self) -> &VkSubpassBeginInfoKHR {
-        &self.0
+        }
     }
 }
 
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-#[repr(transparent)]
-pub struct SubpassEndInfo(VkSubpassEndInfoKHR);
-#[cfg(feature = "VK_KHR_create_renderpass2")]
-impl SubpassEndInfo {
-    #[inline]
+impl VkSubpassEndInfoKHR {
     pub const fn new() -> Self {
-        Self(VkSubpassEndInfoKHR {
-            sType: VkSubpassEndInfoKHR::TYPE,
+        Self {
+            sType: Self::TYPE,
             pNext: core::ptr::null(),
-        })
-    }
-}
-#[cfg(feature = "VK_KHR_create_renderpass2")]
-impl AsRef<VkSubpassEndInfoKHR> for SubpassEndInfo {
-    fn as_ref(&self) -> &VkSubpassEndInfoKHR {
-        &self.0
+        }
     }
 }
 
@@ -145,17 +127,20 @@ impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Clone for SubpassRef<'r, R
 }
 impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Copy for SubpassRef<'r, RenderPass> {}
 impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> PartialEq for SubpassRef<'r, RenderPass> {
+    #[inline(always)]
     fn eq(&self, other: &Self) -> bool {
         core::ptr::eq(self.0, other.0) && self.1 == other.1
     }
 }
 impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Eq for SubpassRef<'r, RenderPass> {}
 impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> core::hash::Hash for SubpassRef<'r, RenderPass> {
+    #[inline(always)]
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         (self.0 as *const RenderPass, self.1).hash(state)
     }
 }
 impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> core::fmt::Debug for SubpassRef<'r, RenderPass> {
+    #[inline(always)]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "RenderPass({:p}).{}", self.0, self.1)
     }

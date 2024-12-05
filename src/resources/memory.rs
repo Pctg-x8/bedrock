@@ -191,7 +191,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkDeviceMemory, Device) {
+    pub const fn unmanage(self) -> (VkDeviceMemory, Device) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -354,7 +354,7 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     #[inline(always)]
-    pub unsafe fn get_mut<T>(&self, offset: usize) -> &mut T {
+    pub const unsafe fn get_mut<T>(&self, offset: usize) -> &mut T {
         &mut *(self.0.add(offset) as *mut T)
     }
 
@@ -370,7 +370,7 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     #[inline(always)]
-    pub unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T] {
+    pub const unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T] {
         std::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count)
     }
 

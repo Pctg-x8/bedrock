@@ -1,3 +1,5 @@
+use ffi_helper::slice_as_ptr_empty_null;
+
 use crate::vk::*;
 use crate::*;
 
@@ -82,17 +84,21 @@ impl AttachmentDescription {
     }
 }
 impl AsRef<VkAttachmentDescription> for AttachmentDescription {
+    #[inline(always)]
     fn as_ref(&self) -> &VkAttachmentDescription {
         &self.0
     }
 }
 impl core::ops::Deref for AttachmentDescription {
     type Target = VkAttachmentDescription;
+
+    #[inline(always)]
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 impl From<AttachmentDescription> for VkAttachmentDescription {
+    #[inline(always)]
     fn from(x: AttachmentDescription) -> Self {
         x.0
     }
@@ -237,23 +243,11 @@ impl<'r> RenderPassBuilder<'r> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 attachmentCount: attachments.len() as _,
-                pAttachments: if attachments.is_empty() {
-                    core::ptr::null()
-                } else {
-                    attachments.as_ptr() as _
-                },
+                pAttachments: slice_as_ptr_empty_null(attachments) as _,
                 subpassCount: subpasses.len() as _,
-                pSubpasses: if subpasses.is_empty() {
-                    core::ptr::null()
-                } else {
-                    subpasses.as_ptr() as _
-                },
+                pSubpasses: slice_as_ptr_empty_null(subpasses) as _,
                 dependencyCount: dependencies.len() as _,
-                pDependencies: if dependencies.is_empty() {
-                    core::ptr::null()
-                } else {
-                    dependencies.as_ptr()
-                },
+                pDependencies: slice_as_ptr_empty_null(dependencies) as _,
             },
             attachments: core::marker::PhantomData,
             subpasses: core::marker::PhantomData,

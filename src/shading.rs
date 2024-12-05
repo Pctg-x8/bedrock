@@ -1,45 +1,43 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use derives::{bitflags_newtype, implements, transparent_marked};
+use derives::{bitflags_newtype, implements};
 
 use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
     vk::*, DescriptorSetLayoutObjectRef, DeviceChild, DeviceChildHandle, GenericVulkanStructure, LifetimeBound,
-    SubpassRef, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
-    VulkanStructureAsRef,
+    SubpassRef, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle,
+    VulkanStructure, VulkanStructureAsRef,
 };
-use std::borrow::Cow;
-use std::ffi::{c_void, CStr, CString};
+use std::ffi::{c_void, CStr};
 use std::marker::PhantomData;
 use std::ops::*;
 
 /// Bitmask specifying a pipeline stage
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
-#[repr(transparent)]
 #[bitflags_newtype]
 pub struct ShaderStage(pub VkShaderStageFlags);
 impl ShaderStage {
     /// Empty bits
-    pub const EMPTY: Self = ShaderStage(0);
+    pub const EMPTY: Self = Self(0);
     /// The vertex stage
-    pub const VERTEX: Self = ShaderStage(VK_SHADER_STAGE_VERTEX_BIT);
+    pub const VERTEX: Self = Self(VK_SHADER_STAGE_VERTEX_BIT);
     /// The tessellation control stage
-    pub const TESSELLATION_CONTROL: Self = ShaderStage(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT);
+    pub const TESSELLATION_CONTROL: Self = Self(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT);
     /// The tessellation evaluation stage
-    pub const TESSELLATION_EVALUATION: Self = ShaderStage(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT);
+    pub const TESSELLATION_EVALUATION: Self = Self(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT);
     /// The geometry stage
-    pub const GEOMETRY: Self = ShaderStage(VK_SHADER_STAGE_GEOMETRY_BIT);
+    pub const GEOMETRY: Self = Self(VK_SHADER_STAGE_GEOMETRY_BIT);
     /// The fragment stage
-    pub const FRAGMENT: Self = ShaderStage(VK_SHADER_STAGE_FRAGMENT_BIT);
+    pub const FRAGMENT: Self = Self(VK_SHADER_STAGE_FRAGMENT_BIT);
     /// The compute stage
-    pub const COMPUTE: Self = ShaderStage(VK_SHADER_STAGE_COMPUTE_BIT);
+    pub const COMPUTE: Self = Self(VK_SHADER_STAGE_COMPUTE_BIT);
     /// A combination of bits used as shorthand to specify all graphics stages defined above (excluding the compute stage)
-    pub const ALL_GRAPHICS: Self = ShaderStage(VK_SHADER_STAGE_ALL_GRAPHICS);
+    pub const ALL_GRAPHICS: Self = Self(VK_SHADER_STAGE_ALL_GRAPHICS);
     /// A combination of bits used as shorthand to specify all shader stages supported by the device,
     /// including all additional stages which are introduced by extensions
-    pub const ALL: Self = ShaderStage(VK_SHADER_STAGE_ALL);
+    pub const ALL: Self = Self(VK_SHADER_STAGE_ALL);
     /// A combination of tessellation control stage and tessellation evaluation stage
-    pub const TESSELLATION: Self = ShaderStage(Self::TESSELLATION_CONTROL.0 | Self::TESSELLATION_EVALUATION.0);
+    pub const TESSELLATION: Self = Self(Self::TESSELLATION_CONTROL.0 | Self::TESSELLATION_EVALUATION.0);
 }
 
 /// Stencil comparison function
@@ -159,7 +157,7 @@ impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkShaderModule, Device) {
+    pub const fn unmanage(self) -> (VkShaderModule, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -169,6 +167,7 @@ impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
 }
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
+    #[inline(always)]
     fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m, Self> {
         PipelineShader::new(self, entry_point)
     }
@@ -209,7 +208,7 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkPipelineCache, Device) {
+    pub const fn unmanage(self) -> (VkPipelineCache, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -218,24 +217,12 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
     }
 }
 
-#[transparent_marked]
-pub struct PipelineCacheObjectRef<'r>(
-    VkPipelineCache,
-    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkPipelineCache>>,
-);
-impl<'r> PipelineCacheObjectRef<'r> {
-    #[inline(always)]
-    pub fn new(res: &'r (impl VkHandle<Handle = VkPipelineCache> + ?Sized)) -> Self {
-        Self(res.native_ptr(), core::marker::PhantomData)
-    }
-
-    #[inline(always)]
-    pub const fn unbounded(h: VkPipelineCache) -> Self {
-        Self(h, core::marker::PhantomData)
-    }
-}
-
 pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle {
+    #[inline(always)]
+    fn as_transparent_ref(&self) -> VkHandleRef<VkPipelineCache> {
+        VkHandleRef::new(self)
+    }
+
     /// Get the size of the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
@@ -292,6 +279,11 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle 
     #[inline]
     fn data(&self) -> crate::Result<Vec<u8>> {
         let len = self.data_len()?;
+        if len == 0 {
+            // no data
+            return Ok(Vec::new());
+        }
+
         let mut b = Vec::with_capacity(len);
         unsafe {
             b.set_len(len);
@@ -313,7 +305,7 @@ pub trait PipelineCacheMut: PipelineCache + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     #[inline]
-    fn merge(&mut self, srcs: &[PipelineCacheObjectRef]) -> crate::Result<()> {
+    fn merge(&mut self, srcs: &[VkHandleRef<VkPipelineCache>]) -> crate::Result<()> {
         unsafe {
             crate::vkfn::merge_pipeline_caches(
                 self.device_handle(),
@@ -360,22 +352,21 @@ impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
 
-/// A range of a push constant, with visible shader stage mask
-#[repr(transparent)]
-pub struct PushConstantRange(VkPushConstantRange);
-impl PushConstantRange {
-    #[inline(always)]
+impl VkPushConstantRange {
     pub const fn new(shader_stage: ShaderStage, byte_range: Range<u32>) -> Self {
-        Self(VkPushConstantRange {
+        Self {
             stageFlags: shader_stage.0,
             offset: byte_range.start,
             size: byte_range.end - byte_range.start,
-        })
+        }
     }
 
-    #[inline(always)]
     pub const fn for_type<T>(shader_stage: ShaderStage, offset: u32) -> Self {
-        Self::new(shader_stage, offset..offset + core::mem::size_of::<T>() as u32)
+        Self {
+            stageFlags: shader_stage.0,
+            offset,
+            size: core::mem::size_of::<T>() as _,
+        }
     }
 }
 
@@ -384,14 +375,17 @@ impl PushConstantRange {
 pub struct PipelineLayoutBuilder<'l> {
     raw: VkPipelineLayoutCreateInfo,
     descriptor_set_layouts: core::marker::PhantomData<&'l [DescriptorSetLayoutObjectRef<'l>]>,
-    push_constant_ranges: core::marker::PhantomData<&'l [PushConstantRange]>,
+    push_constant_ranges: core::marker::PhantomData<&'l [VkPushConstantRange]>,
 }
 impl<'l> PipelineLayoutBuilder<'l> {
+    /// An empty builder struct
+    pub const EMPTY: Self = Self::new(&[], &[]);
+
     /// Creates a new builder struct and initialize it with given parameters
     #[inline(always)]
     pub const fn new(
         descriptor_set_layouts: &'l [crate::DescriptorSetLayoutObjectRef<'l>],
-        push_constant_ranges: &'l [PushConstantRange],
+        push_constant_ranges: &'l [VkPushConstantRange],
     ) -> Self {
         Self {
             raw: VkPipelineLayoutCreateInfo {
@@ -406,12 +400,6 @@ impl<'l> PipelineLayoutBuilder<'l> {
             descriptor_set_layouts: core::marker::PhantomData,
             push_constant_ranges: core::marker::PhantomData,
         }
-    }
-
-    /// Creates a new empty builder struct
-    #[inline(always)]
-    pub const fn empty() -> Self {
-        Self::new(&[], &[])
     }
 
     /// Creates a new pipeline layout object
@@ -456,12 +444,11 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkPipelineLayout, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
+    pub const fn unmanage(self) -> (VkPipelineLayout, Device) {
+        let r = unsafe { (self.0, core::ptr::read(&self.1)) };
         core::mem::forget(self);
 
-        (h, p)
+        r
     }
 }
 
@@ -509,12 +496,11 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkPipeline, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
+    pub const fn unmanage(self) -> (VkPipeline, Device) {
+        let r = unsafe { (self.0, core::ptr::read(&self.1)) };
         core::mem::forget(self);
 
-        (h, p)
+        r
     }
 }
 
@@ -540,76 +526,29 @@ impl<T> SwitchOrDynamicState<T> {
     }
 }
 
-/// Untyped data cell
-#[allow(dead_code)]
-#[derive(Clone)]
-pub struct DynamicDataCell<'d> {
-    size: usize,
-    data: *const (),
-    ph: PhantomData<&'d ()>,
-}
-impl<'d, T> From<&'d T> for DynamicDataCell<'d> {
-    #[inline(always)]
-    fn from(d: &'d T) -> Self {
-        Self {
-            size: core::mem::size_of::<T>(),
-            data: d as *const T as *const _,
-            ph: PhantomData,
-        }
-    }
-}
-impl<'d> DynamicDataCell<'d> {
-    /// Construct borrowing a slice
-    #[inline(always)]
-    pub const fn from_slice<T>(s: &'d [T]) -> Self {
-        Self {
-            size: std::mem::size_of::<T>() * s.len(),
-            data: slice_as_ptr_empty_null(s) as *const _,
-            ph: PhantomData,
-        }
-    }
-}
-/// Builder struct to construct a shader stage in a `Pipeline`
-#[derive(Clone)]
-pub struct OldPipelineShader<'d, Module: ShaderModule> {
-    pub module: Module,
-    pub entry_name: CString,
-    pub specinfo: Option<(Cow<'d, [VkSpecializationMapEntry]>, DynamicDataCell<'d>)>,
-}
 /// Whether the state(type of array) is dynamic or static
 pub enum DynamicArrayState<'d, T> {
     Dynamic(usize),
     Static(&'d [T]),
 }
 impl<'d, T> DynamicArrayState<'d, T> {
-    fn count(&self) -> usize {
+    const fn count(&self) -> usize {
         match self {
-            &DynamicArrayState::Dynamic(s) => s,
-            DynamicArrayState::Static(ref v) => v.len(),
+            &Self::Dynamic(s) => s,
+            &Self::Static(v) => v.len(),
         }
     }
-    fn as_ptr(&self) -> *const T {
+
+    const fn as_ptr(&self) -> *const T {
         match self {
-            DynamicArrayState::Static(v) => v.as_ptr_empty_null(),
-            _ => std::ptr::null(),
+            Self::Static(v) => slice_as_ptr_empty_null(v),
+            _ => core::ptr::null(),
         }
     }
-    fn is_dynamic(&self) -> bool {
-        match self {
-            DynamicArrayState::Dynamic(_) => true,
-            _ => false,
-        }
+
+    const fn is_dynamic(&self) -> bool {
+        matches!(self, Self::Dynamic(_))
     }
-}
-/// Which is pipeline state to derive from
-#[derive(Clone, Copy)]
-pub enum BasePipeline<Pipeline: crate::Pipeline> {
-    /// Does not derive
-    None,
-    /// Derive from a handle to the pipeline state object
-    Handle(Pipeline),
-    /// Derive from a create info in the `pCreateInfos` parameter
-    Index(u32),
 }
 
 /// VkPipelineDynamicStateCreateInfo builder
@@ -617,6 +556,7 @@ pub enum BasePipeline<Pipeline: crate::Pipeline> {
 pub struct PipelineDynamicStates(Vec<VkDynamicState>);
 impl From<Vec<VkDynamicState>> for PipelineDynamicStates {
     fn from(mut v: Vec<VkDynamicState>) -> Self {
+        // needs to be sorted for efficiency enable/disable ops
         v.sort();
         PipelineDynamicStates(v)
     }
@@ -635,11 +575,13 @@ impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d Pipel
 impl PipelineDynamicStates {
     /// Creates an empty PipelineDynamicStates
     #[allow(clippy::new_without_default)]
+    #[inline(always)]
     pub const fn new() -> Self {
         PipelineDynamicStates(Vec::new())
     }
 
     /// Enables using a dynamic state
+    #[inline(always)]
     pub fn enable(&mut self, v: VkDynamicState) {
         if let Err(n) = self.0.binary_search(&v) {
             self.0.insert(n, v);
@@ -647,6 +589,7 @@ impl PipelineDynamicStates {
     }
 
     /// Disables using a dynamic state
+    #[inline(always)]
     pub fn disable(&mut self, v: VkDynamicState) {
         if let Ok(n) = self.0.binary_search(&v) {
             self.0.remove(n);
@@ -654,6 +597,7 @@ impl PipelineDynamicStates {
     }
 
     /// Sets enable or disable state of a dynamic state
+    #[inline(always)]
     pub fn set(&mut self, v: VkDynamicState, enable: bool) {
         if enable {
             self.enable(v);
@@ -669,52 +613,36 @@ where
     ShaderStages: PipelineShaderStageProvider,
 {
     /// Gets a mutable reference to the dynamic state settings
-    pub fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates {
+    pub const fn dynamic_states_mut(&mut self) -> &mut PipelineDynamicStates {
         &mut self.dynamic_state_flags
     }
 }
 
-/// Helper structure for VkVertexInputBindingDescription
-#[repr(transparent)]
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub struct VertexInputBindingDescription(VkVertexInputBindingDescription);
-impl From<VkVertexInputBindingDescription> for VertexInputBindingDescription {
-    fn from(v: VkVertexInputBindingDescription) -> Self {
-        VertexInputBindingDescription(v)
-    }
-}
-impl From<VertexInputBindingDescription> for VkVertexInputBindingDescription {
-    fn from(v: VertexInputBindingDescription) -> Self {
-        v.0
-    }
-}
-impl VertexInputBindingDescription {
+impl VkVertexInputBindingDescription {
     /// Consumed per vertex with stride
-    #[inline]
     pub const fn per_vertex(binding: u32, stride: u32) -> Self {
-        VertexInputBindingDescription(VkVertexInputBindingDescription {
+        Self {
             binding,
             stride,
             inputRate: VK_VERTEX_INPUT_RATE_VERTEX,
-        })
+        }
     }
+
     /// Consumed per instance with stride
-    #[inline]
     pub const fn per_instance(binding: u32, stride: u32) -> Self {
-        VertexInputBindingDescription(VkVertexInputBindingDescription {
+        Self {
             binding,
             stride,
             inputRate: VK_VERTEX_INPUT_RATE_INSTANCE,
-        })
+        }
     }
 
     /// Consumed per vertex the structured data
-    #[inline]
     pub const fn per_vertex_typed<T>(binding: u32) -> Self {
         Self::per_vertex(binding, core::mem::size_of::<T>() as _)
     }
+
     /// Consumed per instance the structured data
-    #[inline]
     pub const fn per_instance_typed<T>(binding: u32) -> Self {
         Self::per_instance(binding, core::mem::size_of::<T>() as _)
     }
@@ -728,6 +656,7 @@ pub trait SpecializationConstants {
 DerefContainerBracketImpl!(for SpecializationConstants {
     const ENTRIES: &'static [VkSpecializationMapEntry] = T::ENTRIES;
 
+    #[inline(always)]
     fn as_ptr(&self) -> *const c_void {
         T::as_ptr(&**self)
     }
@@ -742,9 +671,11 @@ pub trait PipelineShaderProvider {
 DerefContainerBracketImpl!(for PipelineShaderProvider {
     type ExtraStorage = T::ExtraStorage;
 
+    #[inline(always)]
     fn base_struct(&self, stage: ShaderStage, extras: &Self::ExtraStorage) -> VkPipelineShaderStageCreateInfo {
         T::base_struct(&**self, stage, extras)
     }
+    #[inline(always)]
     fn make_extras(&self) -> Self::ExtraStorage {
         T::make_extras(&**self)
     }
@@ -844,9 +775,11 @@ pub trait PipelineShaderStageProvider {
 DerefContainerBracketImpl!(for PipelineShaderStageProvider {
     type ExtraStorage = T::ExtraStorage;
 
+    #[inline(always)]
     fn base_struct(&self, extras: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
         T::base_struct(&**self, extras)
     }
+    #[inline(always)]
     fn make_extras(&self) -> Self::ExtraStorage {
         T::make_extras(&**self)
     }
@@ -862,9 +795,11 @@ impl<P: PipelineShaderProvider> VertexShaderStage<P> {
 impl<P: PipelineShaderProvider> PipelineShaderStageProvider for VertexShaderStage<P> {
     type ExtraStorage = P::ExtraStorage;
 
+    #[inline(always)]
     fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
         vec![self.0.base_struct(ShaderStage::VERTEX, extra_storage)]
     }
+    #[inline(always)]
     fn make_extras(&self) -> Self::ExtraStorage {
         self.0.make_extras()
     }
@@ -894,7 +829,7 @@ impl<S: PipelineShaderStageProvider, P: PipelineShaderProvider> PipelineShaderSt
 
     fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
         let mut vs = self.0.base_struct(&extra_storage.0);
-        vs.push(self.1.base_struct(ShaderStage::FRAGMENT, &extra_storage.1));
+        vs.push(self.1.base_struct(ShaderStage::GEOMETRY, &extra_storage.1));
         vs
     }
     fn make_extras(&self) -> Self::ExtraStorage {
@@ -914,8 +849,11 @@ impl<S: PipelineShaderStageProvider, C: PipelineShaderProvider, E: PipelineShade
 
     fn base_struct(&self, extra_storage: &Self::ExtraStorage) -> Vec<VkPipelineShaderStageCreateInfo> {
         let mut vs = self.0.base_struct(&extra_storage.0);
-        vs.push(self.1.base_struct(ShaderStage::FRAGMENT, &extra_storage.1));
-        vs.push(self.2.base_struct(ShaderStage::FRAGMENT, &extra_storage.2));
+        vs.push(self.1.base_struct(ShaderStage::TESSELLATION_CONTROL, &extra_storage.1));
+        vs.push(
+            self.2
+                .base_struct(ShaderStage::TESSELLATION_EVALUATION, &extra_storage.2),
+        );
         vs
     }
     fn make_extras(&self) -> Self::ExtraStorage {
@@ -930,31 +868,31 @@ pub struct VertexProcessingStages<'d, ShaderStages: PipelineShaderStageProvider>
     vi: VkPipelineVertexInputStateCreateInfo,
     ia: VkPipelineInputAssemblyStateCreateInfo,
     _holder: PhantomData<(
-        &'d [VertexInputBindingDescription],
+        &'d [VkVertexInputBindingDescription],
         &'d [VkVertexInputAttributeDescription],
     )>,
 }
 impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, ShaderStages> {
-    pub fn new(
+    pub const fn new(
         shader_stages: ShaderStages,
-        vbind: &'d [VertexInputBindingDescription],
+        vbind: &'d [VkVertexInputBindingDescription],
         vattr: &'d [VkVertexInputAttributeDescription],
         primitive_topo: VkPrimitiveTopology,
     ) -> Self {
-        VertexProcessingStages {
+        Self {
             shader_stages,
             vi: VkPipelineVertexInputStateCreateInfo {
                 sType: VkPipelineVertexInputStateCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 vertexBindingDescriptionCount: vbind.len() as _,
-                pVertexBindingDescriptions: vbind.as_ptr_empty_null() as _,
+                pVertexBindingDescriptions: slice_as_ptr_empty_null(vbind),
                 vertexAttributeDescriptionCount: vattr.len() as _,
-                pVertexAttributeDescriptions: vattr.as_ptr_empty_null(),
+                pVertexAttributeDescriptions: slice_as_ptr_empty_null(vattr),
             },
             ia: VkPipelineInputAssemblyStateCreateInfo {
                 sType: VkPipelineInputAssemblyStateCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 topology: primitive_topo,
                 primitiveRestartEnable: VK_FALSE,
@@ -964,19 +902,21 @@ impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, S
     }
 
     /// Update the vertex binding description
-    pub fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self {
+    pub const fn vertex_binding(&mut self, vbind: &'d [VkVertexInputBindingDescription]) -> &mut Self {
         self.vi.vertexBindingDescriptionCount = vbind.len() as _;
-        self.vi.pVertexBindingDescriptions = vbind.as_ptr_empty_null();
+        self.vi.pVertexBindingDescriptions = slice_as_ptr_empty_null(vbind);
         self
     }
+
     /// Update the vertex attribute description
-    pub fn vertex_attributes(&mut self, vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self {
+    pub const fn vertex_attributes(&mut self, vattr: &'d [VkVertexInputAttributeDescription]) -> &mut Self {
         self.vi.vertexAttributeDescriptionCount = vattr.len() as _;
-        self.vi.pVertexAttributeDescriptions = vattr.as_ptr_empty_null();
+        self.vi.pVertexAttributeDescriptions = slice_as_ptr_empty_null(vattr);
         self
     }
+
     /// Update the vertex input description
-    pub fn vertex_input(
+    pub const fn vertex_input(
         &mut self,
         vbind: &'d [VkVertexInputBindingDescription],
         vattr: &'d [VkVertexInputAttributeDescription],
@@ -991,27 +931,20 @@ impl<'d, ShaderStages: PipelineShaderStageProvider> VertexProcessingStages<'d, S
     /// * `0xffff` when `indexType` is equal to `VK_INDEX_TYPE_UINT16`.
     ///
     /// Primitive restart is not allowed for "list" topologies.
-    pub fn enable_primitive_restart(&mut self, w: bool) -> &mut Self {
+    pub const fn enable_primitive_restart(&mut self, w: bool) -> &mut Self {
         self.ia.primitiveRestartEnable = w as _;
         self
     }
+
     /// Update the input primitive topology
-    pub fn primitive_topology(&mut self, topo: VkPrimitiveTopology) -> &mut Self {
+    pub const fn primitive_topology(&mut self, topo: VkPrimitiveTopology) -> &mut Self {
         self.ia.topology = topo;
         self
     }
 
-    pub fn shader_stages_mut(&mut self) -> &mut ShaderStages {
+    pub const fn shader_stages_mut(&mut self) -> &mut ShaderStages {
         &mut self.shader_stages
     }
-}
-
-#[cfg(feature = "VK_EXT_conservative_rasterization")]
-#[repr(C)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ConservativeRasterizationMode {
-    Overestimate = VK_CONSERVATIVE_RASTERIZATION_MODE_OVERESTIMATE_EXT as _,
-    Underestimate = VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT as _,
 }
 
 /// PipelineStateDesc: Rasterization State
@@ -1023,11 +956,17 @@ pub struct RasterizationState {
     #[cfg(feature = "VK_EXT_conservative_rasterization")]
     conservative: Option<VkPipelineRasterizationConservativeStateCreateInfoEXT>,
     #[cfg(feature = "VK_KHR_line_rasterization")]
-    line_rasterization: Option<RasterizationLineState>,
+    line_rasterization: Option<VkPipelineRasterizationLineStateCreateInfoKHR>,
 }
 impl Default for RasterizationState {
+    #[inline(always)]
     fn default() -> Self {
-        RasterizationState {
+        Self::new()
+    }
+}
+impl RasterizationState {
+    pub const fn new() -> Self {
+        Self {
             base: VkPipelineRasterizationStateCreateInfo {
                 sType: VkPipelineRasterizationStateCreateInfo::TYPE,
                 pNext: std::ptr::null(),
@@ -1051,12 +990,12 @@ impl Default for RasterizationState {
             line_rasterization: None,
         }
     }
-}
-impl RasterizationState {
+
     fn apply_dynamic_states(&self, st: &mut PipelineDynamicStates) {
         st.set(VK_DYNAMIC_STATE_DEPTH_BIAS, self.is_dynamic_depth_bias);
         st.set(VK_DYNAMIC_STATE_LINE_WIDTH, self.is_dynamic_line_width);
     }
+
     #[allow(unused_assignments)]
     fn make_chained(&mut self) -> &VkPipelineRasterizationStateCreateInfo {
         #[allow(unused_variables, unused_mut)]
@@ -1069,8 +1008,8 @@ impl RasterizationState {
         }
         #[cfg(feature = "VK_KHR_line_rasterization")]
         if let Some(ref mut c) = self.line_rasterization {
-            base.pNext = &c.0 as *const _ as _;
-            base = c.0.as_generic_mut();
+            base.pNext = &c as *const _ as _;
+            base = c.as_generic_mut();
         }
 
         &self.base
@@ -1078,37 +1017,42 @@ impl RasterizationState {
 
     /// Controls whether to clamp the fragment's depth values instead of clipping primitives to the z planes of the frustum,
     /// as described in `Primitive Clipping` in Vulkan Specification
-    pub fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self {
+    pub const fn depth_clamp_enable(&mut self, enable: bool) -> &mut Self {
         self.base.depthClampEnable = enable as _;
         self
     }
+
     /// Controls whether primitives are discarded immediately before the rasterization stage
-    pub fn rasterizer_discard_enable(&mut self, enable: bool) -> &mut Self {
+    pub const fn rasterizer_discard_enable(&mut self, enable: bool) -> &mut Self {
         self.base.rasterizerDiscardEnable = enable as _;
         self
     }
+
     /// The triangle rendering mode
-    pub fn polygon_mode(&mut self, mode: VkPolygonMode) -> &mut Self {
+    pub const fn polygon_mode(&mut self, mode: VkPolygonMode) -> &mut Self {
         self.base.polygonMode = mode;
         self
     }
+
     /// The triangle facing direction used for primitive culling
-    pub fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self {
+    pub const fn cull_mode(&mut self, mode: VkCullModeFlags) -> &mut Self {
         self.base.cullMode = mode;
         self
     }
+
     /// The front-facing triangle orientation to be used for culling
-    pub fn front_face(&mut self, face: VkFrontFace) -> &mut Self {
+    pub const fn front_face(&mut self, face: VkFrontFace) -> &mut Self {
         self.base.frontFace = face;
         self
     }
+
     /// Specify `None` to disable to bias fragment depth values.
     /// Tuple Member: (`ConstantFactor`, `Clamp`, `SlopeFactor`)
     ///
     /// - `ConstantFactor`: A scalar factor controlling the constant depth value added to each fragment
     /// - `Clamp`: The maximum (or minimum) depth bias of a fragment
     /// - `SlopeFactor`: A scalar factor applied to a fragment's slope in depth bias calculations
-    pub fn depth_bias(&mut self, opts: SwitchOrDynamicState<(f32, f32, f32)>) -> &mut Self {
+    pub const fn depth_bias(&mut self, opts: SwitchOrDynamicState<(f32, f32, f32)>) -> &mut Self {
         self.base.depthBiasEnable = opts.is_enabled() as _;
         self.is_dynamic_depth_bias = opts.is_dynamic();
         if let SwitchOrDynamicState::Static((cf, c, sf)) = opts {
@@ -1118,18 +1062,22 @@ impl RasterizationState {
         }
         self
     }
+
     /// The width of rasterized line segments. Specifying `None` means that the `lineWidth` parameter is a dynamic state.
-    pub fn line_width(&mut self, width: Option<f32>) -> &mut Self {
+    pub const fn line_width(&mut self, width: Option<f32>) -> &mut Self {
         self.is_dynamic_line_width = width.is_none();
-        self.base.lineWidth = width.unwrap_or(0.0);
+        self.base.lineWidth = match width {
+            Some(x) => x,
+            None => 0.0,
+        };
         self
     }
 
     #[cfg(feature = "VK_EXT_conservative_rasterization")]
-    /// [VK_EXT_conservative_rasterization] Sets conservative rasterization mode to use.
-    pub fn conservative_rasterization_mode(
+    /// Sets conservative rasterization mode to use.
+    pub const fn conservative_rasterization_mode(
         &mut self,
-        mode: ConservativeRasterizationMode,
+        mode: VkConservativeRasterizationModeEXT,
         extra: Option<f32>,
     ) -> &mut Self {
         if self.conservative.is_none() {
@@ -1141,67 +1089,58 @@ impl RasterizationState {
                 extraPrimitiveOverestimationSize: 0.0,
             });
         }
+
         let r = self.conservative.as_mut().unwrap();
         r.conservativeRasterizationMode = mode as _;
         if let Some(x) = extra {
             r.extraPrimitiveOverestimationSize = x;
         }
+
         self
     }
+
     #[cfg(feature = "VK_EXT_conservative_rasterization")]
     /// [VK_EXT_conservative_rasterization] Disables conservative rasterization.
-    pub fn disable_conservative_rasterization(&mut self) -> &mut Self {
+    pub const fn disable_conservative_rasterization(&mut self) -> &mut Self {
         self.conservative = None;
         self
     }
 
     #[cfg(feature = "VK_KHR_line_rasterization")]
     /// Sets line rasterization state
-    pub fn line_state(&mut self, state: RasterizationLineState) -> &mut Self {
+    pub const fn line_state(&mut self, state: VkPipelineRasterizationLineStateCreateInfoKHR) -> &mut Self {
         self.line_rasterization = Some(state);
         self
     }
+
     #[cfg(feature = "VK_KHR_line_rasterization")]
     /// Clears line rasterization state
-    pub fn clear_line_state(&mut self) -> &mut Self {
+    pub const fn clear_line_state(&mut self) -> &mut Self {
         self.line_rasterization = None;
         self
     }
 }
 
 #[cfg(feature = "VK_KHR_line_rasterization")]
-#[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct RasterizationLineState(VkPipelineRasterizationLineStateCreateInfoKHR);
-#[cfg(feature = "VK_KHR_line_rasterization")]
-impl RasterizationLineState {
-    pub const fn new(mode: LineRasterizationMode) -> Self {
-        Self(VkPipelineRasterizationLineStateCreateInfoKHR {
-            sType: VkPipelineRasterizationLineStateCreateInfoKHR::TYPE,
+impl VkPipelineRasterizationLineStateCreateInfoKHR {
+    pub const fn new(mode: VkLineRasterizationModeKHR) -> Self {
+        Self {
+            sType: Self::TYPE,
             pNext: core::ptr::null(),
-            lineRasterizationMode: mode as _,
+            lineRasterizationMode: mode,
             stippledLineEnable: false as _,
             lineStippleFactor: 0,
             lineStipplePattern: 0,
-        })
+        }
     }
 
-    pub fn stippled(mut self, factor: u32, pattern: u16) -> Self {
-        self.0.stippledLineEnable = true as _;
-        self.0.lineStippleFactor = factor;
-        self.0.lineStipplePattern = pattern;
+    pub const fn stippled(mut self, factor: u32, pattern: u16) -> Self {
+        self.stippledLineEnable = true as _;
+        self.lineStippleFactor = factor;
+        self.lineStipplePattern = pattern;
 
         self
     }
-}
-
-#[cfg(feature = "VK_KHR_line_rasterization")]
-#[derive(Clone, Copy, PartialEq, Eq, Hash)]
-pub enum LineRasterizationMode {
-    Default = VK_LINE_RASTERIZATION_MODE_DEFAULT_KHR as _,
-    Rectangular = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_KHR as _,
-    Bresenham = VK_LINE_RASTERIZATION_MODE_BRESENHAM_KHR as _,
-    RectangularSmooth = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR as _,
 }
 
 /// PipelineStateDesc: Multisample State
@@ -1213,7 +1152,7 @@ pub struct MultisampleState<'d> {
 }
 impl<'d> MultisampleState<'d> {
     #[allow(clippy::new_without_default)]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         MultisampleState {
             data: VkPipelineMultisampleStateCreateInfo {
                 sType: VkPipelineMultisampleStateCreateInfo::TYPE,
@@ -1231,10 +1170,11 @@ impl<'d> MultisampleState<'d> {
     }
 
     /// Specifies the number of samples per pixel used in rasterization. default=1
-    pub fn rasterization_samples(&mut self, samples: usize) -> &mut Self {
+    pub const fn rasterization_samples(&mut self, samples: usize) -> &mut Self {
         self.data.rasterizationSamples = samples as _;
         self
     }
+
     /// A bitmask of static coverage information that is ANDed with the coverage information generated
     /// during rasterization, as described in [Sample Mask](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-samplemask).
     pub fn sample_mask(&mut self, mask: &'d [VkSampleMask]) -> &mut Self {
@@ -1246,9 +1186,10 @@ impl<'d> MultisampleState<'d> {
         }
         self
     }
+
     /// Specifies a minimum fraction of sample shading(must be in the range [0, 1]).
     /// Pass a `None` to disable [Sample Shading](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#primsrast-sampleshading).
-    pub fn sample_shading(&mut self, min_sample_shading: Option<f32>) -> &mut Self {
+    pub const fn sample_shading(&mut self, min_sample_shading: Option<f32>) -> &mut Self {
         self.data.sampleShadingEnable = min_sample_shading.is_some() as _;
         if let Some(m) = min_sample_shading {
             assert!(
@@ -1259,15 +1200,17 @@ impl<'d> MultisampleState<'d> {
         }
         self
     }
+
     /// Controls whether a temporary coverage value is generated based on the alpha component of the fragment's
     /// first color output as specified in the [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg) section.
-    pub fn enable_alpha_to_coverage(&mut self, w: bool) -> &mut Self {
+    pub const fn enable_alpha_to_coverage(&mut self, w: bool) -> &mut Self {
         self.data.alphaToCoverageEnable = w as _;
         self
     }
+
     /// Controls whether the alpha component of the fragment's first color output is replaced with one as described in
     /// [Multisample Coverage](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-covg).
-    pub fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self {
+    pub const fn replace_alpha_to_one(&mut self, w: bool) -> &mut Self {
         self.data.alphaToOneEnable = w as _;
         self
     }
@@ -1302,14 +1245,14 @@ pub trait GraphicsPipelineBuilder {
         let extras = self.make_extras();
         let cinfo = self.build(&extras);
 
-        let mut h = std::mem::MaybeUninit::uninit();
+        let mut h = core::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkfn::create_graphics_pipelines(
                 device.native_ptr(),
-                cache.map(VkHandle::native_ptr).unwrap_or(VkPipelineCache::NULL),
+                cache.map_or(VkPipelineCache::NULL, VkHandle::native_ptr),
                 1,
                 &cinfo,
-                std::ptr::null(),
+                core::ptr::null(),
                 h.as_mut_ptr(),
             )
             .into_result()
@@ -1351,7 +1294,7 @@ impl<
     > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Initialize the builder object
-    pub fn new(
+    pub const fn new(
         layout: Layout,
         subpass: SubpassRef<'d, RenderPass>,
         vp: VertexProcessingStages<'d, ShaderStages>,
@@ -1362,7 +1305,7 @@ impl<
             rp: subpass.0,
             subpass: subpass.1,
             vp,
-            rasterizer_state: Default::default(),
+            rasterizer_state: RasterizationState::new(),
             tess_state: None,
             viewport_state: None,
             ms_state: None,
@@ -1385,8 +1328,9 @@ impl<
         self.vp = vp;
         self
     }
+
     /// Get a mutable reference to the vertex processing stage configuration in this pipeline
-    pub fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d, ShaderStages> {
+    pub const fn vertex_processing_mut(&mut self) -> &mut VertexProcessingStages<'d, ShaderStages> {
         &mut self.vp
     }
 
@@ -1395,7 +1339,7 @@ impl<
         if self.tess_state.is_none() {
             self.tess_state = Some(Box::new(VkPipelineTessellationStateCreateInfo {
                 sType: VkPipelineTessellationStateCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 patchControlPoints: 0,
             }));
@@ -1484,12 +1428,13 @@ impl<
     > NonDerivedGraphicsPipelineBuilder<'d, Layout, RenderPass, ShaderStages>
 {
     /// Rasterization State
-    pub fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
+    pub const fn rasterization_state(&mut self, state: RasterizationState) -> &mut Self {
         self.rasterizer_state = state;
         self
     }
+
     /// Multisample State
-    pub fn multisample_state(&mut self, state: Option<MultisampleState<'d>>) -> &mut Self {
+    pub const fn multisample_state(&mut self, state: Option<MultisampleState<'d>>) -> &mut Self {
         self.ms_state = state;
         self
     }
@@ -1508,6 +1453,7 @@ impl<
         self.ds_state = None;
         self
     }
+
     fn dss_ref(&mut self) -> &mut VkPipelineDepthStencilStateCreateInfo {
         if self.ds_state.is_none() {
             self.ds_state = Some(Box::new(VkPipelineDepthStencilStateCreateInfo {
@@ -1543,21 +1489,25 @@ impl<
         }
         self.ds_state.as_mut().unwrap()
     }
+
     /// Controls whether depth testing is enabled
     pub fn depth_test_enable(&mut self, enable: bool) -> &mut Self {
         self.dss_ref().depthTestEnable = enable as _;
         self
     }
+
     /// Controls whether depth writes are enabled, or always disabled
     pub fn depth_write_enable(&mut self, enable: bool) -> &mut Self {
         self.dss_ref().depthWriteEnable = enable as _;
         self
     }
+
     /// The comparison operator used in the depth test
     pub fn depth_compare_op(&mut self, op: CompareOp) -> &mut Self {
         self.dss_ref().depthCompareOp = op as _;
         self
     }
+
     /// Controls whether depth testing is enabled, depth writes are enabled, and the comparison operator used in the depth test
     /// Specifying `None` to `compare_to` disables depth testing
     pub fn depth_test_settings(&mut self, compare_op: Option<CompareOp>, write_enable: bool) -> &mut Self {
@@ -1568,16 +1518,19 @@ impl<
         }
         self.depth_write_enable(write_enable)
     }
+
     /// Controls whether depth bounds testing is enabled
     pub fn depth_bounds_test_enable(&mut self, enable: bool) -> &mut Self {
         self.dss_ref().depthBoundsTestEnable = enable as _;
         self
     }
+
     /// Controls whether stencil testing is enabled
     pub fn stencil_test_enable(&mut self, enable: bool) -> &mut Self {
         self.dss_ref().stencilTestEnable = enable as _;
         self
     }
+
     /// Control the parameter of the stencil test
     pub fn stencil_control_front(&mut self, state: VkStencilOpState) -> &mut Self {
         self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK);
@@ -1586,6 +1539,7 @@ impl<
         self.dss_ref().front = state;
         self
     }
+
     /// Control the parameter of the stencil test
     pub fn stencil_control_back(&mut self, state: VkStencilOpState) -> &mut Self {
         self.dynamic_state_flags.disable(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK);
@@ -1594,10 +1548,12 @@ impl<
         self.dss_ref().back = state;
         self
     }
+
     /// Convenient function for setting same stencil_control values both front and back
     pub fn stencil_control(&mut self, state: VkStencilOpState) -> &mut Self {
         self.stencil_control_front(state.clone()).stencil_control_back(state)
     }
+
     /// Controls the parameter of the compare mask of the stencil test. Tuple ordering: (front, back).
     /// Specifying `None` means that the parameter is a dynamic state
     pub fn stencil_compare_mask(&mut self, mask: Option<(u32, u32)>) -> &mut Self {
@@ -1612,6 +1568,7 @@ impl<
             .set(VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK, is_dynamic);
         self
     }
+
     /// Controls the parameter of the write mask of the stencil test. Tuple ordering: (front, back)
     /// Specifying `None` means that the parameter is a dynamic state
     pub fn stencil_write_mask(&mut self, mask: Option<(u32, u32)>) -> &mut Self {
@@ -1626,6 +1583,7 @@ impl<
             .set(VK_DYNAMIC_STATE_STENCIL_WRITE_MASK, is_dynamic);
         self
     }
+
     /// Controls the parameter of the reference of the stencil test. Tuple ordering: (front, back)
     /// Specifying `None` means that the parameter is a dynamic state
     pub fn stencil_reference(&mut self, mask: Option<(u32, u32)>) -> &mut Self {
@@ -1640,12 +1598,14 @@ impl<
             .set(VK_DYNAMIC_STATE_STENCIL_REFERENCE, is_dynamic);
         self
     }
+
     /// The range of values used in the depth bounds test
     pub fn depth_bounds_range(&mut self, bounds: Range<f32>) -> &mut Self {
         self.dss_ref().minDepthBounds = bounds.start;
         self.dss_ref().maxDepthBounds = bounds.end;
         self
     }
+
     /// Control the depth bounds test
     pub fn depth_bounds(&mut self, bounds: SwitchOrDynamicState<Range<f32>>) -> &mut Self {
         self.depth_bounds_test_enable(bounds.is_enabled());
@@ -1696,83 +1656,105 @@ pub enum BlendOp {
     Max = VK_BLEND_OP_MAX as _,
 }
 
-/// Structure specifying a pipeline color blend attachment state
-#[derive(Clone)]
-pub struct AttachmentColorBlendState(VkPipelineColorBlendAttachmentState);
-impl AttachmentColorBlendState {
-    #[inline]
-    pub fn noblend() -> Self {
-        AttachmentColorBlendState(VkPipelineColorBlendAttachmentState {
-            colorWriteMask: VK_COLOR_COMPONENT_A_BIT
-                | VK_COLOR_COMPONENT_R_BIT
-                | VK_COLOR_COMPONENT_G_BIT
-                | VK_COLOR_COMPONENT_B_BIT,
-            blendEnable: VK_FALSE,
-            ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
-        })
-    }
+impl VkPipelineColorBlendAttachmentState {
+    pub const NOBLEND: Self = Self {
+        colorWriteMask: VK_COLOR_COMPONENT_A_BIT
+            | VK_COLOR_COMPONENT_R_BIT
+            | VK_COLOR_COMPONENT_G_BIT
+            | VK_COLOR_COMPONENT_B_BIT,
+        blendEnable: VK_FALSE,
+        ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
+    };
 
-    #[inline]
     // https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
-    pub const fn premultiplied() -> Self {
-        AttachmentColorBlendState(VkPipelineColorBlendAttachmentState {
-            colorWriteMask: VK_COLOR_COMPONENT_A_BIT
-                | VK_COLOR_COMPONENT_R_BIT
-                | VK_COLOR_COMPONENT_G_BIT
-                | VK_COLOR_COMPONENT_B_BIT,
+    pub const PREMULTIPLIED: Self = Self {
+        colorWriteMask: VK_COLOR_COMPONENT_A_BIT
+            | VK_COLOR_COMPONENT_R_BIT
+            | VK_COLOR_COMPONENT_G_BIT
+            | VK_COLOR_COMPONENT_B_BIT,
+        blendEnable: VK_TRUE,
+        srcColorBlendFactor: VK_BLEND_FACTOR_ONE,
+        dstColorBlendFactor: VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        colorBlendOp: VK_BLEND_OP_ADD,
+        // srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
+        // dstAlphaBlendFactor: BlendFactor::One as _,
+        srcAlphaBlendFactor: VK_BLEND_FACTOR_ONE,
+        dstAlphaBlendFactor: VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+        alphaBlendOp: VK_BLEND_OP_ADD,
+    };
+
+    pub const fn enabled(self) -> Self {
+        Self {
             blendEnable: VK_TRUE,
-            srcColorBlendFactor: BlendFactor::One as _,
-            dstColorBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
-            colorBlendOp: BlendOp::Add as _,
-            // srcAlphaBlendFactor: BlendFactor::OneMinusDestAlpha as _,
-            // dstAlphaBlendFactor: BlendFactor::One as _,
-            srcAlphaBlendFactor: BlendFactor::One as _,
-            dstAlphaBlendFactor: BlendFactor::OneMinusSourceAlpha as _,
-            alphaBlendOp: BlendOp::Add as _,
-        })
+            ..self
+        }
     }
 
-    pub fn enable(&mut self) -> &mut Self {
-        self.0.blendEnable = VK_TRUE;
-        self
+    pub const fn disabled(self) -> Self {
+        Self {
+            blendEnable: VK_FALSE,
+            ..self
+        }
     }
-    pub fn disable(&mut self) -> &mut Self {
-        self.0.blendEnable = VK_FALSE;
-        self
+
+    pub const fn color_blend_factor_src(self, f: VkBlendFactor) -> Self {
+        Self {
+            srcColorBlendFactor: f,
+            ..self
+        }
     }
-    pub fn color_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self {
-        self.0.srcColorBlendFactor = f as _;
-        self
+
+    pub const fn color_blend_factor_dst(self, f: VkBlendFactor) -> Self {
+        Self {
+            dstColorBlendFactor: f,
+            ..self
+        }
     }
-    pub fn color_blend_factor_dst(&mut self, f: BlendFactor) -> &mut Self {
-        self.0.dstColorBlendFactor = f as _;
-        self
+
+    pub const fn alpha_blend_factor_src(self, f: VkBlendFactor) -> Self {
+        Self {
+            srcAlphaBlendFactor: f,
+            ..self
+        }
     }
-    pub fn alpha_blend_factor_src(&mut self, f: BlendFactor) -> &mut Self {
-        self.0.srcAlphaBlendFactor = f as _;
-        self
+
+    pub const fn alpha_blend_factor_dst(self, f: VkBlendFactor) -> Self {
+        Self {
+            dstAlphaBlendFactor: f,
+            ..self
+        }
     }
-    pub fn alpha_blend_factor_dst(&mut self, f: BlendFactor) -> &mut Self {
-        self.0.dstAlphaBlendFactor = f as _;
-        self
+
+    pub const fn color_blend_op(self, op: VkBlendOp) -> Self {
+        Self {
+            colorBlendOp: op,
+            ..self
+        }
     }
-    pub fn color_blend_op(&mut self, op: BlendOp) -> &mut Self {
-        self.0.colorBlendOp = op as _;
-        self
+
+    pub const fn alpha_blend_op(self, op: VkBlendOp) -> Self {
+        Self {
+            alphaBlendOp: op,
+            ..self
+        }
     }
-    pub fn alpha_blend_op(&mut self, op: BlendOp) -> &mut Self {
-        self.0.alphaBlendOp = op as _;
-        self
+
+    pub const fn color_blend(self, src: VkBlendFactor, op: VkBlendOp, dst: VkBlendFactor) -> Self {
+        Self {
+            srcColorBlendFactor: src,
+            dstColorBlendFactor: dst,
+            colorBlendOp: op,
+            ..self
+        }
     }
-    pub fn color_blend(&mut self, src: BlendFactor, op: BlendOp, dst: BlendFactor) -> &mut Self {
-        self.color_blend_factor_src(src)
-            .color_blend_op(op)
-            .color_blend_factor_dst(dst)
-    }
-    pub fn alpha_blend(&mut self, src: BlendFactor, op: BlendOp, dst: BlendFactor) -> &mut Self {
-        self.alpha_blend_factor_src(src)
-            .alpha_blend_op(op)
-            .alpha_blend_factor_dst(dst)
+
+    pub const fn alpha_blend(self, src: VkBlendFactor, op: VkBlendOp, dst: VkBlendFactor) -> Self {
+        Self {
+            srcAlphaBlendFactor: src,
+            dstAlphaBlendFactor: dst,
+            alphaBlendOp: op,
+            ..self
+        }
     }
 }
 
@@ -1815,16 +1797,17 @@ impl<
         state.logicOp = op.unwrap_or(LogicOp::NoOp) as _;
         self
     }
+
     /// Per target attachment states
-    pub fn add_attachment_blend(&mut self, blend: AttachmentColorBlendState) -> &mut Self {
-        {
-            let cb = self.cb_ref();
-            cb.1.push(blend.0);
-            cb.0.attachmentCount = cb.1.len() as _;
-            cb.0.pAttachments = cb.1.as_ptr_empty_null();
-        }
+    pub fn add_attachment_blend(&mut self, blend: VkPipelineColorBlendAttachmentState) -> &mut Self {
+        let cb = self.cb_ref();
+        cb.1.push(blend);
+        cb.0.attachmentCount = cb.1.len() as _;
+        cb.0.pAttachments = cb.1.as_ptr_empty_null();
+
         self
     }
+
     /// Sets per-target attachment states
     pub fn set_attachment_blends(&mut self, blends: Vec<VkPipelineColorBlendAttachmentState>) -> &mut Self {
         let (ref mut state, ref mut blend_infos) = self.cb_ref();
@@ -1833,11 +1816,13 @@ impl<
         state.pAttachments = blend_infos.as_ptr_empty_null();
         self
     }
+
     /// Clears per-target attachment blending state
     pub fn clear_attachment_blends(&mut self) -> &mut Self {
         self.cb_ref().1.clear();
         self
     }
+
     /// Clears blending state
     pub fn clear_blending_state(&mut self) -> &mut Self {
         self.color_blending = None;
@@ -1869,6 +1854,7 @@ impl<
     pub const fn derive<BP: Pipeline>(self, b: BP) -> DerivedGraphicsPipelineBuilder<BP, Self> {
         DerivedGraphicsPipelineBuilder(b, self)
     }
+
     //// The base pipeline index to derive from
     pub const fn derive_index(self, index: i32) -> IndexDerivedGraphicsPipelineBuilder<Self> {
         IndexDerivedGraphicsPipelineBuilder(index, self)
@@ -1879,31 +1865,36 @@ impl<
         self._layout = l;
         self
     }
+
     /// A handle to a render pass object and the index of the subpass where this pipeline will be used
-    pub fn render_pass(&mut self, rpo: &'d RenderPass, subpass: u32) -> &mut Self {
+    pub const fn render_pass(&mut self, rpo: &'d RenderPass, subpass: u32) -> &mut Self {
         self.rp = rpo;
         self.subpass = subpass;
         self
     }
+
     /// The created pipeline will be optimized.
     /// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
-    pub fn enable_optimization(&mut self) -> &mut Self {
+    pub const fn enable_optimization(&mut self) -> &mut Self {
         self.flags &= !VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
         self
     }
+
     /// The created pipeline will not be optimized.
     /// Disabling optimization of the pipeline may reduce the time taken to create the pipeline
-    pub fn disable_optimization(&mut self) -> &mut Self {
+    pub const fn disable_optimization(&mut self) -> &mut Self {
         self.flags |= VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
         self
     }
+
     /// The pipeline to be created is allowed to be the parent of a pipeline that will be created in a subsequent creation operation
-    pub fn allow_derivatives(&mut self) -> &mut Self {
+    pub const fn allow_derivatives(&mut self) -> &mut Self {
         self.flags |= VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
         self
     }
+
     /// The pipeline to be created is denied to be the parent of a pipeline that will be created in a subsequent creation operation
-    pub fn deny_derivatives(&mut self) -> &mut Self {
+    pub const fn deny_derivatives(&mut self) -> &mut Self {
         self.flags &= !VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
         self
     }
@@ -1930,6 +1921,7 @@ impl<
         self.tess_state = state;
         self
     }
+
     /// Set the `VkPipelineViewportStateCreateInfo` structure directly.
     /// This does not clear any dynamic states
     /// # Safety
@@ -1944,6 +1936,7 @@ impl<
         self.viewport_state = state;
         self
     }
+
     /// Set the `VkPipelineDepthStencilStateCreateInfo` structure directly.
     /// This does not clear any dynamic states
     /// # Safety
@@ -1958,6 +1951,7 @@ impl<
         self.ds_state = state;
         self
     }
+
     /// Set the `VkPipelineColorBlendStateCreateInfo` structure directly.
     /// This does not clear any dynamic states
     /// # Safety
@@ -2062,7 +2056,7 @@ impl<
 
 pub struct DerivedGraphicsPipelineBuilder<Base: Pipeline, Diff: GraphicsPipelineBuilder>(Base, Diff);
 impl<Base: Pipeline, Diff: GraphicsPipelineBuilder> DerivedGraphicsPipelineBuilder<Base, Diff> {
-    pub fn diff_mut(&mut self) -> &mut Diff {
+    pub const fn diff_mut(&mut self) -> &mut Diff {
         &mut self.1
     }
 }
@@ -2088,7 +2082,7 @@ impl<Base: Pipeline, Diff: GraphicsPipelineBuilder> GraphicsPipelineBuilder
 
 pub struct IndexDerivedGraphicsPipelineBuilder<Diff: GraphicsPipelineBuilder>(i32, Diff);
 impl<Diff: GraphicsPipelineBuilder> IndexDerivedGraphicsPipelineBuilder<Diff> {
-    pub fn diff_mut(&mut self) -> &mut Diff {
+    pub const fn diff_mut(&mut self) -> &mut Diff {
         &mut self.1
     }
 }
@@ -2164,130 +2158,48 @@ impl<'d, Layout: PipelineLayout, Shader: PipelineShaderProvider> ComputePipeline
 
 /// Bitmask specifying pipeline stages
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-#[repr(transparent)]
+#[bitflags_newtype]
 pub struct PipelineStageFlags(pub VkPipelineStageFlags);
 impl PipelineStageFlags {
     /// The stage of the pipeline where any commands are initially received by the queue
-    pub const TOP_OF_PIPE: Self = PipelineStageFlags(VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
+    pub const TOP_OF_PIPE: Self = Self(VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT);
     /// The stage of the pipeline where Draw/DispatchIndirect data structures are consumed
-    pub const DRAW_INDIRECT: Self = PipelineStageFlags(VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT);
+    pub const DRAW_INDIRECT: Self = Self(VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT);
     /// The stage of the pipeline where vertex and index buffers are consumed
-    pub const VERTEX_INPUT: Self = PipelineStageFlags(VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
+    pub const VERTEX_INPUT: Self = Self(VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
     /// The vertex shader stage
-    pub const VERTEX_SHADER: Self = PipelineStageFlags(VK_PIPELINE_STAGE_VERTEX_SHADER_BIT);
+    pub const VERTEX_SHADER: Self = Self(VK_PIPELINE_STAGE_VERTEX_SHADER_BIT);
     /// The tessellation control shader stage
-    pub const TESSELLATION_CONTROL_SHADER: Self = PipelineStageFlags(VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT);
+    pub const TESSELLATION_CONTROL_SHADER: Self = Self(VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT);
     /// The tessellation evaluation shader stage
-    pub const TESSELLATION_EVALUATION_SHADER: Self =
-        PipelineStageFlags(VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT);
+    pub const TESSELLATION_EVALUATION_SHADER: Self = Self(VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT);
     /// The geometry shader stage
-    pub const GEOMETRY_SHADER: Self = PipelineStageFlags(VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT);
+    pub const GEOMETRY_SHADER: Self = Self(VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT);
     /// The fragment shader stage
-    pub const FRAGMENT_SHADER: Self = PipelineStageFlags(VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
+    pub const FRAGMENT_SHADER: Self = Self(VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT);
     /// The stage of the pipeline where early fragment tests (depth and stencil tests before fragment shading) are performed
-    pub const EARLY_FRAGMENT_TESTS: Self = PipelineStageFlags(VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT);
+    pub const EARLY_FRAGMENT_TESTS: Self = Self(VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT);
     /// The stage of the pipeline where late fragment tests (depth and stencil tests after fragment shading) are performed
-    pub const LATE_FRAGMENT_TESTS: Self = PipelineStageFlags(VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
+    pub const LATE_FRAGMENT_TESTS: Self = Self(VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT);
     /// The stage of the pipeline after blending where the final color values are output from the pipeline
-    pub const COLOR_ATTACHMENT_OUTPUT: Self = PipelineStageFlags(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
+    pub const COLOR_ATTACHMENT_OUTPUT: Self = Self(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT);
     /// The execution of copy commands
-    pub const TRANSFER: Self = PipelineStageFlags(VK_PIPELINE_STAGE_TRANSFER_BIT);
+    pub const TRANSFER: Self = Self(VK_PIPELINE_STAGE_TRANSFER_BIT);
     /// The execution of a compute shader
-    pub const COMPUTE_SHADER: Self = PipelineStageFlags(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
+    pub const COMPUTE_SHADER: Self = Self(VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT);
     /// The final stage in the pipeline where operations generated by all commands complete execution
-    pub const BOTTOM_OF_PIPE: Self = PipelineStageFlags(VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+    pub const BOTTOM_OF_PIPE: Self = Self(VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
     /// A pseudo-stage indicating execution on the host of reads/writes of device memory
-    pub const HOST: Self = PipelineStageFlags(VK_PIPELINE_STAGE_HOST_BIT);
+    pub const HOST: Self = Self(VK_PIPELINE_STAGE_HOST_BIT);
     /// The execution of all graphics pipeline stages
-    pub const ALL_GRAPHICS: Self = PipelineStageFlags(VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT);
+    pub const ALL_GRAPHICS: Self = Self(VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT);
     /// Equivalent to the logical OR of every other pipeline stage flag that is supported on the quue it is used with
-    pub const ALL_COMMANDS: Self = PipelineStageFlags(VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
-
-    /// The stage of the pipeline where any commands are initially received by the queue
-    pub fn top_of_pipe(self) -> Self {
-        PipelineStageFlags(self.0 | Self::TOP_OF_PIPE.0)
-    }
-    /// The stage of the pipeline where Draw/DispatchIndirect data structures are consumed
-    pub fn draw_indirect(self) -> Self {
-        PipelineStageFlags(self.0 | Self::DRAW_INDIRECT.0)
-    }
-    /// The stage of the pipeline where vertex and index buffers are consumed
-    pub fn vertex_input(self) -> Self {
-        PipelineStageFlags(self.0 | Self::VERTEX_INPUT.0)
-    }
-    /// The vertex shader stage
-    pub fn vertex_shader(self) -> Self {
-        PipelineStageFlags(self.0 | Self::VERTEX_SHADER.0)
-    }
-    /// The tessellation control shader stage
-    pub fn tessellation_control_shader(self) -> Self {
-        PipelineStageFlags(self.0 | Self::TESSELLATION_CONTROL_SHADER.0)
-    }
-    /// The tessellation evaluation shader stage
-    pub fn tessellation_evaluation_shader(self) -> Self {
-        PipelineStageFlags(self.0 | Self::TESSELLATION_EVALUATION_SHADER.0)
-    }
-    /// The geometry shader stage
-    pub fn geometry_shader(self) -> Self {
-        PipelineStageFlags(self.0 | Self::GEOMETRY_SHADER.0)
-    }
-    /// The fragment shader stage
-    pub fn fragment_shader(self) -> Self {
-        PipelineStageFlags(self.0 | Self::FRAGMENT_SHADER.0)
-    }
-    /// The stage of the pipeline where early fragment tests (depth and stencil tests before fragment shading) are performed
-    pub fn early_fragment_tests(self) -> Self {
-        PipelineStageFlags(self.0 | Self::EARLY_FRAGMENT_TESTS.0)
-    }
-    /// The stage of the pipeline where late fragment tests (depth and stencil tests after fragment shading) are performed
-    pub fn late_fragment_tests(self) -> Self {
-        PipelineStageFlags(self.0 | Self::LATE_FRAGMENT_TESTS.0)
-    }
-    /// The stage of the pipeline after blending where the final color values are output from the pipeline
-    pub fn color_attachment_output(self) -> Self {
-        PipelineStageFlags(self.0 | Self::COLOR_ATTACHMENT_OUTPUT.0)
-    }
-    /// The execution of copy commands
-    pub fn transfer(self) -> Self {
-        PipelineStageFlags(self.0 | Self::TRANSFER.0)
-    }
-    /// The execution of a compute shader
-    pub fn compute_shader(self) -> Self {
-        PipelineStageFlags(self.0 | Self::COMPUTE_SHADER.0)
-    }
-    /// The final stage in the pipeline where operations generated by all commands complete execution
-    pub fn bottom_of_pipe(self) -> Self {
-        PipelineStageFlags(self.0 | Self::BOTTOM_OF_PIPE.0)
-    }
-    /// A pseudo-stage indicating execution on the host of reads/writes of device memory
-    pub fn host(self) -> Self {
-        PipelineStageFlags(self.0 | Self::HOST.0)
-    }
-    /// The execution of all graphics pipeline stages
-    pub fn all_graphics(self) -> Self {
-        PipelineStageFlags(self.0 | Self::ALL_GRAPHICS.0)
-    }
-    /// Equivalent to the logical OR of every other pipeline stage flag that is supported on the quue it is used with
-    pub fn all_commands(self) -> Self {
-        PipelineStageFlags(self.0 | Self::ALL_COMMANDS.0)
-    }
-}
-impl BitOr for PipelineStageFlags {
-    type Output = Self;
-    fn bitor(self, rhs: Self) -> Self {
-        PipelineStageFlags(self.0 | rhs.0)
-    }
-}
-impl BitOrAssign for PipelineStageFlags {
-    fn bitor_assign(&mut self, rhs: Self) {
-        self.0 |= rhs.0;
-    }
+    pub const ALL_COMMANDS: Self = Self(VK_PIPELINE_STAGE_ALL_COMMANDS_BIT);
 }
 
 /// Bitmask specifying pipeline stages (extended)
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-#[repr(transparent)]
 #[bitflags_newtype]
 pub struct PipelineStageFlags2(pub VkPipelineStageFlags2KHR);
 #[cfg(feature = "VK_KHR_synchronization2")]

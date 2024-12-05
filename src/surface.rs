@@ -42,6 +42,5 @@ cfg_if! {
 cfg_if! {
     if #[cfg(feature = "VK_EXT_full_screen_exclusive")] {
         mod full_screen_exclusive;
-        pub use self::full_screen_exclusive::*;
     }
 }

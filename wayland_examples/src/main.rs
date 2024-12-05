@@ -138,9 +138,16 @@ fn main() {
         .create(vk_instance.clone())
         .unwrap();
     let vk_pdev = vk_instance.iter_physical_devices().unwrap().next().unwrap();
-    let vk_surface = (&vk_pdev)
-        .new_surface_wayland(display.as_proxy_ptr_mut() as _, surface.as_proxy_ptr_mut() as _)
-        .unwrap();
+    let vk_surface = unsafe {
+        br::SurfaceObject::new(
+            &vk_pdev,
+            &br::vk::VkWaylandSurfaceCreateInfoKHR::new(
+                display.as_proxy_ptr_mut() as _,
+                surface.as_proxy_ptr_mut() as _,
+            ),
+        )
+        .unwrap()
+    };
 
     let device_memory_properties = vk_pdev.memory_properties();
     let vk_graphics_queue_family_index = vk_pdev
@@ -174,15 +181,15 @@ fn main() {
         },
         br::ImageUsageFlags::COLOR_ATTACHMENT,
     )
-    .pre_transform(surface_props.current_transform())
+    .pre_transform(surface_props.currentTransform)
     .composite_alpha(
         if surface_props
             .supported_composite_alpha()
             .has(br::CompositeAlphaFlags::OPAQUE)
         {
-            br::CompositeAlpha::Opaque
+            br::vk::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
         } else {
-            br::CompositeAlpha::Inherit
+            br::vk::VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR
         },
     )
     .present_mode(*presentation_modes.first().unwrap())
@@ -246,7 +253,7 @@ fn main() {
     let fsh = vk_device
         .new_shader_module_ref(&std::fs::read("./shaders/triangle.fspv").unwrap())
         .unwrap();
-    let vi_bindings = [br::VertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
+    let vi_bindings = [br::vk::VkVertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
     let vi_attrs = [
         br::vk::VkVertexInputAttributeDescription {
             location: 0,
@@ -263,7 +270,10 @@ fn main() {
     ];
     let pl = br::PipelineLayoutBuilder::new(
         &[br::DescriptorSetLayoutObjectRef::new(&dsl_ub1)],
-        &[br::PushConstantRange::for_type::<[f32; 2]>(br::ShaderStage::VERTEX, 0)],
+        &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
+            br::ShaderStage::VERTEX,
+            0,
+        )],
     )
     .create(&vk_device)
     .unwrap();
@@ -280,7 +290,7 @@ fn main() {
     );
     pipeline
         .multisample_state(Some(br::MultisampleState::new()))
-        .add_attachment_blend(br::AttachmentColorBlendState::noblend())
+        .add_attachment_blend(br::vk::VkPipelineColorBlendAttachmentState::NOBLEND)
         .viewport_scissors(
             br::DynamicArrayState::Static(&[viewport]),
             br::DynamicArrayState::Static(&[rect]),
@@ -451,7 +461,7 @@ fn main() {
                     .into_rect(br::vk::VkOffset2D::ZERO),
                     &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
                 ),
-                &br::SubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
+                &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
             )
             .bind_graphics_pipeline(&pipeline)
             .push_constant(&pl, br::ShaderStage::VERTEX, 0, &[640.0f32, 480.0])
@@ -462,7 +472,7 @@ fn main() {
                 &[vertex_buffer_offset as _],
             )
             .draw(3, 1, 0, 0)
-            .end_render_pass_2(&br::SubpassEndInfo::new())
+            .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
             .end()
             .unwrap();
     }

@@ -810,6 +810,7 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
     let org_type = newtype_struct_org_type(s);
 
     quote! {
+        #[repr(transparent)]
         #t2
         impl #impl_generics core::ops::BitOr for #name #ty_generics #where_clause {
             type Output = Self;
@@ -856,6 +857,12 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
         }
 
         impl #impl_generics #name #ty_generics #where_clause {
+            /// Returns bits in this flags
+            #[inline(always)]
+            pub const fn bits(&self) -> #org_type {
+                self.0
+            }
+
             /// Returns true if specified bits are contained in this flag.
             #[inline(always)]
             pub const fn has(self, other: Self) -> bool {

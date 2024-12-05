@@ -9,108 +9,126 @@ use crate::{vk::*, VulkanStructure};
 use crate::{InstanceChild, VkHandle, VkObject};
 use derives::*;
 
-cfg_if::cfg_if! {
-    if #[cfg(feature = "VK_EXT_debug_report")] {
-        /// Opaque object to a debug report callback object
-        #[derive(VkHandle, VkObject, InstanceChild)]
-        #[VkObject(type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
-        pub struct DebugReportCallbackObject<Instance: crate::Instance>(
-            pub(crate) VkDebugReportCallbackEXT,
-            #[parent] pub(crate) Instance,
-        );
-        unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
-        unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
-        #[cfg(feature = "Implements")]
-        impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
-            fn drop(&mut self) {
-                unsafe { self.1.destroy_debug_report_callback_ext_fn().0(self.1.native_ptr(), self.native_ptr(), std::ptr::null()); }
-            }
+/// Opaque object to a debug report callback object
+#[cfg(feature = "VK_EXT_debug_report")]
+#[derive(VkHandle, VkObject, InstanceChild)]
+#[VkObject(type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
+pub struct DebugReportCallbackObject<Instance: crate::Instance>(
+    pub(crate) VkDebugReportCallbackEXT,
+    #[parent] pub(crate) Instance,
+);
+#[cfg(feature = "VK_EXT_debug_report")]
+unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
+#[cfg(feature = "VK_EXT_debug_report")]
+unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
+#[implements("VK_EXT_debug_report")]
+impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
+    #[inline(always)]
+    fn drop(&mut self) {
+        unsafe {
+            self.1.destroy_debug_report_callback_ext_fn().0(self.1.native_ptr(), self.native_ptr(), core::ptr::null());
         }
-        impl<Instance: crate::Instance> DebugReportCallback for DebugReportCallbackObject<Instance> {}
-
-        pub struct DebugReportCallbackBuilder<'d, Instance: crate::Instance> {
-            #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-            instance: Instance,
-            flags: VkDebugReportFlagsEXT,
-            #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-            callback: PFN_vkDebugReportCallbackEXT,
-            #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-            user_data: Option<&'d mut dyn core::any::Any>
-        }
-        impl<'d, Instance: crate::Instance> DebugReportCallbackBuilder<'d, Instance> {
-            /// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
-            pub fn new(instance: Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
-                Self {
-                    instance,
-                    flags: 0,
-                    callback,
-                    user_data: None
-                }
-            }
-            /// Reports an error that may cause undefined results, including an application crash
-            pub fn report_error(&mut self) -> &mut Self {
-                self.flags |= VK_DEBUG_REPORT_ERROR_BIT_EXT;
-                self
-            }
-            /// Reports an unexpected use. e.g. Not destroying objects prior to destroying the containing object or potential inconsistencies between descriptor set layout
-            /// and the layout in the corresponding shader, etc
-            pub fn report_warning(&mut self) -> &mut Self {
-                self.flags |= VK_DEBUG_REPORT_WARNING_BIT_EXT;
-                self
-            }
-            /// Reports a potentially non-optimal use of Vulkan. e.g. using `vkCmdClearColorImage` when a RenderPass load_op would have worked
-            pub fn report_performance_warning(&mut self) -> &mut Self {
-                self.flags |= VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
-                self
-            }
-            /// Reports an informational message such as resource details that may be handy when debugging an application
-            pub fn report_information(&mut self) -> &mut Self {
-                self.flags |= VK_DEBUG_REPORT_INFORMATION_BIT_EXT;
-                self
-            }
-            /// Reports diagnostic information from the loader and layers
-            pub fn report_debug_information(&mut self) -> &mut Self {
-                self.flags |= VK_DEBUG_REPORT_DEBUG_BIT_EXT;
-                self
-            }
-
-            /// Sets user data that passed in callback
-            pub fn user_data(&mut self, ptr: &'d mut impl core::any::Any) -> &mut Self {
-                self.user_data = Some(ptr);
-                self
-            }
-
-            /// Register a debug report callback
-            /// # Failures
-            /// On failure, this command returns
-            ///
-            /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-            #[cfg(feature = "Implements")]
-            pub fn create(self) -> crate::Result<DebugReportCallbackObject<Instance>> {
-                let Self { flags, callback, user_data, instance } = self;
-
-                let s = VkDebugReportCallbackCreateInfoEXT {
-                    sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
-                    pNext: core::ptr::null(),
-                    flags,
-                    pfnCallback: callback,
-                    pUserData: user_data.map_or(core::ptr::null_mut(), |p| p as *mut _ as  _)
-                };
-
-                let mut h = core::mem::MaybeUninit::uninit();
-                unsafe {
-                    instance.create_debug_report_callback_ext_fn().0(instance.native_ptr(), &s, core::ptr::null(), h.as_mut_ptr())
-                        .into_result()
-                        .map(move |_| DebugReportCallbackObject(h.assume_init(), instance))
-                }
-            }
-        }
-
-        pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}
-        DerefContainerBracketImpl!(for DebugReportCallback {});
-        GuardsImpl!(for DebugReportCallback {});
     }
 }
+#[cfg(feature = "VK_EXT_debug_report")]
+impl<Instance: crate::Instance> DebugReportCallback for DebugReportCallbackObject<Instance> {}
+
+#[cfg(feature = "VK_EXT_debug_report")]
+pub struct DebugReportCallbackBuilder<'d, Instance: crate::Instance> {
+    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+    instance: Instance,
+    flags: VkDebugReportFlagsEXT,
+    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+    callback: PFN_vkDebugReportCallbackEXT,
+    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
+    user_data: Option<&'d mut dyn core::any::Any>,
+}
+#[cfg(feature = "VK_EXT_debug_report")]
+impl<'d, Instance: crate::Instance> DebugReportCallbackBuilder<'d, Instance> {
+    /// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
+    pub const fn new(instance: Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
+        Self {
+            instance,
+            flags: 0,
+            callback,
+            user_data: None,
+        }
+    }
+    /// Reports an error that may cause undefined results, including an application crash
+    pub const fn report_error(&mut self) -> &mut Self {
+        self.flags |= VK_DEBUG_REPORT_ERROR_BIT_EXT;
+        self
+    }
+    /// Reports an unexpected use. e.g. Not destroying objects prior to destroying the containing object or potential inconsistencies between descriptor set layout
+    /// and the layout in the corresponding shader, etc
+    pub const fn report_warning(&mut self) -> &mut Self {
+        self.flags |= VK_DEBUG_REPORT_WARNING_BIT_EXT;
+        self
+    }
+    /// Reports a potentially non-optimal use of Vulkan. e.g. using `vkCmdClearColorImage` when a RenderPass load_op would have worked
+    pub const fn report_performance_warning(&mut self) -> &mut Self {
+        self.flags |= VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
+        self
+    }
+    /// Reports an informational message such as resource details that may be handy when debugging an application
+    pub const fn report_information(&mut self) -> &mut Self {
+        self.flags |= VK_DEBUG_REPORT_INFORMATION_BIT_EXT;
+        self
+    }
+    /// Reports diagnostic information from the loader and layers
+    pub const fn report_debug_information(&mut self) -> &mut Self {
+        self.flags |= VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+        self
+    }
+
+    /// Sets user data that passed in callback
+    pub const fn user_data(&mut self, ptr: &'d mut impl core::any::Any) -> &mut Self {
+        self.user_data = Some(ptr);
+        self
+    }
+
+    /// Register a debug report callback
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements]
+    pub fn create(self) -> crate::Result<DebugReportCallbackObject<Instance>> {
+        let Self {
+            flags,
+            callback,
+            user_data,
+            instance,
+        } = self;
+
+        let s = VkDebugReportCallbackCreateInfoEXT {
+            sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
+            pNext: core::ptr::null(),
+            flags,
+            pfnCallback: callback,
+            pUserData: user_data.map_or(core::ptr::null_mut(), |p| p as *mut _ as _),
+        };
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            instance.create_debug_report_callback_ext_fn().0(
+                instance.native_ptr(),
+                &s,
+                core::ptr::null(),
+                h.as_mut_ptr(),
+            )
+            .into_result()
+            .map(move |_| DebugReportCallbackObject(h.assume_init(), instance))
+        }
+    }
+}
+
+#[cfg(feature = "VK_EXT_debug_report")]
+pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}
+#[cfg(feature = "VK_EXT_debug_report")]
+DerefContainerBracketImpl!(for DebugReportCallback {});
+#[cfg(feature = "VK_EXT_debug_report")]
+GuardsImpl!(for DebugReportCallback {});
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_utils")] {

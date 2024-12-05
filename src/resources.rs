@@ -166,58 +166,18 @@ pub trait MemoryBound: VkHandle {
         Self: VkHandleMut;
 }
 
-/// Specify how a component is swizzled
-#[repr(u32)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum ComponentSwizzle {
-    /// the component is set to the identity swizzle
-    Identity = VK_COMPONENT_SWIZZLE_IDENTITY as _,
-    /// the component is set to zero
-    Zero = VK_COMPONENT_SWIZZLE_ZERO as _,
-    /// the component is set to either 1 or 1.0, depending on whether
-    /// the type of the image view format is integer of floating-pointer respectively
-    One = VK_COMPONENT_SWIZZLE_ONE as _,
-    /// the component is set to the value of the R component of the image
-    R = VK_COMPONENT_SWIZZLE_R as _,
-    /// the component is set to the value of the G component of the image
-    G = VK_COMPONENT_SWIZZLE_G as _,
-    /// the component is set to the value of the B component of the image
-    B = VK_COMPONENT_SWIZZLE_B as _,
-    /// the component is set to the value of the A component of the image
-    A = VK_COMPONENT_SWIZZLE_A as _,
-}
-
-/// Structure specifying a color component mapping
-#[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ComponentMapping(
-    pub ComponentSwizzle,
-    pub ComponentSwizzle,
-    pub ComponentSwizzle,
-    pub ComponentSwizzle,
-);
-impl From<ComponentMapping> for VkComponentMapping {
-    fn from(value: ComponentMapping) -> Self {
-        Self {
-            r: value.0 as _,
-            g: value.1 as _,
-            b: value.2 as _,
-            a: value.3 as _,
-        }
-    }
-}
-impl ComponentMapping {
-    pub const IDENTITY: Self = Self::all(ComponentSwizzle::Identity);
-    pub const ZERO: Self = Self::all(ComponentSwizzle::Zero);
-    pub const ONE: Self = Self::all(ComponentSwizzle::One);
+impl VkComponentMapping {
+    pub const IDENTITY: Self = Self::all(VK_COMPONENT_SWIZZLE_IDENTITY);
+    pub const ZERO: Self = Self::all(VK_COMPONENT_SWIZZLE_ZERO);
+    pub const ONE: Self = Self::all(VK_COMPONENT_SWIZZLE_ONE);
 
     /// Set same value to all component
-    pub const fn all(s: ComponentSwizzle) -> Self {
-        ComponentMapping(s, s, s, s)
+    pub const fn all(s: VkComponentSwizzle) -> Self {
+        Self { r: s, g: s, b: s, a: s }
     }
 
     /// Set 2 values with repeating
-    pub const fn set2(a: ComponentSwizzle, b: ComponentSwizzle) -> Self {
-        ComponentMapping(a, b, a, b)
+    pub const fn set2(a: VkComponentSwizzle, b: VkComponentSwizzle) -> Self {
+        Self { r: a, g: b, b: a, a: b }
     }
 }

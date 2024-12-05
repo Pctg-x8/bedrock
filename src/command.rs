@@ -78,7 +78,7 @@ impl<Device> CommandBufferObject<Device> {
 
 /// The recording state of command buffers
 #[implements]
-#[must_use = "CmdRecord must be consumed by end() (not closed automatically in drop)"]
+#[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
 pub struct CmdRecord<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized> {
     ptr: &'d mut CommandBuffer,
     device: &'d Device,
@@ -159,7 +159,7 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandPoolObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkCommandPool, Device) {
+    pub const fn unmanage(self) -> (VkCommandPool, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -241,17 +241,10 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn reset(&mut self, release_resources: bool) -> crate::Result<()> {
-        let flags = if release_resources {
-            VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT
-        } else {
-            0
-        };
-        unsafe {
-            crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
-                .into_result()
-                .map(drop)
-        }
+    unsafe fn reset(&mut self, flags: VkCommandPoolResetFlags) -> crate::Result<()> {
+        crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
+            .into_result()
+            .map(drop)
     }
 
     /// Free command buffers
@@ -270,9 +263,14 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// Trim a command pool
     #[implements("VK_KHR_maintenance1")]
     fn trim(&mut self) {
-        use crate::Device;
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
+            crate::vkfn::trim_command_pool(self.device_handle(), self.native_ptr_mut(), 0);
+        }
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        unsafe {
+            use crate::Device;
+
             self.device().get_trim_command_pool_khr_fn().0(self.device_handle(), self.native_ptr_mut(), 0);
         }
     }
@@ -378,7 +376,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             0
         };
         let (fb, rp, s) = match renderpass {
-            Some((f, r, s)) => (f.native_ptr(), r.native_ptr(), s),
+            Some((f, r, s)) => (f.map_or(VkFramebuffer::NULL, |x| x.native_ptr()), r.native_ptr(), s),
             None => (VkFramebuffer::NULL, VkRenderPass::NULL, 0),
         };
         let (oq, psq) = query.map_or((OcclusionQuery::Disable, 0), |(o, p)| (o, p.0));
@@ -587,102 +585,64 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         self
     }
 
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_3APIs")))]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     #[inline]
     pub fn begin_render_pass_2(
         self,
         begin_info: &crate::RenderPassBeginInfo<'_, impl crate::RenderPass + ?Sized, impl crate::Framebuffer + ?Sized>,
-        subpass_begin_info: &crate::SubpassBeginInfo,
-    ) -> Self
-    where
-        Device: crate::Device,
-    {
+        subpass_begin_info: &VkSubpassBeginInfoKHR,
+    ) -> Self {
+        #[cfg(feature = "Allow1_3APIs")]
+        unsafe {
+            crate::vkfn::cmd_begin_render_pass2(self.ptr.native_ptr(), begin_info.as_ref(), subpass_begin_info);
+        }
+
+        #[cfg(not(feature = "Allow1_3APIs"))]
         unsafe {
             (self.device.cmd_begin_render_pass_2_khr_fn().0)(
                 self.ptr.native_ptr(),
                 begin_info.as_ref(),
-                subpass_begin_info.as_ref(),
+                subpass_begin_info,
             );
         }
 
         self
     }
 
-    #[cfg(feature = "Allow1_3APIs")]
-    #[inline]
-    pub fn begin_render_pass_2(
-        self,
-        begin_info: &crate::RenderPassBeginInfo<'_, impl crate::RenderPass + ?Sized, impl crate::Framebuffer + ?Sized>,
-        subpass_begin_info: &crate::SubpassBeginInfo,
-    ) -> Self {
-        unsafe {
-            crate::vkfn::cmd_begin_render_pass2(
-                self.ptr.native_ptr(),
-                begin_info.as_ref(),
-                subpass_begin_info.as_ref(),
-            );
-        }
-
-        self
-    }
-
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_3APIs")))]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     #[inline]
     pub fn next_subpass_2(
         self,
-        subpass_begin_info: &crate::SubpassBeginInfo,
-        subpass_end_info: &crate::SubpassEndInfo,
+        subpass_begin_info: &VkSubpassBeginInfoKHR,
+        subpass_end_info: &VkSubpassEndInfoKHR,
     ) -> Self
     where
         Device: crate::Device,
     {
+        #[cfg(feature = "Allow1_3APIs")]
         unsafe {
-            (self.device.cmd_next_subpass_2_khr_fn().0)(
-                self.ptr.native_ptr(),
-                subpass_begin_info.as_ref(),
-                subpass_end_info.as_ref(),
-            );
+            crate::vkfn::cmd_next_subpass2(self.ptr.native_ptr(), subpass_begin_info, subpass_end_info);
+        }
+
+        #[cfg(not(feature = "Allow1_3APIs"))]
+        unsafe {
+            (self.device.cmd_next_subpass_2_khr_fn().0)(self.ptr.native_ptr(), subpass_begin_info, subpass_end_info);
         }
 
         self
     }
 
-    #[cfg(feature = "Allow1_3APIs")]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     #[inline]
-    pub fn next_subpass_2(
-        self,
-        subpass_begin_info: &crate::SubpassBeginInfo,
-        subpass_end_info: &crate::SubpassEndInfo,
-    ) -> Self {
+    pub fn end_render_pass_2(self, subpass_end_info: &VkSubpassEndInfoKHR) -> Self {
+        #[cfg(feature = "Allow1_3APIs")]
         unsafe {
-            crate::vkfn::cmd_next_subpass2(
-                self.ptr.native_ptr(),
-                subpass_begin_info.as_ref(),
-                subpass_end_info.as_ref(),
-            );
+            crate::vkfn::cmd_end_render_pass2(self.ptr.native_ptr(), subpass_end_info);
         }
 
-        self
-    }
-
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_3APIs")))]
-    #[inline]
-    pub fn end_render_pass_2(self, subpass_end_info: &crate::SubpassEndInfo) -> Self
-    where
-        Device: crate::Device,
-    {
+        #[cfg(not(feature = "Allow1_3APIs"))]
         unsafe {
-            (self.device.cmd_end_render_pass_2_khr_fn().0)(self.ptr.native_ptr(), subpass_end_info.as_ref());
-        }
-
-        self
-    }
-
-    #[cfg(feature = "Allow1_3APIs")]
-    #[inline]
-    pub fn end_render_pass_2(self, subpass_end_info: &crate::SubpassEndInfo) -> Self {
-        unsafe {
-            crate::vkfn::cmd_end_render_pass2(self.ptr.native_ptr(), subpass_end_info.as_ref());
+            (self.device.cmd_end_render_pass_2_khr_fn().0)(self.ptr.native_ptr(), subpass_end_info);
         }
 
         self
