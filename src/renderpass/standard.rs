@@ -1,15 +1,11 @@
-use ffi_helper::slice_as_ptr_empty_null;
+use ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
 
 use crate::vk::*;
 use crate::*;
 
-/// Builder structure to construct the `VkAttachmentDescription`
-#[repr(transparent)]
-#[derive(Clone)]
-pub struct AttachmentDescription(VkAttachmentDescription);
-impl AttachmentDescription {
+impl VkAttachmentDescription {
     pub const fn new(format: VkFormat, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
-        Self(VkAttachmentDescription {
+        Self {
             format,
             samples: 1,
             loadOp: VK_ATTACHMENT_LOAD_OP_DONT_CARE,
@@ -19,49 +15,60 @@ impl AttachmentDescription {
             initialLayout: init_layout as _,
             finalLayout: fin_layout as _,
             flags: 0,
-        })
+        }
     }
 
-    pub const fn format(mut self, fmt: VkFormat) -> Self {
-        self.0.format = fmt;
-        self
+    pub const fn format(self, fmt: VkFormat) -> Self {
+        Self { format: fmt, ..self }
     }
 
     /// default: don't care
-    pub const fn load_op(mut self, op: LoadOp) -> Self {
-        self.0.loadOp = op as _;
-        self
+    pub const fn load_op(self, op: LoadOp) -> Self {
+        Self {
+            loadOp: op as _,
+            ..self
+        }
     }
     /// default: don't care
-    pub const fn store_op(mut self, op: StoreOp) -> Self {
-        self.0.storeOp = op as _;
-        self
+    pub const fn store_op(self, op: StoreOp) -> Self {
+        Self {
+            storeOp: op as _,
+            ..self
+        }
     }
     pub const fn color_memory_op(self, load: LoadOp, store: StoreOp) -> Self {
         self.load_op(load).store_op(store)
     }
 
     /// default: don't care
-    pub const fn stencil_load_op(mut self, op: LoadOp) -> Self {
-        self.0.stencilLoadOp = op as _;
-        self
+    pub const fn stencil_load_op(self, op: LoadOp) -> Self {
+        Self {
+            stencilLoadOp: op as _,
+            ..self
+        }
     }
     /// default: don't care
-    pub const fn stencil_store_op(mut self, op: StoreOp) -> Self {
-        self.0.stencilStoreOp = op as _;
-        self
+    pub const fn stencil_store_op(self, op: StoreOp) -> Self {
+        Self {
+            stencilStoreOp: op as _,
+            ..self
+        }
     }
     pub const fn stencil_memory_op(self, load: LoadOp, store: StoreOp) -> Self {
         self.stencil_load_op(load).stencil_store_op(store)
     }
 
-    pub const fn init_layout(mut self, layout: ImageLayout) -> Self {
-        self.0.initialLayout = layout as _;
-        self
+    pub const fn init_layout(self, layout: ImageLayout) -> Self {
+        Self {
+            initialLayout: layout as _,
+            ..self
+        }
     }
-    pub const fn fin_layout(mut self, layout: ImageLayout) -> Self {
-        self.0.finalLayout = layout as _;
-        self
+    pub const fn fin_layout(self, layout: ImageLayout) -> Self {
+        Self {
+            finalLayout: layout as _,
+            ..self
+        }
     }
     pub const fn image_layout_transition(self, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
         self.init_layout(init_layout).fin_layout(fin_layout)
@@ -71,54 +78,29 @@ impl AttachmentDescription {
     }
 
     pub const fn may_alias(mut self) -> Self {
-        self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
+        self.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
         self
     }
     pub const fn no_alias(mut self) -> Self {
-        self.0.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
+        self.flags &= !VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
         self
     }
-    pub const fn samples(mut self, count: u32) -> Self {
-        self.0.samples = count;
-        self
-    }
-}
-impl AsRef<VkAttachmentDescription> for AttachmentDescription {
-    #[inline(always)]
-    fn as_ref(&self) -> &VkAttachmentDescription {
-        &self.0
-    }
-}
-impl core::ops::Deref for AttachmentDescription {
-    type Target = VkAttachmentDescription;
-
-    #[inline(always)]
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-impl From<AttachmentDescription> for VkAttachmentDescription {
-    #[inline(always)]
-    fn from(x: AttachmentDescription) -> Self {
-        x.0
+    pub const fn samples(self, count: u32) -> Self {
+        Self { samples: count, ..self }
     }
 }
 
-#[repr(transparent)]
-#[derive(Clone)]
-pub struct AttachmentReference(VkAttachmentReference);
-impl AttachmentReference {
-    pub const UNUSED: Self = Self(VkAttachmentReference {
+impl VkAttachmentReference {
+    pub const UNUSED: Self = Self {
         attachment: VK_ATTACHMENT_UNUSED,
         layout: 0,
-    });
+    };
 
-    #[inline(always)]
     pub const fn new(attachment_index: u32, layout: ImageLayout) -> Self {
-        Self(VkAttachmentReference {
+        Self {
             attachment: attachment_index,
             layout: layout as _,
-        })
+        }
     }
 }
 
@@ -142,10 +124,10 @@ impl AttachmentReference {
 #[derive(Clone)]
 pub struct SubpassDescription<'r> {
     base: VkSubpassDescription,
-    input_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
-    color_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
-    resolve_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
-    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r AttachmentReference>>,
+    input_lifetime: core::marker::PhantomData<&'r [VkAttachmentReference]>,
+    color_lifetime: core::marker::PhantomData<&'r [VkAttachmentReference]>,
+    resolve_lifetime: core::marker::PhantomData<&'r [VkAttachmentReference]>,
+    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r VkAttachmentReference>>,
     preserve_lifetime: core::marker::PhantomData<&'r [u32]>,
 }
 impl<'r> SubpassDescription<'r> {
@@ -172,7 +154,7 @@ impl<'r> SubpassDescription<'r> {
     }
 
     #[inline]
-    pub const fn input_attachments(mut self, inputs: &'r [AttachmentReference]) -> Self {
+    pub const fn input_attachments(mut self, inputs: &'r [VkAttachmentReference]) -> Self {
         self.base.inputAttachmentCount = inputs.len() as _;
         self.base.pInputAttachments = if inputs.is_empty() {
             core::ptr::null()
@@ -186,8 +168,8 @@ impl<'r> SubpassDescription<'r> {
     #[inline]
     pub const fn color_attachments(
         mut self,
-        colors: &'r [AttachmentReference],
-        resolves: &'r [AttachmentReference],
+        colors: &'r [VkAttachmentReference],
+        resolves: &'r [VkAttachmentReference],
     ) -> Self {
         assert!(resolves.is_empty() || resolves.len() == colors.len());
 
@@ -207,7 +189,7 @@ impl<'r> SubpassDescription<'r> {
     }
 
     #[inline]
-    pub const fn depth_stencil_attachment(mut self, a: &'r AttachmentReference) -> Self {
+    pub const fn depth_stencil_attachment(mut self, a: &'r VkAttachmentReference) -> Self {
         self.base.pDepthStencilAttachment = a as *const _ as _;
 
         self
@@ -227,13 +209,13 @@ impl<'r> SubpassDescription<'r> {
 #[derive(Clone)]
 pub struct RenderPassBuilder<'r> {
     base: VkRenderPassCreateInfo,
-    attachments: core::marker::PhantomData<&'r [AttachmentDescription]>,
+    attachments: core::marker::PhantomData<&'r [VkAttachmentDescription]>,
     subpasses: core::marker::PhantomData<&'r [SubpassDescription<'r>]>,
     dependencies: core::marker::PhantomData<&'r [VkSubpassDependency]>,
 }
 impl<'r> RenderPassBuilder<'r> {
     pub const fn new(
-        attachments: &'r [AttachmentDescription],
+        attachments: &'r [VkAttachmentDescription],
         subpasses: &'r [SubpassDescription<'r>],
         dependencies: &'r [VkSubpassDependency],
     ) -> Self {
@@ -255,24 +237,36 @@ impl<'r> RenderPassBuilder<'r> {
         }
     }
 
-    /// Create a new render pass object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    pub fn create<Device: crate::Device>(&self, device: Device) -> crate::Result<RenderPassObject<Device>> {
+    pub const unsafe fn from_raw(raw: VkRenderPassCreateInfo) -> Self {
+        Self {
+            base: raw,
+            attachments: core::marker::PhantomData,
+            subpasses: core::marker::PhantomData,
+            dependencies: core::marker::PhantomData,
+        }
+    }
+
+    pub const fn into_raw(self) -> VkRenderPassCreateInfo {
+        self.base
+    }
+}
+#[implements]
+impl super::RenderPassCreateInfo for RenderPassBuilder<'_> {
+    fn execute(
+        &self,
+        device: &(impl crate::VkHandle<Handle = VkDevice> + ?Sized),
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkRenderPass> {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkfn::create_render_pass(
                 device.native_ptr(),
                 self as *const _ as _,
-                std::ptr::null(),
+                opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()
-            .map(|_| RenderPassObject(h.assume_init(), device))
+            .map(|_| h.assume_init())
         }
     }
 }

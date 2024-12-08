@@ -1,7 +1,7 @@
 use derives::implements;
 
 use crate::{
-    AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags, RenderPassObject, StoreOp, VkAccessFlags,
+    AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags, StoreOp, VkAccessFlags,
     VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat, VkRenderPassCreateInfo2KHR,
     VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR, VulkanStructure,
     VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT, VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -309,22 +309,45 @@ impl<'d> RenderPassBuilder2<'d> {
         )
     }
 
-    #[implements]
-    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<RenderPassObject<Device>> {
+    pub const unsafe fn from_raw(raw: VkRenderPassCreateInfo2KHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkRenderPassCreateInfo2KHR {
+        self.0
+    }
+}
+#[implements]
+impl super::RenderPassCreateInfo for RenderPassBuilder2<'_> {
+    fn execute(
+        &self,
+        device: &(impl crate::VkHandle<Handle = super::VkDevice> + ?Sized),
+        allocation_callbacks: Option<&super::VkAllocationCallbacks>,
+    ) -> crate::Result<super::VkRenderPass> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         #[cfg(feature = "Allow1_3APIs")]
         unsafe {
-            crate::vkfn::create_render_pass2(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
+            crate::vkfn::create_render_pass2(
+                device.native_ptr(),
+                &self.0,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
         }
 
         #[cfg(not(feature = "Allow1_3APIs"))]
         unsafe {
-            (device.create_render_pass_2_khr_fn().0)(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
+            (device.create_render_pass_2_khr_fn().0)(
+                device.native_ptr(),
+                &self.0,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
         }
 
-        Ok(RenderPassObject(unsafe { h.assume_init() }, device))
+        Ok(unsafe { h.assume_init() })
     }
 }

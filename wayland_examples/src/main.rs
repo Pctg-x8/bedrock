@@ -223,23 +223,25 @@ fn main() {
         .map(|bb| bb.clone_parent())
         .collect::<Vec<_>>();
 
-    let renderpass = br::RenderPassBuilder2::new(
-        &[br::AttachmentDescription2::new(br::vk::VK_FORMAT_R8G8B8A8_SRGB)
-            .with_layout_to(br::ImageLayout::PresentSrc.from_undefined())
-            .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store)],
-        &[br::SubpassDescription2::new()
-            .colors(&[br::AttachmentReference2::color(0, br::ImageLayout::ColorAttachmentOpt)])],
-        &[
-            br::SubpassDependency2::new(br::SubpassIndex::Internal(0), br::SubpassIndex::External)
-                .by_region()
-                .of_memory(br::AccessFlags::COLOR_ATTACHMENT.write, br::AccessFlags::MEMORY.read)
-                .of_execution(
-                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                    br::PipelineStageFlags::ALL_COMMANDS,
-                ),
-        ],
+    let renderpass = br::RenderPassObject::new(
+        vk_device.clone(),
+        &br::RenderPassBuilder2::new(
+            &[br::AttachmentDescription2::new(br::vk::VK_FORMAT_R8G8B8A8_SRGB)
+                .with_layout_to(br::ImageLayout::PresentSrc.from_undefined())
+                .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store)],
+            &[br::SubpassDescription2::new()
+                .colors(&[br::AttachmentReference2::color(0, br::ImageLayout::ColorAttachmentOpt)])],
+            &[
+                br::SubpassDependency2::new(br::SubpassIndex::Internal(0), br::SubpassIndex::External)
+                    .by_region()
+                    .of_memory(br::AccessFlags::COLOR_ATTACHMENT.write, br::AccessFlags::MEMORY.read)
+                    .of_execution(
+                        br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                        br::PipelineStageFlags::ALL_COMMANDS,
+                    ),
+            ],
+        ),
     )
-    .create(vk_device.clone())
     .unwrap();
 
     let framebuffers = backbuffers

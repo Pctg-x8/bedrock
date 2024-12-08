@@ -64,6 +64,22 @@ impl<Device: crate::Device> DeviceChild for RenderPassObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> RenderPass for RenderPassObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> RenderPassObject<Device> {
+    #[implements]
+    #[inline(always)]
+    pub fn new(device: Device, create_info: &(impl RenderPassCreateInfo + ?Sized)) -> crate::Result<Self> {
+        create_info.execute(&device, None).map(move |x| Self(x, device))
+    }
+}
+
+#[implements]
+pub trait RenderPassCreateInfo {
+    fn execute(
+        &self,
+        device: &(impl crate::VkHandle<Handle = VkDevice> + ?Sized),
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkRenderPass>;
+}
 
 #[repr(transparent)]
 pub struct RenderPassBeginInfo<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd>(

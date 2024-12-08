@@ -217,7 +217,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .by_region(),
         ];
 
-        br::RenderPassBuilder2::new(&attachments, &subpasses, &dependencies).create(&device)?
+        br::RenderPassObject::new(
+            &device,
+            &br::RenderPassBuilder2::new(&attachments, &subpasses, &dependencies),
+        )?
     };
 
     let descriptor_layout_ub1 =
