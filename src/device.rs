@@ -407,6 +407,22 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
         r
     }
 }
+impl<Instance: crate::Instance> DeviceObject<Instance> {
+    /// Constructs a device from raw info structure
+    #[implements]
+    pub unsafe fn new_raw<
+        PhysicalDevice: crate::PhysicalDevice + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
+    >(
+        pdev: PhysicalDevice,
+        create_info: &VkDeviceCreateInfo,
+    ) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_device(pdev.native_ptr(), create_info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self::wrap_handle(h.assume_init(), pdev.transfer_instance()))
+    }
+}
 
 /// Opaque handle to a queue object
 #[derive(Clone, VkHandle, VkObject)]
@@ -432,7 +448,7 @@ impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
 }
 
 /// Family Index, Queue Priorities
-#[repr(transparent)]
+#[transparent_marked]
 pub struct DeviceQueueCreateInfo<'d>(VkDeviceQueueCreateInfo, core::marker::PhantomData<&'d [f32]>);
 impl<'d> DeviceQueueCreateInfo<'d> {
     pub const fn new(family_index: u32, priorities: &'d [f32]) -> Self {
@@ -577,12 +593,7 @@ impl<'p, 'd, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilde
             }
         }
 
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_device(pdev_ref.native_ptr(), &cinfo, ::std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(move |_| DeviceObject::wrap_handle(h.assume_init(), pdev_ref.transfer_instance()))
-        }
+        unsafe { DeviceObject::new_raw(pdev_ref, &cinfo) }
     }
 }
 
