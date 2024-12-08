@@ -7,9 +7,7 @@ use crate::{
     LayoutTransition, VkDeviceChildNonExtDestroyable, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
-use crate::{
-    FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, ShaderStage, StencilFaceMask,
-};
+use crate::{FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, StencilFaceMask};
 use crate::{ImageLayout, VkHandle};
 use std::mem::replace;
 #[implements]
@@ -729,7 +727,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     pub fn push_constant<T>(
         self,
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
-        stage: ShaderStage,
+        stage: VkShaderStageFlags,
         offset: u32,
         value: &T,
     ) -> Self {
@@ -737,7 +735,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
             crate::vkfn::cmd_push_constants(
                 self.ptr.native_ptr_mut(),
                 pipeline_layout.native_ptr(),
-                stage.0,
+                stage,
                 offset,
                 size_of::<T>() as _,
                 value as *const T as *const _,

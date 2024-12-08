@@ -5,8 +5,8 @@ use derives::{implements, transparent_marked};
 
 use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, SamplerObjectRef, ShaderStage, VkDeviceChildNonExtDestroyable,
-    VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
+    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, SamplerObjectRef, VkDeviceChildNonExtDestroyable, VkHandle,
+    VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
 };
 
 /// Opaque handle to a descriptor set layout object
@@ -128,7 +128,7 @@ impl DescriptorType {
     }
 
     pub const fn make_binding<'a>(self, binding: u32, count: u32) -> DescriptorSetLayoutBinding<'a> {
-        DescriptorSetLayoutBinding::new(binding, self, count, ShaderStage::ALL)
+        DescriptorSetLayoutBinding::new(binding, self, count, VK_SHADER_STAGE_ALL)
     }
 }
 
@@ -181,14 +181,13 @@ pub struct DescriptorSetLayoutBinding<'s> {
     immutable_samplers: core::marker::PhantomData<&'s [SamplerObjectRef<'s>]>,
 }
 impl<'s> DescriptorSetLayoutBinding<'s> {
-    #[inline(always)]
-    pub const fn new(binding: u32, r#type: DescriptorType, count: u32, shader_stage: ShaderStage) -> Self {
+    pub const fn new(binding: u32, r#type: DescriptorType, count: u32, shader_stage: VkShaderStageFlags) -> Self {
         Self {
             raw: VkDescriptorSetLayoutBinding {
                 binding,
                 descriptorType: r#type as _,
                 descriptorCount: count,
-                stageFlags: shader_stage.0,
+                stageFlags: shader_stage,
                 pImmutableSamplers: core::ptr::null(),
             },
             immutable_samplers: core::marker::PhantomData,
@@ -201,51 +200,42 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         unsafe { self.with_immutable_samplers_unchecked(samplers) }
     }
 
-    #[inline(always)]
     pub const unsafe fn with_immutable_samplers_unchecked(mut self, samplers: &'s [SamplerObjectRef<'s>]) -> Self {
         self.raw.pImmutableSamplers = slice_as_ptr_empty_null(samplers) as _;
         self
     }
 
-    #[inline(always)]
-    pub const fn for_shader_stage(mut self, mask: ShaderStage) -> Self {
-        self.raw.stageFlags = mask.0;
+    pub const fn for_shader_stage(mut self, mask: VkShaderStageFlags) -> Self {
+        self.raw.stageFlags = mask;
         self
     }
 
-    #[inline(always)]
     pub const fn only_for_vertex(self) -> Self {
-        self.for_shader_stage(ShaderStage::VERTEX)
+        self.for_shader_stage(VK_SHADER_STAGE_VERTEX_BIT)
     }
 
-    #[inline(always)]
     pub const fn only_for_tess_control(self) -> Self {
-        self.for_shader_stage(ShaderStage::TESSELLATION_CONTROL)
+        self.for_shader_stage(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT)
     }
 
-    #[inline(always)]
     pub const fn only_for_tess_evaluation(self) -> Self {
-        self.for_shader_stage(ShaderStage::TESSELLATION_EVALUATION)
+        self.for_shader_stage(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT)
     }
 
-    #[inline(always)]
     pub const fn only_for_tessellation(self) -> Self {
-        self.for_shader_stage(ShaderStage::TESSELLATION)
+        self.for_shader_stage(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT | VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT)
     }
 
-    #[inline(always)]
     pub const fn only_for_geometry(self) -> Self {
-        self.for_shader_stage(ShaderStage::GEOMETRY)
+        self.for_shader_stage(VK_SHADER_STAGE_GEOMETRY_BIT)
     }
 
-    #[inline(always)]
     pub const fn only_for_fragment(self) -> Self {
-        self.for_shader_stage(ShaderStage::FRAGMENT)
+        self.for_shader_stage(VK_SHADER_STAGE_FRAGMENT_BIT)
     }
 
-    #[inline(always)]
     pub const fn only_for_compute(self) -> Self {
-        self.for_shader_stage(ShaderStage::COMPUTE)
+        self.for_shader_stage(VK_SHADER_STAGE_COMPUTE_BIT)
     }
 }
 

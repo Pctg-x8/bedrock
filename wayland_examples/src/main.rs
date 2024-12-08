@@ -1,7 +1,7 @@
 use bedrock::{
     self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut,
-    GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, PipelineShaderStageProvider,
-    QueueMut, RenderPass, ShaderModule, Swapchain, VulkanSinkStructure,
+    GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass,
+    ShaderModule, Swapchain, VulkanSinkStructure,
 };
 use core::ffi::*;
 use std::{
@@ -271,18 +271,21 @@ fn main() {
     let pl = br::PipelineLayoutBuilder::new(
         &[br::DescriptorSetLayoutObjectRef::new(&dsl_ub1)],
         &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
-            br::ShaderStage::VERTEX,
+            br::vk::VK_SHADER_STAGE_VERTEX_BIT,
             0,
         )],
     )
     .create(&vk_device)
     .unwrap();
+    let shader_stages = &[
+        vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
+        fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+    ];
     let mut pipeline = br::NonDerivedGraphicsPipelineBuilder::new(
         &pl,
         renderpass.subpass(0),
         br::VertexProcessingStages::new(
-            br::VertexShaderStage::new(vsh.with_entry_point(c"main"))
-                .with_fragment_shader_stage(fsh.with_entry_point(c"main")),
+            shader_stages,
             &vi_bindings,
             &vi_attrs,
             br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
@@ -290,11 +293,12 @@ fn main() {
     );
     pipeline
         .multisample_state(Some(br::MultisampleState::new()))
-        .add_attachment_blend(br::vk::VkPipelineColorBlendAttachmentState::NOBLEND)
-        .viewport_scissors(
-            br::DynamicArrayState::Static(&[viewport]),
-            br::DynamicArrayState::Static(&[rect]),
-        );
+        .color_blend_state(br::ColorBlendState::new(
+            None,
+            &[br::vk::VkPipelineColorBlendAttachmentState::NOBLEND],
+            [0.0; 4],
+        ))
+        .viewport_state(br::ViewportState::new(&[viewport], &[rect]));
     let pipeline = pipeline
         .create(
             &vk_device,
@@ -464,7 +468,7 @@ fn main() {
                 &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
             )
             .bind_graphics_pipeline(&pipeline)
-            .push_constant(&pl, br::ShaderStage::VERTEX, 0, &[640.0f32, 480.0])
+            .push_constant(&pl, br::vk::VK_SHADER_STAGE_VERTEX_BIT, 0, &[640.0f32, 480.0])
             .bind_graphics_descriptor_sets(&pl, 0, &[object_descriptor], &[])
             .bind_vertex_buffers(
                 0,

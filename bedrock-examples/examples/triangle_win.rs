@@ -5,8 +5,8 @@ use bedrock::{
     ShaderModule,
 };
 use br::{
-    Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice,
-    PipelineShaderStageProvider, RenderPass, Status, Swapchain, VulkanSinkStructure,
+    Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass,
+    Status, Swapchain, VulkanSinkStructure,
 };
 use windows::{
     core::PCSTR,
@@ -217,7 +217,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pl = br::PipelineLayoutBuilder::new(
         &[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)],
         &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
-            br::ShaderStage::VERTEX,
+            br::vk::VK_SHADER_STAGE_VERTEX_BIT,
             0,
         )],
     )
@@ -238,8 +238,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         },
     ];
     let mut pipeline = {
-        let shader_stages = br::VertexShaderStage::new(br::PipelineShader::new(&vsh, c"main"))
-            .with_fragment_shader_stage(br::PipelineShader::new(&fsh, c"main"));
+        let shader_stages = &[
+            vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
+            fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+        ];
         let vps = br::VertexProcessingStages::new(
             shader_stages,
             &vi_bindings,
@@ -248,12 +250,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
         let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, render_pass.subpass(0), vps);
         builder
-            .viewport_scissors(
-                br::DynamicArrayState::Static(&viewports),
-                br::DynamicArrayState::Static(&scissors),
-            )
+            .viewport_state(br::ViewportState::new(&viewports, &scissors))
             .multisample_state(Some(br::MultisampleState::new()))
-            .add_attachment_blend(br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED);
+            .color_blend_state(br::ColorBlendState::new(
+                None,
+                &[br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED],
+                [0.0; 4],
+            ));
 
         builder.create(&device, Some(&pc))?
     };
@@ -373,7 +376,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
             .push_constant(
                 &pl,
-                br::ShaderStage::VERTEX,
+                br::vk::VK_SHADER_STAGE_VERTEX_BIT,
                 0,
                 &[viewports[0].width, viewports[0].height],
             )
@@ -529,8 +532,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let viewports = [scissors[0].make_viewport(0.0..1.0)];
 
             pipeline = {
-                let shader_stages = br::VertexShaderStage::new(vsh.with_entry_point(c"main"))
-                    .with_fragment_shader_stage(fsh.with_entry_point(c"main"));
+                let shader_stages = &[
+                    vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
+                    fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+                ];
                 let vps = br::VertexProcessingStages::new(
                     shader_stages,
                     &vi_bindings,
@@ -539,12 +544,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 );
                 let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, render_pass.subpass(0), vps);
                 builder
-                    .viewport_scissors(
-                        br::DynamicArrayState::Static(&viewports),
-                        br::DynamicArrayState::Static(&scissors),
-                    )
+                    .viewport_state(br::ViewportState::new(&viewports, &scissors))
                     .multisample_state(Some(br::MultisampleState::new()))
-                    .add_attachment_blend(br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED);
+                    .color_blend_state(br::ColorBlendState::new(
+                        None,
+                        &[br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED],
+                        [0.0; 4],
+                    ));
 
                 builder.create(&device, Some(&pc))?
             };
@@ -566,7 +572,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
                     .push_constant(
                         &pl,
-                        br::ShaderStage::VERTEX,
+                        br::vk::VK_SHADER_STAGE_VERTEX_BIT,
                         0,
                         &[viewports[0].width, viewports[0].height],
                     )

@@ -929,7 +929,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .iter()
             .map(|b| {
                 let extras = Box::pin(b.shader.make_extras());
-                let stage = b.shader.base_struct(crate::ShaderStage::COMPUTE, &extras);
+                let stage = b.shader.base_struct(crate::ShaderStage::Compute, &extras);
 
                 (
                     VkComputePipelineCreateInfo {
@@ -938,7 +938,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                         flags: 0,
                         basePipelineHandle: VkPipeline::NULL,
                         basePipelineIndex: -1,
-                        stage,
+                        stage: stage.0,
                         layout: b.layout.native_ptr(),
                     },
                     extras,
@@ -976,7 +976,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .iter()
             .map(|b| {
                 let extras = Box::pin(b.shader.make_extras());
-                let stage = b.shader.base_struct(crate::ShaderStage::COMPUTE, &extras);
+                let stage = b.shader.base_struct(crate::ShaderStage::Compute, &extras);
 
                 (
                     VkComputePipelineCreateInfo {
@@ -985,7 +985,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                         flags: 0,
                         basePipelineHandle: VkPipeline::NULL,
                         basePipelineIndex: -1,
-                        stage,
+                        stage: stage.0,
                         layout: b.layout.native_ptr(),
                     },
                     extras,
