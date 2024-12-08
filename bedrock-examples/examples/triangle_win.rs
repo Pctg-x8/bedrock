@@ -429,7 +429,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ))
         .end()?;
 
-    let mut init_fence = br::FenceBuilder::new().create(&device)?;
+    let mut init_fence = br::FenceObject::new(&device, &br::FenceCreateInfo::new(0))?;
     let mut init_command_pool = br::CommandPoolBuilder::new(graphics_queue_family)
         .transient()
         .create(&device)?;
@@ -469,10 +469,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     init_fence.wait()?;
 
-    let mut bb_ready = br::SemaphoreBuilder::new().create(&device)?;
-    let data_ready = br::SemaphoreBuilder::new().create(&device)?;
-    let present_ready = br::SemaphoreBuilder::new().create(&device)?;
-    let mut last_render_fence = br::FenceBuilder::new().create(&device)?;
+    let mut bb_ready = br::SemaphoreObject::new(&device, &br::SemaphoreCreateInfo::new())?;
+    let data_ready = br::SemaphoreObject::new(&device, &br::SemaphoreCreateInfo::new())?;
+    let present_ready = br::SemaphoreObject::new(&device, &br::SemaphoreCreateInfo::new())?;
+    let mut last_render_fence = br::FenceObject::new(&device, &br::FenceCreateInfo::new(0))?;
     let mut last_render_occured = false;
     let mut resize_next = false;
 

@@ -2,7 +2,7 @@
 
 use crate::{
     chain, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 use derives::{implements, transparent_marked};
 
@@ -389,6 +389,39 @@ impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
     }
 }
 
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SemaphoreCreateInfo<'d>(
+    VkSemaphoreCreateInfo,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+);
+impl<'d> SemaphoreCreateInfo<'d> {
+    pub const fn new() -> Self {
+        Self(
+            VkSemaphoreCreateInfo {
+                sType: VkSemaphoreCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkSemaphoreCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkSemaphoreCreateInfo {
+        self.0
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkSemaphore::OBJECT_TYPE)]
 pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(VkSemaphore, Device);
@@ -421,6 +454,25 @@ impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
 impl<Device: crate::Device> SemaphoreMut for SemaphoreObject<Device> {}
 
 impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
+    /// Create a new queue semaphore object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &SemaphoreCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_semaphore(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -520,7 +572,42 @@ impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
     }
 }
 
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FenceCreateInfo<'d>(
+    VkFenceCreateInfo,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+);
+impl<'d> FenceCreateInfo<'d> {
+    pub const fn new(flags: VkFenceCreateFlags) -> Self {
+        Self(
+            VkFenceCreateInfo {
+                sType: VkFenceCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkFenceCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkFenceCreateInfo {
+        self.0
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+
+#[deprecated = "use FenceCreateInfo"]
 pub struct FenceBuilder(VkFenceCreateInfo, Vec<Box<GenericVulkanStructure>>);
+#[allow(deprecated)]
 impl FenceBuilder {
     #[inline(always)]
     pub const fn new() -> Self {
@@ -570,7 +657,7 @@ impl FenceBuilder {
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<FenceObject<Device>> {
         crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
-        unsafe { FenceObject::new_raw(device, &self.0) }
+        unsafe { FenceObject::new(device, &FenceCreateInfo::from_raw(self.0)) }
     }
 }
 
@@ -586,16 +673,20 @@ impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
     /// no guarantees will be provided (simply calls under api)
     #[implements]
     #[inline]
-    pub unsafe fn new_raw(device: Device, info: &VkFenceCreateInfo) -> crate::Result<Self> {
+    pub fn new(device: Device, info: &FenceCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_fence(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+        unsafe {
+            crate::vkfn::create_fence(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr()).into_result()?;
 
-        Ok(Self::manage(h.assume_init(), device))
+            Ok(Self::manage(h.assume_init(), device))
+        }
     }
 }
 
+#[deprecated = "use SemaphoreCreateInfo"]
 pub struct SemaphoreBuilder(VkSemaphoreCreateInfo, Vec<Box<GenericVulkanStructure>>);
+#[allow(deprecated)]
 impl SemaphoreBuilder {
     #[inline(always)]
     pub const fn new() -> Self {
@@ -643,28 +734,7 @@ impl SemaphoreBuilder {
     pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
         chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
 
-        unsafe { SemaphoreObject::new_raw(device, &self.0) }
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
-    /// Create a new queue semaphore object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    #[inline]
-    pub unsafe fn new_raw(device: Device, info: &VkSemaphoreCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_semaphore(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self::manage(h.assume_init(), device))
+        unsafe { SemaphoreObject::new(device, &SemaphoreCreateInfo::from_raw(self.0)) }
     }
 }
 

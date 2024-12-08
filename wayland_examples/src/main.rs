@@ -505,7 +505,7 @@ fn main() {
             .unwrap();
     }
 
-    let mut fence = br::FenceBuilder::new().create(vk_device.clone()).unwrap();
+    let mut fence = br::FenceObject::new(vk_device.clone(), &br::FenceCreateInfo::new(0)).unwrap();
     let bb_index = vk_swapchain
         .acquire_next(None, br::CompletionHandlerMut::Host(fence.as_transparent_ref_mut()))
         .unwrap();
