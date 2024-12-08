@@ -1619,43 +1619,6 @@ impl<
     }
 }
 
-/// Blending Factor
-#[repr(C)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum BlendFactor {
-    Zero = VK_BLEND_FACTOR_ZERO as _,
-    One = VK_BLEND_FACTOR_ONE as _,
-    SourceColor = VK_BLEND_FACTOR_SRC_COLOR as _,
-    OneMinusSourceColor = VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR as _,
-    DestColor = VK_BLEND_FACTOR_DST_COLOR as _,
-    OneMinusDestColor = VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR as _,
-    SourceAlpha = VK_BLEND_FACTOR_SRC_ALPHA as _,
-    OneMinusSourceAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA as _,
-    DestAlpha = VK_BLEND_FACTOR_DST_ALPHA as _,
-    OneMinusDestAlpha = VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA as _,
-    ConstantColor = VK_BLEND_FACTOR_CONSTANT_COLOR as _,
-    OneMinusConstantColor = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR as _,
-    ConstantAlpha = VK_BLEND_FACTOR_CONSTANT_ALPHA as _,
-    OneMinusConstantAlpha = VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA as _,
-    /// (f, f, f, 1) where f = min(Source Alpha, 1 - Dest Alpha)
-    SrcAlphaSat = VK_BLEND_FACTOR_SRC_ALPHA_SATURATE as _,
-    AltSourceColor = VK_BLEND_FACTOR_SRC1_COLOR as _,
-    OneMinusAltSourceColor = VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR as _,
-    AltSourceAlpha = VK_BLEND_FACTOR_SRC1_ALPHA as _,
-    OneMinusAltSourceAlpha = VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA as _,
-}
-/// Blending Op
-#[repr(C)]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-pub enum BlendOp {
-    Add = VK_BLEND_OP_ADD as _,
-    Sub = VK_BLEND_OP_SUBTRACT as _,
-    /// Reverse subtraction order(destination - source)
-    RevSub = VK_BLEND_OP_REVERSE_SUBTRACT as _,
-    Min = VK_BLEND_OP_MIN as _,
-    Max = VK_BLEND_OP_MAX as _,
-}
-
 impl VkPipelineColorBlendAttachmentState {
     pub const NOBLEND: Self = Self {
         colorWriteMask: VK_COLOR_COMPONENT_A_BIT
@@ -1666,7 +1629,9 @@ impl VkPipelineColorBlendAttachmentState {
         ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
     };
 
-    // https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
+    /// `src * 1 + dst * (1 - src.a)` for both color and alpha.
+    ///
+    /// https://stackoverflow.com/questions/18918643/how-to-achieve-d3d-output-with-premultiplied-alpha-for-use-with-d3dimage-in-wpf
     pub const PREMULTIPLIED: Self = Self {
         colorWriteMask: VK_COLOR_COMPONENT_A_BIT
             | VK_COLOR_COMPONENT_R_BIT
