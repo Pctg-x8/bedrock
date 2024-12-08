@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
 use bedrock::{
-    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, SemaphoreMut,
-    ShaderModule,
+    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, ShaderModule,
+    VkHandle, VkHandleMut,
 };
 use br::{
     Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass,
@@ -465,7 +465,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[br::CommandBufferSubmitInfo::new(&init_command_buffers[0])],
             &[],
         )],
-        Some(init_fence.as_transparent_mut_ref()),
+        Some(init_fence.as_transparent_ref_mut()),
     )?;
     init_fence.wait()?;
 
@@ -612,7 +612,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         let bb_index =
-            swapchain.acquire_next(None, br::CompletionHandlerMut::Queue(bb_ready.as_transparent_mut_ref()))?;
+            swapchain.acquire_next(None, br::CompletionHandlerMut::Queue(bb_ready.as_transparent_ref_mut()))?;
 
         let dt = t.elapsed().as_secs_f32();
         rot += dt * 120.0;
@@ -637,7 +637,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 br::SubmitInfo2::new(&[], &transfer_commands, &transfer_done_semaphores),
                 br::SubmitInfo2::new(&render_wait_semaphores, &render_commands, &render_done_semaphores),
             ],
-            Some(last_render_fence.as_transparent_mut_ref()),
+            Some(last_render_fence.as_transparent_ref_mut()),
         )?;
         match queue.present(br::PresentInfo::new(
             &[present_ready.as_transparent_ref()],

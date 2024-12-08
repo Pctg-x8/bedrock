@@ -970,7 +970,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     fn wait_multiple_fences(
         &self,
-        objects: &[crate::FenceRef],
+        objects: &[VkHandleRef<VkFence>],
         wait_all: bool,
         timeout: Option<u64>,
     ) -> crate::Result<bool> {
@@ -998,7 +998,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn reset_multiple_fences(&self, objects: &[crate::FenceMutRef]) -> crate::Result<()> {
+    fn reset_multiple_fences(&self, objects: &[VkHandleRefMut<VkFence>]) -> crate::Result<()> {
         unsafe {
             crate::vkfn::reset_fences(self.native_ptr(), objects.len() as _, objects.as_ptr_empty_null() as _)
                 .into_result()
@@ -1384,7 +1384,11 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements]
-    fn bind_sparse(&mut self, batches: &[impl SparseBindingOpBatch], fence: Option<FenceMutRef>) -> crate::Result<()> {
+    fn bind_sparse(
+        &mut self,
+        batches: &[impl SparseBindingOpBatch],
+        fence: Option<VkHandleRefMut<VkFence>>,
+    ) -> crate::Result<()> {
         let batches: Vec<_> = batches.iter().map(SparseBindingOpBatch::make_info_struct).collect();
 
         unsafe { self.bind_sparse_raw(&batches, fence) }
@@ -1404,13 +1408,13 @@ pub trait QueueMut: Queue + VkHandleMut {
     unsafe fn bind_sparse_raw(
         &mut self,
         batches: &[VkBindSparseInfo],
-        fence: Option<FenceMutRef>,
+        fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         crate::vkfn::queue_bind_sparse(
             self.native_ptr_mut(),
             batches.len() as _,
             batches.as_ptr_empty_null(),
-            fence.unwrap_or(FenceMutRef::NULL).0,
+            fence.map_or(VkFence::NULL, |x| x.0),
         )
         .into_result()
         .map(drop)
@@ -1424,7 +1428,11 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements]
-    fn submit(&mut self, batches: &[impl SubmissionBatch], fence: Option<FenceMutRef>) -> crate::Result<()> {
+    fn submit(
+        &mut self,
+        batches: &[impl SubmissionBatch],
+        fence: Option<VkHandleRefMut<VkFence>>,
+    ) -> crate::Result<()> {
         let batch_resources: Vec<_> = batches
             .iter()
             .map(|b| {
@@ -1445,7 +1453,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     fn submit_alt<'r>(
         &mut self,
         batches: impl IntoIterator<Item = SubmissionBatch2<'r>>,
-        fence: Option<FenceMutRef>,
+        fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
 
@@ -1457,14 +1465,14 @@ pub trait QueueMut: Queue + VkHandleMut {
     fn submit_alt3<'r>(
         &mut self,
         batches: &'r [SubmissionBatch3<'r>],
-        fence: Option<FenceMutRef>,
+        fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_submit(
                 self.native_ptr_mut(),
                 batches.len() as _,
                 slice_as_ptr_empty_null(batches) as _,
-                fence.unwrap_or(FenceMutRef::NULL).0,
+                fence.map_or(VkFence::NULL, |x| x.0),
             )
             .into_result()
             .map(drop)
@@ -1482,12 +1490,16 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// # Safety
     /// no guarantees will be provided (simply calls under api)
     #[implements]
-    unsafe fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<FenceMutRef>) -> crate::Result<()> {
+    unsafe fn submit_raw(
+        &mut self,
+        batches: &[VkSubmitInfo],
+        fence: Option<VkHandleRefMut<VkFence>>,
+    ) -> crate::Result<()> {
         crate::vkfn::queue_submit(
             self.native_ptr_mut(),
             batches.len() as _,
             batches.as_ptr_empty_null(),
-            fence.unwrap_or(FenceMutRef::NULL).0,
+            fence.map_or(VkFence::NULL, |x| x.0),
         )
         .into_result()
         .map(drop)
@@ -1501,14 +1513,14 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements("VK_KHR_synchronization2")]
-    fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<FenceMutRef>) -> crate::Result<()> {
+    fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
         #[cfg(feature = "Allow1_3APIs")]
         unsafe {
             crate::vkfn::queue_submit2(
                 self.native_ptr_mut(),
                 batches.len() as _,
                 slice_as_ptr_empty_null(batches) as _,
-                fence.unwrap_or(FenceMutRef::NULL).0,
+                fence.map_or(VkFence::NULL, |x| x.0),
             )
             .into_result()
             .map(drop)

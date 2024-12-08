@@ -1,16 +1,11 @@
 use crate::{vk::*, DeviceChild, VkHandle, VkRawHandle};
-use derives::{implements, transparent_marked};
+use derives::implements;
 
 use super::CompletionHandlerMut;
 
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn format(&self) -> VkFormat;
     fn size(&self) -> &VkExtent2D;
-
-    #[inline(always)]
-    fn as_transparent_ref(&self) -> SwapchainRef<Self> {
-        SwapchainRef(self.native_ptr(), core::marker::PhantomData)
-    }
 
     /// Retrieve the index of the next available presentation image
     /// # Failures
@@ -119,17 +114,3 @@ DerefContainerBracketImpl!(for Swapchain {
         T::size(self)
     }
 });
-
-#[transparent_marked]
-pub struct SwapchainRef<'r, R: crate::Swapchain + ?Sized>(
-    pub(crate) VkSwapchainKHR,
-    pub(crate) core::marker::PhantomData<&'r R>,
-);
-impl<'r, R: crate::Swapchain + ?Sized> VkHandle for SwapchainRef<'r, R> {
-    type Handle = VkSwapchainKHR;
-
-    #[inline(always)]
-    fn native_ptr(&self) -> Self::Handle {
-        self.0
-    }
-}

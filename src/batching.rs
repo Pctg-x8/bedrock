@@ -3,7 +3,7 @@ use derives::implements;
 use crate::{
     ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions},
     vk::*,
-    CommandBufferRef, FenceMutRef, PipelineStageFlags, SemaphoreRef, VkHandle, VulkanStructure,
+    CommandBufferRef, PipelineStageFlags, VkHandle, VkHandleRef, VkHandleRefMut, VulkanStructure,
 };
 
 pub struct TemporalSubmissionBatchResources {
@@ -42,17 +42,17 @@ pub struct SubmissionBatch3<'d> {
     raw: VkSubmitInfo,
     _refs: core::marker::PhantomData<(
         &'d [CommandBufferRef<'d>],
-        &'d [SemaphoreRef<'d>],
+        &'d [VkHandleRef<'d, VkSemaphore>],
         &'d [PipelineStageFlags],
     )>,
 }
 impl<'d> SubmissionBatch3<'d> {
     #[inline(always)]
     pub fn new(
-        wait_semaphores: &'d [SemaphoreRef<'d>],
+        wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
         wait_dst_stage_masks: &'d [PipelineStageFlags],
         command_buffers: &'d [CommandBufferRef<'d>],
-        signal_semaphores: &'d [SemaphoreRef<'d>],
+        signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
     ) -> Self {
         assert_eq!(wait_semaphores.len(), wait_dst_stage_masks.len());
 
@@ -68,10 +68,10 @@ impl<'d> SubmissionBatch3<'d> {
 
     #[inline(always)]
     pub const fn new_wait_semaphore_array<const N: usize>(
-        wait_semaphores: &'d [SemaphoreRef<'d>; N],
+        wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>; N],
         wait_dst_stage_masks: &'d [PipelineStageFlags; N],
         command_buffers: &'d [CommandBufferRef<'d>],
-        signal_semaphores: &'d [SemaphoreRef<'d>],
+        signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
     ) -> Self {
         unsafe {
             Self::new_unchecked(
@@ -85,10 +85,10 @@ impl<'d> SubmissionBatch3<'d> {
 
     #[inline]
     pub const unsafe fn new_unchecked(
-        wait_semaphores: &'d [SemaphoreRef<'d>],
+        wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
         wait_dst_stage_masks: &'d [PipelineStageFlags],
         command_buffers: &'d [CommandBufferRef<'d>],
-        signal_semaphores: &'d [SemaphoreRef<'d>],
+        signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
     ) -> Self {
         Self {
             raw: VkSubmitInfo {
@@ -206,7 +206,7 @@ impl<'r> SubmissionBatch2<'r> {
     pub fn submit(
         self,
         queue: &mut (impl crate::QueueMut + ?Sized),
-        wait_fence: Option<FenceMutRef>,
+        wait_fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         unsafe { queue.submit_raw(&[self.0], wait_fence) }
     }

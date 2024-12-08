@@ -1,4 +1,4 @@
-use crate::vk::VkObjectType;
+use crate::{vk::VkObjectType, Transparent};
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {
@@ -6,11 +6,21 @@ pub trait VkHandle {
 
     /// Retrieve an underlying handle
     fn native_ptr(&self) -> Self::Handle;
+
+    #[inline(always)]
+    fn as_transparent_ref(&self) -> VkHandleRef<Self::Handle> {
+        VkHandleRef::new(self)
+    }
 }
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Mutable Handler
 pub trait VkHandleMut: VkHandle {
     /// Retrieve an underlying mutable handle
     fn native_ptr_mut(&mut self) -> Self::Handle;
+
+    #[inline(always)]
+    fn as_transparent_ref_mut(&mut self) -> VkHandleRefMut<Self::Handle> {
+        VkHandleRefMut::new(self)
+    }
 }
 
 DerefContainerBracketImpl!(for VkHandle {
@@ -191,7 +201,7 @@ pub trait VkDeviceChildNonExtDestroyable {
 
 #[repr(transparent)]
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
-pub struct VkHandleRef<'r, H>(H, core::marker::PhantomData<&'r dyn VkHandle<Handle = H>>);
+pub struct VkHandleRef<'r, H>(pub(crate) H, core::marker::PhantomData<&'r dyn VkHandle<Handle = H>>);
 impl<'r, H> VkHandleRef<'r, H> {
     pub fn new(r: &'r (impl VkHandle<Handle = H> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
@@ -212,9 +222,42 @@ impl<H: Copy> VkHandle for VkHandleRef<'_, H> {
         self.0
     }
 }
-impl<H: Copy> VkHandleMut for VkHandleRef<'_, H> {
+unsafe impl<H> Transparent for VkHandleRef<'_, H> {
+    type Target = H;
+}
+
+#[repr(transparent)]
+#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+pub struct VkHandleRefMut<'r, H>(
+    pub(crate) H,
+    core::marker::PhantomData<&'r mut dyn VkHandle<Handle = H>>,
+);
+impl<'r, H> VkHandleRefMut<'r, H> {
+    pub fn new(r: &'r mut (impl VkHandle<Handle = H> + ?Sized)) -> Self {
+        Self(r.native_ptr(), core::marker::PhantomData)
+    }
+
+    /// simple raw handle wrapper without any lifetime constraints.
+    /// # Safety
+    /// owner of the handle must be alive while the handle will be used.
+    pub const unsafe fn dangling(h: H) -> Self {
+        Self(h, core::marker::PhantomData)
+    }
+}
+impl<H: Copy> VkHandle for VkHandleRefMut<'_, H> {
+    type Handle = H;
+
+    #[inline(always)]
+    fn native_ptr(&self) -> H {
+        self.0
+    }
+}
+impl<H: Copy> VkHandleMut for VkHandleRefMut<'_, H> {
     #[inline(always)]
     fn native_ptr_mut(&mut self) -> H {
         self.0
     }
+}
+unsafe impl<H> Transparent for VkHandleRefMut<'_, H> {
+    type Target = H;
 }

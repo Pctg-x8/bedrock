@@ -1,7 +1,7 @@
 use bedrock::{
     self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut,
     GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass,
-    ShaderModule, Swapchain, VulkanSinkStructure,
+    ShaderModule, Swapchain, VkHandle, VkHandleMut, VulkanSinkStructure,
 };
 use core::ffi::*;
 use std::{
@@ -507,7 +507,7 @@ fn main() {
 
     let mut fence = br::FenceBuilder::new().create(vk_device.clone()).unwrap();
     let bb_index = vk_swapchain
-        .acquire_next(None, br::CompletionHandlerMut::Host(fence.as_transparent_mut_ref()))
+        .acquire_next(None, br::CompletionHandlerMut::Host(fence.as_transparent_ref_mut()))
         .unwrap();
     fence.wait().unwrap();
     fence.reset().unwrap();
@@ -518,14 +518,14 @@ fn main() {
                 &[br::CommandBufferSubmitInfo::new(&cb[bb_index as usize])],
                 &[],
             )],
-            Some(fence.as_transparent_mut_ref()),
+            Some(fence.as_transparent_ref_mut()),
         )
         .unwrap();
     fence.wait().unwrap();
     fence.reset().unwrap();
     vk_queue
         .present(br::PresentInfo::new(
-            &[] as &[br::SemaphoreRef],
+            &[] as &[br::VkHandleRef<br::vk::VkSemaphore>],
             &[vk_swapchain.as_transparent_ref()],
             &[bb_index],
         ))
@@ -573,7 +573,7 @@ fn main() {
                 .swapchain
                 .acquire_next(
                     None,
-                    br::CompletionHandlerMut::Host(self.fence.as_transparent_mut_ref()),
+                    br::CompletionHandlerMut::Host(self.fence.as_transparent_ref_mut()),
                 )
                 .unwrap();
             self.fence.wait().unwrap();
@@ -588,14 +588,14 @@ fn main() {
                         ],
                         &[],
                     )],
-                    Some(self.fence.as_transparent_mut_ref()),
+                    Some(self.fence.as_transparent_ref_mut()),
                 )
                 .unwrap();
             self.fence.wait().unwrap();
             self.fence.reset().unwrap();
             self.queue
                 .present(br::PresentInfo::new(
-                    &[] as &[br::SemaphoreRef],
+                    &[] as &[br::VkHandleRef<br::vk::VkSemaphore>],
                     &[self.swapchain.as_transparent_ref()],
                     &[bb_index],
                 ))

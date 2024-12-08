@@ -12,11 +12,6 @@ use derives::{implements, transparent_marked};
 /// let _fo: Option<Box<dyn bedrock::Fence>> = None;
 /// ```
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
-    #[inline(always)]
-    fn as_transparent_ref(&self) -> FenceRef {
-        FenceRef(self.native_ptr(), core::marker::PhantomData)
-    }
-
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
     /// On failure, this command returns
@@ -150,11 +145,6 @@ GuardsImpl!(for Fence {});
 /// let _fo: Option<Box<dyn bedrock::FenceMut>> = None;
 /// ```
 pub trait FenceMut: Fence + VkHandleMut {
-    #[inline(always)]
-    fn as_transparent_mut_ref(&mut self) -> FenceMutRef {
-        FenceMutRef(self.native_ptr_mut(), core::marker::PhantomData)
-    }
-
     /// Resets a fence object
     /// # Failures
     /// On failure, this command returns
@@ -178,11 +168,6 @@ pub trait DeviceChildFence: DeviceChild + Fence {}
 impl<T: DeviceChild + Fence> DeviceChildFence for T {}
 
 pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
-    #[inline(always)]
-    fn as_transparent_ref(&self) -> SemaphoreRef {
-        SemaphoreRef(self.native_ptr(), core::marker::PhantomData)
-    }
-
     /// Get a Windows HANDLE for a semaphore
     ///
     /// A returned handle needs to be closed by caller
@@ -280,12 +265,7 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
 DerefContainerBracketImpl!(for Semaphore {});
 GuardsImpl!(for Semaphore {});
 
-pub trait SemaphoreMut: Semaphore + VkHandleMut {
-    #[inline(always)]
-    fn as_transparent_mut_ref(&mut self) -> SemaphoreMutRef {
-        SemaphoreMutRef(self.native_ptr_mut(), core::marker::PhantomData)
-    }
-}
+pub trait SemaphoreMut: Semaphore + VkHandleMut {}
 DerefContainerBracketImpl!(for mut SemaphoreMut {});
 GuardsImpl!(for mut SemaphoreMut {});
 
@@ -351,42 +331,6 @@ GuardsImpl!(for Status {
     }
 });
 
-/// A handle reference to a fence
-#[transparent_marked]
-pub struct FenceRef<'r>(
-    pub(crate) VkFence,
-    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkFence>>,
-);
-impl<'r> FenceRef<'r> {
-    #[inline(always)]
-    pub const fn unbounded(h: VkFence) -> Self {
-        Self(h, core::marker::PhantomData)
-    }
-}
-impl<'r> VkHandle for FenceRef<'r> {
-    type Handle = VkFence;
-
-    #[inline(always)]
-    fn native_ptr(&self) -> Self::Handle {
-        self.0
-    }
-}
-
-/// A mutable handle reference to a fence
-#[transparent_marked]
-pub struct FenceMutRef<'r>(
-    pub(crate) VkFence,
-    core::marker::PhantomData<&'r mut dyn VkHandle<Handle = VkFence>>,
-);
-impl<'r> FenceMutRef<'r> {
-    pub const NULL: Self = Self(VkFence::NULL, core::marker::PhantomData);
-
-    #[inline(always)]
-    pub fn unbounded(h: VkFence) -> Self {
-        Self(h, core::marker::PhantomData)
-    }
-}
-
 #[derive(VkHandle)]
 pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
 #[implements]
@@ -445,37 +389,6 @@ impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
     }
 }
 
-/// A handle reference to a semaphore
-#[transparent_marked]
-pub struct SemaphoreRef<'r>(
-    pub(crate) VkSemaphore,
-    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkSemaphore>>,
-);
-impl<'r> SemaphoreRef<'r> {
-    pub const fn unbounded(h: VkSemaphore) -> Self {
-        Self(h, core::marker::PhantomData)
-    }
-}
-impl<'r> VkHandle for SemaphoreRef<'r> {
-    type Handle = VkSemaphore;
-
-    fn native_ptr(&self) -> Self::Handle {
-        self.0
-    }
-}
-
-/// A mutable handle reference to a semaphore
-#[transparent_marked]
-pub struct SemaphoreMutRef<'r>(
-    pub(crate) VkSemaphore,
-    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkSemaphore>>,
-);
-impl<'r> SemaphoreMutRef<'r> {
-    pub fn unbounded(h: VkSemaphore) -> Self {
-        Self(h, core::marker::PhantomData)
-    }
-}
-
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkSemaphore::OBJECT_TYPE)]
 pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(VkSemaphore, Device);
@@ -506,12 +419,6 @@ impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
 }
 impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
 impl<Device: crate::Device> SemaphoreMut for SemaphoreObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
-    #[inline(always)]
-    pub const fn as_transparent_ref(&self) -> SemaphoreRef {
-        SemaphoreRef(self.0, core::marker::PhantomData)
-    }
-}
 
 impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
     /// Constructs from raw values
