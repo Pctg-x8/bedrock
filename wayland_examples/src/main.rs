@@ -26,6 +26,26 @@ pub struct ObjectParameters {
     pub rot: f32,
 }
 
+fn read_spv_binary(path: impl AsRef<std::path::Path>) -> std::io::Result<Vec<u32>> {
+    let b = std::fs::read(path)?;
+
+    // 4byte境界にするためにとりあえずコピー
+    // 本当はちゃんとあらかじめalignしたバッファ領域に直接読み込むような実装を作ったほうがいい
+    let mut b2 = Vec::<u32>::with_capacity((b.len() + 3) >> 2);
+    for x in b.chunks(4) {
+        let b1 = match x {
+            &[a, b, c, d] => [a, b, c, d],
+            &[a, b, c] => [a, b, c, 0],
+            &[a, b] => [a, b, 0, 0],
+            &[a] => [a, 0, 0, 0],
+            _ => unreachable!(),
+        };
+        b2.push(u32::from_ne_bytes(b1));
+    }
+
+    Ok(b2)
+}
+
 fn main() {
     let mut display = WlDisplayConnection::new(None);
 
@@ -247,12 +267,16 @@ fn main() {
         .create(&vk_device)
         .unwrap();
 
-    let vsh = vk_device
-        .new_shader_module_ref(&std::fs::read("./shaders/triangle.vspv").unwrap())
-        .unwrap();
-    let fsh = vk_device
-        .new_shader_module_ref(&std::fs::read("./shaders/triangle.fspv").unwrap())
-        .unwrap();
+    let vsh = br::ShaderModuleObject::new(
+        &vk_device,
+        &br::ShaderModuleCreateInfo::new(&read_spv_binary("./shaders/triangle.vspv").unwrap()),
+    )
+    .unwrap();
+    let fsh = br::ShaderModuleObject::new(
+        &vk_device,
+        &br::ShaderModuleCreateInfo::new(&read_spv_binary("./shaders/triangle.fspv").unwrap()),
+    )
+    .unwrap();
     let vi_bindings = [br::vk::VkVertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
     let vi_attrs = [
         br::vk::VkVertexInputAttributeDescription {

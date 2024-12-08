@@ -114,6 +114,33 @@ pub enum StencilFaceMask {
     Both = VK_STENCIL_FRONT_AND_BACK as _,
 }
 
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ShaderModuleCreateInfo<'d>(VkShaderModuleCreateInfo, core::marker::PhantomData<&'d [u32]>);
+impl<'d> ShaderModuleCreateInfo<'d> {
+    pub const fn new(code: &'d [u32]) -> Self {
+        Self(
+            VkShaderModuleCreateInfo {
+                sType: VkShaderModuleCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                // Note: ここはbyte単位
+                codeSize: code.len() << 2,
+                pCode: slice_as_ptr_empty_null(code),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkShaderModuleCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkShaderModuleCreateInfo {
+        self.0
+    }
+}
+
 /// Opaque handle to a shader module object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkShaderModule::OBJECT_TYPE)]
@@ -132,6 +159,18 @@ unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ShaderModuleObj
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<Device> {}
 
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
+    /// Create a new object from info structure
+    pub fn new(device: Device, create_info: &ShaderModuleCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_shader_module(device.native_ptr(), &create_info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -158,6 +197,24 @@ pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
 DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
 
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PipelineCacheCreateInfo<'d>(VkPipelineCacheCreateInfo, core::marker::PhantomData<&'d [u8]>);
+impl<'d> PipelineCacheCreateInfo<'d> {
+    pub const fn new(initial_data: &'d [u8]) -> Self {
+        Self(
+            VkPipelineCacheCreateInfo {
+                sType: VkPipelineCacheCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                initialDataSize: initial_data.len() as _,
+                pInitialData: slice_as_ptr_empty_null(initial_data) as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+}
+
 /// Opaque handle to a pipeline cache object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkPipelineCache::OBJECT_TYPE)]
@@ -183,6 +240,18 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineCache for PipelineCacheObject<
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheMut for PipelineCacheObject<Device> {}
 
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
+    /// Create a new object from info structure
+    pub fn new(device: Device, create_info: &PipelineCacheCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_pipeline_cache(device.native_ptr(), &create_info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere

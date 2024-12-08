@@ -531,6 +531,19 @@ impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
     }
 }
 
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EventCreateInfo(VkEventCreateInfo);
+impl EventCreateInfo {
+    pub const fn new() -> Self {
+        Self(VkEventCreateInfo {
+            sType: VkEventCreateInfo::TYPE,
+            pNext: core::ptr::null(),
+            flags: 0,
+        })
+    }
+}
+
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkEvent::OBJECT_TYPE)]
 pub struct EventObject<Device: VkHandle<Handle = VkDevice>>(VkEvent, Device);
@@ -571,6 +584,18 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
 }
 
 impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
+    /// Creates a new object from info structure
+    pub fn new(device: Device, create_info: &EventCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_event(device.native_ptr(), &create_info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere

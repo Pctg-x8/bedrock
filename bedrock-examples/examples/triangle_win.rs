@@ -30,6 +30,26 @@ pub struct Vertex {
     pub col: [f32; 4],
 }
 
+fn read_spv_binary(path: impl AsRef<std::path::Path>) -> std::io::Result<Vec<u32>> {
+    let b = std::fs::read(path)?;
+
+    // 4byte境界にするためにとりあえずコピー
+    // 本当はちゃんとあらかじめalignしたバッファ領域に直接読み込むような実装を作ったほうがいい
+    let mut b2 = Vec::<u32>::with_capacity((b.len() + 3) >> 2);
+    for x in b.chunks(4) {
+        let b1 = match x {
+            &[a, b, c, d] => [a, b, c, d],
+            &[a, b, c] => [a, b, c, 0],
+            &[a, b] => [a, b, 0, 0],
+            &[a] => [a, 0, 0, 0],
+            _ => unreachable!(),
+        };
+        b2.push(u32::from_ne_bytes(b1));
+    }
+
+    Ok(b2)
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     unsafe {
         SetProcessDPIAware();
@@ -207,9 +227,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         br::DescriptorPoolBuilder::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)]).create(&device)?;
     let descriptors = descriptor_pool.alloc(&[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)])?;
 
-    let vsh = (&device).new_shader_module(&std::fs::read("./examples/shaders/triangle.vspv")?)?;
-    let fsh = (&device).new_shader_module(&std::fs::read("./examples/shaders/triangle.fspv")?)?;
-    let pc = (&device).new_pipeline_cache(&[])?;
+    let vsh = br::ShaderModuleObject::new(
+        &device,
+        &br::ShaderModuleCreateInfo::new(&read_spv_binary("./examples/shaders/triangle.vspv")?),
+    )?;
+    let fsh = br::ShaderModuleObject::new(
+        &device,
+        &br::ShaderModuleCreateInfo::new(&read_spv_binary("./examples/shaders/triangle.fspv")?),
+    )?;
+    let pc = br::PipelineCacheObject::new(&device, &br::PipelineCacheCreateInfo::new(&[]))?;
 
     let scissors = [back_buffer_size.clone().into_rect(br::vk::VkOffset2D::ZERO)];
     let viewports = [scissors[0].make_viewport(0.0..1.0)];

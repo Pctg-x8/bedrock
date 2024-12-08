@@ -4,7 +4,7 @@ use crate::{
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
-use derives::implements;
+use derives::{implements, transparent_marked};
 #[implements]
 use std::ops::Range;
 use std::ops::{BitOr, BitOrAssign, Deref};
@@ -142,6 +142,41 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
         }
     }
 }
+impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
+    /// Create a new buffer object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    pub fn new(device: Device, info: &BufferDesc) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_buffer(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self(h.assume_init(), device))
+        }
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkBuffer, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkBuffer, Device) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
+    }
+}
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkBufferView::OBJECT_TYPE)]
@@ -182,7 +217,7 @@ impl<Buffer: DeviceChildHandle> Deref for BufferViewObject<Buffer> {
 }
 
 /// Builder structure specifying the parameters of a newly created buffer object
-#[repr(transparent)]
+#[transparent_marked]
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct BufferDesc<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
 impl<'s> BufferDesc<'s> {
@@ -264,7 +299,7 @@ impl<'s> BufferDesc<'s> {
     #[implements]
     #[inline(always)]
     pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<BufferObject<Device>> {
-        device.new_buffer(self)
+        BufferObject::new(device, &self)
     }
 }
 impl crate::VulkanStructureProvider for BufferDesc<'_> {
@@ -273,42 +308,6 @@ impl crate::VulkanStructureProvider for BufferDesc<'_> {
     fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut crate::GenericVulkanStructure {
         *root = self.0.clone();
         root.as_generic_mut()
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
-    /// Create a new buffer object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantee will be provided (simply calls the under api)
-    #[implements]
-    pub unsafe fn new_raw(device: Device, info: &VkBufferCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_buffer(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self(h.assume_init(), device))
-    }
-
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkBuffer, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkBuffer, Device) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (v, p)
     }
 }
 

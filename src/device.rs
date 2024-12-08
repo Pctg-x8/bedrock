@@ -7,10 +7,7 @@ use ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
 #[cfg(feature = "Implements")]
-use crate::{
-    fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle,
-    VulkanStructureProvider,
-};
+use crate::{fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle};
 
 use std::ffi::{c_char, CStr};
 
@@ -644,172 +641,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Create a new buffer object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    unsafe fn new_buffer_raw(
-        &self,
-        create_info: &VkBufferCreateInfo,
-        allocation_callback: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkBuffer> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_buffer(
-            self.native_ptr(),
-            create_info,
-            opt_pointer(allocation_callback),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
-
-        Ok(h.assume_init())
-    }
-
-    /// Create a new buffer object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn new_buffer(
-        self,
-        mut create_info: impl VulkanStructureProvider<RootStructure = VkBufferCreateInfo>,
-    ) -> crate::Result<crate::BufferObject<Self>>
-    where
-        Self: Sized,
-    {
-        let mut s = std::mem::MaybeUninit::uninit();
-        create_info.build(unsafe { &mut *s.as_mut_ptr() });
-        let s = unsafe { s.assume_init_ref() };
-
-        unsafe {
-            self.new_buffer_raw(s, None)
-                .map(move |h| crate::BufferObject::manage(h, self))
-        }
-    }
-
-    /// Creates a new shader module object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    unsafe fn new_shader_module_raw(
-        &self,
-        info: &VkShaderModuleCreateInfo,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkShaderModule> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_shader_module(
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
-
-        Ok(h.assume_init())
-    }
-
-    /// Creates a new shader module object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn new_shader_module(self, code: &(impl AsRef<[u8]> + ?Sized)) -> crate::Result<crate::ShaderModuleObject<Self>>
-    where
-        Self: Sized,
-    {
-        #[allow(clippy::cast_ptr_alignment)]
-        let cinfo = VkShaderModuleCreateInfo {
-            sType: VkShaderModuleCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            codeSize: code.as_ref().len() as _,
-            pCode: code.as_ref().as_ptr_empty_null() as *const _,
-        };
-
-        unsafe {
-            Ok(crate::ShaderModuleObject::manage(
-                self.new_shader_module_raw(&cinfo, None)?,
-                self,
-            ))
-        }
-    }
-
-    /// Creates a new pipeline cache
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    unsafe fn new_pipeline_cache_raw(
-        &self,
-        info: &VkPipelineCacheCreateInfo,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkPipelineCache> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_pipeline_cache(
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
-
-        Ok(h.assume_init())
-    }
-
-    /// Creates a new pipeline cache
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn new_pipeline_cache(
-        self,
-        initial: &(impl AsRef<[u8]> + ?Sized),
-    ) -> crate::Result<crate::PipelineCacheObject<Self>>
-    where
-        Self: Sized,
-    {
-        let cinfo = VkPipelineCacheCreateInfo {
-            sType: VkPipelineCacheCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            initialDataSize: initial.as_ref().len() as _,
-            pInitialData: initial.as_ref().as_ptr_empty_null() as *const _,
-        };
-
-        unsafe {
-            Ok(crate::PipelineCacheObject::manage(
-                self.new_pipeline_cache_raw(&cinfo, None)?,
-                self,
-            ))
-        }
-    }
-
     /// Create graphics pipelines
     /// # Failures
     /// On failure, this command returns
@@ -1014,58 +845,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }))
     }
 
-    /// Create a new event object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    unsafe fn new_event_raw(
-        &self,
-        info: &VkEventCreateInfo,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkEvent> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_event(
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
-
-        Ok(h.assume_init())
-    }
-
-    /// Create a new event object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn new_event(self) -> crate::Result<crate::EventObject<Self>>
-    where
-        Self: Sized,
-    {
-        unsafe {
-            self.new_event_raw(
-                &VkEventCreateInfo {
-                    sType: VkEventCreateInfo::TYPE,
-                    pNext: core::ptr::null(),
-                    flags: 0,
-                },
-                None,
-            )
-            .map(|h| crate::EventObject::manage(h, self))
-        }
-    }
-
     /// Invalidate `MappedMemoryRange`s
     /// Invalidating the memory range allows that device writes to the memory ranges
     /// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
@@ -1179,34 +958,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<()> {
         // 必ず両方実行されるようにする
         self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
-    }
-
-    /// Creates a new shader module object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn new_shader_module_ref<'d>(
-        &'d self,
-        code: &(impl AsRef<[u8]> + ?Sized),
-    ) -> crate::Result<crate::ShaderModuleObject<&'d Self>> {
-        #[allow(clippy::cast_ptr_alignment)]
-        let cinfo = VkShaderModuleCreateInfo {
-            sType: VkShaderModuleCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            codeSize: code.as_ref().len() as _,
-            pCode: code.as_ref().as_ptr_empty_null() as *const _,
-        };
-
-        unsafe {
-            Ok(crate::ShaderModuleObject::manage(
-                self.new_shader_module_raw(&cinfo, None)?,
-                self,
-            ))
-        }
     }
 
     /// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
