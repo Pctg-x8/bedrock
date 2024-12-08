@@ -248,6 +248,13 @@ pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, #[parent] Own
 unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
+impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
+    /// Split the lifetime from owner by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(&self) -> PhysicalDeviceObject<Owner> {
+        PhysicalDeviceObject(self.0, self.1.clone())
+    }
+}
 
 pub struct IterPhysicalDevices<'i, Source: Instance + 'i + ?Sized>(Vec<VkPhysicalDevice>, usize, &'i Source);
 impl<'i, Source: Instance + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, Source> {
