@@ -30,6 +30,40 @@ pub trait StructureChainQuery {
             .map(|r| unsafe { r.cast_unchecked() })
     }
 }
+impl<S: VulkanStructure> StructureChainQuery for S {
+    #[inline(always)]
+    fn iter_chain(&self) -> StructureChainIterator {
+        StructureChainIterator {
+            current: self.as_generic() as _,
+            marker: std::marker::PhantomData,
+        }
+    }
+}
+
+pub trait SinkStructureChainQuery {
+    /// Iterate pNext chain
+    fn iter_chain(&self) -> SinkStructureChainIterator;
+
+    #[inline(always)]
+    fn query_structure_type(&self, ty: crate::vk::VkStructureType) -> Option<&GenericVulkanSinkStructure> {
+        self.iter_chain().find(|s| s.sType == ty)
+    }
+
+    #[inline(always)]
+    fn query_structure<S: VulkanSinkStructure>(&self) -> Option<&S> {
+        self.query_structure_type(S::TYPE)
+            .map(|r| unsafe { r.cast_ref_unchecked() })
+    }
+}
+impl<S: VulkanSinkStructure> SinkStructureChainQuery for S {
+    #[inline(always)]
+    fn iter_chain(&self) -> SinkStructureChainIterator {
+        SinkStructureChainIterator {
+            current: self.as_generic() as _,
+            marker: core::marker::PhantomData,
+        }
+    }
+}
 
 pub unsafe trait VulkanStructureAsRef {
     /// Cast structure ref to generic. This is same as transmute but must be safe.
@@ -137,15 +171,6 @@ where
     const TYPE: crate::vk::VkStructureType = T::TYPE;
 }
 
-impl<S: VulkanStructure> StructureChainQuery for S {
-    fn iter_chain(&self) -> StructureChainIterator {
-        StructureChainIterator {
-            current: self.as_generic() as _,
-            marker: std::marker::PhantomData,
-        }
-    }
-}
-
 #[repr(C)]
 #[allow(non_snake_case)]
 pub struct GenericVulkanStructure {
@@ -192,6 +217,24 @@ impl<'a> Iterator for StructureChainIterator<'a> {
     }
 }
 impl FusedIterator for StructureChainIterator<'_> {}
+
+pub struct SinkStructureChainIterator<'a> {
+    pub(crate) current: *const GenericVulkanSinkStructure,
+    pub(crate) marker: core::marker::PhantomData<&'a GenericVulkanSinkStructure>,
+}
+impl<'a> Iterator for SinkStructureChainIterator<'a> {
+    type Item = &'a GenericVulkanSinkStructure;
+
+    fn next(&mut self) -> Option<&'a GenericVulkanSinkStructure> {
+        let Some(r) = (unsafe { self.current.as_ref() }) else {
+            return None;
+        };
+
+        self.current = r.pNext as _;
+        unsafe { self.current.as_ref() }
+    }
+}
+impl FusedIterator for SinkStructureChainIterator<'_> {}
 
 pub trait VulkanStructureProvider {
     type RootStructure;
