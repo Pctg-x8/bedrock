@@ -544,6 +544,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
 
 impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
     /// Creates a new object from info structure
+    #[implements]
     pub fn new(device: Device, create_info: &EventCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 

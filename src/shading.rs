@@ -160,6 +160,7 @@ impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<De
 
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
     /// Create a new object from info structure
+    #[implements]
     pub fn new(device: Device, create_info: &ShaderModuleCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
@@ -241,6 +242,7 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheMut for PipelineCacheObje
 
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
     /// Create a new object from info structure
+    #[implements]
     pub fn new(device: Device, create_info: &PipelineCacheCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
