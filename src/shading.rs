@@ -4,9 +4,9 @@ use derives::{bitflags_newtype, implements, transparent_marked};
 
 use crate::ffi_helper::{opt_pointer, slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DescriptorSetLayoutObjectRef, DeviceChild, DeviceChildHandle, GenericVulkanStructure, LifetimeBound,
-    SubpassRef, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle,
-    VulkanStructure, VulkanStructureAsRef,
+    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, LifetimeBound, SubpassRef,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
+    VulkanStructureAsRef,
 };
 use std::ffi::{c_void, CStr};
 use std::marker::PhantomData;
@@ -272,11 +272,6 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
 }
 
 pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle {
-    #[inline(always)]
-    fn as_transparent_ref(&self) -> VkHandleRef<VkPipelineCache> {
-        VkHandleRef::new(self)
-    }
-
     /// Get the size of the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
@@ -424,48 +419,40 @@ impl VkPushConstantRange {
     }
 }
 
-/// Builder struct for PipelineLayout object
-#[repr(transparent)]
-pub struct PipelineLayoutBuilder<'l> {
-    raw: VkPipelineLayoutCreateInfo,
-    descriptor_set_layouts: core::marker::PhantomData<&'l [DescriptorSetLayoutObjectRef<'l>]>,
-    push_constant_ranges: core::marker::PhantomData<&'l [VkPushConstantRange]>,
-}
-impl<'l> PipelineLayoutBuilder<'l> {
-    /// An empty builder struct
-    pub const EMPTY: Self = Self::new(&[], &[]);
-
-    /// Creates a new builder struct and initialize it with given parameters
-    #[inline(always)]
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PipelineLayoutCreateInfo<'d>(
+    VkPipelineLayoutCreateInfo,
+    core::marker::PhantomData<(
+        &'d dyn VkHandle<Handle = VkDescriptorSetLayout>,
+        &'d [VkPushConstantRange],
+    )>,
+);
+impl<'d> PipelineLayoutCreateInfo<'d> {
     pub const fn new(
-        descriptor_set_layouts: &'l [crate::DescriptorSetLayoutObjectRef<'l>],
-        push_constant_ranges: &'l [VkPushConstantRange],
+        descriptor_set_layouts: &'d [VkHandleRef<'d, VkDescriptorSetLayout>],
+        push_constant_ranges: &'d [VkPushConstantRange],
     ) -> Self {
-        Self {
-            raw: VkPipelineLayoutCreateInfo {
+        Self(
+            VkPipelineLayoutCreateInfo {
                 sType: VkPipelineLayoutCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 setLayoutCount: descriptor_set_layouts.len() as _,
                 pSetLayouts: slice_as_ptr_empty_null(descriptor_set_layouts) as _,
                 pushConstantRangeCount: push_constant_ranges.len() as _,
-                pPushConstantRanges: slice_as_ptr_empty_null(push_constant_ranges) as _,
+                pPushConstantRanges: slice_as_ptr_empty_null(push_constant_ranges),
             },
-            descriptor_set_layouts: core::marker::PhantomData,
-            push_constant_ranges: core::marker::PhantomData,
-        }
+            core::marker::PhantomData,
+        )
     }
 
-    /// Creates a new pipeline layout object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline]
-    pub fn create<D: crate::Device>(&self, device: D) -> crate::Result<PipelineLayoutObject<D>> {
-        unsafe { PipelineLayoutObject::new_raw(device, &self.raw) }
+    pub const unsafe fn from_raw(raw: VkPipelineLayoutCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkPipelineLayoutCreateInfo {
+        self.0
     }
 }
 
@@ -476,18 +463,17 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
     #[implements]
     #[inline]
-    pub unsafe fn new_raw(device: Device, info: &VkPipelineLayoutCreateInfo) -> crate::Result<Self> {
+    pub fn new(device: Device, info: &PipelineLayoutCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_pipeline_layout(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr())
-            .into_result()?;
+        unsafe {
+            crate::vkfn::create_pipeline_layout(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
 
-        Ok(Self::manage(h.assume_init(), device))
+            Ok(Self::manage(h.assume_init(), device))
+        }
     }
 
     /// Constructs from raw values

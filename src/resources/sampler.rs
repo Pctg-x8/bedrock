@@ -1,4 +1,4 @@
-use derives::implements;
+use derives::{implements, transparent_marked};
 
 use crate::{
     vk::*, CompareOp, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
@@ -8,39 +8,6 @@ use crate::{
 pub trait Sampler: VkHandle<Handle = VkSampler> {}
 DerefContainerBracketImpl!(for Sampler {});
 GuardsImpl!(for Sampler {});
-
-#[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug, VkHandle)]
-pub struct SamplerObjectRef<'s>(
-    VkSampler,
-    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
-);
-impl<'s> SamplerObjectRef<'s> {
-    #[inline]
-    pub fn new(x: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
-        Self(x.native_ptr(), core::marker::PhantomData)
-    }
-
-    /// Lifetime unbound constructor
-    #[inline]
-    pub const unsafe fn unbound(x: VkSampler) -> Self {
-        Self(x, core::marker::PhantomData)
-    }
-}
-
-#[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
-pub struct OptionalSamplerObjectRef<'s>(
-    VkSampler,
-    core::marker::PhantomData<Option<&'s dyn VkHandle<Handle = VkSampler>>>,
-);
-impl<'s> OptionalSamplerObjectRef<'s> {
-    pub const NONE: Self = Self(VkSampler::NULL, core::marker::PhantomData);
-
-    pub fn new(r: &'s (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
-        Self(r.native_ptr(), core::marker::PhantomData)
-    }
-}
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkSampler::OBJECT_TYPE)]
@@ -72,20 +39,53 @@ impl<Device: crate::Device> DeviceChild for SamplerObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> Sampler for SamplerObject<Device> {}
 
-/// Builder object for constructing the sampler object
-#[repr(transparent)]
-pub struct SamplerBuilder(VkSamplerCreateInfo);
-impl Default for SamplerBuilder {
+impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
+    /// Create a new sampler object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    #[implements]
+    pub fn new(device: Device, info: &SamplerCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_sampler(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self(h.assume_init(), device))
+        }
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkSampler, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkSampler, Device) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
+    }
+}
+
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq)]
+pub struct SamplerCreateInfo(VkSamplerCreateInfo);
+impl Default for SamplerCreateInfo {
+    #[inline(always)]
     fn default() -> Self {
         Self::new()
     }
 }
-impl Into<VkSamplerCreateInfo> for SamplerBuilder {
-    fn into(self) -> VkSamplerCreateInfo {
-        self.0
-    }
-}
-impl SamplerBuilder {
+impl SamplerCreateInfo {
     /// Initialize by default sampler parameters: Linear Filtering, Repeat addressing, no anisotrophy and no lod biases
     pub const fn new() -> Self {
         Self(VkSamplerCreateInfo {
@@ -108,6 +108,14 @@ impl SamplerBuilder {
             unnormalizedCoordinates: false as _,
             maxAnisotropy: 1.0,
         })
+    }
+
+    pub const unsafe fn from_raw(raw: VkSamplerCreateInfo) -> Self {
+        Self(raw)
+    }
+
+    pub const fn into_raw(self) -> VkSamplerCreateInfo {
+        self.0
     }
 
     /// The magnification and the minification filters to apply to lookups.
@@ -191,60 +199,6 @@ impl SamplerBuilder {
         self.0.unnormalizedCoordinates = use_unnormalized as _;
 
         self
-    }
-
-    /// Create a new sampler object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[implements]
-    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<SamplerObject<Device>> {
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_sampler(device.native_ptr(), &self.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| SamplerObject(h.assume_init(), device))
-        }
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
-    /// Create a new sampler object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    ///
-    /// # Safety
-    /// no guarantee will be provided (simply calls the under api)
-    #[implements]
-    pub unsafe fn new_raw(device: Device, info: &VkSamplerCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_sampler(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self(h.assume_init(), device))
-    }
-
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkSampler, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkSampler, Device) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (v, p)
     }
 }
 

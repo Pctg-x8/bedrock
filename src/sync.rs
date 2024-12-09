@@ -1,8 +1,8 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
 use crate::{
-    chain, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject,
+    VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 use derives::{implements, transparent_marked};
 
@@ -331,6 +331,39 @@ GuardsImpl!(for Status {
     }
 });
 
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FenceCreateInfo<'d>(
+    VkFenceCreateInfo,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+);
+impl<'d> FenceCreateInfo<'d> {
+    pub const fn new(flags: VkFenceCreateFlags) -> Self {
+        Self(
+            VkFenceCreateInfo {
+                sType: VkFenceCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkFenceCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkFenceCreateInfo {
+        self.0
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+
 #[derive(VkHandle)]
 pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
 #[implements]
@@ -372,6 +405,25 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
 }
 
 impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
+    /// Create a new fence object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, create_info: &FenceCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_fence(device.native_ptr(), &create_info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -570,172 +622,6 @@ impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
         core::mem::forget(self);
 
         (h, p)
-    }
-}
-
-#[transparent_marked]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct FenceCreateInfo<'d>(
-    VkFenceCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
-);
-impl<'d> FenceCreateInfo<'d> {
-    pub const fn new(flags: VkFenceCreateFlags) -> Self {
-        Self(
-            VkFenceCreateInfo {
-                sType: VkFenceCreateInfo::TYPE,
-                pNext: core::ptr::null(),
-                flags,
-            },
-            core::marker::PhantomData,
-        )
-    }
-
-    pub const unsafe fn from_raw(raw: VkFenceCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
-    }
-
-    pub const fn into_raw(self) -> VkFenceCreateInfo {
-        self.0
-    }
-
-    #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
-        self.0.pNext = next.as_generic() as *const _ as _;
-        self
-    }
-}
-
-#[deprecated = "use FenceCreateInfo"]
-pub struct FenceBuilder(VkFenceCreateInfo, Vec<Box<GenericVulkanStructure>>);
-#[allow(deprecated)]
-impl FenceBuilder {
-    #[inline(always)]
-    pub const fn new() -> Self {
-        Self(
-            VkFenceCreateInfo {
-                sType: VkFenceCreateInfo::TYPE,
-                pNext: core::ptr::null(),
-                flags: 0,
-            },
-            Vec::new(),
-        )
-    }
-
-    #[inline(always)]
-    pub unsafe fn with_additional_info(mut self, ext: impl VulkanStructure) -> Self {
-        self.1.push(core::mem::transmute(Box::new(ext)));
-
-        self
-    }
-
-    #[inline(always)]
-    pub const fn signaled(mut self) -> Self {
-        self.0.flags |= VK_FENCE_CREATE_SIGNALED_BIT;
-
-        self
-    }
-
-    #[cfg(feature = "VK_KHR_external_fence")]
-    #[inline(always)]
-    pub fn exportable_as(self, ty: crate::ExternalFenceHandleTypes) -> Self {
-        unsafe {
-            self.with_additional_info(VkExportFenceCreateInfoKHR {
-                sType: VkExportFenceCreateInfoKHR::TYPE,
-                pNext: core::ptr::null(),
-                handleTypes: ty.0,
-            })
-        }
-    }
-
-    /// Create a new fence object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<FenceObject<Device>> {
-        crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
-
-        unsafe { FenceObject::new(device, &FenceCreateInfo::from_raw(self.0)) }
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
-    /// Create a new fence object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &FenceCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_fence(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-            Ok(Self::manage(h.assume_init(), device))
-        }
-    }
-}
-
-#[deprecated = "use SemaphoreCreateInfo"]
-pub struct SemaphoreBuilder(VkSemaphoreCreateInfo, Vec<Box<GenericVulkanStructure>>);
-#[allow(deprecated)]
-impl SemaphoreBuilder {
-    #[inline(always)]
-    pub const fn new() -> Self {
-        Self(
-            VkSemaphoreCreateInfo {
-                sType: VkSemaphoreCreateInfo::TYPE,
-                pNext: core::ptr::null(),
-                flags: 0,
-            },
-            Vec::new(),
-        )
-    }
-
-    #[inline(always)]
-    pub unsafe fn with_additional_info(mut self, ext: impl VulkanStructure) -> Self {
-        self.1.push(core::mem::transmute(Box::new(ext)));
-
-        self
-    }
-
-    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
-    #[inline]
-    pub fn exportable_as(
-        self,
-        handle_types: crate::ExternalSemaphoreHandleTypes,
-        export_info: crate::ExportSemaphoreWin32HandleInfo,
-    ) -> Self {
-        unsafe {
-            self.with_additional_info(VkExportSemaphoreCreateInfoKHR {
-                sType: VkExportSemaphoreCreateInfoKHR::TYPE,
-                pNext: core::ptr::null(),
-                handleTypes: handle_types.into(),
-            })
-            .with_additional_info(export_info)
-        }
-    }
-
-    /// Create a new queue semaphore object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<SemaphoreObject<Device>> {
-        chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
-
-        unsafe { SemaphoreObject::new(device, &SemaphoreCreateInfo::from_raw(self.0)) }
     }
 }
 

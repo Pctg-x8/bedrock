@@ -223,12 +223,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?
     };
 
-    let descriptor_layout_ub1 =
-        br::DescriptorSetLayoutBuilder::new(&[br::DescriptorType::UniformBuffer.make_binding(0, 1).only_for_vertex()])
-            .create(&device)?;
-    let mut descriptor_pool =
-        br::DescriptorPoolBuilder::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)]).create(&device)?;
-    let descriptors = descriptor_pool.alloc(&[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)])?;
+    let descriptor_layout_ub1 = br::DescriptorSetLayoutObject::new(
+        &device,
+        &br::DescriptorSetLayoutCreateInfo::new(&[br::DescriptorType::UniformBuffer
+            .make_binding(0, 1)
+            .only_for_vertex()]),
+    )?;
+    let mut descriptor_pool = br::DescriptorPoolObject::new(
+        &device,
+        &br::DescriptorPoolCreateInfo::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)]),
+    )?;
+    let descriptors = descriptor_pool.alloc(&[descriptor_layout_ub1.as_transparent_ref()])?;
 
     let vsh = br::ShaderModuleObject::new(
         &device,
@@ -243,14 +248,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let scissors = [back_buffer_size.clone().into_rect(br::vk::VkOffset2D::ZERO)];
     let viewports = [scissors[0].make_viewport(0.0..1.0)];
 
-    let pl = br::PipelineLayoutBuilder::new(
-        &[br::DescriptorSetLayoutObjectRef::new(&descriptor_layout_ub1)],
-        &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
-            br::vk::VK_SHADER_STAGE_VERTEX_BIT,
-            0,
-        )],
-    )
-    .create(&device)?;
+    let pl = br::PipelineLayoutObject::new(
+        &device,
+        &br::PipelineLayoutCreateInfo::new(
+            &[descriptor_layout_ub1.as_transparent_ref()],
+            &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
+                br::vk::VK_SHADER_STAGE_VERTEX_BIT,
+                0,
+            )],
+        ),
+    )?;
     let vi_bindings = [br::vk::VkVertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
     let vi_attributes = [
         br::vk::VkVertexInputAttributeDescription {
@@ -334,7 +341,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     device.update_descriptor_sets(
         &[
             br::DescriptorPointer::new(descriptors[0].0, 0).write(br::DescriptorContents::UniformBuffer(vec![
-                br::DescriptorBufferRef::new(&ubuf, 0..core::mem::size_of::<f32>() as u64),
+                br::DescriptorBufferInfo::new(&ubuf, 0..core::mem::size_of::<f32>() as u64),
             ])),
         ],
         &[],
@@ -409,7 +416,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 0,
                 &[viewports[0].width, viewports[0].height],
             )
-            .bind_vertex_buffers(0, &[br::BufferObjectRef::new(&vbuf)], &[0])
+            .bind_vertex_buffers(0, &[vbuf.as_transparent_ref()], &[0])
             .draw(3, 1, 0, 0)
             .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
             .end()?;
@@ -605,7 +612,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         0,
                         &[viewports[0].width, viewports[0].height],
                     )
-                    .bind_vertex_buffers(0, &[br::BufferObjectRef::new(&vbuf)], &[0])
+                    .bind_vertex_buffers(0, &[vbuf.as_transparent_ref()], &[0])
                     .draw(3, 1, 0, 0)
                     .end_render_pass()
                     .end()?;

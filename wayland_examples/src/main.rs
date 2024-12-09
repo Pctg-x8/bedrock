@@ -266,9 +266,11 @@ fn main() {
     .into_rect(br::vk::VkOffset2D::ZERO);
     let viewport = rect.make_viewport(0.0..1.0);
 
-    let dsl_ub1 = br::DescriptorSetLayoutBuilder::new(&[br::DescriptorType::UniformBuffer.make_binding(0, 1)])
-        .create(&vk_device)
-        .unwrap();
+    let dsl_ub1 = br::DescriptorSetLayoutObject::new(
+        &vk_device,
+        &br::DescriptorSetLayoutCreateInfo::new(&[br::DescriptorType::UniformBuffer.make_binding(0, 1)]),
+    )
+    .unwrap();
 
     let vsh = br::ShaderModuleObject::new(
         &vk_device,
@@ -295,14 +297,16 @@ fn main() {
             offset: core::mem::offset_of!(Vertex, col) as _,
         },
     ];
-    let pl = br::PipelineLayoutBuilder::new(
-        &[br::DescriptorSetLayoutObjectRef::new(&dsl_ub1)],
-        &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
-            br::vk::VK_SHADER_STAGE_VERTEX_BIT,
-            0,
-        )],
+    let pl = br::PipelineLayoutObject::new(
+        &vk_device,
+        &br::PipelineLayoutCreateInfo::new(
+            &[dsl_ub1.as_transparent_ref()],
+            &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
+                br::vk::VK_SHADER_STAGE_VERTEX_BIT,
+                0,
+            )],
+        ),
     )
-    .create(&vk_device)
     .unwrap();
     let shader_stages = &[
         vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
@@ -438,12 +442,12 @@ fn main() {
         .unwrap();
     vk_queue.wait().unwrap();
 
-    let mut dp = br::DescriptorPoolBuilder::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)])
-        .create(&vk_device)
-        .unwrap();
-    let [object_descriptor] = dp
-        .alloc_array(&[br::DescriptorSetLayoutObjectRef::new(&dsl_ub1)])
-        .unwrap();
+    let mut dp = br::DescriptorPoolObject::new(
+        &vk_device,
+        &br::DescriptorPoolCreateInfo::new(1, &[br::DescriptorType::UniformBuffer.make_size(1)]),
+    )
+    .unwrap();
+    let [object_descriptor] = dp.alloc_array(&[dsl_ub1.as_transparent_ref()]).unwrap();
     vk_device.update_descriptor_sets(
         &[object_descriptor
             .binding_at(0)
@@ -499,11 +503,7 @@ fn main() {
             .bind_graphics_pipeline(&pipeline)
             .push_constant(&pl, br::vk::VK_SHADER_STAGE_VERTEX_BIT, 0, &[640.0f32, 480.0])
             .bind_graphics_descriptor_sets(&pl, 0, &[object_descriptor], &[])
-            .bind_vertex_buffers(
-                0,
-                &[br::BufferObjectRef::new(&device_buffer)],
-                &[vertex_buffer_offset as _],
-            )
+            .bind_vertex_buffers(0, &[device_buffer.as_transparent_ref()], &[vertex_buffer_offset as _])
             .draw(3, 1, 0, 0)
             .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
             .end()
