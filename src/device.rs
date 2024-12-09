@@ -1114,6 +1114,87 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         ))
     }
 
+    /// Get Properties of External Memory File Descriptors
+    /// # Safety
+    /// sink must be constructed correctly
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements("VK_KHR_external_memory_fd")]
+    #[inline]
+    fn memory_fd_properties(
+        &self,
+        handle: &crate::ExternalMemoryHandleFd,
+        sink: &mut core::mem::MaybeUninit<VkMemoryFdPropertiesKHR>,
+    ) -> crate::Result<()> {
+        unsafe {
+            self.get_memory_fd_properties_khr_fn().0(self.native_ptr(), handle.0 as _, handle.1, sink.as_mut_ptr())
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Get Properties of external memory host pointer
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements("VK_EXT_external_memory_host_pointer")]
+    #[inline]
+    pub fn memory_host_pointer_properties(
+        &self,
+        handle: &crate::ExternalMemoryHostPointer,
+        sink: &mut core::mem::MaybeUninit<VkMemoryHostPointerPropertiesEXT>,
+    ) -> crate::Result<()> {
+        unsafe {
+            self.get_memory_host_pointer_properties_ext_fn().0(
+                self.native_ptr(),
+                handle.0 as _,
+                handle.1,
+                sink.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
+    }
+
+    /// Import a fence from a POSIX file descriptor
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements("VK_KHR_external_fence_fd")]
+    #[inline]
+    fn import_fence_fd(&self, info: &crate::ImportFenceFdInfo) -> crate::Result<()> {
+        unsafe {
+            self.import_fence_fd_khr_fn().0(self.native_ptr(), &info.0)
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Get a POSIX file descriptor handle for a type
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements("VK_KHR_external_fence_fd")]
+    #[inline]
+    fn get_fence_fd(&self, info: &crate::FenceFdGetInfo) -> crate::Result<std::os::unix::io::RawFd> {
+        let mut fd = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_fence_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr()).into_result()?;
+
+            Ok(fd.assume_init())
+        }
+    }
+
     // Extension Function Providers
 
     #[implements("VK_KHR_maintenance1")]
