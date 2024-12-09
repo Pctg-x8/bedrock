@@ -150,7 +150,7 @@ impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    pub fn new(device: Device, info: &BufferDesc) -> crate::Result<Self> {
+    pub fn new(device: Device, info: &BufferCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
@@ -219,8 +219,8 @@ impl<Buffer: DeviceChildHandle> Deref for BufferViewObject<Buffer> {
 /// Builder structure specifying the parameters of a newly created buffer object
 #[transparent_marked]
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct BufferDesc<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
-impl<'s> BufferDesc<'s> {
+pub struct BufferCreateInfo<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
+impl<'s> BufferCreateInfo<'s> {
     /// Creates a new buffer description with provided byte-size and usage flags
     pub const fn new(byte_size: usize, usage: BufferUsage) -> Self {
         Self(
@@ -302,7 +302,7 @@ impl<'s> BufferDesc<'s> {
         BufferObject::new(device, &self)
     }
 }
-impl crate::VulkanStructureProvider for BufferDesc<'_> {
+impl crate::VulkanStructureProvider for BufferCreateInfo<'_> {
     type RootStructure = VkBufferCreateInfo;
 
     fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut crate::GenericVulkanStructure {

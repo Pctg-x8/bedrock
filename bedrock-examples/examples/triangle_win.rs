@@ -313,12 +313,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect::<Result<Vec<_>, _>>()?;
 
     let memory_properties = adapter.memory_properties();
-    let mut vbuf = br::BufferDesc::new(
+    let mut vbuf = br::BufferCreateInfo::new(
         core::mem::size_of::<Vertex>() * 3,
         br::BufferUsage::VERTEX_BUFFER.transfer_dest(),
     )
     .create(&device)?;
-    let mut ubuf = br::BufferDesc::new(
+    let mut ubuf = br::BufferCreateInfo::new(
         core::mem::size_of::<f32>(),
         br::BufferUsage::UNIFORM_BUFFER.transfer_dest(),
     )
@@ -348,7 +348,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     let host_buffer_size = ubuf_device_offset + ubuf_requirements.size;
-    let mut host_buffer = br::BufferDesc::new(host_buffer_size as _, br::BufferUsage::TRANSFER_SRC).create(&device)?;
+    let mut host_buffer =
+        br::BufferCreateInfo::new(host_buffer_size as _, br::BufferUsage::TRANSFER_SRC).create(&device)?;
     let host_buffer_requirements = host_buffer.requirements();
     let host_memory_index = memory_properties
         .find_host_visible_index(host_buffer_requirements.memoryTypeBits)
