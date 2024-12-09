@@ -165,12 +165,6 @@ impl ExternalMemoryHandleTypeWin32 {
         ExternalMemoryHandleWin32(self, handle)
     }
 }
-#[cfg(feature = "VK_KHR_external_memory_win32")]
-impl From<ExternalMemoryHandleTypeWin32> for ExternalMemoryHandleTypes {
-    fn from(value: ExternalMemoryHandleTypeWin32) -> Self {
-        Self(value as _)
-    }
-}
 
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
