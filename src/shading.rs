@@ -844,13 +844,37 @@ pub struct SpecializationInfo<'d>(
     core::marker::PhantomData<(&'d [VkSpecializationMapEntry], &'d dyn core::any::Any)>,
 );
 impl<'d> SpecializationInfo<'d> {
-    pub const fn new<T: 'd>(entries: &'d [VkSpecializationMapEntry], data: &'d T) -> Self {
+    pub fn new<T: 'd + SpecializationConstants>(data: &'d T) -> Self {
+        Self(
+            VkSpecializationInfo {
+                mapEntryCount: T::ENTRIES.len() as _,
+                pMapEntries: slice_as_ptr_empty_null(T::ENTRIES),
+                dataSize: core::mem::size_of::<T>() as _,
+                pData: data.as_ptr(),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const fn from_any_type<T: 'd>(entries: &'d [VkSpecializationMapEntry], data: &'d T) -> Self {
         Self(
             VkSpecializationInfo {
                 mapEntryCount: entries.len() as _,
                 pMapEntries: slice_as_ptr_empty_null(entries),
                 dataSize: core::mem::size_of::<T>() as _,
                 pData: data as *const _ as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const fn from_binary(entries: &'d [VkSpecializationMapEntry], data: &'d [u8]) -> Self {
+        Self(
+            VkSpecializationInfo {
+                mapEntryCount: entries.len() as _,
+                pMapEntries: slice_as_ptr_empty_null(entries),
+                dataSize: data.len() as _,
+                pData: data.as_ptr() as _,
             },
             core::marker::PhantomData,
         )

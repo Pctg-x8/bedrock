@@ -244,17 +244,18 @@ fn main() {
     )
     .unwrap();
 
-    let framebuffers = backbuffers
+    let backbuffer_views = backbuffers
         .iter()
         .map(|bb| {
-            br::FramebufferBuilder::new_with_attachment(
-                &renderpass,
-                bb.subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
-                    .view_builder()
-                    .create()?,
-            )
-            .create()
+            bb.subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
+                .view_builder()
+                .create()
         })
+        .collect::<Result<Vec<_>, _>>()
+        .unwrap();
+    let framebuffers = backbuffer_views
+        .iter()
+        .map(|bb| br::FramebufferBuilder::new_with_attachment(&renderpass, bb).create())
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
 
@@ -317,6 +318,8 @@ fn main() {
             br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
         ),
     );
+    let viewports = &[viewport];
+    let scissors = &[rect];
     pipeline
         .multisample_state(Some(br::MultisampleState::new()))
         .color_blend_state(br::ColorBlendState::new(
@@ -324,7 +327,7 @@ fn main() {
             &[br::vk::VkPipelineColorBlendAttachmentState::NOBLEND],
             [0.0; 4],
         ))
-        .viewport_state(br::ViewportState::new(&[viewport], &[rect]));
+        .viewport_state(br::ViewportState::new(viewports, scissors));
     let pipeline = pipeline
         .create(
             &vk_device,
@@ -625,6 +628,7 @@ fn main() {
 
     drop(callback_listener);
     drop(framebuffers);
+    drop(backbuffer_views);
     drop(renderpass);
     drop(backbuffers);
     drop(xdg_toplevel);
