@@ -282,6 +282,57 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
     }
 }
 
+impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
+    /// Create a new image object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
+    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &ImageCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_image(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+            Ok(Self(
+                h.assume_init(),
+                device,
+                info.0.imageType,
+                info.0.format,
+                info.0.extent.clone(),
+            ))
+        }
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(
+        handle: VkImage,
+        parent: Device,
+        image_type: VkImageType,
+        format: VkFormat,
+        extent: VkExtent3D,
+    ) -> Self {
+        Self(handle, parent, image_type, format, extent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkImage, Device, VkImageType, VkFormat, VkExtent3D) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        let (t, f, x) = (self.2, self.3, self.4);
+        core::mem::forget(self);
+
+        (v, p, t, f, x)
+    }
+}
+
 #[transparent_marked]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImageCreateInfo<'d>(
@@ -437,57 +488,6 @@ impl<'d> ImageCreateInfo<'d> {
     pub const fn set_usage(mut self, bits: ImageUsageFlags) -> Self {
         self.0.usage = bits.0;
         self
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
-    /// Create a new image object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
-    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &ImageCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_image(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-            Ok(Self(
-                h.assume_init(),
-                device,
-                info.0.imageType,
-                info.0.format,
-                info.0.extent.clone(),
-            ))
-        }
-    }
-
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(
-        handle: VkImage,
-        parent: Device,
-        image_type: VkImageType,
-        format: VkFormat,
-        extent: VkExtent3D,
-    ) -> Self {
-        Self(handle, parent, image_type, format, extent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkImage, Device, VkImageType, VkFormat, VkExtent3D) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        let (t, f, x) = (self.2, self.3, self.4);
-        core::mem::forget(self);
-
-        (v, p, t, f, x)
     }
 }
 
@@ -953,6 +953,43 @@ impl<Image: self::Image> ImageChild for ImageViewObject<Image> {
     }
 }
 
+impl<Image: DeviceChildHandle> ImageViewObject<Image> {
+    /// Create a new image view from an existing image
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls the under api)
+    #[implements]
+    pub unsafe fn new_raw(image: Image, info: &VkImageViewCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        crate::vkfn::create_image_view(image.device_handle(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+
+        Ok(Self(h.assume_init(), image))
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkImageView, parent: Image) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkImageView, Image) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
+    }
+}
+
 pub struct ImageViewBuilder<I: Image>(VkImageViewCreateInfo, I);
 impl<I: Image> ImageViewBuilder<I> {
     pub fn new(source: I, subresource_range: VkImageSubresourceRange) -> Self {
@@ -998,42 +1035,5 @@ impl<I: Image> ImageViewBuilder<I> {
         self.0.image = self.1.native_ptr();
 
         unsafe { ImageViewObject::new_raw(self.1, &self.0) }
-    }
-}
-
-impl<Image: DeviceChildHandle> ImageViewObject<Image> {
-    /// Create a new image view from an existing image
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls the under api)
-    #[implements]
-    pub unsafe fn new_raw(image: Image, info: &VkImageViewCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_image_view(image.device_handle(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self(h.assume_init(), image))
-    }
-
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkImageView, parent: Image) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkImageView, Image) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (v, p)
     }
 }

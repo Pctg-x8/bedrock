@@ -2081,7 +2081,7 @@ pub struct VkBufferCreateInfo {
 pub struct VkBufferViewCreateInfo {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
-    pub flags: VkBufferCreateFlags,
+    pub flags: VkBufferViewCreateFlags,
     pub buffer: VkBuffer,
     pub format: VkFormat,
     pub offset: VkDeviceSize,
