@@ -405,6 +405,16 @@ cfg_if! {
                 Self(self.0 | Self::HOST_MAPPED_FOREIGN_MEMORY.0)
             }
         }
+
+        impl VkExternalMemoryImageCreateInfoKHR {
+            pub const fn new(types: VkExternalMemoryHandleTypeFlagsKHR) -> Self {
+                Self {
+                    sType: Self::TYPE,
+                    pNext: core::ptr::null(),
+                    handleTypes: types
+                }
+            }
+        }
     }
 }
 

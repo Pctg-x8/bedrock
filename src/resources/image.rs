@@ -1,15 +1,12 @@
-use std::{
-    borrow::Cow,
-    ops::{BitOr, BitOrAssign, Deref, DerefMut, Range},
-};
+use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, ImageMemoryBarrier,
-    MemoryBound, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, DeviceChildHandle, ImageMemoryBarrier, MemoryBound,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
-use derives::{bitflags_newtype, implements};
+use derives::{bitflags_newtype, implements, transparent_marked};
 
 pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     /// The pixel format of an image
@@ -285,19 +282,19 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
     }
 }
 
-/// Builder structure specifying the parameters of a newly created image object
-pub struct ImageDesc<'d> {
-    info: VkImageCreateInfo,
-    extensions: Vec<Box<GenericVulkanStructure>>,
-    shared_queue_families: Option<Cow<'d, [u32]>>,
-    _marker: core::marker::PhantomData<Option<&'d dyn std::any::Any>>,
-}
-impl<'d> ImageDesc<'d> {
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ImageCreateInfo<'d>(
+    VkImageCreateInfo,
+    core::marker::PhantomData<(Option<&'d dyn VulkanStructureAsRef>, Option<&'d [u32]>)>,
+);
+impl<'d> ImageCreateInfo<'d> {
+    #[inline(always)]
     pub fn new<Size: ImageSize>(size: Size, format: VkFormat) -> Self {
-        ImageDesc {
-            info: VkImageCreateInfo {
+        Self(
+            VkImageCreateInfo {
                 sType: VkImageCreateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 flags: 0,
                 imageType: Size::DIMENSION,
                 extent: size.conv(),
@@ -312,208 +309,134 @@ impl<'d> ImageDesc<'d> {
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
             },
-            extensions: Vec::new(),
-            shared_queue_families: None,
-            _marker: core::marker::PhantomData,
-        }
+            core::marker::PhantomData,
+        )
     }
 
-    pub fn clone_without_extensions(&self) -> Self {
-        let mut info = self.info.clone();
-        info.pNext = core::ptr::null();
-        let shared_queue_families = self.shared_queue_families.clone();
-        if let Some(x) = shared_queue_families.as_deref() {
-            info.pQueueFamilyIndices = x.as_ptr_empty_null();
-        }
+    pub const unsafe fn from_raw(raw: VkImageCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
 
-        Self {
-            info,
-            extensions: Vec::new(),
-            shared_queue_families,
-            _marker: self._marker,
-        }
+    pub const fn into_raw(self) -> VkImageCreateInfo {
+        self.0
     }
 
     #[inline(always)]
-    pub unsafe fn with_extension(mut self, ext: impl VulkanStructure) -> Self {
-        self.extensions.push(core::mem::transmute(Box::new(ext)));
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
         self
-    }
-
-    /// Wraps raw vulkan structure
-    /// # Safety
-    /// This function does not check any references/constraints
-    #[inline(always)]
-    pub const unsafe fn from_raw(s: VkImageCreateInfo) -> Self {
-        Self {
-            info: s,
-            extensions: Vec::new(),
-            shared_queue_families: None,
-            _marker: core::marker::PhantomData,
-        }
-    }
-
-    /// Unwraps raw vulkan structure
-    /// # Safety
-    /// Lifetime constraints are removed
-    #[inline(always)]
-    pub unsafe fn into_raw(self) -> VkImageCreateInfo {
-        self.info
     }
 
     /// Sets an size and a dimension of the created image.
     #[inline(always)]
     pub fn size<Size: ImageSize>(mut self, size: Size) -> Self {
-        self.info.extent = size.conv();
-        self.info.imageType = Size::DIMENSION;
+        self.0.extent = size.conv();
+        self.0.imageType = Size::DIMENSION;
 
         self
     }
 
     /// Sets an initial layout for the created image.
     /// default: Undefined layout
-    #[inline(always)]
     pub const fn init_layout(mut self, layout: ImageLayout) -> Self {
-        self.info.initialLayout = layout as _;
+        self.0.initialLayout = layout as _;
         self
     }
 
     /// A list of queue families that will access this image,
     /// or an empty list if no queue families can access this image simultaneously
-    pub fn sharing_queue_families(mut self, indices: &'d [u32]) -> Self {
-        self.info.sharingMode = if indices.is_empty() {
+    pub const fn sharing_queue_families(mut self, indices: &'d [u32]) -> Self {
+        self.0.sharingMode = if indices.is_empty() {
             VK_SHARING_MODE_EXCLUSIVE
         } else {
             VK_SHARING_MODE_CONCURRENT
         };
-        self.info.queueFamilyIndexCount = indices.len() as _;
-        self.info.pQueueFamilyIndices = indices.as_ptr_empty_null();
-        self.shared_queue_families = Some(Cow::Borrowed(indices));
+        self.0.queueFamilyIndexCount = indices.len() as _;
+        self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(indices);
 
         self
     }
 
     /// The number of sub-data element samples in the image
     /// bitmask of 1(default), 2, 4, 8, 16, 32, 64
-    #[inline(always)]
     pub const fn sample_counts(mut self, count_bits: u32) -> Self {
-        self.info.samples = count_bits;
+        self.0.samples = count_bits;
         self
     }
 
     /// Sets the tiling arrangement of the data elements in memory as "linear tiling"
     /// default: optimal tiling
-    #[inline(always)]
     pub const fn use_linear_tiling(mut self) -> Self {
-        self.info.tiling = VK_IMAGE_TILING_LINEAR;
+        self.0.tiling = VK_IMAGE_TILING_LINEAR;
         self
     }
 
     /// A bitmask of `ImageFlags`describing additional parameters of the image
     /// default: none
-    #[inline(always)]
     pub const fn flags(mut self, opt: ImageFlags) -> Self {
-        self.info.flags = opt.0;
+        self.0.flags = opt.0;
         self
     }
 
     /// The number of layers in the image
     /// default: 1
-    #[inline(always)]
     pub const fn array_layers(mut self, layers: u32) -> Self {
-        self.info.arrayLayers = layers;
+        self.0.arrayLayers = layers;
         self
     }
 
     /// The number of levels of detail available for minified sampling of the image
     /// default: 1
-    #[inline(always)]
     pub const fn mip_levels(mut self, levels: u32) -> Self {
-        self.info.mipLevels = levels;
+        self.0.mipLevels = levels;
         self
     }
 
     /// Sets the created image will be sampled.
-    #[inline(always)]
     pub const fn sampled(self) -> Self {
         self.usage_with(ImageUsageFlags::SAMPLED)
     }
 
     /// Sets the created resource will be the destination of transferring operation.
-    #[inline(always)]
     pub const fn transfer_dest(self) -> Self {
         self.usage_with(ImageUsageFlags::TRANSFER_DEST)
     }
 
     /// Sets the created image can be used as a Storage Image.
-    #[inline(always)]
     pub const fn use_as_storage(self) -> Self {
         self.usage_with(ImageUsageFlags::STORAGE)
     }
 
     /// Sets the created image can be used as a color attachment.
-    #[inline(always)]
     pub const fn as_color_attachment(self) -> Self {
         self.usage_with(ImageUsageFlags::COLOR_ATTACHMENT)
     }
 
     /// Sets the created image can be used as an input attachment.
-    #[inline(always)]
     pub const fn as_input_attachment(self) -> Self {
         self.usage_with(ImageUsageFlags::INPUT_ATTACHMENT)
     }
 
     /// Sets the created image can be used as a depth stencil attachment.
-    #[inline(always)]
     pub const fn as_depth_stencil_attachment(self) -> Self {
         self.usage_with(ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT)
     }
 
     /// Sets the created image as transient-used attachment.
-    #[inline(always)]
     pub const fn as_transient_attachment(self) -> Self {
         self.usage_with(ImageUsageFlags::TRANSIENT_ATTACHMENT)
     }
 
     /// Merges some custom usage flag bits.
-    #[inline(always)]
     pub const fn usage_with(mut self, bits: ImageUsageFlags) -> Self {
-        self.info.usage |= bits.0;
+        self.0.usage |= bits.0;
         self
     }
 
     /// Overwrites all of custom usage flag bits.
-    #[inline(always)]
     pub const fn set_usage(mut self, bits: ImageUsageFlags) -> Self {
-        self.info.usage = bits.0;
+        self.0.usage = bits.0;
         self
-    }
-
-    #[inline(always)]
-    #[cfg(feature = "VK_KHR_external_memory")]
-    pub fn exportable_as(self, types: crate::ExternalMemoryHandleTypes) -> Self {
-        unsafe {
-            self.with_extension(VkExternalMemoryImageCreateInfoKHR {
-                sType: VkExternalMemoryImageCreateInfoKHR::TYPE,
-                pNext: core::ptr::null(),
-                handleTypes: types.into(),
-            })
-        }
-    }
-
-    /// Create a new image object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
-    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    #[implements]
-    pub fn create<Device: crate::Device>(mut self, device: Device) -> crate::Result<ImageObject<Device>> {
-        crate::ext::chain(&mut self.info, self.extensions.iter_mut().map(AsMut::as_mut));
-
-        unsafe { ImageObject::new_raw(device, &self.info) }
     }
 }
 
@@ -526,22 +449,22 @@ impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
     /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls the under api)
     #[implements]
-    pub unsafe fn new_raw(device: Device, info: &VkImageCreateInfo) -> crate::Result<Self> {
+    #[inline]
+    pub fn new(device: Device, info: &ImageCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_image(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+        unsafe {
+            crate::vkfn::create_image(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr()).into_result()?;
 
-        Ok(Self(
-            h.assume_init(),
-            device,
-            info.imageType,
-            info.format,
-            info.extent.clone(),
-        ))
+            Ok(Self(
+                h.assume_init(),
+                device,
+                info.0.imageType,
+                info.0.format,
+                info.0.extent.clone(),
+            ))
+        }
     }
 
     /// Constructs from raw values
