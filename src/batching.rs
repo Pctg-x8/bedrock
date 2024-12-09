@@ -3,7 +3,7 @@ use derives::implements;
 use crate::{
     ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions},
     vk::*,
-    CommandBufferRef, PipelineStageFlags, VkHandle, VkHandleRef, VkHandleRefMut, VulkanStructure,
+    PipelineStageFlags, VkHandle, VkHandleRef, VkHandleRefMut, VulkanStructure,
 };
 
 pub struct TemporalSubmissionBatchResources {
@@ -41,7 +41,7 @@ impl TemporalSubmissionBatchResources {
 pub struct SubmissionBatch3<'d> {
     raw: VkSubmitInfo,
     _refs: core::marker::PhantomData<(
-        &'d [CommandBufferRef<'d>],
+        &'d [VkHandleRef<'d, VkCommandBuffer>],
         &'d [VkHandleRef<'d, VkSemaphore>],
         &'d [PipelineStageFlags],
     )>,
@@ -51,7 +51,7 @@ impl<'d> SubmissionBatch3<'d> {
     pub fn new(
         wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
         wait_dst_stage_masks: &'d [PipelineStageFlags],
-        command_buffers: &'d [CommandBufferRef<'d>],
+        command_buffers: &'d [VkHandleRef<'d, VkCommandBuffer>],
         signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
     ) -> Self {
         assert_eq!(wait_semaphores.len(), wait_dst_stage_masks.len());
@@ -70,7 +70,7 @@ impl<'d> SubmissionBatch3<'d> {
     pub const fn new_wait_semaphore_array<const N: usize>(
         wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>; N],
         wait_dst_stage_masks: &'d [PipelineStageFlags; N],
-        command_buffers: &'d [CommandBufferRef<'d>],
+        command_buffers: &'d [VkHandleRef<'d, VkCommandBuffer>],
         signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
     ) -> Self {
         unsafe {
@@ -87,7 +87,7 @@ impl<'d> SubmissionBatch3<'d> {
     pub const unsafe fn new_unchecked(
         wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
         wait_dst_stage_masks: &'d [PipelineStageFlags],
-        command_buffers: &'d [CommandBufferRef<'d>],
+        command_buffers: &'d [VkHandleRef<'d, VkCommandBuffer>],
         signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
     ) -> Self {
         Self {
