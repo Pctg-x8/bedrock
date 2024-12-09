@@ -289,18 +289,6 @@ impl<'s> BufferCreateInfo<'s> {
     pub const fn usage(&self) -> BufferUsage {
         BufferUsage(self.0.usage)
     }
-
-    /// Create a new buffer object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline(always)]
-    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<BufferObject<Device>> {
-        BufferObject::new(device, &self)
-    }
 }
 impl crate::VulkanStructureProvider for BufferCreateInfo<'_> {
     type RootStructure = VkBufferCreateInfo;

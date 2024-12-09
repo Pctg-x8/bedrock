@@ -342,15 +342,19 @@ fn main() {
     let vertex_buffer_offset = 0;
     let uniform_buffer_offset = 256;
     let total_buffer_size = uniform_buffer_offset + core::mem::size_of::<ObjectParameters>();
-    let mut device_buffer = br::BufferCreateInfo::new(
-        total_buffer_size,
-        br::BufferUsage::VERTEX_BUFFER.uniform_buffer().transfer_dest(),
+    let mut device_buffer = br::BufferObject::new(
+        &vk_device,
+        &br::BufferCreateInfo::new(
+            total_buffer_size,
+            br::BufferUsage::VERTEX_BUFFER.uniform_buffer().transfer_dest(),
+        ),
     )
-    .create(&vk_device)
     .unwrap();
-    let mut staging_buffer = br::BufferCreateInfo::new(total_buffer_size, br::BufferUsage::TRANSFER_SRC)
-        .create(&vk_device)
-        .unwrap();
+    let mut staging_buffer = br::BufferObject::new(
+        &vk_device,
+        &br::BufferCreateInfo::new(total_buffer_size, br::BufferUsage::TRANSFER_SRC),
+    )
+    .unwrap();
     let device_memory_req = device_buffer.requirements();
     let staging_memory_req = staging_buffer.requirements();
     let device_memory_type_index = device_memory_properties

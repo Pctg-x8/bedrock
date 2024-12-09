@@ -313,16 +313,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect::<Result<Vec<_>, _>>()?;
 
     let memory_properties = adapter.memory_properties();
-    let mut vbuf = br::BufferCreateInfo::new(
-        core::mem::size_of::<Vertex>() * 3,
-        br::BufferUsage::VERTEX_BUFFER.transfer_dest(),
-    )
-    .create(&device)?;
-    let mut ubuf = br::BufferCreateInfo::new(
-        core::mem::size_of::<f32>(),
-        br::BufferUsage::UNIFORM_BUFFER.transfer_dest(),
-    )
-    .create(&device)?;
+    let mut vbuf = br::BufferObject::new(
+        &device,
+        &br::BufferCreateInfo::new(
+            core::mem::size_of::<Vertex>() * 3,
+            br::BufferUsage::VERTEX_BUFFER.transfer_dest(),
+        ),
+    )?;
+    let mut ubuf = br::BufferObject::new(
+        &device,
+        &br::BufferCreateInfo::new(
+            core::mem::size_of::<f32>(),
+            br::BufferUsage::UNIFORM_BUFFER.transfer_dest(),
+        ),
+    )?;
     let vbuf_requirements = vbuf.requirements();
     let ubuf_requirements = ubuf.requirements();
     let device_local_memory_index = memory_properties
@@ -348,8 +352,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     let host_buffer_size = ubuf_device_offset + ubuf_requirements.size;
-    let mut host_buffer =
-        br::BufferCreateInfo::new(host_buffer_size as _, br::BufferUsage::TRANSFER_SRC).create(&device)?;
+    let mut host_buffer = br::BufferObject::new(
+        &device,
+        &br::BufferCreateInfo::new(host_buffer_size as _, br::BufferUsage::TRANSFER_SRC),
+    )?;
     let host_buffer_requirements = host_buffer.requirements();
     let host_memory_index = memory_properties
         .find_host_visible_index(host_buffer_requirements.memoryTypeBits)
