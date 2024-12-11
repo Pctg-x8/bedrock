@@ -2,15 +2,16 @@
 
 use derives::{implements, transparent_marked};
 
-use crate::{ffi_helper::opt_pointer, vk::*, VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef};
+use crate::{
+    ffi_helper::{opt_pointer, slice_as_ptr_empty_null, CStrFFIRef},
+    vk::*,
+    VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
+};
 #[cfg(feature = "Implements")]
 use crate::{fnconv::FnTransmute, ImageFlags, ImageUsageFlags};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
-use std::{
-    ffi::{c_char, CStr},
-    ops::*,
-};
+use std::{ffi::CStr, ops::*};
 
 #[cfg(feature = "Multithreaded")]
 struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
@@ -322,88 +323,49 @@ impl<'d> ApplicationInfo<'d> {
     }
 }
 
-/// Builder object for constructing a `Instance`
-pub struct InstanceBuilder<'d> {
-    extensions: Vec<*const c_char>,
-    layers: Vec<*const c_char>,
-    ext_structures: Vec<Box<dyn crate::ext::VulkanStructureAsRef + 'static>>,
-    cinfo: VkInstanceCreateInfo,
-    _refs: core::marker::PhantomData<(&'d CStr, &'d ApplicationInfo<'d>)>,
-}
-impl<'d> InstanceBuilder<'d> {
-    #[inline]
-    pub const fn new(app_info: &'d ApplicationInfo) -> Self {
-        Self {
-            extensions: Vec::new(),
-            layers: Vec::new(),
-            ext_structures: Vec::new(),
-            cinfo: VkInstanceCreateInfo {
+#[repr(transparent)]
+#[derive(Debug, Clone)]
+pub struct InstanceCreateInfo<'d>(
+    VkInstanceCreateInfo,
+    core::marker::PhantomData<(
+        Option<&'d dyn VulkanStructureAsRef>,
+        &'d ApplicationInfo<'d>,
+        &'d [CStrFFIRef<'d>],
+    )>,
+);
+impl<'d> InstanceCreateInfo<'d> {
+    pub const fn new(
+        application_info: &'d ApplicationInfo<'d>,
+        layers: &'d [CStrFFIRef<'d>],
+        extensions: &'d [CStrFFIRef<'d>],
+    ) -> Self {
+        Self(
+            VkInstanceCreateInfo {
                 sType: VkInstanceCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
-                pApplicationInfo: app_info as *const _ as _,
-                enabledLayerCount: 0,
-                ppEnabledLayerNames: core::ptr::null(),
-                enabledExtensionCount: 0,
-                ppEnabledExtensionNames: core::ptr::null(),
+                pApplicationInfo: &application_info.0 as *const _,
+                enabledLayerCount: layers.len() as _,
+                ppEnabledLayerNames: slice_as_ptr_empty_null(layers) as _,
+                enabledExtensionCount: extensions.len() as _,
+                ppEnabledExtensionNames: slice_as_ptr_empty_null(extensions) as _,
             },
-            _refs: core::marker::PhantomData,
-        }
+            core::marker::PhantomData,
+        )
     }
 
-    pub fn add_extension(&mut self, extension: &'d CStr) -> &mut Self {
-        self.extensions.push(extension.as_ptr());
-        self
-    }
-    pub fn add_extensions(&mut self, extensions: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
-        self.extensions.extend(extensions.into_iter().map(CStr::as_ptr));
-        self
-    }
-    pub fn add_layer(&mut self, layer: &'d CStr) -> &mut Self {
-        self.layers.push(layer.as_ptr());
-        self
-    }
-    pub fn add_layers(&mut self, layers: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
-        self.layers.extend(layers.into_iter().map(CStr::as_ptr));
-        self
+    pub const unsafe fn from_raw(raw: VkInstanceCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
     }
 
-    pub fn add_ext_structure<S: crate::ext::VulkanStructure + 'static>(&mut self, ext: S) -> &mut Self {
-        self.ext_structures.push(Box::new(ext) as _);
-        self
+    pub const fn into_raw(self) -> VkInstanceCreateInfo {
+        self.0
     }
 
-    #[cfg(feature = "VK_KHR_portability_enumeration")]
-    pub fn enumerate_portability(&mut self) -> &mut Self {
-        self.add_extension(c"VK_KHR_portability_enumeration");
-        self.cinfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
         self
-    }
-
-    /// Create a new Vulkan instance
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
-    /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
-    #[implements]
-    pub fn create(mut self) -> crate::Result<InstanceObject> {
-        use crate::ffi_helper::slice_as_ptr_empty_null;
-
-        crate::ext::chain(
-            &mut self.cinfo,
-            self.ext_structures.iter_mut().map(VulkanStructureAsRef::as_generic_mut),
-        );
-        self.cinfo.enabledLayerCount = self.layers.len() as _;
-        self.cinfo.enabledExtensionCount = self.extensions.len() as _;
-        self.cinfo.ppEnabledLayerNames = slice_as_ptr_empty_null(&self.layers);
-        self.cinfo.ppEnabledExtensionNames = slice_as_ptr_empty_null(&self.extensions);
-
-        unsafe { InstanceObject::new_raw(&self.cinfo) }
     }
 }
 
@@ -418,12 +380,10 @@ impl InstanceObject {
     /// * `VK_ERROR_LAYER_NOT_PRESENT`
     /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
     /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
     #[implements]
-    pub unsafe fn new_raw(info: &VkInstanceCreateInfo) -> crate::Result<Self> {
-        Ok(Self::manage(new_instance_raw(info, None)?))
+    #[inline]
+    pub fn new(info: &InstanceCreateInfo) -> crate::Result<Self> {
+        unsafe { Ok(Self::manage(new_instance_raw(info, None)?)) }
     }
 
     /// Constructs from raw handle
@@ -461,12 +421,12 @@ impl InstanceObject {
 /// no guarantees will be provided (simply calls under api)
 #[implements]
 pub unsafe fn new_instance_raw(
-    info: &VkInstanceCreateInfo,
+    info: &InstanceCreateInfo,
     allocation_callbacks: Option<&VkAllocationCallbacks>,
 ) -> crate::Result<VkInstance> {
     let mut h = core::mem::MaybeUninit::uninit();
 
-    crate::vkfn::create_instance(info, opt_pointer(allocation_callbacks), h.as_mut_ptr()).into_result()?;
+    crate::vkfn::create_instance(&info.0, opt_pointer(allocation_callbacks), h.as_mut_ptr()).into_result()?;
     Ok(h.assume_init())
 }
 

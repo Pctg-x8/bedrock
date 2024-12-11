@@ -1,12 +1,11 @@
 use derives::transparent_marked;
 
+use crate::ffi_helper::opt_pointer;
+use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::vk::*;
 use crate::VkHandle;
 use crate::VulkanStructure;
 use crate::VulkanStructureAsRef;
-
-use super::opt_pointer;
-use super::slice_as_ptr_empty_null;
 
 #[repr(C)]
 pub enum ExternalSemaphoreHandleTypeWin32 {

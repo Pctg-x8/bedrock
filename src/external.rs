@@ -1,16 +1,7 @@
 //! External Memory Import/Export Operations
 
-use derives::implements;
-
-#[implements]
-#[allow(unused_imports)]
-use crate::{ffi_helper::ArrayFFIExtensions, DeviceChild, VkHandle};
-use crate::{
-    ffi_helper::{opt_pointer, slice_as_ptr_empty_null},
-    vk::*,
-};
-#[allow(unused_imports)]
-use crate::{VulkanStructure, VulkanStructureAsRef};
+use crate::vk::*;
+use crate::VulkanStructure;
 
 #[cfg(feature = "VK_KHR_external_memory")]
 impl VkExternalMemoryImageCreateInfoKHR {

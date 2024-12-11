@@ -6,7 +6,7 @@ use bedrock::{
 };
 use br::{
     Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass,
-    Status, Swapchain, VulkanSinkStructure,
+    Status, Swapchain,
 };
 use windows::{
     core::PCSTR,
@@ -105,15 +105,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
     };
 
-    let instance = {
-        let app =
-            br::ApplicationInfo::new(c"BedrockExampleTriangle", (0, 1, 0), c"None", (0, 0, 1)).api_version(1, 3, 0);
-        let mut builder = br::InstanceBuilder::new(&app);
-        builder
-            .add_extensions([c"VK_EXT_debug_utils", c"VK_KHR_surface", c"VK_KHR_win32_surface"])
-            .add_layer(c"VK_LAYER_KHRONOS_validation");
-        builder.create()?
-    };
+    let instance = br::InstanceObject::new(&br::InstanceCreateInfo::new(
+        &br::ApplicationInfo::new(c"BedrockExampleTriangle", (0, 1, 0), c"None", (0, 0, 1)).api_version(1, 3, 0),
+        &[c"VK_LAYER_KHRONOS_validation".into()],
+        &[
+            c"VK_EXT_debug_utils".into(),
+            c"VK_KHR_surface".into(),
+            c"VK_KHR_win32_surface".into(),
+        ],
+    ))?;
     let adapter = instance
         .iter_physical_devices()?
         .next()
@@ -135,21 +135,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let graphics_queue_family = queue_families
         .find_matching_index(br::QueueFlags::GRAPHICS)
         .expect("No graphics queue available");
-    let device = {
-        let qbinfo = br::DeviceQueueCreateInfo::new(graphics_queue_family, &[0.0]);
-
-        let mut builder = br::DeviceBuilder::new(&adapter);
-        builder
-            .add_queue(qbinfo)
-            .add_extensions([c"VK_KHR_swapchain"])
-            .add_extra_features(br::vk::VkPhysicalDeviceSynchronization2Features {
-                sType: br::vk::VkPhysicalDeviceSynchronization2Features::TYPE,
-                pNext: core::ptr::null_mut(),
-                synchronization2: br::vk::VK_TRUE,
-            });
-
-        builder.create()?
-    };
+    let device = br::DeviceObject::new(
+        &adapter,
+        &br::DeviceCreateInfo::new(
+            &[br::DeviceQueueCreateInfo::new(graphics_queue_family, &[0.0])],
+            &[],
+            &[c"VK_KHR_swapchain".into()],
+        )
+        .with_next(
+            &br::vk::VkPhysicalDeviceFeatures2KHR::new(Default::default())
+                .with_next(&mut br::vk::VkPhysicalDeviceSynchronization2Features::new(true)),
+        ),
+    )?;
     let mut queue = (&device).queue(graphics_queue_family, 0);
 
     if !adapter.surface_support(graphics_queue_family, &surface)? {

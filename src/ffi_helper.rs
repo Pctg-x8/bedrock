@@ -7,6 +7,23 @@ impl<const L: usize> FixedCStrBuffer<L> {
     }
 }
 
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct CStrFFIRef<'d>(*const core::ffi::c_char, core::marker::PhantomData<&'d core::ffi::CStr>);
+impl<'d> CStrFFIRef<'d> {
+    pub const NULL: Self = Self(core::ptr::null(), core::marker::PhantomData);
+
+    pub const fn new(src: &'d core::ffi::CStr) -> Self {
+        Self(src.as_ptr(), core::marker::PhantomData)
+    }
+}
+impl<'d> From<&'d core::ffi::CStr> for CStrFFIRef<'d> {
+    #[inline(always)]
+    fn from(value: &'d core::ffi::CStr) -> Self {
+        Self::new(value)
+    }
+}
+
 /// pointer of the slice, or null if the slice is empty
 #[inline(always)]
 pub(crate) const fn slice_as_ptr_empty_null<T>(slice: &[T]) -> *const T {

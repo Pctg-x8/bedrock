@@ -1,7 +1,7 @@
 use bedrock::{
     self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut,
     GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass,
-    ShaderModule, Swapchain, VkHandle, VkHandleMut, VulkanSinkStructure,
+    ShaderModule, Swapchain, VkHandle, VkHandleMut,
 };
 use core::ffi::*;
 use std::{
@@ -143,15 +143,19 @@ fn main() {
 
     surface.commit();
 
-    let app =
-        br::ApplicationInfo::new(c"Bedrock Examples Wayland Native", (0, 1, 0), c"", (0, 1, 0)).api_version(1, 3, 0);
-    let mut vk_instance = br::InstanceBuilder::new(&app);
-    vk_instance.add_layer(c"VK_LAYER_KHRONOS_validation").add_extensions([
-        c"VK_KHR_surface",
-        c"VK_KHR_wayland_surface",
-        c"VK_EXT_debug_utils",
-    ]);
-    let vk_instance = Rc::new(vk_instance.create().unwrap());
+    let vk_instance = Rc::new(
+        br::InstanceObject::new(&br::InstanceCreateInfo::new(
+            &br::ApplicationInfo::new(c"Bedrock Examples Wayland Native", (0, 1, 0), c"", (0, 1, 0))
+                .api_version(1, 3, 0),
+            &[c"VK_LAYER_KHRONOS_validation".into()],
+            &[
+                c"VK_KHR_surface".into(),
+                c"VK_KHR_wayland_surface".into(),
+                c"VK_EXT_debug_utils".into(),
+            ],
+        ))
+        .unwrap(),
+    );
     let _vk_debugger = br::DebugUtilsMessengerCreateInfo::new(vk_debug_msg)
         .filter_type(br::DebugUtilsMessageTypeFlags::VALIDATION.and_performance())
         .filter_severity(br::DebugUtilsMessageSeverityFlags::ERROR.and_warning())
@@ -174,16 +178,21 @@ fn main() {
         .queue_family_properties()
         .find_matching_index(br::QueueFlags::GRAPHICS)
         .unwrap();
-    let mut vk_device = br::DeviceBuilder::new(&vk_pdev);
-    vk_device
-        .add_extensions([c"VK_KHR_swapchain"])
-        .add_queue(br::DeviceQueueCreateInfo::new(vk_graphics_queue_family_index, &[0.0]))
-        .add_extra_features(br::vk::VkPhysicalDeviceSynchronization2Features {
-            sType: br::vk::VkPhysicalDeviceSynchronization2Features::TYPE,
-            pNext: core::ptr::null_mut(),
-            synchronization2: true as _,
-        });
-    let vk_device = Rc::new(vk_device.create().unwrap());
+    let vk_device = Rc::new(
+        br::DeviceObject::new(
+            &vk_pdev,
+            &br::DeviceCreateInfo::new(
+                &[br::DeviceQueueCreateInfo::new(vk_graphics_queue_family_index, &[0.0])],
+                &[],
+                &[c"VK_KHR_swapchain".into()],
+            )
+            .with_next(
+                &br::vk::VkPhysicalDeviceFeatures2KHR::new(Default::default())
+                    .with_next(&mut br::vk::VkPhysicalDeviceSynchronization2FeaturesKHR::new(true)),
+            ),
+        )
+        .unwrap(),
+    );
     let mut vk_queue = vk_device.clone().queue(vk_graphics_queue_family_index, 0);
 
     let surface_props = vk_pdev.surface_capabilities(&vk_surface).unwrap();

@@ -2,14 +2,12 @@
 
 use cfg_if::cfg_if;
 use derives::implements;
-use ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
+use ffi_helper::{opt_pointer, slice_as_ptr_empty_null, CStrFFIRef};
 
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
 #[cfg(feature = "Implements")]
 use crate::{fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle};
-
-use std::ffi::{c_char, CStr};
 
 #[implements]
 #[allow(dead_code)]
@@ -405,19 +403,32 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     }
 }
 impl<Instance: crate::Instance> DeviceObject<Instance> {
-    /// Constructs a device from raw info structure
+    /// Create a new device instance
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
+    /// * `VK_ERROR_FEATURE_NOT_PRESENT`
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_DEVICE_LOST`
     #[implements]
-    pub unsafe fn new_raw<
+    pub fn new<
         PhysicalDevice: crate::PhysicalDevice + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
     >(
-        pdev: PhysicalDevice,
-        create_info: &VkDeviceCreateInfo,
+        physical_device: PhysicalDevice,
+        info: &DeviceCreateInfo,
     ) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_device(pdev.native_ptr(), create_info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
+        unsafe {
+            crate::vkfn::create_device(physical_device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
 
-        Ok(Self::wrap_handle(h.assume_init(), pdev.transfer_instance()))
+            Ok(Self::wrap_handle(h.assume_init(), physical_device.transfer_instance()))
+        }
     }
 }
 
@@ -463,162 +474,87 @@ impl<'d> DeviceQueueCreateInfo<'d> {
     }
 }
 
-// TODO: これ作り直したい気もする（Featureの指定方法がきつい）
-/// Builder object for constructing a `Device`
-pub struct DeviceBuilder<'d, PhysicalDevice: crate::PhysicalDevice + InstanceChild> {
-    pdev_ref: PhysicalDevice,
-    queue_infos: Vec<DeviceQueueCreateInfo<'d>>,
-    layers: Vec<*const c_char>,
-    extensions: Vec<*const c_char>,
-    features: VkPhysicalDeviceFeatures,
-    extra_features: Vec<Box<dyn VulkanStructureAsRef>>,
-    _cstr: core::marker::PhantomData<&'d CStr>,
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct DeviceCreateInfo<'d>(
+    VkDeviceCreateInfo,
+    core::marker::PhantomData<(
+        Option<&'d dyn VulkanStructureAsRef>,
+        &'d [DeviceQueueCreateInfo<'d>],
+        &'d [CStrFFIRef<'d>],
+        &'d [CStrFFIRef<'d>],
+        Option<&'d VkPhysicalDeviceFeatures>,
+    )>,
+);
+impl<'d> DeviceCreateInfo<'d> {
+    pub const fn new(
+        queue_infos: &'d [DeviceQueueCreateInfo<'d>],
+        layers: &'d [CStrFFIRef<'d>],
+        extensions: &'d [CStrFFIRef<'d>],
+    ) -> Self {
+        Self(
+            VkDeviceCreateInfo {
+                sType: VkDeviceCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                queueCreateInfoCount: queue_infos.len() as _,
+                pQueueCreateInfos: slice_as_ptr_empty_null(queue_infos) as _,
+                enabledLayerCount: layers.len() as _,
+                ppEnabledLayerNames: slice_as_ptr_empty_null(layers) as _,
+                enabledExtensionCount: extensions.len() as _,
+                ppEnabledExtensionNames: slice_as_ptr_empty_null(extensions) as _,
+                pEnabledFeatures: core::ptr::null(),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkDeviceCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkDeviceCreateInfo {
+        self.0
+    }
+
+    pub const fn with_features(mut self, features: &'d VkPhysicalDeviceFeatures) -> Self {
+        self.0.pEnabledFeatures = features as *const _ as _;
+        self
+    }
+
+    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
 }
-impl<'p, 'd, PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<'d, PhysicalDevice> {
-    pub fn new(pdev: PhysicalDevice) -> Self {
+
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+impl VkPhysicalDeviceFeatures2KHR {
+    pub const fn new(old_features: VkPhysicalDeviceFeatures) -> Self {
         Self {
-            pdev_ref: pdev,
-            queue_infos: Vec::new(),
-            layers: Vec::new(),
-            extensions: Vec::new(),
-            features: Default::default(),
-            extra_features: Vec::new(),
-            _cstr: core::marker::PhantomData,
+            sType: <Self as VulkanStructure>::TYPE,
+            pNext: core::ptr::null_mut(),
+            features: old_features,
         }
     }
 
-    pub fn add_layer(&mut self, name: &'d CStr) -> &mut Self {
-        self.layers.push(name.as_ptr());
-        self
-    }
-    pub fn add_extension(&mut self, name: &'d CStr) -> &mut Self {
-        self.extensions.push(name.as_ptr());
-        self
-    }
-    pub fn add_layers(&mut self, layers: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
-        self.layers.extend(layers.into_iter().map(|x| x.as_ptr()));
-        self
-    }
-    pub fn add_extensions(&mut self, extensions: impl IntoIterator<Item = &'d CStr>) -> &mut Self {
-        self.extensions.extend(extensions.into_iter().map(|x| x.as_ptr()));
-        self
-    }
-
-    pub fn add_queue(&mut self, info: DeviceQueueCreateInfo<'d>) -> &mut Self {
-        self.queue_infos.push(info);
-        self
-    }
-    pub fn add_queues<Queues: IntoIterator<Item = DeviceQueueCreateInfo<'d>>>(&mut self, queues: Queues) -> &mut Self {
-        for q in queues {
-            self.add_queue(q);
+    #[inline(always)]
+    pub fn with_next(self, next: &mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        Self {
+            pNext: next.as_generic_mut() as *mut _ as _,
+            ..self
         }
-        self
-    }
-
-    pub fn mod_features(&mut self) -> &mut VkPhysicalDeviceFeatures {
-        &mut self.features
-    }
-    pub fn add_extra_features(&mut self, ef: impl VulkanStructureAsRef + 'static) -> &mut Self {
-        self.extra_features.push(Box::new(ef) as _);
-        self
-    }
-
-    /// Create a new device instance
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
-    /// * `VK_ERROR_FEATURE_NOT_PRESENT`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_DEVICE_LOST`
-    #[implements]
-    pub fn create(mut self) -> crate::Result<DeviceObject<PhysicalDevice::ConcreteInstance>>
-    where
-        PhysicalDevice: crate::InstanceChildTransferrable,
-    {
-        enum Feature<'d> {
-            Standard(&'d VkPhysicalDeviceFeatures),
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            Extensible(VkPhysicalDeviceFeatures2KHR),
-        }
-
-        let Self { pdev_ref, .. } = self;
-
-        let mut cinfo = VkDeviceCreateInfo {
-            sType: VkDeviceCreateInfo::TYPE,
-            pNext: core::ptr::null(),
-            flags: 0,
-            queueCreateInfoCount: self.queue_infos.len() as _,
-            pQueueCreateInfos: self.queue_infos.as_ptr_empty_null() as _,
-            enabledLayerCount: self.layers.len() as _,
-            ppEnabledLayerNames: slice_as_ptr_empty_null(&self.layers),
-            enabledExtensionCount: self.extensions.len() as _,
-            ppEnabledExtensionNames: slice_as_ptr_empty_null(&self.extensions),
-            pEnabledFeatures: core::ptr::null(),
-        };
-        #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-        let feature_type = if self.extra_features.is_empty() {
-            Feature::Standard(&self.features)
-        } else {
-            let mut x = VkPhysicalDeviceFeatures2KHR {
-                sType: <VkPhysicalDeviceFeatures2KHR as VulkanStructure>::TYPE,
-                pNext: core::ptr::null_mut(),
-                features: self.features,
-            };
-            crate::ext::chain(
-                &mut x,
-                self.extra_features
-                    .iter_mut()
-                    .map(crate::VulkanStructureAsRef::as_generic_mut),
-            );
-
-            Feature::Extensible(x)
-        };
-        #[cfg(not(feature = "VK_KHR_get_physical_device_properties2"))]
-        let feature_type = Feature::Standard(&self.features);
-
-        match feature_type {
-            Feature::Standard(r) => {
-                cinfo.pEnabledFeatures = r;
-            }
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            Feature::Extensible(ref x) => {
-                cinfo.pNext = x as *const _ as _;
-            }
-        }
-
-        unsafe { DeviceObject::new_raw(pdev_ref, &cinfo) }
     }
 }
 
-/// Tweaking features
-impl<PhysicalDevice: crate::PhysicalDevice + InstanceChild> DeviceBuilder<'_, PhysicalDevice> {
-    pub fn enable_fill_mode_nonsolid(&mut self) -> &mut Self {
-        self.features.fillModeNonSolid = true as _;
-        self
-    }
-
-    pub fn enable_sample_rate_shading(&mut self) -> &mut Self {
-        self.features.sampleRateShading = true as _;
-        self
-    }
-
-    pub fn enable_geometry_shader(&mut self) -> &mut Self {
-        self.features.geometryShader = true as _;
-        self
-    }
-
-    pub fn enable_tessellation_shader(&mut self) -> &mut Self {
-        self.features.tessellationShader = true as _;
-        self
-    }
-
-    pub fn enable_vertex_pipeline_stores_and_atomics(&mut self) -> &mut Self {
-        self.features.vertexPipelineStoresAndAtomics = true as _;
-        self
+#[cfg(feature = "VK_KHR_synchronization2")]
+impl VkPhysicalDeviceSynchronization2FeaturesKHR {
+    pub const fn new(enabled: bool) -> Self {
+        Self {
+            sType: <Self as VulkanStructure>::TYPE,
+            pNext: core::ptr::null_mut(),
+            synchronization2: enabled as _,
+        }
     }
 }
 
