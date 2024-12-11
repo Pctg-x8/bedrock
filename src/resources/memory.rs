@@ -74,64 +74,6 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
 DerefContainerBracketImpl!(for mut DeviceMemoryMut {});
 GuardsImpl!(for mut DeviceMemoryMut {});
 
-pub trait DeviceChildMemory: DeviceMemory + DeviceChild {
-    /// Get a Windows HANDLE for a memory object
-    ///
-    /// A returned handle needs to be closed by caller
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    #[implements("VK_KHR_external_memory_win32")]
-    fn get_win32_handle(
-        &self,
-        handle_type: crate::ExternalMemoryHandleTypeWin32,
-    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
-        use crate::Device;
-
-        let info = VkMemoryGetWin32HandleInfoKHR {
-            sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            memory: self.native_ptr(),
-            handleType: handle_type as _,
-        };
-        let mut h = windows::Win32::Foundation::HANDLE(0);
-
-        unsafe {
-            self.device().get_memory_win32_handle_khr_fn().0(self.device_handle(), &info, &mut h)
-                .into_result()
-                .map(move |_| h)
-        }
-    }
-
-    /// Get a POSIX file descriptor for a memory object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    #[implements("VK_KHR_external_memory_fd")]
-    fn get_fd(&self, handle_type: crate::ExternalMemoryHandleTypeFd) -> crate::Result<std::os::unix::io::RawFd> {
-        use crate::Device;
-
-        let info = VkMemoryGetFdInfoKHR {
-            sType: VkMemoryGetFdInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            memory: self.native_ptr(),
-            handleType: handle_type as _,
-        };
-        let mut fd = 0;
-
-        unsafe {
-            self.device().get_memory_fd_khr_fn().0(self.device_handle(), &info, &mut fd)
-                .into_result()
-                .map(move |_| fd)
-        }
-    }
-}
-impl<T: DeviceMemory + DeviceChild> DeviceChildMemory for T {}
-
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkDeviceMemory::OBJECT_TYPE)]
 pub struct DeviceMemoryObject<Device: VkHandle<Handle = VkDevice>>(VkDeviceMemory, Device);

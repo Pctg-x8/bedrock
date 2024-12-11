@@ -1136,6 +1136,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
+    /// Get a POSIX file descriptor for a memory object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements("VK_KHR_external_memory_fd")]
+    #[inline]
+    fn get_memory_fd(&self, info: &crate::MemoryGetFdInfo) -> crate::Result<std::os::unix::io::RawFd> {
+        let mut fd = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_memory_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr()).into_result()?;
+
+            Ok(fd.assume_init())
+        }
+    }
+
     /// Get Properties of external memory host pointer
     /// # Failures
     /// On failure, this command returns
@@ -1185,6 +1203,29 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             )
             .into_result()
             .map(drop)
+        }
+    }
+
+    /// Get a Windows HANDLE for a memory object
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements("VK_KHR_external_memory_win32")]
+    #[inline]
+    fn get_memory_win32_handle(
+        &self,
+        info: &crate::MemoryGetWin32HandleInfo,
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        let mut handle = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_memory_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr()).into_result()?;
+
+            Ok(handle.assume_init())
         }
     }
 

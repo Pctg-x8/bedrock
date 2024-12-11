@@ -1,7 +1,7 @@
 use derives::transparent_marked;
 use widestring::WideCStr;
 
-use crate::{vk::*, VulkanStructure, VulkanStructureAsRef};
+use crate::{vk::*, VkHandle, VulkanStructure, VulkanStructureAsRef};
 
 #[repr(C)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -70,5 +70,37 @@ unsafe impl VulkanStructureAsRef for ImportMemoryWin32HandleInfo<'_> {
     #[inline(always)]
     fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
         self.0.as_generic_mut()
+    }
+}
+
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MemoryGetWin32HandleInfo<'d>(
+    pub(crate) VkMemoryGetWin32HandleInfoKHR,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
+);
+impl<'d> MemoryGetWin32HandleInfo<'d> {
+    #[inline]
+    pub fn new(
+        memory: &'d (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        handle_type: ExternalMemoryHandleTypeWin32,
+    ) -> Self {
+        Self(
+            VkMemoryGetWin32HandleInfoKHR {
+                sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                memory: memory.native_ptr(),
+                handleType: handle_type as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkMemoryGetWin32HandleInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkMemoryGetWin32HandleInfoKHR {
+        self.0
     }
 }

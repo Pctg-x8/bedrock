@@ -1,4 +1,5 @@
 use crate::vk::*;
+use crate::VkHandle;
 use crate::VulkanStructure;
 
 #[repr(C)]
@@ -24,5 +25,37 @@ impl ExternalMemoryHandleFd {
             handleType: self.0 as _,
             fd: self.1,
         }
+    }
+}
+
+#[transparent_marked]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MemoryGetFdInfo<'d>(
+    VkMemoryGetFdInfoKHR,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
+);
+impl<'d> MemoryGetFdInfo<'d> {
+    #[inline]
+    pub fn new(
+        memory: &'d (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        handle_type: ExternalMemoryHandleTypeFd,
+    ) -> Self {
+        Self(
+            VkMemoryGetFdInfoKHR {
+                sType: VkMemoryGetFdInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                memory: memory.native_ptr(),
+                handleType: handle_type as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkMemoryGetFdInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkMemoryGetFdInfoKHR {
+        self.0
     }
 }
