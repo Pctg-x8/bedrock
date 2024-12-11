@@ -1,3 +1,5 @@
+use derives::transparent_marked;
+
 use crate::vk::*;
 use crate::VkHandle;
 use crate::VulkanStructure;

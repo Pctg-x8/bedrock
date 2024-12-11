@@ -34,8 +34,8 @@ pub struct VkExportMemoryWin32HandleInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR)]
 pub struct VkMemoryWin32HandlePropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,

@@ -1124,16 +1124,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[implements("VK_KHR_external_memory_fd")]
     #[inline]
-    fn memory_fd_properties(
+    unsafe fn memory_fd_properties(
         &self,
         handle: &crate::ExternalMemoryHandleFd,
         sink: &mut core::mem::MaybeUninit<VkMemoryFdPropertiesKHR>,
     ) -> crate::Result<()> {
-        unsafe {
-            self.get_memory_fd_properties_khr_fn().0(self.native_ptr(), handle.0 as _, handle.1, sink.as_mut_ptr())
-                .into_result()
-                .map(drop)
-        }
+        self.get_memory_fd_properties_khr_fn().0(self.native_ptr(), handle.0 as _, handle.1, sink.as_mut_ptr())
+            .into_result()
+            .map(drop)
     }
 
     /// Get a POSIX file descriptor for a memory object
@@ -1155,6 +1153,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     }
 
     /// Get Properties of external memory host pointer
+    /// # Safety
+    /// sink must be constructed correctly
     /// # Failures
     /// On failure, this command returns
     ///
@@ -1162,21 +1162,19 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[implements("VK_EXT_external_memory_host_pointer")]
     #[inline]
-    fn memory_host_pointer_properties(
+    unsafe fn memory_host_pointer_properties(
         &self,
         handle: &crate::ExternalMemoryHostPointer,
         sink: &mut core::mem::MaybeUninit<VkMemoryHostPointerPropertiesEXT>,
     ) -> crate::Result<()> {
-        unsafe {
-            self.get_memory_host_pointer_properties_ext_fn().0(
-                self.native_ptr(),
-                handle.0 as _,
-                handle.1,
-                sink.as_mut_ptr(),
-            )
-            .into_result()
-            .map(drop)
-        }
+        self.get_memory_host_pointer_properties_ext_fn().0(
+            self.native_ptr(),
+            handle.0 as _,
+            handle.1,
+            sink.as_mut_ptr(),
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Get Properties of External Memory Win32 Handles
@@ -1189,21 +1187,19 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[implements("VK_KHR_external_memory_win32")]
     #[inline]
-    fn memory_win32_handle_properties(
+    unsafe fn memory_win32_handle_properties(
         &self,
         handle: &crate::ExternalMemoryWin32Handle,
         sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
     ) -> crate::Result<()> {
-        unsafe {
-            self.get_memory_win32_handle_properties_khr_fn().0(
-                self.native_ptr(),
-                handle.0 as _,
-                handle.1,
-                sink.as_mut_ptr(),
-            )
-            .into_result()
-            .map(drop)
-        }
+        self.get_memory_win32_handle_properties_khr_fn().0(
+            self.native_ptr(),
+            handle.0 as _,
+            handle.1,
+            sink.as_mut_ptr(),
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Get a Windows HANDLE for a memory object
