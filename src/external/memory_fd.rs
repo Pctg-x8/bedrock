@@ -33,7 +33,7 @@ impl ExternalMemoryHandleFd {
 #[transparent_marked]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MemoryGetFdInfo<'d>(
-    VkMemoryGetFdInfoKHR,
+    pub(crate) VkMemoryGetFdInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
 );
 impl<'d> MemoryGetFdInfo<'d> {

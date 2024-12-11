@@ -44,6 +44,7 @@ pub enum CompareOp {
     /// The test always passes
     Always = VK_COMPARE_OP_ALWAYS as _,
 }
+
 /// Stencil action function
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -65,6 +66,7 @@ pub enum StencilOp {
     /// Decrements the current value and wraps to the maximum possible value when the value would go below 0
     DecrementWrap = VK_STENCIL_OP_DECREMENT_AND_WRAP as _,
 }
+
 /// Framebuffer logical operations
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -102,6 +104,7 @@ pub enum LogicOp {
     /// 1
     Set = VK_LOGIC_OP_SET as _,
 }
+
 /// Bitmask specifying sets of stencil state for which to update the compare mask
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -213,6 +216,14 @@ impl<'d> PipelineCacheCreateInfo<'d> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub const unsafe fn from_raw(raw: VkPipelineCacheCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkPipelineCacheCreateInfo {
+        self.0
     }
 }
 
@@ -401,6 +412,42 @@ impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
 
+impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
+    /// Creates a new pipeline layout object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &PipelineLayoutCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_pipeline_layout(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkPipelineLayout, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkPipelineLayout, Device) {
+        let r = unsafe { (self.0, core::ptr::read(&self.1)) };
+        core::mem::forget(self);
+
+        r
+    }
+}
+
 impl VkPushConstantRange {
     pub const fn new(shader_stage: VkShaderStageFlags, byte_range: Range<u32>) -> Self {
         Self {
@@ -453,42 +500,6 @@ impl<'d> PipelineLayoutCreateInfo<'d> {
 
     pub const fn into_raw(self) -> VkPipelineLayoutCreateInfo {
         self.0
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
-    /// Creates a new pipeline layout object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &PipelineLayoutCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_pipeline_layout(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self::manage(h.assume_init(), device))
-        }
-    }
-
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkPipelineLayout, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkPipelineLayout, Device) {
-        let r = unsafe { (self.0, core::ptr::read(&self.1)) };
-        core::mem::forget(self);
-
-        r
     }
 }
 
