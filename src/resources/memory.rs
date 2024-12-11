@@ -1,6 +1,6 @@
 use crate::{
     vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 use derives::implements;
 #[implements]
@@ -214,7 +214,7 @@ impl DeviceMemoryRequest {
         )
     }
 
-    pub unsafe fn with_extension(mut self, x: impl VulkanStructure) -> Self {
+    pub unsafe fn with_extension(mut self, x: impl VulkanStructureAsRef) -> Self {
         self.1.push(core::mem::transmute(Box::new(x)));
         self
     }
@@ -222,20 +222,12 @@ impl DeviceMemoryRequest {
     #[cfg(feature = "VK_KHR_external_memory_win32")]
     pub fn import(
         memory_type_index: u32,
-        handle: crate::ExternalMemoryHandleWin32,
-        name: Option<&widestring::WideCString>,
+        handle: crate::ExternalMemoryWin32Handle,
+        name: Option<&widestring::WideCStr>,
     ) -> Self {
         unsafe {
             // Note: size is ignored by specification(but 0 is not allowed by validation layer...)
-            Self::allocate(1, memory_type_index).with_extension(VkImportMemoryWin32HandleInfoKHR {
-                sType: VkImportMemoryWin32HandleInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                handleType: handle.0 as _,
-                handle: handle.1,
-                name: name.map_or_else(windows::core::PCWSTR::null, |x| {
-                    windows::core::PCWSTR::from_raw(x.as_ptr())
-                }),
-            })
+            Self::allocate(1, memory_type_index).with_extension(handle.import_info(name))
         }
     }
 

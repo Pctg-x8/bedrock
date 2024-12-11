@@ -1144,13 +1144,40 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[implements("VK_EXT_external_memory_host_pointer")]
     #[inline]
-    pub fn memory_host_pointer_properties(
+    fn memory_host_pointer_properties(
         &self,
         handle: &crate::ExternalMemoryHostPointer,
         sink: &mut core::mem::MaybeUninit<VkMemoryHostPointerPropertiesEXT>,
     ) -> crate::Result<()> {
         unsafe {
             self.get_memory_host_pointer_properties_ext_fn().0(
+                self.native_ptr(),
+                handle.0 as _,
+                handle.1,
+                sink.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
+    }
+
+    /// Get Properties of External Memory Win32 Handles
+    /// # Safety
+    /// sink must be constructed correctly
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements("VK_KHR_external_memory_win32")]
+    #[inline]
+    fn memory_win32_handle_properties(
+        &self,
+        handle: &crate::ExternalMemoryWin32Handle,
+        sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
+    ) -> crate::Result<()> {
+        unsafe {
+            self.get_memory_win32_handle_properties_khr_fn().0(
                 self.native_ptr(),
                 handle.0 as _,
                 handle.1,
@@ -1192,6 +1219,46 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.get_fence_fd_khr_fn().0(self.native_ptr(), &info.0, fd.as_mut_ptr()).into_result()?;
 
             Ok(fd.assume_init())
+        }
+    }
+
+    /// Import a semaphore from a Windows HANDLE
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
+    #[implements("VK_KHR_external_semaphore_win32")]
+    #[inline]
+    fn import_semaphore_win32_handle(&self, info: &crate::ImportSemaphoreWin32HandleInfo) -> crate::Result<()> {
+        unsafe {
+            self.import_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info.0)
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Get a Windows HANDLE for a semaphore
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_TOO_MANY_OBJECTS
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    #[implements("VK_KHR_external_semaphore_win32")]
+    #[inline]
+    fn get_semaphore_win32_handle(
+        &self,
+        info: &crate::SemaphoreGetWin32HandleInfo,
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        let mut handle = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr())
+                .into_result()?;
+
+            Ok(handle.assume_init())
         }
     }
 
