@@ -9,6 +9,7 @@ GuardsImpl!(for DebugUtilsMessenger {});
 #[derive(VkHandle, VkObject, InstanceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT)]
 pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(VkDebugUtilsMessengerEXT, #[parent] Instance);
+#[implements]
 impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
