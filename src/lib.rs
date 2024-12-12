@@ -181,30 +181,6 @@ where
     }
 }
 
-/// FFI Structure with Lifetime bounded(e.g. internal pointer-ed data origins)
-pub struct LifetimeBound<'d, T>(T, std::marker::PhantomData<&'d ()>);
-impl<'d, T> LifetimeBound<'d, T> {
-    /// Converts a value bound with a lifetime
-    pub fn new(v: T) -> Self {
-        LifetimeBound(v, std::marker::PhantomData)
-    }
-    /// Unwrap an inner value
-    pub unsafe fn unbound(self) -> T {
-        self.0
-    }
-}
-impl<'d, T> AsRef<T> for LifetimeBound<'d, T> {
-    fn as_ref(&self) -> &T {
-        &self.0
-    }
-}
-impl<'d, T> std::ops::Deref for LifetimeBound<'d, T> {
-    type Target = T;
-    fn deref(&self) -> &T {
-        &self.0
-    }
-}
-
 // Spreading single value to all dimensions
 impl VkExtent2D {
     pub const fn spread1(value: u32) -> Self {

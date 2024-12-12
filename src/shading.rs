@@ -4,9 +4,8 @@ use derives::{bitflags_newtype, implements, transparent_marked};
 
 use crate::ffi_helper::{opt_pointer, slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, LifetimeBound, SubpassRef,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
-    VulkanStructureAsRef,
+    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, SubpassRef, VkDeviceChildNonExtDestroyable,
+    VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 use std::ffi::{c_void, CStr};
 use std::marker::PhantomData;
@@ -585,17 +584,6 @@ impl From<Vec<VkDynamicState>> for PipelineDynamicStates {
         // needs to be sorted for efficiency enable/disable ops
         v.sort();
         PipelineDynamicStates(v)
-    }
-}
-impl<'d> Into<LifetimeBound<'d, VkPipelineDynamicStateCreateInfo>> for &'d PipelineDynamicStates {
-    fn into(self) -> LifetimeBound<'d, VkPipelineDynamicStateCreateInfo> {
-        LifetimeBound::new(VkPipelineDynamicStateCreateInfo {
-            sType: VkPipelineDynamicStateCreateInfo::TYPE,
-            pNext: std::ptr::null(),
-            flags: 0,
-            dynamicStateCount: self.0.len() as _,
-            pDynamicStates: self.0.as_ptr_empty_null(),
-        })
     }
 }
 impl PipelineDynamicStates {
@@ -1247,11 +1235,6 @@ impl<'d> MultisampleState<'d> {
         self
     }
 }
-impl<'d> Into<LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo>> for MultisampleState<'d> {
-    fn into(self) -> LifetimeBound<'d, VkPipelineMultisampleStateCreateInfo> {
-        LifetimeBound::new(self.data)
-    }
-}
 
 /// Depth/Stencil State
 #[transparent_marked]
@@ -1877,7 +1860,13 @@ impl<'d, 's, Layout: PipelineLayout, RenderPass: 'd + crate::RenderPass + ?Sized
     }
     fn make_extras(&self) -> Self::ExtraStorage {
         let dynamic_state = if !self.dynamic_state_flags.0.is_empty() {
-            unsafe { Some(Into::<LifetimeBound<_>>::into(&self.dynamic_state_flags).unbound()) }
+            Some(VkPipelineDynamicStateCreateInfo {
+                sType: VkPipelineDynamicStateCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                dynamicStateCount: self.dynamic_state_flags.0.len() as _,
+                pDynamicStates: self.dynamic_state_flags.0.as_ptr_empty_null(),
+            })
         } else {
             None
         };
