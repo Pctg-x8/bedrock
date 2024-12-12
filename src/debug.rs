@@ -1,414 +1,81 @@
 //! Vulkan Debug Layer Extensions
 
-#[implements]
-use crate::Instance;
-use crate::VkRawHandle;
 #[allow(unused_imports)]
 use crate::{vk::*, VulkanStructure};
 #[allow(unused_imports)]
 use crate::{InstanceChild, VkHandle, VkObject};
-use derives::*;
-
-/// Opaque object to a debug report callback object
-#[cfg(feature = "VK_EXT_debug_report")]
-#[derive(VkHandle, VkObject, InstanceChild)]
-#[VkObject(type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
-pub struct DebugReportCallbackObject<Instance: crate::Instance>(
-    pub(crate) VkDebugReportCallbackEXT,
-    #[parent] pub(crate) Instance,
-);
-#[cfg(feature = "VK_EXT_debug_report")]
-unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
-#[cfg(feature = "VK_EXT_debug_report")]
-unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
-#[implements("VK_EXT_debug_report")]
-impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
-    #[inline(always)]
-    fn drop(&mut self) {
-        unsafe {
-            self.1.destroy_debug_report_callback_ext_fn().0(self.1.native_ptr(), self.native_ptr(), core::ptr::null());
-        }
-    }
-}
-#[cfg(feature = "VK_EXT_debug_report")]
-impl<Instance: crate::Instance> DebugReportCallback for DebugReportCallbackObject<Instance> {}
 
 #[cfg(feature = "VK_EXT_debug_report")]
-pub struct DebugReportCallbackBuilder<'d, Instance: crate::Instance> {
-    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-    instance: Instance,
-    flags: VkDebugReportFlagsEXT,
-    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-    callback: PFN_vkDebugReportCallbackEXT,
-    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-    user_data: Option<&'d mut dyn core::any::Any>,
-}
+mod report;
 #[cfg(feature = "VK_EXT_debug_report")]
-impl<'d, Instance: crate::Instance> DebugReportCallbackBuilder<'d, Instance> {
-    /// Create a builder object of DebugReportCallbackBuilder from `instance`, called back to `callback`
-    pub const fn new(instance: Instance, callback: PFN_vkDebugReportCallbackEXT) -> Self {
-        Self {
-            instance,
-            flags: 0,
-            callback,
-            user_data: None,
-        }
-    }
-    /// Reports an error that may cause undefined results, including an application crash
-    pub const fn report_error(&mut self) -> &mut Self {
-        self.flags |= VK_DEBUG_REPORT_ERROR_BIT_EXT;
-        self
-    }
-    /// Reports an unexpected use. e.g. Not destroying objects prior to destroying the containing object or potential inconsistencies between descriptor set layout
-    /// and the layout in the corresponding shader, etc
-    pub const fn report_warning(&mut self) -> &mut Self {
-        self.flags |= VK_DEBUG_REPORT_WARNING_BIT_EXT;
-        self
-    }
-    /// Reports a potentially non-optimal use of Vulkan. e.g. using `vkCmdClearColorImage` when a RenderPass load_op would have worked
-    pub const fn report_performance_warning(&mut self) -> &mut Self {
-        self.flags |= VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT;
-        self
-    }
-    /// Reports an informational message such as resource details that may be handy when debugging an application
-    pub const fn report_information(&mut self) -> &mut Self {
-        self.flags |= VK_DEBUG_REPORT_INFORMATION_BIT_EXT;
-        self
-    }
-    /// Reports diagnostic information from the loader and layers
-    pub const fn report_debug_information(&mut self) -> &mut Self {
-        self.flags |= VK_DEBUG_REPORT_DEBUG_BIT_EXT;
-        self
-    }
+pub use self::report::*;
 
-    /// Sets user data that passed in callback
-    pub const fn user_data(&mut self, ptr: &'d mut impl core::any::Any) -> &mut Self {
-        self.user_data = Some(ptr);
-        self
-    }
-
-    /// Register a debug report callback
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    #[implements]
-    pub fn create(self) -> crate::Result<DebugReportCallbackObject<Instance>> {
-        let Self {
-            flags,
-            callback,
-            user_data,
-            instance,
-        } = self;
-
-        let s = VkDebugReportCallbackCreateInfoEXT {
-            sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
-            pNext: core::ptr::null(),
-            flags,
-            pfnCallback: callback,
-            pUserData: user_data.map_or(core::ptr::null_mut(), |p| p as *mut _ as _),
-        };
-
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            instance.create_debug_report_callback_ext_fn().0(
-                instance.native_ptr(),
-                &s,
-                core::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(move |_| DebugReportCallbackObject(h.assume_init(), instance))
-        }
-    }
-}
-
-#[cfg(feature = "VK_EXT_debug_report")]
-pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}
-#[cfg(feature = "VK_EXT_debug_report")]
-DerefContainerBracketImpl!(for DebugReportCallback {});
-#[cfg(feature = "VK_EXT_debug_report")]
-GuardsImpl!(for DebugReportCallback {});
-
-cfg_if::cfg_if! {
-    if #[cfg(feature = "VK_EXT_debug_utils")] {
-        pub type DebugUtilsMessengerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT;
-
-        #[derive(VkHandle, VkObject, InstanceChild)]
-        #[VkObject(type = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT)]
-        pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(VkDebugUtilsMessengerEXT, #[parent] Instance);
-        unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
-        unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
-        #[cfg(feature = "Implements")]
-        impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
-            fn drop(&mut self) {
-                unsafe { self.1.destroy_debug_utils_messenger_ext_fn().0(self.1.native_ptr(), self.native_ptr(), std::ptr::null()); }
-            }
-        }
-        impl<Instance: crate::Instance> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
-
-        #[repr(transparent)]
-        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub struct DebugUtilsMessageSeverityFlags(VkDebugUtilsMessageSeverityFlagsEXT);
-        impl DebugUtilsMessageSeverityFlags {
-            /// Empty flag set
-            pub const EMPTY: Self = Self(0);
-            /// The most verbose output indicating all diagnostic messages
-            /// from the Vulkan loader, layers, and drivers should be captured.
-            pub const VERBOSE: Self = Self(VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT);
-            /// An informational message such as resource details that may be handy when debugging an application.
-            pub const INFO: Self = Self(VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT);
-            /// Use of Vulkan that *may* expose an app bug.
-            /// Such cases may not be immediately harmful, such as a fragment shader outptting to a location with no attachment.
-            /// Other cases *may* point to behavior that is almost certainly bad when unintended
-            /// such as using an image whose memory has not been filled.
-            /// In general if you see a warning but you know that the behavior is intended/desired,
-            /// then simply ignore the warning.
-            pub const WARNING: Self = Self(VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT);
-            /// The application has violated a valid usage condiiton of the specification.
-            pub const ERROR: Self = Self(VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT);
-            /// All flags set
-            pub const ALL: Self = Self::VERBOSE.and(Self::INFO).and(Self::WARNING).and(Self::ERROR);
-
-            /// The most verbose output indicating all diagnostic messages
-            /// from the Vulkan loader, layers, and drivers should be captured.
-            pub const fn and_verbose(self) -> Self {
-                self.and(Self::VERBOSE)
-            }
-            /// An informational message such as resource details that may be handy when debugging an application.
-            pub const fn and_info(self) -> Self {
-                self.and(Self::INFO)
-            }
-            /// Use of Vulkan that *may* expose an app bug.
-            /// Such cases may not be immediately harmful, such as a fragment shader outptting to a location with no attachment.
-            /// Other cases *may* point to behavior that is almost certainly bad when unintended
-            /// such as using an image whose memory has not been filled.
-            /// In general if you see a warning but you know that the behavior is intended/desired,
-            /// then simply ignore the warning.
-            pub const fn and_warning(self) -> Self {
-                self.and(Self::WARNING)
-            }
-            /// The application has violated a valid usage condition of the specification.
-            pub const fn and_error(self) -> Self {
-                self.and(Self::ERROR)
-            }
-
-            /// const fn version of `bitor`
-            pub const fn and(self, other: Self) -> Self {
-                Self(self.0 | other.0)
-            }
-        }
-        #[repr(u32)]
-        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub enum DebugUtilsMessageSeverityFlag {
-            /// The most verbose output indicating all diagnostic messages
-            /// from the Vulkan loader, layers, and drivers should be captured.
-            Verbose = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT,
-            /// An informational message such as resource details that may be handy when debugging an application.
-            Info = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
-            /// Use of Vulkan that *may* expose an app bug.
-            /// Such cases may not be immediately harmful, such as a fragment shader outputting to a location with no attachment.
-            /// Other cases *may* point to behavior that is almost certainly bad when unintended
-            /// such as using an image whose memory has not been filled.
-            /// In general if you see a warning but you know that the behavior is intended/desired,
-            /// then simply ignore the warning.
-            Warning = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
-            /// The application has violated a valid usage condition of the specification.
-            Error = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
-        }
-
-        #[repr(transparent)]
-        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub struct DebugUtilsMessageTypeFlags(VkDebugUtilsMessageTypeFlagsEXT);
-        impl DebugUtilsMessageTypeFlags {
-            /// Empty flag set
-            pub const EMPTY: Self = Self(0);
-            /// Some general event has occurred.
-            /// This is typically a non-specification, non-performance event.
-            pub const GENERAL: Self = Self(VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT);
-            /// Something has occurred during validation against the Vulkan specification that may indicate invalid behavior.
-            pub const VALIDATION: Self = Self(VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT);
-            /// A potentially non-optimal use of Vulkan,
-            /// e.g. using `vkCmdClearColorImage` when setting `VkAttachmentDescription::loadOp` to `VK_ATTACHMENT_LOAD_OP_CLEAR`
-            /// would have worked.
-            pub const PERFORMANCE: Self = Self(VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT);
-            /// All flags set
-            pub const ALL: Self = Self::GENERAL.and(Self::VALIDATION).and(Self::PERFORMANCE);
-
-            /// Some general event has occurred.
-            /// This is typically a non-specification, non-performance event.
-            pub const fn and_general(self) -> Self {
-                self.and(Self::GENERAL)
-            }
-            /// Something has occurred during validation against the Vulkan specification that may indicate invalid behavior.
-            pub const fn and_validation(self) -> Self {
-                self.and(Self::VALIDATION)
-            }
-            /// A potentially non-optimal use of Vulkan,
-            /// e.g. using `vkCmdClearColorImage` when setting `VkAttachmentDescription::loadOp` to `VK_ATTACHMENT_LOAD_OP_CLEAR`
-            /// would have worked.
-            pub const fn and_performance(self) -> Self {
-                self.and(Self::PERFORMANCE)
-            }
-
-            /// const fn version of `bitor`
-            pub const fn and(self, other: Self) -> Self {
-                Self(self.0 | other.0)
-            }
-        }
-
-        impl DebugUtilsMessengerCreateInfo {
-            pub fn new(callback: PFN_vkDebugUtilsMessengerCallbackEXT) -> Self {
-                Self {
-                    sType: VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-                    pNext: std::ptr::null(),
-                    flags: 0,
-                    messageSeverity: DebugUtilsMessageSeverityFlags::ALL.0,
-                    messageType: DebugUtilsMessageTypeFlags::ALL.0,
-                    pfnUserCallback: callback,
-                    pUserData: std::ptr::null_mut(),
-                }
-            }
-            pub fn filter_severity(mut self, severity: DebugUtilsMessageSeverityFlags) -> Self {
-                self.messageSeverity = severity.0;
-                self
-            }
-            pub fn filter_type(mut self, ty: DebugUtilsMessageTypeFlags) -> Self {
-                self.messageType = ty.0;
-                self
-            }
-            pub fn user_data<T>(mut self, p: *mut T) -> Self {
-                self.pUserData = p as _;
-                self
-            }
-
-            #[cfg(feature = "Implements")]
-            /// Create a debug messenger object.
-            /// # Failures
-            /// On failure, this command returns
-            ///
-            /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-            pub fn create<Instance: crate::Instance>(
-                &self,
-                instance: Instance,
-            ) -> super::Result<DebugUtilsMessengerObject<Instance>> {
-                let mut h = std::mem::MaybeUninit::uninit();
-                unsafe {
-                    instance.create_debug_utils_messenger_ext_fn().0(instance.native_ptr(), self, std::ptr::null(), h.as_mut_ptr())
-                        .into_result()
-                        .map(|_| DebugUtilsMessengerObject(h.assume_init(), instance))
-                }
-            }
-        }
-
-        pub trait DebugUtilsMessenger: VkHandle<Handle = VkDebugUtilsMessengerEXT> + InstanceChild {}
-        DerefContainerBracketImpl!(for DebugUtilsMessenger {});
-
-        #[repr(transparent)]
-        pub struct DebugUtilsObjectNameInfo<'d>(
-            VkDebugUtilsObjectNameInfoEXT,
-            std::marker::PhantomData<Option<&'d std::ffi::CStr>>,
-        );
-        impl<'d> DebugUtilsObjectNameInfo<'d> {
-            pub fn new<H: VkHandle + VkObject + ?Sized>(handle: &H, name: Option<&'d std::ffi::CStr>) -> Self
-            where
-                H::Handle: VkRawHandle,
-            {
-                Self::new_raw(H::TYPE, handle.native_ptr().raw_handle_value(), name)
-            }
-            pub fn new_raw(ty: VkObjectType, handle: u64, name: Option<&'d std::ffi::CStr>) -> Self {
-                DebugUtilsObjectNameInfo(
-                    VkDebugUtilsObjectNameInfoEXT {
-                        sType: VkDebugUtilsObjectNameInfoEXT::TYPE,
-                        pNext: std::ptr::null(),
-                        objectType: ty,
-                        objectHandle: handle,
-                        pObjectName: name.map_or_else(std::ptr::null, |s| s.as_ptr()),
-                    },
-                    std::marker::PhantomData,
-                )
-            }
-
-            #[cfg(feature = "Implements")]
-            /// Give a user-friendly name to an object.
-            /// # Failures
-            /// On failure, this command returns
-            ///
-            /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-            /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-            pub fn apply(&self, device: &(impl crate::Device + crate::InstanceChild)) -> crate::Result<()> {
-                unsafe {
-                    device.instance().set_debug_utils_object_name_ext_fn().0(device.native_ptr(), &self.0)
-                        .into_result()
-                        .map(drop)
-                }
-            }
-        }
-
-    }
-}
+#[cfg(feature = "VK_EXT_debug_utils")]
+mod utils;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub use self::utils::*;
 
 /// The type of an object passed to the `VkDebugMarkerObjectNameInfoEXT` and `VkDebugMarkerObjectTagInfoEXT` commands
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg(any(feature = "VK_EXT_debug_report", feature = "VK_EXT_debug_marker"))]
 pub enum DebugReportObjectType {
     /// An unknown object
-    Unknown = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT as _,
+    Unknown = VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT,
     /// A `VkInstance`
-    Instance = VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT as _,
+    Instance = VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT,
     /// A `VkPhysicalDevice`
-    PhysicalDevice = VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT as _,
+    PhysicalDevice = VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT,
     /// A `VkDevice`
-    Device = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT as _,
+    Device = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT,
     /// A `VkQueue`
-    Queue = VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT as _,
+    Queue = VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT,
     /// A `VkSemaphore`
-    Semaphore = VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT as _,
+    Semaphore = VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT,
     /// A `VkCommandBuffer`
-    CommandBuffer = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT as _,
+    CommandBuffer = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT,
     /// A `VkFence`
-    Fence = VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT as _,
+    Fence = VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT,
     /// A `VkDeviceMemory`
-    DeviceMemory = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT as _,
+    DeviceMemory = VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT,
     /// A `VkBuffer`
-    Buffer = VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT as _,
+    Buffer = VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT,
     /// A `VkImage`
-    Image = VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT as _,
+    Image = VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT,
     /// A `VkEvent`
-    Event = VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT as _,
+    Event = VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT,
     /// A `VkQueryPool`
-    QueryPool = VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT as _,
+    QueryPool = VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT,
     /// A `VkBufferView`
-    BufferView = VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT as _,
+    BufferView = VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT,
     /// A `VkImageView`
-    ImageView = VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT as _,
+    ImageView = VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT,
     /// A `VkSHaderModule`
-    ShaderModule = VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT as _,
+    ShaderModule = VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT,
     /// A `VkPipeineCache`
-    PipelineCache = VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT as _,
+    PipelineCache = VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT,
     /// A `VkPipelineLayout`
-    PipelineLayout = VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT as _,
+    PipelineLayout = VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT,
     /// A `VkRenderPass`
-    RenderPass = VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT as _,
+    RenderPass = VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT,
     /// A `VkPipeline`
-    Pipeline = VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT as _,
+    Pipeline = VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT,
     /// A `VkDescriptorSetLayout`
-    DescriptorSetLayout = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT as _,
+    DescriptorSetLayout = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT,
     /// A `VkSampler`
-    Sampler = VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT as _,
+    Sampler = VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT,
     /// A `VkDescriptorPool`
-    DescriptorPool = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_POOL_EXT as _,
+    DescriptorPool = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_POOL_EXT,
     /// A `VkDescriptorSet`
-    DescriptorSet = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT as _,
+    DescriptorSet = VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT,
     /// A `VkFramebuffer`
-    Framebuffer = VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT as _,
+    Framebuffer = VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT,
     /// A `VkCommandPool`
-    CommandPool = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT as _,
+    CommandPool = VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT,
     /// A `VkSurfaceKHR`
-    Surface = VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT as _,
+    Surface = VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT,
     /// A `VkSwapchainKHR`
-    Swapchain = VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT as _,
+    Swapchain = VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT,
     /// A `VkDebugReportCallbackEXT`
-    DebugReport = VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT as _,
+    DebugReport = VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT,
 }

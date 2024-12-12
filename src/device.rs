@@ -942,6 +942,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
+    /// Give a user-friendly name to an object.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements("VK_EXT_debug_utils")]
+    fn set_object_name(&self, info: &crate::DebugUtilsObjectNameInfo) -> crate::Result<()> {
+        unsafe {
+            self.instance().set_debug_utils_object_name_ext_fn().0(self.native_ptr(), &info.0)
+                .into_result()
+                .map(drop)
+        }
+    }
+
     /// Create a new descriptor update template
     /// # Failure
     /// On failure, this command returns

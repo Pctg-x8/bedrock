@@ -87,20 +87,21 @@ pub use self::handle::*;
 pub trait VkObject: VkHandle {
     const TYPE: VkObjectType;
 
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_debug_utils"))]
     /// Give a user-friendly name to this object.
     /// # Failures
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    fn set_name(&self, name: Option<&std::ffi::CStr>) -> crate::Result<()>
+    #[implements("VK_EXT_debug_utils")]
+    fn set_name(&self, name: Option<&core::ffi::CStr>) -> crate::Result<()>
     where
         Self: DeviceChild,
         Self::ConcreteDevice: InstanceChild,
         Self::Handle: VkRawHandle,
     {
-        DebugUtilsObjectNameInfo::new(self, name).apply(self.device())
+        self.device()
+            .set_object_name(&DebugUtilsObjectNameInfo::new(self, name))
     }
 }
 impl<T> VkObject for &'_ T

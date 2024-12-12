@@ -119,14 +119,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .next()
         .expect("No suitable adapter found");
 
-    let _dbg = br::DebugUtilsMessengerCreateInfo::new(vk_debug)
-        .filter_severity(br::DebugUtilsMessageSeverityFlags::ERROR.and_warning())
-        .filter_type(
-            br::DebugUtilsMessageTypeFlags::GENERAL
-                .and_performance()
-                .and_validation(),
-        )
-        .create(&instance)?;
+    let _dbg = br::DebugUtilsMessengerObject::new(
+        &instance,
+        &br::DebugUtilsMessengerCreateInfo::new(
+            br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
+                | br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
+            br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
+                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+            vk_debug,
+        ),
+    )?;
 
     let surface =
         unsafe { br::SurfaceObject::new(&adapter, &br::vk::VkWin32SurfaceCreateInfoKHR::new(cls.hInstance, w))? };

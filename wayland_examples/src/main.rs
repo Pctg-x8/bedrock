@@ -156,11 +156,18 @@ fn main() {
         ))
         .unwrap(),
     );
-    let _vk_debugger = br::DebugUtilsMessengerCreateInfo::new(vk_debug_msg)
-        .filter_type(br::DebugUtilsMessageTypeFlags::VALIDATION.and_performance())
-        .filter_severity(br::DebugUtilsMessageSeverityFlags::ERROR.and_warning())
-        .create(vk_instance.clone())
-        .unwrap();
+    let _vk_debugger = br::DebugUtilsMessengerObject::new(
+        vk_instance.clone(),
+        &br::DebugUtilsMessengerCreateInfo::new(
+            br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
+                | br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
+            br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
+                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+            vk_debug_msg,
+        ),
+    )
+    .unwrap();
     let vk_pdev = vk_instance.iter_physical_devices().unwrap().next().unwrap();
     let vk_surface = unsafe {
         br::SurfaceObject::new(
