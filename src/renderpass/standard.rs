@@ -207,13 +207,13 @@ impl<'r> SubpassDescription<'r> {
 /// Builder structure to construct the `RenderPass`
 #[repr(transparent)]
 #[derive(Clone)]
-pub struct RenderPassBuilder<'r> {
+pub struct RenderPassCreateInfo<'r> {
     base: VkRenderPassCreateInfo,
     attachments: core::marker::PhantomData<&'r [VkAttachmentDescription]>,
     subpasses: core::marker::PhantomData<&'r [SubpassDescription<'r>]>,
     dependencies: core::marker::PhantomData<&'r [VkSubpassDependency]>,
 }
-impl<'r> RenderPassBuilder<'r> {
+impl<'r> RenderPassCreateInfo<'r> {
     pub const fn new(
         attachments: &'r [VkAttachmentDescription],
         subpasses: &'r [SubpassDescription<'r>],
@@ -251,7 +251,7 @@ impl<'r> RenderPassBuilder<'r> {
     }
 }
 #[implements]
-impl super::RenderPassCreateInfo for RenderPassBuilder<'_> {
+impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo<'_> {
     fn execute(
         &self,
         device: &(impl crate::VkHandle<Handle = VkDevice> + ?Sized),

@@ -276,7 +276,7 @@ impl SubpassDependency2 {
 }
 
 #[repr(transparent)]
-pub struct RenderPassBuilder2<'d>(
+pub struct RenderPassCreateInfo2<'d>(
     VkRenderPassCreateInfo2KHR,
     core::marker::PhantomData<(
         &'d [AttachmentDescription2],
@@ -284,7 +284,7 @@ pub struct RenderPassBuilder2<'d>(
         &'d [SubpassDependency2],
     )>,
 );
-impl<'d> RenderPassBuilder2<'d> {
+impl<'d> RenderPassCreateInfo2<'d> {
     #[inline]
     pub const fn new(
         attachments: &'d [AttachmentDescription2],
@@ -318,7 +318,7 @@ impl<'d> RenderPassBuilder2<'d> {
     }
 }
 #[implements]
-impl super::RenderPassCreateInfo for RenderPassBuilder2<'_> {
+impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {
     fn execute(
         &self,
         device: &(impl crate::VkHandle<Handle = super::VkDevice> + ?Sized),

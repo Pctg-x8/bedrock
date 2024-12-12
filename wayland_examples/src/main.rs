@@ -241,7 +241,7 @@ fn main() {
 
     let renderpass = br::RenderPassObject::new(
         vk_device.clone(),
-        &br::RenderPassBuilder2::new(
+        &br::RenderPassCreateInfo2::new(
             &[br::AttachmentDescription2::new(br::vk::VK_FORMAT_R8G8B8A8_SRGB)
                 .with_layout_to(br::ImageLayout::PresentSrc.from_undefined())
                 .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store)],

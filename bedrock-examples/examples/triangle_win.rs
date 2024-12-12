@@ -194,34 +194,32 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     let mut back_buffer_size = swapchain.size().clone();
 
-    let render_pass = {
-        let attachments = [br::AttachmentDescription2::new(fmt.format)
-            .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store)
-            .layout_transition(br::ImageLayout::Undefined, br::ImageLayout::PresentSrc)];
-        let mainpass_color_outputs = [br::AttachmentReference2::color(0, br::ImageLayout::ColorAttachmentOpt)];
-        let subpasses = [br::SubpassDescription2::new().colors(&mainpass_color_outputs)];
-        let dependencies = [
-            br::SubpassDependency2::new(br::SubpassIndex::External, br::SubpassIndex::Internal(0))
-                .of_execution(
-                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                )
-                .of_memory(0, br::AccessFlags::COLOR_ATTACHMENT.write)
-                .by_region(),
-            br::SubpassDependency2::new(br::SubpassIndex::Internal(0), br::SubpassIndex::External)
-                .of_execution(
-                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                    br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
-                )
-                .of_memory(br::AccessFlags::COLOR_ATTACHMENT.write, 0)
-                .by_region(),
-        ];
-
-        br::RenderPassObject::new(
-            &device,
-            &br::RenderPassBuilder2::new(&attachments, &subpasses, &dependencies),
-        )?
-    };
+    let render_pass = br::RenderPassObject::new(
+        &device,
+        &br::RenderPassCreateInfo2::new(
+            &[br::AttachmentDescription2::new(fmt.format)
+                .color_memory_op(br::LoadOp::Clear, br::StoreOp::Store)
+                .layout_transition(br::ImageLayout::Undefined, br::ImageLayout::PresentSrc)],
+            &[br::SubpassDescription2::new()
+                .colors(&[br::AttachmentReference2::color(0, br::ImageLayout::ColorAttachmentOpt)])],
+            &[
+                br::SubpassDependency2::new(br::SubpassIndex::External, br::SubpassIndex::Internal(0))
+                    .of_execution(
+                        br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                        br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                    )
+                    .of_memory(0, br::AccessFlags::COLOR_ATTACHMENT.write)
+                    .by_region(),
+                br::SubpassDependency2::new(br::SubpassIndex::Internal(0), br::SubpassIndex::External)
+                    .of_execution(
+                        br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                        br::PipelineStageFlags::COLOR_ATTACHMENT_OUTPUT,
+                    )
+                    .of_memory(br::AccessFlags::COLOR_ATTACHMENT.write, 0)
+                    .by_region(),
+            ],
+        ),
+    )?;
 
     let descriptor_layout_ub1 = br::DescriptorSetLayoutObject::new(
         &device,

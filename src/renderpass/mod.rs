@@ -67,13 +67,13 @@ impl<Device: VkHandle<Handle = VkDevice>> RenderPass for RenderPassObject<Device
 impl<Device: VkHandle<Handle = VkDevice>> RenderPassObject<Device> {
     #[implements]
     #[inline(always)]
-    pub fn new(device: Device, create_info: &(impl RenderPassCreateInfo + ?Sized)) -> crate::Result<Self> {
+    pub fn new(device: Device, create_info: &(impl AnyRenderPassCreateInfo + ?Sized)) -> crate::Result<Self> {
         create_info.execute(&device, None).map(move |x| Self(x, device))
     }
 }
 
 #[implements]
-pub trait RenderPassCreateInfo {
+pub trait AnyRenderPassCreateInfo {
     fn execute(
         &self,
         device: &(impl crate::VkHandle<Handle = VkDevice> + ?Sized),
