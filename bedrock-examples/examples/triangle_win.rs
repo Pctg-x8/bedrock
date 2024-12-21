@@ -410,8 +410,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         host_memory.unmap();
     }
 
-    let mut command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
-    let mut command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
+    let mut command_pool = br::CommandPoolObject::new(&device, &br::CommandPoolCreateInfo::new(graphics_queue_family))?;
+    let mut command_buffers = br::CommandBufferObject::alloc(
+        &device,
+        &br::CommandBufferAllocateInfo::new(
+            &mut command_pool,
+            framebuffers.len() as _,
+            br::CommandBufferLevel::Primary,
+        ),
+    )?;
     for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
         unsafe { cb.begin(&device)? }
             .begin_render_pass_2(
@@ -437,8 +444,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .end()?;
     }
 
-    let mut transfer_command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
-    let mut transfer_command_buffers = transfer_command_pool.alloc(1, true)?;
+    let mut transfer_command_pool =
+        br::CommandPoolObject::new(&device, &br::CommandPoolCreateInfo::new(graphics_queue_family))?;
+    let mut transfer_command_buffers = br::CommandBufferObject::alloc_array(
+        &device,
+        &br::CommandBufferFixedCountAllocateInfo::<'_, 1>::new(
+            &mut transfer_command_pool,
+            br::CommandBufferLevel::Primary,
+        ),
+    )?;
     unsafe { transfer_command_buffers[0].begin(&device)? }
         .copy_buffer(
             &host_buffer,
@@ -455,10 +469,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .end()?;
 
     let mut init_fence = br::FenceObject::new(&device, &br::FenceCreateInfo::new(0))?;
-    let mut init_command_pool = br::CommandPoolBuilder::new(graphics_queue_family)
-        .transient()
-        .create(&device)?;
-    let mut init_command_buffers = init_command_pool.alloc(1, true)?;
+    let mut init_command_pool = br::CommandPoolObject::new(
+        &device,
+        &br::CommandPoolCreateInfo::new(graphics_queue_family).transient(),
+    )?;
+    let mut init_command_buffers = br::CommandBufferObject::alloc(
+        &device,
+        &br::CommandBufferAllocateInfo::new(&mut init_command_pool, 1, br::CommandBufferLevel::Primary),
+    )?;
     unsafe { init_command_buffers[0].begin_once(&device)? }
         .copy_buffer(
             &host_buffer,
@@ -619,7 +637,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             unsafe {
                 command_pool.free(&command_buffers);
             }
-            command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
+            command_buffers = br::CommandBufferObject::alloc(
+                &device,
+                &br::CommandBufferAllocateInfo::new(
+                    &mut command_pool,
+                    framebuffers.len() as _,
+                    br::CommandBufferLevel::Primary,
+                ),
+            )?;
             for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
                 unsafe { cb.begin(&device)? }
                     .begin_render_pass(
