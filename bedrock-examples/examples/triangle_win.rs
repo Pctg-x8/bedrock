@@ -307,7 +307,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect::<Result<Vec<_>, _>>()?;
     let mut framebuffers = back_buffer_views
         .iter()
-        .map(|b| br::FramebufferBuilder::new_with_attachment(&render_pass, b).create())
+        .map(|b| {
+            br::FramebufferObject::new(
+                &device,
+                &br::FramebufferCreateInfo::new(
+                    &render_pass,
+                    &[b.as_transparent_ref()],
+                    back_buffer_size.width,
+                    back_buffer_size.height,
+                ),
+            )
+        })
         .collect::<Result<Vec<_>, _>>()?;
 
     let memory_properties = adapter.memory_properties();
@@ -566,7 +576,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .collect::<Result<Vec<_>, _>>()?;
             framebuffers = back_buffer_views
                 .iter()
-                .map(|b| br::FramebufferBuilder::new_with_attachment(&render_pass, b).create())
+                .map(|b| {
+                    br::FramebufferObject::new(
+                        &device,
+                        &br::FramebufferCreateInfo::new(
+                            &render_pass,
+                            &[b.as_transparent_ref()],
+                            back_buffer_size.width,
+                            back_buffer_size.height,
+                        ),
+                    )
+                })
                 .collect::<Result<Vec<_>, _>>()?;
 
             let scissors = [back_buffer_size.clone().into_rect(br::vk::VkOffset2D::ZERO)];

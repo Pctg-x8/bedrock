@@ -271,7 +271,12 @@ fn main() {
         .unwrap();
     let framebuffers = backbuffer_views
         .iter()
-        .map(|bb| br::FramebufferBuilder::new_with_attachment(&renderpass, bb).create())
+        .map(|bb| {
+            br::FramebufferObject::new(
+                vk_device.clone(),
+                &br::FramebufferCreateInfo::new(&renderpass, &[bb.as_transparent_ref()], 640, 480),
+            )
+        })
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
 
