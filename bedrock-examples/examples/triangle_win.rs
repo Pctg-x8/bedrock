@@ -55,8 +55,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         SetProcessDPIAware();
     }
 
-    let (instance_version_major, instance_version_minor, instance_version_patch) = br::instance_version()?;
-    println!("vk instance version: {instance_version_major}.{instance_version_minor}.{instance_version_patch}",);
+    let vk_version = br::instance_version()?;
+    println!("vk instance version: {vk_version}");
 
     let cls = WNDCLASSEXA {
         cbSize: core::mem::size_of::<WNDCLASSEXA>() as _,
@@ -106,7 +106,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let instance = br::InstanceObject::new(&br::InstanceCreateInfo::new(
-        &br::ApplicationInfo::new(c"BedrockExampleTriangle", (0, 1, 0), c"None", (0, 0, 1)).api_version(1, 3, 0),
+        &br::ApplicationInfo::new(
+            c"BedrockExampleTriangle",
+            br::Version::new(0, 1, 0),
+            c"None",
+            br::Version::new(0, 0, 1),
+        )
+        .api_version(br::Version::new(1, 3, 0)),
         &[c"VK_LAYER_KHRONOS_validation".into()],
         &[
             c"VK_EXT_debug_utils".into(),
@@ -146,8 +152,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[c"VK_KHR_swapchain".into()],
         )
         .with_next(
-            &br::vk::VkPhysicalDeviceFeatures2KHR::new(Default::default())
-                .with_next(&mut br::vk::VkPhysicalDeviceSynchronization2Features::new(true)),
+            &br::PhysicalDeviceFeatures2::new(Default::default())
+                .with_next(&mut br::PhysicalDeviceSynchronization2Features::new(true)),
         ),
     )?;
     let mut queue = (&device).queue(graphics_queue_family, 0);

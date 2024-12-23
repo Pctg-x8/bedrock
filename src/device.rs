@@ -529,32 +529,104 @@ impl<'d> DeviceCreateInfo<'d> {
 }
 
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-impl VkPhysicalDeviceFeatures2KHR {
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PhysicalDeviceFeatures2<'r>(
+    VkPhysicalDeviceFeatures2KHR,
+    core::marker::PhantomData<Option<&'r mut dyn VulkanStructureAsRef>>,
+);
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+impl<'r> PhysicalDeviceFeatures2<'r> {
     pub const fn new(old_features: VkPhysicalDeviceFeatures) -> Self {
-        Self {
-            sType: <Self as VulkanStructure>::TYPE,
-            pNext: core::ptr::null_mut(),
-            features: old_features,
-        }
+        Self(
+            VkPhysicalDeviceFeatures2KHR {
+                sType: <VkPhysicalDeviceFeatures2KHR as VulkanStructure>::TYPE,
+                pNext: core::ptr::null_mut(),
+                features: old_features,
+            },
+            core::marker::PhantomData,
+        )
     }
 
     #[inline(always)]
-    pub fn with_next(self, next: &mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
-        Self {
-            pNext: next.as_generic_mut() as *mut _ as _,
-            ..self
-        }
+    pub fn with_next(mut self, next: &'r mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic_mut() as *mut _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+unsafe impl VulkanStructureAsRef for PhysicalDeviceFeatures2<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic_mut(&mut self.0)
+    }
+}
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+unsafe impl VulkanSinkStructureAsRef for PhysicalDeviceFeatures2<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic_mut(&mut self.0)
     }
 }
 
 #[cfg(feature = "VK_KHR_synchronization2")]
-impl VkPhysicalDeviceSynchronization2FeaturesKHR {
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PhysicalDeviceSynchronization2Features<'r>(
+    VkPhysicalDeviceSynchronization2FeaturesKHR,
+    core::marker::PhantomData<Option<&'r mut dyn VulkanStructureAsRef>>,
+);
+#[cfg(feature = "VK_KHR_synchronization2")]
+impl<'r> PhysicalDeviceSynchronization2Features<'r> {
     pub const fn new(enabled: bool) -> Self {
-        Self {
-            sType: <Self as VulkanStructure>::TYPE,
-            pNext: core::ptr::null_mut(),
-            synchronization2: enabled as _,
-        }
+        Self(
+            VkPhysicalDeviceSynchronization2FeaturesKHR {
+                sType: <VkPhysicalDeviceSynchronization2FeaturesKHR as VulkanStructure>::TYPE,
+                pNext: core::ptr::null_mut(),
+                synchronization2: enabled as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'r mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic_mut() as *mut _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_synchronization2")]
+unsafe impl VulkanStructureAsRef for PhysicalDeviceSynchronization2Features<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic_mut(&mut self.0)
+    }
+}
+#[cfg(feature = "VK_KHR_synchronization2")]
+unsafe impl VulkanSinkStructureAsRef for PhysicalDeviceSynchronization2Features<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic_mut(&mut self.0)
     }
 }
 

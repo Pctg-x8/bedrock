@@ -145,8 +145,13 @@ fn main() {
 
     let vk_instance = Rc::new(
         br::InstanceObject::new(&br::InstanceCreateInfo::new(
-            &br::ApplicationInfo::new(c"Bedrock Examples Wayland Native", (0, 1, 0), c"", (0, 1, 0))
-                .api_version(1, 3, 0),
+            &br::ApplicationInfo::new(
+                c"Bedrock Examples Wayland Native",
+                br::Version::new(0, 1, 0),
+                c"",
+                br::Version::new(0, 1, 0),
+            )
+            .api_version(br::Version::new(1, 3, 0)),
             &[c"VK_LAYER_KHRONOS_validation".into()],
             &[
                 c"VK_KHR_surface".into(),
@@ -194,8 +199,8 @@ fn main() {
                 &[c"VK_KHR_swapchain".into()],
             )
             .with_next(
-                &br::vk::VkPhysicalDeviceFeatures2KHR::new(Default::default())
-                    .with_next(&mut br::vk::VkPhysicalDeviceSynchronization2FeaturesKHR::new(true)),
+                &br::PhysicalDeviceFeatures2::new(Default::default())
+                    .with_next(&mut br::PhysicalDeviceSynchronization2Features::new(true)),
             ),
         )
         .unwrap(),
