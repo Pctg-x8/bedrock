@@ -23,23 +23,69 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     }
 }
 
+/// A Value Object represents the Vulkan version number
+// Note: (MSB) major | minor | patch (LSB) の順でビットが割り当てられているので合成した状態の比較で正しい順序になる
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Version(u32);
+impl Version {
+    /// Version 1.0.0
+    pub const V1: Self = Self::new(1, 0, 0);
+
+    /// Construct an object from discrete values
+    pub const fn new(major: u16, minor: u16, patch: u16) -> Self {
+        Self(crate::vk::VK_MAKE_VERSION(major, minor, patch))
+    }
+
+    /// Construct an object from a raw value
+    pub const fn from_raw(v: u32) -> Self {
+        Self(v)
+    }
+
+    /// Gets a raw value from this object
+    pub const fn raw(&self) -> u32 {
+        self.0
+    }
+
+    /// Major version number
+    pub const fn major(&self) -> u16 {
+        crate::vk::VK_MAJOR_VERSION(self.0)
+    }
+
+    /// Minor version number
+    pub const fn minor(&self) -> u16 {
+        crate::vk::VK_MINOR_VERSION(self.0)
+    }
+
+    /// Patch version number
+    pub const fn patch(&self) -> u16 {
+        crate::vk::VK_PATCH_VERSION(self.0)
+    }
+}
+impl core::fmt::Display for Version {
+    #[inline]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}.{}.{}", self.major(), self.minor(), self.patch())
+    }
+}
+
 /// Query instance-level version before instance creation
 /// # Failures
 /// On failure, this command returns
 ///
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 #[inline]
-pub fn instance_version() -> crate::Result<(u16, u16, u16)> {
+pub fn instance_version() -> crate::Result<Version> {
     #[cfg(feature = "Allow1_1APIs")]
     unsafe {
         let mut sink = 0;
         crate::vkfn::enumerate_instance_version(&mut sink).into_result()?;
-        Ok(crate::vk::vk_deserialize_version(sink))
+        Ok(Version(sink))
     }
     #[cfg(not(feature = "Allow1_1APIs"))]
     {
         // fixed to v1.0.0
-        Ok((1, 0, 0))
+        Ok(Version::V1)
     }
 }
 
@@ -296,29 +342,24 @@ impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDev
 pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
 impl<'d> ApplicationInfo<'d> {
     #[inline(always)]
-    pub const fn new(
-        app_name: &'d CStr,
-        app_version: (u16, u16, u16),
-        engine_name: &'d CStr,
-        engine_version: (u16, u16, u16),
-    ) -> Self {
+    pub const fn new(app_name: &'d CStr, app_version: Version, engine_name: &'d CStr, engine_version: Version) -> Self {
         Self(
             VkApplicationInfo {
                 sType: VkApplicationInfo::TYPE,
                 pNext: core::ptr::null(),
                 apiVersion: VK_API_VERSION_1_0,
                 pApplicationName: app_name.as_ptr(),
-                applicationVersion: VK_MAKE_VERSION(app_version.0, app_version.1, app_version.2),
+                applicationVersion: app_version.0,
                 pEngineName: engine_name.as_ptr(),
-                engineVersion: VK_MAKE_VERSION(engine_version.0, engine_version.1, engine_version.2),
+                engineVersion: engine_version.0,
             },
             core::marker::PhantomData,
         )
     }
 
     #[inline(always)]
-    pub const fn api_version(mut self, major: u16, minor: u16, patch: u16) -> Self {
-        self.0.apiVersion = VK_MAKE_VERSION(major, minor, patch);
+    pub const fn api_version(mut self, version: Version) -> Self {
+        self.0.apiVersion = version.0;
         self
     }
 }
