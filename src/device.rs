@@ -909,12 +909,46 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// # Safety
     /// All VkQueue objects created from this device must be externally synchronized.
     #[implements]
+    #[inline]
     unsafe fn wait(&self) -> crate::Result<()> {
         crate::vkfn::device_wait_idle(self.native_ptr()).into_result().map(drop)
     }
 
-    /// Single binding for buffer
+    /// Query the memory requirements for a sparse image
+    /// # Safety
+    /// `sink_head_ptr` must be a valid pointer for read/write operations.
+    #[implements("VK_KHR_get_memory_requirements2")]
+    #[inline]
+    unsafe fn get_image_sparse_memory_requirements2_count(
+        &self,
+        info: &ImageSparseMemoryRequirementsInfo2,
+        count_sink: &mut core::mem::MaybeUninit<u32>,
+        sink_head_ptr: *mut VkSparseImageMemoryRequirements2KHR,
+    ) {
+        #[cfg(feature = "Allow1_1APIs")]
+        unsafe {
+            crate::vkfn::get_image_sparse_memory_requirements2(
+                self.native_ptr(),
+                &info.0,
+                count_sink.as_mut_ptr(),
+                sink_head_ptr,
+            )
+        }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        unsafe {
+            self.get_image_sparse_memory_requirements_2_khr_fn().0(
+                self.native_ptr(),
+                &info.0,
+                count_sink.as_mut_ptr(),
+                sink_head_ptr,
+            )
+        }
+    }
+
+    /// Single binding for a buffer
     #[implements]
+    #[inline]
     fn bind_buffer_raw(&self, buffer: VkBuffer, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
         unsafe {
             crate::vkfn::bind_buffer_memory(self.native_ptr(), buffer, memory, offset)
@@ -925,18 +959,30 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Multiple Binding for Buffers
     #[implements("VK_KHR_bind_memory2")]
+    #[inline]
     fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
-        tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+            crate::vkfn::bind_buffer_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
         }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        {
+            tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
+
+            unsafe {
+                self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                    .into_result()
+                    .map(drop)
+            }
+        }
     }
 
-    /// Single binding for image
+    /// Single binding for an image
     #[implements]
+    #[inline]
     fn bind_image_raw(&self, image: VkImage, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
         unsafe {
             crate::vkfn::bind_image_memory(self.native_ptr(), image, memory, offset)
@@ -947,13 +993,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Multiple Binding for Images
     #[implements("VK_KHR_bind_memory2")]
+    #[inline]
     fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
-        tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+            crate::vkfn::bind_image_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
+        }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        {
+            tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
+
+            unsafe {
+                self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                    .into_result()
+                    .map(drop)
+            }
         }
     }
 

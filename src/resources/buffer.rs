@@ -334,9 +334,15 @@ impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2
     where
         Buffer: crate::DeviceChild,
     {
-        use crate::Device;
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
+            crate::vkfn::get_buffer_memory_requirements2(self.1.device().native_ptr(), &self.0, sink.as_mut_ptr());
+        }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        unsafe {
+            use crate::Device;
+
             self.1.device().get_buffer_memory_requirements_2_khr_fn().0(
                 self.1.device().native_ptr(),
                 &self.0,
