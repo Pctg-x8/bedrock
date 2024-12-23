@@ -3,8 +3,10 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::ArrayFFIExtensions, vk::*, DeviceChild, DeviceChildHandle, DeviceChildTransferrable, Image, VkHandle,
-    VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions},
+    vk::*,
+    DeviceChild, DeviceChildHandle, DeviceChildTransferrable, Image, Transparent, VkHandle, VkObject, VkRawHandle,
+    VulkanStructure,
 };
 use std::ops::*;
 
@@ -43,6 +45,41 @@ impl<Device: crate::Device> DeviceChild for FramebufferObject<'_, Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> Framebuffer for FramebufferObject<'_, Device> {}
+impl<'r, Device: VkHandle<Handle = VkDevice>> FramebufferObject<'r, Device> {
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &FramebufferCreateInfo<'r, '_>) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_framebuffer(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice>> FramebufferObject<'_, Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkFramebuffer, parent: Device) -> Self {
+        Self {
+            handle,
+            parent,
+            _under_resources: core::marker::PhantomData,
+        }
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkFramebuffer, Device) {
+        let h = self.handle;
+        let p = unsafe { core::ptr::read(&self.parent) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
 
 /// Marker trait that can be used as an attachment of a framebuffer (composited trait)
 pub trait FramebufferAttachment:
@@ -51,6 +88,54 @@ pub trait FramebufferAttachment:
 }
 impl<T: crate::VkHandle<Handle = VkImageView> + crate::DeviceChild + crate::ImageChild> FramebufferAttachment for T {}
 
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FramebufferCreateInfo<'r, 'rs>(
+    VkFramebufferCreateInfo,
+    core::marker::PhantomData<(
+        &'r dyn VkHandle<Handle = VkRenderPass>,
+        &'rs [&'r dyn VkHandle<Handle = VkImageView>],
+    )>,
+);
+impl<'r, 'rs> FramebufferCreateInfo<'r, 'rs> {
+    #[inline(always)]
+    pub fn new(
+        render_pass: &'r (impl VkHandle<Handle = VkRenderPass> + ?Sized),
+        attachments: &'rs [impl Transparent<Target = VkImageView> + 'r],
+        width: u32,
+        height: u32,
+    ) -> Self {
+        Self(
+            VkFramebufferCreateInfo {
+                sType: VkFramebufferCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                renderPass: render_pass.native_ptr(),
+                flags: 0,
+                attachmentCount: attachments.len() as _,
+                pAttachments: slice_as_ptr_empty_null(attachments) as *const _,
+                width,
+                height,
+                layers: 1,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkFramebufferCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkFramebufferCreateInfo {
+        self.0
+    }
+
+    pub const fn with_layers(mut self, layers: u32) -> Self {
+        self.0.layers = layers;
+        self
+    }
+}
+
+#[deprecated = "use FramebufferCreateInfo"]
 pub struct FramebufferBuilder<'r, RenderPass: crate::RenderPass + crate::DeviceChild> {
     info: VkFramebufferCreateInfo,
     render_pass: RenderPass,
@@ -60,6 +145,7 @@ pub struct FramebufferBuilder<'r, RenderPass: crate::RenderPass + crate::DeviceC
         &'r [Box<dyn crate::VkHandle<Handle = VkImageView> + 'r>],
     )>,
 }
+#[allow(deprecated)]
 impl<'r, RenderPass: crate::RenderPass + crate::DeviceChild> FramebufferBuilder<'r, RenderPass> {
     pub fn new(render_pass: RenderPass) -> Self {
         Self {

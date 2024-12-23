@@ -445,6 +445,7 @@ pub use debug::*;
 mod ext;
 pub use self::ext::*;
 mod external;
+#[allow(unused_imports)]
 pub use external::*;
 mod batching;
 pub use self::batching::*;

@@ -44,6 +44,42 @@ impl<Device: crate::Device> DeviceChild for CommandPoolObject<Device> {
 }
 impl<Device: crate::Device> CommandPool for CommandPoolObject<Device> {}
 impl<Device: crate::Device> CommandPoolMut for CommandPoolObject<Device> {}
+impl<Device: crate::Device> CommandPoolObject<Device> {
+    /// Create a new command pool object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &CommandPoolCreateInfo) -> crate::Result<Self> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_command_pool(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+                .into_result()?;
+
+            Ok(Self::manage(h.assume_init(), device))
+        }
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkCommandPool, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkCommandPool, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
+    }
+}
 
 /// Opaque handle to a command buffer object
 #[transparent_marked]
@@ -61,6 +97,46 @@ unsafe impl<Device: Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: Send> Send for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBuffer for CommandBufferObject<Device> {}
 impl<Device: crate::Device> CommandBufferMut for CommandBufferObject<Device> {}
+impl<Device: crate::Device> CommandBufferObject<Device> {
+    /// Allocate command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
+        let mut hs = vec![VkCommandBuffer::NULL; info.0.commandBufferCount as _];
+
+        unsafe {
+            crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr()).into_result()?;
+
+            Ok(transmute(hs))
+        }
+    }
+
+    /// Allocate a static amount of command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn alloc_array<const N: usize>(
+        device: Device,
+        info: &CommandBufferFixedCountAllocateInfo<'_, N>,
+    ) -> crate::Result<[Self; N]> {
+        let mut hs = [Self(VkCommandBuffer::NULL, core::marker::PhantomData); N];
+
+        unsafe {
+            crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr() as _).into_result()?;
+
+            Ok(hs)
+        }
+    }
+}
 
 /// The recording state of command buffers
 #[implements]
@@ -82,75 +158,35 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer>, Device: 'd +
     }
 }
 
-pub struct CommandPoolBuilder(VkCommandPoolCreateInfo);
-impl CommandPoolBuilder {
-    pub const fn new(queue_family: u32) -> Self {
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CommandPoolCreateInfo(VkCommandPoolCreateInfo);
+impl CommandPoolCreateInfo {
+    pub const fn new(queue_family_index: u32) -> Self {
         Self(VkCommandPoolCreateInfo {
             sType: VkCommandPoolCreateInfo::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
-            queueFamilyIndex: queue_family,
+            queueFamilyIndex: queue_family_index,
         })
+    }
+
+    pub const unsafe fn from_raw(raw: VkCommandPoolCreateInfo) -> Self {
+        Self(raw)
+    }
+
+    pub const fn into_raw(self) -> VkCommandPoolCreateInfo {
+        self.0
     }
 
     pub const fn transient(mut self) -> Self {
         self.0.flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-
         self
     }
 
     pub const fn individual_resettable(mut self) -> Self {
         self.0.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-
         self
-    }
-
-    /// Create a new command pool object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline]
-    pub fn create<Device: crate::Device>(self, device: Device) -> crate::Result<CommandPoolObject<Device>> {
-        unsafe { CommandPoolObject::new_raw(device, &self.0) }
-    }
-}
-
-impl<Device: VkHandle<Handle = VkDevice>> CommandPoolObject<Device> {
-    /// Create a new command pool object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    pub unsafe fn new_raw(device: Device, info: &VkCommandPoolCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_command_pool(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self(h.assume_init(), device))
-    }
-
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkCommandPool, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkCommandPool, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
     }
 }
 
@@ -158,66 +194,75 @@ pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {}
 DerefContainerBracketImpl!(for CommandPool {});
 GuardsImpl!(for CommandPool {});
 
+#[repr(i32)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum CommandBufferLevel {
+    Primary = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+    Secondary = VK_COMMAND_BUFFER_LEVEL_SECONDARY,
+}
+
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CommandBufferAllocateInfo<'r>(
+    VkCommandBufferAllocateInfo,
+    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
+);
+impl<'r> CommandBufferAllocateInfo<'r> {
+    #[inline(always)]
+    pub fn new(
+        command_pool: &'r mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
+        count: u32,
+        level: CommandBufferLevel,
+    ) -> Self {
+        Self(
+            VkCommandBufferAllocateInfo {
+                sType: VkCommandBufferAllocateInfo::TYPE,
+                pNext: core::ptr::null(),
+                commandPool: command_pool.native_ptr_mut(),
+                level: level as _,
+                commandBufferCount: count,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkCommandBufferAllocateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkCommandBufferAllocateInfo {
+        self.0
+    }
+}
+
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CommandBufferFixedCountAllocateInfo<'r, const N: usize>(
+    VkCommandBufferAllocateInfo,
+    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
+);
+impl<'r, const N: usize> CommandBufferFixedCountAllocateInfo<'r, N> {
+    #[inline(always)]
+    pub fn new(
+        command_pool: &'r mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
+        level: CommandBufferLevel,
+    ) -> Self {
+        assert!(N <= u32::MAX as usize, "too many command buffers will be allocated");
+
+        Self(
+            VkCommandBufferAllocateInfo {
+                sType: VkCommandBufferAllocateInfo::TYPE,
+                pNext: core::ptr::null(),
+                commandPool: command_pool.native_ptr_mut(),
+                level: level as _,
+                commandBufferCount: N as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+}
+
 pub trait CommandPoolMut: CommandPool + VkHandleMut {
-    /// Allocate command buffers from an existing command pool
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn alloc(&mut self, count: u32, primary: bool) -> crate::Result<Vec<CommandBufferObject<Self::ConcreteDevice>>> {
-        use crate::VkRawHandle;
-
-        let ainfo = VkCommandBufferAllocateInfo {
-            sType: VkCommandBufferAllocateInfo::TYPE,
-            pNext: std::ptr::null(),
-            commandBufferCount: count,
-            level: if primary {
-                VK_COMMAND_BUFFER_LEVEL_PRIMARY
-            } else {
-                VK_COMMAND_BUFFER_LEVEL_SECONDARY
-            },
-            commandPool: self.native_ptr_mut(),
-        };
-        let mut hs = vec![VkCommandBuffer::NULL; count as _];
-        unsafe {
-            crate::vkfn::allocate_command_buffers(self.device_handle(), &ainfo, hs.as_mut_ptr())
-                .into_result()
-                .map(|_| transmute(hs))
-        }
-    }
-
-    /// Allocate a static amount of command buffers from an existing command pool
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn alloc_array<const N: usize>(
-        &mut self,
-        primary: bool,
-    ) -> crate::Result<[CommandBufferObject<Self::ConcreteDevice>; N]> {
-        let ainfo = VkCommandBufferAllocateInfo {
-            sType: VkCommandBufferAllocateInfo::TYPE,
-            pNext: std::ptr::null(),
-            commandBufferCount: N as _,
-            level: if primary {
-                VK_COMMAND_BUFFER_LEVEL_PRIMARY
-            } else {
-                VK_COMMAND_BUFFER_LEVEL_SECONDARY
-            },
-            commandPool: self.native_ptr_mut(),
-        };
-        let mut hs = [CommandBufferObject::<Self::ConcreteDevice>(VkCommandBuffer::NULL, core::marker::PhantomData); N];
-        unsafe {
-            crate::vkfn::allocate_command_buffers(self.device_handle(), &ainfo, hs.as_mut_ptr() as _)
-                .into_result()
-                .map(|_| hs)
-        }
-    }
-
     /// Resets a command pool
     /// # Safety
     /// Application cannot use command buffers after this call
