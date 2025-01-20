@@ -127,6 +127,8 @@ VK_EXT_descriptor_buffer = [
     "VK_EXT_descriptor_indexing",
     "VK_KHR_synchronization2",
 ]
+VK_KHR_maintenance7 = ["Allow1_1APIs"]
+VK_KHR_maintenance8 = ["Allow1_1APIs"]
 
 # 1.1 promoted extensions
 VK_KHR_multiview = ["VK_KHR_get_physical_device_properties2"]

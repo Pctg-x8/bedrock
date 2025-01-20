@@ -1,20 +1,12 @@
 #![allow(clippy::inconsistent_digit_grouping)]
-//! Vulkan API Definitions 1.3.283 with some extensions
+
+//! Vulkan API Definitions 1.4.305 with some extensions
 
 /*
-** Copyright (c) 2015-2018 The Khronos Group Inc.
+** Copyright 2025 S.Percentage.
+** Original C Header: Copyright 2015-2025 The Khronos Group Inc.
 **
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
-**
-**     http://www.apache.org/licenses/LICENSE-2.0
-**
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
-** limitations under the License.
+** SPDX-License-Identifier: Apache-2.0
 */
 
 #![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
@@ -25,17 +17,17 @@ use derives::{implements, vk_raw_handle};
 use std;
 
 #[inline]
-pub const fn VK_MAKE_VERSION(major: u16, minor: u16, patch: u16) -> u32 {
-    ((major as u32) << 22) | ((minor as u32) << 12) | patch as u32
+pub const fn VK_MAKE_VERSION(variant: u8, major: u16, minor: u16, patch: u16) -> u32 {
+    ((variant as u32) << 29) | ((major as u32) << 22) | ((minor as u32) << 12) | patch as u32
 }
 
-/// Vulkan 1.0 version number
-pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(1, 0, 0);
-pub const VK_API_VERISON_1_3: u32 = VK_MAKE_VERSION(1, 3, 0);
+pub const fn VK_VARIANT_VERSION(v: u32) -> u8 {
+    (v >> 29) as _
+}
 
 #[inline]
 pub const fn VK_MAJOR_VERSION(v: u32) -> u16 {
-    (v >> 22) as _
+    ((v >> 22) & 0x7f) as _
 }
 
 #[inline]
@@ -83,8 +75,13 @@ macro_rules! vk_bitmask {
 
 // define macros end
 
+/// Vulkan 1.0 version number
+pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(0, 1, 0, 0);
+
 /// Version of this file
-pub const VK_HEADER_VERSION: u32 = 70;
+pub const VK_HEADER_VERSION: u16 = 305;
+
+pub const VK_HEADER_VERSION_COMPLETE: u32 = VK_MAKE_VERSION(0, 1, 4, VK_HEADER_VERSION);
 
 pub type VkFlags = u32;
 pub type VkFlags64 = u64;
@@ -5262,6 +5259,8 @@ ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
 ExportExtensions!("VK_KHR_maintenance5": maintenance5_khr);
 ExportExtensions!("VK_KHR_maintenance6": maintenance6_khr);
 ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
+ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
+ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 
 // Promoted Extensions
 ExportExtensions!("VK_KHR_multiview": multiview_khr);

@@ -308,17 +308,17 @@ impl<'d> ApplicationInfo<'d> {
                 pNext: core::ptr::null(),
                 apiVersion: VK_API_VERSION_1_0,
                 pApplicationName: app_name.as_ptr(),
-                applicationVersion: VK_MAKE_VERSION(app_version.0, app_version.1, app_version.2),
+                applicationVersion: VK_MAKE_VERSION(0, app_version.0, app_version.1, app_version.2),
                 pEngineName: engine_name.as_ptr(),
-                engineVersion: VK_MAKE_VERSION(engine_version.0, engine_version.1, engine_version.2),
+                engineVersion: VK_MAKE_VERSION(0, engine_version.0, engine_version.1, engine_version.2),
             },
             core::marker::PhantomData,
         )
     }
 
     #[inline(always)]
-    pub const fn api_version(mut self, major: u16, minor: u16, patch: u16) -> Self {
-        self.0.apiVersion = VK_MAKE_VERSION(major, minor, patch);
+    pub const fn api_version(mut self, variant: u8, major: u16, minor: u16, patch: u16) -> Self {
+        self.0.apiVersion = VK_MAKE_VERSION(variant, major, minor, patch);
         self
     }
 }
