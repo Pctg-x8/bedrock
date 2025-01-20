@@ -866,6 +866,36 @@ pub unsafe fn create_display_plane_surface_khr(instance: VkInstance, create_info
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.create_display_plane_surface_khr.0)(instance, create_info, allocator, surface_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCreateDisplayPlaneSurfaceKHR(instance, create_info, allocator, surface_out) }
 }
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_buffer_memory_requirements2(device: VkDevice, info: *const VkBufferMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_buffer_memory_requirements2.0)(device, info, memory_requirements) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetBufferMemoryRequirements2(device, info, memory_requirements) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_image_memory_requirements2(device: VkDevice, info: *const VkImageMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_image_memory_requirements2.0)(device, info, memory_requirements) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetImageMemoryRequirements2(device, info, memory_requirements) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_image_sparse_memory_requirements2(device: VkDevice, info: *const VkImageSparseMemoryRequirementsInfo2, sparse_memory_requirements_count: *mut u32, sparse_memory_requirements: *mut VkSparseImageMemoryRequirements2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_image_sparse_memory_requirements2.0)(device, info, sparse_memory_requirements_count, sparse_memory_requirements) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetImageSparseMemoryRequirements2(device, info, sparse_memory_requirements_count, sparse_memory_requirements) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn bind_buffer_memory2(device: VkDevice, bind_info_count: u32, bind_infos: *const VkBindBufferMemoryInfo) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.bind_buffer_memory2.0)(device, bind_info_count, bind_infos) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkBindBufferMemory2(device, bind_info_count, bind_infos) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn bind_image_memory2(device: VkDevice, bind_info_count: u32, bind_infos: *const VkBindImageMemoryInfo) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.bind_image_memory2.0)(device, bind_info_count, bind_infos) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkBindImageMemory2(device, bind_info_count, bind_infos) }
+}
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip] #[inline(always)]
 pub unsafe fn create_render_pass2(device: VkDevice, create_info: *const VkRenderPassCreateInfo2, allocator: *const VkAllocationCallbacks, out: *mut VkRenderPass) -> VkResult {
@@ -1102,6 +1132,16 @@ struct FunctionPointerTable {
     get_display_plane_capabilities_khr: PFN_vkGetDisplayPlaneCapabilitiesKHR,
     #[cfg(all(feature = "VK_KHR_display", feature = "VK_KHR_surface"))]
     create_display_plane_surface_khr: PFN_vkCreateDisplayPlaneSurfaceKHR,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_buffer_memory_requirements2: PFN_vkGetBufferMemoryRequirements2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_image_memory_requirements2: PFN_vkGetImageMemoryRequirements2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_image_sparse_memory_requirements2: PFN_vkGetImageSparseMemoryRequirements2,
+    #[cfg(feature = "Allow1_1APIs")]
+    bind_buffer_memory2: PFN_vkBindBufferMemory2,
+    #[cfg(feature = "Allow1_1APIs")]
+    bind_image_memory2: PFN_vkBindImageMemory2,
     #[cfg(feature = "Allow1_2APIs")]
     create_render_pass2: PFN_vkCreateRenderPass2,
     #[cfg(feature = "Allow1_2APIs")]
@@ -1319,6 +1359,16 @@ impl FunctionPointerTable {
         get_display_plane_capabilities_khr: PFN_vkGetDisplayPlaneCapabilitiesKHR(stub_get_display_plane_capabilities_khr),
         #[cfg(all(feature = "VK_KHR_display", feature = "VK_KHR_surface"))]
         create_display_plane_surface_khr: PFN_vkCreateDisplayPlaneSurfaceKHR(stub_create_display_plane_surface_khr),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_buffer_memory_requirements2: PFN_vkGetBufferMemoryRequirements2(stub_get_buffer_memory_requirements2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_image_memory_requirements2: PFN_vkGetImageMemoryRequirements2(stub_get_image_memory_requirements2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_image_sparse_memory_requirements2: PFN_vkGetImageSparseMemoryRequirements2(stub_get_image_sparse_memory_requirements2),
+        #[cfg(feature = "Allow1_1APIs")]
+        bind_buffer_memory2: PFN_vkBindBufferMemory2(stub_bind_buffer_memory2),
+        #[cfg(feature = "Allow1_1APIs")]
+        bind_image_memory2: PFN_vkBindImageMemory2(stub_bind_image_memory2),
         #[cfg(feature = "Allow1_2APIs")]
         create_render_pass2: PFN_vkCreateRenderPass2(stub_create_render_pass2),
         #[cfg(feature = "Allow1_2APIs")]
@@ -2867,6 +2917,56 @@ unsafe extern "system" fn stub_create_display_plane_surface_khr(instance: VkInst
     let fp: PFN_vkCreateDisplayPlaneSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDisplayPlaneSurfaceKHR>::NAME_CSTR);
     FPTBL.create_display_plane_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_buffer_memory_requirements2(device: VkDevice, info: *const VkBufferMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetBufferMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetBufferMemoryRequirements2>::NAME_CSTR);
+    FPTBL.get_buffer_memory_requirements2 = fp;
+    (fp.0)(device, info, memory_requirements)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_image_memory_requirements2(device: VkDevice, info: *const VkImageMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetImageMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageMemoryRequirements2>::NAME_CSTR);
+    FPTBL.get_image_memory_requirements2 = fp;
+    (fp.0)(device, info, memory_requirements)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_image_sparse_memory_requirements2(device: VkDevice, info: *const VkImageSparseMemoryRequirementsInfo2, sparse_memory_requirements_count: *mut u32, sparse_memory_requirements: *mut VkSparseImageMemoryRequirements2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetImageSparseMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageSparseMemoryRequirements2>::NAME_CSTR);
+    FPTBL.get_image_sparse_memory_requirements2 = fp;
+    (fp.0)(device, info, sparse_memory_requirements_count, sparse_memory_requirements)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_bind_buffer_memory2(device: VkDevice, bind_info_count: u32, bind_infos: *const VkBindBufferMemoryInfo) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkBindBufferMemory2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBindBufferMemory2>::NAME_CSTR);
+    FPTBL.bind_buffer_memory2 = fp;
+    (fp.0)(device, bind_info_count, bind_infos)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_bind_image_memory2(device: VkDevice, bind_info_count: u32, bind_infos: *const VkBindImageMemoryInfo) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkBindImageMemory2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBindImageMemory2>::NAME_CSTR);
+    FPTBL.bind_image_memory2 = fp;
+    (fp.0)(device, bind_info_count, bind_infos)
 }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]

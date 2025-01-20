@@ -55,8 +55,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         SetProcessDPIAware();
     }
 
-    let (instance_version_major, instance_version_minor, instance_version_patch) = br::instance_version()?;
-    println!("vk instance version: {instance_version_major}.{instance_version_minor}.{instance_version_patch}",);
+    let vk_version = br::instance_version()?;
+    println!("vk instance version: {vk_version}");
 
     let cls = WNDCLASSEXA {
         cbSize: core::mem::size_of::<WNDCLASSEXA>() as _,
@@ -106,7 +106,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let instance = br::InstanceObject::new(&br::InstanceCreateInfo::new(
-        &br::ApplicationInfo::new(c"BedrockExampleTriangle", (0, 1, 0), c"None", (0, 0, 1)).api_version(1, 3, 0),
+        &br::ApplicationInfo::new(
+            c"BedrockExampleTriangle",
+            br::Version::new(0, 1, 0),
+            c"None",
+            br::Version::new(0, 0, 1),
+        )
+        .api_version(br::Version::new(1, 3, 0)),
         &[c"VK_LAYER_KHRONOS_validation".into()],
         &[
             c"VK_EXT_debug_utils".into(),
@@ -146,8 +152,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[c"VK_KHR_swapchain".into()],
         )
         .with_next(
-            &br::vk::VkPhysicalDeviceFeatures2KHR::new(Default::default())
-                .with_next(&mut br::vk::VkPhysicalDeviceSynchronization2Features::new(true)),
+            &br::PhysicalDeviceFeatures2::new(Default::default())
+                .with_next(&mut br::PhysicalDeviceSynchronization2Features::new(true)),
         ),
     )?;
     let mut queue = (&device).queue(graphics_queue_family, 0);
@@ -307,7 +313,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect::<Result<Vec<_>, _>>()?;
     let mut framebuffers = back_buffer_views
         .iter()
-        .map(|b| br::FramebufferBuilder::new_with_attachment(&render_pass, b).create())
+        .map(|b| {
+            br::FramebufferObject::new(
+                &device,
+                &br::FramebufferCreateInfo::new(
+                    &render_pass,
+                    &[b.as_transparent_ref()],
+                    back_buffer_size.width,
+                    back_buffer_size.height,
+                ),
+            )
+        })
         .collect::<Result<Vec<_>, _>>()?;
 
     let memory_properties = adapter.memory_properties();
@@ -400,8 +416,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         host_memory.unmap();
     }
 
-    let mut command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
-    let mut command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
+    let mut command_pool = br::CommandPoolObject::new(&device, &br::CommandPoolCreateInfo::new(graphics_queue_family))?;
+    let mut command_buffers = br::CommandBufferObject::alloc(
+        &device,
+        &br::CommandBufferAllocateInfo::new(
+            &mut command_pool,
+            framebuffers.len() as _,
+            br::CommandBufferLevel::Primary,
+        ),
+    )?;
     for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
         unsafe { cb.begin(&device)? }
             .begin_render_pass_2(
@@ -427,8 +450,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .end()?;
     }
 
-    let mut transfer_command_pool = br::CommandPoolBuilder::new(graphics_queue_family).create(&device)?;
-    let mut transfer_command_buffers = transfer_command_pool.alloc(1, true)?;
+    let mut transfer_command_pool =
+        br::CommandPoolObject::new(&device, &br::CommandPoolCreateInfo::new(graphics_queue_family))?;
+    let mut transfer_command_buffers = br::CommandBufferObject::alloc_array(
+        &device,
+        &br::CommandBufferFixedCountAllocateInfo::<'_, 1>::new(
+            &mut transfer_command_pool,
+            br::CommandBufferLevel::Primary,
+        ),
+    )?;
     unsafe { transfer_command_buffers[0].begin(&device)? }
         .copy_buffer(
             &host_buffer,
@@ -445,10 +475,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .end()?;
 
     let mut init_fence = br::FenceObject::new(&device, &br::FenceCreateInfo::new(0))?;
-    let mut init_command_pool = br::CommandPoolBuilder::new(graphics_queue_family)
-        .transient()
-        .create(&device)?;
-    let mut init_command_buffers = init_command_pool.alloc(1, true)?;
+    let mut init_command_pool = br::CommandPoolObject::new(
+        &device,
+        &br::CommandPoolCreateInfo::new(graphics_queue_family).transient(),
+    )?;
+    let mut init_command_buffers = br::CommandBufferObject::alloc(
+        &device,
+        &br::CommandBufferAllocateInfo::new(&mut init_command_pool, 1, br::CommandBufferLevel::Primary),
+    )?;
     unsafe { init_command_buffers[0].begin_once(&device)? }
         .copy_buffer(
             &host_buffer,
@@ -566,7 +600,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .collect::<Result<Vec<_>, _>>()?;
             framebuffers = back_buffer_views
                 .iter()
-                .map(|b| br::FramebufferBuilder::new_with_attachment(&render_pass, b).create())
+                .map(|b| {
+                    br::FramebufferObject::new(
+                        &device,
+                        &br::FramebufferCreateInfo::new(
+                            &render_pass,
+                            &[b.as_transparent_ref()],
+                            back_buffer_size.width,
+                            back_buffer_size.height,
+                        ),
+                    )
+                })
                 .collect::<Result<Vec<_>, _>>()?;
 
             let scissors = [back_buffer_size.clone().into_rect(br::vk::VkOffset2D::ZERO)];
@@ -599,7 +643,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             unsafe {
                 command_pool.free(&command_buffers);
             }
-            command_buffers = command_pool.alloc(framebuffers.len() as _, true)?;
+            command_buffers = br::CommandBufferObject::alloc(
+                &device,
+                &br::CommandBufferAllocateInfo::new(
+                    &mut command_pool,
+                    framebuffers.len() as _,
+                    br::CommandBufferLevel::Primary,
+                ),
+            )?;
             for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
                 unsafe { cb.begin(&device)? }
                     .begin_render_pass(

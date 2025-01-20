@@ -529,32 +529,104 @@ impl<'d> DeviceCreateInfo<'d> {
 }
 
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-impl VkPhysicalDeviceFeatures2KHR {
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PhysicalDeviceFeatures2<'r>(
+    VkPhysicalDeviceFeatures2KHR,
+    core::marker::PhantomData<Option<&'r mut dyn VulkanStructureAsRef>>,
+);
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+impl<'r> PhysicalDeviceFeatures2<'r> {
     pub const fn new(old_features: VkPhysicalDeviceFeatures) -> Self {
-        Self {
-            sType: <Self as VulkanStructure>::TYPE,
-            pNext: core::ptr::null_mut(),
-            features: old_features,
-        }
+        Self(
+            VkPhysicalDeviceFeatures2KHR {
+                sType: <VkPhysicalDeviceFeatures2KHR as VulkanStructure>::TYPE,
+                pNext: core::ptr::null_mut(),
+                features: old_features,
+            },
+            core::marker::PhantomData,
+        )
     }
 
     #[inline(always)]
-    pub fn with_next(self, next: &mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
-        Self {
-            pNext: next.as_generic_mut() as *mut _ as _,
-            ..self
-        }
+    pub fn with_next(mut self, next: &'r mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic_mut() as *mut _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+unsafe impl VulkanStructureAsRef for PhysicalDeviceFeatures2<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic_mut(&mut self.0)
+    }
+}
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+unsafe impl VulkanSinkStructureAsRef for PhysicalDeviceFeatures2<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic_mut(&mut self.0)
     }
 }
 
 #[cfg(feature = "VK_KHR_synchronization2")]
-impl VkPhysicalDeviceSynchronization2FeaturesKHR {
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PhysicalDeviceSynchronization2Features<'r>(
+    VkPhysicalDeviceSynchronization2FeaturesKHR,
+    core::marker::PhantomData<Option<&'r mut dyn VulkanStructureAsRef>>,
+);
+#[cfg(feature = "VK_KHR_synchronization2")]
+impl<'r> PhysicalDeviceSynchronization2Features<'r> {
     pub const fn new(enabled: bool) -> Self {
-        Self {
-            sType: <Self as VulkanStructure>::TYPE,
-            pNext: core::ptr::null_mut(),
-            synchronization2: enabled as _,
-        }
+        Self(
+            VkPhysicalDeviceSynchronization2FeaturesKHR {
+                sType: <VkPhysicalDeviceSynchronization2FeaturesKHR as VulkanStructure>::TYPE,
+                pNext: core::ptr::null_mut(),
+                synchronization2: enabled as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'r mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic_mut() as *mut _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_synchronization2")]
+unsafe impl VulkanStructureAsRef for PhysicalDeviceSynchronization2Features<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        VulkanStructureAsRef::as_generic_mut(&mut self.0)
+    }
+}
+#[cfg(feature = "VK_KHR_synchronization2")]
+unsafe impl VulkanSinkStructureAsRef for PhysicalDeviceSynchronization2Features<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic(&self.0)
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
+        VulkanSinkStructureAsRef::as_generic_mut(&mut self.0)
     }
 }
 
@@ -837,12 +909,46 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// # Safety
     /// All VkQueue objects created from this device must be externally synchronized.
     #[implements]
+    #[inline]
     unsafe fn wait(&self) -> crate::Result<()> {
         crate::vkfn::device_wait_idle(self.native_ptr()).into_result().map(drop)
     }
 
-    /// Single binding for buffer
+    /// Query the memory requirements for a sparse image
+    /// # Safety
+    /// `sink_head_ptr` must be a valid pointer for read/write operations.
+    #[implements("VK_KHR_get_memory_requirements2")]
+    #[inline]
+    unsafe fn get_image_sparse_memory_requirements2_count(
+        &self,
+        info: &ImageSparseMemoryRequirementsInfo2,
+        count_sink: &mut core::mem::MaybeUninit<u32>,
+        sink_head_ptr: *mut VkSparseImageMemoryRequirements2KHR,
+    ) {
+        #[cfg(feature = "Allow1_1APIs")]
+        unsafe {
+            crate::vkfn::get_image_sparse_memory_requirements2(
+                self.native_ptr(),
+                &info.0,
+                count_sink.as_mut_ptr(),
+                sink_head_ptr,
+            )
+        }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        unsafe {
+            self.get_image_sparse_memory_requirements_2_khr_fn().0(
+                self.native_ptr(),
+                &info.0,
+                count_sink.as_mut_ptr(),
+                sink_head_ptr,
+            )
+        }
+    }
+
+    /// Single binding for a buffer
     #[implements]
+    #[inline]
     fn bind_buffer_raw(&self, buffer: VkBuffer, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
         unsafe {
             crate::vkfn::bind_buffer_memory(self.native_ptr(), buffer, memory, offset)
@@ -853,18 +959,30 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Multiple Binding for Buffers
     #[implements("VK_KHR_bind_memory2")]
+    #[inline]
     fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
-        tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+            crate::vkfn::bind_buffer_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
         }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        {
+            tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
+
+            unsafe {
+                self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                    .into_result()
+                    .map(drop)
+            }
+        }
     }
 
-    /// Single binding for image
+    /// Single binding for an image
     #[implements]
+    #[inline]
     fn bind_image_raw(&self, image: VkImage, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
         unsafe {
             crate::vkfn::bind_image_memory(self.native_ptr(), image, memory, offset)
@@ -875,13 +993,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Multiple Binding for Images
     #[implements("VK_KHR_bind_memory2")]
+    #[inline]
     fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
-        tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+            crate::vkfn::bind_image_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
+        }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        {
+            tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
+
+            unsafe {
+                self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                    .into_result()
+                    .map(drop)
+            }
         }
     }
 

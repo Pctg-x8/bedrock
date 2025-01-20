@@ -582,9 +582,15 @@ impl<'b, Image: self::Image + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
     where
         Image: crate::DeviceChild,
     {
-        use crate::Device;
-
+        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
+            crate::vkfn::get_image_memory_requirements2(self.1.device().native_ptr(), &self.0, sink.as_mut_ptr());
+        }
+
+        #[cfg(not(feature = "Allow1_1APIs"))]
+        unsafe {
+            use crate::Device;
+
             self.1.device().get_image_memory_requirements_2_khr_fn().0(
                 self.1.device().native_ptr(),
                 &self.0,
@@ -847,6 +853,42 @@ impl BitOrAssign for ImageFlags {
 impl From<ImageFlags> for VkImageCreateFlags {
     fn from(value: ImageFlags) -> Self {
         value.0
+    }
+}
+
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ImageSparseMemoryRequirementsInfo2<'r>(
+    pub(crate) VkImageSparseMemoryRequirementsInfo2KHR,
+    core::marker::PhantomData<(Option<&'r dyn VulkanStructureAsRef>, &'r dyn VkHandle<Handle = VkImage>)>,
+);
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+impl<'r> ImageSparseMemoryRequirementsInfo2<'r> {
+    #[inline]
+    pub fn new(image: &'r (impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
+        Self(
+            VkImageSparseMemoryRequirementsInfo2KHR {
+                sType: VkImageSparseMemoryRequirementsInfo2KHR::TYPE,
+                pNext: core::ptr::null(),
+                image: image.native_ptr(),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkImageSparseMemoryRequirementsInfo2KHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkImageSparseMemoryRequirementsInfo2KHR {
+        self.0
+    }
+
+    #[inline]
+    pub fn with_next(mut self, next: &'r (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
     }
 }
 

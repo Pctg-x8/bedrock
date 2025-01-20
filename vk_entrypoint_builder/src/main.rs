@@ -1815,6 +1815,55 @@ const CATALOG: &'static [Entrypoint] = &[
     )
     .with_result()
     .for_extensions(&["VK_KHR_display", "VK_KHR_surface"], "KHR"),
+    // 1.1 promoted
+    Entrypoint::new(
+        "get_buffer_memory_requirements2",
+        &[
+            ("device", "VkDevice"),
+            ("info", "*const VkBufferMemoryRequirementsInfo2"),
+            ("memory_requirements", "*mut VkMemoryRequirements2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_image_memory_requirements2",
+        &[
+            ("device", "VkDevice"),
+            ("info", "*const VkImageMemoryRequirementsInfo2"),
+            ("memory_requirements", "*mut VkMemoryRequirements2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_image_sparse_memory_requirements2",
+        &[
+            ("device", "VkDevice"),
+            ("info", "*const VkImageSparseMemoryRequirementsInfo2"),
+            ("sparse_memory_requirements_count", "*mut u32"),
+            ("sparse_memory_requirements", "*mut VkSparseImageMemoryRequirements2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "bind_buffer_memory2",
+        &[
+            ("device", "VkDevice"),
+            ("bind_info_count", "u32"),
+            ("bind_infos", "*const VkBindBufferMemoryInfo"),
+        ],
+    )
+    .with_result()
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "bind_image_memory2",
+        &[
+            ("device", "VkDevice"),
+            ("bind_info_count", "u32"),
+            ("bind_infos", "*const VkBindImageMemoryInfo"),
+        ],
+    )
+    .with_result()
+    .promoted_at(1, 1),
     // 1.2 promoted
     Entrypoint::new(
         "create_render_pass2",

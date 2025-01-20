@@ -13,7 +13,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR: VkStruct
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR: VkStructureType =
     ext_enum_value(563, 4) as _;
 
-pub type VkPhysicalDeviceLayeredApiKHR = VkFlags;
+pub type VkPhysicalDeviceLayeredApiKHR = i32;
 pub const VK_PHYSICAL_DEVICE_LAYERED_API_VULKAN_KHR: VkPhysicalDeviceLayeredApiKHR = 0;
 pub const VK_PHYSICAL_DEVICE_LAYERED_API_D3D12_KHR: VkPhysicalDeviceLayeredApiKHR = 1;
 pub const VK_PHYSICAL_DEVICE_LAYERED_API_METAL_KHR: VkPhysicalDeviceLayeredApiKHR = 2;

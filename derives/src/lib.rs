@@ -317,6 +317,15 @@ pub fn promote_1_3(args: TokenStream, item: TokenStream) -> TokenStream {
         syn::LitStr::new("Allow1_3APIs", Span::call_site()),
     )
 }
+#[proc_macro_attribute]
+#[inline(always)]
+pub fn promote_1_4(args: TokenStream, item: TokenStream) -> TokenStream {
+    promote::core(
+        parse_macro_input!(item as syn::Item),
+        args,
+        syn::LitStr::new("Allow1_4APIs", Span::call_site()),
+    )
+}
 
 #[inline]
 fn newtype_struct_org_type(d: &syn::DataStruct) -> syn::Result<&syn::Type> {

@@ -1,7 +1,7 @@
 use bedrock::{
-    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut,
-    GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass,
-    ShaderModule, Swapchain, VkHandle, VkHandleMut,
+    self as br, CommandBufferMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut, GraphicsPipelineBuilder,
+    ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass, ShaderModule, Swapchain,
+    VkHandle, VkHandleMut,
 };
 use core::ffi::*;
 use std::{
@@ -145,8 +145,13 @@ fn main() {
 
     let vk_instance = Rc::new(
         br::InstanceObject::new(&br::InstanceCreateInfo::new(
-            &br::ApplicationInfo::new(c"Bedrock Examples Wayland Native", (0, 1, 0), c"", (0, 1, 0))
-                .api_version(1, 3, 0),
+            &br::ApplicationInfo::new(
+                c"Bedrock Examples Wayland Native",
+                br::Version::new(0, 1, 0),
+                c"",
+                br::Version::new(0, 1, 0),
+            )
+            .api_version(br::Version::new(1, 3, 0)),
             &[c"VK_LAYER_KHRONOS_validation".into()],
             &[
                 c"VK_KHR_surface".into(),
@@ -194,8 +199,8 @@ fn main() {
                 &[c"VK_KHR_swapchain".into()],
             )
             .with_next(
-                &br::vk::VkPhysicalDeviceFeatures2KHR::new(Default::default())
-                    .with_next(&mut br::vk::VkPhysicalDeviceSynchronization2FeaturesKHR::new(true)),
+                &br::PhysicalDeviceFeatures2::new(Default::default())
+                    .with_next(&mut br::PhysicalDeviceSynchronization2Features::new(true)),
             ),
         )
         .unwrap(),
@@ -271,7 +276,12 @@ fn main() {
         .unwrap();
     let framebuffers = backbuffer_views
         .iter()
-        .map(|bb| br::FramebufferBuilder::new_with_attachment(&renderpass, bb).create())
+        .map(|bb| {
+            br::FramebufferObject::new(
+                vk_device.clone(),
+                &br::FramebufferCreateInfo::new(&renderpass, &[bb.as_transparent_ref()], 640, 480),
+            )
+        })
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
 
@@ -427,11 +437,16 @@ fn main() {
         staging_memory.unmap();
     }
 
-    let mut init_cp = br::CommandPoolBuilder::new(vk_graphics_queue_family_index)
-        .transient()
-        .create(&vk_device)
-        .unwrap();
-    let [mut init_cb] = init_cp.alloc_array::<1>(true).unwrap();
+    let mut init_cp = br::CommandPoolObject::new(
+        &vk_device,
+        &br::CommandPoolCreateInfo::new(vk_graphics_queue_family_index).transient(),
+    )
+    .unwrap();
+    let [mut init_cb] = br::CommandBufferObject::alloc_array(
+        &vk_device,
+        &br::CommandBufferFixedCountAllocateInfo::<'_, 1>::new(&mut init_cp, br::CommandBufferLevel::Primary),
+    )
+    .unwrap();
     unsafe { init_cb.begin_once(&vk_device).unwrap() }
         .copy_buffer(
             &staging_buffer,
@@ -479,10 +494,16 @@ fn main() {
         &[],
     );
 
-    let mut update_cp = br::CommandPoolBuilder::new(vk_graphics_queue_family_index)
-        .create(&vk_device)
-        .unwrap();
-    let [mut update_cb] = update_cp.alloc_array::<1>(true).unwrap();
+    let mut update_cp = br::CommandPoolObject::new(
+        &vk_device,
+        &br::CommandPoolCreateInfo::new(vk_graphics_queue_family_index),
+    )
+    .unwrap();
+    let [mut update_cb] = br::CommandBufferObject::alloc_array(
+        &vk_device,
+        &br::CommandBufferFixedCountAllocateInfo::<'_, 1>::new(&mut update_cp, br::CommandBufferLevel::Primary),
+    )
+    .unwrap();
     unsafe { update_cb.begin(&vk_device).unwrap() }
         .copy_buffer(
             &staging_buffer,
@@ -501,10 +522,16 @@ fn main() {
         .end()
         .unwrap();
 
-    let mut cp = br::CommandPoolBuilder::new(vk_graphics_queue_family_index)
-        .create(vk_device.clone())
-        .unwrap();
-    let mut cb = cp.alloc(framebuffers.len() as _, true).unwrap();
+    let mut cp = br::CommandPoolObject::new(
+        vk_device.clone(),
+        &br::CommandPoolCreateInfo::new(vk_graphics_queue_family_index),
+    )
+    .unwrap();
+    let mut cb = br::CommandBufferObject::alloc(
+        vk_device.clone(),
+        &br::CommandBufferAllocateInfo::new(&mut cp, framebuffers.len() as _, br::CommandBufferLevel::Primary),
+    )
+    .unwrap();
     for (cb, fb) in cb.iter_mut().zip(framebuffers.iter()) {
         unsafe { cb.begin(&vk_device).unwrap() }
             .begin_render_pass_2(
