@@ -62,6 +62,9 @@ let steps =
       { simpleTestRustWithFeatures =
           λ(features : List Text) →
             cargo "test" "--features ${helper.serializeFeatures features}"
+      , simpleTestRustWithFeaturesNoDefault =
+          λ(features : List Text) →
+            cargo "test" "--no-default-features --features ${helper.serializeFeatures features}"
       , simpleCheckRustWithFeatures =
           λ(features : List Text) →
             cargo "check" "--features ${helper.serializeFeatures features}"
@@ -100,13 +103,23 @@ let checkFormat =
         ]
 
 let platformIndependentTest =
-      JobBuilder.buildJob
-        [ faultableJob
-        , JobBuilder.useRepositoryContent
-        , useRust "stable"
-        , JobBuilder.name "Run Tests (Platform Independent)"
-        ]
-        [ steps.simpleTestRustWithFeatures Features.PlatformIndependent ]
+      { alloc =
+          JobBuilder.buildJob
+            [ faultableJob
+            , JobBuilder.useRepositoryContent
+            , useRust "stable"
+            , JobBuilder.name "Run Tests (Platform Independent)"
+            ]
+            [ steps.simpleTestRustWithFeatures Features.PlatformIndependent ]
+      , noalloc =
+          JobBuilder.buildJob
+            [ faultableJob
+            , JobBuilder.useRepositoryContent
+            , useRust "stable"
+            , JobBuilder.name "Run Tests (Platform Independent - NoAlloc)"
+            ]
+            [ steps.simpleTestRustWithFeaturesNoDefault Features.PlatformIndependent ]
+      }
 
 let platformDependentTests =
       { win32 =

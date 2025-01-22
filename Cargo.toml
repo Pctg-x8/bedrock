@@ -12,6 +12,8 @@ license = "MIT"
 edition = "2021"
 
 [features]
+default = ["Alloc"]
+
 VK_KHR_surface = []
 VK_KHR_swapchain = []
 VK_KHR_display = []
@@ -275,6 +277,7 @@ Multithreaded = []
 Presentation = ["VK_KHR_surface", "VK_KHR_swapchain", "VK_KHR_display"]
 DynamicLoaded = ["Implements", "libloading"]
 CustomResolver = []
+Alloc = []
 
 [dependencies]
 x11 = { version = "^2.15", optional = true }

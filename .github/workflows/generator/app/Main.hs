@@ -60,7 +60,9 @@ platformIndependentTest =
         useRust "stable" Unix $
           GHA.job
             [ GHA.namedAs "test (baseline)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test"),
-              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & Cargo.withFeatures Features.platformIndependent)
+              GHA.namedAs "test (featured)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & Cargo.withFeatures Features.platformIndependent),
+              GHA.namedAs "test (baseline-noalloc)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & Cargo.withoutDefaultFeatures),
+              GHA.namedAs "test (featured-noalloc)" $ GHA.runStep $ "set -o pipefail; " <> cargoRenderAnnotatedCommandline (cargo "test" & Cargo.withoutDefaultFeatures & Cargo.withFeatures Features.platformIndependent)
             ]
 
 win32DependentTest :: GHA.Job

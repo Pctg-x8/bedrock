@@ -187,7 +187,7 @@ fn main() {
 
     let device_memory_properties = vk_pdev.memory_properties();
     let vk_graphics_queue_family_index = vk_pdev
-        .queue_family_properties()
+        .queue_family_properties_alloc()
         .find_matching_index(br::QueueFlags::GRAPHICS)
         .unwrap();
     let vk_device = Rc::new(
@@ -208,7 +208,7 @@ fn main() {
     let mut vk_queue = vk_device.queue(vk_graphics_queue_family_index, 0).clone_parent();
 
     let surface_props = vk_pdev.surface_capabilities(&vk_surface).unwrap();
-    let presentation_modes = vk_pdev.surface_present_modes(&vk_surface).unwrap();
+    let presentation_modes = vk_pdev.surface_present_modes_alloc(&vk_surface).unwrap();
     let vk_swapchain = br::SwapchainBuilder::new(
         vk_surface,
         2,

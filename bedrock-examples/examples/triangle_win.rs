@@ -140,7 +140,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let surface =
         unsafe { br::SurfaceObject::new(&adapter, &br::vk::VkWin32SurfaceCreateInfoKHR::new(cls.hInstance, w))? };
 
-    let queue_families = adapter.queue_family_properties();
+    let queue_families = adapter.queue_family_properties_alloc();
     let graphics_queue_family = queue_families
         .find_matching_index(br::QueueFlags::GRAPHICS)
         .expect("No graphics queue available");
@@ -163,8 +163,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     let surface_caps = adapter.surface_capabilities(&surface)?;
-    let surface_fmt = adapter.surface_formats(&surface)?;
-    let surface_pm = adapter.surface_present_modes(&surface)?;
+    let surface_fmt = adapter.surface_formats_alloc(&surface)?;
+    let surface_pm = adapter.surface_present_modes_alloc(&surface)?;
     let fmt = surface_fmt
         .iter()
         .find(|f| {
@@ -551,8 +551,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             drop(swapchain);
 
             let surface_caps = adapter.surface_capabilities(&surface)?;
-            let surface_fmt = adapter.surface_formats(&surface)?;
-            let surface_pm = adapter.surface_present_modes(&surface)?;
+            let surface_fmt = adapter.surface_formats_alloc(&surface)?;
+            let surface_pm = adapter.surface_present_modes_alloc(&surface)?;
             let fmt = surface_fmt
                 .iter()
                 .find(|f| {

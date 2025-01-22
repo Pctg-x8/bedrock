@@ -2,7 +2,7 @@
 
 use cfg_if::cfg_if;
 use derives::implements;
-use ffi_helper::{opt_pointer, slice_as_ptr_empty_null, CStrFFIRef};
+use ffi_helper::{opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null, CStrFFIRef};
 
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
@@ -884,7 +884,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
+    #[implements("Alloc")]
     fn new_graphics_pipelines<'s>(
         &'s self,
         infos: &[VkGraphicsPipelineCreateInfo],
@@ -896,10 +896,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
         }
 
-        Ok(hs
-            .into_iter()
-            .map(move |h| unsafe { crate::PipelineObject::manage(h, self) })
-            .collect())
+        Ok(crate::collect_vec_alloc(
+            hs.into_iter()
+                .map(move |h| unsafe { crate::PipelineObject::manage(h, self) }),
+        ))
     }
 
     /// Create graphics pipelines
@@ -960,7 +960,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
+    #[implements("Alloc")]
     fn new_compute_pipelines<'s>(
         &'s self,
         builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>],
@@ -992,10 +992,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.new_compute_pipelines_raw(&cinfos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
 
-        Ok(pipelines
-            .into_iter()
-            .map(move |h| unsafe { crate::PipelineObject::manage(h, self) })
-            .collect())
+        Ok(crate::collect_vec_alloc(
+            pipelines
+                .into_iter()
+                .map(move |h| unsafe { crate::PipelineObject::manage(h, self) }),
+        ))
     }
 
     /// Create compute pipelines
@@ -1892,13 +1893,13 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[implements]
+    #[implements("Alloc")]
     fn bind_sparse(
         &mut self,
         batches: &[impl SparseBindingOpBatch],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
-        let batches: Vec<_> = batches.iter().map(SparseBindingOpBatch::make_info_struct).collect();
+        let batches: Vec<_> = crate::collect_vec_alloc(batches.iter().map(SparseBindingOpBatch::make_info_struct));
 
         unsafe { self.bind_sparse_raw(&batches, fence) }
     }
@@ -1936,24 +1937,22 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[implements]
+    #[implements("Alloc")]
     fn submit(
         &mut self,
         batches: &[impl SubmissionBatch],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
-        let batch_resources: Vec<_> = batches
-            .iter()
-            .map(|b| {
-                let mut resources = TemporalSubmissionBatchResources::new();
-                b.collect_resources(&mut resources);
-                resources
-            })
-            .collect();
-        let batches: Vec<_> = batch_resources
-            .iter()
-            .map(TemporalSubmissionBatchResources::make_info_struct)
-            .collect();
+        let batch_resources: Vec<_> = crate::collect_vec_alloc(batches.iter().map(|b| {
+            let mut resources = TemporalSubmissionBatchResources::new();
+            b.collect_resources(&mut resources);
+            resources
+        }));
+        let batches: Vec<_> = crate::collect_vec_alloc(
+            batch_resources
+                .iter()
+                .map(TemporalSubmissionBatchResources::make_info_struct),
+        );
 
         unsafe { self.submit_raw(&batches, fence) }
     }
@@ -2135,15 +2134,30 @@ impl<'r> PresentInfo<'r> {
     }
 
     #[implements]
-    pub fn submit(mut self, queue: &mut (impl QueueMut + ?Sized)) -> crate::Result<Vec<crate::Result<()>>> {
-        let mut results = vec![VK_SUCCESS; self.0.swapchainCount as usize];
-        self.0.pResults = results.as_mut_ptr_empty_null();
+    pub fn submit_sink(
+        mut self,
+        queue: &mut (impl VkHandleMut<Handle = VkQueue> + ?Sized),
+        result_sink: &mut [VkResult],
+    ) -> crate::Result<()> {
+        assert_eq!(result_sink.len(), self.0.swapchainCount as usize);
+        self.0.pResults = slice_as_mut_ptr_empty_null(result_sink);
 
         unsafe {
             crate::vkfn::queue_present_khr(queue.native_ptr_mut(), &self.0)
                 .into_result()
-                .map(|_| results.into_iter().map(|r| r.into_result().map(drop)).collect())
+                .map(drop)
         }
+    }
+
+    #[implements("Alloc")]
+    pub fn submit(
+        self,
+        queue: &mut (impl VkHandleMut<Handle = VkQueue> + ?Sized),
+    ) -> crate::Result<Vec<crate::Result<()>>> {
+        let mut results = vec![VK_SUCCESS; self.0.swapchainCount as usize];
+
+        self.submit_sink(queue, &mut results)
+            .map(move |_| crate::collect_vec_alloc(results.into_iter().map(|r| r.into_result().map(drop))))
     }
 }
 

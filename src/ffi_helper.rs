@@ -34,41 +34,30 @@ pub(crate) const fn slice_as_ptr_empty_null<T>(slice: &[T]) -> *const T {
     }
 }
 
+/// Pointer of the mutable slice, or null if the slice is empty
+#[inline(always)]
+pub(crate) const fn slice_as_mut_ptr_empty_null<T>(slice: &mut [T]) -> *mut T {
+    if slice.is_empty() {
+        core::ptr::null_mut()
+    } else {
+        slice.as_mut_ptr()
+    }
+}
+
 pub(crate) trait ArrayFFIExtensions<T> {
     /// pointer of the array, or null if the array is empty
     fn as_ptr_empty_null(&self) -> *const T;
-
-    /// pointer of the array, or null if the array is empty
-    fn as_mut_ptr_empty_null(&mut self) -> *mut T;
 }
 impl<T> ArrayFFIExtensions<T> for Vec<T> {
     #[inline(always)]
     fn as_ptr_empty_null(&self) -> *const T {
         slice_as_ptr_empty_null(self)
     }
-
-    #[inline(always)]
-    fn as_mut_ptr_empty_null(&mut self) -> *mut T {
-        if self.is_empty() {
-            core::ptr::null_mut()
-        } else {
-            self.as_mut_ptr()
-        }
-    }
 }
 impl<T> ArrayFFIExtensions<T> for [T] {
     #[inline(always)]
     fn as_ptr_empty_null(&self) -> *const T {
         slice_as_ptr_empty_null(self)
-    }
-
-    #[inline(always)]
-    fn as_mut_ptr_empty_null(&mut self) -> *mut T {
-        if self.is_empty() {
-            core::ptr::null_mut()
-        } else {
-            self.as_mut_ptr()
-        }
     }
 }
 
@@ -83,4 +72,12 @@ pub(crate) const fn opt_pointer<T>(x: Option<&T>) -> *const T {
 #[inline(always)]
 pub(crate) const fn pointerify<T>(x: &T) -> *const T {
     x as _
+}
+
+#[inline(always)]
+pub(crate) const fn opt_cstr_ptr(x: Option<&core::ffi::CStr>) -> *const core::ffi::c_char {
+    match x {
+        Some(x) => x.as_ptr(),
+        None => core::ptr::null(),
+    }
 }

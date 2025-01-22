@@ -62,26 +62,26 @@ impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurface
 
 #[cfg(feature = "VK_KHR_surface")]
 /// Presentation mode supported for a surface
-#[repr(u32)]
+#[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 pub enum PresentMode {
     /// The presentation engine does not wait for a vertical blanking period to update the current image, meaning
     /// this mode may result in visible tearing
-    Immediate = VK_PRESENT_MODE_IMMEDIATE_KHR as _,
+    Immediate = VK_PRESENT_MODE_IMMEDIATE_KHR,
     /// The presentation engine waits for the next vertical blanking period to update the current image.
     /// Tearing cannot be observed. An internal single-entry queue is used to hold pending presentation requests.
     /// If the queue is full when a new presentation request is received, the new request replaces the existing entry, and any images
     /// associated with the prior entry become available for re-use by the application
-    Mailbox = VK_PRESENT_MODE_MAILBOX_KHR as _,
+    Mailbox = VK_PRESENT_MODE_MAILBOX_KHR,
     /// The presentation engine waits for the next vertical blanking period to update the current image.
     /// Tearing cannot be observed. An internal queue is used to hold pending presentation requests.
     /// New requests are appended to the end of the queue, and one request is removed from the beginning of the queue
     /// and processed during each vertical blanking period in which the queue is non-empty.
-    FIFO = VK_PRESENT_MODE_FIFO_KHR as _,
+    FIFO = VK_PRESENT_MODE_FIFO_KHR,
     /// The presentation engine generally waits for the next vertical blanking period to update the currnt image.
     /// If a vertical blanking period has already passed since the last update of the current image then the presentation engine
     /// does not wait for another vertical blanking period for the update, meaning this mode may result in visible tearing in this case
-    FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR as _,
+    FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR,
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

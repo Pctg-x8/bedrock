@@ -1498,7 +1498,7 @@ const CATALOG: &'static [Entrypoint] = &[
             ("command_buffers", "*const VkCommandBuffer"),
         ],
     ),
-    // 1.1 promoted
+    // 1.1 new
     Entrypoint::new("enumerate_instance_version", &[("api_version", "*mut u32")])
         .with_result()
         .promoted_at(1, 1),
@@ -1816,6 +1816,68 @@ const CATALOG: &'static [Entrypoint] = &[
     .with_result()
     .for_extensions(&["VK_KHR_display", "VK_KHR_surface"], "KHR"),
     // 1.1 promoted
+    Entrypoint::new(
+        "get_physical_device_features2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("features_out", "*mut VkPhysicalDeviceFeatures2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_physical_device_format_properties2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("format", "VkFormat"),
+            ("format_properties_out", "*mut VkFormatProperties2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_physical_device_image_format_properties2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("image_format_info", "*const VkPhysicalDeviceImageFormatInfo2"),
+            ("image_format_properties_out", "*mut VkImageFormatProperties2"),
+        ],
+    )
+    .with_result()
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_physical_device_memory_properties2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("memory_properties_out", "*mut VkPhysicalDeviceMemoryProperties2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_physical_device_properties2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("properties_out", "*mut VkPhysicalDeviceProperties2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_physical_device_queue_family_properties2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("queue_family_property_count", "*mut u32"),
+            ("queue_family_properties_out", "*mut VkQueueFamilyProperties2"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "get_physical_device_sparse_image_format_properties2",
+        &[
+            ("physical_device", "VkPhysicalDevice"),
+            ("format_info", "*const VkPhysicalDeviceSparseImageFormatInfo2"),
+            ("property_count", "*mut u32"),
+            ("properties_out", "*mut VkSparseImageFormatProperties2"),
+        ],
+    )
+    .promoted_at(1, 1),
     Entrypoint::new(
         "create_descriptor_update_template",
         &[

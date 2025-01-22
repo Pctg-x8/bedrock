@@ -868,6 +868,48 @@ pub unsafe fn create_display_plane_surface_khr(instance: VkInstance, create_info
 }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_features2(physical_device: VkPhysicalDevice, features_out: *mut VkPhysicalDeviceFeatures2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_features2.0)(physical_device, features_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceFeatures2(physical_device, features_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_format_properties2(physical_device: VkPhysicalDevice, format: VkFormat, format_properties_out: *mut VkFormatProperties2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_format_properties2.0)(physical_device, format, format_properties_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceFormatProperties2(physical_device, format, format_properties_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_image_format_properties2(physical_device: VkPhysicalDevice, image_format_info: *const VkPhysicalDeviceImageFormatInfo2, image_format_properties_out: *mut VkImageFormatProperties2) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_image_format_properties2.0)(physical_device, image_format_info, image_format_properties_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceImageFormatProperties2(physical_device, image_format_info, image_format_properties_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_memory_properties2(physical_device: VkPhysicalDevice, memory_properties_out: *mut VkPhysicalDeviceMemoryProperties2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_memory_properties2.0)(physical_device, memory_properties_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceMemoryProperties2(physical_device, memory_properties_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_properties2(physical_device: VkPhysicalDevice, properties_out: *mut VkPhysicalDeviceProperties2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_properties2.0)(physical_device, properties_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceProperties2(physical_device, properties_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_queue_family_properties2(physical_device: VkPhysicalDevice, queue_family_property_count: *mut u32, queue_family_properties_out: *mut VkQueueFamilyProperties2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_queue_family_properties2.0)(physical_device, queue_family_property_count, queue_family_properties_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceQueueFamilyProperties2(physical_device, queue_family_property_count, queue_family_properties_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_physical_device_sparse_image_format_properties2(physical_device: VkPhysicalDevice, format_info: *const VkPhysicalDeviceSparseImageFormatInfo2, property_count: *mut u32, properties_out: *mut VkSparseImageFormatProperties2) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_physical_device_sparse_image_format_properties2.0)(physical_device, format_info, property_count, properties_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetPhysicalDeviceSparseImageFormatProperties2(physical_device, format_info, property_count, properties_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
 pub unsafe fn create_descriptor_update_template(device: VkDevice, create_info: *const VkDescriptorUpdateTemplateCreateInfo, allocator: *const VkAllocationCallbacks, descriptor_update_template_out: *mut VkDescriptorUpdateTemplate) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.create_descriptor_update_template.0)(device, create_info, allocator, descriptor_update_template_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCreateDescriptorUpdateTemplate(device, create_info, allocator, descriptor_update_template_out) }
@@ -1157,6 +1199,20 @@ struct FunctionPointerTable {
     #[cfg(all(feature = "VK_KHR_display", feature = "VK_KHR_surface"))]
     create_display_plane_surface_khr: PFN_vkCreateDisplayPlaneSurfaceKHR,
     #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_features2: PFN_vkGetPhysicalDeviceFeatures2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_format_properties2: PFN_vkGetPhysicalDeviceFormatProperties2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_image_format_properties2: PFN_vkGetPhysicalDeviceImageFormatProperties2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_memory_properties2: PFN_vkGetPhysicalDeviceMemoryProperties2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_properties2: PFN_vkGetPhysicalDeviceProperties2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_queue_family_properties2: PFN_vkGetPhysicalDeviceQueueFamilyProperties2,
+    #[cfg(feature = "Allow1_1APIs")]
+    get_physical_device_sparse_image_format_properties2: PFN_vkGetPhysicalDeviceSparseImageFormatProperties2,
+    #[cfg(feature = "Allow1_1APIs")]
     create_descriptor_update_template: PFN_vkCreateDescriptorUpdateTemplate,
     #[cfg(feature = "Allow1_1APIs")]
     destroy_descriptor_update_template: PFN_vkDestroyDescriptorUpdateTemplate,
@@ -1391,6 +1447,20 @@ impl FunctionPointerTable {
         get_display_plane_capabilities_khr: PFN_vkGetDisplayPlaneCapabilitiesKHR(stub_get_display_plane_capabilities_khr),
         #[cfg(all(feature = "VK_KHR_display", feature = "VK_KHR_surface"))]
         create_display_plane_surface_khr: PFN_vkCreateDisplayPlaneSurfaceKHR(stub_create_display_plane_surface_khr),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_features2: PFN_vkGetPhysicalDeviceFeatures2(stub_get_physical_device_features2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_format_properties2: PFN_vkGetPhysicalDeviceFormatProperties2(stub_get_physical_device_format_properties2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_image_format_properties2: PFN_vkGetPhysicalDeviceImageFormatProperties2(stub_get_physical_device_image_format_properties2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_memory_properties2: PFN_vkGetPhysicalDeviceMemoryProperties2(stub_get_physical_device_memory_properties2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_properties2: PFN_vkGetPhysicalDeviceProperties2(stub_get_physical_device_properties2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_queue_family_properties2: PFN_vkGetPhysicalDeviceQueueFamilyProperties2(stub_get_physical_device_queue_family_properties2),
+        #[cfg(feature = "Allow1_1APIs")]
+        get_physical_device_sparse_image_format_properties2: PFN_vkGetPhysicalDeviceSparseImageFormatProperties2(stub_get_physical_device_sparse_image_format_properties2),
         #[cfg(feature = "Allow1_1APIs")]
         create_descriptor_update_template: PFN_vkCreateDescriptorUpdateTemplate(stub_create_descriptor_update_template),
         #[cfg(feature = "Allow1_1APIs")]
@@ -2957,6 +3027,76 @@ unsafe extern "system" fn stub_create_display_plane_surface_khr(instance: VkInst
     let fp: PFN_vkCreateDisplayPlaneSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDisplayPlaneSurfaceKHR>::NAME_CSTR);
     FPTBL.create_display_plane_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_features2(physical_device: VkPhysicalDevice, features_out: *mut VkPhysicalDeviceFeatures2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceFeatures2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceFeatures2>::NAME_CSTR);
+    FPTBL.get_physical_device_features2 = fp;
+    (fp.0)(physical_device, features_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_format_properties2(physical_device: VkPhysicalDevice, format: VkFormat, format_properties_out: *mut VkFormatProperties2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceFormatProperties2>::NAME_CSTR);
+    FPTBL.get_physical_device_format_properties2 = fp;
+    (fp.0)(physical_device, format, format_properties_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_image_format_properties2(physical_device: VkPhysicalDevice, image_format_info: *const VkPhysicalDeviceImageFormatInfo2, image_format_properties_out: *mut VkImageFormatProperties2) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceImageFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceImageFormatProperties2>::NAME_CSTR);
+    FPTBL.get_physical_device_image_format_properties2 = fp;
+    (fp.0)(physical_device, image_format_info, image_format_properties_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_memory_properties2(physical_device: VkPhysicalDevice, memory_properties_out: *mut VkPhysicalDeviceMemoryProperties2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceMemoryProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceMemoryProperties2>::NAME_CSTR);
+    FPTBL.get_physical_device_memory_properties2 = fp;
+    (fp.0)(physical_device, memory_properties_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_properties2(physical_device: VkPhysicalDevice, properties_out: *mut VkPhysicalDeviceProperties2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceProperties2>::NAME_CSTR);
+    FPTBL.get_physical_device_properties2 = fp;
+    (fp.0)(physical_device, properties_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_queue_family_properties2(physical_device: VkPhysicalDevice, queue_family_property_count: *mut u32, queue_family_properties_out: *mut VkQueueFamilyProperties2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceQueueFamilyProperties2>::NAME_CSTR);
+    FPTBL.get_physical_device_queue_family_properties2 = fp;
+    (fp.0)(physical_device, queue_family_property_count, queue_family_properties_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_physical_device_sparse_image_format_properties2(physical_device: VkPhysicalDevice, format_info: *const VkPhysicalDeviceSparseImageFormatInfo2, property_count: *mut u32, properties_out: *mut VkSparseImageFormatProperties2) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2>::NAME_CSTR);
+    FPTBL.get_physical_device_sparse_image_format_properties2 = fp;
+    (fp.0)(physical_device, format_info, property_count, properties_out)
 }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
