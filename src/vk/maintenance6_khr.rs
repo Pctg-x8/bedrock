@@ -3,17 +3,24 @@
 pub const VK_KHR_MAINTENANCE_6_SPEC_VERSION: usize = 1;
 pub const VK_KHR_MAINTENANCE_6_EXTENSION_NAME: &'static str = "VK_KHR_maintenance6";
 
-use derives::vk_ext_command;
+use derives::{promote_1_4, vk_ext_command};
 
 use super::*;
 
+#[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR: VkStructureType = ext_enum_value(546, 0) as _;
+#[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR: VkStructureType = ext_enum_value(546, 1) as _;
+#[promote_1_4]
 pub const VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR: VkStructureType = ext_enum_value(546, 2) as _;
+#[promote_1_4]
 pub const VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR: VkStructureType = ext_enum_value(546, 3) as _;
+#[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR: VkStructureType = ext_enum_value(546, 4) as _;
+#[promote_1_4]
 #[cfg(feature = "VK_KHR_push_descriptor")]
 pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR: VkStructureType = ext_enum_value(546, 5) as _;
+#[promote_1_4]
 #[cfg(feature = "VK_KHR_push_descriptor")]
 pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR: VkStructureType = ext_enum_value(546, 6) as _;
 
@@ -21,6 +28,7 @@ pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR: VkStruct
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance6FeaturesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -42,6 +50,7 @@ impl VkPhysicalDeviceMaintenance6FeaturesKHR {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance6PropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -65,6 +74,7 @@ impl VkPhysicalDeviceMaintenance6PropertiesKHR {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkBindMemoryStatusKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
@@ -74,6 +84,7 @@ pub struct VkBindMemoryStatusKHR {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkBindDescriptorSetsInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
@@ -89,6 +100,7 @@ pub struct VkBindDescriptorSetsInfoKHR {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkPushConstantsInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
@@ -103,6 +115,7 @@ pub struct VkPushConstantsInfoKHR {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkPushDescriptorSetInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
@@ -117,6 +130,7 @@ pub struct VkPushDescriptorSetInfoKHR {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR)]
+#[promote_1_4(suffix = "KHR")]
 pub struct VkPushDescriptorSetWithTemplateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
@@ -129,18 +143,22 @@ pub struct VkPushDescriptorSetWithTemplateInfoKHR {
 vk_ext_command!(
     pub fn vkCmdBindDescriptorSets2KHR(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR);
     suffix = "KHR";
+    promote = "1.4";
 );
 vk_ext_command!(
     pub fn vkCmdPushConstants2KHR(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR);
     suffix = "KHR";
+    promote = "1.4";
 );
 #[cfg(feature = "VK_KHR_push_descriptor")]
 vk_ext_command!(
     pub fn vkCmdPushDescriptorSet2KHR(commandBuffer: VkCommandBuffer, pPushDEscriptorSetInof: *const VkPushDescriptorSetInfoKHR);
     suffix = "KHR";
+    promote = "1.4";
 );
 #[cfg(feature = "VK_KHR_push_descriptor")]
 vk_ext_command!(
     pub fn vkCmdPushDescriptorSetWithTemplate2KHR(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR);
     suffix = "KHR";
+    promote = "1.4";
 );

@@ -868,6 +868,24 @@ pub unsafe fn create_display_plane_surface_khr(instance: VkInstance, create_info
 }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip] #[inline(always)]
+pub unsafe fn create_descriptor_update_template(device: VkDevice, create_info: *const VkDescriptorUpdateTemplateCreateInfo, allocator: *const VkAllocationCallbacks, descriptor_update_template_out: *mut VkDescriptorUpdateTemplate) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.create_descriptor_update_template.0)(device, create_info, allocator, descriptor_update_template_out) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCreateDescriptorUpdateTemplate(device, create_info, allocator, descriptor_update_template_out) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn destroy_descriptor_update_template(device: VkDevice, descriptor_update_template: VkDescriptorUpdateTemplate, allocator: *const VkAllocationCallbacks) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.destroy_descriptor_update_template.0)(device, descriptor_update_template, allocator) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkDestroyDescriptorUpdateTemplate(device, descriptor_update_template, allocator) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn update_descriptor_set_with_template(device: VkDevice, descriptor_set: VkDescriptorSet, descriptor_update_template: VkDescriptorUpdateTemplate, data: *const core::ffi::c_void) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.update_descriptor_set_with_template.0)(device, descriptor_set, descriptor_update_template, data) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkUpdateDescriptorSetWithTemplate(device, descriptor_set, descriptor_update_template, data) }
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[inline(always)]
 pub unsafe fn get_buffer_memory_requirements2(device: VkDevice, info: *const VkBufferMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.get_buffer_memory_requirements2.0)(device, info, memory_requirements) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkGetBufferMemoryRequirements2(device, info, memory_requirements) }
@@ -931,6 +949,12 @@ pub unsafe fn cmd_pipeline_barrier2(command_buffer: VkCommandBuffer, dependency_
 pub unsafe fn queue_submit2(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo2, fence: VkFence) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.queue_submit2.0)(queue, submit_count, submits, fence) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkQueueSubmit2(queue, submit_count, submits, fence) }
+}
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn cmd_push_descriptor_set(command_buffer: VkCommandBuffer, pipeline_bind_point: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptor_write_count: u32, descriptor_writes: *const VkWriteDescriptorSet) {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] { (FPTBL.cmd_push_descriptor_set.0)(command_buffer, pipeline_bind_point, layout, set, descriptor_write_count, descriptor_writes) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] { vkCmdPushDescriptorSet(command_buffer, pipeline_bind_point, layout, set, descriptor_write_count, descriptor_writes) }
 }
 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
@@ -1133,6 +1157,12 @@ struct FunctionPointerTable {
     #[cfg(all(feature = "VK_KHR_display", feature = "VK_KHR_surface"))]
     create_display_plane_surface_khr: PFN_vkCreateDisplayPlaneSurfaceKHR,
     #[cfg(feature = "Allow1_1APIs")]
+    create_descriptor_update_template: PFN_vkCreateDescriptorUpdateTemplate,
+    #[cfg(feature = "Allow1_1APIs")]
+    destroy_descriptor_update_template: PFN_vkDestroyDescriptorUpdateTemplate,
+    #[cfg(feature = "Allow1_1APIs")]
+    update_descriptor_set_with_template: PFN_vkUpdateDescriptorSetWithTemplate,
+    #[cfg(feature = "Allow1_1APIs")]
     get_buffer_memory_requirements2: PFN_vkGetBufferMemoryRequirements2,
     #[cfg(feature = "Allow1_1APIs")]
     get_image_memory_requirements2: PFN_vkGetImageMemoryRequirements2,
@@ -1153,7 +1183,9 @@ struct FunctionPointerTable {
     #[cfg(feature = "Allow1_3APIs")]
     cmd_pipeline_barrier2: PFN_vkCmdPipelineBarrier2,
     #[cfg(feature = "Allow1_3APIs")]
-    queue_submit2: PFN_vkQueueSubmit2
+    queue_submit2: PFN_vkQueueSubmit2,
+    #[cfg(feature = "Allow1_4APIs")]
+    cmd_push_descriptor_set: PFN_vkCmdPushDescriptorSet
 }
 #[rustfmt::skip]
 #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
@@ -1360,6 +1392,12 @@ impl FunctionPointerTable {
         #[cfg(all(feature = "VK_KHR_display", feature = "VK_KHR_surface"))]
         create_display_plane_surface_khr: PFN_vkCreateDisplayPlaneSurfaceKHR(stub_create_display_plane_surface_khr),
         #[cfg(feature = "Allow1_1APIs")]
+        create_descriptor_update_template: PFN_vkCreateDescriptorUpdateTemplate(stub_create_descriptor_update_template),
+        #[cfg(feature = "Allow1_1APIs")]
+        destroy_descriptor_update_template: PFN_vkDestroyDescriptorUpdateTemplate(stub_destroy_descriptor_update_template),
+        #[cfg(feature = "Allow1_1APIs")]
+        update_descriptor_set_with_template: PFN_vkUpdateDescriptorSetWithTemplate(stub_update_descriptor_set_with_template),
+        #[cfg(feature = "Allow1_1APIs")]
         get_buffer_memory_requirements2: PFN_vkGetBufferMemoryRequirements2(stub_get_buffer_memory_requirements2),
         #[cfg(feature = "Allow1_1APIs")]
         get_image_memory_requirements2: PFN_vkGetImageMemoryRequirements2(stub_get_image_memory_requirements2),
@@ -1380,7 +1418,9 @@ impl FunctionPointerTable {
         #[cfg(feature = "Allow1_3APIs")]
         cmd_pipeline_barrier2: PFN_vkCmdPipelineBarrier2(stub_cmd_pipeline_barrier2),
         #[cfg(feature = "Allow1_3APIs")]
-        queue_submit2: PFN_vkQueueSubmit2(stub_queue_submit2)
+        queue_submit2: PFN_vkQueueSubmit2(stub_queue_submit2),
+        #[cfg(feature = "Allow1_4APIs")]
+        cmd_push_descriptor_set: PFN_vkCmdPushDescriptorSet(stub_cmd_push_descriptor_set)
     };
     #[inline(always)] #[rustfmt::skip] pub(crate) fn reset() { unsafe { FPTBL = Self::INIT; } }
 }
@@ -2920,6 +2960,36 @@ unsafe extern "system" fn stub_create_display_plane_surface_khr(instance: VkInst
 }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_create_descriptor_update_template(device: VkDevice, create_info: *const VkDescriptorUpdateTemplateCreateInfo, allocator: *const VkAllocationCallbacks, descriptor_update_template_out: *mut VkDescriptorUpdateTemplate) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkCreateDescriptorUpdateTemplate = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDescriptorUpdateTemplate>::NAME_CSTR);
+    FPTBL.create_descriptor_update_template = fp;
+    (fp.0)(device, create_info, allocator, descriptor_update_template_out)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_destroy_descriptor_update_template(device: VkDevice, descriptor_update_template: VkDescriptorUpdateTemplate, allocator: *const VkAllocationCallbacks) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkDestroyDescriptorUpdateTemplate = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyDescriptorUpdateTemplate>::NAME_CSTR);
+    FPTBL.destroy_descriptor_update_template = fp;
+    (fp.0)(device, descriptor_update_template, allocator)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_update_descriptor_set_with_template(device: VkDevice, descriptor_set: VkDescriptorSet, descriptor_update_template: VkDescriptorUpdateTemplate, data: *const core::ffi::c_void) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkUpdateDescriptorSetWithTemplate = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkUpdateDescriptorSetWithTemplate>::NAME_CSTR);
+    FPTBL.update_descriptor_set_with_template = fp;
+    (fp.0)(device, descriptor_set, descriptor_update_template, data)
+}
+#[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_buffer_memory_requirements2(device: VkDevice, info: *const VkBufferMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
@@ -3027,4 +3097,14 @@ unsafe extern "system" fn stub_queue_submit2(queue: VkQueue, submit_count: u32, 
     let fp: PFN_vkQueueSubmit2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkQueueSubmit2>::NAME_CSTR);
     FPTBL.queue_submit2 = fp;
     (fp.0)(queue, submit_count, submits, fence)
+}
+#[cfg(feature = "Allow1_4APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_cmd_push_descriptor_set(command_buffer: VkCommandBuffer, pipeline_bind_point: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptor_write_count: u32, descriptor_writes: *const VkWriteDescriptorSet) {
+    use crate::resolver::ResolverInterface;
+    use crate::resolver::PFN;
+
+    let fp: PFN_vkCmdPushDescriptorSet = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdPushDescriptorSet>::NAME_CSTR);
+    FPTBL.cmd_push_descriptor_set = fp;
+    (fp.0)(command_buffer, pipeline_bind_point, layout, set, descriptor_write_count, descriptor_writes)
 }

@@ -779,67 +779,47 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Push descriptor updates into a command buffer
     #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[inline(always)]
+    pub unsafe fn push_descriptor_set_raw(
+        self,
+        pipeline_bind_point: VkPipelineBindPoint,
+        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        set: u32,
+        writes: &[VkWriteDescriptorSet],
+    ) -> Self {
+        #[cfg(feature = "Allow1_4APIs")]
+        crate::vkfn::cmd_push_descriptor_set(
+            self.ptr.native_ptr_mut(),
+            pipeline_bind_point,
+            pipeline_layout.native_ptr(),
+            set,
+            writes.len() as _,
+            writes.as_ptr_empty_null(),
+        );
+        #[cfg(not(feature = "Allow1_4APIs"))]
+        (self.device.cmd_push_descriptor_set_khr_fn())(
+            self.ptr.native_ptr_mut(),
+            pipeline_bind_point,
+            pipeline_layout.native_ptr(),
+            set,
+            writes.len() as _,
+            writes.as_ptr_empty_null(),
+        );
+
+        self
+    }
+
+    /// Push descriptor updates into a command buffer
+    #[cfg(feature = "VK_KHR_push_descriptor")]
     pub fn push_graphics_descriptor_set(
         self,
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
         set: u32,
         writes: &[crate::DescriptorSetWriteInfo],
     ) -> Self {
-        // save flatten results
+        let w = writes.iter().map(|x| x.make_structure()).collect::<Vec<_>>();
 
-        use crate::VkRawHandle;
-        let wt = writes
-            .iter()
-            .map(|x| {
-                let (ty, cnt, iv, bv, bvv) = x.3.decomposite();
-                let ivs = iv
-                    .iter()
-                    .map(|&(s, v, l)| VkDescriptorImageInfo {
-                        sampler: s.unwrap_or(VkSampler::NULL),
-                        imageView: v,
-                        imageLayout: l as _,
-                    })
-                    .collect::<Vec<_>>();
-                let bvs = bv
-                    .iter()
-                    .map(|&(b, ref r)| VkDescriptorBufferInfo {
-                        buffer: b,
-                        offset: r.start as _,
-                        range: r.len() as _,
-                    })
-                    .collect::<Vec<_>>();
-                (x.0, x.1, x.2, ty, cnt, ivs, bvs, bvv)
-            })
-            .collect::<Vec<_>>();
-        let w = wt
-            .iter()
-            .map(
-                |&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet {
-                    sType: VkWriteDescriptorSet::TYPE,
-                    pNext: std::ptr::null(),
-                    dstSet: set,
-                    dstBinding: binding,
-                    dstArrayElement: array,
-                    descriptorType: dty as _,
-                    descriptorCount: count,
-                    pImageInfo: iv.as_ptr_empty_null(),
-                    pBufferInfo: bv.as_ptr_empty_null(),
-                    pTexelBufferView: bvv.as_ptr_empty_null(),
-                },
-            )
-            .collect::<Vec<_>>();
-        unsafe {
-            Resolver::get().cmd_push_descriptor_set_khr(
-                self.ptr.native_ptr_mut(),
-                VK_PIPELINE_BIND_POINT_GRAPHICS,
-                pipeline_layout.native_ptr(),
-                set,
-                w.len() as _,
-                w.as_ptr_empty_null(),
-            );
-        }
-
-        self
+        unsafe { self.push_descriptor_set_raw(VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, set, &w) }
     }
 
     /// Push descriptor updates into a command buffer
@@ -850,61 +830,9 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         set: u32,
         writes: &[crate::DescriptorSetWriteInfo],
     ) -> Self {
-        // save flatten results
+        let w = writes.iter().map(|x| x.make_structure()).collect::<Vec<_>>();
 
-        use crate::VkRawHandle;
-        let wt = writes
-            .iter()
-            .map(|x| {
-                let (ty, cnt, iv, bv, bvv) = x.3.decomposite();
-                let ivs = iv
-                    .iter()
-                    .map(|&(s, v, l)| VkDescriptorImageInfo {
-                        sampler: s.unwrap_or(VkSampler::NULL),
-                        imageView: v,
-                        imageLayout: l as _,
-                    })
-                    .collect::<Vec<_>>();
-                let bvs = bv
-                    .iter()
-                    .map(|&(b, ref r)| VkDescriptorBufferInfo {
-                        buffer: b,
-                        offset: r.start as _,
-                        range: r.len() as _,
-                    })
-                    .collect::<Vec<_>>();
-                (x.0, x.1, x.2, ty, cnt, ivs, bvs, bvv)
-            })
-            .collect::<Vec<_>>();
-        let w = wt
-            .iter()
-            .map(
-                |&(set, binding, array, dty, count, ref iv, ref bv, ref bvv)| VkWriteDescriptorSet {
-                    sType: VkWriteDescriptorSet::TYPE,
-                    pNext: std::ptr::null(),
-                    dstSet: set,
-                    dstBinding: binding,
-                    dstArrayElement: array,
-                    descriptorType: dty as _,
-                    descriptorCount: count,
-                    pImageInfo: iv.as_ptr_empty_null(),
-                    pBufferInfo: bv.as_ptr_empty_null(),
-                    pTexelBufferView: bvv.as_ptr_empty_null(),
-                },
-            )
-            .collect::<Vec<_>>();
-        unsafe {
-            Resolver::get().cmd_push_descriptor_set_khr(
-                self.ptr.native_ptr_mut(),
-                VK_PIPELINE_BIND_POINT_COMPUTE,
-                pipeline_layout.native_ptr(),
-                set,
-                w.len() as _,
-                w.as_ptr_empty_null(),
-            );
-        }
-
-        self
+        unsafe { self.push_descriptor_set_raw(VK_PIPELINE_BIND_POINT_COMPUTE, pipeline_layout, set, &w) }
     }
 }
 

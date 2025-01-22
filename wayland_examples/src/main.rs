@@ -147,11 +147,11 @@ fn main() {
         br::InstanceObject::new(&br::InstanceCreateInfo::new(
             &br::ApplicationInfo::new(
                 c"Bedrock Examples Wayland Native",
-                br::Version::new(0, 1, 0),
+                br::Version::new(0, 0, 1, 0),
                 c"",
-                br::Version::new(0, 1, 0),
+                br::Version::new(0, 0, 1, 0),
             )
-            .api_version(br::Version::new(1, 3, 0)),
+            .api_version(br::Version::new(0, 1, 3, 0)),
             &[c"VK_LAYER_KHRONOS_validation".into()],
             &[
                 c"VK_KHR_surface".into(),

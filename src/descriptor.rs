@@ -778,6 +778,11 @@ cfg_if! {
         #[implements]
         impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
             fn drop(&mut self) {
+                #[cfg(feature = "Allow1_1APIs")]
+                unsafe {
+                    crate::vkfn::destroy_descriptor_update_template(self.1.native_ptr(), self.0, core::ptr::null());
+                }
+                #[cfg(not(feature = "Allow1_1APIs"))]
                 unsafe { self.1.destroy_descriptor_update_template_khr_fn().0(self.1.native_ptr(), self.0, core::ptr::null()); }
             }
         }
@@ -820,9 +825,14 @@ cfg_if! {
         pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplateKHR> + DeviceChild {
             #[implements]
             fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
-                use crate::Device;
-
+                #[cfg(feature = "Allow1_1APIs")]
                 unsafe {
+                    crate::vkfn::update_descriptor_set_with_template(self.device().native_ptr(), set, self.native_ptr(), data as *const _ as _);
+                }
+                #[cfg(not(feature = "Allow1_1APIs"))]
+                unsafe {
+                    use crate::Device;
+
                     self.device().update_descriptor_set_with_template_khr_fn().0(
                         self.device().native_ptr(),
                         set,

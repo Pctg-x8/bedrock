@@ -1434,6 +1434,22 @@ vk_bitmask! {
 }
 pub const VK_STENCIL_FRONT_AND_BACK: VkStencilFaceFlags = VK_STENCIL_FACE_FRONT_BIT | VK_STENCIL_FACE_BACK_BIT;
 
+#[cfg(feature = "Allow1_1APIs")]
+vk_bitmask! {
+    pub enum VkSubgroupFeatureFlagBits {
+        pub VK_SUBGROUP_FEAUTRE_BASIC_BIT: 0,
+        pub VK_SUBGROUP_FEATURE_VOTE_BIT: 1,
+        pub VK_SUBGROUP_FEATURE_ARITHMETIC_BIT: 2,
+        pub VK_SUBGROUP_FEATURE_BALLOT_BIT: 3,
+        pub VK_SUBGROUP_FEATURE_SHUFFLE_BIT: 4,
+        pub VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT: 5,
+        pub VK_SUBGROUP_FEATURE_CLUSTERED_BIT: 6,
+        pub VK_SUBGROUP_FEATURE_QUAD_BIT: 7,
+    }
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkSubgroupFeatureFlags = VkFlags;
+
 pub type PFN_vkAllocationFunction = extern "system" fn(
     pUserData: *mut c_void,
     size: usize,
@@ -1574,7 +1590,7 @@ pub struct VkFormatProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct VkExtent3D {
     pub width: u32,
     pub height: u32,
@@ -1954,7 +1970,7 @@ pub struct VkImageSubresource {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct VkOffset3D {
     pub x: i32,
     pub y: i32,
@@ -2828,7 +2844,7 @@ pub struct VkBufferCopy {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkImageSubresourceLayers {
     pub aspectMask: VkImageAspectFlags,
     pub mipLevel: u32,
@@ -5187,7 +5203,6 @@ ExportExtensions!("VK_KHR_external_memory_fd": external_memory_fd_khr);
 ExportExtensions!("VK_KHR_win32_keyed_mutex": win32_keyed_mutex_khr);
 ExportExtensions!("VK_KHR_external_semaphore_win32": external_semaphore_win32_khr);
 ExportExtensions!("VK_KHR_external_semaphore_fd": external_semaphore_fd_khr);
-ExportExtensions!("VK_KHR_push_descriptor": push_descriptor_khr);
 ExportExtensions!("VK_KHR_incremental_present": incremental_present_khr);
 ExportExtensions!("VK_KHR_shared_presentable_image": shared_presentable_image_khr);
 ExportExtensions!("VK_KHR_external_fence_win32": external_fence_win32_khr);
@@ -5254,10 +5269,7 @@ ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ex
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
-ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
 ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
-ExportExtensions!("VK_KHR_maintenance5": maintenance5_khr);
-ExportExtensions!("VK_KHR_maintenance6": maintenance6_khr);
 ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
@@ -5293,8 +5305,29 @@ ExportExtensions!("VK_KHR_create_renderpass2": create_renderpass2_khr);
 ExportExtensions!("VK_KHR_depth_stencil_resolve": depth_stencil_resolve_khr);
 ExportExtensions!("VK_KHR_buffer_device_address": buffer_device_address_khr);
 ExportExtensions!("VK_EXT_descriptor_indexing": descriptor_indexing_ext);
+ExportExtensions!("VK_KHR_shader_float_controls": shader_float_controls_khr);
 
 // Promoted Extensions (1.3)
 ExportExtensions!("VK_KHR_synchronization2": synchronization2_khr);
 ExportExtensions!("VK_KHR_maintenance4": maintenance4_khr);
 ExportExtensions!("VK_KHR_dynamic_rendering": dynamic_rendering_khr);
+ExportExtensions!("VK_KHR_copy_commands2": copy_commands2_khr);
+ExportExtensions!("VK_KHR_format_feature_flags2": format_feature_flags2_khr);
+
+// Promoted Extensions (1.4)
+ExportExtensions!("VK_KHR_dynamic_rendering_local_read": dynamic_rendering_local_read_khr);
+ExportExtensions!("VK_KHR_global_priority": global_priority_khr);
+ExportExtensions!("VK_KHR_index_type_uint8": index_type_uint8_khr);
+ExportExtensions!("VK_KHR_line_rasterization": line_rasterization_khr);
+ExportExtensions!("VK_KHR_load_store_op_none": load_store_op_none_khr);
+ExportExtensions!("VK_KHR_maintenance5": maintenance5_khr);
+ExportExtensions!("VK_KHR_maintenance6": maintenance6_khr);
+ExportExtensions!("VK_KHR_map_memory2": map_memory2_khr);
+ExportExtensions!("VK_KHR_push_descriptor": push_descriptor_khr);
+ExportExtensions!("VK_KHR_shader_expect_assume": shader_expect_assume_khr);
+ExportExtensions!("VK_KHR_shader_float_controls2": shader_float_controls2_khr);
+ExportExtensions!("VK_KHR_shader_subgroup_rotate": shader_subgroup_rotate_khr);
+ExportExtensions!("VK_KHR_vertex_attribute_divisor": vertex_attribute_divisor_khr);
+ExportExtensions!("VK_EXT_host_image_copy": host_image_copy_ext);
+ExportExtensions!("VK_EXT_pipeline_protected_access": pipeline_protected_access_ext);
+ExportExtensions!("VK_EXT_pipeline_robustness": pipeline_robustness_ext);

@@ -108,11 +108,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let instance = br::InstanceObject::new(&br::InstanceCreateInfo::new(
         &br::ApplicationInfo::new(
             c"BedrockExampleTriangle",
-            br::Version::new(0, 1, 0),
+            br::Version::new(0, 0, 1, 0),
             c"None",
-            br::Version::new(0, 0, 1),
+            br::Version::new(0, 0, 0, 1),
         )
-        .api_version(br::Version::new(1, 3, 0)),
+        .api_version(br::Version::new(0, 1, 3, 0)),
         &[c"VK_LAYER_KHRONOS_validation".into()],
         &[
             c"VK_EXT_debug_utils".into(),

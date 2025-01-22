@@ -1817,6 +1817,36 @@ const CATALOG: &'static [Entrypoint] = &[
     .for_extensions(&["VK_KHR_display", "VK_KHR_surface"], "KHR"),
     // 1.1 promoted
     Entrypoint::new(
+        "create_descriptor_update_template",
+        &[
+            ("device", "VkDevice"),
+            ("create_info", "*const VkDescriptorUpdateTemplateCreateInfo"),
+            ("allocator", "*const VkAllocationCallbacks"),
+            ("descriptor_update_template_out", "*mut VkDescriptorUpdateTemplate"),
+        ],
+    )
+    .with_result()
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "destroy_descriptor_update_template",
+        &[
+            ("device", "VkDevice"),
+            ("descriptor_update_template", "VkDescriptorUpdateTemplate"),
+            ("allocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
+        "update_descriptor_set_with_template",
+        &[
+            ("device", "VkDevice"),
+            ("descriptor_set", "VkDescriptorSet"),
+            ("descriptor_update_template", "VkDescriptorUpdateTemplate"),
+            ("data", "*const core::ffi::c_void"),
+        ],
+    )
+    .promoted_at(1, 1),
+    Entrypoint::new(
         "get_buffer_memory_requirements2",
         &[
             ("device", "VkDevice"),
@@ -1922,6 +1952,19 @@ const CATALOG: &'static [Entrypoint] = &[
     )
     .with_result()
     .promoted_at(1, 3),
+    // 1.4 promoted
+    Entrypoint::new(
+        "cmd_push_descriptor_set",
+        &[
+            ("command_buffer", "VkCommandBuffer"),
+            ("pipeline_bind_point", "VkPipelineBindPoint"),
+            ("layout", "VkPipelineLayout"),
+            ("set", "u32"),
+            ("descriptor_write_count", "u32"),
+            ("descriptor_writes", "*const VkWriteDescriptorSet"),
+        ],
+    )
+    .promoted_at(1, 4),
 ];
 
 /* TODO: translate follows
