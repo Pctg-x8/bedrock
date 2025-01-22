@@ -6,7 +6,7 @@ use crate::{
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
-use derives::{bitflags_newtype, implements, transparent_marked};
+use derives::{bitflags_newtype, implements};
 
 pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     /// The pixel format of an image
@@ -339,7 +339,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> ImageObject<&'_ Device> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImageCreateInfo<'d>(
     VkImageCreateInfo,

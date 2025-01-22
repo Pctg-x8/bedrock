@@ -1,4 +1,4 @@
-use derives::{implements, transparent_marked};
+use derives::implements;
 
 use crate::{
     vk::*, CompareOp, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
@@ -82,7 +82,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> SamplerObject<&'_ Device> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct SamplerCreateInfo(VkSamplerCreateInfo);
 impl Default for SamplerCreateInfo {

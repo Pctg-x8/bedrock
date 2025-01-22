@@ -456,10 +456,6 @@ pub use self::dependency::*;
 mod fmt;
 pub use self::fmt::*;
 
-pub unsafe trait Transparent {
-    type Target: Sized;
-}
-
 /// Opaque handle to a query pool object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkQueryPool::OBJECT_TYPE)]
@@ -569,6 +565,13 @@ impl<Device: VkHandle<Handle = VkDevice>> QueryPool<Device> {
         }
         .into_result()
         .map(|_| v)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> QueryPool<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> QueryPool<Device> {
+        QueryPool(self.0, self.1.clone())
     }
 }
 

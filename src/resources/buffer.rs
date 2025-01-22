@@ -4,7 +4,7 @@ use crate::{
 };
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
-use derives::{implements, transparent_marked};
+use derives::implements;
 use std::ops::{BitOr, BitOrAssign, Deref};
 
 pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {}
@@ -206,7 +206,7 @@ impl<Buffer: DeviceChildHandle + Clone> BufferViewObject<&'_ Buffer> {
 }
 
 /// Builder structure specifying the parameters of a newly created buffer object
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct BufferCreateInfo<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
 impl<'s> BufferCreateInfo<'s> {
@@ -288,7 +288,7 @@ impl crate::VulkanStructureProvider for BufferCreateInfo<'_> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BufferViewCreateInfo<'d>(
     VkBufferViewCreateInfo,

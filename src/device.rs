@@ -659,7 +659,7 @@ impl<Device: Clone> QueueObject<&'_ Device> {
 }
 
 /// Family Index, Queue Priorities
-#[transparent_marked]
+#[repr(transparent)]
 pub struct DeviceQueueCreateInfo<'d>(VkDeviceQueueCreateInfo, core::marker::PhantomData<&'d [f32]>);
 impl<'d> DeviceQueueCreateInfo<'d> {
     pub const fn new(family_index: u32, priorities: &'d [f32]) -> Self {
@@ -677,7 +677,7 @@ impl<'d> DeviceQueueCreateInfo<'d> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeviceCreateInfo<'d>(
     VkDeviceCreateInfo,
@@ -2099,7 +2099,7 @@ DerefContainerBracketImpl!(for mut QueueMut {});
 GuardsImpl!(for mut QueueMut {});
 
 #[cfg(feature = "VK_KHR_swapchain")]
-#[transparent_marked]
+#[repr(transparent)]
 pub struct PresentInfo<'r>(
     VkPresentInfoKHR,
     core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32])>,
@@ -2108,8 +2108,8 @@ pub struct PresentInfo<'r>(
 impl<'r> PresentInfo<'r> {
     #[inline(always)]
     pub fn new(
-        wait_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
-        swapchains: &'r [impl crate::Transparent<Target = VkSwapchainKHR>],
+        wait_semaphores: &'r [VkHandleRef<VkSemaphore>],
+        swapchains: &'r [VkHandleRef<VkSwapchainKHR>],
         image_indices: &'r [u32],
     ) -> Self {
         assert_eq!(swapchains.len(), image_indices.len());
@@ -2181,7 +2181,7 @@ impl<'r> CommandBufferSubmitInfo<'r> {
 }
 
 #[cfg(feature = "VK_KHR_synchronization2")]
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct SubmitInfo2<'b, 'r>(
     VkSubmitInfo2KHR,

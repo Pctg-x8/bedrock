@@ -1,10 +1,10 @@
 //! Vulkan Commands
 
-use derives::{implements, transparent_marked};
+use derives::implements;
 
 use crate::{
     ffi_helper::ArrayFFIExtensions, vk::*, DescriptorSet, DeviceChild, DeviceChildHandle, LayoutTransition,
-    Transparent, VkDeviceChildNonExtDestroyable, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+    VkDeviceChildNonExtDestroyable, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
 use crate::{FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, StencilFaceMask};
@@ -89,7 +89,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> CommandPoolObject<&'_ Device> 
 }
 
 /// Opaque handle to a command buffer object
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkCommandBuffer::OBJECT_TYPE)]
 pub struct CommandBufferObject<Device>(VkCommandBuffer, core::marker::PhantomData<Device>);
@@ -977,12 +977,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Bind vertex buffers to a command buffer
     #[inline(always)]
-    pub fn bind_vertex_buffers(
-        self,
-        first: u32,
-        buffers: &[impl Transparent<Target = VkBuffer>],
-        offsets: &[VkDeviceSize],
-    ) -> Self {
+    pub fn bind_vertex_buffers(self, first: u32, buffers: &[VkHandleRef<VkBuffer>], offsets: &[VkDeviceSize]) -> Self {
         assert_eq!(buffers.len(), offsets.len());
 
         unsafe {
@@ -1883,7 +1878,7 @@ impl From<BufferMemoryBarrier> for VkBufferMemoryBarrier {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 pub struct BufferCopy(pub VkBufferCopy);
 impl BufferCopy {
     #[inline(always)]

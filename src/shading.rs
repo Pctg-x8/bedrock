@@ -1,6 +1,6 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use derives::{bitflags_newtype, implements, transparent_marked};
+use derives::{bitflags_newtype, implements};
 
 use crate::ffi_helper::{opt_pointer, slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
@@ -116,7 +116,7 @@ pub enum StencilFaceMask {
     Both = VK_STENCIL_FRONT_AND_BACK as _,
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ShaderModuleCreateInfo<'d>(VkShaderModuleCreateInfo, core::marker::PhantomData<&'d [u32]>);
 impl<'d> ShaderModuleCreateInfo<'d> {
@@ -206,7 +206,7 @@ pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
 DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PipelineCacheCreateInfo<'d>(VkPipelineCacheCreateInfo, core::marker::PhantomData<&'d [u8]>);
 impl<'d> PipelineCacheCreateInfo<'d> {
@@ -459,7 +459,7 @@ impl VkPushConstantRange {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PipelineLayoutCreateInfo<'d>(
     VkPipelineLayoutCreateInfo,
@@ -796,7 +796,7 @@ impl<M: ShaderModule + ?Sized> PipelineShaderProvider for PipelineShader<'_, M> 
     fn make_extras<'d>(&'d self) -> Self::ExtraStorage<'d> {}
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PipelineShaderStage<'d, 's>(
     pub(crate) VkPipelineShaderStageCreateInfo,
@@ -840,7 +840,7 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecializationInfo<'d>(
     VkSpecializationInfo,
@@ -1255,7 +1255,7 @@ impl<'d> MultisampleState<'d> {
 }
 
 /// Depth/Stencil State
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct DepthStencilState(VkPipelineDepthStencilStateCreateInfo);
 impl DepthStencilState {
@@ -1477,7 +1477,7 @@ impl<'d, 's, Layout: PipelineLayout, RenderPass: 'd + crate::RenderPass + ?Sized
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ViewportState<'d>(
     VkPipelineViewportStateCreateInfo,
@@ -1623,7 +1623,7 @@ impl VkPipelineColorBlendAttachmentState {
 }
 
 /// Color Blending
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Clone, PartialEq)]
 pub struct ColorBlendState<'d>(
     VkPipelineColorBlendStateCreateInfo,

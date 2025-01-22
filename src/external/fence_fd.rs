@@ -1,5 +1,3 @@
-use derives::transparent_marked;
-
 use crate::vk::*;
 use crate::VkHandle;
 use crate::VulkanStructure;
@@ -11,7 +9,7 @@ pub enum ExternalFenceFdType {
     Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR as _,
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImportFenceFdInfo<'d>(
     pub(crate) VkImportFenceFdInfoKHR,
@@ -50,7 +48,7 @@ impl<'d> ImportFenceFdInfo<'d> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FenceFdGetInfo<'d>(
     pub(crate) VkFenceGetFdInfoKHR,

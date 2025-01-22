@@ -4,7 +4,7 @@ use crate::{
     vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject,
     VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
-use derives::{implements, transparent_marked};
+use derives::implements;
 
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
@@ -258,7 +258,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> FenceObject<&'_ Device> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SemaphoreCreateInfo<'d>(
     VkSemaphoreCreateInfo,
@@ -365,7 +365,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> SemaphoreObject<&'_ Device> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventCreateInfo(VkEventCreateInfo);
 impl EventCreateInfo {

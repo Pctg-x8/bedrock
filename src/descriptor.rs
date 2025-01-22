@@ -1,11 +1,11 @@
 //! Vulkan Descriptors
 
-use derives::{implements, transparent_marked};
+use derives::implements;
 
 use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, Transparent, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
+    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut,
+    VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
 };
 
 /// Opaque handle to a descriptor set layout object
@@ -157,7 +157,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorPoolObject<&'_ Devic
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct DescriptorSet(pub VkDescriptorSet);
 impl From<DescriptorSet> for VkDescriptorSet {
@@ -215,7 +215,7 @@ impl DescriptorType {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct DescriptorSetLayoutBinding<'s> {
     raw: VkDescriptorSetLayoutBinding,
@@ -236,15 +236,12 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
     }
 
     #[inline(always)]
-    pub fn with_immutable_samplers(self, samplers: &'s [impl Transparent<Target = VkSampler>]) -> Self {
+    pub fn with_immutable_samplers(self, samplers: &'s [VkHandleRef<VkSampler>]) -> Self {
         assert_eq!(samplers.len(), self.raw.descriptorCount as usize);
         unsafe { self.with_immutable_samplers_unchecked(samplers) }
     }
 
-    pub const unsafe fn with_immutable_samplers_unchecked(
-        mut self,
-        samplers: &'s [impl Transparent<Target = VkSampler>],
-    ) -> Self {
+    pub const unsafe fn with_immutable_samplers_unchecked(mut self, samplers: &'s [VkHandleRef<VkSampler>]) -> Self {
         self.raw.pImmutableSamplers = slice_as_ptr_empty_null(samplers) as _;
         self
     }

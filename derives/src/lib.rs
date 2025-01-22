@@ -544,45 +544,6 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
     .into()
 }
 
-#[proc_macro_attribute]
-pub fn transparent_marked(_args: TokenStream, target: TokenStream) -> TokenStream {
-    let input = parse_macro_input!(target as syn::ItemStruct);
-    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let name = &input.ident;
-    let transparent_target = match input.fields {
-        syn::Fields::Unit => {
-            return syn::Error::new(input.span(), "Unit struct is not transparent")
-                .to_compile_error()
-                .into();
-        }
-        syn::Fields::Named(ref named) => match named.named.first() {
-            Some(f) => &f.ty,
-            None => {
-                return syn::Error::new(named.span(), "Least one field required for transparent marker")
-                    .to_compile_error()
-                    .into();
-            }
-        },
-        syn::Fields::Unnamed(ref fields) => match fields.unnamed.first() {
-            Some(f) => &f.ty,
-            None => {
-                return syn::Error::new(fields.span(), "Least one field required for transparent marker")
-                    .to_compile_error()
-                    .into();
-            }
-        },
-    };
-
-    quote! {
-        #[repr(transparent)]
-        #input
-        unsafe impl #impl_generics crate::Transparent for #name #ty_generics #where_clause {
-            type Target = #transparent_target;
-        }
-    }
-    .into()
-}
-
 struct VkExtCommandInput {
     base_define: syn::ForeignItemFn,
     suffix: syn::LitStr,

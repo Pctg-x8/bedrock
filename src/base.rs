@@ -1,6 +1,6 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
-use derives::{implements, transparent_marked};
+use derives::implements;
 
 use crate::{
     ffi_helper::{opt_pointer, slice_as_ptr_empty_null, CStrFFIRef},
@@ -344,7 +344,7 @@ impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDev
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
 impl<'d> ApplicationInfo<'d> {
     #[inline(always)]

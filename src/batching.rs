@@ -178,10 +178,10 @@ pub struct SubmissionBatch2<'r>(
 );
 impl<'r> SubmissionBatch2<'r> {
     pub fn new(
-        wait_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
+        wait_semaphores: &'r [VkHandleRef<VkSemaphore>],
         wait_semaphore_dst_stages: &'r [VkPipelineStageFlags],
-        command_buffers: &'r [impl crate::Transparent<Target = VkCommandBuffer>],
-        signal_semaphores: &'r [impl crate::Transparent<Target = VkSemaphore>],
+        command_buffers: &'r [VkHandleRef<VkCommandBuffer>],
+        signal_semaphores: &'r [VkHandleRef<VkSemaphore>],
     ) -> Self {
         assert_eq!(wait_semaphores.len(), wait_semaphore_dst_stages.len());
 

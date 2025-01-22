@@ -1,5 +1,3 @@
-use derives::transparent_marked;
-
 use crate::vk::*;
 use crate::VkHandle;
 use crate::VulkanStructure;
@@ -30,7 +28,7 @@ impl ExternalMemoryHandleFd {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MemoryGetFdInfo<'d>(
     pub(crate) VkMemoryGetFdInfoKHR,

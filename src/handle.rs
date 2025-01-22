@@ -1,4 +1,4 @@
-use crate::{vk::VkObjectType, Transparent};
+use crate::vk::VkObjectType;
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {
@@ -199,6 +199,8 @@ pub trait VkDeviceChildNonExtDestroyable {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks);
 }
 
+/// A smart handle to a Vulkan object that holds a source lifetime
+/// (bitpattern as same as native handle type)
 #[repr(transparent)]
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
 pub struct VkHandleRef<'r, H>(pub(crate) H, core::marker::PhantomData<&'r dyn VkHandle<Handle = H>>);
@@ -222,10 +224,9 @@ impl<H: Copy> VkHandle for VkHandleRef<'_, H> {
         self.0
     }
 }
-unsafe impl<H> Transparent for VkHandleRef<'_, H> {
-    type Target = H;
-}
 
+/// A smart handle to a Vulkan object that holds a source lifetime and mutable-borrowing
+/// (bitpattern as same as native handle type)
 #[repr(transparent)]
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
 pub struct VkHandleRefMut<'r, H>(
@@ -257,7 +258,4 @@ impl<H: Copy> VkHandleMut for VkHandleRefMut<'_, H> {
     fn native_ptr_mut(&mut self) -> H {
         self.0
     }
-}
-unsafe impl<H> Transparent for VkHandleRefMut<'_, H> {
-    type Target = H;
 }
