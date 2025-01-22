@@ -35,6 +35,13 @@ impl<Instance: crate::Instance> SurfaceObject<Instance> {
         Ok(Self(create_info.execute(&pd, None)?, pd.transfer_instance()))
     }
 }
+impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> SurfaceObject<Instance> {
+        SurfaceObject(self.0, self.1.clone())
+    }
+}
 
 pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
 DerefContainerBracketImpl!(for Surface {});

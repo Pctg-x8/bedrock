@@ -21,7 +21,6 @@ impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
 unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
 impl<Instance: crate::Instance> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
-
 impl<Instance: crate::Instance> DebugUtilsMessengerObject<Instance> {
     #[implements]
     pub fn new(instance: Instance, info: &DebugUtilsMessengerCreateInfo) -> crate::Result<Self> {
@@ -54,6 +53,13 @@ impl<Instance: crate::Instance> DebugUtilsMessengerObject<Instance> {
         core::mem::forget(self);
 
         (h, p)
+    }
+}
+impl<Instance: crate::Instance + Clone> DebugUtilsMessengerObject<&'_ Instance> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> DebugUtilsMessengerObject<Instance> {
+        DebugUtilsMessengerObject(self.0, self.1.clone())
     }
 }
 

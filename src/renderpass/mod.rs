@@ -71,6 +71,13 @@ impl<Device: VkHandle<Handle = VkDevice>> RenderPassObject<Device> {
         create_info.execute(&device, None).map(move |x| Self(x, device))
     }
 }
+impl<Device: VkHandle<Handle = VkDevice> + Clone> RenderPassObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> RenderPassObject<Device> {
+        RenderPassObject(self.0, self.1.clone())
+    }
+}
 
 #[implements]
 pub trait AnyRenderPassCreateInfo {

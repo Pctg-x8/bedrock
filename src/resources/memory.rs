@@ -104,7 +104,6 @@ impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemory for DeviceMemoryObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryMut for DeviceMemoryObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
     /// Execute requests for Device Memory Acquisition
     /// # Failures
@@ -139,6 +138,13 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
         core::mem::forget(self);
 
         (v, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> DeviceMemoryObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> DeviceMemoryObject<Device> {
+        DeviceMemoryObject(self.0, self.1.clone())
     }
 }
 

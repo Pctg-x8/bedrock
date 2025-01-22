@@ -281,7 +281,6 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
         }
     }
 }
-
 impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
     /// Create a new image object
     /// # Failure
@@ -330,6 +329,13 @@ impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
         core::mem::forget(self);
 
         (v, p, t, f, x)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> ImageObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> ImageObject<Device> {
+        ImageObject(self.0, self.1.clone(), self.2, self.3, self.4)
     }
 }
 
@@ -994,7 +1000,6 @@ impl<Image: self::Image> ImageChild for ImageViewObject<Image> {
         &self.1
     }
 }
-
 impl<Image: DeviceChildHandle> ImageViewObject<Image> {
     /// Create a new image view from an existing image
     /// # Failure
@@ -1029,6 +1034,13 @@ impl<Image: DeviceChildHandle> ImageViewObject<Image> {
         core::mem::forget(self);
 
         (v, p)
+    }
+}
+impl<Image: DeviceChildHandle + Clone> ImageViewObject<&'_ Image> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> ImageViewObject<Image> {
+        ImageViewObject(self.0, self.1.clone())
     }
 }
 

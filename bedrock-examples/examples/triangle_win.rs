@@ -156,7 +156,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .with_next(&mut br::PhysicalDeviceSynchronization2Features::new(true)),
         ),
     )?;
-    let mut queue = (&device).queue(graphics_queue_family, 0);
+    let mut queue = device.queue(graphics_queue_family, 0);
 
     if !adapter.surface_support(graphics_queue_family, &surface)? {
         panic!("Presentation is not supported on this queue");

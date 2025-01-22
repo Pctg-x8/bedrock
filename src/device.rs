@@ -651,6 +651,12 @@ impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
         &self.1
     }
 }
+impl<Device: Clone> QueueObject<&'_ Device> {
+    #[inline(always)]
+    pub fn clone_parent(self) -> QueueObject<Device> {
+        QueueObject(self.0, self.1.clone())
+    }
+}
 
 /// Family Index, Queue Priorities
 #[transparent_marked]
@@ -835,10 +841,7 @@ pub trait ExtraProcedureProvider {
 pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Get a queue handle from a device
     #[implements]
-    fn queue(self, family_index: u32, queue_index: u32) -> QueueObject<Self>
-    where
-        Self: Sized,
-    {
+    fn queue<'s>(&'s self, family_index: u32, queue_index: u32) -> QueueObject<&'s Self> {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkfn::get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
@@ -882,14 +885,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn new_graphics_pipelines(
-        &self,
+    fn new_graphics_pipelines<'s>(
+        &'s self,
         infos: &[VkGraphicsPipelineCreateInfo],
         cache: Option<&impl crate::PipelineCache>,
-    ) -> crate::Result<Vec<crate::PipelineObject<Self>>>
-    where
-        Self: Clone,
-    {
+    ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
         let mut hs = vec![VkPipeline::NULL; infos.len()];
 
         unsafe {
@@ -898,7 +898,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         Ok(hs
             .into_iter()
-            .map(|h| unsafe { crate::PipelineObject::manage(h, self.clone()) })
+            .map(move |h| unsafe { crate::PipelineObject::manage(h, self) })
             .collect())
     }
 
@@ -909,22 +909,19 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn new_graphics_pipeline_array<const N: usize>(
-        &self,
+    fn new_graphics_pipeline_array<'s, const N: usize>(
+        &'s self,
         infos: &[VkGraphicsPipelineCreateInfo; N],
         cache: Option<&impl crate::PipelineCache>,
-    ) -> crate::Result<[crate::PipelineObject<Self>; N]>
-    where
-        Self: Clone,
-    {
+    ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
         let mut hs = [VkPipeline::NULL; N];
 
         unsafe {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
         }
 
-        Ok(core::array::from_fn(|n| unsafe {
-            crate::PipelineObject::manage(hs[n], self.clone())
+        Ok(core::array::from_fn(move |n| unsafe {
+            crate::PipelineObject::manage(hs[n], self)
         }))
     }
 
@@ -964,14 +961,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn new_compute_pipelines(
-        &self,
+    fn new_compute_pipelines<'s>(
+        &'s self,
         builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>],
         cache: Option<&impl crate::PipelineCache>,
-    ) -> crate::Result<Vec<crate::PipelineObject<Self>>>
-    where
-        Self: Clone,
-    {
+    ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
         let (cinfos, _extras): (Vec<_>, Vec<_>) = builders
             .iter()
             .map(|b| {
@@ -1000,7 +994,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         Ok(pipelines
             .into_iter()
-            .map(|h| unsafe { crate::PipelineObject::manage(h, self.clone()) })
+            .map(move |h| unsafe { crate::PipelineObject::manage(h, self) })
             .collect())
     }
 
@@ -1011,14 +1005,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn new_compute_pipeline_array<const N: usize>(
-        &self,
+    fn new_compute_pipeline_array<'s, const N: usize>(
+        &'s self,
         info: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>; N],
         cache: Option<&impl crate::PipelineCache>,
-    ) -> crate::Result<[crate::PipelineObject<Self>; N]>
-    where
-        Self: Clone,
-    {
+    ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
         let (cinfos, _extras): (Vec<_>, Vec<_>) = info
             .iter()
             .map(|b| {
@@ -1045,8 +1036,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.new_compute_pipelines_raw(&cinfos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
 
-        Ok(core::array::from_fn(|n| unsafe {
-            crate::PipelineObject::manage(pipelines[n], self.clone())
+        Ok(core::array::from_fn(move |n| unsafe {
+            crate::PipelineObject::manage(pipelines[n], self)
         }))
     }
 
@@ -1081,6 +1072,19 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     /// Update the contents of descriptor set objects
     #[implements]
+    #[inline(always)]
+    unsafe fn update_descriptor_sets_raw(&self, writes: &[VkWriteDescriptorSet], copies: &[VkCopyDescriptorSet]) {
+        crate::vkfn::update_descriptor_sets(
+            self.native_ptr(),
+            writes.len() as _,
+            slice_as_ptr_empty_null(writes),
+            copies.len() as _,
+            slice_as_ptr_empty_null(copies),
+        );
+    }
+
+    /// Update the contents of descriptor set objects
+    #[implements]
     fn update_descriptor_sets(&self, writes: &[DescriptorSetWriteInfo], copies: &[DescriptorSetCopyInfo]) {
         let writes = writes
             .iter()
@@ -1092,13 +1096,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .collect::<Vec<_>>();
 
         unsafe {
-            crate::vkfn::update_descriptor_sets(
-                self.native_ptr(),
-                writes.len() as _,
-                writes.as_ptr_empty_null(),
-                copies.len() as _,
-                copies.as_ptr_empty_null(),
-            );
+            self.update_descriptor_sets_raw(&writes, &copies);
         }
     }
 
@@ -1157,9 +1155,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Multiple Binding for Buffers
     #[implements("VK_KHR_bind_memory2")]
     #[inline]
-    fn bind_buffers(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
+    unsafe fn bind_buffers_raw(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
         #[cfg(feature = "Allow1_1APIs")]
-        unsafe {
+        {
             crate::vkfn::bind_buffer_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
@@ -1167,13 +1165,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         #[cfg(not(feature = "Allow1_1APIs"))]
         {
-            tracing::trace!(target: "br-vkapi-call", "vkBindBufferMemory2KHR");
-
-            unsafe {
-                self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                    .into_result()
-                    .map(drop)
-            }
+            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
         }
     }
 
@@ -1191,9 +1185,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Multiple Binding for Images
     #[implements("VK_KHR_bind_memory2")]
     #[inline]
-    fn bind_images(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
+    unsafe fn bind_images_raw(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
         #[cfg(feature = "Allow1_1APIs")]
-        unsafe {
+        {
             crate::vkfn::bind_image_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
@@ -1201,25 +1195,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
         #[cfg(not(feature = "Allow1_1APIs"))]
         {
-            tracing::trace!(target: "br-vkapi-call", "vkBindImageMemory2KHR");
-
-            unsafe {
-                self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                    .into_result()
-                    .map(drop)
-            }
+            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
         }
     }
 
     /// Multiple Binding for both resources
     #[implements("VK_KHR_bind_memory2")]
-    fn bind_resources(
+    unsafe fn bind_resources_raw(
         &self,
         buf_bounds: &[VkBindBufferMemoryInfoKHR],
         img_bounds: &[VkBindImageMemoryInfoKHR],
     ) -> crate::Result<()> {
         // 必ず両方実行されるようにする
-        self.bind_buffers(buf_bounds).and(self.bind_images(img_bounds))
+        self.bind_buffers_raw(buf_bounds).and(self.bind_images_raw(img_bounds))
     }
 
     /// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
@@ -1329,14 +1319,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(not(feature = "VK_KHR_push_descriptor"))]
-    fn new_descriptor_update_template(
-        self,
+    fn new_descriptor_update_template<'s>(
+        &'s self,
         entries: &[VkDescriptorUpdateTemplateEntryKHR],
         dsl: &impl crate::DescriptorSetLayout,
-    ) -> crate::Result<crate::DescriptorUpdateTemplateObject<Self>>
-    where
-        Self: Sized + InstanceChild,
-    {
+    ) -> crate::Result<crate::DescriptorUpdateTemplateObject<&'s Self>> {
         let cinfo = VkDescriptorUpdateTemplateCreateInfoKHR {
             sType: VkDescriptorUpdateTemplateCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
@@ -1367,14 +1354,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     #[cfg(feature = "VK_KHR_descriptor_update_template")]
     #[cfg(feature = "VK_KHR_push_descriptor")]
-    fn new_descriptor_update_template(
-        self,
+    fn new_descriptor_update_template<'s>(
+        &'s self,
         entries: &[VkDescriptorUpdateTemplateEntryKHR],
         dsl: Option<&impl crate::DescriptorSetLayout>,
-    ) -> crate::Result<crate::DescriptorUpdateTemplateObject<Self>>
-    where
-        Self: Sized + InstanceChild,
-    {
+    ) -> crate::Result<crate::DescriptorUpdateTemplateObject<&'s Self>> {
         use crate::VkRawHandle;
 
         let cinfo = VkDescriptorUpdateTemplateCreateInfoKHR {
@@ -1446,7 +1430,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    #[implements("VK_EXT_external_memory_host_pointer")]
+    #[implements("VK_EXT_external_memory_host")]
     #[inline]
     unsafe fn memory_host_pointer_properties(
         &self,

@@ -159,7 +159,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for ShaderModuleObject<Device> {
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ShaderModuleObject<Device> {}
 unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ShaderModuleObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
     /// Create a new object from info structure
     #[implements]
@@ -188,6 +187,13 @@ impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
         core::mem::forget(self);
 
         (h, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> ShaderModuleObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> ShaderModuleObject<Device> {
+        ShaderModuleObject(self.0, self.1.clone())
     }
 }
 
@@ -249,7 +255,6 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineCacheObj
 }
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCache for PipelineCacheObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheMut for PipelineCacheObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
     /// Create a new object from info structure
     #[implements]
@@ -278,6 +283,13 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
         core::mem::forget(self);
 
         (h, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineCacheObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> PipelineCacheObject<Device> {
+        PipelineCacheObject(self.0, self.1.clone())
     }
 }
 
@@ -326,30 +338,6 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle 
         }
 
         Ok(())
-    }
-
-    /// Get the data store from a pipeline cache
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline]
-    fn data(&self) -> crate::Result<Vec<u8>> {
-        let len = self.data_len()?;
-        if len == 0 {
-            // no data
-            return Ok(Vec::new());
-        }
-
-        let mut b = Vec::with_capacity(len);
-        unsafe {
-            b.set_len(len);
-        }
-        self.data_into(&mut b[..])?;
-
-        Ok(b)
     }
 }
 DerefContainerBracketImpl!(for PipelineCache {});
@@ -410,7 +398,6 @@ impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
     /// Creates a new pipeline layout object
     /// # Failures
@@ -444,6 +431,13 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
         core::mem::forget(self);
 
         r
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineLayoutObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> PipelineLayoutObject<Device> {
+        PipelineLayoutObject(self.0, self.1.clone())
     }
 }
 
@@ -536,7 +530,6 @@ impl<Device: crate::Device> DeviceChild for PipelineObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> Pipeline for PipelineObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> PipelineObject<Device> {
     /// Constructs from raw values
     /// # Safety
@@ -551,6 +544,13 @@ impl<Device: VkHandle<Handle = VkDevice>> PipelineObject<Device> {
         core::mem::forget(self);
 
         r
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> PipelineObject<Device> {
+        PipelineObject(self.0, self.1.clone())
     }
 }
 
@@ -679,6 +679,24 @@ DerefContainerBracketImpl!(for SpecializationConstants {
         T::as_ptr(&**self)
     }
 });
+
+impl VkSpecializationMapEntry {
+    pub const fn for_byte_range(constant_id: u32, byte_range: core::ops::Range<u32>) -> Self {
+        Self {
+            constantID: constant_id,
+            offset: byte_range.start,
+            size: (byte_range.end - byte_range.start) as _,
+        }
+    }
+
+    pub const fn for_type<T>(constant_id: u32, offset: u32) -> Self {
+        Self {
+            constantID: constant_id,
+            offset,
+            size: core::mem::size_of::<T>(),
+        }
+    }
+}
 
 pub trait PipelineShaderProvider {
     type ExtraStorage<'d>

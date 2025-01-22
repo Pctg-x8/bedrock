@@ -6,11 +6,6 @@ use crate::{
 };
 use derives::{implements, transparent_marked};
 
-///
-/// ```
-/// // Fence is object-safe
-/// let _fo: Option<Box<dyn bedrock::Fence>> = None;
-/// ```
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
@@ -47,11 +42,6 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
 DerefContainerBracketImpl!(for Fence {});
 GuardsImpl!(for Fence {});
 
-///
-/// ```
-/// // FenceMut is object-safe
-/// let _fo: Option<Box<dyn bedrock::FenceMut>> = None;
-/// ```
 pub trait FenceMut: Fence + VkHandleMut {
     /// Resets a fence object
     /// # Failures
@@ -152,7 +142,7 @@ GuardsImpl!(for Status {
     }
 });
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FenceCreateInfo<'d>(
     VkFenceCreateInfo,
@@ -224,7 +214,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
         }
     }
 }
-
 impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
     /// Create a new fence object
     /// # Failures
@@ -259,6 +248,13 @@ impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
         core::mem::forget(self);
 
         (h, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> FenceObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> FenceObject<Device> {
+        FenceObject(self.0, self.1.clone())
     }
 }
 
@@ -325,7 +321,6 @@ impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
 }
 impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
 impl<Device: crate::Device> SemaphoreMut for SemaphoreObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
     /// Create a new queue semaphore object
     /// # Failures
@@ -360,6 +355,13 @@ impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
         core::mem::forget(self);
 
         (h, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> SemaphoreObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> SemaphoreObject<Device> {
+        SemaphoreObject(self.0, self.1.clone())
     }
 }
 
@@ -414,7 +416,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
         }
     }
 }
-
 impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
     /// Creates a new object from info structure
     #[implements]
@@ -443,6 +444,13 @@ impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
         core::mem::forget(self);
 
         (h, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> EventObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> EventObject<Device> {
+        EventObject(self.0, self.1.clone())
     }
 }
 

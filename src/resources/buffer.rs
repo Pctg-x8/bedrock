@@ -114,6 +114,13 @@ impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
         (v, p)
     }
 }
+impl<Device: VkHandle<Handle = VkDevice> + Clone> BufferObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> BufferObject<Device> {
+        BufferObject(self.0, self.1.clone())
+    }
+}
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkBufferView::OBJECT_TYPE)]
@@ -152,7 +159,6 @@ impl<Buffer: DeviceChildHandle> Deref for BufferViewObject<Buffer> {
         &self.1
     }
 }
-
 impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
     /// Create a new buffer view object
     /// # Failure
@@ -189,6 +195,13 @@ impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
         core::mem::forget(self);
 
         (v, p)
+    }
+}
+impl<Buffer: DeviceChildHandle + Clone> BufferViewObject<&'_ Buffer> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> BufferViewObject<Buffer> {
+        BufferViewObject(self.0, self.1.clone())
     }
 }
 

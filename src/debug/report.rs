@@ -24,7 +24,6 @@ impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
 unsafe impl<Instance: crate::Instance + Sync> Sync for DebugReportCallbackObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for DebugReportCallbackObject<Instance> {}
 impl<Instance: crate::Instance> DebugReportCallback for DebugReportCallbackObject<Instance> {}
-
 impl<Instance: crate::Instance> DebugReportCallbackObject<Instance> {
     /// Register a debug report callback
     /// # Failures
@@ -47,6 +46,13 @@ impl<Instance: crate::Instance> DebugReportCallbackObject<Instance> {
 
             Ok(Self(h.assume_init(), instance))
         }
+    }
+}
+impl<Instance: crate::Instance + Clone> DebugReportCallbackObject<&'_ Instance> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> DebugReportCallbackObject<Instance> {
+        DebugReportCallbackObject(self.0, self.1.clone())
     }
 }
 

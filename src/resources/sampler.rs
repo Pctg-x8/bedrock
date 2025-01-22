@@ -38,7 +38,6 @@ impl<Device: crate::Device> DeviceChild for SamplerObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> Sampler for SamplerObject<Device> {}
-
 impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
     /// Create a new sampler object
     /// # Failures
@@ -73,6 +72,13 @@ impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
         core::mem::forget(self);
 
         (v, p)
+    }
+}
+impl<Device: VkHandle<Handle = VkDevice> + Clone> SamplerObject<&'_ Device> {
+    /// Owning parent object by cloning it.
+    #[inline(always)]
+    pub fn clone_parent(self) -> SamplerObject<Device> {
+        SamplerObject(self.0, self.1.clone())
     }
 }
 

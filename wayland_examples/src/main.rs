@@ -205,7 +205,7 @@ fn main() {
         )
         .unwrap(),
     );
-    let mut vk_queue = vk_device.clone().queue(vk_graphics_queue_family_index, 0);
+    let mut vk_queue = vk_device.queue(vk_graphics_queue_family_index, 0).clone_parent();
 
     let surface_props = vk_pdev.surface_capabilities(&vk_surface).unwrap();
     let presentation_modes = vk_pdev.surface_present_modes(&vk_surface).unwrap();
