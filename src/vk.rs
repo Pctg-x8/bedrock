@@ -14,7 +14,6 @@
 use crate::{ffi_helper::FixedCStrBuffer, StaticCallable, VulkanSinkStructure, VulkanStructure, PFN};
 use core::ffi::*;
 use derives::{implements, vk_raw_handle};
-use std;
 
 #[inline]
 pub const fn VK_MAKE_VERSION(variant: u8, major: u16, minor: u16, patch: u16) -> u32 {

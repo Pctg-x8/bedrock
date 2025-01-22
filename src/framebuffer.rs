@@ -6,7 +6,7 @@ use crate::{
     ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, DeviceChildHandle, VkHandle, VkHandleRef, VkObject,
     VkRawHandle, VulkanStructure,
 };
-use std::ops::*;
+use core::ops::*;
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle, VkObject)]

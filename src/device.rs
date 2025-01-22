@@ -884,7 +884,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn new_graphics_pipelines<'s>(
         &'s self,
         infos: &[VkGraphicsPipelineCreateInfo],
@@ -960,7 +960,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn new_compute_pipelines<'s>(
         &'s self,
         builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>],
@@ -1893,7 +1893,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn bind_sparse(
         &mut self,
         batches: &[impl SparseBindingOpBatch],
@@ -1937,7 +1937,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn submit(
         &mut self,
         batches: &[impl SubmissionBatch],
@@ -2149,7 +2149,7 @@ impl<'r> PresentInfo<'r> {
         }
     }
 
-    #[implements("Alloc")]
+    #[implements("alloc")]
     pub fn submit(
         self,
         queue: &mut (impl VkHandleMut<Handle = VkQueue> + ?Sized),

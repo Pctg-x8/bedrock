@@ -11,7 +11,7 @@
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 #![warn(clippy::all)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
-#![cfg_attr(not(feature = "Alloc"), no_std)]
+#![cfg_attr(not(feature = "alloc"), no_std)]
 
 // Platform Extras
 #[cfg(feature = "VK_KHR_android_surface")]
@@ -80,15 +80,15 @@ macro_rules! ForwardFnPtr {
     };
 }
 
-pub type Result<T> = std::result::Result<T, VkResult>;
+pub type Result<T> = core::result::Result<T, VkResult>;
 
-#[cfg(feature = "Alloc")]
+#[cfg(feature = "alloc")]
 #[inline(always)]
 pub(crate) const fn empty_sink_buffer<T>() -> Vec<T> {
     Vec::new()
 }
 
-#[cfg(feature = "Alloc")]
+#[cfg(feature = "alloc")]
 #[inline(always)]
 pub(crate) unsafe fn alloc_sink_buffer<T>(count: usize) -> Vec<T> {
     let mut xs = Vec::with_capacity(count);
@@ -97,13 +97,13 @@ pub(crate) unsafe fn alloc_sink_buffer<T>(count: usize) -> Vec<T> {
     xs
 }
 
-#[cfg(feature = "Alloc")]
+#[cfg(feature = "alloc")]
 #[inline(always)]
 pub(crate) fn collect_vec_alloc<T>(iter: impl IntoIterator<Item = T>) -> Vec<T> {
     Vec::from_iter(iter)
 }
 
-#[cfg(feature = "Alloc")]
+#[cfg(feature = "alloc")]
 #[inline(always)]
 pub(crate) fn str_to_cstr_alloc(s: &str) -> core::result::Result<std::ffi::CString, std::ffi::NulError> {
     std::ffi::CString::new(s)

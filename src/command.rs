@@ -9,10 +9,6 @@ use crate::{
 #[implements]
 use crate::{FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, StencilFaceMask};
 use crate::{ImageLayout, VkHandle};
-use std::mem::replace;
-#[implements]
-use std::mem::{size_of, transmute};
-use std::ops::Range;
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkCommandPool::OBJECT_TYPE)]
@@ -111,7 +107,7 @@ impl<Device: crate::Device> CommandBufferObject<Device> {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
+    #[implements("alloc")]
     #[inline]
     pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
         let mut hs = vec![VkCommandBuffer::NULL; info.0.commandBufferCount as _];
@@ -119,7 +115,7 @@ impl<Device: crate::Device> CommandBufferObject<Device> {
         unsafe {
             crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr()).into_result()?;
 
-            Ok(transmute(hs))
+            Ok(core::mem::transmute(hs))
         }
     }
 
@@ -905,7 +901,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Set the depth bounds test values for a command buffer
     #[inline(always)]
-    pub fn set_depth_bounds(self, bounds: Range<f32>) -> Self {
+    pub fn set_depth_bounds(self, bounds: core::ops::Range<f32>) -> Self {
         unsafe {
             crate::vkfn::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
         }
@@ -1527,7 +1523,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
     /// Reset queries in a query pool
     #[inline(always)]
-    pub fn reset_query_pool(self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), range: Range<u32>) -> Self {
+    pub fn reset_query_pool(
+        self,
+        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        range: core::ops::Range<u32>,
+    ) -> Self {
         unsafe {
             crate::vkfn::cmd_reset_query_pool(
                 self.ptr.native_ptr_mut(),
@@ -1559,7 +1559,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn copy_query_pool_results(
         self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
-        range: Range<u32>,
+        range: core::ops::Range<u32>,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: VkDeviceSize,
         stride: VkDeviceSize,
@@ -1795,8 +1795,8 @@ impl ImageMemoryBarrier {
     /// Flip access masks and image layouts
     #[inline]
     pub fn flip(mut self) -> Self {
-        self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
-        self.0.newLayout = replace(&mut self.0.oldLayout, self.0.newLayout);
+        core::mem::swap(&mut self.0.srcAccessMask, &mut self.0.dstAccessMask);
+        core::mem::swap(&mut self.0.oldLayout, &mut self.0.newLayout);
         self
     }
 }
@@ -1821,7 +1821,7 @@ impl BufferMemoryBarrier {
     /// Construct a new buffer descriptor
     pub fn new(
         buf: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        range: Range<VkDeviceSize>,
+        range: core::ops::Range<VkDeviceSize>,
         src_access_mask: VkAccessFlags,
         dst_access_mask: VkAccessFlags,
     ) -> Self {
@@ -1861,7 +1861,7 @@ impl BufferMemoryBarrier {
     /// Flip access masks
     #[inline]
     pub fn flip(mut self) -> Self {
-        self.0.dstAccessMask = replace(&mut self.0.srcAccessMask, self.0.dstAccessMask);
+        core::mem::swap(&mut self.0.srcAccessMask, &mut self.0.dstAccessMask);
         self
     }
 }

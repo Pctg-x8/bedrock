@@ -11,7 +11,6 @@ use crate::{
 use crate::{fnconv::FnTransmute, ImageFlags, ImageUsageFlags};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
-use std::{ffi::CStr, ops::*};
 
 #[cfg(feature = "Multithreaded")]
 struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
@@ -354,10 +353,15 @@ impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDev
 }
 
 #[repr(transparent)]
-pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
+pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d core::ffi::CStr>);
 impl<'d> ApplicationInfo<'d> {
     #[inline(always)]
-    pub const fn new(app_name: &'d CStr, app_version: Version, engine_name: &'d CStr, engine_version: Version) -> Self {
+    pub const fn new(
+        app_name: &'d core::ffi::CStr,
+        app_version: Version,
+        engine_name: &'d core::ffi::CStr,
+        engine_version: Version,
+    ) -> Self {
         Self(
             VkApplicationInfo {
                 sType: VkApplicationInfo::TYPE,
@@ -526,7 +530,7 @@ pub fn instance_layer_properties(sink: &mut [VkLayerProperties]) -> crate::Resul
 ///
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-#[implements("Alloc")]
+#[implements("alloc")]
 pub fn enumerate_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties>> {
     let n = instance_layer_property_count()?;
     if n == 0 {
@@ -588,9 +592,9 @@ pub fn instance_extension_properties_cstr(
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 /// * `VK_ERROR_LAYER_NOT_PRESENT`
-#[implements("Alloc")]
+#[implements("alloc")]
 pub fn instance_extension_properties_cstr_alloc(
-    layer_name: Option<&CStr>,
+    layer_name: Option<&core::ffi::CStr>,
 ) -> crate::Result<Vec<VkExtensionProperties>> {
     let n = instance_extension_property_count_cstr(layer_name)?;
     if n == 0 {
@@ -611,7 +615,7 @@ pub fn instance_extension_properties_cstr_alloc(
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
 /// * `VK_ERROR_LAYER_NOT_PRESENT`
-#[implements("Alloc")]
+#[implements("alloc")]
 pub fn instance_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
     instance_extension_properties_cstr_alloc(layer_name.map(|s| crate::str_to_cstr_alloc(s).unwrap()).as_deref())
 }
@@ -630,7 +634,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// # Failures
     /// If function is not provided by instance or `name` is empty, returns `None`
     #[deprecated = "do not use this directly(this does not provide caching)"]
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F> {
         if name.is_empty() {
             return None;
@@ -686,7 +690,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn iter_physical_devices(&self) -> crate::Result<IterPhysicalDevices<Self>> {
         let n = self.physical_device_count()?;
         if n == 0 {
@@ -707,7 +711,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn enumerate_physical_devices_alloc(&self) -> crate::Result<Vec<PhysicalDeviceObject<&Self>>> {
         self.iter_physical_devices().map(crate::collect_vec_alloc)
     }
@@ -921,7 +925,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn enumerate_layer_properties_alloc(&self) -> crate::Result<Vec<VkLayerProperties>> {
         let count = self.layer_property_count()?;
         if count == 0 {
@@ -994,10 +998,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     fn enumerate_extension_properties_cstr_alloc(
         &self,
-        layer_name: Option<&CStr>,
+        layer_name: Option<&core::ffi::CStr>,
     ) -> crate::Result<Vec<VkExtensionProperties>> {
         let n = self.extension_property_count_cstr(layer_name)?;
         if n == 0 {
@@ -1018,7 +1022,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    #[implements("Alloc")]
+    #[implements("alloc")]
     #[inline]
     fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
         self.enumerate_extension_properties_cstr_alloc(
@@ -1134,7 +1138,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
 
     /// Reports properties of the queues of the specified physical device
     #[implements]
-    #[cfg(feature = "Alloc")]
+    #[cfg(feature = "alloc")]
     fn queue_family_properties_alloc(&self) -> QueueFamilies {
         let n = self.queue_family_property_count();
         if n == 0 {
@@ -1219,7 +1223,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
 
     /// Retrieve properties of an image format applied to sparse images
     #[implements]
-    #[cfg(feature = "Alloc")]
+    #[cfg(feature = "alloc")]
     fn sparse_image_format_properties_alloc(
         &self,
         format: VkFormat,
@@ -1380,7 +1384,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface", "Alloc")]
+    #[implements("VK_KHR_surface", "alloc")]
     fn surface_formats_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<VkSurfaceFormatKHR>> {
         let n = self.surface_format_count(surface)?;
         if n == 0 {
@@ -1456,7 +1460,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface", "Alloc")]
+    #[implements("VK_KHR_surface", "alloc")]
     fn surface_present_modes_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<PresentMode>> {
         let n = self.surface_present_mode_count(surface)?;
         if n == 0 {
@@ -1566,7 +1570,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements("VK_KHR_display", "Alloc")]
+    #[implements("VK_KHR_display", "alloc")]
     fn display_mode_properties_alloc(&self, display: VkDisplayKHR) -> crate::Result<Vec<VkDisplayModePropertiesKHR>> {
         let n = self.display_mode_property_count(display)?;
         if n == 0 {
@@ -1676,7 +1680,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[implements("VK_KHR_display", "Alloc")]
+    #[implements("VK_KHR_display", "alloc")]
     fn display_properties_alloc(&self) -> crate::Result<Vec<DisplayProperties<&Self>>> {
         let n = self.display_property_count()?;
         if n == 0 {
@@ -1738,7 +1742,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[implements("VK_KHR_display", "Alloc")]
+    #[implements("VK_KHR_display", "alloc")]
     fn display_plane_properties_alloc(&self) -> crate::Result<Vec<DisplayPlaneProperties<&Self>>> {
         let n = self.display_plane_property_count()?;
         if n == 0 {
@@ -1806,7 +1810,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
-    #[implements("VK_KHR_display", "Alloc")]
+    #[implements("VK_KHR_display", "alloc")]
     fn display_plane_supported_displays_alloc(&self, plane_index: u32) -> crate::Result<Vec<Display<&Self>>> {
         let n = self.display_plane_supported_display_count(plane_index)?;
         if n == 0 {
@@ -2157,13 +2161,16 @@ impl MemoryPropertyFlags {
         self.0
     }
 }
-impl BitOr for MemoryPropertyFlags {
+impl core::ops::BitOr for MemoryPropertyFlags {
     type Output = MemoryPropertyFlags;
+
+    #[inline(always)]
     fn bitor(self, other: Self) -> Self {
         MemoryPropertyFlags(self.0 | other.0)
     }
 }
-impl BitOrAssign for MemoryPropertyFlags {
+impl core::ops::BitOrAssign for MemoryPropertyFlags {
+    #[inline(always)]
     fn bitor_assign(&mut self, other: Self) {
         self.0 |= other.0;
     }
