@@ -3,13 +3,12 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions},
-    vk::*,
-    DescriptorSet, DeviceChild, DeviceChildHandle, LayoutTransition, SubpassRef, VkDeviceChildNonExtDestroyable,
-    VkHandleMut, VkHandleRef, VkHandleRefMut, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::slice_as_ptr_empty_null, vk::*, DescriptorSet, DeviceChild, DeviceChildHandle, LayoutTransition,
+    QueryPipelineStatisticFlags, SubpassRef, VkDeviceChildNonExtDestroyable, VkHandleMut, VkHandleRef, VkHandleRefMut,
+    VkObject, VkRawHandle, VulkanStructure,
 };
 #[implements]
-use crate::{FilterMode, PipelineStageFlags, QueryPipelineStatisticFlags, QueryResultFlags, StencilFaceMask};
+use crate::{FilterMode, PipelineStageFlags, QueryResultFlags, StencilFaceMask};
 use crate::{ImageLayout, VkHandle};
 
 #[derive(VkHandle, VkObject)]
@@ -300,7 +299,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
             self.device().native_ptr(),
             self.native_ptr_mut(),
             buffers.len() as _,
-            buffers.as_ptr_empty_null() as *const _,
+            slice_as_ptr_empty_null(buffers) as *const _,
         );
     }
 
@@ -820,9 +819,9 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
                 pipeline_layout.native_ptr(),
                 first,
                 descriptor_sets.len() as _,
-                descriptor_sets.as_ptr_empty_null() as _,
+                slice_as_ptr_empty_null(descriptor_sets) as _,
                 dynamic_offsets.len() as _,
-                dynamic_offsets.as_ptr_empty_null(),
+                slice_as_ptr_empty_null(dynamic_offsets),
             );
         }
 
