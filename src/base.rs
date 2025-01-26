@@ -309,6 +309,19 @@ pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, #[parent] Own
 unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
+impl<Owner: Instance> PhysicalDeviceObject<Owner> {
+    pub const unsafe fn manage(handle: VkPhysicalDevice, owner: Owner) -> Self {
+        Self(handle, owner)
+    }
+
+    pub const fn unmanage(self) -> (VkPhysicalDevice, Owner) {
+        let handle = self.0;
+        let owner = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (handle, owner)
+    }
+}
 impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
     /// Split the lifetime from owner by cloning it.
     #[inline(always)]

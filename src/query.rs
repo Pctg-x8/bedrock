@@ -77,7 +77,6 @@ impl<Device: crate::Device> DeviceChild for QueryPoolObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> QueryPool for QueryPoolObject<Device> {}
-#[implements]
 impl<Device: VkHandle<Handle = VkDevice>> QueryPoolObject<Device> {
     /// Constructs from raw values
     /// # Safety
@@ -109,6 +108,7 @@ impl<Device: crate::Device> QueryPoolObject<Device> {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
     pub fn new(device: Device, info: &QueryPoolCreateInfo) -> crate::Result<Self> {
         Ok(unsafe { Self::manage(device.new_query_pool_raw(info, None)?, device) })
     }
