@@ -63,6 +63,10 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
         self.0.pNext = next as *const _ as _;
         self
     }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
+    }
 }
 
 #[repr(transparent)]
@@ -112,6 +116,10 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
         self.0.pNext = next as *const _ as _;
         self
     }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
+    }
 }
 
 #[repr(transparent)]
@@ -154,5 +162,9 @@ impl<'d> MemoryGetWin32HandleInfo<'d> {
 
     pub const fn into_raw(self) -> VkMemoryGetWin32HandleInfoKHR {
         self.0
+    }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
     }
 }

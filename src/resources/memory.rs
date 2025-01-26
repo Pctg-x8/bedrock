@@ -177,6 +177,10 @@ impl<'d> MemoryAllocateInfo<'d> {
         self.0.pNext = next as *const _ as _;
         self
     }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
+    }
 }
 
 /// Specify a dedicated memory allocation resource
@@ -242,6 +246,10 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
+    }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
     }
 }
 

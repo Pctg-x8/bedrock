@@ -52,4 +52,8 @@ impl<'d> ImportMemoryHostPointerInfo<'d> {
         self.0.pNext = next as *const _ as _;
         self
     }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
+    }
 }

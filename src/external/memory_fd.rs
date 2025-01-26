@@ -54,6 +54,10 @@ impl<'d> ImportMemoryFdInfo<'d> {
         self.0.pNext = next as *const _ as _;
         self
     }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
+    }
 }
 
 #[repr(transparent)]
@@ -85,5 +89,9 @@ impl<'d> MemoryGetFdInfo<'d> {
 
     pub const fn into_raw(self) -> VkMemoryGetFdInfoKHR {
         self.0
+    }
+
+    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+        core::mem::transmute(&mut self.0.pNext)
     }
 }
