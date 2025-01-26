@@ -1,6 +1,6 @@
 use widestring::WideCStr;
 
-use crate::{vk::*, VkHandle, VulkanStructure, VulkanStructureAsRef};
+use crate::{ffi_helper::opt_pointer, vk::*, GenericVulkanStructure, VkHandle, VulkanStructure, VulkanStructureAsRef};
 
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
@@ -71,7 +71,7 @@ pub struct ExportMemoryWin32HandleInfo<'d>(
     VkExportMemoryWin32HandleInfoKHR,
     core::marker::PhantomData<(Option<&'d dyn VulkanStructureAsRef>, &'d WideCStr)>,
 );
-impl VulkanStructureAsRef for ExportMemoryWin32HandleInfo<'_> {
+unsafe impl VulkanStructureAsRef for ExportMemoryWin32HandleInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -120,6 +120,17 @@ pub struct MemoryGetWin32HandleInfo<'d>(
     pub(crate) VkMemoryGetWin32HandleInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
 );
+unsafe impl VulkanStructureAsRef for MemoryGetWin32HandleInfo<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
 impl<'d> MemoryGetWin32HandleInfo<'d> {
     #[inline]
     pub fn new(

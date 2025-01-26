@@ -12,7 +12,7 @@ pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType 
 pub const VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 3) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -23,7 +23,7 @@ pub struct VkImportMemoryWin32HandleInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkExportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -34,7 +34,7 @@ pub struct VkExportMemoryWin32HandleInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR)]
 pub struct VkMemoryWin32HandlePropertiesKHR {
     pub sType: VkStructureType,
@@ -55,7 +55,7 @@ impl VkMemoryWin32HandlePropertiesKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR)]
 pub struct VkMemoryGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
