@@ -42,7 +42,10 @@ impl<Instance: crate::Instance + Clone> DebugReportCallbackObject<&'_ Instance> 
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DebugReportCallbackObject<Instance> {
-        DebugReportCallbackObject(self.0, self.1.clone())
+        let r = DebugReportCallbackObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

@@ -126,7 +126,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DeviceMemoryObject<&'_ Device>
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DeviceMemoryObject<Device> {
-        DeviceMemoryObject(self.0, self.1.clone())
+        let r = DeviceMemoryObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> DeviceMemoryObject<Device> {

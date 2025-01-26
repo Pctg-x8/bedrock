@@ -54,7 +54,10 @@ impl<Instance: crate::Instance + Clone> DebugUtilsMessengerObject<&'_ Instance> 
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DebugUtilsMessengerObject<Instance> {
-        DebugUtilsMessengerObject(self.0, self.1.clone())
+        let r = DebugUtilsMessengerObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

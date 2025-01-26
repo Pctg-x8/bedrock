@@ -180,7 +180,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> ShaderModuleObject<&'_ Device>
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> ShaderModuleObject<Device> {
-        ShaderModuleObject(self.0, self.1.clone())
+        let r = ShaderModuleObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> ShaderModuleObject<Device> {
@@ -277,7 +280,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineCacheObject<&'_ Device
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> PipelineCacheObject<Device> {
-        PipelineCacheObject(self.0, self.1.clone())
+        let r = PipelineCacheObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> PipelineCacheObject<Device> {
@@ -455,7 +461,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineLayoutObject<&'_ Devic
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> PipelineLayoutObject<Device> {
-        PipelineLayoutObject(self.0, self.1.clone())
+        let r = PipelineLayoutObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> PipelineLayoutObject<Device> {
@@ -544,7 +553,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> PipelineObject<Device> {
-        PipelineObject(self.0, self.1.clone())
+        let r = PipelineObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

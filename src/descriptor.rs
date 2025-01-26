@@ -80,7 +80,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorSetLayoutObject<&'_ 
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DescriptorSetLayoutObject<Device> {
-        DescriptorSetLayoutObject(self.0, self.1.clone())
+        let r = DescriptorSetLayoutObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 
@@ -153,7 +156,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorPoolObject<&'_ Devic
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DescriptorPoolObject<Device> {
-        DescriptorPoolObject(self.0, self.1.clone())
+        let r = DescriptorPoolObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

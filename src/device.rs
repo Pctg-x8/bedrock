@@ -665,7 +665,10 @@ impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
 impl<Device: Clone> QueueObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> QueueObject<Device> {
-        QueueObject(self.0, self.1.clone())
+        let r = QueueObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

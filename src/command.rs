@@ -62,7 +62,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> CommandPoolObject<&'_ Device> 
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> CommandPoolObject<Device> {
-        CommandPoolObject(self.0, self.1.clone())
+        let r = CommandPoolObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> CommandPoolObject<Device> {

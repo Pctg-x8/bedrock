@@ -39,7 +39,10 @@ impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> SurfaceObject<Instance> {
-        SurfaceObject(self.0, self.1.clone())
+        let r = SurfaceObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

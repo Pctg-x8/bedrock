@@ -68,11 +68,14 @@ impl<'r, Device: VkHandle<Handle = VkDevice> + Clone> FramebufferObject<'r, &'_ 
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> FramebufferObject<'r, Device> {
-        FramebufferObject {
+        let r = FramebufferObject {
             handle: self.handle,
             parent: self.parent.clone(),
             _under_resources: self._under_resources,
-        }
+        };
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<'r, Device: crate::Device> FramebufferObject<'r, Device> {

@@ -98,7 +98,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> QueryPoolObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> QueryPoolObject<Device> {
-        QueryPoolObject(self.0, self.1.clone())
+        let r = QueryPoolObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> QueryPoolObject<Device> {

@@ -59,7 +59,10 @@ impl<Device: crate::Device + Clone> DescriptorUpdateTemplateObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DescriptorUpdateTemplateObject<Device> {
-        DescriptorUpdateTemplateObject(self.0, self.1.clone())
+        let r = DescriptorUpdateTemplateObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 

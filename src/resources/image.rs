@@ -345,7 +345,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> ImageObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> ImageObject<Device> {
-        ImageObject(self.0, self.1.clone(), self.2, self.3, self.4)
+        let r = ImageObject(self.0, self.1.clone(), self.2, self.3, self.4);
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> ImageObject<Device> {
@@ -874,7 +877,10 @@ impl<Image: DeviceChildHandle + Clone> ImageViewObject<&'_ Image> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> ImageViewObject<Image> {
-        ImageViewObject(self.0, self.1.clone())
+        let r = ImageViewObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Image: DeviceChild> ImageViewObject<Image> {

@@ -99,7 +99,10 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> BufferObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> BufferObject<Device> {
-        BufferObject(self.0, self.1.clone())
+        let r = BufferObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Device: crate::Device> BufferObject<Device> {
@@ -174,7 +177,10 @@ impl<Buffer: DeviceChildHandle + Clone> BufferViewObject<&'_ Buffer> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> BufferViewObject<Buffer> {
-        BufferViewObject(self.0, self.1.clone())
+        let r = BufferViewObject(self.0, self.1.clone());
+        core::mem::forget(self);
+
+        r
     }
 }
 impl<Buffer: DeviceChild> BufferViewObject<Buffer> {
