@@ -1968,7 +1968,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[inline]
     unsafe fn memory_win32_handle_properties(
         &self,
-        handle_type: &crate::ExternalMemoryHandleTypeWin32,
+        handle_type: crate::ExternalMemoryHandleTypeWin32,
         handle: windows::Win32::Foundation::HANDLE,
         sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
     ) -> crate::Result<()> {

@@ -66,7 +66,7 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExportMemoryWin32HandleInfo<'d>(
     VkExportMemoryWin32HandleInfoKHR,
     core::marker::PhantomData<(Option<&'d dyn VulkanStructureAsRef>, &'d WideCStr)>,
