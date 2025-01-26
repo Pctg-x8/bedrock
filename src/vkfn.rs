@@ -1500,7 +1500,7 @@ unsafe extern "system" fn stub_create_instance(create_info: *const VkInstanceCre
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateInstance = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateInstance>::NAME_CSTR);
+    let fp: PFN_vkCreateInstance = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_instance = fp;
     (fp.0)(create_info, allocator, instance_out)
 }
@@ -1509,7 +1509,7 @@ unsafe extern "system" fn stub_destroy_instance(instance: VkInstance, allocator:
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyInstance = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyInstance>::NAME_CSTR);
+    let fp: PFN_vkDestroyInstance = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_instance = fp;
     (fp.0)(instance, allocator)
 }
@@ -1518,7 +1518,7 @@ unsafe extern "system" fn stub_enumerate_physical_devices(instance: VkInstance, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEnumeratePhysicalDevices = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumeratePhysicalDevices>::NAME_CSTR);
+    let fp: PFN_vkEnumeratePhysicalDevices = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.enumerate_physical_devices = fp;
     (fp.0)(instance, physical_devices_count_out, physical_devices_out)
 }
@@ -1527,7 +1527,7 @@ unsafe extern "system" fn stub_get_physical_device_features(physical_device: VkP
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceFeatures = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceFeatures>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceFeatures = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_features = fp;
     (fp.0)(physical_device, features_out)
 }
@@ -1536,7 +1536,7 @@ unsafe extern "system" fn stub_get_physical_device_format_properties(physical_de
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceFormatProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceFormatProperties>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceFormatProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_format_properties = fp;
     (fp.0)(physical_device, format, format_properties_out)
 }
@@ -1545,7 +1545,7 @@ unsafe extern "system" fn stub_get_physical_device_image_format_properties(physi
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceImageFormatProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceImageFormatProperties>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceImageFormatProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_image_format_properties = fp;
     (fp.0)(physical_device, format, image_type, tiling, usage, flags, image_format_properties_out)
 }
@@ -1554,7 +1554,7 @@ unsafe extern "system" fn stub_get_physical_device_properties(physical_device: V
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceProperties>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_properties = fp;
     (fp.0)(physical_device, properties_out)
 }
@@ -1563,7 +1563,7 @@ unsafe extern "system" fn stub_get_physical_device_queue_family_properties(physi
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceQueueFamilyProperties>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_queue_family_properties = fp;
     (fp.0)(physical_device, queue_family_properties_count_out, queue_family_properties_out)
 }
@@ -1572,7 +1572,7 @@ unsafe extern "system" fn stub_get_physical_device_memory_properties(physical_de
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceMemoryProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceMemoryProperties>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceMemoryProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_memory_properties = fp;
     (fp.0)(physical_device, memory_properties_out)
 }
@@ -1581,7 +1581,7 @@ unsafe extern "system" fn stub_get_instance_proc_addr(instance: VkInstance, name
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetInstanceProcAddr = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetInstanceProcAddr>::NAME_CSTR);
+    let fp: PFN_vkGetInstanceProcAddr = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_instance_proc_addr = fp;
     (fp.0)(instance, name)
 }
@@ -1590,7 +1590,7 @@ unsafe extern "system" fn stub_get_device_proc_addr(device: VkDevice, name: *con
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetDeviceProcAddr = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetDeviceProcAddr>::NAME_CSTR);
+    let fp: PFN_vkGetDeviceProcAddr = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_device_proc_addr = fp;
     (fp.0)(device, name)
 }
@@ -1599,7 +1599,7 @@ unsafe extern "system" fn stub_create_device(physical_device: VkPhysicalDevice, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateDevice = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDevice>::NAME_CSTR);
+    let fp: PFN_vkCreateDevice = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_device = fp;
     (fp.0)(physical_device, create_info, allocator, device_out)
 }
@@ -1608,7 +1608,7 @@ unsafe extern "system" fn stub_destroy_device(device: VkDevice, allocator: *cons
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyDevice = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyDevice>::NAME_CSTR);
+    let fp: PFN_vkDestroyDevice = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_device = fp;
     (fp.0)(device, allocator)
 }
@@ -1617,7 +1617,7 @@ unsafe extern "system" fn stub_enumerate_instance_extension_properties(layer_nam
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEnumerateInstanceExtensionProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumerateInstanceExtensionProperties>::NAME_CSTR);
+    let fp: PFN_vkEnumerateInstanceExtensionProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.enumerate_instance_extension_properties = fp;
     (fp.0)(layer_name, property_count_out, properties_out)
 }
@@ -1626,7 +1626,7 @@ unsafe extern "system" fn stub_enumerate_device_extension_properties(physical_de
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEnumerateDeviceExtensionProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumerateDeviceExtensionProperties>::NAME_CSTR);
+    let fp: PFN_vkEnumerateDeviceExtensionProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.enumerate_device_extension_properties = fp;
     (fp.0)(physical_device, layer_name, property_count_out, properties_out)
 }
@@ -1635,7 +1635,7 @@ unsafe extern "system" fn stub_enumerate_instance_layer_properties(property_coun
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEnumerateInstanceLayerProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumerateInstanceLayerProperties>::NAME_CSTR);
+    let fp: PFN_vkEnumerateInstanceLayerProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.enumerate_instance_layer_properties = fp;
     (fp.0)(property_count_out, properties_out)
 }
@@ -1644,7 +1644,7 @@ unsafe extern "system" fn stub_enumerate_device_layer_properties(physical_device
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEnumerateDeviceLayerProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumerateDeviceLayerProperties>::NAME_CSTR);
+    let fp: PFN_vkEnumerateDeviceLayerProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.enumerate_device_layer_properties = fp;
     (fp.0)(physical_device, property_count_out, properties_out)
 }
@@ -1653,7 +1653,7 @@ unsafe extern "system" fn stub_get_device_queue(device: VkDevice, queue_family_i
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetDeviceQueue = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetDeviceQueue>::NAME_CSTR);
+    let fp: PFN_vkGetDeviceQueue = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_device_queue = fp;
     (fp.0)(device, queue_family_index, queue_index, queue_out)
 }
@@ -1662,7 +1662,7 @@ unsafe extern "system" fn stub_queue_submit(queue: VkQueue, submit_count: u32, s
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkQueueSubmit = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkQueueSubmit>::NAME_CSTR);
+    let fp: PFN_vkQueueSubmit = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.queue_submit = fp;
     (fp.0)(queue, submit_count, submits, fence)
 }
@@ -1671,7 +1671,7 @@ unsafe extern "system" fn stub_queue_wait_idle(queue: VkQueue) -> VkResult {
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkQueueWaitIdle = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkQueueWaitIdle>::NAME_CSTR);
+    let fp: PFN_vkQueueWaitIdle = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.queue_wait_idle = fp;
     (fp.0)(queue)
 }
@@ -1680,7 +1680,7 @@ unsafe extern "system" fn stub_device_wait_idle(device: VkDevice) -> VkResult {
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDeviceWaitIdle = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDeviceWaitIdle>::NAME_CSTR);
+    let fp: PFN_vkDeviceWaitIdle = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.device_wait_idle = fp;
     (fp.0)(device)
 }
@@ -1689,7 +1689,7 @@ unsafe extern "system" fn stub_allocate_memory(device: VkDevice, allocate_info: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkAllocateMemory = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkAllocateMemory>::NAME_CSTR);
+    let fp: PFN_vkAllocateMemory = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.allocate_memory = fp;
     (fp.0)(device, allocate_info, allocator, memory_out)
 }
@@ -1698,7 +1698,7 @@ unsafe extern "system" fn stub_free_memory(device: VkDevice, memory: VkDeviceMem
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkFreeMemory = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkFreeMemory>::NAME_CSTR);
+    let fp: PFN_vkFreeMemory = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.free_memory = fp;
     (fp.0)(device, memory, allocator)
 }
@@ -1707,7 +1707,7 @@ unsafe extern "system" fn stub_map_memory(device: VkDevice, memory: VkDeviceMemo
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkMapMemory = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkMapMemory>::NAME_CSTR);
+    let fp: PFN_vkMapMemory = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.map_memory = fp;
     (fp.0)(device, memory, offset, size, flags, data_ptr_out)
 }
@@ -1716,7 +1716,7 @@ unsafe extern "system" fn stub_unmap_memory(device: VkDevice, memory: VkDeviceMe
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkUnmapMemory = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkUnmapMemory>::NAME_CSTR);
+    let fp: PFN_vkUnmapMemory = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.unmap_memory = fp;
     (fp.0)(device, memory)
 }
@@ -1725,7 +1725,7 @@ unsafe extern "system" fn stub_flush_mapped_memory_ranges(device: VkDevice, memo
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkFlushMappedMemoryRanges = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkFlushMappedMemoryRanges>::NAME_CSTR);
+    let fp: PFN_vkFlushMappedMemoryRanges = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.flush_mapped_memory_ranges = fp;
     (fp.0)(device, memory_range_count, memory_ranges)
 }
@@ -1734,7 +1734,7 @@ unsafe extern "system" fn stub_invalidate_mapped_memory_ranges(device: VkDevice,
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkInvalidateMappedMemoryRanges = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkInvalidateMappedMemoryRanges>::NAME_CSTR);
+    let fp: PFN_vkInvalidateMappedMemoryRanges = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.invalidate_mapped_memory_ranges = fp;
     (fp.0)(device, memory_range_count, memory_ranges)
 }
@@ -1743,7 +1743,7 @@ unsafe extern "system" fn stub_get_device_memory_commitment(device: VkDevice, me
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetDeviceMemoryCommitment = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetDeviceMemoryCommitment>::NAME_CSTR);
+    let fp: PFN_vkGetDeviceMemoryCommitment = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_device_memory_commitment = fp;
     (fp.0)(device, memory, committed_memory_bytes_out)
 }
@@ -1752,7 +1752,7 @@ unsafe extern "system" fn stub_bind_buffer_memory(device: VkDevice, buffer: VkBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkBindBufferMemory = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBindBufferMemory>::NAME_CSTR);
+    let fp: PFN_vkBindBufferMemory = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.bind_buffer_memory = fp;
     (fp.0)(device, buffer, memory, memory_offset)
 }
@@ -1761,7 +1761,7 @@ unsafe extern "system" fn stub_bind_image_memory(device: VkDevice, image: VkImag
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkBindImageMemory = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBindImageMemory>::NAME_CSTR);
+    let fp: PFN_vkBindImageMemory = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.bind_image_memory = fp;
     (fp.0)(device, image, memory, memory_offset)
 }
@@ -1770,7 +1770,7 @@ unsafe extern "system" fn stub_get_buffer_memory_requirements(device: VkDevice, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetBufferMemoryRequirements = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetBufferMemoryRequirements>::NAME_CSTR);
+    let fp: PFN_vkGetBufferMemoryRequirements = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_buffer_memory_requirements = fp;
     (fp.0)(device, buffer, memory_requirements_out)
 }
@@ -1779,7 +1779,7 @@ unsafe extern "system" fn stub_get_image_memory_requirements(device: VkDevice, i
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetImageMemoryRequirements = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageMemoryRequirements>::NAME_CSTR);
+    let fp: PFN_vkGetImageMemoryRequirements = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_image_memory_requirements = fp;
     (fp.0)(device, image, memory_requirements_out)
 }
@@ -1788,7 +1788,7 @@ unsafe extern "system" fn stub_get_image_sparse_memory_requirements(device: VkDe
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetImageSparseMemoryRequirements = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageSparseMemoryRequirements>::NAME_CSTR);
+    let fp: PFN_vkGetImageSparseMemoryRequirements = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_image_sparse_memory_requirements = fp;
     (fp.0)(device, image, sparse_memory_requirement_count_out, sparse_memory_requirements_out)
 }
@@ -1797,7 +1797,7 @@ unsafe extern "system" fn stub_get_physical_device_sparse_image_format_propertie
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSparseImageFormatProperties>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_sparse_image_format_properties = fp;
     (fp.0)(physical_device, format, r#type, samples, usage, tiling, property_count_out, properties_out)
 }
@@ -1806,7 +1806,7 @@ unsafe extern "system" fn stub_queue_bind_sparse(queue: VkQueue, bind_info_count
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkQueueBindSparse = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkQueueBindSparse>::NAME_CSTR);
+    let fp: PFN_vkQueueBindSparse = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.queue_bind_sparse = fp;
     (fp.0)(queue, bind_info_count, bind_info, fence)
 }
@@ -1815,7 +1815,7 @@ unsafe extern "system" fn stub_create_fence(device: VkDevice, create_info: *cons
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateFence = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateFence>::NAME_CSTR);
+    let fp: PFN_vkCreateFence = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_fence = fp;
     (fp.0)(device, create_info, allocator, fence_out)
 }
@@ -1824,7 +1824,7 @@ unsafe extern "system" fn stub_destroy_fence(device: VkDevice, fence: VkFence, a
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyFence = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyFence>::NAME_CSTR);
+    let fp: PFN_vkDestroyFence = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_fence = fp;
     (fp.0)(device, fence, allocator)
 }
@@ -1833,7 +1833,7 @@ unsafe extern "system" fn stub_reset_fences(device: VkDevice, fence_count: u32, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkResetFences = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkResetFences>::NAME_CSTR);
+    let fp: PFN_vkResetFences = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.reset_fences = fp;
     (fp.0)(device, fence_count, fences)
 }
@@ -1842,7 +1842,7 @@ unsafe extern "system" fn stub_get_fence_status(device: VkDevice, fence: VkFence
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetFenceStatus = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetFenceStatus>::NAME_CSTR);
+    let fp: PFN_vkGetFenceStatus = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_fence_status = fp;
     (fp.0)(device, fence)
 }
@@ -1851,7 +1851,7 @@ unsafe extern "system" fn stub_wait_for_fences(device: VkDevice, fence_count: u3
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkWaitForFences = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkWaitForFences>::NAME_CSTR);
+    let fp: PFN_vkWaitForFences = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.wait_for_fences = fp;
     (fp.0)(device, fence_count, fences, wait_all, timeout)
 }
@@ -1860,7 +1860,7 @@ unsafe extern "system" fn stub_create_semaphore(device: VkDevice, create_info: *
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateSemaphore = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateSemaphore>::NAME_CSTR);
+    let fp: PFN_vkCreateSemaphore = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_semaphore = fp;
     (fp.0)(device, create_info, allocator, semaphore_out)
 }
@@ -1869,7 +1869,7 @@ unsafe extern "system" fn stub_destroy_semaphore(device: VkDevice, semaphore: Vk
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroySemaphore = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroySemaphore>::NAME_CSTR);
+    let fp: PFN_vkDestroySemaphore = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_semaphore = fp;
     (fp.0)(device, semaphore, allocator)
 }
@@ -1878,7 +1878,7 @@ unsafe extern "system" fn stub_create_event(device: VkDevice, create_info: *cons
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateEvent = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateEvent>::NAME_CSTR);
+    let fp: PFN_vkCreateEvent = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_event = fp;
     (fp.0)(device, create_info, allocator, event_out)
 }
@@ -1887,7 +1887,7 @@ unsafe extern "system" fn stub_destroy_event(device: VkDevice, event: VkEvent, a
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyEvent = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyEvent>::NAME_CSTR);
+    let fp: PFN_vkDestroyEvent = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_event = fp;
     (fp.0)(device, event, allocator)
 }
@@ -1896,7 +1896,7 @@ unsafe extern "system" fn stub_get_event_status(device: VkDevice, event: VkEvent
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetEventStatus = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetEventStatus>::NAME_CSTR);
+    let fp: PFN_vkGetEventStatus = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_event_status = fp;
     (fp.0)(device, event)
 }
@@ -1905,7 +1905,7 @@ unsafe extern "system" fn stub_set_event(device: VkDevice, event: VkEvent) -> Vk
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkSetEvent = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkSetEvent>::NAME_CSTR);
+    let fp: PFN_vkSetEvent = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.set_event = fp;
     (fp.0)(device, event)
 }
@@ -1914,7 +1914,7 @@ unsafe extern "system" fn stub_reset_event(device: VkDevice, event: VkEvent) -> 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkResetEvent = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkResetEvent>::NAME_CSTR);
+    let fp: PFN_vkResetEvent = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.reset_event = fp;
     (fp.0)(device, event)
 }
@@ -1923,7 +1923,7 @@ unsafe extern "system" fn stub_create_query_pool(device: VkDevice, create_info: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateQueryPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateQueryPool>::NAME_CSTR);
+    let fp: PFN_vkCreateQueryPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_query_pool = fp;
     (fp.0)(device, create_info, allocator, query_pool_out)
 }
@@ -1932,7 +1932,7 @@ unsafe extern "system" fn stub_destroy_query_pool(device: VkDevice, query_pool: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyQueryPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyQueryPool>::NAME_CSTR);
+    let fp: PFN_vkDestroyQueryPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_query_pool = fp;
     (fp.0)(device, query_pool, allocator)
 }
@@ -1941,7 +1941,7 @@ unsafe extern "system" fn stub_get_query_pool_results(device: VkDevice, query_po
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetQueryPoolResults = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetQueryPoolResults>::NAME_CSTR);
+    let fp: PFN_vkGetQueryPoolResults = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_query_pool_results = fp;
     (fp.0)(device, query_pool, first_query, query_count, data_size, data_out, stride, flags)
 }
@@ -1950,7 +1950,7 @@ unsafe extern "system" fn stub_create_buffer(device: VkDevice, create_info: *con
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateBuffer>::NAME_CSTR);
+    let fp: PFN_vkCreateBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_buffer = fp;
     (fp.0)(device, create_info, allocator, buffer_out)
 }
@@ -1959,7 +1959,7 @@ unsafe extern "system" fn stub_destroy_buffer(device: VkDevice, buffer: VkBuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyBuffer>::NAME_CSTR);
+    let fp: PFN_vkDestroyBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_buffer = fp;
     (fp.0)(device, buffer, allocator)
 }
@@ -1968,7 +1968,7 @@ unsafe extern "system" fn stub_create_buffer_view(device: VkDevice, create_info:
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateBufferView = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateBufferView>::NAME_CSTR);
+    let fp: PFN_vkCreateBufferView = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_buffer_view = fp;
     (fp.0)(device, create_info, allocator, view_out)
 }
@@ -1977,7 +1977,7 @@ unsafe extern "system" fn stub_destroy_buffer_view(device: VkDevice, buffer_view
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyBufferView = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyBufferView>::NAME_CSTR);
+    let fp: PFN_vkDestroyBufferView = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_buffer_view = fp;
     (fp.0)(device, buffer_view, allocator)
 }
@@ -1986,7 +1986,7 @@ unsafe extern "system" fn stub_create_image(device: VkDevice, create_info: *cons
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateImage>::NAME_CSTR);
+    let fp: PFN_vkCreateImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_image = fp;
     (fp.0)(device, create_info, allocator, image_out)
 }
@@ -1995,7 +1995,7 @@ unsafe extern "system" fn stub_destroy_image(device: VkDevice, image: VkImage, a
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyImage>::NAME_CSTR);
+    let fp: PFN_vkDestroyImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_image = fp;
     (fp.0)(device, image, allocator)
 }
@@ -2004,7 +2004,7 @@ unsafe extern "system" fn stub_get_image_subresource_layout(device: VkDevice, im
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetImageSubresourceLayout = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageSubresourceLayout>::NAME_CSTR);
+    let fp: PFN_vkGetImageSubresourceLayout = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_image_subresource_layout = fp;
     (fp.0)(device, image, subresource, layout_out)
 }
@@ -2013,7 +2013,7 @@ unsafe extern "system" fn stub_create_image_view(device: VkDevice, create_info: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateImageView = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateImageView>::NAME_CSTR);
+    let fp: PFN_vkCreateImageView = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_image_view = fp;
     (fp.0)(device, create_info, allocator, view_out)
 }
@@ -2022,7 +2022,7 @@ unsafe extern "system" fn stub_destroy_image_view(device: VkDevice, image_view: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyImageView = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyImageView>::NAME_CSTR);
+    let fp: PFN_vkDestroyImageView = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_image_view = fp;
     (fp.0)(device, image_view, allocator)
 }
@@ -2031,7 +2031,7 @@ unsafe extern "system" fn stub_create_shader_module(device: VkDevice, create_inf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateShaderModule = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateShaderModule>::NAME_CSTR);
+    let fp: PFN_vkCreateShaderModule = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_shader_module = fp;
     (fp.0)(device, create_info, allocator, shader_module_out)
 }
@@ -2040,7 +2040,7 @@ unsafe extern "system" fn stub_destroy_shader_module(device: VkDevice, shader_mo
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyShaderModule = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyShaderModule>::NAME_CSTR);
+    let fp: PFN_vkDestroyShaderModule = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_shader_module = fp;
     (fp.0)(device, shader_module, allocator)
 }
@@ -2049,7 +2049,7 @@ unsafe extern "system" fn stub_create_pipeline_cache(device: VkDevice, create_in
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreatePipelineCache = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreatePipelineCache>::NAME_CSTR);
+    let fp: PFN_vkCreatePipelineCache = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_pipeline_cache = fp;
     (fp.0)(device, create_info, allocator, pipeline_cache_out)
 }
@@ -2058,7 +2058,7 @@ unsafe extern "system" fn stub_destroy_pipeline_cache(device: VkDevice, pipeline
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyPipelineCache = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyPipelineCache>::NAME_CSTR);
+    let fp: PFN_vkDestroyPipelineCache = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_pipeline_cache = fp;
     (fp.0)(device, pipeline_cache, allocator)
 }
@@ -2067,7 +2067,7 @@ unsafe extern "system" fn stub_get_pipeline_cache_data(device: VkDevice, pipelin
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPipelineCacheData = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPipelineCacheData>::NAME_CSTR);
+    let fp: PFN_vkGetPipelineCacheData = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_pipeline_cache_data = fp;
     (fp.0)(device, pipeline_cache, data_size_out, data_out)
 }
@@ -2076,7 +2076,7 @@ unsafe extern "system" fn stub_merge_pipeline_caches(device: VkDevice, dst_cache
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkMergePipelineCaches = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkMergePipelineCaches>::NAME_CSTR);
+    let fp: PFN_vkMergePipelineCaches = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.merge_pipeline_caches = fp;
     (fp.0)(device, dst_cache, src_cache_count, src_caches)
 }
@@ -2085,7 +2085,7 @@ unsafe extern "system" fn stub_create_graphics_pipelines(device: VkDevice, pipel
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateGraphicsPipelines = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateGraphicsPipelines>::NAME_CSTR);
+    let fp: PFN_vkCreateGraphicsPipelines = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_graphics_pipelines = fp;
     (fp.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out)
 }
@@ -2094,7 +2094,7 @@ unsafe extern "system" fn stub_create_compute_pipelines(device: VkDevice, pipeli
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateComputePipelines = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateComputePipelines>::NAME_CSTR);
+    let fp: PFN_vkCreateComputePipelines = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_compute_pipelines = fp;
     (fp.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out)
 }
@@ -2103,7 +2103,7 @@ unsafe extern "system" fn stub_destroy_pipeline(device: VkDevice, pipeline: VkPi
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyPipeline = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyPipeline>::NAME_CSTR);
+    let fp: PFN_vkDestroyPipeline = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_pipeline = fp;
     (fp.0)(device, pipeline, allocator)
 }
@@ -2112,7 +2112,7 @@ unsafe extern "system" fn stub_create_pipeline_layout(device: VkDevice, create_i
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreatePipelineLayout = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreatePipelineLayout>::NAME_CSTR);
+    let fp: PFN_vkCreatePipelineLayout = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_pipeline_layout = fp;
     (fp.0)(device, create_info, allocator, pipeline_layout_out)
 }
@@ -2121,7 +2121,7 @@ unsafe extern "system" fn stub_destroy_pipeline_layout(device: VkDevice, pipelin
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyPipelineLayout = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyPipelineLayout>::NAME_CSTR);
+    let fp: PFN_vkDestroyPipelineLayout = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_pipeline_layout = fp;
     (fp.0)(device, pipeline_layout, allocator)
 }
@@ -2130,7 +2130,7 @@ unsafe extern "system" fn stub_create_sampler(device: VkDevice, create_info: *co
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateSampler = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateSampler>::NAME_CSTR);
+    let fp: PFN_vkCreateSampler = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_sampler = fp;
     (fp.0)(device, create_info, allocator, sampler_out)
 }
@@ -2139,7 +2139,7 @@ unsafe extern "system" fn stub_destroy_sampler(device: VkDevice, sampler: VkSamp
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroySampler = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroySampler>::NAME_CSTR);
+    let fp: PFN_vkDestroySampler = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_sampler = fp;
     (fp.0)(device, sampler, allocator)
 }
@@ -2148,7 +2148,7 @@ unsafe extern "system" fn stub_create_descriptor_set_layout(device: VkDevice, cr
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateDescriptorSetLayout = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDescriptorSetLayout>::NAME_CSTR);
+    let fp: PFN_vkCreateDescriptorSetLayout = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_descriptor_set_layout = fp;
     (fp.0)(device, create_info, allocator, set_layout_out)
 }
@@ -2157,7 +2157,7 @@ unsafe extern "system" fn stub_destroy_descriptor_set_layout(device: VkDevice, d
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyDescriptorSetLayout = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyDescriptorSetLayout>::NAME_CSTR);
+    let fp: PFN_vkDestroyDescriptorSetLayout = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_descriptor_set_layout = fp;
     (fp.0)(device, descriptor_set_layout, allocator)
 }
@@ -2166,7 +2166,7 @@ unsafe extern "system" fn stub_create_descriptor_pool(device: VkDevice, create_i
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateDescriptorPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDescriptorPool>::NAME_CSTR);
+    let fp: PFN_vkCreateDescriptorPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_descriptor_pool = fp;
     (fp.0)(device, create_info, allocator, descriptor_pool_out)
 }
@@ -2175,7 +2175,7 @@ unsafe extern "system" fn stub_destroy_descriptor_pool(device: VkDevice, descrip
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyDescriptorPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyDescriptorPool>::NAME_CSTR);
+    let fp: PFN_vkDestroyDescriptorPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_descriptor_pool = fp;
     (fp.0)(device, descriptor_pool, allocator)
 }
@@ -2184,7 +2184,7 @@ unsafe extern "system" fn stub_reset_descriptor_pool(device: VkDevice, descripto
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkResetDescriptorPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkResetDescriptorPool>::NAME_CSTR);
+    let fp: PFN_vkResetDescriptorPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.reset_descriptor_pool = fp;
     (fp.0)(device, descriptor_pool, flags)
 }
@@ -2193,7 +2193,7 @@ unsafe extern "system" fn stub_allocate_descriptor_sets(device: VkDevice, alloca
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkAllocateDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkAllocateDescriptorSets>::NAME_CSTR);
+    let fp: PFN_vkAllocateDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.allocate_descriptor_sets = fp;
     (fp.0)(device, allocate_info, descriptor_sets_out)
 }
@@ -2202,7 +2202,7 @@ unsafe extern "system" fn stub_free_descriptor_sets(device: VkDevice, descriptor
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkFreeDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkFreeDescriptorSets>::NAME_CSTR);
+    let fp: PFN_vkFreeDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.free_descriptor_sets = fp;
     (fp.0)(device, descriptor_pool, descriptor_set_count, descriptor_sets)
 }
@@ -2211,7 +2211,7 @@ unsafe extern "system" fn stub_update_descriptor_sets(device: VkDevice, descript
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkUpdateDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkUpdateDescriptorSets>::NAME_CSTR);
+    let fp: PFN_vkUpdateDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.update_descriptor_sets = fp;
     (fp.0)(device, descriptor_write_count, descriptor_writes, descriptor_copy_count, descriptor_copies)
 }
@@ -2220,7 +2220,7 @@ unsafe extern "system" fn stub_create_framebuffer(device: VkDevice, create_info:
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateFramebuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateFramebuffer>::NAME_CSTR);
+    let fp: PFN_vkCreateFramebuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_framebuffer = fp;
     (fp.0)(device, create_info, allocator, framebuffer_out)
 }
@@ -2229,7 +2229,7 @@ unsafe extern "system" fn stub_destroy_framebuffer(device: VkDevice, framebuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyFramebuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyFramebuffer>::NAME_CSTR);
+    let fp: PFN_vkDestroyFramebuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_framebuffer = fp;
     (fp.0)(device, framebuffer, allocator)
 }
@@ -2238,7 +2238,7 @@ unsafe extern "system" fn stub_create_render_pass(device: VkDevice, create_info:
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateRenderPass = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateRenderPass>::NAME_CSTR);
+    let fp: PFN_vkCreateRenderPass = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_render_pass = fp;
     (fp.0)(device, create_info, allocator, render_pass_out)
 }
@@ -2247,7 +2247,7 @@ unsafe extern "system" fn stub_destroy_render_pass(device: VkDevice, render_pass
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyRenderPass = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyRenderPass>::NAME_CSTR);
+    let fp: PFN_vkDestroyRenderPass = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_render_pass = fp;
     (fp.0)(device, render_pass, allocator)
 }
@@ -2256,7 +2256,7 @@ unsafe extern "system" fn stub_get_render_area_granularity(device: VkDevice, ren
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetRenderAreaGranularity = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetRenderAreaGranularity>::NAME_CSTR);
+    let fp: PFN_vkGetRenderAreaGranularity = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_render_area_granularity = fp;
     (fp.0)(device, render_pass, granularity_out)
 }
@@ -2265,7 +2265,7 @@ unsafe extern "system" fn stub_create_command_pool(device: VkDevice, create_info
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateCommandPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateCommandPool>::NAME_CSTR);
+    let fp: PFN_vkCreateCommandPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_command_pool = fp;
     (fp.0)(device, create_info, allocator, command_pool_out)
 }
@@ -2274,7 +2274,7 @@ unsafe extern "system" fn stub_destroy_command_pool(device: VkDevice, command_po
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyCommandPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyCommandPool>::NAME_CSTR);
+    let fp: PFN_vkDestroyCommandPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_command_pool = fp;
     (fp.0)(device, command_pool, allocator)
 }
@@ -2283,7 +2283,7 @@ unsafe extern "system" fn stub_reset_command_pool(device: VkDevice, command_pool
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkResetCommandPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkResetCommandPool>::NAME_CSTR);
+    let fp: PFN_vkResetCommandPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.reset_command_pool = fp;
     (fp.0)(device, command_pool, flags)
 }
@@ -2292,7 +2292,7 @@ unsafe extern "system" fn stub_allocate_command_buffers(device: VkDevice, alloca
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkAllocateCommandBuffers = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkAllocateCommandBuffers>::NAME_CSTR);
+    let fp: PFN_vkAllocateCommandBuffers = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.allocate_command_buffers = fp;
     (fp.0)(device, allocate_info, command_buffers_out)
 }
@@ -2301,7 +2301,7 @@ unsafe extern "system" fn stub_free_command_buffers(device: VkDevice, command_po
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkFreeCommandBuffers = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkFreeCommandBuffers>::NAME_CSTR);
+    let fp: PFN_vkFreeCommandBuffers = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.free_command_buffers = fp;
     (fp.0)(device, command_pool, command_buffer_count, command_buffers)
 }
@@ -2310,7 +2310,7 @@ unsafe extern "system" fn stub_begin_command_buffer(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkBeginCommandBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBeginCommandBuffer>::NAME_CSTR);
+    let fp: PFN_vkBeginCommandBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.begin_command_buffer = fp;
     (fp.0)(command_buffer, begin_info)
 }
@@ -2319,7 +2319,7 @@ unsafe extern "system" fn stub_end_command_buffer(command_buffer: VkCommandBuffe
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEndCommandBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEndCommandBuffer>::NAME_CSTR);
+    let fp: PFN_vkEndCommandBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.end_command_buffer = fp;
     (fp.0)(command_buffer)
 }
@@ -2328,7 +2328,7 @@ unsafe extern "system" fn stub_reset_command_buffer(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkResetCommandBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkResetCommandBuffer>::NAME_CSTR);
+    let fp: PFN_vkResetCommandBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.reset_command_buffer = fp;
     (fp.0)(command_buffer, flags)
 }
@@ -2337,7 +2337,7 @@ unsafe extern "system" fn stub_cmd_bind_pipeline(command_buffer: VkCommandBuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBindPipeline = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBindPipeline>::NAME_CSTR);
+    let fp: PFN_vkCmdBindPipeline = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_bind_pipeline = fp;
     (fp.0)(command_buffer, pipeline_bind_point, pipeline)
 }
@@ -2346,7 +2346,7 @@ unsafe extern "system" fn stub_cmd_set_viewport(command_buffer: VkCommandBuffer,
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetViewport = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetViewport>::NAME_CSTR);
+    let fp: PFN_vkCmdSetViewport = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_viewport = fp;
     (fp.0)(command_buffer, first_viewport, viewport_count, viewports)
 }
@@ -2355,7 +2355,7 @@ unsafe extern "system" fn stub_cmd_set_scissor(command_buffer: VkCommandBuffer, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetScissor = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetScissor>::NAME_CSTR);
+    let fp: PFN_vkCmdSetScissor = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_scissor = fp;
     (fp.0)(command_buffer, first_scissor, scissor_count, scissors)
 }
@@ -2364,7 +2364,7 @@ unsafe extern "system" fn stub_cmd_set_line_width(command_buffer: VkCommandBuffe
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetLineWidth = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetLineWidth>::NAME_CSTR);
+    let fp: PFN_vkCmdSetLineWidth = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_line_width = fp;
     (fp.0)(command_buffer, line_width)
 }
@@ -2373,7 +2373,7 @@ unsafe extern "system" fn stub_cmd_set_depth_bias(command_buffer: VkCommandBuffe
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetDepthBias = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetDepthBias>::NAME_CSTR);
+    let fp: PFN_vkCmdSetDepthBias = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_depth_bias = fp;
     (fp.0)(command_buffer, depth_bias_constant_factor, depth_bias_clamp, depth_bias_slope_factor)
 }
@@ -2382,7 +2382,7 @@ unsafe extern "system" fn stub_cmd_set_blend_constants(command_buffer: VkCommand
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetBlendConstants = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetBlendConstants>::NAME_CSTR);
+    let fp: PFN_vkCmdSetBlendConstants = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_blend_constants = fp;
     (fp.0)(command_buffer, blend_constants)
 }
@@ -2391,7 +2391,7 @@ unsafe extern "system" fn stub_cmd_set_depth_bounds(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetDepthBounds = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetDepthBounds>::NAME_CSTR);
+    let fp: PFN_vkCmdSetDepthBounds = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_depth_bounds = fp;
     (fp.0)(command_buffer, min_depth_bounds, max_depth_bounds)
 }
@@ -2400,7 +2400,7 @@ unsafe extern "system" fn stub_cmd_set_stencil_compare_mask(command_buffer: VkCo
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetStencilCompareMask = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetStencilCompareMask>::NAME_CSTR);
+    let fp: PFN_vkCmdSetStencilCompareMask = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_stencil_compare_mask = fp;
     (fp.0)(command_buffer, face_mask, compare_mask)
 }
@@ -2409,7 +2409,7 @@ unsafe extern "system" fn stub_cmd_set_stencil_write_mask(command_buffer: VkComm
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetStencilWriteMask = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetStencilWriteMask>::NAME_CSTR);
+    let fp: PFN_vkCmdSetStencilWriteMask = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_stencil_write_mask = fp;
     (fp.0)(command_buffer, face_mask, write_mask)
 }
@@ -2418,7 +2418,7 @@ unsafe extern "system" fn stub_cmd_set_stencil_reference(command_buffer: VkComma
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetStencilReference = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetStencilReference>::NAME_CSTR);
+    let fp: PFN_vkCmdSetStencilReference = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_stencil_reference = fp;
     (fp.0)(command_buffer, face_mask, reference)
 }
@@ -2427,7 +2427,7 @@ unsafe extern "system" fn stub_cmd_bind_descriptor_sets(command_buffer: VkComman
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBindDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBindDescriptorSets>::NAME_CSTR);
+    let fp: PFN_vkCmdBindDescriptorSets = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_bind_descriptor_sets = fp;
     (fp.0)(command_buffer, pipeline_bind_point, layout, first_set, descriptor_set_count, descriptor_sets, dynamic_offset_count, dynamic_offsets)
 }
@@ -2436,7 +2436,7 @@ unsafe extern "system" fn stub_cmd_bind_index_buffer(command_buffer: VkCommandBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBindIndexBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBindIndexBuffer>::NAME_CSTR);
+    let fp: PFN_vkCmdBindIndexBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_bind_index_buffer = fp;
     (fp.0)(command_buffer, buffer, offset, index_type)
 }
@@ -2445,7 +2445,7 @@ unsafe extern "system" fn stub_cmd_bind_vertex_buffers(command_buffer: VkCommand
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBindVertexBuffers = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBindVertexBuffers>::NAME_CSTR);
+    let fp: PFN_vkCmdBindVertexBuffers = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_bind_vertex_buffers = fp;
     (fp.0)(command_buffer, first_binding, binding_count, buffers, offsets)
 }
@@ -2454,7 +2454,7 @@ unsafe extern "system" fn stub_cmd_draw(command_buffer: VkCommandBuffer, vertex_
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdDraw = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdDraw>::NAME_CSTR);
+    let fp: PFN_vkCmdDraw = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_draw = fp;
     (fp.0)(command_buffer, vertex_count, instance_count, first_vertex, first_index)
 }
@@ -2463,7 +2463,7 @@ unsafe extern "system" fn stub_cmd_draw_indexed(command_buffer: VkCommandBuffer,
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdDrawIndexed = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdDrawIndexed>::NAME_CSTR);
+    let fp: PFN_vkCmdDrawIndexed = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_draw_indexed = fp;
     (fp.0)(command_buffer, index_count, instance_count, first_index, vertex_offset, first_instance)
 }
@@ -2472,7 +2472,7 @@ unsafe extern "system" fn stub_cmd_draw_indirect(command_buffer: VkCommandBuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdDrawIndirect = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdDrawIndirect>::NAME_CSTR);
+    let fp: PFN_vkCmdDrawIndirect = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_draw_indirect = fp;
     (fp.0)(command_buffer, buffer, offset, draw_count, stride)
 }
@@ -2481,7 +2481,7 @@ unsafe extern "system" fn stub_cmd_draw_indexed_indirect(command_buffer: VkComma
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdDrawIndexedIndirect = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdDrawIndexedIndirect>::NAME_CSTR);
+    let fp: PFN_vkCmdDrawIndexedIndirect = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_draw_indexed_indirect = fp;
     (fp.0)(command_buffer, buffer, offset, draw_count, stride)
 }
@@ -2490,7 +2490,7 @@ unsafe extern "system" fn stub_cmd_dispatch(command_buffer: VkCommandBuffer, gro
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdDispatch = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdDispatch>::NAME_CSTR);
+    let fp: PFN_vkCmdDispatch = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_dispatch = fp;
     (fp.0)(command_buffer, group_count_x, group_count_y, group_count_z)
 }
@@ -2499,7 +2499,7 @@ unsafe extern "system" fn stub_cmd_dispatch_indirect(command_buffer: VkCommandBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdDispatchIndirect = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdDispatchIndirect>::NAME_CSTR);
+    let fp: PFN_vkCmdDispatchIndirect = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_dispatch_indirect = fp;
     (fp.0)(command_buffer, buffer, offset)
 }
@@ -2508,7 +2508,7 @@ unsafe extern "system" fn stub_cmd_copy_buffer(command_buffer: VkCommandBuffer, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdCopyBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdCopyBuffer>::NAME_CSTR);
+    let fp: PFN_vkCmdCopyBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_copy_buffer = fp;
     (fp.0)(command_buffer, src_buffer, dst_buffer, region_count, regions)
 }
@@ -2517,7 +2517,7 @@ unsafe extern "system" fn stub_cmd_copy_image(command_buffer: VkCommandBuffer, s
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdCopyImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdCopyImage>::NAME_CSTR);
+    let fp: PFN_vkCmdCopyImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_copy_image = fp;
     (fp.0)(command_buffer, src_image, src_image_layout, dst_image, dst_image_layout, region_count, regions)
 }
@@ -2526,7 +2526,7 @@ unsafe extern "system" fn stub_cmd_blit_image(command_buffer: VkCommandBuffer, s
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBlitImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBlitImage>::NAME_CSTR);
+    let fp: PFN_vkCmdBlitImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_blit_image = fp;
     (fp.0)(command_buffer, src_image, src_image_layout, dst_image, dst_image_layout, region_count, regions, filter)
 }
@@ -2535,7 +2535,7 @@ unsafe extern "system" fn stub_cmd_copy_buffer_to_image(command_buffer: VkComman
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdCopyBufferToImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdCopyBufferToImage>::NAME_CSTR);
+    let fp: PFN_vkCmdCopyBufferToImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_copy_buffer_to_image = fp;
     (fp.0)(command_buffer, src_buffer, dst_image, dst_image_layout, region_count, regions)
 }
@@ -2544,7 +2544,7 @@ unsafe extern "system" fn stub_cmd_copy_image_to_buffer(command_buffer: VkComman
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdCopyImageToBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdCopyImageToBuffer>::NAME_CSTR);
+    let fp: PFN_vkCmdCopyImageToBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_copy_image_to_buffer = fp;
     (fp.0)(command_buffer, src_image, src_image_layout, dst_buffer, region_count, regions)
 }
@@ -2553,7 +2553,7 @@ unsafe extern "system" fn stub_cmd_update_buffer(command_buffer: VkCommandBuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdUpdateBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdUpdateBuffer>::NAME_CSTR);
+    let fp: PFN_vkCmdUpdateBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_update_buffer = fp;
     (fp.0)(command_buffer, dst_buffer, dst_offset, data_size, data)
 }
@@ -2562,7 +2562,7 @@ unsafe extern "system" fn stub_cmd_fill_buffer(command_buffer: VkCommandBuffer, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdFillBuffer = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdFillBuffer>::NAME_CSTR);
+    let fp: PFN_vkCmdFillBuffer = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_fill_buffer = fp;
     (fp.0)(command_buffer, dst_buffer, dst_offset, size, data)
 }
@@ -2571,7 +2571,7 @@ unsafe extern "system" fn stub_cmd_clear_color_image(command_buffer: VkCommandBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdClearColorImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdClearColorImage>::NAME_CSTR);
+    let fp: PFN_vkCmdClearColorImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_clear_color_image = fp;
     (fp.0)(command_buffer, image, image_layout, color, range_count, ranges)
 }
@@ -2580,7 +2580,7 @@ unsafe extern "system" fn stub_cmd_clear_depth_stencil_image(command_buffer: VkC
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdClearDepthStencilImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdClearDepthStencilImage>::NAME_CSTR);
+    let fp: PFN_vkCmdClearDepthStencilImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_clear_depth_stencil_image = fp;
     (fp.0)(command_buffer, image, image_layout, depth_stencil, range_count, ranges)
 }
@@ -2589,7 +2589,7 @@ unsafe extern "system" fn stub_cmd_clear_attachments(command_buffer: VkCommandBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdClearAttachments = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdClearAttachments>::NAME_CSTR);
+    let fp: PFN_vkCmdClearAttachments = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_clear_attachments = fp;
     (fp.0)(command_buffer, attachment_count, attachments, rect_count, rects)
 }
@@ -2598,7 +2598,7 @@ unsafe extern "system" fn stub_cmd_resolve_image(command_buffer: VkCommandBuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdResolveImage = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdResolveImage>::NAME_CSTR);
+    let fp: PFN_vkCmdResolveImage = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_resolve_image = fp;
     (fp.0)(command_buffer, src_image, src_image_layout, dst_image, dst_image_layout, region_count, regions)
 }
@@ -2607,7 +2607,7 @@ unsafe extern "system" fn stub_cmd_set_event(command_buffer: VkCommandBuffer, ev
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdSetEvent = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdSetEvent>::NAME_CSTR);
+    let fp: PFN_vkCmdSetEvent = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_set_event = fp;
     (fp.0)(command_buffer, event, stage_mask)
 }
@@ -2616,7 +2616,7 @@ unsafe extern "system" fn stub_cmd_reset_event(command_buffer: VkCommandBuffer, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdResetEvent = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdResetEvent>::NAME_CSTR);
+    let fp: PFN_vkCmdResetEvent = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_reset_event = fp;
     (fp.0)(command_buffer, event, stage_mask)
 }
@@ -2625,7 +2625,7 @@ unsafe extern "system" fn stub_cmd_wait_events(command_buffer: VkCommandBuffer, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdWaitEvents = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdWaitEvents>::NAME_CSTR);
+    let fp: PFN_vkCmdWaitEvents = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_wait_events = fp;
     (fp.0)(command_buffer, event_count, events, src_stage_mask, dst_stage_mask, memory_barrier_count, memory_barriers, buffer_memory_barrier_count, buffer_memory_barriers, image_memory_barrier_count, image_memory_barriers)
 }
@@ -2634,7 +2634,7 @@ unsafe extern "system" fn stub_cmd_pipeline_barrier(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdPipelineBarrier = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdPipelineBarrier>::NAME_CSTR);
+    let fp: PFN_vkCmdPipelineBarrier = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_pipeline_barrier = fp;
     (fp.0)(command_buffer, src_stage_mask, dst_stage_mask, dependency_flags, memory_barrier_count, memory_barriers, buffer_memory_barrier_count, buffer_memory_barriers, image_memory_barrier_count, image_memory_barriers)
 }
@@ -2643,7 +2643,7 @@ unsafe extern "system" fn stub_cmd_begin_query(command_buffer: VkCommandBuffer, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBeginQuery = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBeginQuery>::NAME_CSTR);
+    let fp: PFN_vkCmdBeginQuery = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_begin_query = fp;
     (fp.0)(command_buffer, query_pool, query, flags)
 }
@@ -2652,7 +2652,7 @@ unsafe extern "system" fn stub_cmd_end_query(command_buffer: VkCommandBuffer, qu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdEndQuery = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdEndQuery>::NAME_CSTR);
+    let fp: PFN_vkCmdEndQuery = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_end_query = fp;
     (fp.0)(command_buffer, query_pool, query)
 }
@@ -2661,7 +2661,7 @@ unsafe extern "system" fn stub_cmd_reset_query_pool(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdResetQueryPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdResetQueryPool>::NAME_CSTR);
+    let fp: PFN_vkCmdResetQueryPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_reset_query_pool = fp;
     (fp.0)(command_buffer, query_pool, first_query, query_count)
 }
@@ -2670,7 +2670,7 @@ unsafe extern "system" fn stub_cmd_write_timestamp(command_buffer: VkCommandBuff
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdWriteTimestamp = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdWriteTimestamp>::NAME_CSTR);
+    let fp: PFN_vkCmdWriteTimestamp = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_write_timestamp = fp;
     (fp.0)(command_buffer, pipeline_stage, query_pool, query)
 }
@@ -2679,7 +2679,7 @@ unsafe extern "system" fn stub_cmd_copy_query_pool_results(command_buffer: VkCom
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdCopyQueryPoolResults = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdCopyQueryPoolResults>::NAME_CSTR);
+    let fp: PFN_vkCmdCopyQueryPoolResults = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_copy_query_pool_results = fp;
     (fp.0)(command_buffer, query_pool, first_query, query_count, dst_buffer, dst_offset, stride, flags)
 }
@@ -2688,7 +2688,7 @@ unsafe extern "system" fn stub_cmd_push_constants(command_buffer: VkCommandBuffe
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdPushConstants = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdPushConstants>::NAME_CSTR);
+    let fp: PFN_vkCmdPushConstants = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_push_constants = fp;
     (fp.0)(command_buffer, layout, stage_flags, offset, size, values)
 }
@@ -2697,7 +2697,7 @@ unsafe extern "system" fn stub_cmd_begin_render_pass(command_buffer: VkCommandBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBeginRenderPass = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBeginRenderPass>::NAME_CSTR);
+    let fp: PFN_vkCmdBeginRenderPass = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_begin_render_pass = fp;
     (fp.0)(command_buffer, render_pass_begin_info, contents)
 }
@@ -2706,7 +2706,7 @@ unsafe extern "system" fn stub_cmd_next_subpass(command_buffer: VkCommandBuffer,
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdNextSubpass = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdNextSubpass>::NAME_CSTR);
+    let fp: PFN_vkCmdNextSubpass = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_next_subpass = fp;
     (fp.0)(command_buffer, contents)
 }
@@ -2715,7 +2715,7 @@ unsafe extern "system" fn stub_cmd_end_render_pass(command_buffer: VkCommandBuff
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdEndRenderPass = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdEndRenderPass>::NAME_CSTR);
+    let fp: PFN_vkCmdEndRenderPass = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_end_render_pass = fp;
     (fp.0)(command_buffer)
 }
@@ -2724,7 +2724,7 @@ unsafe extern "system" fn stub_cmd_execute_commands(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdExecuteCommands = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdExecuteCommands>::NAME_CSTR);
+    let fp: PFN_vkCmdExecuteCommands = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_execute_commands = fp;
     (fp.0)(command_buffer, command_buffer_count, command_buffers)
 }
@@ -2734,7 +2734,7 @@ unsafe extern "system" fn stub_enumerate_instance_version(api_version: *mut u32)
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkEnumerateInstanceVersion = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkEnumerateInstanceVersion>::NAME_CSTR);
+    let fp: PFN_vkEnumerateInstanceVersion = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.enumerate_instance_version = fp;
     (fp.0)(api_version)
 }
@@ -2744,7 +2744,7 @@ unsafe extern "system" fn stub_trim_command_pool(device: VkDevice, command_pool:
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkTrimCommandPool = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkTrimCommandPool>::NAME_CSTR);
+    let fp: PFN_vkTrimCommandPool = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.trim_command_pool = fp;
     (fp.0)(device, command_pool, flags)
 }
@@ -2754,7 +2754,7 @@ unsafe extern "system" fn stub_destroy_surface_khr(instance: VkInstance, surface
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroySurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroySurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkDestroySurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_surface_khr = fp;
     (fp.0)(instance, surface, allocator)
 }
@@ -2764,7 +2764,7 @@ unsafe extern "system" fn stub_get_physical_device_surface_support_khr(physical_
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceSurfaceSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSurfaceSupportKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceSurfaceSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_surface_support_khr = fp;
     (fp.0)(physical_device, queue_family_index, surface, supported_out)
 }
@@ -2774,7 +2774,7 @@ unsafe extern "system" fn stub_get_physical_device_surface_capabilities_khr(phys
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_surface_capabilities_khr = fp;
     (fp.0)(physical_device, surface, surface_capabilities_out)
 }
@@ -2784,7 +2784,7 @@ unsafe extern "system" fn stub_get_physical_device_surface_formats_khr(physical_
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSurfaceFormatsKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_surface_formats_khr = fp;
     (fp.0)(physical_device, surface, surface_format_count_out, surface_formats_out)
 }
@@ -2794,7 +2794,7 @@ unsafe extern "system" fn stub_get_physical_device_surface_present_modes_khr(phy
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSurfacePresentModesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_surface_present_modes_khr = fp;
     (fp.0)(physical_device, surface, present_mode_count_out, present_modes_out)
 }
@@ -2804,7 +2804,7 @@ unsafe extern "system" fn stub_create_swapchain_khr(device: VkDevice, create_inf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateSwapchainKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateSwapchainKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateSwapchainKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_swapchain_khr = fp;
     (fp.0)(device, create_info, allocator, swapchain_out)
 }
@@ -2814,7 +2814,7 @@ unsafe extern "system" fn stub_destroy_swapchain_khr(device: VkDevice, swapchain
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroySwapchainKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroySwapchainKHR>::NAME_CSTR);
+    let fp: PFN_vkDestroySwapchainKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_swapchain_khr = fp;
     (fp.0)(device, swapchain, allocator)
 }
@@ -2824,7 +2824,7 @@ unsafe extern "system" fn stub_get_swapchain_images_khr(device: VkDevice, swapch
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetSwapchainImagesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetSwapchainImagesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetSwapchainImagesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_swapchain_images_khr = fp;
     (fp.0)(device, swapchain, swapchain_image_count_out, swapchain_images_out)
 }
@@ -2834,7 +2834,7 @@ unsafe extern "system" fn stub_acquire_next_image_khr(device: VkDevice, swapchai
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkAcquireNextImageKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkAcquireNextImageKHR>::NAME_CSTR);
+    let fp: PFN_vkAcquireNextImageKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.acquire_next_image_khr = fp;
     (fp.0)(device, swapchain, timeout, semaphore, fence, image_index_out)
 }
@@ -2844,7 +2844,7 @@ unsafe extern "system" fn stub_queue_present_khr(queue: VkQueue, present_info: *
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkQueuePresentKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkQueuePresentKHR>::NAME_CSTR);
+    let fp: PFN_vkQueuePresentKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.queue_present_khr = fp;
     (fp.0)(queue, present_info)
 }
@@ -2854,7 +2854,7 @@ unsafe extern "system" fn stub_create_xlib_surface_khr(instance: VkInstance, cre
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateXlibSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateXlibSurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateXlibSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_xlib_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2864,7 +2864,7 @@ unsafe extern "system" fn stub_get_physical_device_xlib_presentation_support_khr
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_xlib_presentation_support_khr = fp;
     (fp.0)(physical_device, queue_family_index, dpy, visual_id)
 }
@@ -2874,7 +2874,7 @@ unsafe extern "system" fn stub_create_xcb_surface_khr(instance: VkInstance, crea
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateXcbSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateXcbSurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateXcbSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_xcb_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2884,7 +2884,7 @@ unsafe extern "system" fn stub_get_physical_device_xcb_presentation_support_khr(
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_xcb_presentation_support_khr = fp;
     (fp.0)(physical_device, queue_family_index, connection, visual_id)
 }
@@ -2894,7 +2894,7 @@ unsafe extern "system" fn stub_create_wayland_surface_khr(instance: VkInstance, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateWaylandSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateWaylandSurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateWaylandSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_wayland_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2904,7 +2904,7 @@ unsafe extern "system" fn stub_get_physical_device_wayland_presentation_support_
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_wayland_presentation_support_khr = fp;
     (fp.0)(physical_device, queue_family_index, display)
 }
@@ -2914,7 +2914,7 @@ unsafe extern "system" fn stub_create_android_surface_khr(instance: VkInstance, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateAndroidSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateAndroidSurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateAndroidSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_android_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2924,7 +2924,7 @@ unsafe extern "system" fn stub_create_win32_surface_khr(instance: VkInstance, cr
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateWin32SurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateWin32SurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateWin32SurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_win32_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2934,7 +2934,7 @@ unsafe extern "system" fn stub_get_physical_device_win32_presentation_support_kh
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_win32_presentation_support_khr = fp;
     (fp.0)(physical_device, queue_family_index)
 }
@@ -2944,7 +2944,7 @@ unsafe extern "system" fn stub_create_macos_surface_mvk(instance: VkInstance, cr
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateMacOSSurfaceMVK = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateMacOSSurfaceMVK>::NAME_CSTR);
+    let fp: PFN_vkCreateMacOSSurfaceMVK = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_macos_surface_mvk = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2954,7 +2954,7 @@ unsafe extern "system" fn stub_create_metal_surface_ext(instance: VkInstance, cr
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateMetalSurfaceEXT = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateMetalSurfaceEXT>::NAME_CSTR);
+    let fp: PFN_vkCreateMetalSurfaceEXT = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_metal_surface_ext = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -2964,7 +2964,7 @@ unsafe extern "system" fn stub_get_physical_device_display_properties_khr(physic
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceDisplayPropertiesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceDisplayPropertiesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceDisplayPropertiesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_display_properties_khr = fp;
     (fp.0)(physical_device, property_count_out, properties_out)
 }
@@ -2974,7 +2974,7 @@ unsafe extern "system" fn stub_get_physical_device_display_plane_properties_khr(
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_display_plane_properties_khr = fp;
     (fp.0)(physical_device, property_count_out, properties_out)
 }
@@ -2984,7 +2984,7 @@ unsafe extern "system" fn stub_get_display_plane_supported_displays_khr(physical
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetDisplayPlaneSupportedDisplaysKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetDisplayPlaneSupportedDisplaysKHR>::NAME_CSTR);
+    let fp: PFN_vkGetDisplayPlaneSupportedDisplaysKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_display_plane_supported_displays_khr = fp;
     (fp.0)(physical_device, plane_index, display_count_out, displays_out)
 }
@@ -2994,7 +2994,7 @@ unsafe extern "system" fn stub_get_display_mode_properties_khr(physical_device: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetDisplayModePropertiesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetDisplayModePropertiesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetDisplayModePropertiesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_display_mode_properties_khr = fp;
     (fp.0)(physical_device, display, property_count_out, properties_out)
 }
@@ -3004,7 +3004,7 @@ unsafe extern "system" fn stub_create_display_mode_khr(physical_device: VkPhysic
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateDisplayModeKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDisplayModeKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateDisplayModeKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_display_mode_khr = fp;
     (fp.0)(physical_device, display, create_info, allocator, mode_out)
 }
@@ -3014,7 +3014,7 @@ unsafe extern "system" fn stub_get_display_plane_capabilities_khr(physcial_devic
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetDisplayPlaneCapabilitiesKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetDisplayPlaneCapabilitiesKHR>::NAME_CSTR);
+    let fp: PFN_vkGetDisplayPlaneCapabilitiesKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_display_plane_capabilities_khr = fp;
     (fp.0)(physcial_device, mode, plane_index, capabilities_out)
 }
@@ -3024,7 +3024,7 @@ unsafe extern "system" fn stub_create_display_plane_surface_khr(instance: VkInst
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateDisplayPlaneSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDisplayPlaneSurfaceKHR>::NAME_CSTR);
+    let fp: PFN_vkCreateDisplayPlaneSurfaceKHR = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_display_plane_surface_khr = fp;
     (fp.0)(instance, create_info, allocator, surface_out)
 }
@@ -3034,7 +3034,7 @@ unsafe extern "system" fn stub_get_physical_device_features2(physical_device: Vk
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceFeatures2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceFeatures2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceFeatures2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_features2 = fp;
     (fp.0)(physical_device, features_out)
 }
@@ -3044,7 +3044,7 @@ unsafe extern "system" fn stub_get_physical_device_format_properties2(physical_d
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceFormatProperties2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_format_properties2 = fp;
     (fp.0)(physical_device, format, format_properties_out)
 }
@@ -3054,7 +3054,7 @@ unsafe extern "system" fn stub_get_physical_device_image_format_properties2(phys
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceImageFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceImageFormatProperties2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceImageFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_image_format_properties2 = fp;
     (fp.0)(physical_device, image_format_info, image_format_properties_out)
 }
@@ -3064,7 +3064,7 @@ unsafe extern "system" fn stub_get_physical_device_memory_properties2(physical_d
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceMemoryProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceMemoryProperties2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceMemoryProperties2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_memory_properties2 = fp;
     (fp.0)(physical_device, memory_properties_out)
 }
@@ -3074,7 +3074,7 @@ unsafe extern "system" fn stub_get_physical_device_properties2(physical_device: 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceProperties2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceProperties2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_properties2 = fp;
     (fp.0)(physical_device, properties_out)
 }
@@ -3084,7 +3084,7 @@ unsafe extern "system" fn stub_get_physical_device_queue_family_properties2(phys
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceQueueFamilyProperties2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_queue_family_properties2 = fp;
     (fp.0)(physical_device, queue_family_property_count, queue_family_properties_out)
 }
@@ -3094,7 +3094,7 @@ unsafe extern "system" fn stub_get_physical_device_sparse_image_format_propertie
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetPhysicalDeviceSparseImageFormatProperties2>::NAME_CSTR);
+    let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_physical_device_sparse_image_format_properties2 = fp;
     (fp.0)(physical_device, format_info, property_count, properties_out)
 }
@@ -3104,7 +3104,7 @@ unsafe extern "system" fn stub_create_descriptor_update_template(device: VkDevic
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateDescriptorUpdateTemplate = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateDescriptorUpdateTemplate>::NAME_CSTR);
+    let fp: PFN_vkCreateDescriptorUpdateTemplate = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_descriptor_update_template = fp;
     (fp.0)(device, create_info, allocator, descriptor_update_template_out)
 }
@@ -3114,7 +3114,7 @@ unsafe extern "system" fn stub_destroy_descriptor_update_template(device: VkDevi
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkDestroyDescriptorUpdateTemplate = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkDestroyDescriptorUpdateTemplate>::NAME_CSTR);
+    let fp: PFN_vkDestroyDescriptorUpdateTemplate = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.destroy_descriptor_update_template = fp;
     (fp.0)(device, descriptor_update_template, allocator)
 }
@@ -3124,7 +3124,7 @@ unsafe extern "system" fn stub_update_descriptor_set_with_template(device: VkDev
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkUpdateDescriptorSetWithTemplate = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkUpdateDescriptorSetWithTemplate>::NAME_CSTR);
+    let fp: PFN_vkUpdateDescriptorSetWithTemplate = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.update_descriptor_set_with_template = fp;
     (fp.0)(device, descriptor_set, descriptor_update_template, data)
 }
@@ -3134,7 +3134,7 @@ unsafe extern "system" fn stub_get_buffer_memory_requirements2(device: VkDevice,
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetBufferMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetBufferMemoryRequirements2>::NAME_CSTR);
+    let fp: PFN_vkGetBufferMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_buffer_memory_requirements2 = fp;
     (fp.0)(device, info, memory_requirements)
 }
@@ -3144,7 +3144,7 @@ unsafe extern "system" fn stub_get_image_memory_requirements2(device: VkDevice, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetImageMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageMemoryRequirements2>::NAME_CSTR);
+    let fp: PFN_vkGetImageMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_image_memory_requirements2 = fp;
     (fp.0)(device, info, memory_requirements)
 }
@@ -3154,7 +3154,7 @@ unsafe extern "system" fn stub_get_image_sparse_memory_requirements2(device: VkD
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkGetImageSparseMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkGetImageSparseMemoryRequirements2>::NAME_CSTR);
+    let fp: PFN_vkGetImageSparseMemoryRequirements2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.get_image_sparse_memory_requirements2 = fp;
     (fp.0)(device, info, sparse_memory_requirements_count, sparse_memory_requirements)
 }
@@ -3164,7 +3164,7 @@ unsafe extern "system" fn stub_bind_buffer_memory2(device: VkDevice, bind_info_c
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkBindBufferMemory2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBindBufferMemory2>::NAME_CSTR);
+    let fp: PFN_vkBindBufferMemory2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.bind_buffer_memory2 = fp;
     (fp.0)(device, bind_info_count, bind_infos)
 }
@@ -3174,7 +3174,7 @@ unsafe extern "system" fn stub_bind_image_memory2(device: VkDevice, bind_info_co
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkBindImageMemory2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkBindImageMemory2>::NAME_CSTR);
+    let fp: PFN_vkBindImageMemory2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.bind_image_memory2 = fp;
     (fp.0)(device, bind_info_count, bind_infos)
 }
@@ -3184,7 +3184,7 @@ unsafe extern "system" fn stub_create_render_pass2(device: VkDevice, create_info
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCreateRenderPass2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCreateRenderPass2>::NAME_CSTR);
+    let fp: PFN_vkCreateRenderPass2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.create_render_pass2 = fp;
     (fp.0)(device, create_info, allocator, out)
 }
@@ -3194,7 +3194,7 @@ unsafe extern "system" fn stub_cmd_begin_render_pass2(command_buffer: VkCommandB
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdBeginRenderPass2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdBeginRenderPass2>::NAME_CSTR);
+    let fp: PFN_vkCmdBeginRenderPass2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_begin_render_pass2 = fp;
     (fp.0)(command_buffer, begin_info, begin_subpass_info)
 }
@@ -3204,7 +3204,7 @@ unsafe extern "system" fn stub_cmd_next_subpass2(command_buffer: VkCommandBuffer
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdNextSubpass2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdNextSubpass2>::NAME_CSTR);
+    let fp: PFN_vkCmdNextSubpass2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_next_subpass2 = fp;
     (fp.0)(command_buffer, begin_subpass_info, end_subpass_info)
 }
@@ -3214,7 +3214,7 @@ unsafe extern "system" fn stub_cmd_end_render_pass2(command_buffer: VkCommandBuf
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdEndRenderPass2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdEndRenderPass2>::NAME_CSTR);
+    let fp: PFN_vkCmdEndRenderPass2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_end_render_pass2 = fp;
     (fp.0)(command_buffer, end_subpass_info)
 }
@@ -3224,7 +3224,7 @@ unsafe extern "system" fn stub_cmd_pipeline_barrier2(command_buffer: VkCommandBu
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdPipelineBarrier2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdPipelineBarrier2>::NAME_CSTR);
+    let fp: PFN_vkCmdPipelineBarrier2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_pipeline_barrier2 = fp;
     (fp.0)(command_buffer, dependency_info)
 }
@@ -3234,7 +3234,7 @@ unsafe extern "system" fn stub_queue_submit2(queue: VkQueue, submit_count: u32, 
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkQueueSubmit2 = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkQueueSubmit2>::NAME_CSTR);
+    let fp: PFN_vkQueueSubmit2 = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.queue_submit2 = fp;
     (fp.0)(queue, submit_count, submits, fence)
 }
@@ -3244,7 +3244,7 @@ unsafe extern "system" fn stub_cmd_push_descriptor_set(command_buffer: VkCommand
     use crate::resolver::ResolverInterface;
     use crate::resolver::PFN;
 
-    let fp: PFN_vkCmdPushDescriptorSet = crate::resolver::get_resolver().load_function_unconstrainted(<PFN_vkCmdPushDescriptorSet>::NAME_CSTR);
+    let fp: PFN_vkCmdPushDescriptorSet = crate::resolver::get_resolver().load_function_unconstrainted();
     FPTBL.cmd_push_descriptor_set = fp;
     (fp.0)(command_buffer, pipeline_bind_point, layout, set, descriptor_write_count, descriptor_writes)
 }

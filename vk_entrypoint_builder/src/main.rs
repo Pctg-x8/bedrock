@@ -191,7 +191,7 @@ unsafe extern "system" fn {}({})"#,
         writeln!(sink, "    use crate::resolver::PFN;\n")?;
         writeln!(
             sink,
-            r#"    let fp: {pfn} = crate::resolver::get_resolver().load_function_unconstrainted(<{pfn}>::NAME_CSTR);"#,
+            r#"    let fp: {pfn} = crate::resolver::get_resolver().load_function_unconstrainted();"#,
             pfn = PFNNameWriter(self)
         )?;
         writeln!(sink, r#"    FPTBL.{} = fp;"#, ExportNameWriter(self))?;

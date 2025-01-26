@@ -326,10 +326,7 @@ impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
     /// Split the lifetime from owner by cloning it.
     #[inline(always)]
     pub fn clone_parent(&self) -> PhysicalDeviceObject<Owner> {
-        let r = PhysicalDeviceObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
+        PhysicalDeviceObject(self.0, self.1.clone())
     }
 }
 
