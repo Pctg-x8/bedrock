@@ -1525,16 +1525,20 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    fn allocate_command_buffer_array_raw<const N: usize>(
-        &self,
+    fn allocate_command_buffer_array_raw<'s, const N: usize>(
+        &'s self,
         info: &CommandBufferFixedCountAllocateInfo<N>,
-        sink: &mut [VkCommandBuffer; N],
-    ) -> crate::Result<()> {
+    ) -> crate::Result<[CommandBufferObject<&'s Self>; N]> {
+        // このあとすぐ初期化されるのでいったんinvalidでもOK
+        #[allow(invalid_value)]
+        let mut sink =
+            [const { unsafe { core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::uninit().assume_init() } }; N];
         unsafe {
-            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr())
-                .into_result()
-                .map(drop)
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
+                .into_result()?;
         }
+
+        Ok(sink)
     }
 
     /// Invalidate `MappedMemoryRange`s
