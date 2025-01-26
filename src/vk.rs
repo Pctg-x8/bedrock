@@ -2060,7 +2060,7 @@ pub struct VkEventCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO)]
 pub struct VkQueryPoolCreateInfo {
     pub sType: VkStructureType,

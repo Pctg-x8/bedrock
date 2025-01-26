@@ -1409,6 +1409,33 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Ok(unsafe { h.assume_init() })
     }
 
+    /// Create a new query pool object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_query_pool_raw(
+        &self,
+        info: &QueryPoolCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkQueryPool> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_query_pool(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
     /// Allocate command buffers from an existing command pool
     /// # Failures
     /// On failure, this command returns
