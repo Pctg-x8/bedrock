@@ -1,5 +1,3 @@
-use std::ops::{BitOr, BitOrAssign, Deref, DerefMut, Range};
-
 use crate::{
     ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, DeviceChildHandle, ImageMemoryBarrier, MemoryBound,
     VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
@@ -17,30 +15,74 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
 
     fn dimension(&self) -> VkImageViewType;
 
-    /// Query the memory requirements for a sparse image
+    /// Query a count of the memory requirements for a sparse image
     #[implements]
-    fn sparse_requirements(&self) -> Vec<VkSparseImageMemoryRequirements> {
+    #[inline]
+    fn sparse_requirement_count(&self) -> u32 {
         let mut n = 0;
         unsafe {
             crate::vkfn::get_image_sparse_memory_requirements(
                 self.device_handle(),
                 self.native_ptr(),
                 &mut n,
-                std::ptr::null_mut(),
+                core::ptr::null_mut(),
             );
-        };
-        let mut v = Vec::with_capacity(n as _);
+        }
+
+        n
+    }
+
+    /// Query the memory requirements for a sparse image
+    #[implements]
+    #[inline]
+    fn sparse_requirements(&self, sink: &mut [VkSparseImageMemoryRequirements]) -> u32 {
+        let mut n = sink.len() as _;
         unsafe {
-            v.set_len(n as _);
             crate::vkfn::get_image_sparse_memory_requirements(
                 self.device_handle(),
                 self.native_ptr(),
                 &mut n,
-                v.as_mut_ptr(),
-            )
-        };
+                sink.as_mut_ptr(),
+            );
+        }
 
-        v
+        n
+    }
+
+    /// Query the memory requirements for a sparse image
+    #[implements("alloc")]
+    fn sparse_requirements_alloc(&self) -> Vec<VkSparseImageMemoryRequirements> {
+        let n = self.sparse_requirement_count();
+        if n == 0 {
+            // no items
+            return crate::alloc::empty_sink_buffer();
+        }
+
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
+        self.sparse_requirements(&mut xs);
+
+        xs
+    }
+
+    /// Returns an image's DRM format modifier
+    #[implements("VK_EXT_image_drm_format_modifier")]
+    #[inline]
+    unsafe fn drm_format_modifier_properties_raw(
+        &self,
+        sink: &mut core::mem::MaybeUninit<VkImageDrmFormatModifierPropertiesEXT>,
+    ) -> crate::Result<()>
+    where
+        Self: DeviceChild,
+    {
+        use crate::Device;
+
+        self.device().get_image_drm_format_modifier_properties_ext_fn().0(
+            self.device_handle(),
+            self.native_ptr(),
+            sink.as_mut_ptr(),
+        )
+        .into_result()
+        .map(drop)
     }
 
     /// Returns an image's DRM format modifier
@@ -49,21 +91,15 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     where
         Self: DeviceChild,
     {
-        use crate::Device;
-
-        let mut properties = VkImageDrmFormatModifierPropertiesEXT {
-            sType: VkImageDrmFormatModifierPropertiesEXT::TYPE,
-            pNext: std::ptr::null_mut(),
-            drmFormatModifier: 0,
-        };
+        let mut properties = core::mem::MaybeUninit::<VkImageDrmFormatModifierPropertiesEXT>::uninit();
         unsafe {
-            self.device().get_image_drm_format_modifier_properties_ext_fn().0(
-                self.device_handle(),
-                self.native_ptr(),
-                &mut properties,
-            )
-            .into_result()
-            .map(move |_| properties)
+            let p = properties.as_mut_ptr();
+            core::ptr::addr_of_mut!((*p).sType).write(VkImageDrmFormatModifierPropertiesEXT::TYPE);
+            core::ptr::addr_of_mut!((*p).pNext).write(core::ptr::null_mut());
+
+            self.drm_format_modifier_properties_raw(&mut properties)?;
+
+            Ok(properties.assume_init())
         }
     }
 }
@@ -124,8 +160,8 @@ pub trait ImageSubresourceSlice: Image {
     fn subresource_range(
         self,
         aspect_mask: AspectMask,
-        mip_level: Range<u32>,
-        array_layers: Range<u32>,
+        mip_level: core::ops::Range<u32>,
+        array_layers: core::ops::Range<u32>,
     ) -> ImageSubresourceRange<Self>
     where
         Self: Sized,
@@ -282,32 +318,6 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
-    /// Create a new image object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_COMPRESSION_EXHAUSTED_EXT`
-    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &ImageCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_image(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-            Ok(Self(
-                h.assume_init(),
-                device,
-                info.0.imageType,
-                info.0.format,
-                info.0.extent.clone(),
-            ))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
@@ -336,6 +346,29 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> ImageObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> ImageObject<Device> {
         ImageObject(self.0, self.1.clone(), self.2, self.3, self.4)
+    }
+}
+impl<Device: crate::Device> ImageObject<Device> {
+    /// Create a new image object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_COMPRESSION_EXHAUSTED_EXT`]
+    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &ImageCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe {
+            Self::manage(
+                device.new_image_raw(info, None)?,
+                device,
+                info.0.imageType,
+                info.0.format,
+                info.0.extent,
+            )
+        })
     }
 }
 
@@ -368,6 +401,10 @@ impl<'d> ImageCreateInfo<'d> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkImageCreateInfo {
+        &self.0
     }
 
     pub const unsafe fn from_raw(raw: VkImageCreateInfo) -> Self {
@@ -683,7 +720,7 @@ pub struct LayoutTransition {
 }
 
 /// Bitmask specifying intended usage of an image.
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 #[bitflags_newtype]
 pub struct ImageUsageFlags(VkImageUsageFlags);
 impl ImageUsageFlags {
@@ -709,100 +746,10 @@ impl ImageUsageFlags {
     pub const INPUT_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT);
 }
 
-/// Bitmask specifying intended usage of an image
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[repr(transparent)]
-#[deprecated = "use [`ImageUsageFlags`]"]
-pub struct ImageUsage(pub VkImageUsageFlags);
-#[allow(deprecated)]
-impl ImageUsage {
-    /// The image can be used as the source of a transfer command
-    pub const TRANSFER_SRC: Self = Self(VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
-    /// The image can be used as the destination of a transfer command
-    pub const TRANSFER_DEST: Self = Self(VK_IMAGE_USAGE_TRANSFER_DST_BIT);
-    /// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot
-    /// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader
-    pub const SAMPLED: Self = Self(VK_IMAGE_USAGE_SAMPLED_BIT);
-    /// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`
-    pub const STORAGE: Self = Self(VK_IMAGE_USAGE_STORAGE_BIT);
-    /// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`
-    pub const COLOR_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT);
-    /// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`
-    pub const DEPTH_STENCIL_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
-    /// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`
-    /// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,
-    /// or input attachment
-    pub const TRANSIENT_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT);
-    /// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;
-    /// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer
-    pub const INPUT_ATTACHMENT: Self = Self(VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT);
-
-    /// The image can be used as the source of a transfer command
-    pub const fn transfer_src(self) -> Self {
-        Self(self.0 | Self::TRANSFER_SRC.0)
-    }
-    /// The image can be used as the destination of a transfer command
-    pub const fn transfer_dest(self) -> Self {
-        Self(self.0 | Self::TRANSFER_DEST.0)
-    }
-    /// The image can be used to create `ImageView` suitable for occupying a `DescriptorSet` slot
-    /// either of type `DescriptorType::SampledImage` or `DescriptorType::CombinedImageSampler`, and be sampled by a shader
-    pub const fn sampled(self) -> Self {
-        Self(self.0 | Self::SAMPLED.0)
-    }
-    /// The image can be used to create a `ImageView` suitable for occupying a `DescriptorSet` slot of type `DescriptorType::StorageImage`
-    pub const fn storage(self) -> Self {
-        Self(self.0 | Self::STORAGE.0)
-    }
-    /// The image can be used to create a `ImageView` suitable for use as a color or resolve attachment in a `Framebuffer`
-    pub const fn color_attachment(self) -> Self {
-        Self(self.0 | Self::COLOR_ATTACHMENT.0)
-    }
-    /// The image can be used to create a `ImageView` suitable for use as a depth/stencil attachment in a `Framebuffer`
-    pub const fn depth_stencil_attachment(self) -> Self {
-        Self(self.0 | Self::DEPTH_STENCIL_ATTACHMENT.0)
-    }
-    /// The memory bound to this image will have been allocated with the `VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`
-    /// This bit can be set for any image that can be used to create a `ImageView` suitable for use as a color, resolve, depth/stencil,
-    /// or input attachment
-    pub const fn transient_attachment(self) -> Self {
-        Self(self.0 | Self::TRANSIENT_ATTACHMENT.0)
-    }
-    /// The image can be used to create a `ImageView` suitable for occupying `DescriptorSet` slot of type `DescriptorType::InputAttachment`;
-    /// be read from a shader as an input attachment; and be used as an input attachment in a framebuffer
-    pub const fn input_attachment(self) -> Self {
-        Self(self.0 | Self::INPUT_ATTACHMENT.0)
-    }
-
-    /// merge two flags (const alias of BitOr)
-    pub const fn merge(self, other: Self) -> Self {
-        Self(self.0 | other.0)
-    }
-}
-#[allow(deprecated)]
-impl BitOr for ImageUsage {
-    type Output = ImageUsage;
-    fn bitor(self, other: Self) -> Self {
-        ImageUsage(self.0 | other.0)
-    }
-}
-#[allow(deprecated)]
-impl BitOrAssign for ImageUsage {
-    fn bitor_assign(&mut self, other: Self) {
-        self.0 |= other.0;
-    }
-}
-#[allow(deprecated)]
-impl From<ImageUsage> for VkImageUsageFlags {
-    fn from(value: ImageUsage) -> Self {
-        value.0
-    }
-}
-
 /// Bitmask specifying additional parameters of an image
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-#[repr(transparent)]
-pub struct ImageFlags(pub VkImageCreateFlags);
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[bitflags_newtype]
+pub struct ImageFlags(VkImageCreateFlags);
 impl ImageFlags {
     /// Empty bits
     pub const EMPTY: Self = Self(0);
@@ -817,54 +764,11 @@ impl ImageFlags {
     pub const MUTABLE_FORMAT: Self = Self(VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT);
     /// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`
     pub const CUBE_COMPATIBLE: Self = Self(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
-
-    /// The image will be backed using sparse memory binding
-    pub const fn sparse_binding(self) -> Self {
-        Self(self.0 | Self::SPARSE_BINDING.0)
-    }
-    /// The image can be partially backed using sparse memory binding. This bit is with `SPARSE_BINDING` implicitly
-    pub const fn sparse_residency(self) -> Self {
-        Self(self.0 | Self::SPARSE_RESIDENCY.0)
-    }
-    /// The image will be backed using sparse memory binding with memory ranges
-    /// that might also simultaneously be backing another image. This bit is with `SPARSE_BINDING` implicitly
-    pub const fn sparse_aliased(self) -> Self {
-        Self(self.0 | Self::SPARSE_ALIASED.0)
-    }
-    /// The image can be used to create a `ImageView` with a different format from the image
-    pub const fn mutable_format(self) -> Self {
-        Self(self.0 | Self::MUTABLE_FORMAT.0)
-    }
-    /// The image can be used to create a `ImageView` of type `ImageViewType::Cube` or `ImageViewType::CubeArray`
-    pub const fn cube_compatible(self) -> Self {
-        Self(self.0 | Self::CUBE_COMPATIBLE.0)
-    }
-
-    /// merge two flags (const alias of BitOr)
-    pub const fn merge(self, other: Self) -> Self {
-        Self(self.0 | other.0)
-    }
-}
-impl BitOr for ImageFlags {
-    type Output = ImageFlags;
-    fn bitor(self, other: Self) -> Self {
-        ImageFlags(self.0 | other.0)
-    }
-}
-impl BitOrAssign for ImageFlags {
-    fn bitor_assign(&mut self, other: Self) {
-        self.0 |= other.0;
-    }
-}
-impl From<ImageFlags> for VkImageCreateFlags {
-    fn from(value: ImageFlags) -> Self {
-        value.0
-    }
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ImageSparseMemoryRequirementsInfo2<'r>(
     pub(crate) VkImageSparseMemoryRequirementsInfo2KHR,
     core::marker::PhantomData<(Option<&'r dyn VulkanStructureAsRef>, &'r dyn VkHandle<Handle = VkImage>)>,
@@ -900,9 +804,11 @@ impl<'r> ImageSparseMemoryRequirementsInfo2<'r> {
 
 /// Bitmask specifying which aspects of an image are included in a view
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
-#[repr(transparent)]
-pub struct AspectMask(pub VkImageAspectFlags);
+#[bitflags_newtype]
+pub struct AspectMask(VkImageAspectFlags);
 impl AspectMask {
+    /// No aspect mask
+    pub const EMPTY: Self = Self(0);
     /// The color aspect
     pub const COLOR: Self = Self(VK_IMAGE_ASPECT_COLOR_BIT);
     /// The depth aspect
@@ -911,44 +817,6 @@ impl AspectMask {
     pub const STENCIL: Self = Self(VK_IMAGE_ASPECT_STENCIL_BIT);
     /// The metadata aspect, used for sparse sparse resource operations
     pub const METADATA: Self = Self(VK_IMAGE_ASPECT_METADATA_BIT);
-
-    /// The color aspect
-    pub const fn color(self) -> Self {
-        Self(self.0 | Self::COLOR.0)
-    }
-    /// The depth aspect
-    pub const fn depth(self) -> Self {
-        Self(self.0 | Self::DEPTH.0)
-    }
-    /// The stencil aspect
-    pub const fn stencil(self) -> Self {
-        Self(self.0 | Self::STENCIL.0)
-    }
-    /// The metadata aspect, used for sparse sparse resource oeprations
-    pub const fn metadata(self) -> Self {
-        Self(self.0 | Self::METADATA.0)
-    }
-
-    /// merge two flags (const alias of BitOr)
-    pub const fn merge(self, other: Self) -> Self {
-        Self(self.0 | other.0)
-    }
-}
-impl BitOr for AspectMask {
-    type Output = AspectMask;
-    fn bitor(self, other: Self) -> Self {
-        AspectMask(self.0 | other.0)
-    }
-}
-impl BitOrAssign for AspectMask {
-    fn bitor_assign(&mut self, other: Self) {
-        self.0 |= other.0;
-    }
-}
-impl From<AspectMask> for VkImageAspectFlags {
-    fn from(value: AspectMask) -> Self {
-        value.0
-    }
 }
 
 /// Opaque handle to a image view object
@@ -980,46 +848,16 @@ impl<Image: DeviceChild> DeviceChild for ImageViewObject<Image> {
         self.1.device()
     }
 }
-impl<Image: DeviceChildHandle> ImageView for ImageViewObject<Image> {}
-impl<Image: self::Image> Deref for ImageViewObject<Image> {
-    type Target = Image;
-
-    fn deref(&self) -> &Image {
-        &self.1
-    }
-}
-impl<Image: self::Image> DerefMut for ImageViewObject<Image> {
-    fn deref_mut(&mut self) -> &mut Image {
-        &mut self.1
-    }
-}
 impl<Image: self::Image> ImageChild for ImageViewObject<Image> {
     type ConcreteImage = Image;
 
+    #[inline(always)]
     fn image(&self) -> &Image {
         &self.1
     }
 }
+impl<Image: DeviceChildHandle> ImageView for ImageViewObject<Image> {}
 impl<Image: DeviceChildHandle> ImageViewObject<Image> {
-    /// Create a new image view from an existing image
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls the under api)
-    #[implements]
-    pub unsafe fn new_raw(image: Image, info: &VkImageViewCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_image_view(image.device_handle(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self(h.assume_init(), image))
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
@@ -1043,23 +881,61 @@ impl<Image: DeviceChildHandle + Clone> ImageViewObject<&'_ Image> {
         ImageViewObject(self.0, self.1.clone())
     }
 }
+impl<Image: DeviceChild> ImageViewObject<Image> {
+    /// Create a new image view from an existing image
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
+    #[implements]
+    #[inline]
+    pub fn new(image: Image, info: &ImageViewCreateInfo) -> crate::Result<Self> {
+        use crate::Device;
 
-pub struct ImageViewBuilder<I: Image>(VkImageViewCreateInfo, I);
-impl<I: Image> ImageViewBuilder<I> {
-    pub fn new(source: I, subresource_range: VkImageSubresourceRange) -> Self {
+        Ok(unsafe { Self::manage(image.device().new_image_view_raw(info, None)?, image) })
+    }
+}
+
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ImageViewCreateInfo<'r>(
+    VkImageViewCreateInfo,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkImage>>,
+);
+impl<'r> ImageViewCreateInfo<'r> {
+    pub fn new(
+        source: &'r (impl VkHandle<Handle = VkImage> + ?Sized),
+        subresource_range: VkImageSubresourceRange,
+        view_type: VkImageViewType,
+        format: VkFormat,
+    ) -> Self {
         Self(
             VkImageViewCreateInfo {
                 sType: VkImageViewCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 image: source.native_ptr(),
-                viewType: source.dimension(),
-                format: source.format(),
+                viewType: view_type,
+                format,
                 components: VkComponentMapping::default(),
                 subresourceRange: subresource_range,
             },
-            source,
+            core::marker::PhantomData,
         )
+    }
+
+    pub const unsafe fn from_raw(raw: VkImageViewCreateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkImageViewCreateInfo {
+        self.0
+    }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkImageViewCreateInfo {
+        &self.0
     }
 
     pub const fn with_format_mutation(mut self, format: VkFormat) -> Self {
@@ -1076,6 +952,42 @@ impl<I: Image> ImageViewBuilder<I> {
         self.0.viewType = dimension;
         self
     }
+}
+
+pub struct ImageViewBuilder<I: Image>(ImageViewCreateInfo<'static>, I);
+impl<I: Image> ImageViewBuilder<I> {
+    pub fn new(source: I, subresource_range: VkImageSubresourceRange) -> Self {
+        Self(
+            unsafe {
+                ImageViewCreateInfo::from_raw(VkImageViewCreateInfo {
+                    sType: VkImageViewCreateInfo::TYPE,
+                    pNext: core::ptr::null(),
+                    flags: 0,
+                    image: source.native_ptr(),
+                    viewType: source.dimension(),
+                    format: source.format(),
+                    components: VkComponentMapping::default(),
+                    subresourceRange: subresource_range,
+                })
+            },
+            source,
+        )
+    }
+
+    pub const fn with_format_mutation(mut self, format: VkFormat) -> Self {
+        self.0 = self.0.with_format_mutation(format);
+        self
+    }
+
+    pub const fn with_mapping(mut self, mapping: VkComponentMapping) -> Self {
+        self.0 = self.0.with_mapping(mapping);
+        self
+    }
+
+    pub const fn with_dimension(mut self, dimension: VkImageViewType) -> Self {
+        self.0 = self.0.with_dimension(dimension);
+        self
+    }
 
     /// Create a new image view from an existing image
     /// # Failure
@@ -1085,9 +997,10 @@ impl<I: Image> ImageViewBuilder<I> {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
     #[implements]
-    pub fn create(mut self) -> crate::Result<ImageViewObject<I>> {
-        self.0.image = self.1.native_ptr();
-
-        unsafe { ImageViewObject::new_raw(self.1, &self.0) }
+    pub fn create(self) -> crate::Result<ImageViewObject<I>>
+    where
+        I: DeviceChild,
+    {
+        ImageViewObject::new(self.1, &self.0)
     }
 }

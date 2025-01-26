@@ -65,10 +65,20 @@ impl<Device: crate::Device> DeviceChild for RenderPassObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> RenderPass for RenderPassObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> RenderPassObject<Device> {
-    #[implements]
-    #[inline(always)]
-    pub fn new(device: Device, create_info: &(impl AnyRenderPassCreateInfo + ?Sized)) -> crate::Result<Self> {
-        create_info.execute(&device, None).map(move |x| Self(x, device))
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the parent
+    pub const unsafe fn manage(handle: VkRenderPass, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkRenderPass, Device) {
+        let v = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (v, p)
     }
 }
 impl<Device: VkHandle<Handle = VkDevice> + Clone> RenderPassObject<&'_ Device> {
@@ -78,24 +88,40 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> RenderPassObject<&'_ Device> {
         RenderPassObject(self.0, self.1.clone())
     }
 }
+impl<Device: crate::Device> RenderPassObject<Device> {
+    #[implements]
+    #[inline(always)]
+    pub fn new(device: Device, create_info: &(impl AnyRenderPassCreateInfo + ?Sized)) -> crate::Result<Self> {
+        create_info.execute(&device, None).map(move |x| Self(x, device))
+    }
+}
 
 #[implements]
 pub trait AnyRenderPassCreateInfo {
     fn execute(
         &self,
-        device: &(impl crate::VkHandle<Handle = VkDevice> + ?Sized),
+        device: &(impl crate::Device + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkRenderPass>;
 }
 
 #[repr(transparent)]
-pub struct RenderPassBeginInfo<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd>(
+pub struct RenderPassBeginInfo<'d>(
     VkRenderPassBeginInfo,
-    core::marker::PhantomData<(&'d R, &'d F, &'d [ClearValue])>,
+    core::marker::PhantomData<(
+        &'d dyn VkHandle<Handle = VkRenderPass>,
+        &'d dyn VkHandle<Handle = VkFramebuffer>,
+        &'d [ClearValue],
+    )>,
 );
-impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> RenderPassBeginInfo<'d, R, F> {
+impl<'d> RenderPassBeginInfo<'d> {
     #[inline]
-    pub fn new(render_pass: &'d R, framebuffer: &'d F, render_area: VkRect2D, clear_values: &'d [ClearValue]) -> Self {
+    pub fn new(
+        render_pass: &'d (impl VkHandle<Handle = VkRenderPass> + ?Sized),
+        framebuffer: &'d (impl VkHandle<Handle = VkFramebuffer> + ?Sized),
+        render_area: VkRect2D,
+        clear_values: &'d [ClearValue],
+    ) -> Self {
         Self(
             VkRenderPassBeginInfo {
                 sType: VkRenderPassBeginInfo::TYPE,
@@ -110,9 +136,7 @@ impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> RenderPassBe
         )
     }
 }
-impl<'d, R: RenderPass + ?Sized + 'd, F: Framebuffer + ?Sized + 'd> AsRef<VkRenderPassBeginInfo>
-    for RenderPassBeginInfo<'d, R, F>
-{
+impl<'d> AsRef<VkRenderPassBeginInfo> for RenderPassBeginInfo<'d> {
     #[inline(always)]
     fn as_ref(&self) -> &VkRenderPassBeginInfo {
         &self.0
@@ -141,35 +165,35 @@ impl VkSubpassEndInfoKHR {
 }
 
 /// A reference to a subpass in a render pass object.
-pub struct SubpassRef<'r, RenderPass: 'r + ?Sized + crate::RenderPass>(pub &'r RenderPass, pub u32);
-impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Clone for SubpassRef<'r, RenderPass> {
+pub struct SubpassRef<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>>(pub &'r RenderPass, pub u32);
+impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Clone for SubpassRef<'r, RenderPass> {
     #[inline(always)]
     fn clone(&self) -> Self {
         Self(self.0, self.1)
     }
 }
-impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Copy for SubpassRef<'r, RenderPass> {}
-impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> PartialEq for SubpassRef<'r, RenderPass> {
+impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Copy for SubpassRef<'r, RenderPass> {}
+impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> PartialEq for SubpassRef<'r, RenderPass> {
     #[inline(always)]
     fn eq(&self, other: &Self) -> bool {
         core::ptr::eq(self.0, other.0) && self.1 == other.1
     }
 }
-impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> Eq for SubpassRef<'r, RenderPass> {}
-impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> core::hash::Hash for SubpassRef<'r, RenderPass> {
+impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Eq for SubpassRef<'r, RenderPass> {}
+impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> core::hash::Hash for SubpassRef<'r, RenderPass> {
     #[inline(always)]
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         (self.0 as *const RenderPass, self.1).hash(state)
     }
 }
-impl<'r, RenderPass: 'r + ?Sized + crate::RenderPass> core::fmt::Debug for SubpassRef<'r, RenderPass> {
+impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> core::fmt::Debug for SubpassRef<'r, RenderPass> {
     #[inline(always)]
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "RenderPass({:p}).{}", self.0, self.1)
     }
 }
 
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LoadOp {
     /// The previous contents of the image within the render area will be preserved.
@@ -177,21 +201,21 @@ pub enum LoadOp {
     /// ## Used access types
     ///
     /// This operation uses the "Read" access
-    Load = VK_ATTACHMENT_LOAD_OP_LOAD as _,
+    Load = VK_ATTACHMENT_LOAD_OP_LOAD,
     /// The contents within the render area will be cleared to a uniform value, which is
     /// specified when a render pass instance is begun.
     ///
     /// ## Used access types
     ///
     /// This operation uses the "Write" access
-    Clear = VK_ATTACHMENT_LOAD_OP_CLEAR as _,
+    Clear = VK_ATTACHMENT_LOAD_OP_CLEAR,
     /// The previous contents within the area need not be preserved;
     /// the contents of the attachment will be undefined inside the render area.
     ///
     /// ## Used access types
     ///
     /// This operation uses the "Write" access
-    DontCare = VK_ATTACHMENT_LOAD_OP_DONT_CARE as _,
+    DontCare = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 }
 
 /// Possible argument values of `AttachmentDescription::store_op` and `stencil_store_op`,
@@ -200,12 +224,12 @@ pub enum LoadOp {
 /// ## Used access types
 ///
 /// Both items use the "Write" access
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum StoreOp {
     /// The contents generated during the render pass and within the render area are written to memory.
-    Store = VK_ATTACHMENT_STORE_OP_STORE as _,
+    Store = VK_ATTACHMENT_STORE_OP_STORE,
     /// The contents within the render area are not needed after rendering, and *may* be discarded;
     /// the contents of the attachment will be undefined inside the render area.
-    DontCare = VK_ATTACHMENT_STORE_OP_DONT_CARE as _,
+    DontCare = VK_ATTACHMENT_STORE_OP_DONT_CARE,
 }

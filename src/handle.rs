@@ -231,10 +231,10 @@ impl<H: Copy> VkHandle for VkHandleRef<'_, H> {
 #[derive(Clone, Hash, PartialEq, Eq, Debug)]
 pub struct VkHandleRefMut<'r, H>(
     pub(crate) H,
-    core::marker::PhantomData<&'r mut dyn VkHandle<Handle = H>>,
+    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = H>>,
 );
 impl<'r, H> VkHandleRefMut<'r, H> {
-    pub fn new(r: &'r mut (impl VkHandle<Handle = H> + ?Sized)) -> Self {
+    pub fn new(r: &'r mut (impl VkHandleMut<Handle = H> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
     }
 

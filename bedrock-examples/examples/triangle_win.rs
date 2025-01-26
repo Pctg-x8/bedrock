@@ -4,10 +4,7 @@ use bedrock::{
     self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, ShaderModule,
     VkHandle, VkHandleMut,
 };
-use br::{
-    Device, Fence, GraphicsPipelineBuilder, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass,
-    Status, Swapchain,
-};
+use br::{Device, Fence, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass, Status, Swapchain};
 use windows::{
     core::PCSTR,
     Win32::{
@@ -277,32 +274,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             offset: 4 * 4,
         },
     ];
-    let mut pipeline = {
-        let shader_stages = &[
-            vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
-            fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
-        ];
-        let vps = br::VertexProcessingStages::new(
-            shader_stages,
-            &vi_bindings,
-            &vi_attributes,
-            br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-        );
-        let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, render_pass.subpass(0), vps);
-        builder
-            .viewport_state(br::ViewportState::new(&viewports, &scissors))
-            .multisample_state(Some(br::MultisampleState::new()))
-            .color_blend_state(br::ColorBlendState::new(
-                None,
-                &[br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED],
-                [0.0; 4],
-            ));
-
-        builder.create(&device, Some(&pc))?
-    };
+    let [mut pipeline] = device.new_graphics_pipeline_array(
+        &[br::GraphicsPipelineCreateInfo::new(
+            &pl,
+            render_pass.subpass(0),
+            &[
+                vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
+                fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+            ],
+            &br::PipelineVertexInputStateCreateInfo::new(&vi_bindings, &vi_attributes),
+            &br::PipelineInputAssemblyStateCreateInfo::new(br::PrimitiveTopology::TriangleList),
+            &br::PipelineViewportStateCreateInfo::new(&viewports, &scissors),
+            &br::PipelineRasterizationStateCreateInfo::new(
+                br::PolygonMode::Fill,
+                br::CullModeFlags::NONE,
+                br::FrontFace::CounterClockwise,
+            ),
+            &br::PipelineColorBlendStateCreateInfo::new(&[br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED]),
+        )
+        .multisample_state(&br::PipelineMultisampleStateCreateInfo::new())],
+        Some(&pc),
+    )?;
 
     let mut back_buffer_views = swapchain
-        .get_images()?
+        .images_alloc()?
         .into_iter()
         .map(|b| {
             b.clone_parent()
@@ -436,8 +431,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ),
                 &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
             )
-            .bind_graphics_pipeline(&pipeline)
-            .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
+            .bind_pipeline(br::PipelineBindPoint::Graphics, &pipeline)
+            .bind_descriptor_sets(br::PipelineBindPoint::Graphics, &pl, 0, &[descriptors[0]], &[])
             .push_constant(
                 &pl,
                 br::vk::VK_SHADER_STAGE_VERTEX_BIT,
@@ -589,7 +584,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             back_buffer_size = swapchain.size().clone();
 
             back_buffer_views = swapchain
-                .get_images()?
+                .images_alloc()?
                 .into_iter()
                 .map(|b| {
                     b.clone_parent()
@@ -616,32 +611,38 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let scissors = [back_buffer_size.clone().into_rect(br::vk::VkOffset2D::ZERO)];
             let viewports = [scissors[0].make_viewport(0.0..1.0)];
 
-            pipeline = {
-                let shader_stages = &[
-                    vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
-                    fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
-                ];
-                let vps = br::VertexProcessingStages::new(
-                    shader_stages,
-                    &vi_bindings,
-                    &vi_attributes,
-                    br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-                );
-                let mut builder = br::NonDerivedGraphicsPipelineBuilder::new(&pl, render_pass.subpass(0), vps);
-                builder
-                    .viewport_state(br::ViewportState::new(&viewports, &scissors))
-                    .multisample_state(Some(br::MultisampleState::new()))
-                    .color_blend_state(br::ColorBlendState::new(
-                        None,
-                        &[br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED],
-                        [0.0; 4],
-                    ));
-
-                builder.create(&device, Some(&pc))?
-            };
+            let [p2] = device.new_graphics_pipeline_array(
+                &[br::GraphicsPipelineCreateInfo::new(
+                    &pl,
+                    render_pass.subpass(0),
+                    &[
+                        vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
+                        fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+                    ],
+                    &br::PipelineVertexInputStateCreateInfo::new(&vi_bindings, &vi_attributes),
+                    &br::PipelineInputAssemblyStateCreateInfo::new(br::PrimitiveTopology::TriangleList),
+                    &br::PipelineViewportStateCreateInfo::new(&viewports, &scissors),
+                    &br::PipelineRasterizationStateCreateInfo::new(
+                        br::PolygonMode::Fill,
+                        br::CullModeFlags::NONE,
+                        br::FrontFace::CounterClockwise,
+                    ),
+                    &br::PipelineColorBlendStateCreateInfo::new(&[
+                        br::vk::VkPipelineColorBlendAttachmentState::PREMULTIPLIED,
+                    ]),
+                )
+                .multisample_state(&br::PipelineMultisampleStateCreateInfo::new())],
+                Some(&pc),
+            )?;
+            pipeline = p2;
 
             unsafe {
-                command_pool.free(&command_buffers);
+                command_pool.free(
+                    &command_buffers
+                        .iter_mut()
+                        .map(|x| x.as_transparent_ref_mut())
+                        .collect::<Vec<_>>(),
+                );
             }
             command_buffers = br::CommandBufferObject::alloc(
                 &device,
@@ -654,14 +655,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
                 unsafe { cb.begin(&device)? }
                     .begin_render_pass(
-                        &render_pass,
-                        fb,
-                        scissors[0].clone(),
-                        &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
-                        true,
+                        &br::RenderPassBeginInfo::new(
+                            &render_pass,
+                            fb,
+                            scissors[0].clone(),
+                            &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
+                        ),
+                        br::SubpassContents::Inline,
                     )
-                    .bind_graphics_pipeline(&pipeline)
-                    .bind_graphics_descriptor_sets(&pl, 0, &[descriptors[0]], &[])
+                    .bind_pipeline(br::PipelineBindPoint::Graphics, &pipeline)
+                    .bind_descriptor_sets(br::PipelineBindPoint::Graphics, &pl, 0, &[descriptors[0]], &[])
                     .push_constant(
                         &pl,
                         br::vk::VK_SHADER_STAGE_VERTEX_BIT,
@@ -709,6 +712,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             &[present_ready.as_transparent_ref()],
             &[swapchain.as_transparent_ref()],
             &[bb_index],
+            &mut [br::vk::VK_SUCCESS],
         )) {
             Err(e) if e == br::vk::VK_ERROR_OUT_OF_DATE_KHR => {
                 resize_next = true;

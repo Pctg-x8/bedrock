@@ -11,18 +11,26 @@ use libloading::*;
 use core::ffi::*;
 
 #[implements]
+pub trait ResolverInterface {
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T;
+    unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F;
+}
+
+#[implements]
 cfg_if! {
     if #[cfg(feature = "CustomResolver")] {
-        static GLOBAL_RESOLVER: std::sync::OnceLock<Box<dyn ResolverInterface>> = std::sync::OnceLock::new();
+        static GLOBAL_RESOLVER: parking_lot::RwLock<Option<Box<dyn ResolverInterface>>> = parking_low::RwLock::new(None);
 
         /// Sets custom resolver object for vulkan api call
         pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface>) {
             crate::vkfn::FunctionPointerTable::reset();
-            GLOBAL_RESOLVER.set(Box::into_raw(resolver))
+            *GLOBAL_RESOLVER.write() = Some(Box::into_raw(resolver));
         }
+
         /// Gets current resolver object
-        pub fn get_resolver() -> &'static dyn ResolverInterface {
-            GLOBAL_RESOLVER.get().expect("no global resolver set")
+        #[inline(always)]
+        pub fn get_resolver<'a>() -> &'a dyn ResolverInterface {
+            GLOBAL_RESOLVER.read().expect("no global resolver set")
         }
     } else if #[cfg(feature = "DynamicLoaded")] {
         static GLOBAL_RESOLVER: std::sync::LazyLock<Box<Resolver>> = std::sync::LazyLock::new(|| Box::new(Resolver::new()));
@@ -61,8 +69,8 @@ cfg_if! {
                 T::from_ptr(self.0.get::<T>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
             }
 
-            unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F {
-                F::from_ptr(self.0.get::<F>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
+            unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F {
+                F::from_ptr(self.0.get::<F>(F::NAME_CSTR.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
             }
         }
 
@@ -70,27 +78,6 @@ cfg_if! {
         pub fn get_resolver<'a>() -> &'a Resolver {
             &*GLOBAL_RESOLVER
         }
-    }
-}
-
-#[implements]
-pub trait ResolverInterface {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T;
-    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F;
-}
-
-#[implements]
-#[cfg(feature = "DynamicLoaded")]
-pub struct DefaultGlobalResolver;
-#[implements]
-#[cfg(feature = "DynamicLoaded")]
-impl ResolverInterface for DefaultGlobalResolver {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T {
-        get_resolver().load_symbol_unconstrainted(name)
-    }
-
-    unsafe fn load_function_unconstrainted<F: PFN>(&self, name: &core::ffi::CStr) -> F {
-        get_resolver().load_function_unconstrainted(name)
     }
 }
 
@@ -117,6 +104,6 @@ impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
 
     pub fn resolve(&self) -> &F {
         self.1
-            .get_or_init(|| unsafe { self.0.load_function_unconstrainted::<F>(F::NAME_CSTR) })
+            .get_or_init(|| unsafe { self.0.load_function_unconstrainted::<F>() })
     }
 }

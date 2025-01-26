@@ -1,7 +1,6 @@
 use bedrock::{
-    self as br, CommandBufferMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut, GraphicsPipelineBuilder,
-    ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass, ShaderModule, Swapchain,
-    VkHandle, VkHandleMut,
+    self as br, CommandBufferMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut, ImageSubresourceSlice,
+    Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass, ShaderModule, Swapchain, VkHandle, VkHandleMut,
 };
 use core::ffi::*;
 use std::{
@@ -238,7 +237,7 @@ fn main() {
     .unwrap();
     let mut vk_swapchain = Rc::new(vk_swapchain);
     let backbuffers = vk_swapchain
-        .get_images()
+        .images_alloc()
         .unwrap()
         .into_iter()
         .map(|bb| bb.clone_parent())
@@ -334,33 +333,26 @@ fn main() {
         ),
     )
     .unwrap();
-    let shader_stages = &[
-        vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
-        fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
-    ];
-    let mut pipeline = br::NonDerivedGraphicsPipelineBuilder::new(
-        &pl,
-        renderpass.subpass(0),
-        br::VertexProcessingStages::new(
-            shader_stages,
-            &vi_bindings,
-            &vi_attrs,
-            br::vk::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
-        ),
-    );
-    let viewports = &[viewport];
-    let scissors = &[rect];
-    pipeline
-        .multisample_state(Some(br::MultisampleState::new()))
-        .color_blend_state(br::ColorBlendState::new(
-            None,
-            &[br::vk::VkPipelineColorBlendAttachmentState::NOBLEND],
-            [0.0; 4],
-        ))
-        .viewport_state(br::ViewportState::new(viewports, scissors));
-    let pipeline = pipeline
-        .create(
-            &vk_device,
+    let [pipeline] = vk_device
+        .new_graphics_pipeline_array(
+            &[br::GraphicsPipelineCreateInfo::new(
+                &pl,
+                renderpass.subpass(0),
+                &[
+                    vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
+                    fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+                ],
+                &br::PipelineVertexInputStateCreateInfo::new(&vi_bindings, &vi_attrs),
+                &br::PipelineInputAssemblyStateCreateInfo::new(br::PrimitiveTopology::TriangleList),
+                &br::PipelineViewportStateCreateInfo::new_array(&[viewport], &[rect]),
+                &br::PipelineRasterizationStateCreateInfo::new(
+                    br::PolygonMode::Fill,
+                    br::CullModeFlags::NONE,
+                    br::FrontFace::CounterClockwise,
+                ),
+                &br::PipelineColorBlendStateCreateInfo::new(&[br::vk::VkPipelineColorBlendAttachmentState::NOBLEND]),
+            )
+            .multisample_state(&br::PipelineMultisampleStateCreateInfo::new())],
             None::<&br::PipelineCacheObject<Rc<br::DeviceObject<&Rc<br::InstanceObject>>>>>,
         )
         .unwrap();
@@ -547,9 +539,9 @@ fn main() {
                 ),
                 &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
             )
-            .bind_graphics_pipeline(&pipeline)
+            .bind_pipeline(br::PipelineBindPoint::Graphics, &pipeline)
             .push_constant(&pl, br::vk::VK_SHADER_STAGE_VERTEX_BIT, 0, &[640.0f32, 480.0])
-            .bind_graphics_descriptor_sets(&pl, 0, &[object_descriptor], &[])
+            .bind_descriptor_sets(br::PipelineBindPoint::Graphics, &pl, 0, &[object_descriptor], &[])
             .bind_vertex_buffers(0, &[device_buffer.as_transparent_ref()], &[vertex_buffer_offset as _])
             .draw(3, 1, 0, 0)
             .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
@@ -580,6 +572,7 @@ fn main() {
             &[] as &[br::VkHandleRef<br::vk::VkSemaphore>],
             &[vk_swapchain.as_transparent_ref()],
             &[bb_index],
+            &mut [br::vk::VK_SUCCESS],
         ))
         .unwrap();
     vk_queue.wait().unwrap();
@@ -650,6 +643,7 @@ fn main() {
                     &[] as &[br::VkHandleRef<br::vk::VkSemaphore>],
                     &[self.swapchain.as_transparent_ref()],
                     &[bb_index],
+                    &mut [br::vk::VK_SUCCESS],
                 ))
                 .unwrap();
             self.queue.wait().unwrap();

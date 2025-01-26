@@ -8,10 +8,11 @@
 //! - `Implements`: Enable Vulkan implementations(functions)
 //! - `Multithreaded`: Enables to use objects from some threads(experimental)
 //! - `Presentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
+//! - `alloc`(default): Enable extra functionalities that may allocate some memory inside
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
 #![warn(clippy::all)]
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
-#![cfg_attr(not(feature = "alloc"), no_std)]
+#![doc(html_root_url = "https://docs.ct2.io/bedrock/mod-peridot/")]
 
 // Platform Extras
 #[cfg(feature = "VK_KHR_android_surface")]
@@ -83,31 +84,7 @@ macro_rules! ForwardFnPtr {
 pub type Result<T> = core::result::Result<T, VkResult>;
 
 #[cfg(feature = "alloc")]
-#[inline(always)]
-pub(crate) const fn empty_sink_buffer<T>() -> Vec<T> {
-    Vec::new()
-}
-
-#[cfg(feature = "alloc")]
-#[inline(always)]
-pub(crate) unsafe fn alloc_sink_buffer<T>(count: usize) -> Vec<T> {
-    let mut xs = Vec::with_capacity(count);
-    xs.set_len(count);
-
-    xs
-}
-
-#[cfg(feature = "alloc")]
-#[inline(always)]
-pub(crate) fn collect_vec_alloc<T>(iter: impl IntoIterator<Item = T>) -> Vec<T> {
-    Vec::from_iter(iter)
-}
-
-#[cfg(feature = "alloc")]
-#[inline(always)]
-pub(crate) fn str_to_cstr_alloc(s: &str) -> core::result::Result<std::ffi::CString, std::ffi::NulError> {
-    std::ffi::CString::new(s)
-}
+pub(crate) mod alloc;
 
 mod handle;
 pub use self::handle::*;
@@ -699,27 +676,17 @@ impl QueryPipelineStatisticFlags {
 }
 /// Bitmask specifying how and when query results are returned
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct QueryResultFlags(pub VkQueryResultFlags);
+#[bitflags_newtype]
+pub struct QueryResultFlags(VkQueryResultFlags);
 impl QueryResultFlags {
     /// Empty bits
     pub const EMPTY: Self = QueryResultFlags(0);
+    /// The results will be written as array of 64-bit unsigned integer values
+    pub const WIDE: Self = QueryResultFlags(VK_QUERY_RESULT_64_BIT);
     /// Vulkan will wait for each query's status to become available before retrieving its results
     pub const WAIT: Self = QueryResultFlags(VK_QUERY_RESULT_WAIT_BIT);
     /// The availability status accompanies the results
     pub const WITH_AVAILABILITY: Self = QueryResultFlags(VK_QUERY_RESULT_WITH_AVAILABILITY_BIT);
     /// Returning partial results is acceptable
     pub const PARTIAL: Self = QueryResultFlags(VK_QUERY_RESULT_PARTIAL_BIT);
-
-    /// Vulkan will wait for each query's status to become available before retrieving its results
-    pub fn wait(self) -> Self {
-        QueryResultFlags(self.0 | Self::WAIT.0)
-    }
-    /// The availability status accompanies the results
-    pub fn with_availability(self) -> Self {
-        QueryResultFlags(self.0 | Self::WITH_AVAILABILITY.0)
-    }
-    /// Returning partial results is acceptable
-    pub fn partial(self) -> Self {
-        QueryResultFlags(self.0 | Self::PARTIAL.0)
-    }
 }

@@ -1,4 +1,4 @@
-use ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
+use ffi_helper::slice_as_ptr_empty_null;
 
 use crate::vk::*;
 use crate::*;
@@ -153,19 +153,13 @@ impl<'r> SubpassDescription<'r> {
         }
     }
 
-    #[inline]
     pub const fn input_attachments(mut self, inputs: &'r [VkAttachmentReference]) -> Self {
         self.base.inputAttachmentCount = inputs.len() as _;
-        self.base.pInputAttachments = if inputs.is_empty() {
-            core::ptr::null()
-        } else {
-            inputs.as_ptr() as _
-        };
+        self.base.pInputAttachments = slice_as_ptr_empty_null(inputs);
 
         self
     }
 
-    #[inline]
     pub const fn color_attachments(
         mut self,
         colors: &'r [VkAttachmentReference],
@@ -174,28 +168,18 @@ impl<'r> SubpassDescription<'r> {
         assert!(resolves.is_empty() || resolves.len() == colors.len());
 
         self.base.colorAttachmentCount = colors.len() as _;
-        self.base.pColorAttachments = if colors.is_empty() {
-            core::ptr::null()
-        } else {
-            colors.as_ptr() as _
-        };
-        self.base.pResolveAttachments = if resolves.is_empty() {
-            core::ptr::null()
-        } else {
-            resolves.as_ptr() as _
-        };
+        self.base.pColorAttachments = slice_as_ptr_empty_null(colors);
+        self.base.pResolveAttachments = slice_as_ptr_empty_null(resolves);
 
         self
     }
 
-    #[inline]
     pub const fn depth_stencil_attachment(mut self, a: &'r VkAttachmentReference) -> Self {
         self.base.pDepthStencilAttachment = a as *const _ as _;
 
         self
     }
 
-    #[inline]
     pub const fn preserved_attachments(mut self, a: &'r [u32]) -> Self {
         self.base.preserveAttachmentCount = a.len() as _;
         self.base.pPreserveAttachments = if a.is_empty() { core::ptr::null() } else { a.as_ptr() };
@@ -249,24 +233,18 @@ impl<'r> RenderPassCreateInfo<'r> {
     pub const fn into_raw(self) -> VkRenderPassCreateInfo {
         self.base
     }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkRenderPassCreateInfo {
+        &self.base
+    }
 }
 #[implements]
 impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo<'_> {
     fn execute(
         &self,
-        device: &(impl crate::VkHandle<Handle = VkDevice> + ?Sized),
+        device: &(impl crate::Device + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkRenderPass> {
-        let mut h = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_render_pass(
-                device.native_ptr(),
-                self as *const _ as _,
-                opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| h.assume_init())
-        }
+        device.new_render_pass(self, allocation_callbacks)
     }
 }

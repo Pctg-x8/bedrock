@@ -18,7 +18,7 @@ impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_surface_khr(self.1.native_ptr(), self.0, std::ptr::null());
+            crate::vkfn::destroy_surface_khr(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -60,7 +60,6 @@ impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurface
     }
 }
 
-#[cfg(feature = "VK_KHR_surface")]
 /// Presentation mode supported for a surface
 #[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
@@ -84,6 +83,7 @@ pub enum PresentMode {
     FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR,
 }
 
+/// Presentation transforms supported on a device
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[bitflags_newtype]
 pub struct SurfaceTransformFlags(VkSurfaceTransformFlagsKHR);
@@ -108,6 +108,7 @@ impl SurfaceTransformFlags {
     pub const INHERIT: Self = Self(VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR);
 }
 
+/// Alpha compositing modes supported on a device
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[bitflags_newtype]
 pub struct CompositeAlphaFlags(VkCompositeAlphaFlagsKHR);
@@ -128,20 +129,17 @@ impl CompositeAlphaFlags {
 
 // specification extensions
 impl VkSurfaceCapabilitiesKHR {
-    /// The presentation transforms supported for the surface.
-    #[inline(always)]
+    /// The presentation transforms supported for the surface
     pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
         SurfaceTransformFlags(self.supportedTransforms)
     }
 
-    /// The alpha compositing modes supported by the presentation engine for the surface.
-    #[inline(always)]
+    /// The alpha compositing modes supported by the presentation engine for the surface
     pub const fn supported_composite_alpha(&self) -> CompositeAlphaFlags {
         CompositeAlphaFlags(self.supportedCompositeAlpha)
     }
 
-    /// The ways the application can use the presentable images of a swapchain.
-    #[inline(always)]
+    /// The ways the application can use the presentable images of a swapchain
     pub const fn supported_usage_flags(&self) -> ImageUsageFlags {
         unsafe { core::mem::transmute(self.supportedUsageFlags) }
     }
@@ -149,9 +147,9 @@ impl VkSurfaceCapabilitiesKHR {
 
 pub trait SurfaceCreateInfo {
     #[implements]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR>;
 }
@@ -174,9 +172,9 @@ impl VkXlibSurfaceCreateInfoKHR {
 impl SurfaceCreateInfo for VkXlibSurfaceCreateInfoKHR {
     #[implements]
     #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
@@ -211,9 +209,9 @@ impl VkXcbSurfaceCreateInfoKHR {
 impl SurfaceCreateInfo for VkXcbSurfaceCreateInfoKHR {
     #[implements]
     #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
@@ -248,9 +246,9 @@ impl VkWaylandSurfaceCreateInfoKHR {
 impl SurfaceCreateInfo for VkWaylandSurfaceCreateInfoKHR {
     #[implements]
     #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
@@ -284,9 +282,9 @@ impl VkAndroidSurfaceCreateInfoKHR {
 impl SurfaceCreateInfo for VkAndroidSurfaceCreateInfoKHR {
     #[implements]
     #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
@@ -319,50 +317,14 @@ impl VkWin32SurfaceCreateInfoKHR {
 impl SurfaceCreateInfo for VkWin32SurfaceCreateInfoKHR {
     #[implements]
     #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         crate::vkfn::create_win32_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
-
-        Ok(h.assume_init())
-    }
-}
-
-#[cfg(feature = "VK_MVK_macos_surface")]
-impl VkMacOSSurfaceCreateInfoMVK {
-    /// # Safety
-    /// Provided `view_prt` must be a valid reference
-    pub const unsafe fn new(view_ptr: *const core::ffi::c_void) -> Self {
-        Self {
-            sType: Self::TYPE,
-            pNext: core::ptr::null(),
-            flags: 0,
-            pView: view_ptr,
-        }
-    }
-}
-#[cfg(feature = "VK_MVK_macos_surface")]
-impl SurfaceCreateInfo for VkMacOSSurfaceCreateInfoMVK {
-    #[implements]
-    #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
-        &self,
-        pd: &PhysicalDevice,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::create_macos_surface_mvk(
             pd.instance().native_ptr(),
             self,
             opt_pointer(allocation_callbacks),
@@ -391,9 +353,9 @@ impl VkMetalSurfaceCreateInfoEXT {
 impl SurfaceCreateInfo for VkMetalSurfaceCreateInfoEXT {
     #[implements]
     #[inline(always)]
-    unsafe fn execute<PhysicalDevice: crate::PhysicalDevice + ?Sized>(
+    unsafe fn execute(
         &self,
-        pd: &PhysicalDevice,
+        pd: &(impl crate::PhysicalDevice + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
@@ -416,7 +378,7 @@ impl VkDisplaySurfaceCreateInfoKHR {
         mode: &super::DisplayMode,
         plane_index: u32,
         plane_stack_index: u32,
-        transform: VkSurfaceTransformFlagsKHR,
+        transform: SurfaceTransformFlags,
         global_alpha: f32,
         alpha_mode: super::DisplayPlaneAlpha,
         extent: VkExtent2D,
@@ -428,7 +390,7 @@ impl VkDisplaySurfaceCreateInfoKHR {
             displayMode: mode.0,
             planeIndex: plane_index,
             planeStackIndex: plane_stack_index,
-            transform: transform,
+            transform: transform.bits(),
             globalAlpha: global_alpha,
             alphaMode: alpha_mode as _,
             imageExtent: extent,

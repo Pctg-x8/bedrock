@@ -36,7 +36,7 @@ pub struct VkImageMemoryRequirementsInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkImageSparseMemoryRequirementsInfo2KHR {

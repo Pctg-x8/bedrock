@@ -47,7 +47,7 @@ impl<Device: crate::Device> DescriptorUpdateTemplateObject<Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub fn unmanage(self) -> (VkDescriptorUpdateTemplateKHR, Device) {
+    pub const fn unmanage(self) -> (VkDescriptorUpdateTemplateKHR, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);

@@ -46,8 +46,8 @@ impl<Device: VkHandle<Handle = VkDevice>> DescriptorSetLayoutObject<Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// - [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     pub fn new(device: Device, info: &DescriptorSetLayoutCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
@@ -170,7 +170,7 @@ impl AsRef<VkDescriptorSet> for DescriptorSet {
         &self.0
     }
 }
-impl std::ops::Deref for DescriptorSet {
+impl core::ops::Deref for DescriptorSet {
     type Target = VkDescriptorSet;
 
     fn deref(&self) -> &VkDescriptorSet {

@@ -1,6 +1,6 @@
 use derives::implements;
 
-use crate::{vk::*, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure};
+use crate::{ffi_helper::opt_cstr_ptr, vk::*, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure};
 
 pub trait DebugUtilsMessenger: VkHandle<Handle = VkDebugUtilsMessengerEXT> + InstanceChild {}
 DerefContainerBracketImpl!(for DebugUtilsMessenger {});
@@ -14,7 +14,7 @@ impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.1.destroy_debug_utils_messenger_ext_fn().0(self.1.native_ptr(), self.native_ptr(), core::ptr::null());
+            self.1.destroy_debug_utils_messenger_raw(self.native_ptr(), None);
         }
     }
 }
@@ -22,21 +22,16 @@ unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject
 unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
 impl<Instance: crate::Instance> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
 impl<Instance: crate::Instance> DebugUtilsMessengerObject<Instance> {
+    /// Create a debug messenger object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     #[implements]
     pub fn new(instance: Instance, info: &DebugUtilsMessengerCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
+        let h = unsafe { instance.new_debug_utils_messenger_raw(info, None)? };
 
-        unsafe {
-            instance.create_debug_utils_messenger_ext_fn().0(
-                instance.native_ptr(),
-                info,
-                core::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-
-            Ok(Self(h.assume_init(), instance))
-        }
+        Ok(Self(h, instance))
     }
 
     /// Constructs from raw values
@@ -127,10 +122,7 @@ impl<'d> DebugUtilsObjectNameInfo<'d> {
                 pNext: core::ptr::null(),
                 objectType: ty,
                 objectHandle: handle,
-                pObjectName: match name {
-                    Some(x) => x.as_ptr(),
-                    None => core::ptr::null(),
-                },
+                pObjectName: opt_cstr_ptr(name),
             },
             core::marker::PhantomData,
         )

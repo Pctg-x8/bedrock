@@ -20,7 +20,7 @@ pub enum SubpassIndex {
 }
 impl SubpassIndex {
     #[inline(always)]
-    pub(crate) const fn as_api_value(self) -> u32 {
+    pub(crate) const fn as_vk(self) -> u32 {
         match self {
             Self::External => VK_SUBPASS_EXTERNAL,
             Self::Internal(x) => x,
@@ -48,49 +48,41 @@ impl AttachmentDescription2 {
         })
     }
 
-    #[inline]
     pub const fn samples(mut self, samples: VkSampleCountFlagBits) -> Self {
         self.0.samples = samples;
         self
     }
 
-    #[inline]
     pub const fn color_memory_op(mut self, load: LoadOp, store: StoreOp) -> Self {
         self.0.loadOp = load as _;
         self.0.storeOp = store as _;
         self
     }
 
-    #[inline]
     pub const fn stencil_memory_op(mut self, load: LoadOp, store: StoreOp) -> Self {
         self.0.stencilLoadOp = load as _;
         self.0.stencilStoreOp = store as _;
         self
     }
 
-    #[inline]
     pub const fn layout_transition(mut self, init: ImageLayout, fini: ImageLayout) -> Self {
         self.0.initialLayout = init as _;
         self.0.finalLayout = fini as _;
         self
     }
 
-    #[inline]
     pub const fn layout(self, layout: ImageLayout) -> Self {
         self.layout_transition(layout, layout)
     }
 
-    #[inline]
     pub const fn with_layout_from(self, trans: LayoutTransition) -> Self {
         self.layout_transition(trans.from, trans.to)
     }
 
-    #[inline]
     pub const fn with_layout_to(self, trans: LayoutTransition) -> Self {
         self.layout_transition(trans.from, trans.to)
     }
 
-    #[inline]
     pub const fn may_alias(mut self) -> Self {
         self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
         self
@@ -107,45 +99,39 @@ impl AttachmentReference2 {
             pNext: core::ptr::null(),
             attachment: index,
             layout: layout as _,
-            aspectMask: aspect_mask.0,
+            aspectMask: aspect_mask.bits(),
         })
     }
 
     /// An unused attachment
-    pub const UNUSED: Self = Self::new(VK_ATTACHMENT_UNUSED, AspectMask(0), ImageLayout::Undefined);
+    pub const UNUSED: Self = Self::new(VK_ATTACHMENT_UNUSED, AspectMask::EMPTY, ImageLayout::Undefined);
 
     /// Represents an attachment reference that references color aspect of the attachment.
-    #[inline(always)]
     pub const fn color(index: u32, layout: ImageLayout) -> Self {
         Self::new(index, AspectMask::COLOR, layout)
     }
 
     /// Represents an attachment reference that references depth and stencil aspect of the attachment.
-    #[inline(always)]
     pub const fn depth_stencil(index: u32, layout: ImageLayout) -> Self {
-        Self::new(index, AspectMask::DEPTH.stencil(), layout)
+        Self::new(index, AspectMask::DEPTH.merge(AspectMask::STENCIL), layout)
     }
 
     /// Optimal constructor for ShaderReadOnlyOpt reference.
-    #[inline(always)]
     pub const fn shader_color_readonly_opt(index: u32) -> Self {
         Self::color(index, ImageLayout::ShaderReadOnlyOpt)
     }
 
     /// Optimal constructor for ColorAttachmentOpt reference.
-    #[inline(always)]
     pub const fn color_attachment_opt(index: u32) -> Self {
         Self::color(index, ImageLayout::ColorAttachmentOpt)
     }
 
     /// Optimal constructor for DepthStencilAttachmentOpt reference.
-    #[inline(always)]
     pub const fn depth_stencil_attachment_opt(index: u32) -> Self {
         Self::depth_stencil(index, ImageLayout::DepthStencilAttachmentOpt)
     }
 
     /// Optimal constructor for DepthStencilReadOnlyOpt reference.
-    #[inline(always)]
     pub const fn depth_stencil_readonly_opt(index: u32) -> Self {
         Self::depth_stencil(index, ImageLayout::DepthStencilReadOnlyOpt)
     }
@@ -158,7 +144,6 @@ pub struct SubpassDescription2<'d>(
     core::marker::PhantomData<&'d [AttachmentReference2]>,
 );
 impl<'d> SubpassDescription2<'d> {
-    #[inline]
     pub const fn new() -> Self {
         Self(
             VkSubpassDescription2KHR {
@@ -180,21 +165,18 @@ impl<'d> SubpassDescription2<'d> {
         )
     }
 
-    #[inline]
     pub const fn inputs(mut self, xs: &'d [AttachmentReference2]) -> Self {
         self.0.inputAttachmentCount = xs.len() as _;
         self.0.pInputAttachments = slice_as_ptr_empty_null(xs) as _;
         self
     }
 
-    #[inline]
     pub const fn colors(mut self, xs: &'d [AttachmentReference2]) -> Self {
         self.0.colorAttachmentCount = xs.len() as _;
         self.0.pColorAttachments = slice_as_ptr_empty_null(xs) as _;
         self
     }
 
-    #[inline]
     pub fn color_resolves(mut self, xs: &'d [AttachmentReference2]) -> Self {
         if !xs.is_empty() {
             assert_eq!(
@@ -208,20 +190,17 @@ impl<'d> SubpassDescription2<'d> {
         self
     }
 
-    #[inline]
     pub const fn depth_stencil(mut self, x: &'d AttachmentReference2) -> Self {
         self.0.pDepthStencilAttachment = x as *const _ as _;
         self
     }
 
-    #[inline]
     pub const fn preserves(mut self, xs: &'d [u32]) -> Self {
         self.0.preserveAttachmentCount = xs.len() as _;
         self.0.pPreserveAttachments = slice_as_ptr_empty_null(xs);
         self
     }
 
-    #[inline]
     pub const fn view_mask(mut self, mask: u32) -> Self {
         self.0.viewMask = mask;
         self
@@ -232,13 +211,12 @@ impl<'d> SubpassDescription2<'d> {
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct SubpassDependency2(VkSubpassDependency2KHR);
 impl SubpassDependency2 {
-    #[inline]
     pub const fn new(src: SubpassIndex, dst: SubpassIndex) -> Self {
         Self(VkSubpassDependency2KHR {
             sType: VkSubpassDependency2KHR::TYPE,
             pNext: core::ptr::null(),
-            srcSubpass: src.as_api_value(),
-            dstSubpass: dst.as_api_value(),
+            srcSubpass: src.as_vk(),
+            dstSubpass: dst.as_vk(),
             srcStageMask: 0,
             dstStageMask: 0,
             srcAccessMask: 0,
@@ -248,27 +226,23 @@ impl SubpassDependency2 {
         })
     }
 
-    #[inline]
     pub const fn of_execution(mut self, src: PipelineStageFlags, dst: PipelineStageFlags) -> Self {
         self.0.srcStageMask = src.0;
         self.0.dstStageMask = dst.0;
         self
     }
 
-    #[inline]
     pub const fn of_memory(mut self, src: VkAccessFlags, dst: VkAccessFlags) -> Self {
         self.0.srcAccessMask = src;
         self.0.dstAccessMask = dst;
         self
     }
 
-    #[inline]
     pub const fn by_region(mut self) -> Self {
         self.0.dependencyFlags |= VK_DEPENDENCY_BY_REGION_BIT;
         self
     }
 
-    #[inline]
     pub const fn view_offset(mut self, offset: i32) -> Self {
         self.0.viewOffset = offset;
         self
@@ -285,7 +259,6 @@ pub struct RenderPassCreateInfo2<'d>(
     )>,
 );
 impl<'d> RenderPassCreateInfo2<'d> {
-    #[inline]
     pub const fn new(
         attachments: &'d [AttachmentDescription2],
         subpasses: &'d [SubpassDescription2<'d>],
@@ -316,38 +289,18 @@ impl<'d> RenderPassCreateInfo2<'d> {
     pub const fn into_raw(self) -> VkRenderPassCreateInfo2KHR {
         self.0
     }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkRenderPassCreateInfo2KHR {
+        &self.0
+    }
 }
 #[implements]
 impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {
     fn execute(
         &self,
-        device: &(impl crate::VkHandle<Handle = super::VkDevice> + ?Sized),
+        device: &(impl crate::Device + ?Sized),
         allocation_callbacks: Option<&super::VkAllocationCallbacks>,
     ) -> crate::Result<super::VkRenderPass> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        #[cfg(feature = "Allow1_3APIs")]
-        unsafe {
-            crate::vkfn::create_render_pass2(
-                device.native_ptr(),
-                &self.0,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-
-        #[cfg(not(feature = "Allow1_3APIs"))]
-        unsafe {
-            (device.create_render_pass_2_khr_fn().0)(
-                device.native_ptr(),
-                &self.0,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-
-        Ok(unsafe { h.assume_init() })
+        device.new_render_pass2(&self, allocation_callbacks)
     }
 }

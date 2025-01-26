@@ -17,7 +17,7 @@ impl<Instance: crate::Instance> Drop for DebugReportCallbackObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.1.destroy_debug_report_callback_ext_fn().0(self.1.native_ptr(), self.native_ptr(), core::ptr::null());
+            self.1.destroy_debug_report_callback_raw(self.native_ptr(), None);
         }
     }
 }
@@ -33,19 +33,9 @@ impl<Instance: crate::Instance> DebugReportCallbackObject<Instance> {
     #[implements]
     #[inline]
     pub fn new(instance: Instance, info: &DebugReportCallbackCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
+        let h = unsafe { instance.new_debug_report_callback_raw(info, None)? };
 
-        unsafe {
-            instance.create_debug_report_callback_ext_fn().0(
-                instance.native_ptr(),
-                &info.0,
-                core::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-
-            Ok(Self(h.assume_init(), instance))
-        }
+        Ok(Self(h, instance))
     }
 }
 impl<Instance: crate::Instance + Clone> DebugReportCallbackObject<&'_ Instance> {
@@ -75,6 +65,10 @@ impl DebugReportCallbackCreateInfo {
 
     pub const fn into_raw(self) -> VkDebugReportCallbackCreateInfoEXT {
         self.0
+    }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkDebugReportCallbackCreateInfoEXT {
+        &self.0
     }
 
     pub const fn with_user_data<T>(mut self, data: *mut T) -> Self {

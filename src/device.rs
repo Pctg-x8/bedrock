@@ -23,10 +23,10 @@ impl crate::resolver::ResolverInterface for VkDevice {
     }
 
     #[inline(always)]
-    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self, name: &core::ffi::CStr) -> F {
+    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
         F::from_void_fn(
-            crate::vkfn::get_device_proc_addr(*self, name.as_ptr() as _)
-                .unwrap_or_else(|| panic!("function {name:?} not found")),
+            crate::vkfn::get_device_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
+                .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
         )
     }
 }
@@ -152,6 +152,8 @@ pub struct DeviceObject<Instance> {
         not(feature = "Allow1_4APIs")
     ))]
     cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
+    cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
 }
 impl<Instance> DeviceObject<Instance> {
     pub const fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
@@ -272,6 +274,8 @@ impl<Instance> DeviceObject<Instance> {
                 not(feature = "Allow1_4APIs")
             ))]
             cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
+            cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -450,6 +454,11 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
         *self.cmd_push_descriptor_set_khr.resolve()
     }
+
+    #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
+    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
+        *self.cmd_set_sample_locations_ext.resolve()
+    }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
@@ -592,6 +601,8 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
                 not(feature = "Allow1_4APIs")
             ))]
             cmd_push_descriptor_set_khr: unsafe { core::ptr::read(&self.cmd_push_descriptor_set_khr) },
+            #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
+            cmd_set_sample_locations_ext: unsafe { core::ptr::read(&self.cmd_set_sample_locations_ext) },
         };
         // disable running VkDevice destruction
         std::mem::forget(self);
@@ -849,6 +860,375 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
+    /// Create a new fence object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_fence_raw(
+        &self,
+        info: &FenceCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkFence> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_fence(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new queue semaphore object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_semaphore_raw(
+        &self,
+        info: &SemaphoreCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkSemaphore> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_semaphore(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new event object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_event_raw(
+        &self,
+        info: &EventCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkEvent> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_event(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new buffer object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_buffer_raw(
+        &self,
+        info: &BufferCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkBuffer> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_buffer(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new buffer view object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_buffer_view_raw(
+        &self,
+        info: &BufferViewCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkBufferView> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_buffer_view(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new sampler object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_TOO_MANY_OBJECTS`]
+    #[implements]
+    #[inline]
+    fn new_sampler_raw(
+        &self,
+        info: &SamplerCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkSampler> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_sampler(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new image object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_COMPRESSION_EXHAUSTED_EXT`]
+    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
+    #[implements]
+    #[inline]
+    fn new_image_raw(
+        &self,
+        info: &ImageCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkImage> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::create_image(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new image view from an existing image
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
+    #[implements]
+    #[inline]
+    fn new_image_view_raw(
+        &self,
+        info: &ImageViewCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkImageView> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_image_view(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new render pass object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_render_pass(
+        &self,
+        info: &RenderPassCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkRenderPass> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_render_pass(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new render pass object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements("VK_KHR_create_renderpass2")]
+    #[inline]
+    fn new_render_pass2(
+        &self,
+        info: &RenderPassCreateInfo2,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkRenderPass> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        #[cfg(feature = "Allow1_2APIs")]
+        unsafe {
+            crate::vkfn::create_render_pass2(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+        #[cfg(not(feature = "Allow1_2APIs"))]
+        unsafe {
+            (self.create_render_pass_2_khr_fn().0)(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Creates a new shader module object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_INVALID_SHADER_NV`]
+    #[implements]
+    #[inline]
+    fn new_shader_module_raw(
+        &self,
+        info: &ShaderModuleCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkShaderModule> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_shader_module(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new pipeline cache
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_pipeline_cache_raw(
+        &self,
+        info: &PipelineCacheCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkPipelineCache> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_pipeline_cache(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Create a new pipeline layout object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_pipeline_layout_raw(
+        &self,
+        info: &PipelineLayoutCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkPipelineLayout> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_pipeline_layout(
+                self.native_ptr(),
+                info as *const _ as _,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
     /// Create graphics pipelines
     /// # Failures
     /// On failure, this command returns
@@ -861,7 +1241,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     unsafe fn new_graphics_pipelines_raw(
         &self,
-        infos: &[VkGraphicsPipelineCreateInfo],
+        infos: &[GraphicsPipelineCreateInfo],
         cache: Option<VkPipelineCache>,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
         objects: &mut [VkPipeline],
@@ -870,7 +1250,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.native_ptr(),
             cache.unwrap_or(VkPipelineCache::NULL),
             infos.len() as _,
-            infos.as_ptr_empty_null(),
+            infos.as_ptr_empty_null() as _,
             opt_pointer(allocation_callbacks),
             objects.as_mut_ptr(),
         )
@@ -887,7 +1267,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements("alloc")]
     fn new_graphics_pipelines<'s>(
         &'s self,
-        infos: &[VkGraphicsPipelineCreateInfo],
+        infos: &[GraphicsPipelineCreateInfo],
         cache: Option<&impl crate::PipelineCache>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
         let mut hs = vec![VkPipeline::NULL; infos.len()];
@@ -896,7 +1276,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
         }
 
-        Ok(crate::collect_vec_alloc(
+        Ok(crate::alloc::collect_vec(
             hs.into_iter()
                 .map(move |h| unsafe { crate::PipelineObject::manage(h, self) }),
         ))
@@ -911,7 +1291,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     fn new_graphics_pipeline_array<'s, const N: usize>(
         &'s self,
-        infos: &[VkGraphicsPipelineCreateInfo; N],
+        infos: &[GraphicsPipelineCreateInfo; N],
         cache: Option<&impl crate::PipelineCache>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
         let mut hs = [VkPipeline::NULL; N];
@@ -937,7 +1317,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     unsafe fn new_compute_pipelines_raw(
         &self,
-        infos: &[VkComputePipelineCreateInfo],
+        infos: &[ComputePipelineCreateInfo],
         cache: Option<VkPipelineCache>,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
         objects: &mut [VkPipeline],
@@ -946,7 +1326,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.native_ptr(),
             cache.unwrap_or(VkPipelineCache::NULL),
             infos.len() as _,
-            infos.as_ptr_empty_null(),
+            infos.as_ptr_empty_null() as _,
             opt_pointer(allocation_callbacks),
             objects.as_mut_ptr(),
         )
@@ -963,36 +1343,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements("alloc")]
     fn new_compute_pipelines<'s>(
         &'s self,
-        builders: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>],
-        cache: Option<&impl crate::PipelineCache>,
+        infos: &[ComputePipelineCreateInfo],
+        cache: Option<&(impl crate::PipelineCache + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
-        let (cinfos, _extras): (Vec<_>, Vec<_>) = builders
-            .iter()
-            .map(|b| {
-                let extras = Box::pin(b.shader.make_extras());
-                let stage = b.shader.base_struct(crate::ShaderStage::Compute, &extras);
-
-                (
-                    VkComputePipelineCreateInfo {
-                        sType: VkComputePipelineCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags: 0,
-                        basePipelineHandle: VkPipeline::NULL,
-                        basePipelineIndex: -1,
-                        stage: stage.0,
-                        layout: b.layout.native_ptr(),
-                    },
-                    extras,
-                )
-            })
-            .unzip();
-        let mut pipelines = vec![VkPipeline::NULL; builders.len()];
+        let mut pipelines = vec![VkPipeline::NULL; infos.len()];
 
         unsafe {
-            self.new_compute_pipelines_raw(&cinfos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
+            self.new_compute_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
 
-        Ok(crate::collect_vec_alloc(
+        Ok(crate::alloc::collect_vec(
             pipelines
                 .into_iter()
                 .map(move |h| unsafe { crate::PipelineObject::manage(h, self) }),
@@ -1008,38 +1368,87 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     fn new_compute_pipeline_array<'s, const N: usize>(
         &'s self,
-        info: &[crate::ComputePipelineBuilder<impl crate::PipelineLayout, impl crate::PipelineShaderProvider>; N],
-        cache: Option<&impl crate::PipelineCache>,
+        infos: &[ComputePipelineCreateInfo; N],
+        cache: Option<&(impl crate::PipelineCache + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
-        let (cinfos, _extras): (Vec<_>, Vec<_>) = info
-            .iter()
-            .map(|b| {
-                let extras = Box::pin(b.shader.make_extras());
-                let stage = b.shader.base_struct(crate::ShaderStage::Compute, &extras);
-
-                (
-                    VkComputePipelineCreateInfo {
-                        sType: VkComputePipelineCreateInfo::TYPE,
-                        pNext: std::ptr::null(),
-                        flags: 0,
-                        basePipelineHandle: VkPipeline::NULL,
-                        basePipelineIndex: -1,
-                        stage: stage.0,
-                        layout: b.layout.native_ptr(),
-                    },
-                    extras,
-                )
-            })
-            .unzip();
         let mut pipelines = [VkPipeline::NULL; N];
 
         unsafe {
-            self.new_compute_pipelines_raw(&cinfos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
+            self.new_compute_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
 
         Ok(core::array::from_fn(move |n| unsafe {
             crate::PipelineObject::manage(pipelines[n], self)
         }))
+    }
+
+    /// Create a new command pool object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn new_command_pool_raw(
+        &self,
+        info: &CommandPoolCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkCommandPool> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_command_pool(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+
+    /// Allocate command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn allocate_command_buffers_raw(
+        &self,
+        info: &CommandBufferAllocateInfo,
+        sink: &mut [VkCommandBuffer],
+    ) -> crate::Result<()> {
+        assert_eq!(info.as_raw_ref().commandBufferCount as usize, sink.len());
+
+        unsafe {
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), info.as_raw_ref(), sink.as_mut_ptr())
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Allocate command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    fn allocate_command_buffer_array_raw<const N: usize>(
+        &self,
+        info: &CommandBufferFixedCountAllocateInfo<N>,
+        sink: &mut [VkCommandBuffer; N],
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), info.as_raw_ref(), sink.as_mut_ptr())
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Invalidate `MappedMemoryRange`s
@@ -1257,6 +1666,38 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 .into_result()
                 .map(drop)
         }
+    }
+
+    /// Create a swapchain
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    /// * [`VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`]
+    /// * [`VK_ERROR_INITIALIZATION_FAILED`]
+    /// * [`VK_ERROR_COMPRESSION_EXHAUSTED_EXT`]
+    #[implements("VK_KHR_swapchain")]
+    #[inline]
+    fn new_swapchain_raw(
+        &self,
+        info: &SwapchainCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkSwapchainKHR> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_swapchain_khr(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Give a user-friendly name to an object.
@@ -1654,6 +2095,9 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[cfg(not(feature = "Allow1_4APIs"))]
     #[implements("VK_KHR_push_descriptor")]
     fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
+
+    #[implements("VK_EXT_sample_locations")]
+    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
 }
 DerefContainerBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_1APIs"))]
@@ -1738,6 +2182,9 @@ DerefContainerBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_4APIs"))]
     #[implements("VK_KHR_push_descriptor")]
     ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
+
+    #[implements("VK_EXT_sample_locations")]
+    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
 });
 GuardsImpl!(for Device {
     #[cfg(not(feature = "Allow1_1APIs"))]
@@ -1822,6 +2269,9 @@ GuardsImpl!(for Device {
     #[cfg(not(feature = "Allow1_4APIs"))]
     #[implements("VK_KHR_push_descriptor")]
     ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
+
+    #[implements("VK_EXT_sample_locations")]
+    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
 });
 
 /// Child of a device object(raw handle)
@@ -1899,7 +2349,7 @@ pub trait QueueMut: Queue + VkHandleMut {
         batches: &[impl SparseBindingOpBatch],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
-        let batches: Vec<_> = crate::collect_vec_alloc(batches.iter().map(SparseBindingOpBatch::make_info_struct));
+        let batches: Vec<_> = crate::alloc::collect_vec(batches.iter().map(SparseBindingOpBatch::make_info_struct));
 
         unsafe { self.bind_sparse_raw(&batches, fence) }
     }
@@ -1943,12 +2393,12 @@ pub trait QueueMut: Queue + VkHandleMut {
         batches: &[impl SubmissionBatch],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
-        let batch_resources: Vec<_> = crate::collect_vec_alloc(batches.iter().map(|b| {
+        let batch_resources: Vec<_> = crate::alloc::collect_vec(batches.iter().map(|b| {
             let mut resources = TemporalSubmissionBatchResources::new();
             b.collect_resources(&mut resources);
             resources
         }));
-        let batches: Vec<_> = crate::collect_vec_alloc(
+        let batches: Vec<_> = crate::alloc::collect_vec(
             batch_resources
                 .iter()
                 .map(TemporalSubmissionBatchResources::make_info_struct),
@@ -1991,9 +2441,9 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls under api)
@@ -2017,9 +2467,9 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements("VK_KHR_synchronization2")]
     fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
         #[cfg(feature = "Allow1_3APIs")]
@@ -2041,57 +2491,14 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DATE_KHR`]
+    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_KHR_swapchain")]
-    fn present<'r>(&mut self, info: PresentInfo<'r>) -> crate::Result<Vec<crate::Result<()>>> {
+    fn present<'r>(&mut self, info: PresentInfo<'r>) -> crate::Result<()> {
         info.submit(self)
-    }
-
-    /// Queue images for presentation
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[cfg(feature = "Implements")]
-    #[cfg(feature = "VK_KHR_swapchain")]
-    #[deprecated = "use PresentInfo for more extensibiility"]
-    fn present1(
-        &mut self,
-        swapchains: &mut [(&mut (impl crate::Swapchain + VkHandleMut), u32)],
-        wait_semaphores: &mut [impl VkHandleMut<Handle = VkSemaphore>],
-    ) -> crate::Result<Vec<VkResult>> {
-        let mut res = vec![VkResult(0); swapchains.len()];
-        let wait_semaphores = wait_semaphores
-            .iter_mut()
-            .map(VkHandleMut::native_ptr_mut)
-            .collect::<Vec<_>>();
-        let (swapchains, indices): (Vec<_>, Vec<_>) = swapchains
-            .iter_mut()
-            .map(|&mut (ref mut x, n)| (x.native_ptr_mut(), n))
-            .unzip();
-        let pinfo = VkPresentInfoKHR {
-            sType: VkPresentInfoKHR::TYPE,
-            pNext: std::ptr::null(),
-            waitSemaphoreCount: wait_semaphores.len() as _,
-            pWaitSemaphores: wait_semaphores.as_ptr_empty_null(),
-            swapchainCount: swapchains.len() as _,
-            pSwapchains: swapchains.as_ptr_empty_null(),
-            pImageIndices: indices.as_ptr_empty_null(),
-            pResults: res.as_mut_ptr(),
-        };
-        unsafe {
-            crate::vkfn::queue_present_khr(self.native_ptr_mut(), &pinfo)
-                .into_result()
-                .map(|_| res)
-        }
     }
 }
 DerefContainerBracketImpl!(for mut QueueMut {});
@@ -2101,7 +2508,7 @@ GuardsImpl!(for mut QueueMut {});
 #[repr(transparent)]
 pub struct PresentInfo<'r>(
     VkPresentInfoKHR,
-    core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32])>,
+    core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32], &'r mut [VkResult])>,
 );
 #[cfg(feature = "VK_KHR_swapchain")]
 impl<'r> PresentInfo<'r> {
@@ -2110,8 +2517,10 @@ impl<'r> PresentInfo<'r> {
         wait_semaphores: &'r [VkHandleRef<VkSemaphore>],
         swapchains: &'r [VkHandleRef<VkSwapchainKHR>],
         image_indices: &'r [u32],
+        results: &'r mut [VkResult],
     ) -> Self {
         assert_eq!(swapchains.len(), image_indices.len());
+        assert_eq!(swapchains.len(), results.len());
 
         Self(
             VkPresentInfoKHR {
@@ -2120,9 +2529,9 @@ impl<'r> PresentInfo<'r> {
                 waitSemaphoreCount: wait_semaphores.len() as _,
                 pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
                 swapchainCount: swapchains.len() as _,
-                pSwapchains: swapchains.as_ptr_empty_null() as _,
-                pImageIndices: image_indices.as_ptr_empty_null(),
-                pResults: core::ptr::null_mut(),
+                pSwapchains: slice_as_ptr_empty_null(swapchains) as _,
+                pImageIndices: slice_as_ptr_empty_null(image_indices),
+                pResults: slice_as_mut_ptr_empty_null(results),
             },
             core::marker::PhantomData,
         )
@@ -2134,30 +2543,12 @@ impl<'r> PresentInfo<'r> {
     }
 
     #[implements]
-    pub fn submit_sink(
-        mut self,
-        queue: &mut (impl VkHandleMut<Handle = VkQueue> + ?Sized),
-        result_sink: &mut [VkResult],
-    ) -> crate::Result<()> {
-        assert_eq!(result_sink.len(), self.0.swapchainCount as usize);
-        self.0.pResults = slice_as_mut_ptr_empty_null(result_sink);
-
+    pub fn submit(&self, queue: &mut (impl VkHandleMut<Handle = VkQueue> + ?Sized)) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_present_khr(queue.native_ptr_mut(), &self.0)
                 .into_result()
                 .map(drop)
         }
-    }
-
-    #[implements("alloc")]
-    pub fn submit(
-        self,
-        queue: &mut (impl VkHandleMut<Handle = VkQueue> + ?Sized),
-    ) -> crate::Result<Vec<crate::Result<()>>> {
-        let mut results = vec![VK_SUCCESS; self.0.swapchainCount as usize];
-
-        self.submit_sink(queue, &mut results)
-            .map(move |_| crate::collect_vec_alloc(results.into_iter().map(|r| r.into_result().map(drop))))
     }
 }
 

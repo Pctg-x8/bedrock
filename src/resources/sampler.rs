@@ -39,25 +39,6 @@ impl<Device: crate::Device> DeviceChild for SamplerObject<Device> {
 }
 impl<Device: VkHandle<Handle = VkDevice>> Sampler for SamplerObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
-    /// Create a new sampler object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[implements]
-    pub fn new(device: Device, info: &SamplerCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_sampler(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self(h.assume_init(), device))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
@@ -79,6 +60,19 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> SamplerObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> SamplerObject<Device> {
         SamplerObject(self.0, self.1.clone())
+    }
+}
+impl<Device: crate::Device> SamplerObject<Device> {
+    /// Create a new sampler object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    #[implements]
+    pub fn new(device: Device, info: &SamplerCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.new_sampler_raw(info, None)?, device) })
     }
 }
 
@@ -114,6 +108,10 @@ impl SamplerCreateInfo {
             unnormalizedCoordinates: false as _,
             maxAnisotropy: 1.0,
         })
+    }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkSamplerCreateInfo {
+        &self.0
     }
 
     pub const unsafe fn from_raw(raw: VkSamplerCreateInfo) -> Self {

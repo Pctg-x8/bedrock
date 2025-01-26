@@ -470,7 +470,9 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
 
     let syn::Data::Struct(ref s) = input.data else {
-        panic!("cannot use as bitflags struct");
+        return syn::Error::new(input.span(), "cannot use as bitflags struct")
+            .into_compile_error()
+            .into();
     };
     let org_type = try_compile_error!(newtype_struct_org_type(s));
 

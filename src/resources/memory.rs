@@ -1,14 +1,14 @@
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    ffi_helper::opt_pointer, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure,
+    VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
+    VulkanStructureAsRef,
 };
 use derives::implements;
-#[implements]
-use std::ops::Range;
 
 pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
     /// Query the current commitment for a `DeviceMemory`
     #[implements]
+    #[inline]
     fn commitment_bytes(&self) -> VkDeviceSize {
         let mut b = 0;
         unsafe {
@@ -23,21 +23,6 @@ GuardsImpl!(for DeviceMemory {});
 
 pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// Map a memory object into application address space
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_MEMORY_MAP_FAILED`
-    #[implements]
-    fn map(&mut self, range: Range<usize>) -> crate::Result<MappedMemoryRange<Self>> {
-        unsafe {
-            self.map_raw(range.start as _..range.end as _)
-                .map(move |p| MappedMemoryRange(p as _, self))
-        }
-    }
-
-    /// Map a memory object into application address space
     /// # Safety
     /// mapped memory must be unmapped once
     /// # Failure
@@ -47,7 +32,8 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
-    unsafe fn map_raw(&mut self, range: Range<VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
+    #[inline]
+    unsafe fn map_raw(&mut self, range: core::ops::Range<VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
         let mut p = core::mem::MaybeUninit::uninit();
 
         crate::vkfn::map_memory(
@@ -58,8 +44,23 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
             0,
             p.as_mut_ptr(),
         )
-        .into_result()
-        .map(move |_| p.assume_init())
+        .into_result()?;
+
+        Ok(p.assume_init())
+    }
+
+    /// Map a memory object into application address space
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_MEMORY_MAP_FAILED`
+    #[implements]
+    fn map(&mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemoryRange<Self>> {
+        let p = unsafe { self.map_raw(range.start as _..range.end as _)? };
+
+        Ok(MappedMemoryRange(p, self))
     }
 
     /// Unmap a previously mapped memory object
@@ -67,6 +68,7 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// Caller must guarantee that there is no `MappedMemoryRange` alives.
     /// Accessing the mapped memory after this call has undefined behavior
     #[implements]
+    #[inline]
     unsafe fn unmap(&mut self) {
         crate::vkfn::unmap_memory(self.device_handle(), self.native_ptr_mut());
     }
@@ -116,6 +118,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
     /// # Safety
     /// no guarantee will be provided (simply calls the under api)
     #[implements]
+    #[inline]
     pub unsafe fn new_raw(device: Device, info: &VkMemoryAllocateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
@@ -154,7 +157,7 @@ impl DeviceMemoryRequest {
         Self(
             VkMemoryAllocateInfo {
                 sType: VkMemoryAllocateInfo::TYPE,
-                pNext: std::ptr::null(),
+                pNext: core::ptr::null(),
                 allocationSize: size as _,
                 memoryTypeIndex: memory_type_index,
             },
@@ -203,8 +206,8 @@ impl DeviceMemoryRequest {
         unsafe {
             self.with_extension(VkExportMemoryWin32HandleInfoKHR {
                 sType: VkExportMemoryWin32HandleInfoKHR::TYPE,
-                pNext: std::ptr::null(),
-                pAttributes: security_attributes.map_or_else(std::ptr::null, |v| v as *const _),
+                pNext: core::ptr::null(),
+                pAttributes: security_attributes.map_or_else(core::ptr::null, |v| v as *const _),
                 dwAccess: access,
                 name: windows::core::PCWSTR(name.as_ptr()),
             })
@@ -215,7 +218,7 @@ impl DeviceMemoryRequest {
     /// # Safety
     /// lifetime not captured
     #[cfg(feature = "VK_KHR_dedicated_allocation")]
-    pub unsafe fn for_dedicated_buffer_allocation(self, buffer: &impl crate::Buffer) -> Self {
+    pub unsafe fn for_dedicated_buffer_allocation(self, buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
         use crate::VkRawHandle;
 
         self.with_extension(VkMemoryDedicatedAllocateInfoKHR {
@@ -230,7 +233,7 @@ impl DeviceMemoryRequest {
     /// # Safety
     /// lifetime not captured
     #[cfg(feature = "VK_KHR_dedicated_allocation")]
-    pub unsafe fn for_dedicated_image_allocation(self, image: &impl crate::Image) -> Self {
+    pub unsafe fn for_dedicated_image_allocation(self, image: &(impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
         use crate::VkRawHandle;
 
         self.with_extension(VkMemoryDedicatedAllocateInfoKHR {
@@ -239,6 +242,31 @@ impl DeviceMemoryRequest {
             image: image.native_ptr(),
             buffer: VkBuffer::NULL,
         })
+    }
+
+    /// Execute requests for Device Memory Acquisition
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_TOO_MANY_OBJECTS`]
+    #[implements]
+    #[inline]
+    pub fn execute_raw(
+        mut self,
+        device: &(impl VkHandle<Handle = VkDevice> + ?Sized),
+        allocator: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkDeviceMemory> {
+        crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
+
+        let mut h = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::allocate_memory(device.native_ptr(), &self.0, opt_pointer(allocator), h.as_mut_ptr())
+                .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Execute requests for Device Memory Acquisition
@@ -257,19 +285,20 @@ impl DeviceMemoryRequest {
 }
 
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm>(*mut u8, &'m mut DeviceMemory);
+pub struct MappedMemoryRange<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm>(
+    *mut core::ffi::c_void,
+    &'m mut DeviceMemory,
+);
 #[allow(clippy::mut_from_ref)]
 impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'m, DeviceMemory> {
     /// Returns a pointer to the head of the mapped region
-    #[inline(always)]
-    pub const fn ptr(&self) -> *mut u8 {
+    pub const fn ptr(&self) -> *mut core::ffi::c_void {
         self.0
     }
 
     /// Get a reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
-    #[inline(always)]
     pub const unsafe fn get<T>(&self, offset: usize) -> &T {
         &*(self.0.add(offset) as *const T)
     }
@@ -277,7 +306,6 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// Get a mutable reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
-    #[inline(always)]
     pub const unsafe fn get_mut<T>(&self, offset: usize) -> &mut T {
         &mut *(self.0.add(offset) as *mut T)
     }
@@ -285,17 +313,15 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// Get a slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
-    #[inline(always)]
     pub const unsafe fn slice<T>(&self, offset: usize, count: usize) -> &[T] {
-        std::slice::from_raw_parts(self.0.add(offset) as *const T, count)
+        core::slice::from_raw_parts(self.0.add(offset) as *const T, count)
     }
 
     /// Get a mutable slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
-    #[inline(always)]
     pub const unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T] {
-        std::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count)
+        core::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count)
     }
 
     /// Clone data from slice at the specified offset in mapped memory.

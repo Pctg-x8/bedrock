@@ -351,12 +351,10 @@ pub const VK_PIPELINE_CACHE_HEADER_VERSION_ONE: VkPipelineCacheHeaderVersion = 1
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct VkResult(pub i32);
 impl VkResult {
-    #[inline(always)]
     const fn ext_value(ext_number: u16, offset: u16) -> Self {
         Self(1000_000_000 + ((ext_number - 1) as i32 * 1_000) + offset as i32)
     }
 
-    #[inline(always)]
     const fn ext_err_value(ext_number: u16, offset: u16) -> Self {
         Self(-Self::ext_value(ext_number, offset).0)
     }
@@ -2132,7 +2130,7 @@ pub struct VkSubresourceLayout {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkComponentMapping {
     pub r: VkComponentSwizzle,
     pub g: VkComponentSwizzle,
@@ -2161,7 +2159,7 @@ pub struct VkImageSubresourceRange {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)]
 pub struct VkImageViewCreateInfo {
     pub sType: VkStructureType,
@@ -2214,7 +2212,7 @@ pub struct VkSpecializationInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)]
 pub struct VkPipelineShaderStageCreateInfo {
     pub sType: VkStructureType,
@@ -2268,7 +2266,7 @@ pub struct VkPipelineInputAssemblyStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO)]
 pub struct VkPipelineTessellationStateCreateInfo {
     pub sType: VkStructureType,
@@ -2323,7 +2321,7 @@ pub struct VkRect2D {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)]
 pub struct VkPipelineViewportStateCreateInfo {
     pub sType: VkStructureType,
@@ -2438,7 +2436,7 @@ pub struct VkPipelineDynamicStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO)]
 pub struct VkGraphicsPipelineCreateInfo {
     pub sType: VkStructureType,
@@ -2463,7 +2461,7 @@ pub struct VkGraphicsPipelineCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO)]
 pub struct VkComputePipelineCreateInfo {
     pub sType: VkStructureType,

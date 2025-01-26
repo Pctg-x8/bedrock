@@ -1,4 +1,3 @@
-use derives::transparent_marked;
 use widestring::WideCStr;
 
 use crate::{vk::*, VkHandle, VulkanStructure, VulkanStructureAsRef};
@@ -30,7 +29,7 @@ impl ExternalMemoryWin32Handle {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImportMemoryWin32HandleInfo<'d>(
     VkImportMemoryWin32HandleInfoKHR,
@@ -73,7 +72,7 @@ unsafe impl VulkanStructureAsRef for ImportMemoryWin32HandleInfo<'_> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MemoryGetWin32HandleInfo<'d>(
     pub(crate) VkMemoryGetWin32HandleInfoKHR,

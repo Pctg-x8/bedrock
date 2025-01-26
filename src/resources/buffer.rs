@@ -5,7 +5,6 @@ use crate::{
 #[implements]
 use crate::{DeviceMemory, VkHandleMut};
 use derives::implements;
-use std::ops::{BitOr, BitOrAssign, Deref};
 
 pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {}
 DerefContainerBracketImpl!(for Buffer {});
@@ -80,24 +79,6 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
-    /// Create a new buffer object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    pub fn new(device: Device, info: &BufferCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_buffer(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self(h.assume_init(), device))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
@@ -119,6 +100,19 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> BufferObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> BufferObject<Device> {
         BufferObject(self.0, self.1.clone())
+    }
+}
+impl<Device: crate::Device> BufferObject<Device> {
+    /// Create a new buffer object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &BufferCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.new_buffer_raw(info, None)?, device) })
     }
 }
 
@@ -151,7 +145,7 @@ impl<Buffer: DeviceChild> DeviceChild for BufferViewObject<Buffer> {
     }
 }
 impl<Buffer: DeviceChildHandle> BufferView for BufferViewObject<Buffer> {}
-impl<Buffer: DeviceChildHandle> Deref for BufferViewObject<Buffer> {
+impl<Buffer: DeviceChildHandle> core::ops::Deref for BufferViewObject<Buffer> {
     type Target = Buffer;
 
     #[inline(always)]
@@ -160,27 +154,6 @@ impl<Buffer: DeviceChildHandle> Deref for BufferViewObject<Buffer> {
     }
 }
 impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
-    /// Create a new buffer view object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls the under api)
-    #[implements]
-    pub fn new(buffer: Buffer, info: &BufferViewCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_buffer_view(buffer.device_handle(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self(h.assume_init(), buffer))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
@@ -202,6 +175,21 @@ impl<Buffer: DeviceChildHandle + Clone> BufferViewObject<&'_ Buffer> {
     #[inline(always)]
     pub fn clone_parent(self) -> BufferViewObject<Buffer> {
         BufferViewObject(self.0, self.1.clone())
+    }
+}
+impl<Buffer: DeviceChild> BufferViewObject<Buffer> {
+    /// Create a new buffer view object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    pub fn new(buffer: Buffer, info: &BufferViewCreateInfo) -> crate::Result<Self> {
+        use crate::Device;
+
+        Ok(unsafe { Self::manage(buffer.device().new_buffer_view_raw(info, None)?, buffer) })
     }
 }
 
@@ -231,6 +219,10 @@ impl<'s> BufferCreateInfo<'s> {
     #[inline(always)]
     pub const fn new_for_type<T>(usage: BufferUsage) -> Self {
         Self::new(core::mem::size_of::<T>(), usage)
+    }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkBufferCreateInfo {
+        &self.0
     }
 
     /// Wraps raw vulkan structure
@@ -313,6 +305,10 @@ impl<'d> BufferViewCreateInfo<'d> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub(crate) const fn as_raw_ref(&self) -> &VkBufferViewCreateInfo {
+        &self.0
     }
 
     pub const unsafe fn from_raw(raw: VkBufferViewCreateInfo) -> Self {
@@ -483,7 +479,7 @@ impl BufferUsage {
         (self.0 & (Self::STORAGE_BUFFER.0 | Self::STORAGE_TEXEL_BUFFER.0)) != 0
     }
 }
-impl BitOr for BufferUsage {
+impl core::ops::BitOr for BufferUsage {
     type Output = Self;
 
     #[inline(always)]
@@ -491,7 +487,7 @@ impl BitOr for BufferUsage {
         BufferUsage(self.0 | other.0)
     }
 }
-impl BitOrAssign for BufferUsage {
+impl core::ops::BitOrAssign for BufferUsage {
     #[inline(always)]
     fn bitor_assign(&mut self, other: Self) {
         self.0 |= other.0;

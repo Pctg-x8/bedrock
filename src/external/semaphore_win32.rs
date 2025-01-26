@@ -1,5 +1,3 @@
-use derives::transparent_marked;
-
 use crate::ffi_helper::opt_pointer;
 use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::vk::*;
@@ -24,7 +22,7 @@ pub struct ExternalSemaphoreHandleWin32(
     pub windows::Win32::Foundation::HANDLE,
 );
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImportSemaphoreWin32HandleInfo<'d>(
     pub(crate) VkImportSemaphoreWin32HandleInfoKHR,
@@ -60,7 +58,7 @@ impl<'d> ImportSemaphoreWin32HandleInfo<'d> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SemaphoreGetWin32HandleInfo<'d>(
     pub(crate) VkSemaphoreGetWin32HandleInfoKHR,
@@ -92,7 +90,7 @@ impl<'d> SemaphoreGetWin32HandleInfo<'d> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct D3D12FenceSubmitInfo<'t>(
     VkD3D12FenceSubmitInfoKHR,
@@ -138,7 +136,7 @@ unsafe impl<'t> VulkanStructureAsRef for D3D12FenceSubmitInfo<'t> {
     }
 }
 
-#[transparent_marked]
+#[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExportSemaphoreWin32HandleInfo<'d>(
     VkExportSemaphoreWin32HandleInfoKHR,

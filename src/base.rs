@@ -8,7 +8,7 @@ use crate::{
     VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
 };
 #[cfg(feature = "Implements")]
-use crate::{fnconv::FnTransmute, ImageFlags, ImageUsageFlags};
+use crate::{ImageFlags, ImageUsageFlags};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
 
@@ -105,10 +105,10 @@ impl crate::resolver::ResolverInterface for VkInstance {
         )))
     }
 
-    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self, name: &core::ffi::CStr) -> F {
+    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
         F::from_void_fn(
-            crate::vkfn::get_instance_proc_addr(*self, name.as_ptr() as _)
-                .unwrap_or_else(|| panic!("function {:?} not found", name)),
+            crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
+                .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
         )
     }
 }
@@ -535,10 +535,10 @@ pub fn enumerate_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties
     let n = instance_layer_property_count()?;
     if n == 0 {
         // no items
-        return Ok(crate::empty_sink_buffer());
+        return Ok(crate::alloc::empty_sink_buffer());
     }
 
-    let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+    let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
     instance_layer_properties(&mut xs)?;
 
     Ok(xs)
@@ -599,10 +599,10 @@ pub fn instance_extension_properties_cstr_alloc(
     let n = instance_extension_property_count_cstr(layer_name)?;
     if n == 0 {
         // no items
-        return Ok(crate::empty_sink_buffer());
+        return Ok(crate::alloc::empty_sink_buffer());
     }
 
-    let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+    let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
     instance_extension_properties_cstr(layer_name, &mut xs)?;
 
     Ok(xs)
@@ -617,7 +617,7 @@ pub fn instance_extension_properties_cstr_alloc(
 /// * `VK_ERROR_LAYER_NOT_PRESENT`
 #[implements("alloc")]
 pub fn instance_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
-    instance_extension_properties_cstr_alloc(layer_name.map(|s| crate::str_to_cstr_alloc(s).unwrap()).as_deref())
+    instance_extension_properties_cstr_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
 }
 
 /// A Vulkan Instance interface
@@ -635,14 +635,14 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// If function is not provided by instance or `name` is empty, returns `None`
     #[deprecated = "do not use this directly(this does not provide caching)"]
     #[implements("alloc")]
-    fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F> {
+    fn extra_procedure<F: crate::fnconv::FnTransmute>(&self, name: &str) -> Option<F> {
         if name.is_empty() {
             return None;
         }
 
         #[allow(deprecated)]
-        self.extra_procedure_raw(&crate::str_to_cstr_alloc(name).unwrap())
-            .map(|f| unsafe { FnTransmute::from_fn(f) })
+        self.extra_procedure_raw(&crate::alloc::str_to_cstr(name).unwrap())
+            .map(|f| unsafe { crate::fnconv::FnTransmute::from_fn(f) })
     }
 
     /// Counts the physical devices accessible to a Vulkan instance
@@ -695,10 +695,10 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         let n = self.physical_device_count()?;
         if n == 0 {
             // no items
-            return Ok(IterPhysicalDevices(crate::empty_sink_buffer(), 0, self));
+            return Ok(IterPhysicalDevices(crate::alloc::empty_sink_buffer(), 0, self));
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.enumerate_physical_devices(&mut xs)?;
 
         Ok(IterPhysicalDevices(xs, 0, self))
@@ -713,7 +713,34 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     #[implements("alloc")]
     fn enumerate_physical_devices_alloc(&self) -> crate::Result<Vec<PhysicalDeviceObject<&Self>>> {
-        self.iter_physical_devices().map(crate::collect_vec_alloc)
+        self.iter_physical_devices().map(crate::alloc::collect_vec)
+    }
+
+    /// Register a debug report callback
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    ///
+    /// # Safety
+    /// must not execute in parallel with any Vulkan commands
+    #[implements("VK_EXT_debug_report")]
+    #[inline]
+    unsafe fn new_debug_report_callback_raw(
+        &self,
+        info: &crate::DebugReportCallbackCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkDebugReportCallbackEXT> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        self.create_debug_report_callback_ext_fn().0(
+            self.native_ptr(),
+            info.as_raw_ref(),
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Inject its own messages into the debug stream
@@ -726,8 +753,8 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         object: u64,
         location: usize,
         message_count: i32,
-        layer_prefix: &CStr,
-        message: &CStr,
+        layer_prefix: &core::ffi::CStr,
+        message: &core::ffi::CStr,
     ) {
         unsafe {
             self.debug_report_message_ext_fn().0(
@@ -741,6 +768,61 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
                 message.as_ptr(),
             );
         }
+    }
+
+    /// Destroy a debug report callback object
+    /// # Safety
+    /// * must created from this Instance object
+    /// * must not execute in parallel with any Vulkan commands
+    #[implements("VK_EXT_debug_report")]
+    #[inline]
+    unsafe fn destroy_debug_report_callback_raw(
+        &self,
+        obj: VkDebugReportCallbackEXT,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) {
+        self.destroy_debug_report_callback_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+    }
+
+    /// Create a debug messenger object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    ///
+    /// # Safety
+    /// must not be executed in parallel with any Vulkan commands
+    #[implements("VK_EXT_debug_utils")]
+    #[inline]
+    unsafe fn new_debug_utils_messenger_raw(
+        &self,
+        info: &crate::DebugUtilsMessengerCreateInfo,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkDebugUtilsMessengerEXT> {
+        let mut h = core::mem::MaybeUninit::uninit();
+        self.create_debug_utils_messenger_ext_fn().0(
+            self.native_ptr(),
+            info,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+
+        Ok(h.assume_init())
+    }
+
+    /// Destroy a debug messenger object
+    /// # Safety
+    /// * must created from this Instance object
+    /// * must not execute in parallel with any Vulkan commands
+    #[implements("VK_EXT_debug_utils")]
+    #[inline]
+    unsafe fn destroy_debug_utils_messenger_raw(
+        &self,
+        obj: VkDebugUtilsMessengerEXT,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) {
+        self.destroy_debug_utils_messenger_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
     }
 
     // Extension Function Providers
@@ -930,10 +1012,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let count = self.layer_property_count()?;
         if count == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(count as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(count as _) };
         self.enumerate_layer_properties(&mut xs)?;
 
         Ok(xs)
@@ -1006,10 +1088,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.extension_property_count_cstr(layer_name)?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.enumerate_extension_properties_cstr(layer_name, &mut xs)?;
 
         Ok(xs)
@@ -1026,7 +1108,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
         self.enumerate_extension_properties_cstr_alloc(
-            layer_name.map(|s| crate::str_to_cstr_alloc(s).unwrap()).as_deref(),
+            layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref(),
         )
     }
 
@@ -1091,13 +1173,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 itype,
                 tiling,
                 usage.bits(),
-                flags.0,
+                flags.bits(),
                 p.as_mut_ptr(),
             )
             .into_result()?;
-
-            Ok(p.assume_init())
         }
+
+        Ok(unsafe { p.assume_init() })
     }
 
     /// Returns properties of a physical device
@@ -1143,10 +1225,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.queue_family_property_count();
         if n == 0 {
             // no items
-            return QueueFamilies(crate::empty_sink_buffer());
+            return QueueFamilies(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.queue_family_properties(&mut xs);
 
         QueueFamilies(xs)
@@ -1235,10 +1317,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.sparse_image_format_property_count(format, itype, samples, usage, tiling);
         if n == 0 {
             // no items
-            return crate::empty_sink_buffer();
+            return crate::alloc::empty_sink_buffer();
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.sparse_image_format_properties(format, itype, samples, usage, tiling, &mut xs);
 
         xs
@@ -1389,10 +1471,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.surface_format_count(surface)?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.surface_formats(surface, &mut xs)?;
 
         Ok(xs)
@@ -1465,10 +1547,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.surface_present_mode_count(surface)?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.surface_present_modes(surface, &mut xs)?;
 
         Ok(xs)
@@ -1575,10 +1657,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.display_mode_property_count(display)?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.display_mode_properties(display, &mut xs)?;
 
         Ok(xs)
@@ -1685,13 +1767,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.display_property_count()?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.display_properties(&mut xs)?;
 
-        Ok(crate::collect_vec_alloc(
+        Ok(crate::alloc::collect_vec(
             xs.into_iter().map(move |x| DisplayProperties(x, self)),
         ))
     }
@@ -1747,13 +1829,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.display_plane_property_count()?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.display_plane_properties(&mut xs)?;
 
-        Ok(crate::collect_vec_alloc(
+        Ok(crate::alloc::collect_vec(
             xs.into_iter().map(move |x| DisplayPlaneProperties(x, self)),
         ))
     }
@@ -1815,13 +1897,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.display_plane_supported_display_count(plane_index)?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.display_plane_supported_displays(plane_index, &mut xs)?;
 
-        Ok(crate::collect_vec_alloc(xs.into_iter().map(move |x| Display(x, self))))
+        Ok(crate::alloc::collect_vec(xs.into_iter().map(move |x| Display(x, self))))
     }
 
     /// Query the VkDisplayKHR corresponding to an X11 RandR Output

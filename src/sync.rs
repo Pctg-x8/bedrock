@@ -11,9 +11,9 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements]
     #[inline(always)]
     fn wait_timeout(&self, timeout: u64) -> crate::Result<bool> {
@@ -30,9 +30,9 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements]
     #[inline(always)]
     fn wait(&self) -> crate::Result<()> {
@@ -89,9 +89,10 @@ pub trait EventMut: Event + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
+    #[inline]
     fn set(&mut self) -> crate::Result<()> {
         unsafe {
             crate::vkfn::set_event(self.device().native_ptr(), self.native_ptr_mut())
@@ -104,9 +105,10 @@ pub trait EventMut: Event + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
+    #[inline]
     fn reset(&mut self) -> crate::Result<()> {
         unsafe {
             crate::vkfn::reset_event(self.device().native_ptr(), self.native_ptr_mut())
@@ -123,20 +125,22 @@ pub trait Status {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements]
     fn status(&self) -> crate::Result<bool>;
 }
 DerefContainerBracketImpl!(for Status {
     #[implements]
+    #[inline(always)]
     fn status(&self) -> crate::Result<bool> {
         T::status(self)
     }
 });
 GuardsImpl!(for Status {
     #[implements]
+    #[inline(always)]
     fn status(&self) -> crate::Result<bool> {
         T::status(&self)
     }
@@ -215,25 +219,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
-    /// Create a new fence object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, create_info: &FenceCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_fence(device.native_ptr(), &create_info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self::manage(h.assume_init(), device))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -255,6 +240,19 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> FenceObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> FenceObject<Device> {
         FenceObject(self.0, self.1.clone())
+    }
+}
+impl<Device: crate::Device> FenceObject<Device> {
+    /// Create a new fence object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, create_info: &FenceCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.new_fence_raw(create_info, None)?, device) })
     }
 }
 
@@ -322,25 +320,6 @@ impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
 impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
 impl<Device: crate::Device> SemaphoreMut for SemaphoreObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
-    /// Create a new queue semaphore object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &SemaphoreCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_semaphore(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self::manage(h.assume_init(), device))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -362,6 +341,19 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> SemaphoreObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> SemaphoreObject<Device> {
         SemaphoreObject(self.0, self.1.clone())
+    }
+}
+impl<Device: crate::Device> SemaphoreObject<Device> {
+    /// Create a new queue semaphore object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &SemaphoreCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.new_semaphore_raw(info, None)?, device) })
     }
 }
 
@@ -417,19 +409,6 @@ impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
-    /// Creates a new object from info structure
-    #[implements]
-    pub fn new(device: Device, create_info: &EventCreateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_event(device.native_ptr(), &create_info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self::manage(h.assume_init(), device))
-        }
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -451,6 +430,19 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> EventObject<&'_ Device> {
     #[inline(always)]
     pub fn clone_parent(self) -> EventObject<Device> {
         EventObject(self.0, self.1.clone())
+    }
+}
+impl<Device: crate::Device> EventObject<Device> {
+    /// Create a new event object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, create_info: &EventCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.new_event_raw(create_info, None)?, device) })
     }
 }
 

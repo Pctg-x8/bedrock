@@ -42,7 +42,7 @@ impl VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, PartialEq, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
     pub sType: VkStructureType,
