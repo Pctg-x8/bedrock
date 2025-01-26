@@ -2,11 +2,11 @@ use crate::vk::*;
 use crate::VkHandle;
 use crate::VulkanStructure;
 
-#[repr(C)]
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(u32)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ExternalFenceFdType {
-    Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _,
-    Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR as _,
+    Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR,
+    Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR,
 }
 
 #[repr(transparent)]
@@ -66,5 +66,13 @@ impl<'d> FenceFdGetInfo<'d> {
             },
             core::marker::PhantomData,
         )
+    }
+
+    pub const unsafe fn from_raw(raw: VkFenceGetFdInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkFenceGetFdInfoKHR {
+        self.0
     }
 }

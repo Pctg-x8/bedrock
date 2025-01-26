@@ -1690,46 +1690,6 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
     }
 }
 
-pub trait GraphicsPipelineBuilder {
-    type ExtraStorage;
-
-    fn build(&mut self, extras: &Self::ExtraStorage) -> VkGraphicsPipelineCreateInfo;
-    /// Builds extra values needed by constructing the Struct.
-    ///
-    /// Values live until the struct will be consumed.
-    fn make_extras(&self) -> Self::ExtraStorage;
-
-    /// Create a graphics pipeline
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    fn create<Device: crate::Device>(
-        &mut self,
-        device: Device,
-        cache: Option<&impl PipelineCache>,
-    ) -> crate::Result<PipelineObject<Device>> {
-        let extras = self.make_extras();
-        let cinfo = self.build(&extras);
-
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_graphics_pipelines(
-                device.native_ptr(),
-                cache.map_or(VkPipelineCache::NULL, VkHandle::native_ptr),
-                1,
-                &cinfo,
-                core::ptr::null(),
-                h.as_mut_ptr(),
-            )
-            .into_result()
-            .map(|_| PipelineObject(h.assume_init(), device))
-        }
-    }
-}
-
 /// Structure specifying parameters of a newly created compute pipeline
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

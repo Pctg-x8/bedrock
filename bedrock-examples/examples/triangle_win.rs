@@ -344,11 +344,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let vbuf_device_offset = 0u64;
     let ubuf_device_offset = (vbuf_requirements.size + (ubuf_requirements.alignment - 1)) / ubuf_requirements.alignment
         * ubuf_requirements.alignment;
-    let device_memory = br::DeviceMemoryRequest::allocate(
-        (ubuf_device_offset + ubuf_requirements.size) as _,
-        device_local_memory_index,
-    )
-    .execute(&device)?;
+    let device_memory = br::DeviceMemoryObject::new(
+        &device,
+        &br::MemoryAllocateInfo::new(ubuf_device_offset + ubuf_requirements.size, device_local_memory_index),
+    )?;
     vbuf.bind(&device_memory, vbuf_device_offset as _)?;
     ubuf.bind(&device_memory, ubuf_device_offset as _)?;
     device.update_descriptor_sets(
@@ -369,8 +368,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let host_memory_index = memory_properties
         .find_host_visible_index(host_buffer_requirements.memoryTypeBits)
         .expect("No suitable memory for init buffer");
-    let mut host_memory =
-        br::DeviceMemoryRequest::allocate(host_buffer_requirements.size as _, host_memory_index).execute(&device)?;
+    let mut host_memory = br::DeviceMemoryObject::new(
+        &device,
+        &br::MemoryAllocateInfo::new(host_buffer_requirements.size, host_memory_index),
+    )?;
     host_buffer.bind(&host_memory, 0)?;
     let p = host_memory.map(0..host_buffer_requirements.size as _)?;
     unsafe {
@@ -708,7 +709,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ],
             Some(last_render_fence.as_transparent_ref_mut()),
         )?;
-        match queue.present(br::PresentInfo::new(
+        match queue.present(&br::PresentInfo::new(
             &[present_ready.as_transparent_ref()],
             &[swapchain.as_transparent_ref()],
             &[bb_index],

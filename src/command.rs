@@ -179,10 +179,6 @@ impl CommandPoolCreateInfo {
         self.0
     }
 
-    pub(crate) const fn as_raw_ref(&self) -> &VkCommandPoolCreateInfo {
-        &self.0
-    }
-
     pub const fn transient(mut self) -> Self {
         self.0.flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
         self
@@ -204,7 +200,7 @@ pub enum CommandBufferLevel {
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CommandBufferAllocateInfo<'r>(
-    VkCommandBufferAllocateInfo,
+    pub(crate) VkCommandBufferAllocateInfo,
     core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
 );
 impl<'r> CommandBufferAllocateInfo<'r> {
@@ -233,10 +229,6 @@ impl<'r> CommandBufferAllocateInfo<'r> {
     pub const fn into_raw(self) -> VkCommandBufferAllocateInfo {
         self.0
     }
-
-    pub const fn as_raw_ref(&self) -> &VkCommandBufferAllocateInfo {
-        &self.0
-    }
 }
 
 #[repr(transparent)]
@@ -263,10 +255,6 @@ impl<'r, const N: usize> CommandBufferFixedCountAllocateInfo<'r, N> {
             },
             core::marker::PhantomData,
         )
-    }
-
-    pub const fn as_raw_ref(&self) -> &VkCommandBufferAllocateInfo {
-        &self.0
     }
 }
 

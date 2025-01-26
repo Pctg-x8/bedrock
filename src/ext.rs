@@ -2,18 +2,6 @@
 
 use std::iter::FusedIterator;
 
-pub(crate) fn chain<'s>(
-    base: &'s mut impl VulkanStructure,
-    extends: impl IntoIterator<Item = &'s mut GenericVulkanStructure>,
-) {
-    let term = extends.into_iter().fold(base.as_generic_mut(), |p, s| {
-        p.pNext = s as *const _ as _;
-        s
-    });
-
-    term.pNext = core::ptr::null();
-}
-
 pub trait Chainable<'d, T> {
     fn chain(&mut self, next: &'d T) -> &mut Self;
 }

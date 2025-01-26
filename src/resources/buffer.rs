@@ -221,10 +221,6 @@ impl<'s> BufferCreateInfo<'s> {
         Self::new(core::mem::size_of::<T>(), usage)
     }
 
-    pub(crate) const fn as_raw_ref(&self) -> &VkBufferCreateInfo {
-        &self.0
-    }
-
     /// Wraps raw vulkan structure
     /// # Safety
     /// This function does not check any references/constraints
@@ -305,10 +301,6 @@ impl<'d> BufferViewCreateInfo<'d> {
             },
             core::marker::PhantomData,
         )
-    }
-
-    pub(crate) const fn as_raw_ref(&self) -> &VkBufferViewCreateInfo {
-        &self.0
     }
 
     pub const unsafe fn from_raw(raw: VkBufferViewCreateInfo) -> Self {

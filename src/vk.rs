@@ -1886,7 +1886,7 @@ pub struct VkSubmitInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO)]
 pub struct VkMemoryAllocateInfo {
     pub sType: VkStructureType,

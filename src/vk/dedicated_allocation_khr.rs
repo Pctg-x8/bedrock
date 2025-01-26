@@ -33,7 +33,7 @@ impl VkMemoryDedicatedRequirementsKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkMemoryDedicatedAllocateInfoKHR {

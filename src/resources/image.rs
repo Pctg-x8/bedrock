@@ -403,10 +403,6 @@ impl<'d> ImageCreateInfo<'d> {
         )
     }
 
-    pub(crate) const fn as_raw_ref(&self) -> &VkImageCreateInfo {
-        &self.0
-    }
-
     pub const unsafe fn from_raw(raw: VkImageCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -932,10 +928,6 @@ impl<'r> ImageViewCreateInfo<'r> {
 
     pub const fn into_raw(self) -> VkImageViewCreateInfo {
         self.0
-    }
-
-    pub(crate) const fn as_raw_ref(&self) -> &VkImageViewCreateInfo {
-        &self.0
     }
 
     pub const fn with_format_mutation(mut self, format: VkFormat) -> Self {

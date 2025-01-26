@@ -1,30 +1,58 @@
 use crate::vk::*;
+use crate::GenericVulkanStructure;
 use crate::VkHandle;
 use crate::VulkanStructure;
+use crate::VulkanStructureAsRef;
 
-#[repr(C)]
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+#[repr(u32)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum ExternalMemoryHandleTypeFd {
-    Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR as _,
+    Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR,
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
-    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT as _,
+    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
 }
-impl ExternalMemoryHandleTypeFd {
-    pub const fn with_fd(self, fd: std::os::unix::io::RawFd) -> ExternalMemoryHandleFd {
-        ExternalMemoryHandleFd(self, fd)
+
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ImportMemoryFdInfo<'d>(
+    VkImportMemoryFdInfoKHR,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+);
+unsafe impl VulkanStructureAsRef for ImportMemoryFdInfo<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
     }
 }
+impl<'d> ImportMemoryFdInfo<'d> {
+    pub const fn new(ty: ExternalMemoryHandleTypeFd, fd: std::os::unix::io::RawFd) -> Self {
+        Self(
+            VkImportMemoryFdInfoKHR {
+                sType: VkImportMemoryFdInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                handleType: ty as _,
+                fd,
+            },
+            core::marker::PhantomData,
+        )
+    }
 
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub struct ExternalMemoryHandleFd(pub ExternalMemoryHandleTypeFd, pub std::os::unix::io::RawFd);
-impl ExternalMemoryHandleFd {
-    pub const fn import_info(&self) -> VkImportMemoryFdInfoKHR {
-        VkImportMemoryFdInfoKHR {
-            sType: VkImportMemoryFdInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            handleType: self.0 as _,
-            fd: self.1,
-        }
+    pub const unsafe fn from_raw(raw: VkImportMemoryFdInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkImportMemoryFdInfoKHR {
+        self.0
+    }
+
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next as *const _ as _;
+        self
     }
 }
 

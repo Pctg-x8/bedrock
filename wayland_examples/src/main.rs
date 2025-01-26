@@ -381,12 +381,16 @@ fn main() {
     let staging_memory_type_index = device_memory_properties
         .find_host_visible_index(staging_memory_req.memoryTypeBits)
         .unwrap();
-    let device_memory = br::DeviceMemoryRequest::allocate(device_memory_req.size as _, device_memory_type_index)
-        .execute(&vk_device)
-        .unwrap();
-    let mut staging_memory = br::DeviceMemoryRequest::allocate(staging_memory_req.size as _, staging_memory_type_index)
-        .execute(&vk_device)
-        .unwrap();
+    let device_memory = br::DeviceMemoryObject::new(
+        &vk_device,
+        &br::MemoryAllocateInfo::new(device_memory_req.size, device_memory_type_index),
+    )
+    .unwrap();
+    let mut staging_memory = br::DeviceMemoryObject::new(
+        &vk_device,
+        &br::MemoryAllocateInfo::new(staging_memory_req.size, staging_memory_type_index),
+    )
+    .unwrap();
     device_buffer.bind(&device_memory, 0).unwrap();
     staging_buffer.bind(&staging_memory, 0).unwrap();
     unsafe {
@@ -568,7 +572,7 @@ fn main() {
     fence.wait().unwrap();
     fence.reset().unwrap();
     vk_queue
-        .present(br::PresentInfo::new(
+        .present(&br::PresentInfo::new(
             &[] as &[br::VkHandleRef<br::vk::VkSemaphore>],
             &[vk_swapchain.as_transparent_ref()],
             &[bb_index],
@@ -639,7 +643,7 @@ fn main() {
             self.fence.wait().unwrap();
             self.fence.reset().unwrap();
             self.queue
-                .present(br::PresentInfo::new(
+                .present(&br::PresentInfo::new(
                     &[] as &[br::VkHandleRef<br::vk::VkSemaphore>],
                     &[self.swapchain.as_transparent_ref()],
                     &[bb_index],

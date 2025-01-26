@@ -43,20 +43,6 @@ impl<Device: crate::Device> DeviceChild for FramebufferObject<'_, Device> {
     }
 }
 impl<Device: VkHandle<Handle = VkDevice>> Framebuffer for FramebufferObject<'_, Device> {}
-impl<'r, Device: VkHandle<Handle = VkDevice>> FramebufferObject<'r, Device> {
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &FramebufferCreateInfo<'r, '_>) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::create_framebuffer(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
-
-            Ok(Self::manage(h.assume_init(), device))
-        }
-    }
-}
 impl<Device: VkHandle<Handle = VkDevice>> FramebufferObject<'_, Device> {
     /// Constructs from raw values
     /// # Safety
@@ -89,13 +75,19 @@ impl<'r, Device: VkHandle<Handle = VkDevice> + Clone> FramebufferObject<'r, &'_ 
         }
     }
 }
-
-/// Marker trait that can be used as an attachment of a framebuffer (composited trait)
-pub trait FramebufferAttachment:
-    crate::VkHandle<Handle = VkImageView> + crate::DeviceChild + crate::ImageChild
-{
+impl<'r, Device: crate::Device> FramebufferObject<'r, Device> {
+    /// Create a new framebuffer object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline]
+    pub fn new(device: Device, info: &FramebufferCreateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.new_framebuffer_raw(info, None)?, device) })
+    }
 }
-impl<T: crate::VkHandle<Handle = VkImageView> + crate::DeviceChild + crate::ImageChild> FramebufferAttachment for T {}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]

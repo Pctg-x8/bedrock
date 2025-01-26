@@ -1,7 +1,6 @@
 use crate::{
-    ffi_helper::opt_pointer, vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject, VkRawHandle, VulkanStructure,
-    VulkanStructureAsRef,
+    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
+    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
 };
 use derives::implements;
 
@@ -107,26 +106,6 @@ impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemory for DeviceMemoryObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryMut for DeviceMemoryObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
-    /// Execute requests for Device Memory Acquisition
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    ///
-    /// # Safety
-    /// no guarantee will be provided (simply calls the under api)
-    #[implements]
-    #[inline]
-    pub unsafe fn new_raw(device: Device, info: &VkMemoryAllocateInfo) -> crate::Result<Self> {
-        let mut h = core::mem::MaybeUninit::uninit();
-
-        crate::vkfn::allocate_memory(device.native_ptr(), info, core::ptr::null(), h.as_mut_ptr()).into_result()?;
-
-        Ok(Self(h.assume_init(), device))
-    }
-
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
@@ -150,137 +129,117 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DeviceMemoryObject<&'_ Device>
         DeviceMemoryObject(self.0, self.1.clone())
     }
 }
-
-pub struct DeviceMemoryRequest(VkMemoryAllocateInfo, Vec<Box<GenericVulkanStructure>>);
-impl DeviceMemoryRequest {
-    pub const fn allocate(size: usize, memory_type_index: u32) -> Self {
-        Self(
-            VkMemoryAllocateInfo {
-                sType: VkMemoryAllocateInfo::TYPE,
-                pNext: core::ptr::null(),
-                allocationSize: size as _,
-                memoryTypeIndex: memory_type_index,
-            },
-            Vec::new(),
-        )
-    }
-
-    pub unsafe fn with_extension(mut self, x: impl VulkanStructureAsRef) -> Self {
-        self.1.push(core::mem::transmute(Box::new(x)));
-        self
-    }
-
-    #[cfg(feature = "VK_KHR_external_memory_win32")]
-    pub fn import(
-        memory_type_index: u32,
-        handle: crate::ExternalMemoryWin32Handle,
-        name: Option<&widestring::WideCStr>,
-    ) -> Self {
-        unsafe {
-            // Note: size is ignored by specification(but 0 is not allowed by validation layer...)
-            Self::allocate(1, memory_type_index).with_extension(handle.import_info(name))
-        }
-    }
-
-    #[cfg(feature = "VK_KHR_external_memory_fd")]
-    pub fn import(memory_type_index: u32, handle: crate::ExternalMemoryHandleFd) -> Self {
-        unsafe { Self::allocate(1, memory_type_index).with_extension(handle.import_info()) }
-    }
-
-    #[cfg(feature = "VK_EXT_external_memory_host")]
-    #[implements]
-    pub fn import_host_pointer(memory_type_index: u32, ptr: crate::ExternalMemoryHostPointer) -> Self {
-        unsafe {
-            // Note: size is ignored by specification(but 0 is not allowed by validation layer...)
-            Self::allocate(1, memory_type_index).with_extension(ptr.import_info())
-        }
-    }
-
-    #[cfg(feature = "VK_KHR_external_memory_win32")]
-    pub fn and_export(
-        self,
-        security_attributes: Option<&windows::Win32::Security::SECURITY_ATTRIBUTES>,
-        access: u32,
-        name: &widestring::WideCString,
-    ) -> Self {
-        unsafe {
-            self.with_extension(VkExportMemoryWin32HandleInfoKHR {
-                sType: VkExportMemoryWin32HandleInfoKHR::TYPE,
-                pNext: core::ptr::null(),
-                pAttributes: security_attributes.map_or_else(core::ptr::null, |v| v as *const _),
-                dwAccess: access,
-                name: windows::core::PCWSTR(name.as_ptr()),
-            })
-        }
-    }
-
-    /// Adds dedicated allocation info for a buffer
-    /// # Safety
-    /// lifetime not captured
-    #[cfg(feature = "VK_KHR_dedicated_allocation")]
-    pub unsafe fn for_dedicated_buffer_allocation(self, buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
-        use crate::VkRawHandle;
-
-        self.with_extension(VkMemoryDedicatedAllocateInfoKHR {
-            sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            image: VkImage::NULL,
-            buffer: buffer.native_ptr(),
-        })
-    }
-
-    /// Adds dedicated allocation info for an image
-    /// # Safety
-    /// lifetime not captured
-    #[cfg(feature = "VK_KHR_dedicated_allocation")]
-    pub unsafe fn for_dedicated_image_allocation(self, image: &(impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
-        use crate::VkRawHandle;
-
-        self.with_extension(VkMemoryDedicatedAllocateInfoKHR {
-            sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
-            pNext: core::ptr::null(),
-            image: image.native_ptr(),
-            buffer: VkBuffer::NULL,
-        })
-    }
-
-    /// Execute requests for Device Memory Acquisition
-    /// # Failures
+impl<Device: crate::Device> DeviceMemoryObject<Device> {
+    /// Create DeviceMemory object with allocating device memory
+    /// # Failure
     /// On failure, this command returns
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_TOO_MANY_OBJECTS`]
+    /// * [`VK_ERROR_INVALID_EXTERNAL_HANDLE`]
+    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
     #[implements]
     #[inline]
-    pub fn execute_raw(
-        mut self,
-        device: &(impl VkHandle<Handle = VkDevice> + ?Sized),
-        allocator: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkDeviceMemory> {
-        crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
+    pub fn new(device: Device, info: &MemoryAllocateInfo) -> crate::Result<Self> {
+        Ok(unsafe { Self::manage(device.allocate_memory(info, None)?, device) })
+    }
+}
 
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::allocate_memory(device.native_ptr(), &self.0, opt_pointer(allocator), h.as_mut_ptr())
-                .into_result()?;
-        }
-
-        Ok(unsafe { h.assume_init() })
+/// Structure containing parameters of a memory allocation
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MemoryAllocateInfo<'d>(
+    VkMemoryAllocateInfo,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+);
+impl<'d> MemoryAllocateInfo<'d> {
+    pub const fn new(size: VkDeviceSize, memory_type_index: u32) -> Self {
+        Self(
+            VkMemoryAllocateInfo {
+                sType: VkMemoryAllocateInfo::TYPE,
+                pNext: core::ptr::null(),
+                allocationSize: size,
+                memoryTypeIndex: memory_type_index,
+            },
+            core::marker::PhantomData,
+        )
     }
 
-    /// Execute requests for Device Memory Acquisition
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[implements]
-    pub fn execute<Device: crate::Device>(mut self, device: Device) -> crate::Result<DeviceMemoryObject<Device>> {
-        crate::ext::chain(&mut self.0, self.1.iter_mut().map(|x| &mut **x));
+    pub const unsafe fn from_raw(raw: VkMemoryAllocateInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
 
-        unsafe { DeviceMemoryObject::new_raw(device, &self.0) }
+    pub const fn into_raw(self) -> VkMemoryAllocateInfo {
+        self.0
+    }
+
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next as *const _ as _;
+        self
+    }
+}
+
+/// Specify a dedicated memory allocation resource
+#[cfg(feature = "VK_KHR_dedicated_allocation")]
+#[repr(transparent)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct MemoryDedicatedAllocateInfo<'d>(
+    VkMemoryDedicatedAllocateInfoKHR,
+    core::marker::PhantomData<(
+        Option<&'d dyn VulkanStructureAsRef>,
+        Option<&'d dyn VkHandle<Handle = VkImage>>,
+        Option<&'d dyn VkHandle<Handle = VkBuffer>>,
+    )>,
+);
+unsafe impl VulkanStructureAsRef for MemoryDedicatedAllocateInfo<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+impl<'d> MemoryDedicatedAllocateInfo<'d> {
+    #[inline]
+    pub fn for_buffer(buffer: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
+        Self(
+            VkMemoryDedicatedAllocateInfoKHR {
+                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                image: VkImage::NULL,
+                buffer: buffer.native_ptr(),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline]
+    pub fn for_image(image: &'d (impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
+        Self(
+            VkMemoryDedicatedAllocateInfoKHR {
+                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                image: image.native_ptr(),
+                buffer: VkBuffer::NULL,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkMemoryDedicatedAllocateInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkMemoryDedicatedAllocateInfoKHR {
+        self.0
+    }
+
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+        self.0.pNext = next as *const _ as _;
+        self
     }
 }
 

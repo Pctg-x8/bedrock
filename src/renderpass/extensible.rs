@@ -289,10 +289,6 @@ impl<'d> RenderPassCreateInfo2<'d> {
     pub const fn into_raw(self) -> VkRenderPassCreateInfo2KHR {
         self.0
     }
-
-    pub(crate) const fn as_raw_ref(&self) -> &VkRenderPassCreateInfo2KHR {
-        &self.0
-    }
 }
 #[implements]
 impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {

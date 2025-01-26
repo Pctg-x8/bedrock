@@ -157,10 +157,6 @@ impl<'r> SwapchainCreateInfo<'r> {
         self.0
     }
 
-    pub(crate) const fn as_raw_ref(&self) -> &VkSwapchainCreateInfoKHR {
-        &self.0
-    }
-
     pub const fn array_layers(mut self, layers: u32) -> Self {
         self.0.imageArrayLayers = layers;
         self

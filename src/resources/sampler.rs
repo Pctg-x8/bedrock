@@ -110,10 +110,6 @@ impl SamplerCreateInfo {
         })
     }
 
-    pub(crate) const fn as_raw_ref(&self) -> &VkSamplerCreateInfo {
-        &self.0
-    }
-
     pub const unsafe fn from_raw(raw: VkSamplerCreateInfo) -> Self {
         Self(raw)
     }

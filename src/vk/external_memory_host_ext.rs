@@ -19,7 +19,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT)]
 pub struct VkImportMemoryHostPointerInfoEXT {
     pub sType: VkStructureType,
