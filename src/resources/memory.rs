@@ -191,6 +191,7 @@ pub struct MemoryDedicatedAllocateInfo<'d>(
         Option<&'d dyn VkHandle<Handle = VkBuffer>>,
     )>,
 );
+#[cfg(feature = "VK_KHR_dedicated_allocation")]
 unsafe impl VulkanStructureAsRef for MemoryDedicatedAllocateInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
@@ -202,6 +203,7 @@ unsafe impl VulkanStructureAsRef for MemoryDedicatedAllocateInfo<'_> {
         unsafe { core::mem::transmute(self) }
     }
 }
+#[cfg(feature = "VK_KHR_dedicated_allocation")]
 impl<'d> MemoryDedicatedAllocateInfo<'d> {
     #[inline]
     pub fn for_buffer(buffer: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
