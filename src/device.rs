@@ -1501,20 +1501,21 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    ///
+    /// # Safety
+    /// A `VkCommandPool` specified in the `info` argument must be created from this device
     #[implements]
     #[inline]
-    fn allocate_command_buffers_raw(
-        &self,
+    unsafe fn allocate_command_buffers<'s>(
+        &'s self,
         info: &CommandBufferAllocateInfo,
-        sink: &mut [VkCommandBuffer],
+        sink: &mut [CommandBufferObject<&'s Self>],
     ) -> crate::Result<()> {
         assert_eq!(info.0.commandBufferCount as usize, sink.len());
 
-        unsafe {
-            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr())
-                .into_result()
-                .map(drop)
-        }
+        crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
+            .into_result()
+            .map(drop)
     }
 
     /// Allocate command buffers from an existing command pool
@@ -1523,9 +1524,32 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    ///
+    /// # Safety
+    /// A `VkCommandPool` specified in the `info` argument must be created from this device
+    #[implements("alloc")]
+    unsafe fn allocate_command_buffers_alloc<'s>(
+        &'s self,
+        info: &CommandBufferAllocateInfo,
+    ) -> crate::Result<Vec<CommandBufferObject<&'s Self>>> {
+        let mut sink = crate::alloc::alloc_sink_buffer(info.0.commandBufferCount as _);
+        self.allocate_command_buffers(info, &mut sink)?;
+
+        Ok(sink)
+    }
+
+    /// Allocate command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    ///
+    /// # Safety
+    /// A `VkCommandPool` specified in the `info` argument must be created from this device
     #[implements]
     #[inline]
-    fn allocate_command_buffer_array_raw<'s, const N: usize>(
+    unsafe fn allocate_command_buffer_array<'s, const N: usize>(
         &'s self,
         info: &CommandBufferFixedCountAllocateInfo<N>,
     ) -> crate::Result<[CommandBufferObject<&'s Self>; N]> {
@@ -1533,10 +1557,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         #[allow(invalid_value)]
         let mut sink =
             [const { unsafe { core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::uninit().assume_init() } }; N];
-        unsafe {
-            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
-                .into_result()?;
-        }
+        crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
+            .into_result()?;
 
         Ok(sink)
     }
