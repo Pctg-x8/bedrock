@@ -1553,10 +1553,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         &'s self,
         info: &CommandBufferFixedCountAllocateInfo<N>,
     ) -> crate::Result<[CommandBufferObject<&'s Self>; N]> {
-        // このあとすぐ初期化されるのでいったんinvalidでもOK
-        #[allow(invalid_value)]
         let mut sink =
-            [const { unsafe { core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::uninit().assume_init() } }; N];
+            [const { unsafe { core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::zeroed().assume_init() } }; N];
         crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
             .into_result()?;
 
