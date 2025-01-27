@@ -140,6 +140,12 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
         }
     }
 }
+impl<Device: Clone> CommandBufferObject<&'_ Device> {
+    /// clones internally-referenced parent object
+    pub const fn clone_parent(&self) -> CommandBufferObject<Device> {
+        CommandBufferObject(self.0, core::marker::PhantomData)
+    }
+}
 
 /// The recording state of command buffers
 #[implements]
