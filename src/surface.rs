@@ -3,19 +3,19 @@
 use super::*;
 
 /// A semaphore or a fence
-pub enum CompletionHandler<Fence: crate::Fence, Semaphore: crate::Semaphore> {
+pub enum CompletionHandler<'d> {
     /// A Host synchronizer(aka Fence)
-    Host(Fence),
+    Host(&'d Fence),
     /// A Queue synchronizer(aka Semaphore)
-    Queue(Semaphore),
+    Queue(&'d Semaphore),
 }
 
 /// A semaphore or a fence, externally synchronized on host access
 pub enum CompletionHandlerMut<'d> {
     /// A Host synchronizer(aka Fence)
-    Host(VkHandleRefMut<'d, VkFence>),
+    Host(&'d mut Fence),
     /// A Queue synchronizer(aka Semaphore)
-    Queue(VkHandleRefMut<'d, VkSemaphore>),
+    Queue(&'d mut Semaphore),
 }
 
 cfg_if! {

@@ -1,10 +1,12 @@
+use core::ptr::NonNull;
 use ffi_helper::slice_as_ptr_empty_null;
 
 use crate::vk::*;
 use crate::*;
 
-impl VkAttachmentDescription {
-    pub const fn new(format: VkFormat, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
+pub type AttachmentDescription = VkAttachmentDescription;
+impl AttachmentDescription {
+    pub const fn new(format: Format, init_layout: ImageLayout, fin_layout: ImageLayout) -> Self {
         Self {
             format,
             samples: 1,
@@ -18,7 +20,7 @@ impl VkAttachmentDescription {
         }
     }
 
-    pub const fn format(self, fmt: VkFormat) -> Self {
+    pub const fn format(self, fmt: Format) -> Self {
         Self { format: fmt, ..self }
     }
 
@@ -90,7 +92,8 @@ impl VkAttachmentDescription {
     }
 }
 
-impl VkAttachmentReference {
+pub type AttachmentReference = VkAttachmentReference;
+impl AttachmentReference {
     pub const UNUSED: Self = Self {
         attachment: VK_ATTACHMENT_UNUSED,
         layout: 0,
@@ -124,10 +127,10 @@ impl VkAttachmentReference {
 #[derive(Clone)]
 pub struct SubpassDescription<'r> {
     base: VkSubpassDescription,
-    input_lifetime: core::marker::PhantomData<&'r [VkAttachmentReference]>,
-    color_lifetime: core::marker::PhantomData<&'r [VkAttachmentReference]>,
-    resolve_lifetime: core::marker::PhantomData<&'r [VkAttachmentReference]>,
-    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r VkAttachmentReference>>,
+    input_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    color_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    resolve_lifetime: core::marker::PhantomData<&'r [AttachmentReference]>,
+    depth_stencil_lifetime: core::marker::PhantomData<Option<&'r AttachmentReference>>,
     preserve_lifetime: core::marker::PhantomData<&'r [u32]>,
 }
 impl<'r> SubpassDescription<'r> {
@@ -153,7 +156,7 @@ impl<'r> SubpassDescription<'r> {
         }
     }
 
-    pub const fn input_attachments(mut self, inputs: &'r [VkAttachmentReference]) -> Self {
+    pub const fn input_attachments(mut self, inputs: &'r [AttachmentReference]) -> Self {
         self.base.inputAttachmentCount = inputs.len() as _;
         self.base.pInputAttachments = slice_as_ptr_empty_null(inputs);
 
@@ -162,8 +165,8 @@ impl<'r> SubpassDescription<'r> {
 
     pub const fn color_attachments(
         mut self,
-        colors: &'r [VkAttachmentReference],
-        resolves: &'r [VkAttachmentReference],
+        colors: &'r [AttachmentReference],
+        resolves: &'r [AttachmentReference],
     ) -> Self {
         assert!(resolves.is_empty() || resolves.len() == colors.len());
 
@@ -174,7 +177,7 @@ impl<'r> SubpassDescription<'r> {
         self
     }
 
-    pub const fn depth_stencil_attachment(mut self, a: &'r VkAttachmentReference) -> Self {
+    pub const fn depth_stencil_attachment(mut self, a: &'r AttachmentReference) -> Self {
         self.base.pDepthStencilAttachment = a as *const _ as _;
 
         self
@@ -188,20 +191,22 @@ impl<'r> SubpassDescription<'r> {
     }
 }
 
+pub type SubpassDependency = VkSubpassDependency;
+
 /// Builder structure to construct the `RenderPass`
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct RenderPassCreateInfo<'r> {
     base: VkRenderPassCreateInfo,
-    attachments: core::marker::PhantomData<&'r [VkAttachmentDescription]>,
+    attachments: core::marker::PhantomData<&'r [AttachmentDescription]>,
     subpasses: core::marker::PhantomData<&'r [SubpassDescription<'r>]>,
-    dependencies: core::marker::PhantomData<&'r [VkSubpassDependency]>,
+    dependencies: core::marker::PhantomData<&'r [SubpassDependency]>,
 }
 impl<'r> RenderPassCreateInfo<'r> {
     pub const fn new(
-        attachments: &'r [VkAttachmentDescription],
+        attachments: &'r [AttachmentDescription],
         subpasses: &'r [SubpassDescription<'r>],
-        dependencies: &'r [VkSubpassDependency],
+        dependencies: &'r [SubpassDependency],
     ) -> Self {
         Self {
             base: VkRenderPassCreateInfo {
@@ -238,9 +243,9 @@ impl<'r> RenderPassCreateInfo<'r> {
 impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo<'_> {
     fn execute(
         &self,
-        device: &(impl crate::Device + ?Sized),
+        device: &Device,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkRenderPass> {
+    ) -> crate::Result<NonNull<RenderPass>> {
         device.new_render_pass(self, allocation_callbacks)
     }
 }

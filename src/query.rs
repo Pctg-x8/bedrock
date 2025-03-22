@@ -1,9 +1,6 @@
 use derives::{bitflags_newtype, implements};
 
-use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure,
-};
+use crate::{VkHandle, VkObject, VulkanStructure, vk::*};
 
 /// Specify the type of queries managed by a query pool
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -49,14 +46,14 @@ impl QueryPoolCreateInfo {
 
 /// Opaque handle to a query pool object
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkQueryPool::OBJECT_TYPE)]
+#[VkObject(type = VK_OBJECT_TYPE_QUERY_POOL)]
 pub struct QueryPoolObject<Device: VkHandle<Handle = VkDevice>>(VkQueryPool, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for QueryPoolObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_query_pool(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -68,7 +65,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueryPoolObject<
         self.1.native_ptr()
     }
 }
-impl<Device: crate::Device> DeviceChild for QueryPoolObject<Device> {
+impl<Device: crate::DeviceT> DeviceChild for QueryPoolObject<Device> {
     type ConcreteDevice = Device;
 
     #[inline(always)]
@@ -104,7 +101,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> QueryPoolObject<&'_ Device> {
         r
     }
 }
-impl<Device: crate::Device> QueryPoolObject<Device> {
+impl<Device: crate::DeviceT> QueryPoolObject<Device> {
     /// Create a new query pool object
     /// # Failure
     /// On failure, this command returns

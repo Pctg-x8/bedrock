@@ -1,6 +1,6 @@
 use bedrock::{
-    self as br, CommandBufferMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut, ImageSubresourceSlice,
-    Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass, ShaderModule, Swapchain, VkHandle, VkHandleMut,
+    self as br, CommandBufferMut, DescriptorPoolMut, DeviceT, DeviceMemoryMut, Fence, FenceMut, ImageSubresourceSlice,
+    InstanceT, MemoryBound, PhysicalDeviceT, QueueMut, RenderPass, ShaderModule, Swapchain, VkHandle, VkHandleMut,
 };
 use core::ffi::*;
 use std::{
@@ -160,18 +160,6 @@ fn main() {
         ))
         .unwrap(),
     );
-    let _vk_debugger = br::DebugUtilsMessengerObject::new(
-        vk_instance.clone(),
-        &br::DebugUtilsMessengerCreateInfo::new(
-            br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
-                | br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
-            br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
-                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
-            vk_debug_msg,
-        ),
-    )
-    .unwrap();
     let vk_pdev = vk_instance.iter_physical_devices().unwrap().next().unwrap();
     let vk_surface = unsafe {
         br::SurfaceObject::new(
@@ -680,19 +668,6 @@ fn main() {
     drop(xdg_surface);
     drop(surface);
     drop(display);
-}
-
-extern "system" fn vk_debug_msg(
-    _message_severity: br::vk::VkDebugUtilsMessageSeverityFlagBitsEXT,
-    _message_types: br::vk::VkDebugUtilsMessageTypeFlagsEXT,
-    callback_data: *const br::vk::VkDebugUtilsMessengerCallbackDataEXT,
-    _user_data: *mut c_void,
-) -> br::vk::VkBool32 {
-    let msg = unsafe { core::ffi::CStr::from_ptr((*callback_data).pMessage).to_str().unwrap() };
-
-    eprintln!("*vk_debug_msg* {msg}");
-
-    true as _
 }
 
 #[repr(transparent)]

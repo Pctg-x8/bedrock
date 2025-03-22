@@ -1,71 +1,127 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject,
-    VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    DeviceChild, VkHandle, VkHandleMut, VkObject, VulkanStructure, VulkanStructureAsRef, ffi_helper::opt_pointer, vk::*,
 };
 use derives::implements;
 
-pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
+/// Result Status for time-limited wait operations.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum WaitResult {
+    Success,
+    Timeout,
+}
+
+/// Opaque handle to a fence object
+#[repr(transparent)]
+pub struct Fence(VkFence_T);
+#[implements]
+impl Fence {
+    /// Destroy an fence object.
+    /// # Safety
+    /// * the `device` parameter must be owner of the event object.
+    /// * After calling this function, accessing to the object causes undefined behavior.
+    #[inline]
+    pub unsafe fn destroy(
+        &mut self,
+        device: &(impl crate::DeviceT + ?Sized),
+        allocator: Option<&VkAllocationCallbacks>,
+    ) {
+        unsafe { crate::vkfn::destroy_fence(device.native_ptr(), self as *mut _ as _, opt_pointer(allocator)) }
+    }
+
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
+    /// # Safety
+    /// the `device` parameter must be owner of the event object.
     /// # Failures
     /// On failure, this command returns
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_DEVICE_LOST`]
-    #[implements]
-    #[inline(always)]
-    fn wait_timeout(&self, timeout: u64) -> crate::Result<bool> {
-        let vr =
-            unsafe { crate::vkfn::wait_for_fences(self.device_handle(), 1, &self.native_ptr(), false as _, timeout) };
-        match vr {
-            VK_SUCCESS => Ok(false),
-            VK_TIMEOUT => Ok(true),
-            _ => Err(vr),
+    pub unsafe fn wait_timeout(
+        &self,
+        device: &(impl crate::DeviceT + ?Sized),
+        timeout: u64,
+    ) -> crate::Result<WaitResult> {
+        let r =
+            unsafe { crate::vkfn::wait_for_fences(device.native_ptr(), 1, self as *const _ as _, false as _, timeout) };
+        if r == VK_SUCCESS {
+            return Ok(WaitResult::Success);
         }
+        if r == VK_TIMEOUT {
+            return Ok(WaitResult::Timeout);
+        }
+
+        Err(r)
     }
 
     /// Wait for a fence to become signaled
+    /// # Safety
+    /// the `device` parameter must be owner of the event object.
     /// # Failures
     /// On failure, this command returns
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_DEVICE_LOST`]
-    #[implements]
-    #[inline(always)]
-    fn wait(&self) -> crate::Result<()> {
-        self.wait_timeout(std::u64::MAX).map(drop)
+    #[inline]
+    pub unsafe fn wait(&self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<()> {
+        // timeoutはしない
+        unsafe { self.wait_timeout(device, std::u64::MAX).map(drop) }
     }
-}
-DerefContainerBracketImpl!(for Fence {});
-GuardsImpl!(for Fence {});
 
-pub trait FenceMut: Fence + VkHandleMut {
     /// Resets a fence object
+    /// # Safety
+    /// the `device` parameter must be owner of the event object.
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements]
-    #[inline(always)]
-    fn reset(&mut self) -> crate::Result<()> {
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[inline]
+    pub unsafe fn reset(&mut self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::reset_fences(self.device_handle(), 1, &self.native_ptr_mut())
+            crate::vkfn::reset_fences(device.native_ptr(), 1, self as *mut _ as _)
                 .into_result()
                 .map(drop)
         }
     }
 }
-DerefContainerBracketImpl!(for mut FenceMut {});
-GuardsImpl!(for mut FenceMut {});
+impl Status for Fence {
+    #[implements]
+    #[inline]
+    unsafe fn status(&self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<SyncStatus> {
+        let r = unsafe { crate::vkfn::get_fence_status(device.native_ptr(), self as *const _ as _) };
+        if r == VK_SUCCESS {
+            return Ok(SyncStatus::Done);
+        }
+        if r == VK_NOT_READY {
+            return Ok(SyncStatus::Pending);
+        }
 
-pub trait DeviceChildFence: DeviceChild + Fence {}
-impl<T: DeviceChild + Fence> DeviceChildFence for T {}
+        Err(r)
+    }
+}
 
-pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
+/// Opaque handle to a semaphore object.
+#[repr(transparent)]
+pub struct Semaphore(VkSemaphore_T);
+#[implements]
+impl Semaphore {
+    /// Destroy an semaphore object.
+    /// # Safety
+    /// * the `device` parameter must be owner of the event object.
+    /// * After calling this function, accessing to the object causes undefined behavior.
+    #[inline]
+    pub unsafe fn destroy(
+        &mut self,
+        device: &(impl crate::DeviceT + ?Sized),
+        allocator: Option<&VkAllocationCallbacks>,
+    ) {
+        unsafe { crate::vkfn::destroy_semaphore(device.native_ptr(), self as *mut _ as _, opt_pointer(allocator)) }
+    }
+
     /// Creates a submit info structure for this semaphore.
     #[cfg(feature = "VK_KHR_synchronization2")]
     #[inline(always)]
@@ -73,43 +129,51 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
         SemaphoreSubmitInfo::new(self)
     }
 }
-DerefContainerBracketImpl!(for Semaphore {});
-GuardsImpl!(for Semaphore {});
 
-pub trait SemaphoreMut: Semaphore + VkHandleMut {}
-DerefContainerBracketImpl!(for mut SemaphoreMut {});
-GuardsImpl!(for mut SemaphoreMut {});
+/// Opaque handle to an event object.
+#[repr(transparent)]
+pub struct Event(VkEvent_T);
+#[implements]
+impl Event {
+    /// Destroy an event object.
+    /// # Safety
+    /// * the `device` parameter must be owner of the event object.
+    /// * After calling this function, accessing to the object causes undefined behavior.
+    #[inline]
+    pub unsafe fn destroy(
+        &mut self,
+        device: &(impl crate::DeviceT + ?Sized),
+        allocator: Option<&VkAllocationCallbacks>,
+    ) {
+        unsafe { crate::vkfn::destroy_event(device.native_ptr(), self as *mut _ as _, opt_pointer(allocator)) }
+    }
 
-pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {}
-DerefContainerBracketImpl!(for Event {});
-GuardsImpl!(for Event {});
-
-pub trait EventMut: Event + VkHandleMut {
-    /// Set an event to signaled state
-    /// # Failures
+    /// Set an event to signaled state.
+    /// # Safety
+    /// the `device` parameter must be owner of the event object.
+    /// # Failure
     /// On failure, this command returns
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
     #[inline]
-    fn set(&mut self) -> crate::Result<()> {
+    pub unsafe fn set(&mut self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::set_event(self.device().native_ptr(), self.native_ptr_mut())
+            crate::vkfn::set_event(device.native_ptr(), self as *mut _ as _)
                 .into_result()
                 .map(drop)
         }
     }
 
-    /// Reset an event to non-signaled state
-    /// # Failures
+    /// Reset an event to non-signaled state.
+    /// # Safety
+    /// the `device` parameter must be owner of the event object.
+    /// # Failure
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
     #[inline]
-    fn reset(&mut self) -> crate::Result<()> {
+    pub unsafe fn reset(&mut self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<()> {
         unsafe {
             crate::vkfn::reset_event(self.device().native_ptr(), self.native_ptr_mut())
                 .into_result()
@@ -117,11 +181,33 @@ pub trait EventMut: Event + VkHandleMut {
         }
     }
 }
-DerefContainerBracketImpl!(for mut EventMut {});
-GuardsImpl!(for mut EventMut {});
+impl Status for Event {
+    #[implements]
+    #[inline]
+    unsafe fn status(&self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<SyncStatus> {
+        let r = unsafe { crate::vkfn::get_event_status(device.native_ptr(), self as *const _ as _) };
+        if r == VK_EVENT_SET {
+            return Ok(SyncStatus::Done);
+        }
+        if r == VK_EVENT_RESET {
+            return Ok(SyncStatus::Pending);
+        }
+
+        Err(r)
+    }
+}
+
+/// Status value of the synchronizing object.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SyncStatus {
+    Done,
+    Pending,
+}
 
 pub trait Status {
     /// Retrieve the status(whether is signaled or not) of a synchronize object
+    /// # Safety
+    /// the `device` parameter must be owner of this object.
     /// # Failures
     /// On failure, this command returns
     ///
@@ -129,20 +215,20 @@ pub trait Status {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements]
-    fn status(&self) -> crate::Result<bool>;
+    unsafe fn status(&self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<SyncStatus>;
 }
 DerefContainerBracketImpl!(for Status {
     #[implements]
     #[inline(always)]
-    fn status(&self) -> crate::Result<bool> {
-        T::status(self)
+    unsafe fn status(&self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<SyncStatus> {
+        unsafe { T::status(self, device) }
     }
 });
 GuardsImpl!(for Status {
     #[implements]
     #[inline(always)]
-    fn status(&self) -> crate::Result<bool> {
-        T::status(&self)
+    unsafe fn status(&self, device: &(impl crate::DeviceT + ?Sized)) -> crate::Result<SyncStatus> {
+        unsafe { T::status(&self, device) }
     }
 });
 
@@ -179,83 +265,6 @@ impl<'d> FenceCreateInfo<'d> {
     }
 }
 
-#[derive(VkHandle)]
-pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
-#[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for FenceObject<Device> {
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
-        }
-    }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for FenceObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for FenceObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for FenceObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for FenceObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> Fence for FenceObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> FenceMut for FenceObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
-    #[inline(always)]
-    #[implements]
-    fn status(&self) -> crate::Result<bool> {
-        match unsafe { crate::vkfn::get_fence_status(self.1.native_ptr(), self.0) } {
-            VK_SUCCESS => Ok(true),
-            VK_NOT_READY => Ok(false),
-            vr => Err(vr),
-        }
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkFence, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkFence, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> FenceObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> FenceObject<Device> {
-        FenceObject(self.0, self.1.clone())
-    }
-}
-impl<Device: crate::Device> FenceObject<Device> {
-    /// Create a new fence object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, create_info: &FenceCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_fence_raw(create_info, None)?, device) })
-    }
-}
-
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SemaphoreCreateInfo<'d>(
@@ -289,74 +298,6 @@ impl<'d> SemaphoreCreateInfo<'d> {
     }
 }
 
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkSemaphore::OBJECT_TYPE)]
-pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(VkSemaphore, Device);
-#[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for SemaphoreObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
-        }
-    }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for SemaphoreObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for SemaphoreObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for SemaphoreObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
-impl<Device: crate::Device> SemaphoreMut for SemaphoreObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkSemaphore, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkSemaphore, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> SemaphoreObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> SemaphoreObject<Device> {
-        SemaphoreObject(self.0, self.1.clone())
-    }
-}
-impl<Device: crate::Device> SemaphoreObject<Device> {
-    /// Create a new queue semaphore object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &SemaphoreCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_semaphore_raw(info, None)?, device) })
-    }
-}
-
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EventCreateInfo(VkEventCreateInfo);
@@ -370,92 +311,13 @@ impl EventCreateInfo {
     }
 }
 
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkEvent::OBJECT_TYPE)]
-pub struct EventObject<Device: VkHandle<Handle = VkDevice>>(VkEvent, Device);
-#[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for EventObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
-        }
-    }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for EventObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for EventObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for EventObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for EventObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
-    #[implements]
-    fn status(&self) -> crate::Result<bool> {
-        match unsafe { crate::vkfn::get_event_status(self.1.native_ptr(), self.0) } {
-            VK_EVENT_SET => Ok(true),
-            VK_EVENT_RESET => Ok(false),
-            vr => Err(vr),
-        }
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkEvent, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkEvent, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> EventObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> EventObject<Device> {
-        EventObject(self.0, self.1.clone())
-    }
-}
-impl<Device: crate::Device> EventObject<Device> {
-    /// Create a new event object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, create_info: &EventCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_event_raw(create_info, None)?, device) })
-    }
-}
-
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-pub struct SemaphoreSubmitInfo<'s>(
-    VkSemaphoreSubmitInfoKHR,
-    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSemaphore>>,
-);
+pub struct SemaphoreSubmitInfo<'s>(VkSemaphoreSubmitInfoKHR, core::marker::PhantomData<&'s Semaphore>);
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'s> SemaphoreSubmitInfo<'s> {
     #[inline]
-    pub fn new(semaphore: &'s (impl VkHandle<Handle = VkSemaphore> + ?Sized)) -> Self {
+    pub fn new(semaphore: &'s Semaphore) -> Self {
         Self(
             VkSemaphoreSubmitInfoKHR {
                 sType: VkSemaphoreSubmitInfoKHR::TYPE,

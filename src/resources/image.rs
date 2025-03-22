@@ -1,31 +1,43 @@
-use crate::{
-    ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, DeviceChildHandle, ImageMemoryBarrier, MemoryBound,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
-};
 #[implements]
-use crate::{DeviceMemory, VkHandleMut};
+use crate::DeviceMemory;
+use crate::{
+    Device, Extent3D, Format, ImageMemoryBarrier, MemoryBound, VkHandle, VkObject, VulkanStructure,
+    VulkanStructureAsRef,
+    ffi_helper::{opt_pointer, slice_as_ptr_empty_null},
+    vk::*,
+};
+use core::{marker::PhantomData, mem::MaybeUninit, ops::Range, ptr::null_mut};
 use derives::{bitflags_newtype, implements};
 
-pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
-    /// The pixel format of an image
-    fn format(&self) -> VkFormat;
+// Vulkan ReExports //
+pub type SparseImageMemoryRequirements = VkSparseImageMemoryRequirements;
 
-    /// The size of an image
-    fn size(&self) -> &VkExtent3D;
-
-    fn dimension(&self) -> VkImageViewType;
+/// Opaque handle to an image object.
+#[repr(transparent)]
+pub struct Image(VkImage_T);
+#[implements]
+impl Image {
+    /// Destroy an image object.
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
+        unsafe {
+            crate::vkfn::destroy_image(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
+        }
+    }
 
     /// Query a count of the memory requirements for a sparse image
-    #[implements]
     #[inline]
-    fn sparse_requirement_count(&self) -> u32 {
+    pub unsafe fn sparse_requirement_count(&self, device: &Device) -> u32 {
         let mut n = 0;
         unsafe {
             crate::vkfn::get_image_sparse_memory_requirements(
-                self.device_handle(),
-                self.native_ptr(),
+                device as *const _ as _,
+                self as *const _ as _,
                 &mut n,
-                core::ptr::null_mut(),
+                null_mut(),
             );
         }
 
@@ -33,14 +45,13 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     }
 
     /// Query the memory requirements for a sparse image
-    #[implements]
     #[inline]
-    fn sparse_requirements(&self, sink: &mut [VkSparseImageMemoryRequirements]) -> u32 {
+    pub unsafe fn sparse_requirements(&self, device: &Device, sink: &mut [SparseImageMemoryRequirements]) -> u32 {
         let mut n = sink.len() as _;
         unsafe {
             crate::vkfn::get_image_sparse_memory_requirements(
-                self.device_handle(),
-                self.native_ptr(),
+                device as *const _ as _,
+                self as *const _ as _,
                 &mut n,
                 sink.as_mut_ptr(),
             );
@@ -50,171 +61,131 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     }
 
     /// Query the memory requirements for a sparse image
-    #[implements("alloc")]
-    fn sparse_requirements_alloc(&self) -> Vec<VkSparseImageMemoryRequirements> {
-        let n = self.sparse_requirement_count();
+    #[cfg(feature = "alloc")]
+    pub unsafe fn sparse_requirements_alloc(&self, device: &Device) -> Vec<SparseImageMemoryRequirements> {
+        let n = unsafe { self.sparse_requirement_count(device) };
         if n == 0 {
             // no items
             return crate::alloc::empty_sink_buffer();
         }
 
         let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.sparse_requirements(&mut xs);
+        unsafe {
+            self.sparse_requirements(device, &mut xs);
+        }
 
         xs
     }
 
-    /// Returns an image's DRM format modifier
-    #[implements("VK_EXT_image_drm_format_modifier")]
+    /// Retrieve information about an image subresource.
     #[inline]
-    unsafe fn drm_format_modifier_properties_raw(
+    pub unsafe fn get_subresource_layout(
         &self,
-        sink: &mut core::mem::MaybeUninit<VkImageDrmFormatModifierPropertiesEXT>,
-    ) -> crate::Result<()>
-    where
-        Self: DeviceChild,
-    {
-        use crate::Device;
-
-        self.device().get_image_drm_format_modifier_properties_ext_fn().0(
-            self.device_handle(),
-            self.native_ptr(),
-            sink.as_mut_ptr(),
-        )
-        .into_result()
-        .map(drop)
+        device: &Device,
+        subresource: &ImageSubresource,
+        sink: &mut MaybeUninit<SubresourceLayout>,
+    ) {
+        unsafe {
+            crate::vkfn::get_image_subresource_layout(
+                device as *const _ as _,
+                self as *const _ as _,
+                subresource,
+                sink.as_mut_ptr(),
+            )
+        }
     }
 
-    /// Returns an image's DRM format modifier
-    #[implements("VK_EXT_image_drm_format_modifier")]
-    fn drm_format_modifier_properties(&self) -> crate::Result<VkImageDrmFormatModifierPropertiesEXT>
-    where
-        Self: DeviceChild,
-    {
-        let mut properties = core::mem::MaybeUninit::<VkImageDrmFormatModifierPropertiesEXT>::uninit();
+    /// Retrieve information about an image subresource.
+    #[inline]
+    pub unsafe fn subresource_layout(&self, device: &Device, subresource: &ImageSubresource) -> SubresourceLayout {
+        let mut sink = MaybeUninit::uninit();
         unsafe {
-            let p = properties.as_mut_ptr();
-            core::ptr::addr_of_mut!((*p).sType).write(VkImageDrmFormatModifierPropertiesEXT::TYPE);
-            core::ptr::addr_of_mut!((*p).pNext).write(core::ptr::null_mut());
+            self.get_subresource_layout(device, subresource, &mut sink);
+        }
 
-            self.drm_format_modifier_properties_raw(&mut properties)?;
+        unsafe { sink.assume_init() }
+    }
+}
+impl Image {
+    #[inline]
+    pub fn memory_barrier(&self, subresource: &ImageSubresource, trans: LayoutTransition) -> ImageMemoryBarrier {
+        ImageMemoryBarrier::new(self, subresource, trans)
+    }
 
-            Ok(properties.assume_init())
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[inline]
+    pub fn memory_barrier2<'r>(&'r self, subresource: &'r ImageSubresource) -> crate::ImageMemoryBarrier2<'r> {
+        crate::ImageMemoryBarrier2::new(self, subresource)
+    }
+}
+impl MemoryBound for Image {
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+    type MemoryRequirementsInfo2<'b> = ImageMemoryRequirementsInfo2<'b>;
+
+    #[implements]
+    unsafe fn get_memory_requirements(&self, device: &Device, sink: &mut MaybeUninit<super::MemoryRequirements>) {
+        unsafe {
+            crate::vkfn::get_image_memory_requirements(
+                device as *const _ as _,
+                self as *const _ as _,
+                sink.as_mut_ptr(),
+            )
+        }
+    }
+
+    #[implements("VK_KHR_get_memory_requirements2")]
+    unsafe fn memory_requirements2<'b>(&'b self, device: &'b Device) -> Self::MemoryRequirementsInfo2<'b> {
+        unsafe { ImageMemoryRequirementsInfo2::new(self, device) }
+    }
+
+    #[implements]
+    unsafe fn bind(
+        &mut self,
+        device: &Device,
+        memory: &(impl DeviceMemory + ?Sized),
+        offset: usize,
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::bind_image_memory(
+                device as *const _ as _,
+                self as *mut _ as _,
+                memory.native_ptr(),
+                offset as _,
+            )
+            .into_result()
+            .map(drop)
         }
     }
 }
-DerefContainerBracketImpl!(for Image {
-    fn format(&self) -> VkFormat {
-        T::format(self)
-    }
 
-    fn size(&self) -> &VkExtent3D {
-        T::size(self)
-    }
-
-    fn dimension(&self) -> VkImageViewType {
-        T::dimension(self)
-    }
-});
-GuardsImpl!(for Image {
-    fn format(&self) -> VkFormat {
-        T::format(&self)
-    }
-
-    fn size(&self) -> &VkExtent3D {
-        T::size(&self)
-    }
-
-    fn dimension(&self) -> VkImageViewType {
-        T::dimension(&self)
-    }
-});
-
-pub trait DeviceChildImage: Image + DeviceChild {}
-impl<T: Image + DeviceChild> DeviceChildImage for T {}
-
-pub trait ImageSubresourceSlice: Image {
-    /// method chaining helper
-    fn by_ref(&self) -> &Self {
-        self
-    }
-
-    /// Creates subresource
-    #[inline]
-    fn subresource(self, aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> ImageSubresource<Self>
-    where
-        Self: Sized,
-    {
-        ImageSubresource(
-            self,
-            VkImageSubresource {
-                aspectMask: aspect_mask.0,
-                mipLevel: mip_level,
-                arrayLayer: array_layer,
-            },
-        )
-    }
-
-    /// Creates subresource-range
-    #[inline]
-    fn subresource_range(
-        self,
-        aspect_mask: AspectMask,
-        mip_level: core::ops::Range<u32>,
-        array_layers: core::ops::Range<u32>,
-    ) -> ImageSubresourceRange<Self>
-    where
-        Self: Sized,
-    {
-        ImageSubresourceRange(
-            self,
-            VkImageSubresourceRange {
-                aspectMask: aspect_mask.0,
-                baseMipLevel: mip_level.start,
-                levelCount: mip_level.len() as _,
-                baseArrayLayer: array_layers.start,
-                layerCount: array_layers.len() as _,
-            },
-        )
+/// Opaque handle to an image view object.
+#[repr(transparent)]
+pub struct ImageView(VkImageView_T);
+#[implements]
+impl ImageView {
+    /// Destroy an image view object.
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
+        unsafe {
+            crate::vkfn::destroy_image_view(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
+        }
     }
 }
-impl<T> ImageSubresourceSlice for T where T: Image {}
-
-pub trait ImageChild {
-    type ConcreteImage: crate::Image;
-
-    fn image(&self) -> &Self::ConcreteImage;
-}
-DerefContainerBracketImpl!(for ImageChild {
-    type ConcreteImage = T::ConcreteImage;
-
-    fn image(&self) -> &Self::ConcreteImage { T::image(self) }
-});
-GuardsImpl!(for ImageChild {
-    type ConcreteImage = T::ConcreteImage;
-
-    fn image(&self) -> &Self::ConcreteImage { T::image(&self) }
-});
-
-pub trait ImageView: VkHandle<Handle = VkImageView> {}
-DerefContainerBracketImpl!(for ImageView {});
-GuardsImpl!(for ImageView {});
-
-pub trait ConcreteDeviceImageView: ImageView + DeviceChild {}
-DerefContainerBracketImpl!(for ConcreteDeviceImageView {});
-GuardsImpl!(for ConcreteDeviceImageView {});
 
 /// Image Dimension by corresponding extent type
 pub trait ImageSize {
-    const DIMENSION: VkImageType;
+    const DIMENSION: ImageType;
 
-    fn conv(self) -> VkExtent3D;
+    fn conv(self) -> Extent3D;
 }
 impl ImageSize for u32 {
-    const DIMENSION: VkImageType = VK_IMAGE_TYPE_1D;
+    const DIMENSION: ImageType = ImageType::Dim1;
 
-    fn conv(self) -> VkExtent3D {
-        VkExtent3D {
+    fn conv(self) -> Extent3D {
+        Extent3D {
             width: self,
             height: 1,
             depth: 1,
@@ -222,156 +193,17 @@ impl ImageSize for u32 {
     }
 }
 impl ImageSize for VkExtent2D {
-    const DIMENSION: VkImageType = VK_IMAGE_TYPE_2D;
+    const DIMENSION: ImageType = ImageType::Dim2;
 
-    fn conv(self) -> VkExtent3D {
+    fn conv(self) -> Extent3D {
         self.with_depth(1)
     }
 }
 impl ImageSize for VkExtent3D {
-    const DIMENSION: VkImageType = VK_IMAGE_TYPE_3D;
+    const DIMENSION: ImageType = ImageType::Dim2;
 
-    fn conv(self) -> VkExtent3D {
+    fn conv(self) -> Extent3D {
         self
-    }
-}
-
-/// Opaque handle to a image object(constructed via `ImageDesc`)
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkImage::OBJECT_TYPE)]
-pub struct ImageObject<Device: VkHandle<Handle = VkDevice>>(VkImage, Device, VkImageType, VkFormat, VkExtent3D);
-#[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for ImageObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
-        }
-    }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ImageObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ImageObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for ImageObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for ImageObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> Image for ImageObject<Device> {
-    fn format(&self) -> VkFormat {
-        self.3
-    }
-
-    fn size(&self) -> &VkExtent3D {
-        &self.4
-    }
-
-    fn dimension(&self) -> VkImageViewType {
-        match self.2 {
-            VK_IMAGE_TYPE_1D => VK_IMAGE_VIEW_TYPE_1D,
-            VK_IMAGE_TYPE_2D => VK_IMAGE_VIEW_TYPE_2D,
-            VK_IMAGE_TYPE_3D => VK_IMAGE_VIEW_TYPE_3D,
-            _ => unreachable!(),
-        }
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
-    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-    type MemoryRequirementsInfo2<'b>
-        = ImageMemoryRequirementsInfo2<'b, Self>
-    where
-        Device: 'b;
-
-    #[implements]
-    fn requirements(&self) -> VkMemoryRequirements {
-        let mut p = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_image_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
-
-            p.assume_init()
-        }
-    }
-
-    #[implements("VK_KHR_get_memory_requirements2")]
-    fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b> {
-        ImageMemoryRequirementsInfo2::new(self)
-    }
-
-    #[implements]
-    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()>
-    where
-        Self: VkHandleMut,
-    {
-        unsafe {
-            crate::vkfn::bind_image_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
-                .into_result()
-                .map(drop)
-        }
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> ImageObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(
-        handle: VkImage,
-        parent: Device,
-        image_type: VkImageType,
-        format: VkFormat,
-        extent: VkExtent3D,
-    ) -> Self {
-        Self(handle, parent, image_type, format, extent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkImage, Device, VkImageType, VkFormat, VkExtent3D) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        let (t, f, x) = (self.2, self.3, self.4);
-        core::mem::forget(self);
-
-        (v, p, t, f, x)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> ImageObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> ImageObject<Device> {
-        let r = ImageObject(self.0, self.1.clone(), self.2, self.3, self.4);
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: crate::Device> ImageObject<Device> {
-    /// Create a new image object
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_COMPRESSION_EXHAUSTED_EXT`]
-    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &ImageCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe {
-            Self::manage(
-                device.new_image_raw(info, None)?,
-                device,
-                info.0.imageType,
-                info.0.format,
-                info.0.extent,
-            )
-        })
     }
 }
 
@@ -533,147 +365,89 @@ impl<'d> ImageCreateInfo<'d> {
     }
 }
 
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct ImageSubresource<S: Image>(S, VkImageSubresource);
-impl<S: Image> ImageSubresource<S> {
-    /// Retrieve information about an image subresource
-    #[implements]
-    pub fn layout_info(&self) -> VkSubresourceLayout {
-        let mut s = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_image_subresource_layout(
-                self.0.device_handle(),
-                self.0.native_ptr(),
-                &self.1,
-                s.as_mut_ptr(),
-            );
+pub type SubresourceLayout = VkSubresourceLayout;
+pub type ImageSubresource = VkImageSubresource;
 
-            s.assume_init()
+pub type ImageSubresourceRange = VkImageSubresourceRange;
+impl ImageSubresourceRange {
+    /// Creates subresource-range
+    #[inline]
+    pub const fn new(aspect_mask: AspectMask, mip_level: Range<u32>, array_layers: Range<u32>) -> Self {
+        Self {
+            aspectMask: aspect_mask.0,
+            baseMipLevel: mip_level.start,
+            levelCount: mip_level.len() as _,
+            baseArrayLayer: array_layers.start,
+            layerCount: array_layers.len() as _,
         }
     }
 
-    pub fn make_ref(&self) -> ImageSubresource<&S> {
-        ImageSubresource(&self.0, self.1.clone())
-    }
-}
-impl<S: Image> From<ImageSubresource<S>> for VkImageSubresource {
-    fn from(value: ImageSubresource<S>) -> Self {
-        value.1
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct ImageSubresourceRange<S: Image>(S, VkImageSubresourceRange);
-impl<S: Image> ImageSubresourceRange<S> {
-    /// Builds ImageView information
-    pub fn view_builder(self) -> ImageViewBuilder<S> {
-        ImageViewBuilder::new(self.0, self.1)
-    }
-
     /// Retrieves single subresource in this range
-    pub fn subresource(self, mip_level_offset: u32, array_layer_offset: u32) -> ImageSubresource<S> {
-        ImageSubresource(
-            self.0,
-            VkImageSubresource {
-                aspectMask: self.1.aspectMask,
-                mipLevel: self.1.baseMipLevel + mip_level_offset,
-                arrayLayer: self.1.baseArrayLayer + array_layer_offset,
-            },
-        )
-    }
-
-    pub fn make_ref(&self) -> ImageSubresourceRange<&S> {
-        ImageSubresourceRange(&self.0, self.1.clone())
-    }
-}
-impl<'r, S: Image> ImageSubresourceRange<&'r S> {
-    #[inline]
-    pub fn memory_barrier(self, trans: LayoutTransition) -> ImageMemoryBarrier {
-        ImageMemoryBarrier::new(self.0, self.1, trans)
-    }
-
-    #[cfg(feature = "VK_KHR_synchronization2")]
-    #[inline]
-    pub fn memory_barrier2(self) -> crate::ImageMemoryBarrier2<'r> {
-        crate::ImageMemoryBarrier2::new(self.0, self.1)
-    }
-}
-impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
-    fn from(value: ImageSubresourceRange<S>) -> Self {
-        value.1
+    pub fn subresource(&self, mip_level_offset: u32, array_layer_offset: u32) -> ImageSubresource {
+        ImageSubresource {
+            aspectMask: self.1.aspectMask,
+            mipLevel: self.1.baseMipLevel + mip_level_offset,
+            arrayLayer: self.1.baseArrayLayer + array_layer_offset,
+        }
     }
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-pub struct ImageMemoryRequirementsInfo2<'b, Image: self::Image + 'b>(VkImageMemoryRequirementsInfo2KHR, &'b Image);
+pub struct ImageMemoryRequirementsInfo2<'b>(VkImageMemoryRequirementsInfo2KHR, &'b Device, PhantomData<&'b Image>);
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-impl<'b, Image: self::Image + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
-    pub fn new(image: &'b Image) -> Self {
+impl<'b> ImageMemoryRequirementsInfo2<'b> {
+    pub const unsafe fn new(image: &'b Image, device: &'b Device) -> Self {
         Self(
             VkImageMemoryRequirementsInfo2KHR {
                 sType: VkImageMemoryRequirementsInfo2KHR::TYPE,
                 pNext: core::ptr::null(),
-                image: image.native_ptr(),
+                image: image as *const _ as _,
             },
-            image,
+            device,
+            PhantomData,
         )
     }
 
-    #[implements]
-    pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
-    where
-        Image: crate::DeviceChild,
-    {
-        #[cfg(feature = "Allow1_1APIs")]
+    #[implements("Allow1_1APIs")]
+    pub fn query(self, sink: &mut MaybeUninit<VkMemoryRequirements2KHR>) {
         unsafe {
-            crate::vkfn::get_image_memory_requirements2(self.1.device().native_ptr(), &self.0, sink.as_mut_ptr());
-        }
-
-        #[cfg(not(feature = "Allow1_1APIs"))]
-        unsafe {
-            use crate::Device;
-
-            self.1.device().get_image_memory_requirements_2_khr_fn().0(
-                self.1.device().native_ptr(),
-                &self.0,
-                sink.as_mut_ptr(),
-            );
+            crate::vkfn::get_image_memory_requirements2(self.1 as *const _ as _, &self.0, sink.as_mut_ptr());
         }
     }
 }
 
 /// Layouts of image and image subresources
-#[repr(u32)]
+#[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum ImageLayout {
     /// does not support device access
-    Undefined = VK_IMAGE_LAYOUT_UNDEFINED as _,
+    Undefined = VK_IMAGE_LAYOUT_UNDEFINED,
     /// does not support device access. host can be written to this memory immediately
-    Preinitialized = VK_IMAGE_LAYOUT_PREINITIALIZED as _,
+    Preinitialized = VK_IMAGE_LAYOUT_PREINITIALIZED,
     /// supports all types of device access
-    General = VK_IMAGE_LAYOUT_GENERAL as _,
+    General = VK_IMAGE_LAYOUT_GENERAL,
     /// must only be used as a color or resolve attachment in a `Framebuffer`
-    ColorAttachmentOpt = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL as _,
+    ColorAttachmentOpt = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
     /// must only be used as a depth/stencil attachment in a `Framebuffer`
-    DepthStencilAttachmentOpt = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL as _,
+    DepthStencilAttachmentOpt = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
     /// must only be used as a read-only depth/stencil attachment in a `Framebuffer`
     /// and/or as a read-only image in a shader (which can be read as a sampled image,
     /// combined image/sampler and/or input attachment).
-    DepthStencilReadOnlyOpt = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL as _,
+    DepthStencilReadOnlyOpt = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL,
     /// must only be used as a read-only image in a shader (which can be read as a sampled image,
     /// combined image/sampler and/or input attachment).
-    ShaderReadOnlyOpt = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL as _,
+    ShaderReadOnlyOpt = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
     /// must only be used as a source image of a transfer command
-    TransferSrcOpt = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL as _,
+    TransferSrcOpt = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
     /// must only be used as a destination image of a transfer command
-    TransferDestOpt = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL as _,
+    TransferDestOpt = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
     /// must only be used for presenting a swapchain image for display
     #[cfg(feature = "VK_KHR_swapchain")]
-    PresentSrc = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR as _,
+    PresentSrc = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
 }
 impl ImageLayout {
     /// Commonly used access types with the layout
-    pub fn default_access_mask(self) -> VkAccessFlags {
+    pub const fn default_access_mask(self) -> VkAccessFlags {
         match self {
             Self::Undefined | Self::Preinitialized => 0,
             Self::General => VK_ACCESS_MEMORY_READ_BIT,
@@ -689,23 +463,21 @@ impl ImageLayout {
     }
 
     /// Constructs the transition between image layouts.
-    #[inline(always)]
     pub const fn to(self, after: Self) -> LayoutTransition {
         LayoutTransition { from: self, to: after }
     }
+
     /// Constructs the transition between image layouts (in reverse order).
-    #[inline(always)]
     pub const fn from(self, before: Self) -> LayoutTransition {
         LayoutTransition { from: before, to: self }
     }
+
     /// Constructs the transition from undefined layout to this layout (convenient function).
-    #[inline(always)]
     pub const fn from_undefined(self) -> LayoutTransition {
         self.from(Self::Undefined)
     }
 
     /// Constructs the empty transition.
-    #[inline(always)]
     pub const fn keep(self) -> LayoutTransition {
         LayoutTransition { from: self, to: self }
     }
@@ -765,24 +537,66 @@ impl ImageFlags {
     pub const CUBE_COMPATIBLE: Self = Self(VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
 }
 
+/// Specifies the tiling arrangement of data in an image.
+#[repr(i32)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ImageTiling {
+    /// Optimal tiling
+    /// (texels are laid out in an implementation-dependent arrangement, for more efficient memory access).
+    Optimal = VK_IMAGE_TILING_OPTIMAL,
+    /// Linear tiling
+    /// (texels are laid out in memory in row-major order, possibly with some padding on each row).
+    Linear = VK_IMAGE_TILING_LINEAR,
+    #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
+    /// The image's tiling is defined by a [Linux DRM format modifier](https://registry.khronos.org/vulkan/specs/latest/html/vkspec.html#glossary-drm-format-modifier).
+    /// The modifier is specified at image creation with [`VkImageDrmFormatModifierListCreateInfoEXT`]
+    /// or [`VkImageDrmFormatModifierExplicitCreateInfoEXT`],
+    /// and can be queried with [`vkGetImageDrmFormatModifierPropertiesEXT`]
+    DrmFormatModifierEXT = VK_IMAGE_TILING_DRM_FORMAT_MODIFIER_EXT,
+}
+
+/// Specifies the type of an image object.
+#[repr(i32)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ImageType {
+    /// one-dimensional image.
+    Dim1 = VK_IMAGE_TYPE_1D,
+    /// two-dimensional image.
+    Dim2 = VK_IMAGE_TYPE_2D,
+    /// three-dimensional image.
+    Dim3 = VK_IMAGE_TYPE_3D,
+}
+
+/// Image view types.
+#[repr(i32)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum ImageViewType {
+    Dim1 = VK_IMAGE_VIEW_TYPE_1D,
+    Dim2 = VK_IMAGE_VIEW_TYPE_2D,
+    Dim3 = VK_IMAGE_VIEW_TYPE_3D,
+    Cube = VK_IMAGE_VIEW_TYPE_CUBE,
+    Dim1Array = VK_IMAGE_VIEW_TYPE_1D_ARRAY,
+    Dim2Array = VK_IMAGE_VIEW_TYPE_2D_ARRAY,
+    CubeArray = VK_IMAGE_VIEW_TYPE_CUBE_ARRAY,
+}
+
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ImageSparseMemoryRequirementsInfo2<'r>(
     pub(crate) VkImageSparseMemoryRequirementsInfo2KHR,
-    core::marker::PhantomData<(Option<&'r dyn VulkanStructureAsRef>, &'r dyn VkHandle<Handle = VkImage>)>,
+    PhantomData<(Option<&'r dyn VulkanStructureAsRef>, &'r Image)>,
 );
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 impl<'r> ImageSparseMemoryRequirementsInfo2<'r> {
-    #[inline]
-    pub fn new(image: &'r (impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
+    pub const fn new(image: &'r Image) -> Self {
         Self(
             VkImageSparseMemoryRequirementsInfo2KHR {
                 sType: VkImageSparseMemoryRequirementsInfo2KHR::TYPE,
                 pNext: core::ptr::null(),
-                image: image.native_ptr(),
+                image: image as *const _ as _,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
@@ -818,118 +632,33 @@ impl AspectMask {
     pub const METADATA: Self = Self(VK_IMAGE_ASPECT_METADATA_BIT);
 }
 
-/// Opaque handle to a image view object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkImageView::OBJECT_TYPE)]
-pub struct ImageViewObject<Image: DeviceChildHandle>(VkImageView, Image);
-#[implements]
-impl<Image: DeviceChildHandle> Drop for ImageViewObject<Image> {
-    #[inline(always)]
-    fn drop(&mut self) {
-        unsafe {
-            self.0.destroy(self.1.device_handle(), core::ptr::null());
-        }
-    }
-}
-unsafe impl<Image: DeviceChildHandle + Sync> Sync for ImageViewObject<Image> {}
-unsafe impl<Image: DeviceChildHandle + Send> Send for ImageViewObject<Image> {}
-impl<Image: DeviceChildHandle> DeviceChildHandle for ImageViewObject<Image> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.device_handle()
-    }
-}
-impl<Image: DeviceChild> DeviceChild for ImageViewObject<Image> {
-    type ConcreteDevice = Image::ConcreteDevice;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        self.1.device()
-    }
-}
-impl<Image: self::Image> ImageChild for ImageViewObject<Image> {
-    type ConcreteImage = Image;
-
-    #[inline(always)]
-    fn image(&self) -> &Image {
-        &self.1
-    }
-}
-impl<Image: DeviceChildHandle> ImageView for ImageViewObject<Image> {}
-impl<Image: DeviceChildHandle> ImageViewObject<Image> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkImageView, parent: Image) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkImageView, Image) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (v, p)
-    }
-}
-impl<Image: DeviceChildHandle + Clone> ImageViewObject<&'_ Image> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> ImageViewObject<Image> {
-        let r = ImageViewObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Image: DeviceChild> ImageViewObject<Image> {
-    /// Create a new image view from an existing image
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
-    #[implements]
-    #[inline]
-    pub fn new(image: Image, info: &ImageViewCreateInfo) -> crate::Result<Self> {
-        use crate::Device;
-
-        Ok(unsafe { Self::manage(image.device().new_image_view_raw(info, None)?, image) })
-    }
-}
-
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct ImageViewCreateInfo<'r>(
-    VkImageViewCreateInfo,
-    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkImage>>,
-);
+pub struct ImageViewCreateInfo<'r>(VkImageViewCreateInfo, PhantomData<&'r Image>);
 impl<'r> ImageViewCreateInfo<'r> {
-    pub fn new(
-        source: &'r (impl VkHandle<Handle = VkImage> + ?Sized),
-        subresource_range: VkImageSubresourceRange,
-        view_type: VkImageViewType,
-        format: VkFormat,
+    pub const fn new(
+        source: &'r Image,
+        subresource_range: ImageSubresourceRange,
+        view_type: ImageViewType,
+        format: Format,
     ) -> Self {
         Self(
             VkImageViewCreateInfo {
                 sType: VkImageViewCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
-                image: source.native_ptr(),
+                image: source as *const _ as _,
                 viewType: view_type,
                 format,
                 components: VkComponentMapping::default(),
                 subresourceRange: subresource_range,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkImageViewCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkImageViewCreateInfo {
@@ -949,56 +678,5 @@ impl<'r> ImageViewCreateInfo<'r> {
     pub const fn with_dimension(mut self, dimension: VkImageViewType) -> Self {
         self.0.viewType = dimension;
         self
-    }
-}
-
-pub struct ImageViewBuilder<I: Image>(ImageViewCreateInfo<'static>, I);
-impl<I: Image> ImageViewBuilder<I> {
-    pub fn new(source: I, subresource_range: VkImageSubresourceRange) -> Self {
-        Self(
-            unsafe {
-                ImageViewCreateInfo::from_raw(VkImageViewCreateInfo {
-                    sType: VkImageViewCreateInfo::TYPE,
-                    pNext: core::ptr::null(),
-                    flags: 0,
-                    image: source.native_ptr(),
-                    viewType: source.dimension(),
-                    format: source.format(),
-                    components: VkComponentMapping::default(),
-                    subresourceRange: subresource_range,
-                })
-            },
-            source,
-        )
-    }
-
-    pub const fn with_format_mutation(mut self, format: VkFormat) -> Self {
-        self.0 = self.0.with_format_mutation(format);
-        self
-    }
-
-    pub const fn with_mapping(mut self, mapping: VkComponentMapping) -> Self {
-        self.0 = self.0.with_mapping(mapping);
-        self
-    }
-
-    pub const fn with_dimension(mut self, dimension: VkImageViewType) -> Self {
-        self.0 = self.0.with_dimension(dimension);
-        self
-    }
-
-    /// Create a new image view from an existing image
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`
-    #[implements]
-    pub fn create(self) -> crate::Result<ImageViewObject<I>>
-    where
-        I: DeviceChild,
-    {
-        ImageViewObject::new(self.1, &self.0)
     }
 }

@@ -6,16 +6,7 @@ pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
 use super::*;
 use crate::PFN;
 
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[vk_raw_handle(object_type = VK_OBJECT_TYPE_SWAPCHAIN_KHR)]
-pub struct VkSwapchainKHR(pub u64);
-#[implements]
-impl crate::VkDeviceChildNonExtDestroyable for VkSwapchainKHR {
-    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks) {
-        crate::vkfn::destroy_swapchain_khr(device, self, allocator);
-    }
-}
+DefineHandle!(pub handle VkSwapchainKHR(VkSwapchainKHR_T));
 
 pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = ext_enum_value(2, 0) as _;
 
@@ -122,21 +113,25 @@ pub struct PFN_vkQueuePresentKHR(
 
 #[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateSwapchainKHR(
+unsafe extern "system" {
+    pub unsafe fn vkCreateSwapchainKHR(
         device: VkDevice,
         pCreateInfo: *const VkSwapchainCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pSwapchain: *mut VkSwapchainKHR,
     ) -> VkResult;
-    pub fn vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetSwapchainImagesKHR(
+    pub unsafe fn vkDestroySwapchainKHR(
+        device: VkDevice,
+        swapchain: VkSwapchainKHR,
+        pAllocator: *const VkAllocationCallbacks,
+    );
+    pub unsafe fn vkGetSwapchainImagesKHR(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         pSwapchainImageCount: *mut u32,
         pSwapchainImages: *mut VkImage,
     ) -> VkResult;
-    pub fn vkAcquireNextImageKHR(
+    pub unsafe fn vkAcquireNextImageKHR(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         timeout: u64,
@@ -144,5 +139,5 @@ extern "system" {
         fence: VkFence,
         pImageIndex: *mut u32,
     ) -> VkResult;
-    pub fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+    pub unsafe fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
 }

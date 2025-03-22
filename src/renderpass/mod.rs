@@ -1,5 +1,6 @@
 mod standard;
-use ffi_helper::slice_as_ptr_empty_null;
+use core::{marker::PhantomData, mem::MaybeUninit, ptr::NonNull};
+use ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
 
 pub use self::standard::*;
 
@@ -10,92 +11,42 @@ pub use self::extensible::*;
 
 use crate::*;
 
-pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChildHandle {
-    /// Returns the granularity for optimal render area
-    #[implements]
-    fn optimal_granularity(&self) -> VkExtent2D {
-        let mut e = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_render_area_granularity(self.device_handle(), self.native_ptr(), e.as_mut_ptr());
-
-            e.assume_init()
-        }
-    }
-
-    #[inline(always)]
-    fn subpass(&self, index: u32) -> SubpassRef<Self> {
-        SubpassRef(self, index)
-    }
-}
-DerefContainerBracketImpl!(for RenderPass {});
-GuardsImpl!(for RenderPass {});
-
-pub trait ConcreteDeviceRenderPass: RenderPass + DeviceChild {}
-DerefContainerBracketImpl!(for ConcreteDeviceRenderPass {});
-GuardsImpl!(for ConcreteDeviceRenderPass {});
-
-/// Opaque handle to a render pass object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkRenderPass::OBJECT_TYPE)]
-pub struct RenderPassObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkRenderPass, pub(crate) Device);
+/// Opaque handle to a render pass object.
+#[repr(transparent)]
+pub struct RenderPass(VkRenderPass_T);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for RenderPassObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl RenderPass {
+    /// Destroy a render pass object.
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_render_pass(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
     }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for RenderPassObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for RenderPassObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for RenderPassObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for RenderPassObject<Device> {
-    type ConcreteDevice = Device;
 
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> RenderPass for RenderPassObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> RenderPassObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkRenderPass, parent: Device) -> Self {
-        Self(handle, parent)
+    /// Returns the granularity for optimal render area
+    pub unsafe fn get_render_area_granularity(&self, device: &Device, sink: &mut MaybeUninit<Extent2D>) {
+        unsafe {
+            crate::vkfn::get_render_area_granularity(device as *const _ as _, self as *const _ as _, sink.as_mut_ptr());
+        }
     }
 
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkRenderPass, Device) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
+    /// Returns the granularity for optimal render area
+    pub unsafe fn render_area_granularity(&self, device: &Device) -> VkExtent2D {
+        let mut e = MaybeUninit::uninit();
+        unsafe {
+            self.get_render_area_granularity(device, &mut e);
+        }
 
-        (v, p)
+        unsafe { e.assume_init() }
     }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> RenderPassObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> RenderPassObject<Device> {
-        let r = RenderPassObject(self.0, self.1.clone());
-        core::mem::forget(self);
 
-        r
-    }
-}
-impl<Device: crate::Device> RenderPassObject<Device> {
-    #[implements]
     #[inline(always)]
-    pub fn new(device: Device, create_info: &(impl AnyRenderPassCreateInfo + ?Sized)) -> crate::Result<Self> {
-        create_info.execute(&device, None).map(move |x| Self(x, device))
+    pub const fn subpass(&self, index: u32) -> SubpassRef {
+        SubpassRef(self, index)
     }
 }
 
@@ -103,16 +54,16 @@ impl<Device: crate::Device> RenderPassObject<Device> {
 pub trait AnyRenderPassCreateInfo {
     fn execute(
         &self,
-        device: &(impl crate::Device + ?Sized),
+        device: &Device,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkRenderPass>;
+    ) -> crate::Result<NonNull<RenderPass>>;
 }
 
 #[repr(transparent)]
 pub struct RenderPassBeginInfo<'d>(
     VkRenderPassBeginInfo,
-    core::marker::PhantomData<(
-        &'d dyn VkHandle<Handle = VkRenderPass>,
+    PhantomData<(
+        &'d RenderPass,
         &'d dyn VkHandle<Handle = VkFramebuffer>,
         &'d [ClearValue],
     )>,
@@ -120,7 +71,7 @@ pub struct RenderPassBeginInfo<'d>(
 impl<'d> RenderPassBeginInfo<'d> {
     #[inline]
     pub fn new(
-        render_pass: &'d (impl VkHandle<Handle = VkRenderPass> + ?Sized),
+        render_pass: &'d RenderPass,
         framebuffer: &'d (impl VkHandle<Handle = VkFramebuffer> + ?Sized),
         render_area: VkRect2D,
         clear_values: &'d [ClearValue],
@@ -129,13 +80,13 @@ impl<'d> RenderPassBeginInfo<'d> {
             VkRenderPassBeginInfo {
                 sType: VkRenderPassBeginInfo::TYPE,
                 pNext: core::ptr::null(),
-                renderPass: render_pass.native_ptr(),
+                renderPass: render_pass as *const _ as _,
                 framebuffer: framebuffer.native_ptr(),
                 renderArea: render_area,
                 clearValueCount: clear_values.len() as _,
                 pClearValues: slice_as_ptr_empty_null(clear_values),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 }
@@ -168,31 +119,49 @@ impl VkSubpassEndInfoKHR {
 }
 
 /// A reference to a subpass in a render pass object.
-pub struct SubpassRef<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>>(pub &'r RenderPass, pub u32);
-impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Clone for SubpassRef<'r, RenderPass> {
+pub struct SubpassRef<'r>(pub &'r RenderPass, pub u32);
+impl<'r> Clone for SubpassRef<'r> {
     #[inline(always)]
     fn clone(&self) -> Self {
         Self(self.0, self.1)
     }
 }
-impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Copy for SubpassRef<'r, RenderPass> {}
-impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> PartialEq for SubpassRef<'r, RenderPass> {
+impl<'r> Copy for SubpassRef<'r> {}
+impl<'r> PartialEq for SubpassRef<'r> {
     #[inline(always)]
     fn eq(&self, other: &Self) -> bool {
         core::ptr::eq(self.0, other.0) && self.1 == other.1
     }
 }
-impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Eq for SubpassRef<'r, RenderPass> {}
-impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> core::hash::Hash for SubpassRef<'r, RenderPass> {
+impl<'r> Eq for SubpassRef<'r> {}
+impl<'r> core::hash::Hash for SubpassRef<'r> {
     #[inline(always)]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         (self.0 as *const RenderPass, self.1).hash(state)
     }
 }
-impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> core::fmt::Debug for SubpassRef<'r, RenderPass> {
+impl<'r> core::fmt::Debug for SubpassRef<'r> {
     #[inline(always)]
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "RenderPass({:p}).{}", self.0, self.1)
+    }
+}
+
+/// Index specifying a subpass
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum SubpassIndex {
+    /// Out of the render pass
+    External,
+    /// In the render pass
+    Internal(u32),
+}
+impl SubpassIndex {
+    #[inline(always)]
+    pub(crate) const fn as_vk(self) -> u32 {
+        match self {
+            Self::External => VK_SUBPASS_EXTERNAL,
+            Self::Internal(x) => x,
+        }
     }
 }
 

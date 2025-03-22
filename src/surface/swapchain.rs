@@ -1,72 +1,48 @@
-use crate::{vk::*, DeviceChild, VkHandle, VkRawHandle};
+use crate::vk::*;
+use core::ptr::NonNull;
 use derives::implements;
 
-use super::CompletionHandlerMut;
+use super::{CompletionHandlerMut, Device, EnumerationResult, Image};
 
-pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
-    fn format(&self) -> VkFormat;
-    fn size(&self) -> &VkExtent2D;
-
+/// Opaque handle to a swapchain object.
+#[repr(transparent)]
+pub struct Swapchain(VkSwapchainKHR_T);
+#[implements]
+impl Swapchain {
     /// Retrieve the index of the next available presentation image
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements]
-    fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandlerMut) -> crate::Result<u32> {
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DATE_KHR`]
+    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    pub unsafe fn acquire_next(
+        &mut self,
+        device: &Device,
+        timeout: Option<u64>,
+        completion: CompletionHandlerMut,
+    ) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
-            CompletionHandlerMut::Host(f) => (VkSemaphore::NULL, f.0),
-            CompletionHandlerMut::Queue(s) => (s.0, VkFence::NULL),
+            CompletionHandlerMut::Host(f) => (VK_NULL_HANDLE as _, f as *mut _ as _),
+            CompletionHandlerMut::Queue(s) => (s as *mut _ as _, VK_NULL_HANDLE as _),
         };
 
         let mut n = 0;
         unsafe {
             crate::vkfn::acquire_next_image_khr(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                timeout.unwrap_or(std::u64::MAX),
+                device as *const _ as _,
+                self as *mut _ as _,
+                timeout.unwrap_or(u64::MAX),
                 semaphore,
                 fence,
                 &mut n,
             )
-            .into_result()
-            .map(|_| n)
+            .into_result()?;
         }
-    }
 
-    /// Acquire full-screen exclusive mode for a swapchain.
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        use crate::Device;
-
-        unsafe {
-            self.device().acquire_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
-                .into_result()
-                .map(drop)
-        }
-    }
-
-    /// Release full-screen exclusive mode from a swapchain.
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        use crate::Device;
-
-        unsafe {
-            self.device().release_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
-                .into_result()
-                .map(drop)
-        }
+        Ok(n)
     }
 
     /// Obtain a count of the array of presentable images associated with a swapchain
@@ -75,14 +51,13 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
     #[inline]
-    fn image_count(&self) -> crate::Result<u32> {
+    pub unsafe fn image_count(&self, device: &Device) -> crate::Result<u32> {
         let mut n = 0;
         unsafe {
             crate::vkfn::get_swapchain_images_khr(
-                self.device_handle(),
-                self.native_ptr(),
+                device as *const _ as _,
+                self as *const _ as _,
                 &mut n,
                 core::ptr::null_mut(),
             )
@@ -98,51 +73,48 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    #[inline]
-    fn images(&self, sink: &mut [VkImage]) -> crate::Result<u32> {
+    pub unsafe fn images(&self, device: &Device, sink: &mut [*mut Image]) -> crate::Result<(u32, EnumerationResult)> {
         let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_swapchain_images_khr(self.device_handle(), self.native_ptr(), &mut n, sink.as_mut_ptr())
-                .into_result()?;
+        let r = unsafe {
+            crate::vkfn::get_swapchain_images_khr(
+                device as *const _ as _,
+                self as *const _ as _,
+                &mut n,
+                sink.as_mut_ptr(),
+            )
+        };
+        if r == VK_SUCCESS {
+            return Ok((n, EnumerationResult::Complete));
+        }
+        if r == VK_INCOMPLETE {
+            return Ok((n, EnumerationResult::Incomplete));
         }
 
-        Ok(n)
+        Err(r)
     }
 
     /// Obtain the array of presentable images associated with a swapchain
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    #[implements("alloc")]
-    fn images_alloc(&self) -> crate::Result<Vec<crate::SwapchainImage<&Self>>>
-    where
-        Self: Sized,
-    {
-        let n = self.image_count()?;
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[cfg(feature = "alloc")]
+    pub unsafe fn images_alloc(&self, device: &Device) -> crate::Result<Vec<NonNull<Image>>> {
+        let n = unsafe { self.image_count(device)? };
         if n == 0 {
             // no items
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
+        // 全部取れるのでIncompleteは見ない
         let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.images(&mut xs)?;
+        unsafe {
+            self.images(device, &mut xs)?;
+        }
 
-        Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
-            crate::SwapchainImage(r, self, self.size().with_depth(1))
-        })))
+        Ok(crate::alloc::collect_vec(
+            xs.into_iter().map(|r| unsafe { NonNull::new_unchecked(r) }),
+        ))
     }
 }
-DerefContainerBracketImpl!(for Swapchain {
-    #[inline(always)]
-    fn format(&self) -> VkFormat {
-        T::format(self)
-    }
-
-    #[inline(always)]
-    fn size(&self) -> &VkExtent2D {
-        T::size(self)
-    }
-});

@@ -182,43 +182,43 @@ pub struct PFN_vkCreateDisplayPlaneSurfaceKHR(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetPhysicalDeviceDisplayPropertiesKHR(
+unsafe extern "system" {
+    pub unsafe fn vkGetPhysicalDeviceDisplayPropertiesKHR(
         physicalDevice: VkPhysicalDevice,
         pPropertyCount: *mut u32,
         pProperties: *mut VkDisplayPropertiesKHR,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
+    pub unsafe fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
         physicalDevice: VkPhysicalDevice,
         pPropertyCount: *mut u32,
         pProperties: *mut VkDisplayPlanePropertiesKHR,
     ) -> VkResult;
-    pub fn vkGetDisplayPlaneSupportedDisplaysKHR(
+    pub unsafe fn vkGetDisplayPlaneSupportedDisplaysKHR(
         physicalDevice: VkPhysicalDevice,
         planeIndex: u32,
         pDisplayCount: *mut u32,
         pDisplays: *mut VkDisplayKHR,
     ) -> VkResult;
-    pub fn vkGetDisplayModePropertiesKHR(
+    pub unsafe fn vkGetDisplayModePropertiesKHR(
         physicalDevice: VkPhysicalDevice,
         display: VkDisplayKHR,
         pPropertyCount: *mut u32,
         pProperties: *mut VkDisplayModePropertiesKHR,
     ) -> VkResult;
-    pub fn vkCreateDisplayModeKHR(
+    pub unsafe fn vkCreateDisplayModeKHR(
         physicalDevice: VkPhysicalDevice,
         display: VkDisplayKHR,
         pCreateInfo: *const VkDisplayModeCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,
         pMode: *mut VkDisplayModeKHR,
     ) -> VkResult;
-    pub fn vkGetDisplayPlaneCapabilitiesKHR(
+    pub unsafe fn vkGetDisplayPlaneCapabilitiesKHR(
         physicalDevice: VkPhysicalDevice,
         mode: VkDisplayModeKHR,
         planeIndex: u32,
         pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
     ) -> VkResult;
-    pub fn vkCreateDisplayPlaneSurfaceKHR(
+    pub unsafe fn vkCreateDisplayPlaneSurfaceKHR(
         instance: VkInstance,
         pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR,
         pAllocator: *const VkAllocationCallbacks,

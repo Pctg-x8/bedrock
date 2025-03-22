@@ -1,6 +1,6 @@
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut,
+    VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef, vk::*,
 };
 use derives::implements;
 
@@ -95,7 +95,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DeviceMemoryObje
         self.1.native_ptr()
     }
 }
-impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
+impl<Device: crate::DeviceT> DeviceChild for DeviceMemoryObject<Device> {
     type ConcreteDevice = Device;
 
     #[inline(always)]
@@ -132,7 +132,7 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DeviceMemoryObject<&'_ Device>
         r
     }
 }
-impl<Device: crate::Device> DeviceMemoryObject<Device> {
+impl<Device: crate::DeviceT> DeviceMemoryObject<Device> {
     /// Create DeviceMemory object with allocating device memory
     /// # Failure
     /// On failure, this command returns

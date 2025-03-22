@@ -1,15 +1,15 @@
 use derives::implements;
 
-use crate::{vk::*, DeviceChild, DeviceChildHandle, VkHandle, VkObject};
+use crate::{DeviceChild, DeviceChildHandle, VkHandle, VkObject, vk::*};
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]
-pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
+pub struct DescriptorUpdateTemplateObject<Device: crate::DeviceT>(
     pub(crate) VkDescriptorUpdateTemplateKHR,
     pub(crate) Device,
 );
 #[implements]
-impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
+impl<Device: crate::DeviceT> Drop for DescriptorUpdateTemplateObject<Device> {
     fn drop(&mut self) {
         #[cfg(feature = "Allow1_1APIs")]
         unsafe {
@@ -21,15 +21,15 @@ impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
         }
     }
 }
-unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
-unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
-impl<Device: crate::Device> DeviceChildHandle for DescriptorUpdateTemplateObject<Device> {
+unsafe impl<Device: crate::DeviceT + Sync> Sync for DescriptorUpdateTemplateObject<Device> {}
+unsafe impl<Device: crate::DeviceT + Send> Send for DescriptorUpdateTemplateObject<Device> {}
+impl<Device: crate::DeviceT> DeviceChildHandle for DescriptorUpdateTemplateObject<Device> {
     #[inline(always)]
     fn device_handle(&self) -> VkDevice {
         self.1.native_ptr()
     }
 }
-impl<Device: crate::Device> DeviceChild for DescriptorUpdateTemplateObject<Device> {
+impl<Device: crate::DeviceT> DeviceChild for DescriptorUpdateTemplateObject<Device> {
     type ConcreteDevice = Device;
 
     #[inline(always)]
@@ -37,8 +37,8 @@ impl<Device: crate::Device> DeviceChild for DescriptorUpdateTemplateObject<Devic
         &self.1
     }
 }
-impl<Device: crate::Device> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
-impl<Device: crate::Device> DescriptorUpdateTemplateObject<Device> {
+impl<Device: crate::DeviceT> DescriptorUpdateTemplate for DescriptorUpdateTemplateObject<Device> {}
+impl<Device: crate::DeviceT> DescriptorUpdateTemplateObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
@@ -55,7 +55,7 @@ impl<Device: crate::Device> DescriptorUpdateTemplateObject<Device> {
         (h, p)
     }
 }
-impl<Device: crate::Device + Clone> DescriptorUpdateTemplateObject<&'_ Device> {
+impl<Device: crate::DeviceT + Clone> DescriptorUpdateTemplateObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DescriptorUpdateTemplateObject<Device> {
@@ -80,7 +80,7 @@ pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplate
         }
         #[cfg(not(feature = "Allow1_1APIs"))]
         unsafe {
-            use crate::Device;
+            use crate::DeviceT;
 
             self.device().update_descriptor_set_with_template_khr_fn().0(
                 self.device().native_ptr(),

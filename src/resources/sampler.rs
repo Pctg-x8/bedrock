@@ -1,81 +1,22 @@
 use derives::implements;
 
-use crate::{
-    vk::*, CompareOp, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure,
-};
+use crate::{CompareOp, Device, VkObject, VulkanStructure, ffi_helper::opt_pointer, vk::*};
 
-pub trait Sampler: VkHandle<Handle = VkSampler> {}
-DerefContainerBracketImpl!(for Sampler {});
-GuardsImpl!(for Sampler {});
-
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkSampler::OBJECT_TYPE)]
-pub struct SamplerObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkSampler, pub(crate) Device);
+/// Opaque handle to a sampler object.
+#[repr(transparent)]
+pub struct Sampler(VkSampler_T);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for SamplerObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl Sampler {
+    /// Destroy a sampler object.
+    #[inline]
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_sampler(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
-    }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for SamplerObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for SamplerObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for SamplerObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for SamplerObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> Sampler for SamplerObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkSampler, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkSampler, Device) {
-        let v = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (v, p)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> SamplerObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> SamplerObject<Device> {
-        let r = SamplerObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: crate::Device> SamplerObject<Device> {
-    /// Create a new sampler object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    #[implements]
-    pub fn new(device: Device, info: &SamplerCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_sampler_raw(info, None)?, device) })
     }
 }
 
@@ -206,56 +147,56 @@ impl SamplerCreateInfo {
 }
 
 /// Specify behavior of sampling with texture coordinates outside an image
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum AddressingMode {
     /// The repeat wrap mode
-    Repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT as _,
+    Repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT,
     /// The mirrored repeat wrap mode
-    MirroredRepeat = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT as _,
+    MirroredRepeat = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT,
     /// The clamp to edge wrap mode
-    ClampToEdge = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE as _,
+    ClampToEdge = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
     /// The clamp to border wrap mode
-    ClampToBorder = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER as _,
+    ClampToBorder = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER,
     /// The mirror clamp to edge wrap mode
     #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-    MirrorClampToEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as _,
+    MirrorClampToEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE,
 }
 
 /// Specify filter used for texture lookups
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum FilterMode {
     /// Nearest filtering
-    Nearest = VK_FILTER_NEAREST as _,
+    Nearest = VK_FILTER_NEAREST,
     /// Linear filtering
-    Linear = VK_FILTER_LINEAR as _,
+    Linear = VK_FILTER_LINEAR,
 }
 
 /// Specify mipmap mode used for texture lookups
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum MipmapFilterMode {
     /// Nearest filtering
-    Nearest = VK_SAMPLER_MIPMAP_MODE_NEAREST as _,
+    Nearest = VK_SAMPLER_MIPMAP_MODE_NEAREST,
     /// Linear filtering
-    Linear = VK_SAMPLER_MIPMAP_MODE_LINEAR as _,
+    Linear = VK_SAMPLER_MIPMAP_MODE_LINEAR,
 }
 
 /// Specify border color used for texture lookups
-#[repr(C)]
+#[repr(i32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum BorderColor {
     /// A transparent, floating-point format, black color
-    TransparentBlackF = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK as _,
+    TransparentBlackF = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
     /// A transparent, integer format, black color
-    TransparentBlackI = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK as _,
+    TransparentBlackI = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK,
     /// An opaque, floating-point format, black color
-    OpaqueBlackF = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK as _,
+    OpaqueBlackF = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK,
     /// An opaque, integer format, black color
-    OpaqueBlackI = VK_BORDER_COLOR_INT_OPAQUE_BLACK as _,
+    OpaqueBlackI = VK_BORDER_COLOR_INT_OPAQUE_BLACK,
     /// An opaque, floating-point format, white color
-    OpaqueWhiteF = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE as _,
+    OpaqueWhiteF = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE,
     /// An opaque, integer format, white color
-    OpaqueWhiteI = VK_BORDER_COLOR_INT_OPAQUE_WHITE as _,
+    OpaqueWhiteI = VK_BORDER_COLOR_INT_OPAQUE_WHITE,
 }

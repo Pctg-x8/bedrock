@@ -34,7 +34,7 @@ pub mod error;
 mod resolver;
 #[cfg(feature = "Implements")]
 pub use resolver::ResolverInterface;
-pub use resolver::{StaticCallable, PFN};
+pub use resolver::{PFN, StaticCallable};
 
 #[cfg(feature = "Implements")]
 #[allow(dead_code)]
@@ -85,6 +85,27 @@ pub type Result<T> = core::result::Result<T, VkResult>;
 
 #[cfg(feature = "alloc")]
 pub(crate) mod alloc;
+
+// Vulkan ReExports //
+pub type LayerProperties = crate::vk::VkLayerProperties;
+pub type ExtensionProperties = crate::vk::VkExtensionProperties;
+pub type Format = crate::vk::VkFormat;
+pub type Extent2D = crate::vk::VkExtent2D;
+pub type Offset2D = crate::vk::VkOffset2D;
+pub type Extent3D = crate::vk::VkExtent3D;
+pub type Offset3D = crate::vk::VkOffset3D;
+pub type DeviceSize = crate::vk::VkDeviceSize;
+pub type Rect2D = crate::vk::VkRect2D;
+pub type Viewport = crate::vk::VkViewport;
+pub type ClearAttachment = crate::vk::VkClearAttachment;
+pub type ClearRect = crate::vk::VkClearRect;
+
+/// Enumeration API return codes
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EnumerationResult {
+    Complete,
+    Incomplete,
+}
 
 mod handle;
 pub use self::handle::*;
@@ -184,6 +205,58 @@ where
     }
     fn end(&self) -> T {
         self.end
+    }
+}
+
+/// A Value Object represents the Vulkan version number
+// Note: (MSB) major | minor | patch (LSB) の順でビットが割り当てられているので合成した状態の比較で正しい順序になる
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Version(u32);
+impl Version {
+    /// Version 1.0.0
+    pub const V1: Self = Self::new(0, 1, 0, 0);
+
+    /// Construct an object from discrete values
+    pub const fn new(variant: u8, major: u16, minor: u16, patch: u16) -> Self {
+        Self(crate::vk::VK_MAKE_VERSION(variant, major, minor, patch))
+    }
+
+    /// Construct an object from a raw value
+    pub const fn from_raw(v: u32) -> Self {
+        Self(v)
+    }
+
+    /// Gets a raw value from this object
+    pub const fn raw(&self) -> u32 {
+        self.0
+    }
+
+    /// Version variant number
+    pub const fn variant(&self) -> u8 {
+        crate::vk::VK_VARIANT_VERSION(self.0)
+    }
+
+    /// Major version number
+    pub const fn major(&self) -> u16 {
+        crate::vk::VK_MAJOR_VERSION(self.0)
+    }
+
+    /// Minor version number
+    pub const fn minor(&self) -> u16 {
+        crate::vk::VK_MINOR_VERSION(self.0)
+    }
+
+    /// Patch version number
+    pub const fn patch(&self) -> u16 {
+        crate::vk::VK_PATCH_VERSION(self.0)
+    }
+}
+impl core::fmt::Display for Version {
+    #[inline]
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // TODO: Variantを含めたバージョン表示
+        write!(f, "{}.{}.{}", self.major(), self.minor(), self.patch())
     }
 }
 
@@ -424,8 +497,12 @@ impl VkViewport {
 }
 
 mod base;
-pub(crate) mod ffi_helper;
 pub use base::*;
+pub(crate) mod ffi_helper;
+mod instance;
+pub use instance::*;
+mod physical_device;
+pub use physical_device::*;
 mod device;
 pub use device::*;
 mod sync;

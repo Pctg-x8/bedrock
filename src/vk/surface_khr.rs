@@ -6,10 +6,7 @@ pub const VK_KHR_SURFACE_EXTENSION_NAME: &str = "VK_KHR_surface";
 use super::*;
 use crate::PFN;
 
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[vk_raw_handle(object_type = VK_OBJECT_TYPE_SURFACE_KHR)]
-pub struct VkSurfaceKHR(pub u64);
+DefineHandle!(pub handle VkSurfaceKHR(VkSurfaceKHR_T));
 
 pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = ext_enum_value(1, 0) as _;
 
@@ -139,26 +136,30 @@ pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(
 
 #[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetPhysicalDeviceSurfaceSupportKHR(
+unsafe extern "system" {
+    pub unsafe fn vkDestroySurfaceKHR(
+        instance: VkInstance,
+        surface: VkSurfaceKHR,
+        pAllocator: *const VkAllocationCallbacks,
+    );
+    pub unsafe fn vkGetPhysicalDeviceSurfaceSupportKHR(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         surface: VkSurfaceKHR,
         pSupported: *mut VkBool32,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfaceFormatsKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceFormatCount: *mut u32,
         pSurfaceFormats: *mut VkSurfaceFormatKHR,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfacePresentModesKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pPresentModeCount: *mut u32,

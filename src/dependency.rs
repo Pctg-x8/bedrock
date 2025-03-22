@@ -183,6 +183,18 @@ impl<'r> ImageMemoryBarrier2<'r> {
     }
 }
 
+/// Specifying how execution and memory dependencies are formed.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[bitflags_newtype]
+pub struct DependencyFlags(VkDependencyFlags);
+impl DependencyFlags {
+    /// Empty bits.
+    pub const EMPTY: Self = Self(0);
+
+    /// Dependencies will be [framebuffer-local](https://registry.khronos.org/vulkan/specs/latest/html/vkspec.html#synchronization-framebuffer-regions).
+    pub const BY_REGION: Self = Self(VK_DEPENDENCY_BY_REGION_BIT);
+}
+
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

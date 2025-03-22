@@ -1,67 +1,28 @@
+use core::{mem::MaybeUninit, ptr::NonNull};
+
 use derives::{bitflags_newtype, implements};
 
-use crate::{
-    vk::*, Extends, ImageUsageFlags, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure,
-    VulkanStructureProvider,
-};
+use crate::{ImageUsageFlags, VkObject, VulkanStructure, vk::*};
 
-use super::ffi_helper::opt_pointer;
+use super::{Extent2D, Instance, ffi_helper::opt_pointer};
 
 /// Opaque handle to a surface object
-#[derive(VkHandle, VkObject, InstanceChild)]
-#[VkObject(type = VkSurfaceKHR::OBJECT_TYPE)]
-pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) VkSurfaceKHR, #[parent] pub(crate) Instance);
-unsafe impl<Instance: crate::Instance + Sync> Sync for SurfaceObject<Instance> {}
-unsafe impl<Instance: crate::Instance + Send> Send for SurfaceObject<Instance> {}
+#[repr(transparent)]
+pub struct Surface(VkSurfaceKHR_T);
 #[implements]
-impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl Surface {
+    pub unsafe fn destroy(&mut self, instance: &Instance, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            crate::vkfn::destroy_surface_khr(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn::destroy_surface_khr(
+                instance as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
     }
 }
-impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
-impl<Instance: crate::Instance> SurfaceObject<Instance> {
-    #[implements]
-    #[inline(always)]
-    pub unsafe fn new<
-        PhysicalDevice: crate::PhysicalDevice + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
-    >(
-        pd: PhysicalDevice,
-        create_info: &(impl SurfaceCreateInfo + ?Sized),
-    ) -> crate::Result<Self> {
-        Ok(Self(create_info.execute(&pd, None)?, pd.transfer_instance()))
-    }
-}
-impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> SurfaceObject<Instance> {
-        let r = SurfaceObject(self.0, self.1.clone());
-        core::mem::forget(self);
 
-        r
-    }
-}
-
-pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
-DerefContainerBracketImpl!(for Surface {});
-
-pub trait TransferSurfaceObject {
-    type ConcreteSurface: crate::Surface;
-
-    fn transfer_surface(self) -> Self::ConcreteSurface;
-}
-impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurfaceObject for Extends<Parent, T> {
-    type ConcreteSurface = Parent::ConcreteSurface;
-
-    #[inline(always)]
-    fn transfer_surface(self) -> Self::ConcreteSurface {
-        self.0.transfer_surface()
-    }
-}
+pub type SurfaceFormat = VkSurfaceFormatKHR;
 
 /// Presentation mode supported for a surface
 #[repr(i32)]
@@ -131,7 +92,8 @@ impl CompositeAlphaFlags {
 }
 
 // specification extensions
-impl VkSurfaceCapabilitiesKHR {
+pub type SurfaceCapabilities = VkSurfaceCapabilitiesKHR;
+impl SurfaceCapabilities {
     /// The presentation transforms supported for the surface
     pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
         SurfaceTransformFlags(self.supportedTransforms)
@@ -152,13 +114,15 @@ pub trait SurfaceCreateInfo {
     #[implements]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR>;
+    ) -> crate::Result<NonNull<Surface>>;
 }
 
 #[cfg(feature = "VK_KHR_xlib_surface")]
-impl VkXlibSurfaceCreateInfoKHR {
+pub type XlibSurfaceCreateInfo = VkXlibSurfaceCreateInfoKHR;
+#[cfg(feature = "VK_KHR_xlib_surface")]
+impl XlibSurfaceCreateInfo {
     /// # Safety
     /// Provided `display` must be a valid reference
     pub const unsafe fn new(display: *mut x11::xlib::Display, window: x11::xlib::Window) -> Self {
@@ -172,30 +136,34 @@ impl VkXlibSurfaceCreateInfoKHR {
     }
 }
 #[cfg(feature = "VK_KHR_xlib_surface")]
-impl SurfaceCreateInfo for VkXlibSurfaceCreateInfoKHR {
+impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Surface>> {
+        let mut h = MaybeUninit::uninit();
 
-        crate::vkfn::create_xlib_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_xlib_surface_khr(
+                instance as *const _ as _,
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init() as _) })
     }
 }
 
 #[cfg(feature = "VK_KHR_xcb_surface")]
-impl VkXcbSurfaceCreateInfoKHR {
+pub type XcbSurfaceCreateInfo = VkXcbSurfaceCreateInfoKHR;
+#[cfg(feature = "VK_KHR_xcb_surface")]
+impl XcbSurfaceCreateInfo {
     /// # Safety
     /// Provided `connection` must be a valid reference
     pub const unsafe fn new(connection: *mut xcb::ffi::xcb_connection_t, window: xcb::x::Window) -> Self {
@@ -209,30 +177,34 @@ impl VkXcbSurfaceCreateInfoKHR {
     }
 }
 #[cfg(feature = "VK_KHR_xcb_surface")]
-impl SurfaceCreateInfo for VkXcbSurfaceCreateInfoKHR {
+impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Surface>> {
+        let mut h = MaybeUninit::uninit();
 
-        crate::vkfn::create_xcb_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_xcb_surface_khr(
+                instance as *const _ as _,
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init() as _) })
     }
 }
 
 #[cfg(feature = "VK_KHR_wayland_surface")]
-impl VkWaylandSurfaceCreateInfoKHR {
+pub type WaylandSurfaceCreateInfo = VkWaylandSurfaceCreateInfoKHR;
+#[cfg(feature = "VK_KHR_wayland_surface")]
+impl WaylandSurfaceCreateInfo {
     /// # Safety
     /// Provided `display` and `surface` must be a valid reference
     pub const unsafe fn new(display: *mut core::ffi::c_void, surface: *mut core::ffi::c_void) -> Self {
@@ -246,30 +218,34 @@ impl VkWaylandSurfaceCreateInfoKHR {
     }
 }
 #[cfg(feature = "VK_KHR_wayland_surface")]
-impl SurfaceCreateInfo for VkWaylandSurfaceCreateInfoKHR {
+impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Surface>> {
+        let mut h = MaybeUninit::uninit();
 
-        crate::vkfn::create_wayland_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_wayland_surface_khr(
+                instance as *const _ as _,
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init() as _) })
     }
 }
 
 #[cfg(feature = "VK_KHR_android_surface")]
-impl VkAndroidSurfaceCreateInfoKHR {
+pub type AndroidSurfaceCreateInfo = VkAndroidSurfaceCreateInfoKHR;
+#[cfg(feature = "VK_KHR_android_surface")]
+impl AndroidSurfaceCreateInfo {
     /// # Safety
     /// Provided `window` must be a valid reference
     pub const unsafe fn new(window: *mut android::ANativeWindow) -> Self {
@@ -282,30 +258,34 @@ impl VkAndroidSurfaceCreateInfoKHR {
     }
 }
 #[cfg(feature = "VK_KHR_android_surface")]
-impl SurfaceCreateInfo for VkAndroidSurfaceCreateInfoKHR {
+impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Surface>> {
+        let mut h = MaybeUninit::uninit();
 
-        crate::vkfn::create_android_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_android_surface_khr(
+                instance as *const _ as _,
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init() as _) })
     }
 }
 
 #[cfg(feature = "VK_KHR_win32_surface")]
-impl VkWin32SurfaceCreateInfoKHR {
+pub type Win32SurfaceCreateInfo = VkWin32SurfaceCreateInfoKHR;
+#[cfg(feature = "VK_KHR_win32_surface")]
+impl Win32SurfaceCreateInfo {
     pub const fn new(hinstance: windows::Win32::Foundation::HINSTANCE, hwnd: windows::Win32::Foundation::HWND) -> Self {
         Self {
             sType: Self::TYPE,
@@ -317,30 +297,34 @@ impl VkWin32SurfaceCreateInfoKHR {
     }
 }
 #[cfg(feature = "VK_KHR_win32_surface")]
-impl SurfaceCreateInfo for VkWin32SurfaceCreateInfoKHR {
+impl SurfaceCreateInfo for Win32SurfaceCreateInfo {
     #[implements]
     #[inline(always)]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Surface>> {
+        let mut h = MaybeUninit::uninit();
 
-        crate::vkfn::create_win32_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_win32_surface_khr(
+                instance as *const _ as _,
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init() as _) })
     }
 }
 
 #[cfg(feature = "VK_EXT_metal_surface")]
-impl VkMetalSurfaceCreateInfoEXT {
+pub type MetalSurfaceCreateInfo = VkMetalSurfaceCreateInfoEXT;
+#[cfg(feature = "VK_EXT_metal_surface")]
+impl MetalSurfaceCreateInfo {
     /// # Safety
     /// Provided `layer` must be a valid reference
     pub const unsafe fn new(layer: *const core::ffi::c_void) -> Self {
@@ -353,30 +337,34 @@ impl VkMetalSurfaceCreateInfoEXT {
     }
 }
 #[cfg(feature = "VK_EXT_metal_surface")]
-impl SurfaceCreateInfo for VkMetalSurfaceCreateInfoEXT {
+impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
     #[implements]
     #[inline(always)]
     unsafe fn execute(
         &self,
-        pd: &(impl crate::PhysicalDevice + ?Sized),
+        instance: &Instance,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Surface>> {
+        let mut h = MaybeUninit::uninit();
 
-        crate::vkfn::create_metal_surface_ext(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_metal_surface_ext(
+                instance as *const _ as _,
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init() as _) })
     }
 }
 
 #[cfg(feature = "VK_KHR_display")]
-impl VkDisplaySurfaceCreateInfoKHR {
+pub type DisplaySurfaceCreateInfo = VkDisplaySurfaceCreateInfoKHR;
+#[cfg(feature = "VK_KHR_display")]
+impl DisplaySurfaceCreateInfo {
     pub const fn new(
         mode: &super::DisplayMode,
         plane_index: u32,
@@ -384,7 +372,7 @@ impl VkDisplaySurfaceCreateInfoKHR {
         transform: SurfaceTransformFlags,
         global_alpha: f32,
         alpha_mode: super::DisplayPlaneAlpha,
-        extent: VkExtent2D,
+        extent: Extent2D,
     ) -> Self {
         Self {
             sType: Self::TYPE,

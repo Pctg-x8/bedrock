@@ -2,24 +2,57 @@
 
 use derives::{bitflags_newtype, implements};
 
-use crate::ffi_helper::slice_as_ptr_empty_null;
+use crate::ffi_helper::{opt_pointer, slice_as_ptr_empty_null};
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, SubpassRef, VkDeviceChildNonExtDestroyable,
-    VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    DescriptorSetLayout, Device, EnumerationResult, GenericVulkanStructure, Rect2D, SubpassRef, Viewport, VkHandle,
+    VkObject, VulkanStructure, VulkanStructureAsRef, vk::*,
 };
-use core::ffi::{c_void, CStr};
-use core::marker::PhantomData;
-use core::ops::*;
+use core::{
+    ffi::{CStr, c_void},
+    marker::PhantomData,
+    mem::MaybeUninit,
+    ops::*,
+};
 
+/// Specifying a pipeline stage.
 #[repr(u32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
 pub enum ShaderStage {
+    /// The vertex stage.
     Vertex = VK_SHADER_STAGE_VERTEX_BIT,
+    /// The tessellation control stage.
     TessellationControl = VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT,
+    /// The tessellation evaluation stage.
     TessellationEvaluation = VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+    /// The geometry stage.
     Geometry = VK_SHADER_STAGE_GEOMETRY_BIT,
+    /// The fragment stage.
     Fragment = VK_SHADER_STAGE_FRAGMENT_BIT,
+    /// The compute stage.
     Compute = VK_SHADER_STAGE_COMPUTE_BIT,
+}
+
+/// Specifying a pipeline stage.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[bitflags_newtype]
+pub struct ShaderStageFlags(VkShaderStageFlags);
+impl ShaderStageFlags {
+    /// A combination of bits used as shorthand to specify all shader stages supported by the device,
+    /// including all additional stages which are introduced by extensions.
+    pub const ALL: Self = Self(VK_SHADER_STAGE_ALL);
+
+    /// The vertex stage.
+    pub const VERTEX: Self = Self(VK_SHADER_STAGE_VERTEX_BIT);
+    /// The tessellation control stage.
+    pub const TESSELLATION_CONTROL: Self = Self(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT);
+    /// The tessellation evaluation stage.
+    pub const TESSELLATION_EVALUATION: Self = Self(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT);
+    /// The geometry stage.
+    pub const GEOMETRY: Self = Self(VK_SHADER_STAGE_GEOMETRY_BIT);
+    /// The fragment stage.
+    pub const FRAGMENT: Self = Self(VK_SHADER_STAGE_FRAGMENT_BIT);
+    /// The compute stage.
+    pub const COMPUTE: Self = Self(VK_SHADER_STAGE_COMPUTE_BIT);
 }
 
 /// Stencil comparison function
@@ -118,7 +151,7 @@ pub enum StencilFaceMask {
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ShaderModuleCreateInfo<'d>(VkShaderModuleCreateInfo, core::marker::PhantomData<&'d [u32]>);
+pub struct ShaderModuleCreateInfo<'d>(VkShaderModuleCreateInfo, PhantomData<&'d [u32]>);
 impl<'d> ShaderModuleCreateInfo<'d> {
     pub const fn new(code: &'d [u32]) -> Self {
         Self(
@@ -130,12 +163,12 @@ impl<'d> ShaderModuleCreateInfo<'d> {
                 codeSize: code.len() << 2,
                 pCode: slice_as_ptr_empty_null(code),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkShaderModuleCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkShaderModuleCreateInfo {
@@ -144,75 +177,32 @@ impl<'d> ShaderModuleCreateInfo<'d> {
 }
 
 /// Opaque handle to a shader module object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkShaderModule::OBJECT_TYPE)]
-pub struct ShaderModuleObject<Device: VkHandle<Handle = VkDevice>>(VkShaderModule, Device);
+#[repr(transparent)]
+pub struct ShaderModule(VkShaderModule_T);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for ShaderModuleObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl ShaderModule {
+    /// Destroy a shader moudle.
+    #[inline]
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_shader_module(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
     }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for ShaderModuleObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for ShaderModuleObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> ShaderModule for ShaderModuleObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> ShaderModuleObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkShaderModule, parent: Device) -> Self {
-        Self(handle, parent)
-    }
 
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkShaderModule, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> ShaderModuleObject<&'_ Device> {
-    /// Owning parent object by cloning it.
+    /// Construct a `PipelineShader` value with an entry point function name
     #[inline(always)]
-    pub fn clone_parent(self) -> ShaderModuleObject<Device> {
-        let r = ShaderModuleObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: crate::Device> ShaderModuleObject<Device> {
-    /// Creates a new shader module object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_INVALID_SHADER_NV`]
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &ShaderModuleCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_shader_module_raw(info, None)?, device) })
-    }
-}
-
-pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
-    #[inline(always)]
-    fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m, Self> {
+    pub const fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m> {
         PipelineShader::new(self, entry_point)
     }
 }
-DerefContainerBracketImpl!(for ShaderModule {});
-GuardsImpl!(for ShaderModule {});
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PipelineCacheCreateInfo<'d>(VkPipelineCacheCreateInfo, core::marker::PhantomData<&'d [u8]>);
+pub struct PipelineCacheCreateInfo<'d>(VkPipelineCacheCreateInfo, PhantomData<&'d [u8]>);
 impl<'d> PipelineCacheCreateInfo<'d> {
     pub const fn new(initial_data: &'d [u8]) -> Self {
         Self(
@@ -223,12 +213,12 @@ impl<'d> PipelineCacheCreateInfo<'d> {
                 initialDataSize: initial_data.len() as _,
                 pInitialData: slice_as_ptr_empty_null(initial_data) as _,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineCacheCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineCacheCreateInfo {
@@ -237,83 +227,35 @@ impl<'d> PipelineCacheCreateInfo<'d> {
 }
 
 /// Opaque handle to a pipeline cache object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkPipelineCache::OBJECT_TYPE)]
-pub struct PipelineCacheObject<Device: VkHandle<Handle = VkDevice>>(VkPipelineCache, Device);
+#[repr(transparent)]
+pub struct PipelineCache(VkPipelineCache_T);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineCacheObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl PipelineCache {
+    /// Destroy a pipeline cache object.
+    #[inline]
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_pipeline_cache(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
     }
-}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineCacheObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineCacheObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineCacheObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> PipelineCache for PipelineCacheObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheMut for PipelineCacheObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> PipelineCacheObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkPipelineCache, parent: Device) -> Self {
-        Self(handle, parent)
-    }
 
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkPipelineCache, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineCacheObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> PipelineCacheObject<Device> {
-        let r = PipelineCacheObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: crate::Device> PipelineCacheObject<Device> {
-    /// Create a new pipeline cache
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    pub fn new(device: Device, create_info: &PipelineCacheCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_pipeline_cache_raw(create_info, None)?, device) })
-    }
-}
-
-pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle {
     /// Get the size of the data store from a pipeline cache
     /// # Failures
     /// On failure, this command returns
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
     #[inline]
-    fn data_len(&self) -> crate::Result<usize> {
+    pub unsafe fn data_len(&self, device: &Device) -> crate::Result<usize> {
         let mut n = 0;
         unsafe {
             crate::vkfn::get_pipeline_cache_data(
-                self.device_handle(),
-                self.native_ptr(),
+                device as *const _ as _,
+                self as *const _ as _,
                 &mut n,
                 core::ptr::null_mut(),
             )
@@ -329,40 +271,39 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle 
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
     #[inline]
-    fn data_into(&self, store: &mut [u8]) -> crate::Result<usize> {
+    pub unsafe fn data_into(&self, device: &Device, store: &mut [u8]) -> crate::Result<(usize, EnumerationResult)> {
         let mut dl = store.len();
-        unsafe {
+        let r = unsafe {
             crate::vkfn::get_pipeline_cache_data(
-                self.device_handle(),
-                self.native_ptr(),
+                device as *const _ as _,
+                self as *const _ as _,
                 &mut dl,
                 store.as_mut_ptr() as _,
             )
-            .into_result()?;
+        };
+        if r == VK_SUCCESS {
+            return Ok((dl, EnumerationResult::Complete));
+        }
+        if r == VK_INCOMPLETE {
+            return Ok((dl, EnumerationResult::Incomplete));
         }
 
-        Ok(dl)
+        Err(r)
     }
-}
-DerefContainerBracketImpl!(for PipelineCache {});
-GuardsImpl!(for PipelineCache {});
 
-pub trait PipelineCacheMut: PipelineCache + VkHandleMut {
     /// Combine the data stores of pipeline caches into `self`
     /// # Failures
     /// On failure, this command returns
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
     #[inline]
-    fn merge(&mut self, srcs: &[VkHandleRef<VkPipelineCache>]) -> crate::Result<()> {
+    fn merge(&mut self, device: &Device, srcs: &[&Self]) -> crate::Result<()> {
         unsafe {
             crate::vkfn::merge_pipeline_caches(
-                self.device_handle(),
-                self.native_ptr_mut(),
+                device as *const _ as _,
+                self as *mut _ as _,
                 srcs.len() as _,
                 slice_as_ptr_empty_null(srcs) as _,
             )
@@ -371,22 +312,36 @@ pub trait PipelineCacheMut: PipelineCache + VkHandleMut {
         }
     }
 }
-DerefContainerBracketImpl!(for mut PipelineCacheMut {});
-GuardsImpl!(for mut PipelineCacheMut {});
+
+pub type PushConstantRange = VkPushConstantRange;
+impl PushConstantRange {
+    pub const fn new(shader_stage: ShaderStageFlags, byte_range: Range<u32>) -> Self {
+        Self {
+            stageFlags: shader_stage.bits(),
+            offset: byte_range.start,
+            size: byte_range.end - byte_range.start,
+        }
+    }
+
+    pub const fn for_type<T>(shader_stage: ShaderStageFlags, offset: u32) -> Self {
+        Self {
+            stageFlags: shader_stage.bits(),
+            offset,
+            size: core::mem::size_of::<T>() as _,
+        }
+    }
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PipelineLayoutCreateInfo<'d>(
+pub struct PipelineLayoutCreateInfo<'ds, 'd>(
     VkPipelineLayoutCreateInfo,
-    core::marker::PhantomData<(
-        &'d dyn VkHandle<Handle = VkDescriptorSetLayout>,
-        &'d [VkPushConstantRange],
-    )>,
+    core::marker::PhantomData<(&'ds [&'d DescriptorSetLayout], &'ds [PushConstantRange])>,
 );
-impl<'d> PipelineLayoutCreateInfo<'d> {
+impl<'ds, 'd> PipelineLayoutCreateInfo<'ds, 'd> {
     pub const fn new(
-        descriptor_set_layouts: &'d [VkHandleRef<'d, VkDescriptorSetLayout>],
-        push_constant_ranges: &'d [VkPushConstantRange],
+        descriptor_set_layouts: &'ds [&'d DescriptorSetLayout],
+        push_constant_ranges: &'ds [PushConstantRange],
     ) -> Self {
         Self(
             VkPipelineLayoutCreateInfo {
@@ -411,166 +366,45 @@ impl<'d> PipelineLayoutCreateInfo<'d> {
     }
 }
 
-/// Opaque handle to a pipeline layout object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkPipelineLayout::OBJECT_TYPE)]
-pub struct PipelineLayoutObject<Device: VkHandle<Handle = VkDevice>>(VkPipelineLayout, Device);
+/// Opaque handle to a pipeline layout object.
+#[repr(transparent)]
+pub struct PipelineLayout(VkPipelineLayout_T);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineLayoutObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl PipelineLayout {
+    /// Destroy a pipeline layout object.
+    #[inline]
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_pipeline_layout(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineLayoutObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineLayoutObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineLayoutObject<Device> {
-    #[inline]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for PipelineLayoutObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> PipelineLayout for PipelineLayoutObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> PipelineLayoutObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkPipelineLayout, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkPipelineLayout, Device) {
-        let r = unsafe { (self.0, core::ptr::read(&self.1)) };
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineLayoutObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> PipelineLayoutObject<Device> {
-        let r = PipelineLayoutObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: crate::Device> PipelineLayoutObject<Device> {
-    /// Creates a new pipeline layout object
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    #[inline]
-    pub fn new(device: Device, info: &PipelineLayoutCreateInfo) -> crate::Result<Self> {
-        Ok(unsafe { Self::manage(device.new_pipeline_layout_raw(info, None)?, device) })
-    }
-}
-
-impl VkPushConstantRange {
-    pub const fn new(shader_stage: VkShaderStageFlags, byte_range: Range<u32>) -> Self {
-        Self {
-            stageFlags: shader_stage,
-            offset: byte_range.start,
-            size: byte_range.end - byte_range.start,
-        }
-    }
-
-    pub const fn for_type<T>(shader_stage: VkShaderStageFlags, offset: u32) -> Self {
-        Self {
-            stageFlags: shader_stage,
-            offset,
-            size: core::mem::size_of::<T>() as _,
-        }
-    }
-}
-
-pub trait PipelineLayout: VkHandle<Handle = VkPipelineLayout> {}
-DerefContainerBracketImpl!(for PipelineLayout {});
-GuardsImpl!(for PipelineLayout {});
 
 /// Opaque handle to a pipeline object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VkPipeline::OBJECT_TYPE)]
-pub struct PipelineObject<Device: VkHandle<Handle = VkDevice>>(VkPipeline, Device);
+pub struct Pipeline(VkPipeline_T);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineObject<Device> {
-    #[inline(always)]
-    fn drop(&mut self) {
+impl Pipeline {
+    /// Destroy a pipeline object.
+    #[inline]
+    pub unsafe fn destroy(&mut self, device: &Device, allocation_callbacks: Option<&VkAllocationCallbacks>) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_pipeline(
+                device as *const _ as _,
+                self as *mut _ as _,
+                opt_pointer(allocation_callbacks),
+            )
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for PipelineObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for PipelineObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for PipelineObject<Device> {
-    #[inline]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for PipelineObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice>> Pipeline for PipelineObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> PipelineObject<Device> {
-    /// Constructs from raw values
-    /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkPipeline, parent: Device) -> Self {
-        Self(handle, parent)
-    }
-
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkPipeline, Device) {
-        let r = unsafe { (self.0, core::ptr::read(&self.1)) };
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device: VkHandle<Handle = VkDevice> + Clone> PipelineObject<&'_ Device> {
-    /// Owning parent object by cloning it.
-    #[inline(always)]
-    pub fn clone_parent(self) -> PipelineObject<Device> {
-        let r = PipelineObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-
-pub trait Pipeline: VkHandle<Handle = VkPipeline> {}
-DerefContainerBracketImpl!(for Pipeline {});
-GuardsImpl!(for Pipeline {});
 
 /// Structure specifying parameters of a newly created pipeline dynamic state
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PipelineDynamicStateCreateInfo<'d>(
-    VkPipelineDynamicStateCreateInfo,
-    core::marker::PhantomData<&'d [VkDynamicState]>,
-);
+pub struct PipelineDynamicStateCreateInfo<'d>(VkPipelineDynamicStateCreateInfo, PhantomData<&'d [VkDynamicState]>);
 impl<'d> PipelineDynamicStateCreateInfo<'d> {
     pub const fn new(states: &'d [VkDynamicState]) -> Self {
         Self(
@@ -581,12 +415,12 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
                 dynamicStateCount: states.len() as _,
                 pDynamicStates: slice_as_ptr_empty_null(states),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineDynamicStateCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineDynamicStateCreateInfo {
@@ -594,7 +428,8 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
     }
 }
 
-impl VkVertexInputBindingDescription {
+pub type VertexInputBindingDescription = VkVertexInputBindingDescription;
+impl VertexInputBindingDescription {
     /// Consumed per vertex with stride
     pub const fn per_vertex(binding: u32, stride: u32) -> Self {
         Self {
@@ -624,13 +459,15 @@ impl VkVertexInputBindingDescription {
     }
 }
 
+pub type VertexInputAttributeDescription = VkVertexInputAttributeDescription;
+
 pub trait SpecializationConstants {
-    const ENTRIES: &'static [VkSpecializationMapEntry];
+    const ENTRIES: &'static [SpecializationMapEntry];
 
     fn as_ptr(&self) -> *const c_void;
 }
 DerefContainerBracketImpl!(for SpecializationConstants {
-    const ENTRIES: &'static [VkSpecializationMapEntry] = T::ENTRIES;
+    const ENTRIES: &'static [SpecializationMapEntry] = T::ENTRIES;
 
     #[inline(always)]
     fn as_ptr(&self) -> *const c_void {
@@ -638,8 +475,9 @@ DerefContainerBracketImpl!(for SpecializationConstants {
     }
 });
 
-impl VkSpecializationMapEntry {
-    pub const fn for_byte_range(constant_id: u32, byte_range: core::ops::Range<u32>) -> Self {
+pub type SpecializationMapEntry = VkSpecializationMapEntry;
+impl SpecializationMapEntry {
+    pub const fn for_byte_range(constant_id: u32, byte_range: Range<u32>) -> Self {
         Self {
             constantID: constant_id,
             offset: byte_range.start,
@@ -726,19 +564,17 @@ impl<T: PipelineShaderProvider> PipelineShaderProvider for Box<T> {
     }
 }
 
-pub struct PipelineShader<'m, M: 'm + ShaderModule + ?Sized>(&'m M, &'m CStr);
-impl<'m, M: 'm + ShaderModule + ?Sized> PipelineShader<'m, M> {
-    #[inline(always)]
-    pub const fn new(module: &'m M, entry_point: &'m CStr) -> Self {
+pub struct PipelineShader<'m>(&'m ShaderModule, &'m CStr);
+impl<'m> PipelineShader<'m> {
+    pub const fn new(module: &'m ShaderModule, entry_point: &'m CStr) -> Self {
         Self(module, entry_point)
     }
 
-    #[inline(always)]
     pub fn on_stage<'s>(self, stage: ShaderStage) -> PipelineShaderStage<'m, 's> {
         PipelineShaderStage::new(stage, self.0, self.1)
     }
 }
-impl<M: ShaderModule + ?Sized> PipelineShaderProvider for PipelineShader<'_, M> {
+impl PipelineShaderProvider for PipelineShader<'_> {
     type ExtraStorage<'d>
         = ()
     where
@@ -758,36 +594,32 @@ impl<M: ShaderModule + ?Sized> PipelineShaderProvider for PipelineShader<'_, M> 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PipelineShaderStage<'d, 's>(
     pub(crate) VkPipelineShaderStageCreateInfo,
-    core::marker::PhantomData<(
+    PhantomData<(
         Option<&'d dyn VulkanStructureAsRef>,
-        &'d dyn VkHandle<Handle = VkShaderModule>,
-        &'d core::ffi::CStr,
+        &'d ShaderModule,
+        &'d CStr,
         Option<&'s SpecializationInfo<'d>>,
     )>,
 );
 impl<'d, 's> PipelineShaderStage<'d, 's> {
     #[inline(always)]
-    pub fn new(
-        stage: ShaderStage,
-        shader: &'d (impl ShaderModule + ?Sized),
-        entrypoint_name: &'d core::ffi::CStr,
-    ) -> Self {
+    pub const fn new(stage: ShaderStage, shader: &'d ShaderModule, entrypoint_name: &'d CStr) -> Self {
         Self(
             VkPipelineShaderStageCreateInfo {
                 sType: VkPipelineShaderStageCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 stage: stage as _,
-                module: shader.native_ptr(),
+                module: shader as *const _ as _,
                 pName: entrypoint_name.as_ptr(),
                 pSpecializationInfo: core::ptr::null(),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineShaderStageCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineShaderStageCreateInfo {
@@ -810,7 +642,7 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SpecializationInfo<'d>(
     VkSpecializationInfo,
-    core::marker::PhantomData<(&'d [VkSpecializationMapEntry], &'d dyn core::any::Any)>,
+    PhantomData<(&'d [VkSpecializationMapEntry], &'d dyn core::any::Any)>,
 );
 impl<'d> SpecializationInfo<'d> {
     pub fn new<T: 'd + SpecializationConstants>(data: &'d T) -> Self {
@@ -821,11 +653,11 @@ impl<'d> SpecializationInfo<'d> {
                 dataSize: core::mem::size_of::<T>() as _,
                 pData: data.as_ptr(),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
-    pub const fn from_any_type<T: 'd>(entries: &'d [VkSpecializationMapEntry], data: &'d T) -> Self {
+    pub const fn from_any_type<T: 'd>(entries: &'d [SpecializationMapEntry], data: &'d T) -> Self {
         Self(
             VkSpecializationInfo {
                 mapEntryCount: entries.len() as _,
@@ -837,7 +669,7 @@ impl<'d> SpecializationInfo<'d> {
         )
     }
 
-    pub const fn from_binary(entries: &'d [VkSpecializationMapEntry], data: &'d [u8]) -> Self {
+    pub const fn from_binary(entries: &'d [SpecializationMapEntry], data: &'d [u8]) -> Self {
         Self(
             VkSpecializationInfo {
                 mapEntryCount: entries.len() as _,
@@ -864,14 +696,14 @@ impl<'d> SpecializationInfo<'d> {
 pub struct PipelineVertexInputStateCreateInfo<'d>(
     VkPipelineVertexInputStateCreateInfo,
     core::marker::PhantomData<(
-        &'d [VkVertexInputBindingDescription],
-        &'d [VkVertexInputAttributeDescription],
+        &'d [VertexInputBindingDescription],
+        &'d [VertexInputAttributeDescription],
     )>,
 );
 impl<'d> PipelineVertexInputStateCreateInfo<'d> {
     pub const fn new(
-        bindings: &'d [VkVertexInputBindingDescription],
-        attributes: &'d [VkVertexInputAttributeDescription],
+        bindings: &'d [VertexInputBindingDescription],
+        attributes: &'d [VertexInputAttributeDescription],
     ) -> Self {
         Self(
             VkPipelineVertexInputStateCreateInfo {
@@ -986,10 +818,10 @@ impl PipelineTessellationStateCreateInfo {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PipelineViewportStateCreateInfo<'d>(
     VkPipelineViewportStateCreateInfo,
-    core::marker::PhantomData<(&'d [VkViewport], &'d [VkRect2D])>,
+    PhantomData<(&'d [Viewport], &'d [Rect2D])>,
 );
 impl<'d> PipelineViewportStateCreateInfo<'d> {
-    pub const unsafe fn new_unchecked(viewports: &'d [VkViewport], scissors: &'d [VkRect2D]) -> Self {
+    pub const unsafe fn new_unchecked(viewports: &'d [Viewport], scissors: &'d [Rect2D]) -> Self {
         Self(
             VkPipelineViewportStateCreateInfo {
                 sType: VkPipelineViewportStateCreateInfo::TYPE,
@@ -1000,18 +832,18 @@ impl<'d> PipelineViewportStateCreateInfo<'d> {
                 scissorCount: scissors.len() as _,
                 pScissors: slice_as_ptr_empty_null(scissors),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     #[inline]
-    pub fn new(viewports: &'d [VkViewport], scissors: &'d [VkRect2D]) -> Self {
+    pub fn new(viewports: &'d [Viewport], scissors: &'d [Rect2D]) -> Self {
         assert_eq!(viewports.len(), scissors.len());
 
         unsafe { Self::new_unchecked(viewports, scissors) }
     }
 
-    pub const fn new_array<const N: usize>(viewports: &'d [VkViewport; N], scissors: &'d [VkRect2D; N]) -> Self {
+    pub const fn new_array<const N: usize>(viewports: &'d [Viewport; N], scissors: &'d [Rect2D; N]) -> Self {
         // checked that both length are identitcal by const generic parameter
         unsafe { Self::new_unchecked(viewports, scissors) }
     }
@@ -1027,7 +859,7 @@ impl<'d> PipelineViewportStateCreateInfo<'d> {
                 scissorCount: count,
                 pScissors: core::ptr::null(),
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
@@ -1044,28 +876,42 @@ impl<'d> PipelineViewportStateCreateInfo<'d> {
     }
 }
 
+/// Control polygon rasterization mode.
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum PolygonMode {
+    /// Polygons are rendered using the polygon rasterization rules.
     Fill = VK_POLYGON_MODE_FILL,
+    /// Polygon edges are drawn as line segments.
     Line = VK_POLYGON_MODE_LINE,
+    /// Polygon vertices are drawn as points.
     Point = VK_POLYGON_MODE_POINT,
 }
 
+/// Bitmask controlling triangle culling.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[bitflags_newtype]
 pub struct CullModeFlags(VkCullModeFlags);
 impl CullModeFlags {
+    /// No triangles are discarded.
     pub const NONE: Self = Self(VK_CULL_MODE_NONE);
+    /// Front-facing triangles are discarded.
     pub const FRONT: Self = Self(VK_CULL_MODE_FRONT_BIT);
+    /// Back-facing triangles are discarded.
     pub const BACK: Self = Self(VK_CULL_MODE_BACK_BIT);
+    /// All triangles are discarded.
     pub const FRONT_AND_BACK: Self = Self(VK_CULL_MODE_FRONT_AND_BACK);
 }
 
+/// Interpret polygon front-facing orientation.
+///
+/// For more details, see [the official doc](https://registry.khronos.org/vulkan/specs/latest/man/html/VkFrontFace.html)
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum FrontFace {
+    /// A triangle with negative area is considered front-facing.
     Clockwise = VK_FRONT_FACE_CLOCKWISE,
+    /// A triangle with positive area is considered front-facing.
     CounterClockwise = VK_FRONT_FACE_COUNTER_CLOCKWISE,
 }
 
@@ -1074,7 +920,7 @@ pub enum FrontFace {
 #[derive(Clone, Debug, PartialEq)]
 pub struct PipelineRasterizationStateCreateInfo<'d>(
     VkPipelineRasterizationStateCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
 );
 impl<'d> PipelineRasterizationStateCreateInfo<'d> {
     pub const fn new(polygon_mode: PolygonMode, cull_mode: CullModeFlags, front_face: FrontFace) -> Self {
@@ -1094,12 +940,12 @@ impl<'d> PipelineRasterizationStateCreateInfo<'d> {
                 depthBiasSlopeFactor: 0.0,
                 lineWidth: 1.0,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineRasterizationStateCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineRasterizationStateCreateInfo {
@@ -1155,7 +1001,7 @@ pub enum ConservativeRasterizationMode {
 #[derive(Debug, Clone, PartialEq)]
 pub struct PipelineRasterizationConservativeStateCreateInfo<'d>(
     VkPipelineRasterizationConservativeStateCreateInfoEXT,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
 );
 #[cfg(feature = "VK_EXT_conservative_rasterization")]
 unsafe impl VulkanStructureAsRef for PipelineRasterizationConservativeStateCreateInfo<'_> {
@@ -1180,12 +1026,12 @@ impl<'d> PipelineRasterizationConservativeStateCreateInfo<'d> {
                 conservativeRasterizationMode: mode as _,
                 extraPrimitiveOverestimationSize: extra_primitive_overestimation_size,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineRasterizationConservativeStateCreateInfoEXT) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineRasterizationConservativeStateCreateInfoEXT {
@@ -1224,7 +1070,7 @@ pub enum LineRasterizationMode {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PipelineRasterizationLineStateCreateInfo<'d>(
     VkPipelineRasterizationLineStateCreateInfoKHR,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
 );
 #[cfg(feature = "VK_KHR_line_rasterization")]
 unsafe impl VulkanStructureAsRef for PipelineRasterizationLineStateCreateInfo<'_> {
@@ -1250,12 +1096,12 @@ impl<'d> PipelineRasterizationLineStateCreateInfo<'d> {
                 lineStippleFactor: 0,
                 lineStipplePattern: 0,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineRasterizationLineStateCreateInfoKHR) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineRasterizationLineStateCreateInfoKHR {
@@ -1305,7 +1151,7 @@ impl<'d> PipelineMultisampleStateCreateInfo<'d> {
     pub const unsafe fn from_raw(raw: VkPipelineMultisampleStateCreateInfo) -> Self {
         Self {
             data: raw,
-            samplemask_lifetime_binder: core::marker::PhantomData,
+            samplemask_lifetime_binder: PhantomData,
         }
     }
 
@@ -1472,10 +1318,10 @@ impl PipelineDepthStencilStateCreateInfo {
 #[derive(Debug, Clone, PartialEq)]
 pub struct PipelineColorBlendStateCreateInfo<'d>(
     VkPipelineColorBlendStateCreateInfo,
-    core::marker::PhantomData<&'d [VkPipelineColorBlendAttachmentState]>,
+    PhantomData<&'d [PipelineColorBlendAttachmentState]>,
 );
 impl<'d> PipelineColorBlendStateCreateInfo<'d> {
-    pub const fn new(attachments: &'d [VkPipelineColorBlendAttachmentState]) -> Self {
+    pub const fn new(attachments: &'d [PipelineColorBlendAttachmentState]) -> Self {
         Self(
             VkPipelineColorBlendStateCreateInfo {
                 sType: VkPipelineColorBlendStateCreateInfo::TYPE,
@@ -1487,12 +1333,12 @@ impl<'d> PipelineColorBlendStateCreateInfo<'d> {
                 pAttachments: slice_as_ptr_empty_null(attachments),
                 blendConstants: [0.0; 4],
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkPipelineColorBlendStateCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkPipelineColorBlendStateCreateInfo {
@@ -1511,14 +1357,15 @@ impl<'d> PipelineColorBlendStateCreateInfo<'d> {
     }
 }
 
-impl VkPipelineColorBlendAttachmentState {
+pub type PipelineColorBlendAttachmentState = VkPipelineColorBlendAttachmentState;
+impl PipelineColorBlendAttachmentState {
     pub const NOBLEND: Self = Self {
         colorWriteMask: VK_COLOR_COMPONENT_A_BIT
             | VK_COLOR_COMPONENT_R_BIT
             | VK_COLOR_COMPONENT_G_BIT
             | VK_COLOR_COMPONENT_B_BIT,
         blendEnable: VK_FALSE,
-        ..unsafe { std::mem::MaybeUninit::zeroed().assume_init() }
+        ..unsafe { MaybeUninit::zeroed().assume_init() }
     };
 
     /// `src * 1 + dst * (1 - src.a)` for both color and alpha.
@@ -1619,7 +1466,7 @@ impl VkPipelineColorBlendAttachmentState {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct GraphicsPipelineCreateInfo<'d>(
     VkGraphicsPipelineCreateInfo,
-    core::marker::PhantomData<(
+    PhantomData<(
         &'d dyn VkHandle<Handle = VkPipelineLayout>,
         &'d dyn VkHandle<Handle = VkRenderPass>,
         &'d [PipelineShaderStage<'d, 'd>],
@@ -1636,9 +1483,9 @@ pub struct GraphicsPipelineCreateInfo<'d>(
 );
 impl<'d> GraphicsPipelineCreateInfo<'d> {
     #[inline]
-    pub fn new(
-        layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
-        pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>,
+    pub const fn new(
+        layout: &'d PipelineLayout,
+        pass: SubpassRef<'d>,
         stages: &'d [PipelineShaderStage<'d, 'd>],
         vertex_input_state: &'d PipelineVertexInputStateCreateInfo<'d>,
         input_assembly_state: &'d PipelineInputAssemblyStateCreateInfo,
@@ -1662,19 +1509,19 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
                 pDepthStencilState: core::ptr::null(),
                 pColorBlendState: color_blend_state as *const _ as _,
                 pDynamicState: core::ptr::null(),
-                layout: layout.native_ptr(),
-                renderPass: pass.0.native_ptr(),
+                layout: layout as *const _ as _,
+                renderPass: pass.0 as *const _ as _,
                 subpass: pass.1,
                 // TODO: deriving pipeline (派生するときってCreateInfo系は全部nullableになるのかな？)
-                basePipelineHandle: VkPipeline::NULL,
+                basePipelineHandle: VK_NULL_HANDLE as _,
                 basePipelineIndex: -1,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 
     pub const unsafe fn from_raw(raw: VkGraphicsPipelineCreateInfo) -> Self {
-        Self(raw, core::marker::PhantomData)
+        Self(raw, PhantomData)
     }
 
     pub const fn into_raw(self) -> VkGraphicsPipelineCreateInfo {
@@ -1707,30 +1554,23 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ComputePipelineCreateInfo<'d>(
     VkComputePipelineCreateInfo,
-    core::marker::PhantomData<(
-        &'d dyn VkHandle<Handle = VkPipelineLayout>,
-        PipelineShaderStage<'d, 'd>,
-        Option<&'d dyn VkHandle<Handle = VkPipeline>>,
-    )>,
+    PhantomData<(&'d PipelineLayout, PipelineShaderStage<'d, 'd>, Option<&'d Pipeline>)>,
 );
 impl<'d> ComputePipelineCreateInfo<'d> {
     #[inline]
-    pub fn new(
-        layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
-        stage: PipelineShaderStage<'d, 'd>,
-    ) -> Self {
+    pub const fn new(layout: &'d PipelineLayout, stage: PipelineShaderStage<'d, 'd>) -> Self {
         Self(
             VkComputePipelineCreateInfo {
                 sType: VkComputePipelineCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 stage: stage.0,
-                layout: layout.native_ptr(),
+                layout: layout as *const _ as _,
                 // TODO: deriving pipeline (派生するときってCreateInfo系は全部nullableになるのかな？)
-                basePipelineHandle: VkPipeline::NULL,
+                basePipelineHandle: VK_NULL_HANDLE as _,
                 basePipelineIndex: -1,
             },
-            core::marker::PhantomData,
+            PhantomData,
         )
     }
 

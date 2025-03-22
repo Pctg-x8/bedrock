@@ -12,7 +12,7 @@ use super::opt_pointer;
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DISPLAY_KHR)]
-pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub VkDisplayKHR, pub PhysicalDevice);
+pub struct Display<PhysicalDevice: crate::PhysicalDeviceT>(pub VkDisplayKHR, pub PhysicalDevice);
 
 #[repr(transparent)]
 #[derive(VkHandle, VkObject)]
@@ -21,14 +21,14 @@ pub struct DisplayMode(pub VkDisplayModeKHR);
 impl DisplayMode {
     #[implements]
     pub unsafe fn new(
-        display: &Display<impl crate::PhysicalDevice>,
+        display: &Display<impl crate::PhysicalDeviceT>,
         create_info: &VkDisplayModeCreateInfoKHR,
     ) -> crate::Result<Self> {
         Ok(Self(display.create_display_mode_raw(create_info, None)?))
     }
 }
 
-impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDeviceT> Display<PhysicalDevice> {
     /// Query a count of the set of mode properties supported by the display
     /// # Failures
     /// On failure, this command returns
@@ -88,7 +88,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// Release access to an acquired VkDisplayKHR
     #[implements("VK_EXT_direct_mode_display")]
     pub fn release(&self) {
-        use crate::Instance;
+        use crate::InstanceT;
 
         unsafe {
             self.1.instance().release_display_ext_fn().0(self.1.native_ptr(), self.native_ptr());
@@ -103,7 +103,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     #[implements("VK_EXT_acquire_xlib_display")]
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
-        use crate::Instance;
+        use crate::InstanceT;
 
         unsafe {
             self.1.instance().acquire_xlib_display_ext_fn().0(self.1.native_ptr(), dpy, self.native_ptr())
@@ -161,27 +161,27 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     }
 }
 
-pub struct DisplayProperties<PhysicalDevice: crate::PhysicalDevice>(
+pub struct DisplayProperties<PhysicalDevice: crate::PhysicalDeviceT>(
     pub(crate) VkDisplayPropertiesKHR,
     pub(crate) PhysicalDevice,
 );
-impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayProperties<PhysicalDevice>> for VkDisplayPropertiesKHR {
+impl<PhysicalDevice: crate::PhysicalDeviceT> From<DisplayProperties<PhysicalDevice>> for VkDisplayPropertiesKHR {
     fn from(v: DisplayProperties<PhysicalDevice>) -> Self {
         v.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDeviceT> Deref for DisplayProperties<PhysicalDevice> {
     type Target = VkDisplayPropertiesKHR;
     fn deref(&self) -> &VkDisplayPropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPropertiesKHR> for DisplayProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDeviceT> AsRef<VkDisplayPropertiesKHR> for DisplayProperties<PhysicalDevice> {
     fn as_ref(&self) -> &VkDisplayPropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> DisplayProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDeviceT> DisplayProperties<PhysicalDevice> {
     /// A handle that is used to refer to the display described here.
     /// This handle will be valid for the lifetime of the Vulkan instance.
     pub const fn display(&self) -> Display<&PhysicalDevice> {
@@ -204,31 +204,31 @@ impl<PhysicalDevice: crate::PhysicalDevice> DisplayProperties<PhysicalDevice> {
     }
 }
 
-pub struct DisplayPlaneProperties<PhysicalDevice: crate::PhysicalDevice>(
+pub struct DisplayPlaneProperties<PhysicalDevice: crate::PhysicalDeviceT>(
     pub(crate) VkDisplayPlanePropertiesKHR,
     pub(crate) PhysicalDevice,
 );
-impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPlaneProperties<PhysicalDevice>>
+impl<PhysicalDevice: crate::PhysicalDeviceT> From<DisplayPlaneProperties<PhysicalDevice>>
     for VkDisplayPlanePropertiesKHR
 {
     fn from(v: DisplayPlaneProperties<PhysicalDevice>) -> Self {
         v.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPlaneProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDeviceT> Deref for DisplayPlaneProperties<PhysicalDevice> {
     type Target = VkDisplayPlanePropertiesKHR;
     fn deref(&self) -> &VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPlanePropertiesKHR>
+impl<PhysicalDevice: crate::PhysicalDeviceT> AsRef<VkDisplayPlanePropertiesKHR>
     for DisplayPlaneProperties<PhysicalDevice>
 {
     fn as_ref(&self) -> &VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlaneProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDeviceT> DisplayPlaneProperties<PhysicalDevice> {
     /// The handle of the display the plane is currently associated with.
     /// If the plane is not currently attached to any displays, this will be `None`
     pub const fn current_display(&self) -> Option<Display<&PhysicalDevice>> {

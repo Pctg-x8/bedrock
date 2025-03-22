@@ -1,44 +1,24 @@
 use derives::implements;
 
 use crate::{
-    AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags, StoreOp, VkAccessFlags,
-    VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat, VkRenderPassCreateInfo2KHR,
-    VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR, VulkanStructure,
-    VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT, VK_PIPELINE_BIND_POINT_GRAPHICS,
-    VK_SAMPLE_COUNT_1_BIT, VK_SUBPASS_EXTERNAL,
+    AspectMask, Device, Format, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags, RenderPass, StoreOp,
+    SubpassIndex, VulkanStructure, ffi_helper::slice_as_ptr_empty_null, vk::*,
 };
+use core::ptr::NonNull;
 
-use super::{ffi_helper::slice_as_ptr_empty_null, VK_ATTACHMENT_UNUSED};
-
-/// Index specifying a subpass
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-pub enum SubpassIndex {
-    /// Out of the render pass
-    External,
-    /// In the render pass
-    Internal(u32),
-}
-impl SubpassIndex {
-    #[inline(always)]
-    pub(crate) const fn as_vk(self) -> u32 {
-        match self {
-            Self::External => VK_SUBPASS_EXTERNAL,
-            Self::Internal(x) => x,
-        }
-    }
-}
+pub type SampleCountBits = VkSampleCountFlags;
 
 #[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct AttachmentDescription2(VkAttachmentDescription2KHR);
 impl AttachmentDescription2 {
-    pub const fn new(format: VkFormat) -> Self {
+    pub const fn new(format: Format) -> Self {
         Self(VkAttachmentDescription2KHR {
             sType: VkAttachmentDescription2KHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             format,
-            samples: VK_SAMPLE_COUNT_1_BIT,
+            samples: 1,
             loadOp: LoadOp::DontCare as _,
             storeOp: StoreOp::DontCare as _,
             stencilLoadOp: LoadOp::DontCare as _,
@@ -48,7 +28,7 @@ impl AttachmentDescription2 {
         })
     }
 
-    pub const fn samples(mut self, samples: VkSampleCountFlagBits) -> Self {
+    pub const fn samples(mut self, samples: SampleCountBits) -> Self {
         self.0.samples = samples;
         self
     }
@@ -294,9 +274,9 @@ impl<'d> RenderPassCreateInfo2<'d> {
 impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {
     fn execute(
         &self,
-        device: &(impl crate::Device + ?Sized),
-        allocation_callbacks: Option<&super::VkAllocationCallbacks>,
-    ) -> crate::Result<super::VkRenderPass> {
+        device: &Device,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<NonNull<RenderPass>> {
         device.new_render_pass2(&self, allocation_callbacks)
     }
 }

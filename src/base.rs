@@ -2,15 +2,13 @@
 
 use derives::implements;
 
-use crate::{
-    ffi_helper::{opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null, CStrFFIRef},
-    vk::*,
-    VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
-};
 #[cfg(feature = "Implements")]
 use crate::{ImageFlags, ImageUsageFlags};
-#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
-use crate::{PresentMode, Surface};
+use crate::{
+    Version, VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
+    ffi_helper::{CStrFFIRef, opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null},
+    vk::*,
+};
 
 #[cfg(feature = "Multithreaded")]
 struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
@@ -19,58 +17,6 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
     type Target = T;
     fn deref(&self) -> &T {
         self.0.as_ref().unwrap()
-    }
-}
-
-/// A Value Object represents the Vulkan version number
-// Note: (MSB) major | minor | patch (LSB) の順でビットが割り当てられているので合成した状態の比較で正しい順序になる
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Version(u32);
-impl Version {
-    /// Version 1.0.0
-    pub const V1: Self = Self::new(0, 1, 0, 0);
-
-    /// Construct an object from discrete values
-    pub const fn new(variant: u8, major: u16, minor: u16, patch: u16) -> Self {
-        Self(crate::vk::VK_MAKE_VERSION(variant, major, minor, patch))
-    }
-
-    /// Construct an object from a raw value
-    pub const fn from_raw(v: u32) -> Self {
-        Self(v)
-    }
-
-    /// Gets a raw value from this object
-    pub const fn raw(&self) -> u32 {
-        self.0
-    }
-
-    /// Version variant number
-    pub const fn variant(&self) -> u8 {
-        crate::vk::VK_VARIANT_VERSION(self.0)
-    }
-
-    /// Major version number
-    pub const fn major(&self) -> u16 {
-        crate::vk::VK_MAJOR_VERSION(self.0)
-    }
-
-    /// Minor version number
-    pub const fn minor(&self) -> u16 {
-        crate::vk::VK_MINOR_VERSION(self.0)
-    }
-
-    /// Patch version number
-    pub const fn patch(&self) -> u16 {
-        crate::vk::VK_PATCH_VERSION(self.0)
-    }
-}
-impl core::fmt::Display for Version {
-    #[inline]
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // TODO: Variantを含めたバージョン表示
-        write!(f, "{}.{}.{}", self.major(), self.minor(), self.patch())
     }
 }
 
@@ -214,7 +160,7 @@ impl Drop for InstanceObject {
         }
     }
 }
-impl Instance for InstanceObject {
+impl InstanceT for InstanceObject {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
@@ -305,11 +251,11 @@ impl Instance for InstanceObject {
 /// * Methods for Android and Mir surfaces are not implemented
 #[derive(VkHandle, VkObject, crate::InstanceChild, crate::InstanceChildTransferrable, Clone)]
 #[VkObject(type = VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
-pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, #[parent] Owner);
-unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
-unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
-impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
-impl<Owner: Instance> PhysicalDeviceObject<Owner> {
+pub struct PhysicalDeviceObject<Owner: InstanceT>(VkPhysicalDevice, #[parent] Owner);
+unsafe impl<Owner: InstanceT + Sync> Sync for PhysicalDeviceObject<Owner> {}
+unsafe impl<Owner: InstanceT + Send> Send for PhysicalDeviceObject<Owner> {}
+impl<Owner: InstanceT> PhysicalDeviceT for PhysicalDeviceObject<Owner> {}
+impl<Owner: InstanceT> PhysicalDeviceObject<Owner> {
     pub const unsafe fn manage(handle: VkPhysicalDevice, owner: Owner) -> Self {
         Self(handle, owner)
     }
@@ -322,7 +268,7 @@ impl<Owner: Instance> PhysicalDeviceObject<Owner> {
         (handle, owner)
     }
 }
-impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
+impl<Owner: InstanceT + Clone> PhysicalDeviceObject<&'_ Owner> {
     /// Split the lifetime from owner by cloning it.
     #[inline(always)]
     pub fn clone_parent(&self) -> PhysicalDeviceObject<Owner> {
@@ -330,8 +276,8 @@ impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
     }
 }
 
-pub struct IterPhysicalDevices<'i, Source: Instance + 'i + ?Sized>(Vec<VkPhysicalDevice>, usize, &'i Source);
-impl<'i, Source: Instance + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, Source> {
+pub struct IterPhysicalDevices<'i, Source: InstanceT + 'i + ?Sized>(Vec<VkPhysicalDevice>, usize, &'i Source);
+impl<'i, Source: InstanceT + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, Source> {
     type Item = PhysicalDeviceObject<&'i Source>;
 
     #[inline(always)]
@@ -348,13 +294,13 @@ impl<'i, Source: Instance + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, So
         (self.0.len(), Some(self.0.len()))
     }
 }
-impl<'i, Source: Instance + 'i + ?Sized> ExactSizeIterator for IterPhysicalDevices<'i, Source> {
+impl<'i, Source: InstanceT + 'i + ?Sized> ExactSizeIterator for IterPhysicalDevices<'i, Source> {
     #[inline(always)]
     fn len(&self) -> usize {
         self.0.len()
     }
 }
-impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDevices<'i, Source> {
+impl<'i, Source: InstanceT + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDevices<'i, Source> {
     #[inline(always)]
     fn next_back(&mut self) -> Option<PhysicalDeviceObject<&'i Source>> {
         if self.0.len() <= self.1 {
@@ -634,7 +580,7 @@ pub fn instance_extension_properties(layer_name: Option<&str>) -> crate::Result<
 }
 
 /// A Vulkan Instance interface
-pub trait Instance: VkHandle<Handle = VkInstance> {
+pub trait InstanceT: VkHandle<Handle = VkInstance> {
     /// Return a function pointer for a command
     #[deprecated = "do not use this directly(this does not provide caching!)"]
     #[implements]
@@ -866,7 +812,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 
     #[implements("VK_KHR_external_fence_capabilities")]
     fn get_physical_device_external_fence_properties_khr_fn(&self)
-        -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
+    -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
 
     #[implements("VK_EXT_acquire_xlib_display")]
     fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
@@ -885,7 +831,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     #[implements("VK_EXT_sample_locations")]
     fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
 }
-DerefContainerBracketImpl!(for Instance {
+DerefContainerBracketImpl!(for InstanceT {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
@@ -930,7 +876,7 @@ DerefContainerBracketImpl!(for Instance {
     #[implements("VK_EXT_sample_locations")]
     ForwardFnPtr!(deref get_physical_device_multisample_properties_ext_fn -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT);
 });
-GuardsImpl!(for Instance {
+GuardsImpl!(for InstanceT {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
@@ -977,7 +923,7 @@ GuardsImpl!(for Instance {
 });
 
 /// A PhysicalDevice interface
-pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
+pub trait PhysicalDeviceT: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Returns a count of properties of available physical device layers
     /// # Failures
     /// On failure, this command returns
@@ -1369,254 +1315,6 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             info,
             sink.as_mut_ptr(),
         );
-    }
-
-    /// Query if presentation is supported
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface")]
-    #[inline]
-    fn surface_support(&self, queue_family: u32, surface: &(impl Surface + ?Sized)) -> crate::Result<bool> {
-        let mut f = 0;
-
-        unsafe {
-            crate::vkfn::get_physical_device_surface_support_khr(
-                self.native_ptr(),
-                queue_family,
-                surface.native_ptr(),
-                &mut f,
-            )
-            .into_result()?;
-
-            Ok(f != 0)
-        }
-    }
-
-    /// Query surface capabilities
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface")]
-    #[inline]
-    fn surface_capabilities(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<VkSurfaceCapabilitiesKHR> {
-        let mut s = std::mem::MaybeUninit::uninit();
-
-        unsafe {
-            crate::vkfn::get_physical_device_surface_capabilities_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                s.as_mut_ptr(),
-            )
-            .into_result()?;
-
-            Ok(s.assume_init())
-        }
-    }
-
-    /// Query a count of color formats supported by surface
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface")]
-    #[inline]
-    fn surface_format_count(&self, surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized)) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_physical_device_surface_formats_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
-    }
-
-    /// Query a count of color formats supported by surface
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface")]
-    #[inline]
-    fn surface_formats(
-        &self,
-        surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
-        sink: &mut [VkSurfaceFormatKHR],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_physical_device_surface_formats_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                sink.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
-    }
-
-    /// Query color formats supported by surface
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface", "alloc")]
-    fn surface_formats_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<VkSurfaceFormatKHR>> {
-        let n = self.surface_format_count(surface)?;
-        if n == 0 {
-            // no items
-            return Ok(crate::alloc::empty_sink_buffer());
-        }
-
-        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.surface_formats(surface, &mut xs)?;
-
-        Ok(xs)
-    }
-
-    /// Query a count of supported presentation modes
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface")]
-    #[inline]
-    fn surface_present_mode_count(
-        &self,
-        surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
-    ) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_physical_device_surface_present_modes_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
-    }
-
-    /// Query supported presentation modes
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface")]
-    #[inline]
-    fn surface_present_modes(
-        &self,
-        surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
-        sink: &mut [PresentMode],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_physical_device_surface_present_modes_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                sink.as_mut_ptr() as _,
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
-    }
-
-    /// Query supported presentation modes
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    #[implements("VK_KHR_surface", "alloc")]
-    fn surface_present_modes_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<PresentMode>> {
-        let n = self.surface_present_mode_count(surface)?;
-        if n == 0 {
-            // no items
-            return Ok(crate::alloc::empty_sink_buffer());
-        }
-
-        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.surface_present_modes(surface, &mut xs)?;
-
-        Ok(xs)
-    }
-
-    /// Query physical device for presentation to X11 server using Xlib
-    /// # Safety
-    /// Provided `display` must be a valid reference
-    #[implements("VK_KHR_xlib_surface")]
-    #[inline]
-    unsafe fn xlib_presentation_support(
-        &self,
-        queue_family: u32,
-        display: *mut x11::xlib::Display,
-        visual: x11::xlib::VisualID,
-    ) -> bool {
-        crate::vkfn::get_physical_device_xlib_presentation_support_khr(self.native_ptr(), queue_family, display, visual)
-            != 0
-    }
-
-    /// Query physical device for presentation to X11 server using XCB
-    /// # Safety
-    /// Provided `connection` must be a valid reference
-    #[implements("VK_KHR_xcb_surface")]
-    #[inline]
-    unsafe fn xcb_presentation_support(
-        &self,
-        queue_family: u32,
-        connection: *mut xcb::ffi::xcb_connection_t,
-        visual: xcb::x::Visualid,
-    ) -> bool {
-        crate::vkfn::get_physical_device_xcb_presentation_support_khr(
-            self.native_ptr(),
-            queue_family,
-            connection,
-            visual,
-        ) != 0
-    }
-
-    /// Query physical device for presentation to Wayland
-    /// # Safety
-    /// Provided `display` must be a valid reference
-    #[implements("VK_KHR_wayland_surface")]
-    #[inline]
-    unsafe fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
-        crate::vkfn::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display) != 0
-    }
-
-    /// Query queue family support for presentation on a Win32 display
-    #[implements("VK_KHR_win32_surface")]
-    #[inline]
-    fn win32_presentation_support(&self, queue_family: u32) -> bool {
-        unsafe { crate::vkfn::get_physical_device_win32_presentation_support_khr(self.native_ptr(), queue_family) != 0 }
     }
 
     /// Query a count of the set of mode properties supported by the display
@@ -2101,11 +1799,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Ok(x)
     }
 }
-DerefContainerBracketImpl!(for PhysicalDevice {});
-GuardsImpl!(for PhysicalDevice {});
+DerefContainerBracketImpl!(for PhysicalDeviceT {});
+GuardsImpl!(for PhysicalDeviceT {});
 
 pub trait InstanceChild {
-    type ConcreteInstance: Instance;
+    type ConcreteInstance: InstanceT;
 
     fn instance(&self) -> &Self::ConcreteInstance;
 }

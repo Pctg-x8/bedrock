@@ -1,13 +1,14 @@
 //! Vulkan Device and Queues
 
 use cfg_if::cfg_if;
+use core::{mem::MaybeUninit, ptr::NonNull};
 use derives::implements;
-use ffi_helper::{opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null, CStrFFIRef};
+use ffi_helper::{CStrFFIRef, opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null};
 
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
 #[cfg(feature = "Implements")]
-use crate::{fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle};
+use crate::{DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, fnconv::FnTransmute};
 
 #[implements]
 #[allow(dead_code)]
@@ -290,7 +291,7 @@ impl<Instance> Drop for DeviceObject<Instance> {
         }
     }
 }
-impl<Instance: crate::Instance> InstanceChild for DeviceObject<Instance> {
+impl<Instance: crate::InstanceT> InstanceChild for DeviceObject<Instance> {
     type ConcreteInstance = Instance;
 
     #[inline(always)]
@@ -298,7 +299,7 @@ impl<Instance: crate::Instance> InstanceChild for DeviceObject<Instance> {
         &self.parent
     }
 }
-impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
+impl<Instance: crate::InstanceT> DeviceT for DeviceObject<Instance> {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_maintenance1")]
     fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
@@ -460,7 +461,7 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
         *self.cmd_set_sample_locations_ext.resolve()
     }
 }
-impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
+impl<Instance: crate::InstanceT + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
     #[inline]
     pub fn clone_parent(self) -> DeviceObject<Instance> {
@@ -610,7 +611,7 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
         r
     }
 }
-impl<Instance: crate::Instance> DeviceObject<Instance> {
+impl<Instance: crate::InstanceT> DeviceObject<Instance> {
     /// Create a new device instance
     /// # Failures
     /// On failure, this command returns
@@ -624,7 +625,7 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements]
     pub fn new<
-        PhysicalDevice: crate::PhysicalDevice + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
+        PhysicalDevice: crate::PhysicalDeviceT + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
     >(
         physical_device: PhysicalDevice,
         info: &DeviceCreateInfo,
@@ -646,15 +647,15 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
 pub struct QueueObject<Device>(VkQueue, Device);
 unsafe impl<Device: Sync> Sync for QueueObject<Device> {}
 unsafe impl<Device: Send> Send for QueueObject<Device> {}
-impl<Device: crate::Device> Queue for QueueObject<Device> {}
-impl<Device: crate::Device> QueueMut for QueueObject<Device> {}
+impl<Device: crate::DeviceT> Queue for QueueObject<Device> {}
+impl<Device: crate::DeviceT> QueueMut for QueueObject<Device> {}
 impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueueObject<Device> {
     #[inline(always)]
     fn device_handle(&self) -> VkDevice {
         self.1.native_ptr()
     }
 }
-impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
+impl<Device: crate::DeviceT> DeviceChild for QueueObject<Device> {
     type ConcreteDevice = Device;
 
     #[inline(always)]
@@ -745,57 +746,6 @@ impl<'d> DeviceCreateInfo<'d> {
     }
 }
 
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-#[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct PhysicalDeviceFeatures2<'r>(
-    VkPhysicalDeviceFeatures2KHR,
-    core::marker::PhantomData<Option<&'r mut dyn VulkanStructureAsRef>>,
-);
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-impl<'r> PhysicalDeviceFeatures2<'r> {
-    pub const fn new(old_features: VkPhysicalDeviceFeatures) -> Self {
-        Self(
-            VkPhysicalDeviceFeatures2KHR {
-                sType: <VkPhysicalDeviceFeatures2KHR as VulkanStructure>::TYPE,
-                pNext: core::ptr::null_mut(),
-                features: old_features,
-            },
-            core::marker::PhantomData,
-        )
-    }
-
-    #[inline(always)]
-    pub fn with_next(mut self, next: &'r mut (impl VulkanStructureAsRef + ?Sized)) -> Self {
-        self.0.pNext = next.as_generic_mut() as *mut _ as _;
-        self
-    }
-}
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-unsafe impl VulkanStructureAsRef for PhysicalDeviceFeatures2<'_> {
-    #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
-        VulkanStructureAsRef::as_generic(&self.0)
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
-        VulkanStructureAsRef::as_generic_mut(&mut self.0)
-    }
-}
-#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-unsafe impl VulkanSinkStructureAsRef for PhysicalDeviceFeatures2<'_> {
-    #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanSinkStructure {
-        VulkanSinkStructureAsRef::as_generic(&self.0)
-    }
-
-    #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
-        VulkanSinkStructureAsRef::as_generic_mut(&mut self.0)
-    }
-}
-
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -852,18 +802,100 @@ pub trait ExtraProcedureProvider {
     unsafe fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F>;
 }
 
-pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
+/// Opaque handle to a device object.
+#[repr(transparent)]
+pub struct Device(VkDevice_T);
+#[implements]
+impl Device {
+    /// Allocate one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// - [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// - [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// - [`VK_ERROR_FRAGMENTED_POOL`]
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    #[inline]
+    pub unsafe fn alloc_descriptor_sets_raw(
+        &self,
+        info: &VkDescriptorSetAllocateInfo,
+        objects: &mut [VkDescriptorSet],
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::allocate_descriptor_sets(self as *const _ as _, info, objects.as_mut_ptr())
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Allocate one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - VK_ERROR_FRAGMENTED_POOL
+    pub fn alloc_descriptor_sets(
+        &self,
+        pool: &mut DescriptorPool,
+        layouts: &[VkHandleRef<VkDescriptorSetLayout>],
+    ) -> crate::Result<Vec<DescriptorSet>> {
+        let ainfo = VkDescriptorSetAllocateInfo {
+            sType: VkDescriptorSetAllocateInfo::TYPE,
+            pNext: core::ptr::null(),
+            descriptorPool: pool as *mut _ as _,
+            descriptorSetCount: layouts.len() as _,
+            pSetLayouts: layouts.as_ptr_empty_null() as _,
+        };
+        let mut hs = vec![VkDescriptorSet::NULL; layouts.len()];
+
+        unsafe {
+            self.alloc_descriptor_sets_raw(&ainfo, &mut hs)?;
+
+            Ok(core::mem::transmute(hs))
+        }
+    }
+
+    /// Allocate one or more descriptor sets
+    /// # Failures
+    /// On failure, this command returns
+    /// - VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - VK_ERROR_FRAGMENTED_POOL
+    pub fn alloc_descriptor_set_array<const N: usize>(
+        &self,
+        pool: &mut DescriptorPool,
+        layouts: &[VkHandleRef<VkDescriptorSetLayout>; N],
+    ) -> crate::Result<[DescriptorSet; N]> {
+        let ainfo = VkDescriptorSetAllocateInfo {
+            sType: VkDescriptorSetAllocateInfo::TYPE,
+            pNext: core::ptr::null(),
+            descriptorPool: pool as *mut _ as _,
+            descriptorSetCount: N as _,
+            pSetLayouts: layouts.as_ptr_empty_null() as _,
+        };
+        let mut hs = [VkDescriptorSet::NULL; N];
+
+        unsafe {
+            self.alloc_descriptor_sets_raw(&ainfo, &mut hs)?;
+
+            // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
+            Ok(*(&hs as *const _ as *const [DescriptorSet; N]))
+        }
+    }
+
     /// Get a queue handle from a device
     #[implements]
     fn queue<'s>(&'s self, family_index: u32, queue_index: u32) -> QueueObject<&'s Self> {
-        let mut h = std::mem::MaybeUninit::uninit();
+        let mut h = MaybeUninit::uninit();
         unsafe {
             crate::vkfn::get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
             QueueObject(h.assume_init(), self)
         }
     }
 
-    /// Create a new fence object
+    /// Create a new fence object.
     /// # Failure
     /// On failure, this command returns
     ///
@@ -871,12 +903,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    fn new_fence_raw(
+    fn new_fence(
         &self,
         info: &FenceCreateInfo,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkFence> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Fence>> {
+        let mut h = MaybeUninit::uninit();
         unsafe {
             crate::vkfn::create_fence(
                 self.native_ptr(),
@@ -887,10 +919,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .into_result()?;
         }
 
-        Ok(unsafe { h.assume_init() })
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init()) })
     }
 
-    /// Create a new queue semaphore object
+    /// Create a new queue semaphore object.
     /// # Failure
     /// On failure, this command returns
     ///
@@ -898,12 +930,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    fn new_semaphore_raw(
+    fn new_semaphore(
         &self,
         info: &SemaphoreCreateInfo,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSemaphore> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Semaphore>> {
+        let mut h = MaybeUninit::uninit();
         unsafe {
             crate::vkfn::create_semaphore(
                 self.native_ptr(),
@@ -914,10 +946,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .into_result()?;
         }
 
-        Ok(unsafe { h.assume_init() })
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init()) })
     }
 
-    /// Create a new event object
+    /// Create a new event object.
     /// # Failure
     /// On failure, this command returns
     ///
@@ -925,12 +957,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    fn new_event_raw(
+    fn new_event(
         &self,
         info: &EventCreateInfo,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkEvent> {
-        let mut h = core::mem::MaybeUninit::uninit();
+    ) -> crate::Result<NonNull<Event>> {
+        let mut h = MaybeUninit::uninit();
         unsafe {
             crate::vkfn::create_event(
                 self.native_ptr(),
@@ -941,7 +973,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             .into_result()?;
         }
 
-        Ok(unsafe { h.assume_init() })
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init()) })
     }
 
     /// Allocate device memory
@@ -2106,326 +2138,131 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    // Extension Function Providers
+    #[inline]
+    #[implements]
+    fn new_command_pool(
+        &self,
+        create_info: &CommandPoolCreateInfo,
+        allocator: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<NonNull<CommandPool>> {
+        let mut h = MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::create_command_pool(self.native_ptr(), create_info, opt_pointer(allocator), h.as_mut_ptr())
+                .into_result()?;
+        }
 
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_maintenance1")]
-    fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR;
+        Ok(unsafe { NonNull::new_unchecked(h.assume_init()) })
+    }
 
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR;
+    #[inline]
+    #[implements]
+    unsafe fn destroy_command_pool(&self, command_pool: &mut CommandPool, allocator: Option<&VkAllocationCallbacks>) {
+        unsafe {
+            crate::vkfn::destroy_command_pool(self.native_ptr(), command_pool as *mut _ as _, opt_pointer(allocator))
+        }
+    }
 
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR;
+    /// Resets a command pool.
+    /// # Safety
+    /// Application cannot use command buffers after this call.
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[inline]
+    #[implements]
+    unsafe fn reset_command_pool(
+        &self,
+        command_pool: &mut CommandPool,
+        flags: CommandPoolResetFlags,
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::reset_command_pool(self.native_ptr(), command_pool as *mut _ as _, flags.bits())
+                .into_result()
+                .map(drop)
+        }
+    }
 
-    #[implements("VK_EXT_image_drm_format_modifier")]
-    fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
+    /// Free command buffers.
+    /// # Safety
+    /// Application cannot use passed command buffers after this call.
+    #[inline]
+    #[implements]
+    unsafe fn free_command_buffers(&self, command_pool: &mut CommandPool, buffers: &[VkHandleRefMut<VkCommandBuffer>]) {
+        unsafe {
+            crate::vkfn::free_command_buffers(
+                self.native_ptr(),
+                command_pool as *mut _ as _,
+                buffers.len() as _,
+                slice_as_ptr_empty_null(buffers) as *const _,
+            );
+        }
+    }
 
-    #[implements("VK_KHR_external_fence_fd")]
-    fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR;
-    #[implements("VK_KHR_external_fence_fd")]
-    fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR;
+    /// Trim a command pool
+    #[implements("Allow1_1APIs")]
+    fn trim_command_pool(&self, command_pool: &mut CommandPool, flags: CommandPoolTrimFlags) {
+        unsafe {
+            crate::vkfn::trim_command_pool(self.native_ptr(), command_pool as *mut _ as _, flags.bits());
+        }
+    }
 
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
+    /// Allocate command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements("alloc")]
+    #[inline]
+    fn alloc(&self, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<NonNull<CommandBuffer>>> {
+        let mut hs = vec![VK_NULL_HANDLE as _; info.0.commandBufferCount as _];
 
-    #[implements("VK_KHR_external_memory_fd")]
-    fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR;
-    #[implements("VK_KHR_external_memory_fd")]
-    fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR;
+        unsafe {
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), &info.0, hs.as_mut_ptr()).into_result()?;
 
-    #[implements("VK_EXT_external_memory_host")]
-    fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
+            Ok(core::mem::transmute(hs))
+        }
+    }
 
-    #[implements("VK_KHR_external_semaphore_win32")]
-    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
-    #[implements("VK_KHR_external_semaphore_win32")]
-    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
+    /// Allocate a static amount of command buffers from an existing command pool
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    #[implements]
+    #[inline]
+    fn alloc_array<const N: usize>(
+        &self,
+        info: &CommandBufferFixedCountAllocateInfo<'_, N>,
+    ) -> crate::Result<[NonNull<CommandBuffer>; N]> {
+        let mut hs = [NonNull::dangling(); N];
 
-    #[implements("VK_KHR_external_memory_win32")]
-    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
-    #[implements("VK_KHR_external_memory_win32")]
-    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
+        unsafe {
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), &info.0, hs.as_mut_ptr() as _).into_result()?;
 
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
-
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
-
-    #[cfg(not(feature = "Allow1_3APIs"))]
-    #[implements("VK_KHR_synchronization2")]
-    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
-
-    #[cfg(not(feature = "Allow1_4APIs"))]
-    #[implements("VK_KHR_push_descriptor")]
-    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
-
-    #[implements("VK_EXT_sample_locations")]
-    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
-}
-DerefContainerBracketImpl!(for Device {
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_maintenance1")]
-    ForwardFnPtr!(deref get_trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref create_descriptor_update_template_khr_fn -> PFN_vkCreateDescriptorUpdateTemplateKHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref destroy_descriptor_update_template_khr_fn -> PFN_vkDestroyDescriptorUpdateTemplateKHR);
-        #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref update_descriptor_set_with_template_khr_fn -> PFN_vkUpdateDescriptorSetWithTemplateKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    ForwardFnPtr!(deref bind_buffer_memory2_khr_fn -> PFN_vkBindBufferMemory2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    ForwardFnPtr!(deref bind_image_memory2_khr_fn -> PFN_vkBindImageMemory2KHR);
-
-    #[implements("VK_EXT_image_drm_format_modifier")]
-    ForwardFnPtr!(deref get_image_drm_format_modifier_properties_ext_fn -> PFN_vkGetImageDrmFormatModifierPropertiesEXT);
-
-    #[implements("VK_KHR_external_fence_fd")]
-    ForwardFnPtr!(deref get_fence_fd_khr_fn -> PFN_vkGetFenceFdKHR);
-    #[implements("VK_KHR_external_fence_fd")]
-    ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
-
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
-
-    #[implements("VK_KHR_external_memory_fd")]
-    ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
-    #[implements("VK_KHR_external_memory_fd")]
-    ForwardFnPtr!(deref get_memory_fd_properties_khr_fn -> PFN_vkGetMemoryFdPropertiesKHR);
-
-    #[implements("VK_EXT_external_memory_host")]
-    ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
-
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
-
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_buffer_memory_requirements_2_khr_fn -> PFN_vkGetBufferMemoryRequirements2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_image_memory_requirements_2_khr_fn -> PFN_vkGetImageMemoryRequirements2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
-
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
-
-    #[cfg(not(feature = "Allow1_3APIs"))]
-    #[implements("VK_KHR_synchronization2")]
-    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
-
-    #[cfg(not(feature = "Allow1_4APIs"))]
-    #[implements("VK_KHR_push_descriptor")]
-    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
-
-    #[implements("VK_EXT_sample_locations")]
-    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
-});
-GuardsImpl!(for Device {
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_maintenance1")]
-    ForwardFnPtr!(deref get_trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref create_descriptor_update_template_khr_fn -> PFN_vkCreateDescriptorUpdateTemplateKHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref destroy_descriptor_update_template_khr_fn -> PFN_vkDestroyDescriptorUpdateTemplateKHR);
-        #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref update_descriptor_set_with_template_khr_fn -> PFN_vkUpdateDescriptorSetWithTemplateKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    ForwardFnPtr!(deref bind_buffer_memory2_khr_fn -> PFN_vkBindBufferMemory2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    ForwardFnPtr!(deref bind_image_memory2_khr_fn -> PFN_vkBindImageMemory2KHR);
-
-    #[implements("VK_EXT_image_drm_format_modifier")]
-    ForwardFnPtr!(deref get_image_drm_format_modifier_properties_ext_fn -> PFN_vkGetImageDrmFormatModifierPropertiesEXT);
-
-    #[implements("VK_KHR_external_fence_fd")]
-    ForwardFnPtr!(deref get_fence_fd_khr_fn -> PFN_vkGetFenceFdKHR);
-    #[implements("VK_KHR_external_fence_fd")]
-    ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
-
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
-
-    #[implements("VK_KHR_external_memory_fd")]
-    ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
-    #[implements("VK_KHR_external_memory_fd")]
-    ForwardFnPtr!(deref get_memory_fd_properties_khr_fn -> PFN_vkGetMemoryFdPropertiesKHR);
-
-    #[implements("VK_EXT_external_memory_host")]
-    ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
-
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
-
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_buffer_memory_requirements_2_khr_fn -> PFN_vkGetBufferMemoryRequirements2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_image_memory_requirements_2_khr_fn -> PFN_vkGetImageMemoryRequirements2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
-
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
-
-    #[cfg(not(feature = "Allow1_3APIs"))]
-    #[implements("VK_KHR_synchronization2")]
-    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
-
-    #[cfg(not(feature = "Allow1_4APIs"))]
-    #[implements("VK_KHR_push_descriptor")]
-    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
-
-    #[implements("VK_EXT_sample_locations")]
-    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
-});
-
-/// Child of a device object(raw handle)
-pub trait DeviceChildHandle {
-    /// Retrieve a reference to a device handle that creates this objecs
-    fn device_handle(&self) -> VkDevice;
-}
-DerefContainerBracketImpl!(for DeviceChildHandle {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice { T::device_handle(self) }
-});
-GuardsImpl!(for DeviceChildHandle {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice { T::device_handle(&self) }
-});
-
-/// Child of a device object
-pub trait DeviceChild: DeviceChildHandle {
-    /// A concrete type of the parent device object.
-    type ConcreteDevice: Device;
-
-    /// Retrieve a reference to a device object that creates this object
-    fn device(&self) -> &Self::ConcreteDevice;
-}
-DerefContainerBracketImpl!(for DeviceChild {
-    type ConcreteDevice = T::ConcreteDevice;
-
-    fn device(&self) -> &Self::ConcreteDevice { T::device(self) }
-});
-GuardsImpl!(for DeviceChild {
-    type ConcreteDevice = T::ConcreteDevice;
-
-    fn device(&self) -> &Self::ConcreteDevice { T::device(&self) }
-});
-
-pub trait DeviceChildTransferrable: DeviceChild {
-    fn transfer_device(self) -> Self::ConcreteDevice;
-}
-impl<T> DeviceChildTransferrable for &'_ T
-where
-    T: DeviceChild + ?Sized,
-    T::ConcreteDevice: Clone,
-{
-    fn transfer_device(self) -> Self::ConcreteDevice {
-        self.device().clone()
+            Ok(hs)
+        }
     }
 }
 
-pub trait Queue: VkHandle<Handle = VkQueue> + DeviceChild {}
-DerefContainerBracketImpl!(for Queue {});
-GuardsImpl!(for Queue {});
-
-pub trait QueueMut: Queue + VkHandleMut {
-    /// Wait for a object to become idle
-    #[implements]
+/// Opaque handle to a queue object.
+#[repr(transparent)]
+pub struct Queue(VkQueue_T);
+#[implements]
+impl Queue {
+    /// Wait for a queue to become idle
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     #[inline(always)]
-    fn wait(&mut self) -> crate::Result<()> {
+    pub fn wait(&mut self) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::queue_wait_idle(self.native_ptr_mut())
+            crate::vkfn::queue_wait_idle(self as *mut _ as _)
                 .into_result()
                 .map(drop)
         }
@@ -2435,59 +2272,59 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    #[implements("alloc")]
-    fn bind_sparse(
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    ///
+    /// # Safety
+    /// no guarantees will be provided (simply calls under api)
+    pub unsafe fn bind_sparse_raw(
         &mut self,
-        batches: &[impl SparseBindingOpBatch],
-        fence: Option<VkHandleRefMut<VkFence>>,
+        batches: &[VkBindSparseInfo],
+        fence: Option<&mut Fence>,
     ) -> crate::Result<()> {
-        let batches: Vec<_> = crate::alloc::collect_vec(batches.iter().map(SparseBindingOpBatch::make_info_struct));
-
-        unsafe { self.bind_sparse_raw(&batches, fence) }
+        unsafe {
+            crate::vkfn::queue_bind_sparse(
+                self as *mut _ as _,
+                batches.len() as _,
+                batches.as_ptr_empty_null(),
+                match fence {
+                    Some(x) => x as *mut _ as _,
+                    None => VK_NULL_HANDLE as _,
+                },
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Bind device memory to a sparse resource object
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    ///
-    /// # Safety
-    /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    unsafe fn bind_sparse_raw(
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    #[cfg(feature = "alloc")]
+    pub fn bind_sparse(
         &mut self,
-        batches: &[VkBindSparseInfo],
-        fence: Option<VkHandleRefMut<VkFence>>,
+        batches: &[impl SparseBindingOpBatch],
+        fence: Option<&mut Fence>,
     ) -> crate::Result<()> {
-        crate::vkfn::queue_bind_sparse(
-            self.native_ptr_mut(),
-            batches.len() as _,
-            batches.as_ptr_empty_null(),
-            fence.map_or(VkFence::NULL, |x| x.0),
-        )
-        .into_result()
-        .map(drop)
+        let batches: Vec<_> = crate::alloc::collect_vec(batches.iter().map(SparseBindingOpBatch::make_info_struct));
+
+        unsafe { self.bind_sparse_raw(&batches, fence) }
     }
 
     /// Submits a sequence of semaphores or command buffers to a queue
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    #[implements("alloc")]
-    fn submit(
-        &mut self,
-        batches: &[impl SubmissionBatch],
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    #[cfg(feature = "alloc")]
+    pub fn submit(&mut self, batches: &[impl SubmissionBatch], fence: Option<&mut Fence>) -> crate::Result<()> {
         let batch_resources: Vec<_> = crate::alloc::collect_vec(batches.iter().map(|b| {
             let mut resources = TemporalSubmissionBatchResources::new();
             b.collect_resources(&mut resources);
@@ -2502,30 +2339,45 @@ pub trait QueueMut: Queue + VkHandleMut {
         unsafe { self.submit_raw(&batches, fence) }
     }
 
-    #[implements]
-    fn submit_alt<'r>(
+    /// Submits a sequence of semaphores or command buffers to a queue
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    #[cfg(feature = "alloc")]
+    #[inline]
+    pub fn submit_alt<'r>(
         &mut self,
         batches: impl IntoIterator<Item = SubmissionBatch2<'r>>,
-        fence: Option<VkHandleRefMut<VkFence>>,
+        fence: Option<&mut Fence>,
     ) -> crate::Result<()> {
-        let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
-
-        unsafe { self.submit_raw(&batches, fence) }
+        unsafe { self.submit_raw(&crate::alloc::collect_vec(batches.into_iter().map(|x| x.0)), fence) }
     }
 
-    #[implements]
+    /// Submits a sequence of semaphores or command buffers to a queue
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
     #[inline]
-    fn submit_alt3<'r>(
+    pub fn submit_alt3<'r>(
         &mut self,
         batches: &'r [SubmissionBatch3<'r>],
-        fence: Option<VkHandleRefMut<VkFence>>,
+        fence: Option<&mut Fence>,
     ) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_submit(
-                self.native_ptr_mut(),
+                self as *mut _ as _,
                 batches.len() as _,
                 slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
+                match fence {
+                    Some(x) => x as *mut _ as _,
+                    None => VK_NULL_HANDLE as _,
+                },
             )
             .into_result()
             .map(drop)
@@ -2542,20 +2394,20 @@ pub trait QueueMut: Queue + VkHandleMut {
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls under api)
-    #[implements]
-    unsafe fn submit_raw(
-        &mut self,
-        batches: &[VkSubmitInfo],
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        crate::vkfn::queue_submit(
-            self.native_ptr_mut(),
-            batches.len() as _,
-            batches.as_ptr_empty_null(),
-            fence.map_or(VkFence::NULL, |x| x.0),
-        )
-        .into_result()
-        .map(drop)
+    pub unsafe fn submit_raw(&mut self, batches: &[VkSubmitInfo], fence: Option<&mut Fence>) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::queue_submit(
+                self as *mut _ as _,
+                batches.len() as _,
+                batches.as_ptr_empty_null(),
+                match fence {
+                    Some(x) => x as *mut _ as _,
+                    None => VK_NULL_HANDLE as _,
+                },
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Submits command buffers to a queue
@@ -2565,21 +2417,21 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_DEVICE_LOST`]
-    #[implements("VK_KHR_synchronization2")]
-    fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
-        #[cfg(feature = "Allow1_3APIs")]
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<&mut Fence>) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_submit2(
-                self.native_ptr_mut(),
+                self as *mut _ as _,
                 batches.len() as _,
                 slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
+                match fence {
+                    Some(x) => x as *mut _ as _,
+                    None => VK_NULL_HANDLE as _,
+                },
             )
             .into_result()
             .map(drop)
         }
-        #[cfg(not(feature = "Allow1_3APIs"))]
-        todo!("cache loaded function in device object")
     }
 
     /// Queue images for presentation
@@ -2591,30 +2443,33 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * [`VK_ERROR_DEVICE_LOST`]
     /// * [`VK_ERROR_OUT_OF_DATE_KHR`]
     /// * [`VK_ERROR_SURFACE_LOST_KHR`]
-    #[implements("VK_KHR_swapchain")]
-    fn present<'r>(&mut self, info: &PresentInfo<'r>) -> crate::Result<()> {
+    #[cfg(feature = "VK_KHR_swapchain")]
+    pub fn present<'r>(&mut self, info: &PresentInfo<'r>) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::queue_present_khr(self.native_ptr_mut(), info as *const _ as _)
+            crate::vkfn::queue_present_khr(self as *mut _ as _, info as *const _ as _)
                 .into_result()
                 .map(drop)
         }
     }
 }
-DerefContainerBracketImpl!(for mut QueueMut {});
-GuardsImpl!(for mut QueueMut {});
 
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
 pub struct PresentInfo<'r>(
     VkPresentInfoKHR,
-    core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32], &'r mut [VkResult])>,
+    core::marker::PhantomData<(
+        &'r [&'r mut crate::Swapchain],
+        &'r [&'r mut Semaphore],
+        &'r [u32],
+        &'r mut [VkResult],
+    )>,
 );
 #[cfg(feature = "VK_KHR_swapchain")]
 impl<'r> PresentInfo<'r> {
     #[inline(always)]
     pub fn new(
-        wait_semaphores: &'r [VkHandleRef<VkSemaphore>],
-        swapchains: &'r [VkHandleRef<VkSwapchainKHR>],
+        wait_semaphores: &'r [&'r mut Semaphore],
+        swapchains: &'r [&'r mut crate::Swapchain],
         image_indices: &'r [u32],
         results: &'r mut [VkResult],
     ) -> Self {
@@ -2645,7 +2500,7 @@ impl<'r> PresentInfo<'r> {
     }
 
     #[implements]
-    pub fn submit(&self, queue: &mut (impl QueueMut + ?Sized)) -> crate::Result<()> {
+    pub fn submit(&self, queue: &mut Queue) -> crate::Result<()> {
         queue.present(self)
     }
 }

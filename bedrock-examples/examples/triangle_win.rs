@@ -4,7 +4,9 @@ use bedrock::{
     self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, ShaderModule,
     VkHandle, VkHandleMut,
 };
-use br::{Device, Fence, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass, Status, Swapchain};
+use br::{
+    DeviceT, Fence, ImageSubresourceSlice, InstanceT, MemoryBound, PhysicalDeviceT, RenderPass, Status, Swapchain,
+};
 use windows::{
     core::PCSTR,
     Win32::{

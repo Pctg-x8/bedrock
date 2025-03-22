@@ -1,9 +1,9 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions},
+    CommandBuffer, PipelineStageFlags, Semaphore, VkHandleRef, VkHandleRefMut, VulkanStructure,
+    ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null},
     vk::*,
-    PipelineStageFlags, VkHandleRef, VkHandleRefMut, VulkanStructure,
 };
 
 #[cfg(feature = "alloc")]
@@ -42,19 +42,15 @@ impl TemporalSubmissionBatchResources {
 #[repr(transparent)]
 pub struct SubmissionBatch3<'d> {
     raw: VkSubmitInfo,
-    _refs: core::marker::PhantomData<(
-        &'d [VkHandleRef<'d, VkCommandBuffer>],
-        &'d [VkHandleRef<'d, VkSemaphore>],
-        &'d [PipelineStageFlags],
-    )>,
+    _refs: core::marker::PhantomData<(&'d [&'d CommandBuffer], &'d [&'d Semaphore], &'d [PipelineStageFlags])>,
 }
 impl<'d> SubmissionBatch3<'d> {
     #[inline(always)]
     pub fn new(
-        wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
+        wait_semaphores: &'d [&'d Semaphore],
         wait_dst_stage_masks: &'d [PipelineStageFlags],
-        command_buffers: &'d [VkHandleRef<'d, VkCommandBuffer>],
-        signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
+        command_buffers: &'d [&'d CommandBuffer],
+        signal_semaphores: &'d [&'d Semaphore],
     ) -> Self {
         assert_eq!(wait_semaphores.len(), wait_dst_stage_masks.len());
 
@@ -69,10 +65,10 @@ impl<'d> SubmissionBatch3<'d> {
     }
 
     pub const fn new_wait_semaphore_array<const N: usize>(
-        wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>; N],
+        wait_semaphores: &'d [&'d Semaphore; N],
         wait_dst_stage_masks: &'d [PipelineStageFlags; N],
-        command_buffers: &'d [VkHandleRef<'d, VkCommandBuffer>],
-        signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
+        command_buffers: &'d [&'d CommandBuffer],
+        signal_semaphores: &'d [&'d Semaphore],
     ) -> Self {
         unsafe {
             Self::new_unchecked(
@@ -85,10 +81,10 @@ impl<'d> SubmissionBatch3<'d> {
     }
 
     pub const unsafe fn new_unchecked(
-        wait_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
+        wait_semaphores: &'d [&'d Semaphore],
         wait_dst_stage_masks: &'d [PipelineStageFlags],
-        command_buffers: &'d [VkHandleRef<'d, VkCommandBuffer>],
-        signal_semaphores: &'d [VkHandleRef<'d, VkSemaphore>],
+        command_buffers: &'d [&'d CommandBuffer],
+        signal_semaphores: &'d [&'d Semaphore],
     ) -> Self {
         Self {
             raw: VkSubmitInfo {
@@ -121,10 +117,10 @@ pub trait SubmissionBatch {
 
     #[cfg(feature = "alloc")]
     #[inline]
-    fn with_command_buffers<'d, CommandBuffer: crate::CommandBuffer + 'd>(
+    fn with_command_buffers<'d>(
         self,
-        command_buffers: &'d [CommandBuffer],
-    ) -> SubmissionWithCommandBuffers<'d, Self, CommandBuffer>
+        command_buffers: &'d [&'d CommandBuffer],
+    ) -> SubmissionWithCommandBuffers<'d, Self>
     where
         Self: Sized,
     {
@@ -137,10 +133,10 @@ pub trait SubmissionBatch {
 
     #[cfg(feature = "alloc")]
     #[inline]
-    fn with_wait_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+    fn with_wait_semaphores<'d>(
         self,
-        wait_semaphores: &'d [(Semaphore, PipelineStageFlags)],
-    ) -> SubmissionWithWaitSemaphores<'d, Self, Semaphore>
+        wait_semaphores: &'d [(&'d Semaphore, PipelineStageFlags)],
+    ) -> SubmissionWithWaitSemaphores<'d, Self>
     where
         Self: Sized,
     {
@@ -154,10 +150,10 @@ pub trait SubmissionBatch {
 
     #[cfg(feature = "alloc")]
     #[inline]
-    fn with_signal_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+    fn with_signal_semaphores<'d>(
         self,
-        signal_semaphores: &'d [Semaphore],
-    ) -> SubmissionWithSignalSemaphores<'d, Self, Semaphore>
+        signal_semaphores: &'d [&'d Semaphore],
+    ) -> SubmissionWithSignalSemaphores<'d, Self>
     where
         Self: Sized,
     {
@@ -244,16 +240,15 @@ impl SubmissionBatch for EmptySubmissionBatch {
     }
 }
 #[cfg(feature = "alloc")]
-pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch, CommandBuffer: crate::CommandBuffer + 'd>(
+pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch>(
     Parent,
     Vec<VkCommandBuffer>,
-    std::marker::PhantomData<&'d [CommandBuffer]>,
+    std::marker::PhantomData<&'d [&'d CommandBuffer]>,
 );
 #[cfg(feature = "alloc")]
-impl<'d, Parent, CommandBuffer> SubmissionBatch for SubmissionWithCommandBuffers<'d, Parent, CommandBuffer>
+impl<'d, Parent> SubmissionBatch for SubmissionWithCommandBuffers<'d, Parent>
 where
     Parent: SubmissionBatch,
-    CommandBuffer: crate::CommandBuffer + 'd,
 {
     #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
@@ -262,17 +257,16 @@ where
     }
 }
 #[cfg(feature = "alloc")]
-pub struct SubmissionWithWaitSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
+pub struct SubmissionWithWaitSemaphores<'d, Parent: SubmissionBatch>(
     Parent,
     Vec<VkSemaphore>,
     Vec<VkPipelineStageFlags>,
-    std::marker::PhantomData<&'d [Semaphore]>,
+    std::marker::PhantomData<&'d [&'d Semaphore]>,
 );
 #[cfg(feature = "alloc")]
-impl<'d, Parent, Semaphore> SubmissionBatch for SubmissionWithWaitSemaphores<'d, Parent, Semaphore>
+impl<'d, Parent> SubmissionBatch for SubmissionWithWaitSemaphores<'d, Parent>
 where
     Parent: SubmissionBatch,
-    Semaphore: crate::Semaphore + 'd,
 {
     #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
@@ -282,16 +276,15 @@ where
     }
 }
 #[cfg(feature = "alloc")]
-pub struct SubmissionWithSignalSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
+pub struct SubmissionWithSignalSemaphores<'d, Parent: SubmissionBatch>(
     Parent,
     Vec<VkSemaphore>,
-    std::marker::PhantomData<&'d [Semaphore]>,
+    std::marker::PhantomData<&'d [&'d Semaphore]>,
 );
 #[cfg(feature = "alloc")]
-impl<'d, Parent, Semaphore> SubmissionBatch for SubmissionWithSignalSemaphores<'d, Parent, Semaphore>
+impl<'d, Parent> SubmissionBatch for SubmissionWithSignalSemaphores<'d, Parent>
 where
     Parent: SubmissionBatch,
-    Semaphore: crate::Semaphore + 'd,
 {
     #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
@@ -338,10 +331,10 @@ pub trait SparseBindingOpBatch {
 
     #[cfg(feature = "alloc")]
     #[inline]
-    fn with_wait_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+    fn with_wait_semaphores<'d>(
         self,
-        semaphores: &'d [Semaphore],
-    ) -> SparseBindingOpBatchWithWaitSemaphores<'d, Self, Semaphore>
+        semaphores: &'d [&'d Semaphore],
+    ) -> SparseBindingOpBatchWithWaitSemaphores<'d, Self>
     where
         Self: Sized,
     {
@@ -354,10 +347,10 @@ pub trait SparseBindingOpBatch {
 
     #[cfg(feature = "alloc")]
     #[inline]
-    fn with_signal_semaphores<'d, Semaphore: crate::Semaphore + 'd>(
+    fn with_signal_semaphores<'d>(
         self,
-        semaphores: &'d [Semaphore],
-    ) -> SparseBindingOpBatchWithSignalSemaphores<'d, Self, Semaphore>
+        semaphores: &'d [&'d Semaphore],
+    ) -> SparseBindingOpBatchWithSignalSemaphores<'d, Self>
     where
         Self: Sized,
     {
@@ -437,14 +430,12 @@ impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpB
         }
     }
 }
-pub struct SparseBindingOpBatchWithWaitSemaphores<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd>(
+pub struct SparseBindingOpBatchWithWaitSemaphores<'d, Parent: SparseBindingOpBatch>(
     Parent,
     Vec<VkSemaphore>,
-    std::marker::PhantomData<&'d [Semaphore]>,
+    std::marker::PhantomData<&'d [&'d Semaphore]>,
 );
-impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseBindingOpBatch
-    for SparseBindingOpBatchWithWaitSemaphores<'d, Parent, Semaphore>
-{
+impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithWaitSemaphores<'d, Parent> {
     #[inline]
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {
@@ -454,14 +445,12 @@ impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseB
         }
     }
 }
-pub struct SparseBindingOpBatchWithSignalSemaphores<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd>(
+pub struct SparseBindingOpBatchWithSignalSemaphores<'d, Parent: SparseBindingOpBatch>(
     Parent,
     Vec<VkSemaphore>,
-    std::marker::PhantomData<&'d [Semaphore]>,
+    std::marker::PhantomData<&'d [&'d Semaphore]>,
 );
-impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseBindingOpBatch
-    for SparseBindingOpBatchWithSignalSemaphores<'d, Parent, Semaphore>
-{
+impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithSignalSemaphores<'d, Parent> {
     #[inline]
     fn make_info_struct(&self) -> VkBindSparseInfo {
         VkBindSparseInfo {

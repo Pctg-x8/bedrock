@@ -116,10 +116,11 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
-use cfg_if::cfg_if;
+use core::mem::MaybeUninit;
 use derives::implements;
 
-use crate::{vk::*, VkHandle, VkHandleMut};
+use crate::Device;
+use crate::vk::*;
 
 mod memory;
 pub use self::memory::*;
@@ -133,26 +134,32 @@ pub use self::image::*;
 mod sampler;
 pub use self::sampler::*;
 
-cfg_if! {
-    if #[cfg(feature = "VK_KHR_swapchain")] {
-        mod swapchain_image;
-        pub use self::swapchain_image::*;
-    }
-}
+pub type MemoryRequirements = VkMemoryRequirements;
 
 /// Common operations for memory bound objects
-pub trait MemoryBound: VkHandle {
+pub trait MemoryBound {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     type MemoryRequirementsInfo2<'b>
     where
         Self: 'b;
 
-    /// Returns the memory requirements for specified Vulkan object
+    /// Returns the memory requirements for specified Vulkan object.
     #[implements]
-    fn requirements(&self) -> VkMemoryRequirements;
+    unsafe fn get_memory_requirements(&self, device: &Device, sink: &mut MaybeUninit<MemoryRequirements>);
+
+    /// Returns the memory requirements for specified Vulkan object.
+    #[implements]
+    unsafe fn memory_requirements(&self, device: &Device) -> MemoryRequirements {
+        let mut sink = MaybeUninit::uninit();
+        unsafe {
+            self.get_memory_requirements(device, &mut sink);
+        }
+
+        unsafe { sink.assume_init() }
+    }
 
     #[implements("VK_KHR_get_memory_requirements2")]
-    fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b>;
+    unsafe fn memory_requirements2<'b>(&'b self, device: &'b Device) -> Self::MemoryRequirementsInfo2<'b>;
 
     /// Bind device memory to the object
     /// # Failure
@@ -161,12 +168,16 @@ pub trait MemoryBound: VkHandle {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()>
-    where
-        Self: VkHandleMut;
+    unsafe fn bind(
+        &mut self,
+        device: &Device,
+        memory: &(impl DeviceMemory + ?Sized),
+        offset: usize,
+    ) -> crate::Result<()>;
 }
 
-impl VkComponentMapping {
+type ComponentMapping = VkComponentMapping;
+impl ComponentMapping {
     pub const IDENTITY: Self = Self::all(VK_COMPONENT_SWIZZLE_IDENTITY);
     pub const ZERO: Self = Self::all(VK_COMPONENT_SWIZZLE_ZERO);
     pub const ONE: Self = Self::all(VK_COMPONENT_SWIZZLE_ONE);
