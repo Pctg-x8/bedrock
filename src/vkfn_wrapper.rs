@@ -184,3 +184,49 @@ pub unsafe fn begin_command_buffer(
 pub unsafe fn end_command_buffer(command_buffer: VkCommandBuffer) -> crate::Result<()> {
     unsafe { crate::vkfn::end_command_buffer(command_buffer).into_result().map(drop) }
 }
+
+#[inline]
+pub unsafe fn create_fence(
+    device: VkDevice,
+    info: &FenceCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkFence> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_fence(
+            device,
+            info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_fence(device: VkDevice, fence: VkFence, allocation_callbacks: Option<&VkAllocationCallbacks>) {
+    unsafe { crate::vkfn::destroy_fence(device, fence, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn wait_for_fences(
+    device: VkDevice,
+    fences: &[VkFence],
+    wait_all: bool,
+    timeout: u64,
+) -> crate::Result<VkResult> {
+    unsafe {
+        crate::vkfn::wait_for_fences(device, fences.len() as _, fences.as_ptr(), wait_all as _, timeout).into_result()
+    }
+}
+
+#[inline]
+pub unsafe fn reset_fences(device: VkDevice, fences: &[VkHandleRefMut<VkFence>]) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::reset_fences(device, fences.len() as _, fences.as_ptr() as _)
+            .into_result()
+            .map(drop)
+    }
+}
