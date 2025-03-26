@@ -72,6 +72,7 @@ impl core::fmt::Display for Version {
 ///
 /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
 #[inline]
+#[implements]
 pub fn instance_version() -> crate::Result<Version> {
     #[cfg(feature = "Allow1_1APIs")]
     unsafe {
