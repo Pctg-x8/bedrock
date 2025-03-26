@@ -413,6 +413,7 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
     pub fn unmanage(mut self) -> (VkDevice, Instance) {
         let h = self.handle;
         let p = unsafe { core::ptr::read(&self.parent) };
+        #[cfg(feature = "Implements")]
         unsafe {
             core::ptr::drop_in_place(&mut self.ext);
         }
