@@ -72,3 +72,20 @@ pub unsafe fn reset_command_pool(
             .map(drop)
     }
 }
+
+#[inline]
+pub unsafe fn begin_command_buffer(
+    command_buffer: VkCommandBuffer,
+    begin_info: &CommandBufferBeginInfo,
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::begin_command_buffer(command_buffer, begin_info as *const _ as _)
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
+pub unsafe fn end_command_buffer(command_buffer: VkCommandBuffer) -> crate::Result<()> {
+    unsafe { crate::vkfn::end_command_buffer(command_buffer).into_result().map(drop) }
+}
