@@ -1,16 +1,8 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
+use crate::ffi_helper::{CStrFFIRef, opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null};
+use crate::*;
 use derives::implements;
-
-#[cfg(feature = "Implements")]
-use crate::{ImageFlags, ImageUsageFlags};
-#[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
-use crate::{PresentMode, Surface};
-use crate::{
-    VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
-    ffi_helper::{CStrFFIRef, opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null},
-    vk::*,
-};
 
 #[cfg(feature = "Multithreaded")]
 struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);

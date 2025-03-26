@@ -1,7 +1,4 @@
-use crate::GenericVulkanStructure;
-use crate::VulkanStructure;
-use crate::VulkanStructureAsRef;
-use crate::vk::*;
+use crate::*;
 
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]

@@ -1,6 +1,6 @@
 //! Vulkan Surface/Swapchain Extensions
 
-use super::*;
+use crate::*;
 
 /// A semaphore or a fence
 pub enum CompletionHandler<Fence: crate::Fence, Semaphore: crate::Semaphore> {

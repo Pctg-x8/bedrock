@@ -1,4 +1,4 @@
-use crate::vk::VkObjectType;
+use crate::*;
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
 pub trait VkHandle {

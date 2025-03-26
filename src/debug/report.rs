@@ -1,4 +1,4 @@
-use crate::{vk::*, InstanceChild, VkHandle, VkObject, VulkanStructure};
+use crate::*;
 use derives::implements;
 
 pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}

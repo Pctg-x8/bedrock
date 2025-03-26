@@ -1,10 +1,7 @@
 use derives::implements;
 
-use crate::{
-    ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions},
-    vk::*,
-    PipelineStageFlags, VkHandleRef, VkHandleRefMut, VulkanStructure,
-};
+use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
+use crate::*;
 
 #[cfg(feature = "alloc")]
 pub struct TemporalSubmissionBatchResources {

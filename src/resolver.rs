@@ -2,7 +2,7 @@
 
 #![allow(non_snake_case)]
 
-use crate::vk::*;
+use crate::*;
 use cfg_if::cfg_if;
 use derives::implements;
 #[cfg(feature = "DynamicLoaded")]

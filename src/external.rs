@@ -1,7 +1,6 @@
 //! External Memory Import/Export Operations
 
-use crate::vk::*;
-use crate::VulkanStructure;
+use crate::*;
 
 #[cfg(feature = "VK_KHR_external_memory")]
 impl VkExternalMemoryImageCreateInfoKHR {

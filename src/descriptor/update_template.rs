@@ -1,6 +1,6 @@
 use derives::implements;
 
-use crate::{vk::*, DeviceChild, DeviceChildHandle, VkHandle, VkObject};
+use crate::*;
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]

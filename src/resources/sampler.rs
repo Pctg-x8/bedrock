@@ -1,9 +1,5 @@
+use crate::*;
 use derives::implements;
-
-use crate::{
-    vk::*, CompareOp, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure,
-};
 
 pub trait Sampler: VkHandle<Handle = VkSampler> {}
 DerefContainerBracketImpl!(for Sampler {});

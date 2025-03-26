@@ -1,9 +1,5 @@
-use crate::{
-    ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, DeviceChildHandle, ImageMemoryBarrier, MemoryBound,
-    VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
-};
-#[implements]
-use crate::{DeviceMemory, VkHandleMut};
+use crate::ffi_helper::slice_as_ptr_empty_null;
+use crate::*;
 use derives::{bitflags_newtype, implements};
 
 pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {

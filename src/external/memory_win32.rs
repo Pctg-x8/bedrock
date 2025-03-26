@@ -1,6 +1,7 @@
 use widestring::WideCStr;
 
-use crate::{ffi_helper::opt_pointer, vk::*, GenericVulkanStructure, VkHandle, VulkanStructure, VulkanStructureAsRef};
+use crate::ffi_helper::opt_pointer;
+use crate::*;
 
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]

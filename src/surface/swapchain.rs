@@ -1,4 +1,4 @@
-use crate::{vk::*, DeviceChild, VkHandle, VkRawHandle};
+use crate::*;
 use derives::implements;
 
 use super::CompletionHandlerMut;

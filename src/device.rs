@@ -1,13 +1,11 @@
 //! Vulkan Device and Queues
 
+use crate::ffi_helper::{
+    ArrayFFIExtensions, CStrFFIRef, opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null,
+};
+use crate::*;
 use cfg_if::cfg_if;
 use derives::implements;
-use ffi_helper::{CStrFFIRef, opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null};
-
-use crate::ffi_helper::ArrayFFIExtensions;
-use crate::*;
-#[cfg(feature = "Implements")]
-use crate::{DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle};
 
 #[implements]
 #[allow(dead_code)]

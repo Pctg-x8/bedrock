@@ -1,15 +1,13 @@
 //! Vulkan Shading(Shader/Pipeline)
 
-use derives::{bitflags_newtype, implements};
-
 use crate::ffi_helper::slice_as_ptr_empty_null;
-use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, SubpassRef, VkDeviceChildNonExtDestroyable,
-    VkHandle, VkHandleMut, VkHandleRef, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+use crate::*;
+use core::{
+    ffi::{CStr, c_void},
+    marker::PhantomData,
+    ops::*,
 };
-use core::ffi::{c_void, CStr};
-use core::marker::PhantomData;
-use core::ops::*;
+use derives::{bitflags_newtype, implements};
 
 #[repr(u32)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]

@@ -1,4 +1,4 @@
-use crate::{vk::*, DeviceChild, DeviceChildHandle, Image, VkHandle, VkObject, VkRawHandle};
+use crate::*;
 
 /// Opaque handle to a image object, backed by Swapchain.
 #[derive(VkHandle, VkObject)]

@@ -3,10 +3,7 @@
 use derives::implements;
 
 use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
-use crate::{
-    DeviceChild, DeviceChildHandle, ImageLayout, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkHandleRef,
-    VkObject, VkRawHandle, VulkanStructure, vk::*,
-};
+use crate::*;
 
 /// Opaque handle to a descriptor set layout object
 #[derive(VkHandle, VkObject)]

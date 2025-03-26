@@ -1,9 +1,6 @@
 //! Vulkan Debug Layer Extensions
 
-#[allow(unused_imports)]
-use crate::{vk::*, VulkanStructure};
-#[allow(unused_imports)]
-use crate::{InstanceChild, VkHandle, VkObject};
+use crate::*;
 
 #[cfg(feature = "VK_EXT_debug_report")]
 mod report;

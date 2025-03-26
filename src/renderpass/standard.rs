@@ -1,6 +1,4 @@
-use ffi_helper::slice_as_ptr_empty_null;
-
-use crate::vk::*;
+use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
 
 impl VkAttachmentDescription {

@@ -1,9 +1,5 @@
+use crate::*;
 use derives::{bitflags_newtype, implements};
-
-use crate::{
-    Extends, ImageUsageFlags, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureProvider,
-    vk::*,
-};
 
 use super::ffi_helper::opt_pointer;
 

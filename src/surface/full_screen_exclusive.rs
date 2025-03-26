@@ -1,4 +1,4 @@
-use crate::{vk::*, VulkanSinkStructure, VulkanStructure};
+use crate::*;
 
 impl VkSurfaceFullScreenExclusiveInfoEXT {
     /// Constructs the structure, specifying the preferred full-screen transition behavior.

@@ -1,6 +1,7 @@
 use derives::implements;
 
-use crate::{ffi_helper::opt_cstr_ptr, vk::*, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure};
+use crate::ffi_helper::opt_cstr_ptr;
+use crate::*;
 
 pub trait DebugUtilsMessenger: VkHandle<Handle = VkDebugUtilsMessengerEXT> + InstanceChild {}
 DerefContainerBracketImpl!(for DebugUtilsMessenger {});

@@ -1,14 +1,11 @@
 //! Direct Display Rendering
 //! All functionality requires VK_KHR_display feature.
 
-#[implements]
-use crate::VkHandle;
-use crate::{VkObject, VulkanStructure, vk::*};
+use crate::ffi_helper::opt_pointer;
+use crate::*;
 #[allow(unused_imports)]
 use derives::*;
 use std::ops::Deref;
-
-use super::opt_pointer;
 
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DISPLAY_KHR)]

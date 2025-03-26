@@ -1,8 +1,5 @@
-use crate::{
-    ffi_helper::slice_as_ptr_empty_null, vk::*, DeviceChild, GenericVulkanStructure, ImageUsageFlags, PresentMode,
-    Swapchain, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
-    VulkanStructureProvider,
-};
+use crate::ffi_helper::slice_as_ptr_empty_null;
+use crate::*;
 use derives::implements;
 
 use super::DeviceChildHandle;

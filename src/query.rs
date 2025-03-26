@@ -1,9 +1,5 @@
+use crate::*;
 use derives::{bitflags_newtype, implements};
-
-use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkObject, VkRawHandle,
-    VulkanStructure,
-};
 
 /// Specify the type of queries managed by a query pool
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

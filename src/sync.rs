@@ -1,9 +1,6 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
 
-use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkObject,
-    VkRawHandle, VulkanStructure, VulkanStructureAsRef,
-};
+use crate::*;
 use derives::implements;
 
 pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {

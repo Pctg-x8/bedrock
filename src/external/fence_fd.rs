@@ -1,6 +1,4 @@
-use crate::vk::*;
-use crate::VkHandle;
-use crate::VulkanStructure;
+use crate::*;
 
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]

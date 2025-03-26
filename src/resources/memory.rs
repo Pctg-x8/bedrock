@@ -1,7 +1,4 @@
-use crate::{
-    DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut,
-    VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef, vk::*,
-};
+use crate::*;
 use derives::implements;
 
 pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {

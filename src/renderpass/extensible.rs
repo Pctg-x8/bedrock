@@ -1,14 +1,7 @@
 use derives::implements;
 
-use crate::{
-    AspectMask, ImageLayout, LayoutTransition, LoadOp, PipelineStageFlags, StoreOp, VkAccessFlags,
-    VkAttachmentDescription2KHR, VkAttachmentReference2KHR, VkFormat, VkRenderPassCreateInfo2KHR,
-    VkSampleCountFlagBits, VkSubpassDependency2KHR, VkSubpassDescription2KHR, VulkanStructure,
-    VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT, VK_DEPENDENCY_BY_REGION_BIT, VK_PIPELINE_BIND_POINT_GRAPHICS,
-    VK_SAMPLE_COUNT_1_BIT, VK_SUBPASS_EXTERNAL,
-};
-
-use super::{ffi_helper::slice_as_ptr_empty_null, VK_ATTACHMENT_UNUSED};
+use crate::ffi_helper::slice_as_ptr_empty_null;
+use crate::*;
 
 /// Index specifying a subpass
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]

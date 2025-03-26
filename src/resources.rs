@@ -116,10 +116,9 @@
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
 
+use crate::*;
 use cfg_if::cfg_if;
 use derives::implements;
-
-use crate::{vk::*, VkHandle, VkHandleMut};
 
 mod memory;
 pub use self::memory::*;

@@ -15,13 +15,17 @@ impl core::fmt::Debug for VkResult {
             // Error Codes //
             VK_ERROR_OUT_OF_HOST_MEMORY => "A host memory allocation has failed",
             VK_ERROR_OUT_OF_DEVICE_MEMORY => "A device memory allocation has failed",
-            VK_ERROR_INITIALIZATION_FAILED => "Initialization of an object could not be completed for implementation-specific reasons",
+            VK_ERROR_INITIALIZATION_FAILED => {
+                "Initialization of an object could not be completed for implementation-specific reasons"
+            }
             VK_ERROR_DEVICE_LOST => "The logical or physical device has been lost",
             VK_ERROR_MEMORY_MAP_FAILED => "Mapping of a memory object has failed",
             VK_ERROR_LAYER_NOT_PRESENT => "A requested layer is not presented or could not be loaded",
             VK_ERROR_EXTENSION_NOT_PRESENT => "A requested extension is not supported",
             VK_ERROR_FEATURE_NOT_PRESENT => "A requested feature is not supported",
-            VK_ERROR_INCOMPATIBLE_DRIVER => "The requested version of Vulkan is not supported by the driver or is otherwise incompatible for implementation-specific reasons",
+            VK_ERROR_INCOMPATIBLE_DRIVER => {
+                "The requested version of Vulkan is not supported by the driver or is otherwise incompatible for implementation-specific reasons"
+            }
             VK_ERROR_TOO_MANY_OBJECTS => "Too many objects of the type have already been created",
             VK_ERROR_FORMAT_NOT_SUPPORTED => "A requested format is not supported on this device",
             VK_ERROR_FRAGMENTED_POOL => "A pool allocation has failed due to fragmentation of the pool's memory",
@@ -32,7 +36,9 @@ impl core::fmt::Debug for VkResult {
             #[cfg(feature = "VK_KHR_swapchain")]
             VK_ERROR_OUT_OF_DATE_KHR => "Out of date",
             #[cfg(feature = "VK_KHR_display_swapchain")]
-            VK_ERROR_INCOMPATIBLE_DISPLAY_KHR => "The display used by a swapchain does not use the same presentable image layout",
+            VK_ERROR_INCOMPATIBLE_DISPLAY_KHR => {
+                "The display used by a swapchain does not use the same presentable image layout"
+            }
             #[cfg(feature = "VK_EXT_debug_report")]
             VK_ERROR_VALIDATION_FAILED_EXT => "Validation failed",
             #[cfg(feature = "VK_NV_glsl_shader")]
@@ -42,10 +48,12 @@ impl core::fmt::Debug for VkResult {
             #[cfg(feature = "VK_KHR_external_memory_capabilities")]
             VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR => "An external handle is not a valid handle of ths specified type",
             #[cfg(feature = "VK_KHR_buffer_device_address")]
-            VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR => "A buffer creation or memory allocation failed because the requested address is not available",
+            VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR => {
+                "A buffer creation or memory allocation failed because the requested address is not available"
+            }
             #[cfg(feature = "VK_EXT_descriptor_indexing")]
             VK_ERROR_FRAGMENTATION_EXT => "A descriptor pool creation has failed due to fragmentation",
-            _ => "Unknown or extension-specific error"
+            _ => "Unknown or extension-specific error",
         };
 
         write!(fmt, "[{:?}] {msg}", self.0)
@@ -66,10 +74,6 @@ impl VkResult {
 
     #[inline]
     pub const fn into_result(self) -> Result<Self, Self> {
-        if self.is_err() {
-            Err(self)
-        } else {
-            Ok(self)
-        }
+        if self.is_err() { Err(self) } else { Ok(self) }
     }
 }

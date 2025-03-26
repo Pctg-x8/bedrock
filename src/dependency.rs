@@ -1,7 +1,6 @@
+use crate::*;
 #[cfg(feature = "VK_KHR_synchronization2")]
 use ffi_helper::slice_as_ptr_empty_null;
-
-use crate::*;
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]

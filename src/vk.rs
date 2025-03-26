@@ -1,4 +1,5 @@
 #![allow(clippy::inconsistent_digit_grouping)]
+#![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
 //! Vulkan API Definitions 1.4.305 with some extensions
 
@@ -8,8 +9,6 @@
 **
 ** SPDX-License-Identifier: Apache-2.0
 */
-
-#![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
 
 use crate::{PFN, StaticCallable, VulkanSinkStructure, VulkanStructure, ffi_helper::FixedCStrBuffer};
 use core::ffi::*;
