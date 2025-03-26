@@ -32,13 +32,13 @@ pub struct PFN_vkGetRandROutputDisplayEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkAcquireXlibDisplayEXT(
+unsafe extern "system" {
+    pub unsafe fn vkAcquireXlibDisplayEXT(
         physicalDevice: VkPhysicalDevice,
         dpy: *mut Display,
         display: VkDisplayKHR,
     ) -> VkResult;
-    pub fn vkGetRandROutputDisplayEXT(
+    pub unsafe fn vkGetRandROutputDisplayEXT(
         physicalDevice: VkPhysicalDevice,
         dpy: *mut Display,
         rrOutput: RROutput,

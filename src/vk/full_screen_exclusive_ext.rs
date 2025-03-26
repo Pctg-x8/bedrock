@@ -86,15 +86,15 @@ pub struct PFN_vkReleaseFullScreenExclusiveModeEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetPhysicalDeviceSurfacePresentModes2EXT(
+unsafe extern "system" {
+    pub unsafe fn vkGetPhysicalDeviceSurfacePresentModes2EXT(
         physicalDevice: VkPhysicalDevice,
         pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
         pPresentModeCount: *mut u32,
         pPresentModes: *mut VkPresentModeKHR,
     ) -> VkResult;
-    pub fn vkAcquireFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
-    pub fn vkReleaseFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
+    pub unsafe fn vkAcquireFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
+    pub unsafe fn vkReleaseFullScreenExclusiveModeEXT(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 }
 
 cfg_if::cfg_if! {
@@ -127,8 +127,8 @@ cfg_if::cfg_if! {
 
         #[cfg(feature = "Implements")]
         #[cfg(not(feature = "DynamicLoaded"))]
-        extern "system" {
-            pub fn vkGetDeviceGroupSurfacePresentModes2EXT(
+        unsafe extern "system" {
+            pub unsafe fn vkGetDeviceGroupSurfacePresentModes2EXT(
                 physicalDevice: VkPhysicalDevice,
                 pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
                 pModes: *mut VkDeviceGroupPresentModeFlagsKHR,

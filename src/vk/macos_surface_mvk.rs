@@ -4,9 +4,9 @@ pub const VK_MVK_MACOS_SURFACE_SPEC_VERSION: usize = 2;
 pub static VK_MVK_MACOS_SURFACE_EXTENSION_NAME: &'static str = "VK_MVK_macos_surface";
 
 use super::*;
+use crate::PFN;
 #[cfg(all(not(feature = "DynamicLoaded"), feature = "Implements"))]
 use crate::StaticCallable;
-use crate::PFN;
 
 pub type VkMacOSSurfaceCreateFlagsMVK = VkFlags;
 
@@ -34,8 +34,8 @@ pub struct PFN_vkCreateMacOSSurfaceMVK(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateMacOSSurfaceMVK(
+unsafe extern "system" {
+    pub unsafe fn vkCreateMacOSSurfaceMVK(
         instance: VkInstance,
         pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
         pAllocator: *const VkAllocationCallbacks,

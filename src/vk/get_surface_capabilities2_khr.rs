@@ -83,13 +83,13 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceFormats2KHR(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetPhysicalDeviceSurfaceCapabilities2KHR(
+unsafe extern "system" {
+    pub unsafe fn vkGetPhysicalDeviceSurfaceCapabilities2KHR(
         physicalDevice: VkPhysicalDevice,
         pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
         pSurfaceCapabilities: *mut VkSurfaceCapabilities2KHR,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceFormats2KHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfaceFormats2KHR(
         physicalDevice: VkPhysicalDevice,
         pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR,
         pSurfaceFormatCount: *mut u32,
