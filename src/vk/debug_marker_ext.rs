@@ -73,9 +73,12 @@ pub struct PFN_vkCmdDebugMarkerInsertEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkDebugMarkerSetObjectTagEXT(device: VkDevice, pTagInfo: *const VkDebugMarkerObjectTagInfoEXT) -> VkResult;
-    pub fn vkDebugMarkerSetObjectNameEXT(
+unsafe extern "system" {
+    pub unsafe fn vkDebugMarkerSetObjectTagEXT(
+        device: VkDevice,
+        pTagInfo: *const VkDebugMarkerObjectTagInfoEXT,
+    ) -> VkResult;
+    pub unsafe fn vkDebugMarkerSetObjectNameEXT(
         device: VkDevice,
         pNameInfo: *const VkDebugMarkerObjectNameInfoEXT,
     ) -> VkResult;

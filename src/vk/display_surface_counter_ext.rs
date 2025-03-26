@@ -53,8 +53,8 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2EXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetPhysicalDeviceSurfaceCapabilities2EXT(
+unsafe extern "system" {
+    pub unsafe fn vkGetPhysicalDeviceSurfaceCapabilities2EXT(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceCapabilities: *mut VkSurfaceCapabilities2EXT,

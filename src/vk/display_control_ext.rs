@@ -100,26 +100,26 @@ pub struct PFN_vkGetSwapchainCounterEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkDisplayPowerControlEXT(
+unsafe extern "system" {
+    pub unsafe fn vkDisplayPowerControlEXT(
         device: VkDevice,
         display: VkDisplayKHR,
         pDisplayPowerInfo: *const VkDisplayPowerInfoEXT,
     ) -> VkResult;
-    pub fn vkRegisterDeviceEventEXT(
+    pub unsafe fn vkRegisterDeviceEventEXT(
         device: VkDevice,
         pDeviceEventInfo: *const VkDeviceEventInfoEXT,
         pAllocator: *const VkAllocationCallbacks,
         pFence: *mut VkFence,
     ) -> VkResult;
-    pub fn vkRegisterDisplayEventEXT(
+    pub unsafe fn vkRegisterDisplayEventEXT(
         device: VkDevice,
         display: VkDisplayKHR,
         pDisplayEventInfo: *const VkDisplayEventInfoEXT,
         pAllocator: *const VkAllocationCallbacks,
         pFence: *mut VkFence,
     ) -> VkResult;
-    pub fn vkGetSwapchainCounterEXT(
+    pub unsafe fn vkGetSwapchainCounterEXT(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         counter: VkSurfaceCounterFlagsEXT,

@@ -21,8 +21,8 @@ pub struct PFN_vkCmdWriteBufferMarkerAMD(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCmdWriteBufferMarkerAMD(
+unsafe extern "system" {
+    pub unsafe fn vkCmdWriteBufferMarkerAMD(
         commandBuffer: VkCommandBuffer,
         pipelineStage: VkPipelineStageFlags,
         dstBuffer: VkBuffer,

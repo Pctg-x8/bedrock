@@ -43,8 +43,8 @@ pub struct PFN_vkSetHdrMetadataEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkSetHdrMetadataEXT(
+unsafe extern "system" {
+    pub unsafe fn vkSetHdrMetadataEXT(
         device: VkDevice,
         swapchainCount: u32,
         pSwapchains: *const VkSwapchainKHR,

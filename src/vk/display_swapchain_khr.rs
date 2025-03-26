@@ -33,8 +33,8 @@ pub struct PFN_vkCreateSharedSwapchainsKHR(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateSharedSwapchainsKHR(
+unsafe extern "system" {
+    pub unsafe fn vkCreateSharedSwapchainsKHR(
         device: VkDevice,
         swapchainCount: u32,
         pCreateInfos: *const VkSwapchainCreateInfoKHR,

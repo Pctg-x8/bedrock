@@ -34,8 +34,8 @@ pub struct PFN_vkCreateViSurfaceNN(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateViSurfaceNN(
+unsafe extern "system" {
+    pub unsafe fn vkCreateViSurfaceNN(
         instance: VkInstance,
         pCreateInfo: *const VkViSurfaceCreateInfoNN,
         pAllocator: *const VkAllocationCallbacks,

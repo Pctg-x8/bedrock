@@ -2097,7 +2097,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_SURFACE_LOST_KHR`]
-    #[implements("VK_EXT_full_screen_exclusive", "Alloc")]
+    #[implements("VK_EXT_full_screen_exclusive", "alloc")]
     fn surface_present_modes2_alloc(
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,

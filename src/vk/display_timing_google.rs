@@ -63,13 +63,13 @@ pub struct PFN_vkGetPastPresentationTimingGOOGLE(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetRefreshCycleDurationGOOGLE(
+unsafe extern "system" {
+    pub unsafe fn vkGetRefreshCycleDurationGOOGLE(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE,
     ) -> VkResult;
-    pub fn vkGetPastPresentationTimingGOOGLE(
+    pub unsafe fn vkGetPastPresentationTimingGOOGLE(
         device: VkDevice,
         swapchain: VkSwapchainKHR,
         pPresentationTimingCount: *mut u32,

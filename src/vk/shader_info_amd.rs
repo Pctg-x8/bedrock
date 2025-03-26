@@ -49,8 +49,8 @@ pub struct PFN_vkGetShaderInfoAMD(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkGetShaderInfoAMD(
+unsafe extern "system" {
+    pub unsafe fn vkGetShaderInfoAMD(
         device: VkDevice,
         pipeline: VkPipeline,
         shaderStage: VkShaderStageFlags,

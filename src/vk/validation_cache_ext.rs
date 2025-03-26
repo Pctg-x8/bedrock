@@ -90,25 +90,25 @@ pub struct PFN_vkGetValidationCacheDataEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateValidationCacheEXT(
+unsafe extern "system" {
+    pub unsafe fn vkCreateValidationCacheEXT(
         device: VkDevice,
         pCreateInfo: *const VkValidationCacheCreateInfoEXT,
         pAllocator: *const VkAllocationCallbacks,
         pValidationCache: *mut VkValidationCacheEXT,
     ) -> VkResult;
-    pub fn vkDestroyValidationCacheEXT(
+    pub unsafe fn vkDestroyValidationCacheEXT(
         device: VkDevice,
         validationCache: VkValidationCacheEXT,
         pAllocator: *const VkAllocationCallbacks,
     );
-    pub fn vkMergeValidationCachesEXT(
+    pub unsafe fn vkMergeValidationCachesEXT(
         device: VkDevice,
         dstCache: VkValidationCacheEXT,
         srcCacheCount: u32,
         pSrcCaches: *const VkValidationCacheEXT,
     ) -> VkResult;
-    pub fn vkGetValidationCacheDataEXT(
+    pub unsafe fn vkGetValidationCacheDataEXT(
         device: VkDevice,
         validationCache: VkValidationCacheEXT,
         pDataSize: *mut usize,

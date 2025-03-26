@@ -133,12 +133,12 @@ pub struct PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCmdSetSampleLocationsEXT(
+unsafe extern "system" {
+    pub unsafe fn vkCmdSetSampleLocationsEXT(
         commandBuffer: VkCommandBuffer,
         pSampleLocationsInfo: *const VkSampleLocationsInfoEXT,
     );
-    pub fn vkGetPhysicalDeviceMultisamplePropertiesEXT(
+    pub unsafe fn vkGetPhysicalDeviceMultisamplePropertiesEXT(
         physicalDevice: VkPhysicalDevice,
         samples: VkSampleCountFlags,
         pMultisampleProperties: *mut VkMultisamplePropertiesEXT,

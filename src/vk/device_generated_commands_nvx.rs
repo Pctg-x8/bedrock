@@ -303,44 +303,44 @@ pub struct PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkCreateIndirectCommandsLayoutNVX(
+unsafe extern "system" {
+    pub unsafe fn vkCreateIndirectCommandsLayoutNVX(
         device: VkDevice,
         pCreateInfo: *const VkIndirectCommandsLayoutCreateInfoNVX,
         pAllocator: *const VkAllocationCallbacks,
         pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX,
     ) -> VkResult;
-    pub fn vkDestroyIndirectCommandsLayoutNVX(
+    pub unsafe fn vkDestroyIndirectCommandsLayoutNVX(
         device: VkDevice,
         indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
         pAllocator: *const VkAllocationCallbacks,
     );
-    pub fn vkCreateObjectTableNVX(
+    pub unsafe fn vkCreateObjectTableNVX(
         device: VkDevice,
         pCreateInfo: *const VkObjectTableCreateInfoNVX,
         pAllocator: *const VkAllocationCallbacks,
         pObjectTable: *mut VkObjectTableNVX,
     ) -> VkResult;
-    pub fn vkDestroyObjectTableNVX(
+    pub unsafe fn vkDestroyObjectTableNVX(
         device: VkDevice,
         objectTable: VkObjectTableNVX,
         pAllocator: *const VkAllocationCallbacks,
     );
-    pub fn vkRegisterObjectsNVX(
+    pub unsafe fn vkRegisterObjectsNVX(
         device: VkDevice,
         objectTable: VkObjectTableNVX,
         objectCount: u32,
         ppObjectTableEntries: *const *const VkObjectTableEntryNVX,
         pObjectIndices: *const u32,
     ) -> VkResult;
-    pub fn vkUnregisterObjectsNVX(
+    pub unsafe fn vkUnregisterObjectsNVX(
         device: VkDevice,
         objectTable: VkObjectTableNVX,
         objectCount: u32,
         pObjectEntryTypes: *const VkObjectEntryTypeNVX,
         pObjectIndices: *const u32,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(
+    pub unsafe fn vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(
         physicalDevice: VkPhysicalDevice,
         pFeatures: *mut VkDeviceGeneratedCommandsFeaturesNVX,
         pLimits: *mut VkDeviceGeneratedCommandsLimitsNVX,
