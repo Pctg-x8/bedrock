@@ -39,6 +39,8 @@ pub use resolver::{PFN, StaticCallable};
 #[cfg(feature = "Implements")]
 #[allow(dead_code)]
 pub mod vkfn;
+#[cfg(feature = "Implements")]
+pub mod vkfn_wrapper;
 
 macro_rules! DerefContainerBracketImpl {
     (for mut $t: path { $($required: item)* }) => {
