@@ -148,6 +148,14 @@ pub struct CmdRecord<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffe
     device: &'d Device,
 }
 #[implements]
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, Device>
+{
+    pub const fn new(ptr: &'d mut CommandBuffer, device: &'d Device) -> Self {
+        Self { ptr, device }
+    }
+}
+#[implements]
 impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer>, Device: 'd + ?Sized>
     CmdRecord<'d, CommandBuffer, Device>
 {
