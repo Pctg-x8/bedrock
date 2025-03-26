@@ -645,23 +645,8 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     #[deprecated = "do not use this directly(this does not provide caching!)"]
     #[implements]
     #[inline]
-    fn extra_procedure_raw(&self, name: &core::ffi::CStr) -> Option<PFN_vkVoidFunction> {
+    fn extra_procedure(&self, name: &core::ffi::CStr) -> Option<PFN_vkVoidFunction> {
         unsafe { crate::vkfn::get_instance_proc_addr(self.native_ptr(), name.as_ptr()) }
-    }
-
-    /// Return a function pointer for a command
-    /// # Failures
-    /// If function is not provided by instance or `name` is empty, returns `None`
-    #[deprecated = "do not use this directly(this does not provide caching)"]
-    #[implements("alloc")]
-    fn extra_procedure<F: crate::fnconv::FnTransmute>(&self, name: &str) -> Option<F> {
-        if name.is_empty() {
-            return None;
-        }
-
-        #[allow(deprecated)]
-        self.extra_procedure_raw(&crate::alloc::str_to_cstr(name).unwrap())
-            .map(|f| unsafe { crate::fnconv::FnTransmute::from_fn(f) })
     }
 
     /// Counts the physical devices accessible to a Vulkan instance

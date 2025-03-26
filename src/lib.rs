@@ -34,14 +34,11 @@ pub mod error;
 mod resolver;
 #[cfg(feature = "Implements")]
 pub use resolver::ResolverInterface;
-pub use resolver::{StaticCallable, PFN};
+pub use resolver::{PFN, StaticCallable};
 
 #[cfg(feature = "Implements")]
 #[allow(dead_code)]
 mod vkfn;
-
-#[cfg(feature = "Implements")]
-mod fnconv;
 
 macro_rules! DerefContainerBracketImpl {
     (for mut $t: path { $($required: item)* }) => {

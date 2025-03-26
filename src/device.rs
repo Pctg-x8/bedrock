@@ -7,7 +7,7 @@ use ffi_helper::{CStrFFIRef, opt_pointer, slice_as_mut_ptr_empty_null, slice_as_
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
 #[cfg(feature = "Implements")]
-use crate::{DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, fnconv::FnTransmute};
+use crate::{DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle};
 
 #[implements]
 #[allow(dead_code)]
@@ -849,11 +849,6 @@ unsafe impl VulkanSinkStructureAsRef for PhysicalDeviceSynchronization2Features<
     fn as_generic_mut(&mut self) -> &mut GenericVulkanSinkStructure {
         VulkanSinkStructureAsRef::as_generic_mut(&mut self.0)
     }
-}
-
-pub trait ExtraProcedureProvider {
-    #[implements]
-    unsafe fn extra_procedure<F: FnTransmute>(&self, name: &str) -> Option<F>;
 }
 
 pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
