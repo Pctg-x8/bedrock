@@ -1,7 +1,7 @@
-use derives::implements;
-
 use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
 use crate::*;
+use core::marker::PhantomData;
+use derives::implements;
 
 #[cfg(feature = "alloc")]
 pub struct TemporalSubmissionBatchResources {
@@ -170,6 +170,80 @@ impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
     #[inline]
     fn collect_resources(&self, target: &mut TemporalSubmissionBatchResources) {
         T::collect_resources(self, target)
+    }
+}
+
+#[repr(transparent)]
+pub struct SubmitInfo<'r, 'rs>(
+    VkSubmitInfo,
+    PhantomData<(
+        &'rs [VkHandleRef<'r, VkSemaphore>],
+        &'rs [VkPipelineStageFlags],
+        &'rs [VkHandleRef<'r, VkCommandBuffer>],
+        &'rs [VkHandleRef<'r, VkSemaphore>],
+    )>,
+);
+impl<'r, 'rs> SubmitInfo<'r, 'rs> {
+    pub unsafe fn new_unchecked(
+        wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+        wait_semaphore_dst_stages: &'rs [VkPipelineStageFlags],
+        command_buffers: &'rs [VkHandleRef<'r, VkCommandBuffer>],
+        signal_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+    ) -> Self {
+        Self(
+            VkSubmitInfo {
+                sType: VkSubmitInfo::TYPE,
+                pNext: core::ptr::null(),
+                waitSemaphoreCount: wait_semaphores.len() as _,
+                pWaitSemaphores: slice_as_ptr_empty_null(wait_semaphores) as _,
+                pWaitDstStageMask: slice_as_ptr_empty_null(wait_semaphore_dst_stages),
+                commandBufferCount: command_buffers.len() as _,
+                pCommandBuffers: slice_as_ptr_empty_null(command_buffers) as _,
+                signalSemaphoreCount: signal_semaphores.len() as _,
+                pSignalSemaphores: slice_as_ptr_empty_null(signal_semaphores) as _,
+            },
+            PhantomData,
+        )
+    }
+
+    pub fn new(
+        wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+        wait_semaphore_dst_stages: &'rs [VkPipelineStageFlags],
+        command_buffers: &'rs [VkHandleRef<'r, VkCommandBuffer>],
+        signal_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+    ) -> Self {
+        assert_eq!(wait_semaphores.len(), wait_semaphore_dst_stages.len());
+
+        unsafe {
+            Self::new_unchecked(
+                wait_semaphores,
+                wait_semaphore_dst_stages,
+                command_buffers,
+                signal_semaphores,
+            )
+        }
+    }
+
+    pub const fn new_array<const NW: usize, const NC: usize, const NS: usize>(
+        wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>; NW],
+        wait_semaphore_dst_stages: &'rs [VkPipelineStageFlags; NW],
+        command_buffers: &'rs [VkHandleRef<'r, VkCommandBuffer>; NC],
+        signal_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>; NS],
+    ) -> Self {
+        Self(
+            VkSubmitInfo {
+                sType: VkSubmitInfo::TYPE,
+                pNext: core::ptr::null(),
+                waitSemaphoreCount: NW as _,
+                pWaitSemaphores: slice_as_ptr_empty_null(wait_semaphores) as _,
+                pWaitDstStageMask: slice_as_ptr_empty_null(wait_semaphore_dst_stages),
+                commandBufferCount: NC as _,
+                pCommandBuffers: slice_as_ptr_empty_null(command_buffers) as _,
+                signalSemaphoreCount: NS as _,
+                pSignalSemaphores: slice_as_ptr_empty_null(signal_semaphores) as _,
+            },
+            PhantomData,
+        )
     }
 }
 

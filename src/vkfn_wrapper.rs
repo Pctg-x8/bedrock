@@ -24,12 +24,12 @@ pub unsafe fn device_wait_idle(device: VkDevice) -> crate::Result<()> {
 }
 
 #[inline]
-pub unsafe fn queue_submit(queue: VkQueue, submit_info: &[VkSubmitInfo], fence: Option<VkFence>) -> crate::Result<()> {
+pub unsafe fn queue_submit(queue: VkQueue, submit_info: &[SubmitInfo], fence: Option<VkFence>) -> crate::Result<()> {
     unsafe {
         crate::vkfn::queue_submit(
             queue,
             submit_info.len() as _,
-            submit_info.as_ptr(),
+            submit_info.as_ptr() as _,
             fence.unwrap_or(VkFence::NULL),
         )
         .into_result()
@@ -44,7 +44,7 @@ pub unsafe fn queue_submit2(queue: VkQueue, submit_info: &[SubmitInfo2], fence: 
         crate::vkfn::queue_submit2(
             queue,
             submit_info.len() as _,
-            submit_info.as_ptr() as *const _ as _,
+            submit_info.as_ptr() as _,
             fence.unwrap_or(VkFence::NULL),
         )
         .into_result()
