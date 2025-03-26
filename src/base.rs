@@ -2105,13 +2105,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let n = self.surface_present_mode2_count(surface_info)?;
         if n == 0 {
             // no items
-            return Ok(crate::empty_sink_buffer());
+            return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc_sink_buffer(n as _) };
+        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
         self.surface_present_modes2(surface_info, &mut xs)?;
 
-        Ok(x)
+        Ok(xs)
     }
 }
 DerefContainerBracketImpl!(for PhysicalDevice {});
