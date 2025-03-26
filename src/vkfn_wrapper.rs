@@ -24,13 +24,17 @@ pub unsafe fn device_wait_idle(device: VkDevice) -> crate::Result<()> {
 }
 
 #[inline]
-pub unsafe fn queue_submit(queue: VkQueue, submit_info: &[SubmitInfo], fence: Option<VkFence>) -> crate::Result<()> {
+pub unsafe fn queue_submit(
+    mut queue: VkHandleRefMut<VkQueue>,
+    submit_info: &[SubmitInfo],
+    mut fence: Option<VkHandleRefMut<VkFence>>,
+) -> crate::Result<()> {
     unsafe {
         crate::vkfn::queue_submit(
-            queue,
+            queue.native_ptr_mut(),
             submit_info.len() as _,
             submit_info.as_ptr() as _,
-            fence.unwrap_or(VkFence::NULL),
+            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
         )
         .into_result()
         .map(drop)
@@ -39,13 +43,17 @@ pub unsafe fn queue_submit(queue: VkQueue, submit_info: &[SubmitInfo], fence: Op
 
 #[cfg(feature = "Allow1_3APIs")]
 #[inline]
-pub unsafe fn queue_submit2(queue: VkQueue, submit_info: &[SubmitInfo2], fence: Option<VkFence>) -> crate::Result<()> {
+pub unsafe fn queue_submit2(
+    mut queue: VkHandleRefMut<VkQueue>,
+    submit_info: &[SubmitInfo2],
+    mut fence: Option<VkHandleRefMut<VkFence>>,
+) -> crate::Result<()> {
     unsafe {
         crate::vkfn::queue_submit2(
-            queue,
+            queue.native_ptr_mut(),
             submit_info.len() as _,
             submit_info.as_ptr() as _,
-            fence.unwrap_or(VkFence::NULL),
+            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
         )
         .into_result()
         .map(drop)
@@ -60,14 +68,19 @@ pub unsafe fn queue_present(queue: VkQueue, present_info: &PresentInfo) -> crate
 
 #[inline]
 pub unsafe fn queue_bind_sparse(
-    queue: VkQueue,
+    mut queue: VkHandleRefMut<VkQueue>,
     infos: &[VkBindSparseInfo],
-    fence: Option<VkFence>,
+    mut fence: Option<VkHandleRefMut<VkFence>>,
 ) -> crate::Result<()> {
     unsafe {
-        crate::vkfn::queue_bind_sparse(queue, infos.len() as _, infos.as_ptr(), fence.unwrap_or(VkFence::NULL))
-            .into_result()
-            .map(drop)
+        crate::vkfn::queue_bind_sparse(
+            queue.native_ptr_mut(),
+            infos.len() as _,
+            infos.as_ptr(),
+            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
+        )
+        .into_result()
+        .map(drop)
     }
 }
 
