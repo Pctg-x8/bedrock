@@ -199,6 +199,18 @@ pub enum CommandBufferLevel {
     Secondary = VK_COMMAND_BUFFER_LEVEL_SECONDARY,
 }
 
+/// Bitmask controlling behavior of a command pool reset.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[bitflags_newtype]
+pub struct CommandPoolResetFlags(VkCommandPoolResetFlags);
+impl CommandPoolResetFlags {
+    /// Empty bits.
+    pub const EMPTY: Self = Self(0);
+
+    /// Resetting a command pool recycles all of the resources from the command pool back to the system.
+    pub const RELEASE_RESOURCES: Self = Self(VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
+}
+
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CommandBufferAllocateInfo<'r>(
