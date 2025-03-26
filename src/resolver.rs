@@ -24,7 +24,7 @@ cfg_if! {
         /// Sets custom resolver object for vulkan api call
         pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface>) {
             crate::vkfn::FunctionPointerTable::reset();
-            *GLOBAL_RESOLVER.write() = Some(Box::into_raw(resolver));
+            *GLOBAL_RESOLVER.write() = Some(resolver);
         }
 
         /// Gets current resolver object

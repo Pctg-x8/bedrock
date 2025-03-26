@@ -99,54 +99,32 @@ pub trait VkObject: VkHandle {
     #[implements("VK_EXT_debug_utils")]
     fn set_name(&self, name: Option<&core::ffi::CStr>) -> crate::Result<()>
     where
-        Self: DeviceChild,
-        Self::ConcreteDevice: InstanceChild,
+        Self: DeviceChild<ConcreteDevice: InstanceChild>,
         Self::Handle: VkRawHandle,
     {
         self.device()
             .set_object_name(&DebugUtilsObjectNameInfo::new(self, name))
     }
 }
-impl<T> VkObject for &'_ T
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for &'_ T {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for &'_ mut T
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for &'_ mut T {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for std::rc::Rc<T>
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for std::rc::Rc<T> {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for std::sync::Arc<T>
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for std::sync::Arc<T> {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for std::cell::Ref<'_, T>
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for std::cell::Ref<'_, T> {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for std::cell::RefMut<'_, T>
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for std::cell::RefMut<'_, T> {
     const TYPE: VkObjectType = T::TYPE;
 }
-impl<T> VkObject for std::sync::MutexGuard<'_, T>
-where
-    T: VkObject + ?Sized,
-{
+impl<T: VkObject + ?Sized> VkObject for std::sync::MutexGuard<'_, T> {
     const TYPE: VkObjectType = T::TYPE;
 }
 
@@ -156,7 +134,7 @@ pub trait AnalogNumRange<T> {
     fn end(&self) -> T;
     fn count(&self) -> T
     where
-        T: ::std::ops::Sub<T, Output = T> + Copy,
+        T: std::ops::Sub<T, Output = T> + Copy,
     {
         self.end() - self.begin()
     }
@@ -184,8 +162,17 @@ where
     }
 }
 
+// Vulkan ReExports //
+pub type DeviceSize = VkDeviceSize;
+pub type Extent2D = VkExtent2D;
+pub type Offset2D = VkOffset2D;
+pub type Rect2D = VkRect2D;
+pub type Viewport = VkViewport;
+pub type Extent3D = VkExtent3D;
+pub type Offset3D = VkOffset3D;
+
 // Spreading single value to all dimensions
-impl VkExtent2D {
+impl Extent2D {
     pub const fn spread1(value: u32) -> Self {
         Self {
             width: value,
@@ -193,7 +180,7 @@ impl VkExtent2D {
         }
     }
 }
-impl VkExtent3D {
+impl Extent3D {
     pub const fn spread1(value: u32) -> Self {
         Self {
             width: value,
@@ -202,12 +189,12 @@ impl VkExtent3D {
         }
     }
 }
-impl VkOffset2D {
+impl Offset2D {
     pub const fn spread1(value: i32) -> Self {
         Self { x: value, y: value }
     }
 }
-impl VkOffset3D {
+impl Offset3D {
     pub const fn spread1(value: i32) -> Self {
         Self {
             x: value,
@@ -218,18 +205,18 @@ impl VkOffset3D {
 }
 
 // into conversion to larger dimension //
-impl VkExtent2D {
-    pub const fn with_depth(self, depth: u32) -> VkExtent3D {
-        VkExtent3D {
+impl Extent2D {
+    pub const fn with_depth(self, depth: u32) -> Extent3D {
+        Extent3D {
             width: self.width,
             height: self.height,
             depth,
         }
     }
 }
-impl VkOffset2D {
-    pub const fn with_z(self, z: i32) -> VkOffset3D {
-        VkOffset3D {
+impl Offset2D {
+    pub const fn with_z(self, z: i32) -> Offset3D {
+        Offset3D {
             x: self.x,
             y: self.y,
             z,
@@ -237,158 +224,146 @@ impl VkOffset2D {
     }
 }
 // AsRef for self //
-impl AsRef<VkExtent3D> for VkExtent3D {
+impl AsRef<Extent3D> for Extent3D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
-impl AsRef<VkExtent2D> for VkExtent2D {
+impl AsRef<Extent2D> for Extent2D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
-impl AsRef<VkOffset3D> for VkOffset3D {
+impl AsRef<Offset3D> for Offset3D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
-impl AsRef<VkOffset2D> for VkOffset2D {
+impl AsRef<Offset2D> for Offset2D {
     fn as_ref(&self) -> &Self {
         self
     }
 }
 
 // AsRef Conversion to smaller-dimension
-impl AsRef<VkExtent2D> for VkExtent3D {
-    fn as_ref(&self) -> &VkExtent2D {
-        unsafe { std::mem::transmute(self) }
+impl AsRef<Extent2D> for Extent3D {
+    fn as_ref(&self) -> &Extent2D {
+        unsafe { core::mem::transmute(self) }
     }
 }
-impl AsRef<VkOffset2D> for VkOffset3D {
-    fn as_ref(&self) -> &VkOffset2D {
-        unsafe { std::mem::transmute(self) }
+impl AsRef<Offset2D> for Offset3D {
+    fn as_ref(&self) -> &Offset2D {
+        unsafe { core::mem::transmute(self) }
     }
 }
 
 // Swizzling
-impl VkExtent3D {
-    #[inline]
-    pub const fn wh(&self) -> VkExtent2D {
-        VkExtent2D {
+impl Extent3D {
+    pub const fn wh(&self) -> Extent2D {
+        Extent2D {
             width: self.width,
             height: self.height,
         }
     }
 
-    #[inline]
-    pub const fn wd(&self) -> VkExtent2D {
-        VkExtent2D {
+    pub const fn wd(&self) -> Extent2D {
+        Extent2D {
             width: self.width,
             height: self.depth,
         }
     }
 
-    #[inline]
-    pub const fn hw(&self) -> VkExtent2D {
-        VkExtent2D {
+    pub const fn hw(&self) -> Extent2D {
+        Extent2D {
             width: self.height,
             height: self.width,
         }
     }
 
-    #[inline]
-    pub const fn hd(&self) -> VkExtent2D {
-        VkExtent2D {
+    pub const fn hd(&self) -> Extent2D {
+        Extent2D {
             width: self.height,
             height: self.depth,
         }
     }
 
-    #[inline]
-    pub const fn dw(&self) -> VkExtent2D {
-        VkExtent2D {
+    pub const fn dw(&self) -> Extent2D {
+        Extent2D {
             width: self.depth,
             height: self.width,
         }
     }
 
-    #[inline]
-    pub const fn dh(&self) -> VkExtent2D {
-        VkExtent2D {
+    pub const fn dh(&self) -> Extent2D {
+        Extent2D {
             width: self.depth,
             height: self.height,
         }
     }
 }
-impl VkOffset3D {
-    #[inline]
-    pub const fn xy(&self) -> VkOffset2D {
-        VkOffset2D { x: self.x, y: self.y }
+impl Offset3D {
+    pub const fn xy(&self) -> Offset2D {
+        Offset2D { x: self.x, y: self.y }
     }
 
-    #[inline]
-    pub const fn xz(&self) -> VkOffset2D {
-        VkOffset2D { x: self.x, y: self.z }
+    pub const fn xz(&self) -> Offset2D {
+        Offset2D { x: self.x, y: self.z }
     }
 
-    #[inline]
-    pub const fn yx(&self) -> VkOffset2D {
-        VkOffset2D { x: self.y, y: self.x }
+    pub const fn yx(&self) -> Offset2D {
+        Offset2D { x: self.y, y: self.x }
     }
 
-    #[inline]
-    pub const fn yz(&self) -> VkOffset2D {
-        VkOffset2D { x: self.y, y: self.z }
+    pub const fn yz(&self) -> Offset2D {
+        Offset2D { x: self.y, y: self.z }
     }
 
-    #[inline]
-    pub const fn zx(&self) -> VkOffset2D {
-        VkOffset2D { x: self.z, y: self.x }
+    pub const fn zx(&self) -> Offset2D {
+        Offset2D { x: self.z, y: self.x }
     }
 
-    #[inline]
-    pub const fn zy(&self) -> VkOffset2D {
-        VkOffset2D { x: self.z, y: self.y }
+    pub const fn zy(&self) -> Offset2D {
+        Offset2D { x: self.z, y: self.y }
     }
 }
 
 /// Utility Constants
-impl VkExtent2D {
+impl Extent2D {
     pub const ONE: Self = Self::spread1(1);
 }
-impl VkExtent3D {
+impl Extent3D {
     pub const ONE: Self = Self::spread1(1);
 }
-impl VkOffset2D {
+impl Offset2D {
     pub const ZERO: Self = Self::spread1(0);
 }
-impl VkOffset3D {
+impl Offset3D {
     pub const ZERO: Self = Self::spread1(0);
 }
 
 /// Viewport and Rect Util Functions
-impl VkExtent2D {
-    pub const fn into_rect(self, offset: VkOffset2D) -> VkRect2D {
-        VkRect2D { offset, extent: self }
+impl Extent2D {
+    pub const fn into_rect(self, offset: Offset2D) -> Rect2D {
+        Rect2D { offset, extent: self }
     }
 }
-impl From<VkViewport> for VkRect2D {
-    fn from(vp: VkViewport) -> Self {
-        VkRect2D {
-            offset: VkOffset2D {
+impl From<Viewport> for Rect2D {
+    fn from(vp: Viewport) -> Self {
+        Rect2D {
+            offset: Offset2D {
                 x: vp.x as _,
                 y: vp.y as _,
             },
-            extent: VkExtent2D {
+            extent: Extent2D {
                 width: vp.width as _,
                 height: vp.height as _,
             },
         }
     }
 }
-impl VkRect2D {
-    pub const fn make_viewport(&self, depth_range: std::ops::Range<f32>) -> VkViewport {
-        VkViewport {
+impl Rect2D {
+    pub const fn make_viewport(&self, depth_range: std::ops::Range<f32>) -> Viewport {
+        Viewport {
             x: self.offset.x as _,
             y: self.offset.y as _,
             width: self.extent.width as _,
@@ -398,22 +373,22 @@ impl VkRect2D {
         }
     }
 }
-impl VkViewport {
-    pub const fn from_rect_with_depth_range(rect: &VkRect2D, depth_range: std::ops::Range<f32>) -> Self {
+impl Viewport {
+    pub const fn from_rect_with_depth_range(rect: &Rect2D, depth_range: core::ops::Range<f32>) -> Self {
         rect.make_viewport(depth_range)
     }
 
-    pub fn set_offset(&mut self, offset: &VkOffset2D) -> &mut Self {
+    pub const fn set_offset(&mut self, offset: &Offset2D) -> &mut Self {
         self.x = offset.x as _;
         self.y = offset.y as _;
         self
     }
-    pub fn set_extent(&mut self, extent: &VkExtent2D) -> &mut Self {
+    pub const fn set_extent(&mut self, extent: &Extent2D) -> &mut Self {
         self.width = extent.width as _;
         self.height = extent.height as _;
         self
     }
-    pub fn set_depth_range(&mut self, range: std::ops::Range<f32>) -> &mut Self {
+    pub const fn set_depth_range(&mut self, range: core::ops::Range<f32>) -> &mut Self {
         self.minDepth = range.start;
         self.maxDepth = range.end;
         self

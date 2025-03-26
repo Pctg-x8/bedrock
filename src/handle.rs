@@ -29,20 +29,12 @@ DerefContainerBracketImpl!(for VkHandle {
     #[inline(always)]
     fn native_ptr(&self) -> Self::Handle { T::native_ptr(self) }
 });
-impl<T> VkHandleMut for &'_ mut T
-where
-    T: VkHandleMut + ?Sized,
-{
+DerefContainerBracketImpl!(for mut VkHandleMut {
     #[inline(always)]
-    fn native_ptr_mut(&mut self) -> Self::Handle {
-        T::native_ptr_mut(*self)
-    }
-}
+    fn native_ptr_mut(&mut self) -> Self::Handle { T::native_ptr_mut(self) }
+});
 
-impl<T> VkHandle for std::cell::Ref<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for std::cell::Ref<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -50,10 +42,7 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandle for std::cell::RefMut<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for std::cell::RefMut<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -61,20 +50,14 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandleMut for std::cell::RefMut<'_, T>
-where
-    T: VkHandleMut + ?Sized,
-{
+impl<T: VkHandleMut + ?Sized> VkHandleMut for std::cell::RefMut<'_, T> {
     #[inline(always)]
     fn native_ptr_mut(&mut self) -> Self::Handle {
         T::native_ptr_mut(&mut **self)
     }
 }
 
-impl<T> VkHandle for std::sync::MutexGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for std::sync::MutexGuard<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -82,20 +65,14 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandleMut for std::sync::MutexGuard<'_, T>
-where
-    T: VkHandleMut + ?Sized,
-{
+impl<T: VkHandleMut + ?Sized> VkHandleMut for std::sync::MutexGuard<'_, T> {
     #[inline(always)]
     fn native_ptr_mut(&mut self) -> Self::Handle {
         T::native_ptr_mut(&mut **self)
     }
 }
 
-impl<T> VkHandle for std::sync::RwLockReadGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for std::sync::RwLockReadGuard<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -104,10 +81,7 @@ where
     }
 }
 
-impl<T> VkHandle for std::sync::RwLockWriteGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for std::sync::RwLockWriteGuard<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -115,20 +89,14 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandleMut for std::sync::RwLockWriteGuard<'_, T>
-where
-    T: VkHandleMut + ?Sized,
-{
+impl<T: VkHandleMut + ?Sized> VkHandleMut for std::sync::RwLockWriteGuard<'_, T> {
     #[inline(always)]
     fn native_ptr_mut(&mut self) -> Self::Handle {
         T::native_ptr_mut(&mut **self)
     }
 }
 
-impl<T> VkHandle for parking_lot::RwLockReadGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for parking_lot::RwLockReadGuard<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -136,10 +104,7 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandle for parking_lot::RwLockWriteGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for parking_lot::RwLockWriteGuard<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -147,20 +112,14 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandleMut for parking_lot::RwLockWriteGuard<'_, T>
-where
-    T: VkHandleMut + ?Sized,
-{
+impl<T: VkHandleMut + ?Sized> VkHandleMut for parking_lot::RwLockWriteGuard<'_, T> {
     #[inline(always)]
     fn native_ptr_mut(&mut self) -> Self::Handle {
         T::native_ptr_mut(&mut **self)
     }
 }
 
-impl<T> VkHandle for parking_lot::MutexGuard<'_, T>
-where
-    T: VkHandle + ?Sized,
-{
+impl<T: VkHandle + ?Sized> VkHandle for parking_lot::MutexGuard<'_, T> {
     type Handle = T::Handle;
 
     #[inline(always)]
@@ -168,20 +127,7 @@ where
         T::native_ptr(&**self)
     }
 }
-impl<T> VkHandleMut for parking_lot::MutexGuard<'_, T>
-where
-    T: VkHandleMut + ?Sized,
-{
-    #[inline(always)]
-    fn native_ptr_mut(&mut self) -> Self::Handle {
-        T::native_ptr_mut(&mut **self)
-    }
-}
-
-impl<T> VkHandleMut for Box<T>
-where
-    T: VkHandleMut + ?Sized,
-{
+impl<T: VkHandleMut + ?Sized> VkHandleMut for parking_lot::MutexGuard<'_, T> {
     #[inline(always)]
     fn native_ptr_mut(&mut self) -> Self::Handle {
         T::native_ptr_mut(&mut **self)

@@ -270,32 +270,39 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
         self.0
     }
 
+    /// Get a mutable pointer in mapped memory with byte offsets
+    /// # Safety
+    /// Caller must guarantee that the pointer and its alignment are valid
+    pub const unsafe fn addr_of_mut<T>(&self, offset: usize) -> *mut T {
+        unsafe { self.0.byte_add(offset) as *mut T }
+    }
+
     /// Get a reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn get<T>(&self, offset: usize) -> &T {
-        unsafe { &*(self.0.add(offset) as *const T) }
+        unsafe { &*(self.0.byte_add(offset) as *const T) }
     }
 
     /// Get a mutable reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn get_mut<T>(&self, offset: usize) -> &mut T {
-        unsafe { &mut *(self.0.add(offset) as *mut T) }
+        unsafe { &mut *(self.0.byte_add(offset) as *mut T) }
     }
 
     /// Get a slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn slice<T>(&self, offset: usize, count: usize) -> &[T] {
-        unsafe { core::slice::from_raw_parts(self.0.add(offset) as *const T, count) }
+        unsafe { core::slice::from_raw_parts(self.0.byte_add(offset) as *const T, count) }
     }
 
     /// Get a mutable slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T] {
-        unsafe { core::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count) }
+        unsafe { core::slice::from_raw_parts_mut(self.0.byte_add(offset) as *mut T, count) }
     }
 
     /// Clone data from slice at the specified offset in mapped memory.

@@ -778,7 +778,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 
     /// Destroy a debug report callback object
     /// # Safety
-    /// * must created from this Instance object
+    /// * must be created from this Instance object
     /// * must not execute in parallel with any Vulkan commands
     #[implements("VK_EXT_debug_report")]
     #[inline]
@@ -823,7 +823,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 
     /// Destroy a debug messenger object
     /// # Safety
-    /// * must created from this Instance object
+    /// * must be created from this Instance object
     /// * must not execute in parallel with any Vulkan commands
     #[implements("VK_EXT_debug_utils")]
     #[inline]
