@@ -33,6 +33,129 @@ impl crate::resolver::ResolverInterface for VkDevice {
     }
 }
 
+#[implements]
+struct DeviceExtFunctions {
+    #[cfg(all(feature = "VK_KHR_maintenance1", not(feature = "Allow1_1APIs")))]
+    trim_command_pool_khr: DeviceResolvedFn<PFN_vkTrimCommandPoolKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+    create_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkCreateDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+    destroy_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkDestroyDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+    update_descriptor_set_with_template_khr: DeviceResolvedFn<PFN_vkUpdateDescriptorSetWithTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+    bind_buffer_memory2_khr: DeviceResolvedFn<PFN_vkBindBufferMemory2KHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+    bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
+    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
+    get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
+    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+    get_fence_fd_khr: DeviceResolvedFn<PFN_vkGetFenceFdKHR>,
+    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+    import_fence_fd_khr: DeviceResolvedFn<PFN_vkImportFenceFdKHR>,
+    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+    acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkAcquireFullScreenExclusiveModeEXT>,
+    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+    release_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkReleaseFullScreenExclusiveModeEXT>,
+    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+    get_memory_fd_khr: DeviceResolvedFn<PFN_vkGetMemoryFdKHR>,
+    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+    get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
+    #[cfg(all(feature = "VK_EXT_external_memory_host"))]
+    get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
+    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+    import_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkImportSemaphoreWin32HandleKHR>,
+    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+    get_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkGetSemaphoreWin32HandleKHR>,
+    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+    get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
+    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+    get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
+    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+    get_buffer_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetBufferMemoryRequirements2KHR>,
+    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+    get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
+    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+    get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    create_render_pass_2_khr: DeviceResolvedFn<PFN_vkCreateRenderPass2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    cmd_begin_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdBeginRenderPass2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
+    #[cfg(all(feature = "VK_KHR_synchronization2", not(feature = "Allow1_3APIs")))]
+    cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
+    #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
+    cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
+    #[cfg(all(feature = "VK_EXT_sample_locations"))]
+    cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
+}
+#[implements]
+impl DeviceExtFunctions {
+    const fn new(handle: VkDevice) -> Self {
+        Self {
+            #[cfg(all(feature = "VK_KHR_maintenance1", not(feature = "Allow1_1APIs")))]
+            trim_command_pool_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
+            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+            get_fence_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+            import_fence_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_external_memory_host"))]
+            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            create_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_synchronization2", not(feature = "Allow1_3APIs")))]
+            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
+            cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_sample_locations"))]
+            cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
+        }
+    }
+}
+
 /// Opaque handle to a device object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DEVICE)]
@@ -40,244 +163,15 @@ pub struct DeviceObject<Instance> {
     #[handle]
     handle: VkDevice,
     parent: Instance,
-    #[cfg(all(
-        feature = "VK_KHR_maintenance1",
-        feature = "Implements",
-        not(feature = "Allow1_1APIs")
-    ))]
-    trim_command_pool_khr: DeviceResolvedFn<PFN_vkTrimCommandPoolKHR>,
-    #[cfg(all(
-        feature = "VK_KHR_descriptor_update_template",
-        feature = "Implements",
-        not(feature = "Allow1_1APIs")
-    ))]
-    create_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkCreateDescriptorUpdateTemplateKHR>,
-    #[cfg(all(
-        feature = "VK_KHR_descriptor_update_template",
-        feature = "Implements",
-        not(feature = "Allow1_1APIs")
-    ))]
-    destroy_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkDestroyDescriptorUpdateTemplateKHR>,
-    #[cfg(all(
-        feature = "VK_KHR_descriptor_update_template",
-        feature = "Implements",
-        not(feature = "Allow1_1APIs")
-    ))]
-    update_descriptor_set_with_template_khr: DeviceResolvedFn<PFN_vkUpdateDescriptorSetWithTemplateKHR>,
-    #[cfg(all(
-        feature = "VK_KHR_bind_memory2",
-        feature = "Implements",
-        not(feature = "Allow1_1APIs")
-    ))]
-    bind_buffer_memory2_khr: DeviceResolvedFn<PFN_vkBindBufferMemory2KHR>,
-    #[cfg(all(
-        feature = "VK_KHR_bind_memory2",
-        feature = "Implements",
-        not(feature = "Allow1_1APIs")
-    ))]
-    bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
-    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
-    get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-    get_fence_fd_khr: DeviceResolvedFn<PFN_vkGetFenceFdKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-    import_fence_fd_khr: DeviceResolvedFn<PFN_vkImportFenceFdKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-    acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkAcquireFullScreenExclusiveModeEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-    release_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkReleaseFullScreenExclusiveModeEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
-    get_memory_fd_khr: DeviceResolvedFn<PFN_vkGetMemoryFdKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
-    get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
-    get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-    import_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkImportSemaphoreWin32HandleKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-    get_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkGetSemaphoreWin32HandleKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-    get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-    get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_get_memory_requirements2",
-        not(feature = "Allow1_1APIs")
-    ))]
-    get_buffer_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetBufferMemoryRequirements2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_get_memory_requirements2",
-        not(feature = "Allow1_1APIs")
-    ))]
-    get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_get_memory_requirements2",
-        not(feature = "Allow1_1APIs")
-    ))]
-    get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_create_renderpass2",
-        not(feature = "Allow1_2APIs")
-    ))]
-    create_render_pass_2_khr: DeviceResolvedFn<PFN_vkCreateRenderPass2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_create_renderpass2",
-        not(feature = "Allow1_2APIs")
-    ))]
-    cmd_begin_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdBeginRenderPass2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_create_renderpass2",
-        not(feature = "Allow1_2APIs")
-    ))]
-    cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_create_renderpass2",
-        not(feature = "Allow1_2APIs")
-    ))]
-    cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_synchronization2",
-        not(feature = "Allow1_3APIs")
-    ))]
-    cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_push_descriptor",
-        not(feature = "Allow1_4APIs")
-    ))]
-    cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
-    cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
+    #[cfg(feature = "Implements")]
+    ext: DeviceExtFunctions,
 }
 impl<Instance> DeviceObject<Instance> {
     pub const fn wrap_handle(handle: VkDevice, parent: Instance) -> Self {
         Self {
             handle,
             parent,
-            #[cfg(all(
-                feature = "VK_KHR_maintenance1",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            trim_command_pool_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "VK_KHR_descriptor_update_template",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "VK_KHR_descriptor_update_template",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "VK_KHR_descriptor_update_template",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "VK_KHR_bind_memory2",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "VK_KHR_bind_memory2",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
-            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-            get_fence_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-            import_fence_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
-            get_memory_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
-            get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
-            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-            get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_get_memory_requirements2",
-                not(feature = "Allow1_1APIs")
-            ))]
-            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_get_memory_requirements2",
-                not(feature = "Allow1_1APIs")
-            ))]
-            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_get_memory_requirements2",
-                not(feature = "Allow1_1APIs")
-            ))]
-            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            create_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_synchronization2",
-                not(feature = "Allow1_3APIs")
-            ))]
-            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_push_descriptor",
-                not(feature = "Allow1_4APIs")
-            ))]
-            cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
-            cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
+            ext: DeviceExtFunctions::new(handle),
         }
     }
 }
@@ -304,19 +198,19 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_maintenance1")]
     fn get_trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
-        *self.trim_command_pool_khr.resolve()
+        *self.ext.trim_command_pool_khr.resolve()
     }
 
     cfg_if! {
         if #[cfg(all(feature = "VK_KHR_descriptor_update_template", feature = "Implements", not(feature = "Allow1_1APIs")))] {
             fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
-                *self.create_descriptor_update_template_khr.resolve()
+                *self.ext.create_descriptor_update_template_khr.resolve()
             }
             fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
-                *self.destroy_descriptor_update_template_khr.resolve()
+                *self.ext.destroy_descriptor_update_template_khr.resolve()
             }
             fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
-                *self.update_descriptor_set_with_template_khr.resolve()
+                *self.ext.update_descriptor_set_with_template_khr.resolve()
             }
         }
     }
@@ -324,10 +218,10 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "VK_KHR_bind_memory2", feature = "Implements", not(feature = "Allow1_1APIs")))] {
             fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
-                *self.bind_buffer_memory2_khr.resolve()
+                *self.ext.bind_buffer_memory2_khr.resolve()
             }
             fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
-                *self.bind_image_memory2_khr.resolve()
+                *self.ext.bind_image_memory2_khr.resolve()
             }
         }
     }
@@ -335,7 +229,7 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))] {
             fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
-                *self.get_image_drm_format_modifier_properties_ext.resolve()
+                *self.ext.get_image_drm_format_modifier_properties_ext.resolve()
             }
         }
     }
@@ -343,10 +237,10 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))] {
             fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
-                *self.get_fence_fd_khr.resolve()
+                *self.ext.get_fence_fd_khr.resolve()
             }
             fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
-                *self.import_fence_fd_khr.resolve()
+                *self.ext.import_fence_fd_khr.resolve()
             }
         }
     }
@@ -354,10 +248,10 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
             fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
-                *self.acquire_full_screen_exclusive_mode_ext.resolve()
+                *self.ext.acquire_full_screen_exclusive_mode_ext.resolve()
             }
             fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
-                *self.release_full_screen_exclusive_mode_ext.resolve()
+                *self.ext.release_full_screen_exclusive_mode_ext.resolve()
             }
         }
     }
@@ -365,10 +259,10 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
             fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
-                *self.get_memory_fd_khr.resolve()
+                *self.ext.get_memory_fd_khr.resolve()
             }
             fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
-                *self.get_memory_fd_properties_khr.resolve()
+                *self.ext.get_memory_fd_properties_khr.resolve()
             }
         }
     }
@@ -376,7 +270,7 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
             fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
-                *self.get_memory_host_pointer_properties_ext.resolve()
+                *self.ext.get_memory_host_pointer_properties_ext.resolve()
             }
         }
     }
@@ -384,10 +278,10 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
             fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
-                *self.import_semaphore_win32_handle_khr.resolve()
+                *self.ext.import_semaphore_win32_handle_khr.resolve()
             }
             fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
-                *self.get_semaphore_win32_handle_khr.resolve()
+                *self.ext.get_semaphore_win32_handle_khr.resolve()
             }
         }
     }
@@ -395,10 +289,10 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
             fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
-                *self.get_memory_win32_handle_khr.resolve()
+                *self.ext.get_memory_win32_handle_khr.resolve()
             }
             fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
-                *self.get_memory_win32_handle_properties_khr.resolve()
+                *self.ext.get_memory_win32_handle_properties_khr.resolve()
             }
         }
     }
@@ -406,15 +300,15 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))] {
             fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
-                *self.get_buffer_memory_requirements_2_khr.resolve()
+                *self.ext.get_buffer_memory_requirements_2_khr.resolve()
             }
 
             fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
-                *self.get_image_memory_requirements_2_khr.resolve()
+                *self.ext.get_image_memory_requirements_2_khr.resolve()
             }
 
             fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
-                *self.get_image_sparse_memory_requirements_2_khr.resolve()
+                *self.ext.get_image_sparse_memory_requirements_2_khr.resolve()
             }
         }
     }
@@ -422,19 +316,19 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))] {
             fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
-                *self.create_render_pass_2_khr.resolve()
+                *self.ext.create_render_pass_2_khr.resolve()
             }
 
             fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
-                *self.cmd_begin_render_pass_2_khr.resolve()
+                *self.ext.cmd_begin_render_pass_2_khr.resolve()
             }
 
             fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
-                *self.cmd_end_render_pass_2_khr.resolve()
+                *self.ext.cmd_end_render_pass_2_khr.resolve()
             }
 
             fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
-                *self.cmd_next_subpass_2_khr.resolve()
+                *self.ext.cmd_next_subpass_2_khr.resolve()
             }
         }
     }
@@ -445,7 +339,7 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
         not(feature = "Allow1_3APIs")
     ))]
     fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
-        *self.cmd_pipeline_barrier_2_khr.resolve()
+        *self.ext.cmd_pipeline_barrier_2_khr.resolve()
     }
 
     #[cfg(all(
@@ -454,12 +348,12 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
         not(feature = "Allow1_4APIs")
     ))]
     fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
-        *self.cmd_push_descriptor_set_khr.resolve()
+        *self.ext.cmd_push_descriptor_set_khr.resolve()
     }
 
     #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
     fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
-        *self.cmd_set_sample_locations_ext.resolve()
+        *self.ext.cmd_set_sample_locations_ext.resolve()
     }
 }
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
@@ -469,142 +363,8 @@ impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
         let r = DeviceObject {
             handle: self.handle,
             parent: self.parent.clone(),
-            #[cfg(all(
-                feature = "VK_KHR_maintenance1",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            trim_command_pool_khr: unsafe { core::ptr::read(&self.trim_command_pool_khr) },
-            #[cfg(all(
-                feature = "VK_KHR_descriptor_update_template",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            create_descriptor_update_template_khr: unsafe {
-                core::ptr::read(&self.create_descriptor_update_template_khr)
-            },
-            #[cfg(all(
-                feature = "VK_KHR_descriptor_update_template",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            destroy_descriptor_update_template_khr: unsafe {
-                core::ptr::read(&self.destroy_descriptor_update_template_khr)
-            },
-            #[cfg(all(
-                feature = "VK_KHR_descriptor_update_template",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            update_descriptor_set_with_template_khr: unsafe {
-                core::ptr::read(&self.update_descriptor_set_with_template_khr)
-            },
-            #[cfg(all(
-                feature = "VK_KHR_bind_memory2",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            bind_buffer_memory2_khr: unsafe { core::ptr::read(&self.bind_buffer_memory2_khr) },
-            #[cfg(all(
-                feature = "VK_KHR_bind_memory2",
-                feature = "Implements",
-                not(feature = "Allow1_1APIs")
-            ))]
-            bind_image_memory2_khr: unsafe { core::ptr::read(&self.bind_image_memory2_khr) },
-            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier", feature = "Implements"))]
-            get_image_drm_format_modifier_properties_ext: unsafe {
-                core::ptr::read(&self.get_image_drm_format_modifier_properties_ext)
-            },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-            get_fence_fd_khr: unsafe { core::ptr::read(&self.get_fence_fd_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_fence_fd"))]
-            import_fence_fd_khr: unsafe { core::ptr::read(&self.import_fence_fd_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-            acquire_full_screen_exclusive_mode_ext: unsafe {
-                core::ptr::read(&self.acquire_full_screen_exclusive_mode_ext)
-            },
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))]
-            release_full_screen_exclusive_mode_ext: unsafe {
-                core::ptr::read(&self.release_full_screen_exclusive_mode_ext)
-            },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
-            get_memory_fd_khr: unsafe { core::ptr::read(&self.get_memory_fd_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))]
-            get_memory_fd_properties_khr: unsafe { core::ptr::read(&self.get_memory_fd_properties_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))]
-            get_memory_host_pointer_properties_ext: unsafe {
-                core::ptr::read(&self.get_memory_host_pointer_properties_ext)
-            },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-            import_semaphore_win32_handle_khr: unsafe { core::ptr::read(&self.import_semaphore_win32_handle_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))]
-            get_semaphore_win32_handle_khr: unsafe { core::ptr::read(&self.get_semaphore_win32_handle_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-            get_memory_win32_handle_khr: unsafe { core::ptr::read(&self.get_memory_win32_handle_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))]
-            get_memory_win32_handle_properties_khr: unsafe {
-                core::ptr::read(&self.get_memory_win32_handle_properties_khr)
-            },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_get_memory_requirements2",
-                not(feature = "Allow1_1APIs")
-            ))]
-            get_buffer_memory_requirements_2_khr: unsafe {
-                core::ptr::read(&self.get_buffer_memory_requirements_2_khr)
-            },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_get_memory_requirements2",
-                not(feature = "Allow1_1APIs")
-            ))]
-            get_image_memory_requirements_2_khr: unsafe { core::ptr::read(&self.get_image_memory_requirements_2_khr) },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_get_memory_requirements2",
-                not(feature = "Allow1_1APIs")
-            ))]
-            get_image_sparse_memory_requirements_2_khr: unsafe {
-                core::ptr::read(&self.get_image_sparse_memory_requirements_2_khr)
-            },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            create_render_pass_2_khr: unsafe { core::ptr::read(&self.create_render_pass_2_khr) },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            cmd_begin_render_pass_2_khr: unsafe { core::ptr::read(&self.cmd_begin_render_pass_2_khr) },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            cmd_end_render_pass_2_khr: unsafe { core::ptr::read(&self.cmd_end_render_pass_2_khr) },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_create_renderpass2",
-                not(feature = "Allow1_2APIs")
-            ))]
-            cmd_next_subpass_2_khr: unsafe { core::ptr::read(&self.cmd_next_subpass_2_khr) },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_synchronization2",
-                not(feature = "Allow1_3APIs")
-            ))]
-            cmd_pipeline_barrier_2_khr: unsafe { core::ptr::read(&self.cmd_pipeline_barrier_2_khr) },
-            #[cfg(all(
-                feature = "Implements",
-                feature = "VK_KHR_push_descriptor",
-                not(feature = "Allow1_4APIs")
-            ))]
-            cmd_push_descriptor_set_khr: unsafe { core::ptr::read(&self.cmd_push_descriptor_set_khr) },
-            #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
-            cmd_set_sample_locations_ext: unsafe { core::ptr::read(&self.cmd_set_sample_locations_ext) },
+            #[cfg(feature = "Implements")]
+            ext: unsafe { core::ptr::read(&self.ext) },
         };
         // disable running VkDevice destruction
         std::mem::forget(self);
@@ -640,6 +400,25 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
             Ok(Self::wrap_handle(h.assume_init(), physical_device.transfer_instance()))
         }
     }
+
+    /// Constructs from raw handle
+    /// # Safety
+    /// the handle must be valid and not freed
+    pub const unsafe fn manage(handle: VkDevice, parent: Instance) -> Self {
+        Self::wrap_handle(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub fn unmanage(mut self) -> (VkDevice, Instance) {
+        let h = self.handle;
+        let p = unsafe { core::ptr::read(&self.parent) };
+        unsafe {
+            core::ptr::drop_in_place(&mut self.ext);
+        }
+        core::mem::forget(self);
+
+        (h, p)
+    }
 }
 
 /// Opaque handle to a queue object
@@ -671,6 +450,23 @@ impl<Device: Clone> QueueObject<&'_ Device> {
         core::mem::forget(self);
 
         r
+    }
+}
+impl<Device> QueueObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkQueue, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkQueue, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 
