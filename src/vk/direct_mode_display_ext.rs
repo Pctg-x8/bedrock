@@ -15,6 +15,6 @@ pub struct PFN_vkReleaseDisplayEXT(
 
 #[cfg(feature = "Implements")]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkReleaseDisplayEXT(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult;
+unsafe extern "system" {
+    pub unsafe fn vkReleaseDisplayEXT(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult;
 }

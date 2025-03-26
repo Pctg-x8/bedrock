@@ -191,13 +191,13 @@ unsafe extern "system" fn {}({})"#,
         writeln!(sink, "    use crate::resolver::PFN;\n")?;
         writeln!(
             sink,
-            r#"    let fp: {pfn} = crate::resolver::get_resolver().load_function_unconstrainted();"#,
+            r#"    let fp: {pfn} = unsafe {{ crate::resolver::get_resolver().load_function_unconstrainted() }};"#,
             pfn = PFNNameWriter(self)
         )?;
-        writeln!(sink, r#"    FPTBL.{} = fp;"#, ExportNameWriter(self))?;
+        writeln!(sink, r#"    unsafe {{ FPTBL.{} = fp; }}"#, ExportNameWriter(self))?;
         writeln!(
             sink,
-            r#"    (fp.0)({})"#,
+            r#"    unsafe {{ (fp.0)({}) }}"#,
             EntrypointFunctionInputForwardingFormatter(self.inputs)
         )?;
 
@@ -227,13 +227,13 @@ pub unsafe fn {}({})"#,
 
         writeln!(
             sink,
-            r#"    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] {{ (FPTBL.{}.0)({}) }}"#,
+            r#"    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe {{ (FPTBL.{}.0)({}) }}"#,
             ExportNameWriter(self),
             EntrypointFunctionInputForwardingFormatter(self.inputs)
         )?;
         writeln!(
             sink,
-            r#"    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] {{ {}({}) }}"#,
+            r#"    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe {{ {}({}) }}"#,
             CanonicalNameWriter(self),
             EntrypointFunctionInputForwardingFormatter(self.inputs)
         )?;

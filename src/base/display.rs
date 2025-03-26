@@ -3,7 +3,7 @@
 
 #[implements]
 use crate::VkHandle;
-use crate::{vk::*, VkObject, VulkanStructure};
+use crate::{VkObject, VulkanStructure, vk::*};
 #[allow(unused_imports)]
 use derives::*;
 use std::ops::Deref;
@@ -24,7 +24,7 @@ impl DisplayMode {
         display: &Display<impl crate::PhysicalDevice>,
         create_info: &VkDisplayModeCreateInfoKHR,
     ) -> crate::Result<Self> {
-        Ok(Self(display.create_display_mode_raw(create_info, None)?))
+        Ok(Self(unsafe { display.create_display_mode_raw(create_info, None)? }))
     }
 }
 
@@ -130,16 +130,18 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     ) -> crate::Result<VkDisplayModeKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_display_mode_khr(
-            self.1.native_ptr(),
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_display_mode_khr(
+                self.1.native_ptr(),
+                self.native_ptr(),
+                info,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Create a display mode

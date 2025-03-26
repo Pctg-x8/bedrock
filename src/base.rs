@@ -2,15 +2,15 @@
 
 use derives::implements;
 
-use crate::{
-    ffi_helper::{opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null, CStrFFIRef},
-    vk::*,
-    VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
-};
 #[cfg(feature = "Implements")]
 use crate::{ImageFlags, ImageUsageFlags};
 #[cfg(all(feature = "Implements", feature = "VK_KHR_surface"))]
 use crate::{PresentMode, Surface};
+use crate::{
+    VkHandle, VkObject, VulkanStructure, VulkanStructureAsRef,
+    ffi_helper::{CStrFFIRef, opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null},
+    vk::*,
+};
 
 #[cfg(feature = "Multithreaded")]
 struct LazyCellReadRef<'d, T>(::std::sync::RwLockReadGuard<'d, Option<T>>);
@@ -99,17 +99,21 @@ type InstanceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, VkInstance>;
 #[implements]
 impl crate::resolver::ResolverInterface for VkInstance {
     unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
-        T::from_ptr(core::mem::transmute(crate::vkfn::get_instance_proc_addr(
-            *self,
-            name.as_ptr() as _,
-        )))
+        unsafe {
+            T::from_ptr(core::mem::transmute(crate::vkfn::get_instance_proc_addr(
+                *self,
+                name.as_ptr() as _,
+            )))
+        }
     }
 
     unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
-        F::from_void_fn(
-            crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
-                .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
-        )
+        unsafe {
+            F::from_void_fn(
+                crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
+                    .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
+            )
+        }
     }
 }
 
@@ -499,8 +503,10 @@ pub unsafe fn new_instance_raw(
 ) -> crate::Result<VkInstance> {
     let mut h = core::mem::MaybeUninit::uninit();
 
-    crate::vkfn::create_instance(&info.0, opt_pointer(allocation_callbacks), h.as_mut_ptr()).into_result()?;
-    Ok(h.assume_init())
+    unsafe {
+        crate::vkfn::create_instance(&info.0, opt_pointer(allocation_callbacks), h.as_mut_ptr()).into_result()?;
+    }
+    Ok(unsafe { h.assume_init() })
 }
 
 /// Returns a count of all of global layer properties
@@ -745,13 +751,15 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkDebugReportCallbackEXT> {
         let mut h = core::mem::MaybeUninit::uninit();
-        self.create_debug_report_callback_ext_fn().0(
-            self.native_ptr(),
-            info.as_raw_ref(),
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            self.create_debug_report_callback_ext_fn().0(
+                self.native_ptr(),
+                info.as_raw_ref(),
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
         Ok(unsafe { h.assume_init() })
     }
@@ -794,7 +802,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         obj: VkDebugReportCallbackEXT,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) {
-        self.destroy_debug_report_callback_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+        unsafe {
+            self.destroy_debug_report_callback_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+        }
     }
 
     /// Create a debug messenger object
@@ -813,15 +823,17 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkDebugUtilsMessengerEXT> {
         let mut h = core::mem::MaybeUninit::uninit();
-        self.create_debug_utils_messenger_ext_fn().0(
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            self.create_debug_utils_messenger_ext_fn().0(
+                self.native_ptr(),
+                info,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Destroy a debug messenger object
@@ -835,7 +847,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
         obj: VkDebugUtilsMessengerEXT,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) {
-        self.destroy_debug_utils_messenger_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+        unsafe {
+            self.destroy_debug_utils_messenger_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+        }
     }
 
     // Extension Function Providers
@@ -866,7 +880,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 
     #[implements("VK_KHR_external_fence_capabilities")]
     fn get_physical_device_external_fence_properties_khr_fn(&self)
-        -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
+    -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
 
     #[implements("VK_EXT_acquire_xlib_display")]
     fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
@@ -1156,9 +1170,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR) {
         #[cfg(feature = "Allow1_1APIs")]
-        crate::vkfn::get_physical_device_format_properties2(self.native_ptr(), format, out);
+        unsafe {
+            crate::vkfn::get_physical_device_format_properties2(self.native_ptr(), format, out);
+        }
         #[cfg(not(feature = "Allow1_1APIs"))]
-        self.instance().get_physical_device_format_properties2_khr_fn().0(self.native_ptr(), format, out);
+        unsafe {
+            self.instance().get_physical_device_format_properties2_khr_fn().0(self.native_ptr(), format, out);
+        }
     }
 
     /// Lists physical device's image format capabilities
@@ -1364,11 +1382,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         info: &VkPhysicalDeviceExternalFenceInfoKHR,
         sink: &mut core::mem::MaybeUninit<VkExternalFencePropertiesKHR>,
     ) {
-        self.instance().get_physical_device_external_fence_properties_khr_fn().0(
-            self.native_ptr(),
-            info,
-            sink.as_mut_ptr(),
-        );
+        unsafe {
+            self.instance().get_physical_device_external_fence_properties_khr_fn().0(
+                self.native_ptr(),
+                info,
+                sink.as_mut_ptr(),
+            );
+        }
     }
 
     /// Query if presentation is supported
@@ -1609,7 +1629,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[implements("VK_KHR_wayland_surface")]
     #[inline]
     unsafe fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
-        crate::vkfn::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display) != 0
+        unsafe {
+            crate::vkfn::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display)
+                != 0
+        }
     }
 
     /// Query queue family support for presentation on a Win32 display
@@ -1699,16 +1722,18 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> crate::Result<VkDisplayModeKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_display_mode_khr(
-            self.native_ptr(),
-            display,
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_display_mode_khr(
+                self.native_ptr(),
+                display,
+                info,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Query capabilities of a mode and plane combination
@@ -1962,15 +1987,17 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_display_plane_surface_khr(
-            self.instance().native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_display_plane_surface_khr(
+                self.instance().native_ptr(),
+                info,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Reports capabilities of a surface on a physical device
@@ -2007,9 +2034,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>) {
         #[cfg(feature = "Allow1_1APIs")]
-        crate::vkfn::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
+        unsafe {
+            crate::vkfn::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
+        }
         #[cfg(not(feature = "Allow1_1APIs"))]
-        self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+        unsafe {
+            self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+        }
     }
 
     /// Reports capabilities of a physical device
@@ -2019,9 +2050,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
         #[cfg(feature = "Allow1_1APIs")]
-        crate::vkfn::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
+        unsafe {
+            crate::vkfn::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
+        }
         #[cfg(not(feature = "Allow1_1APIs"))]
-        self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+        unsafe {
+            self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+        }
     }
 
     /// Query a count of supported presentation modes

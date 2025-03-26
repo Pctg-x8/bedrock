@@ -2,12 +2,12 @@
 
 use cfg_if::cfg_if;
 use derives::implements;
-use ffi_helper::{opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null, CStrFFIRef};
+use ffi_helper::{CStrFFIRef, opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null};
 
 use crate::ffi_helper::ArrayFFIExtensions;
 use crate::*;
 #[cfg(feature = "Implements")]
-use crate::{fnconv::FnTransmute, DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle};
+use crate::{DescriptorSetCopyInfo, DescriptorSetWriteInfo, VkHandleMut, VkRawHandle, fnconv::FnTransmute};
 
 #[implements]
 #[allow(dead_code)]
@@ -16,18 +16,22 @@ type DeviceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, VkDevice>;
 impl crate::resolver::ResolverInterface for VkDevice {
     #[inline(always)]
     unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
-        T::from_ptr(core::mem::transmute(crate::vkfn::get_device_proc_addr(
-            *self,
-            name.as_ptr() as _,
-        )))
+        unsafe {
+            T::from_ptr(core::mem::transmute(crate::vkfn::get_device_proc_addr(
+                *self,
+                name.as_ptr() as _,
+            )))
+        }
     }
 
     #[inline(always)]
     unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
-        F::from_void_fn(
-            crate::vkfn::get_device_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
-                .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
-        )
+        unsafe {
+            F::from_void_fn(
+                crate::vkfn::get_device_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
+                    .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
+            )
+        }
     }
 }
 
@@ -1305,16 +1309,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         allocation_callbacks: Option<&VkAllocationCallbacks>,
         objects: &mut [VkPipeline],
     ) -> crate::Result<()> {
-        crate::vkfn::create_graphics_pipelines(
-            self.native_ptr(),
-            cache.unwrap_or(VkPipelineCache::NULL),
-            infos.len() as _,
-            infos.as_ptr_empty_null() as _,
-            opt_pointer(allocation_callbacks),
-            objects.as_mut_ptr(),
-        )
-        .into_result()
-        .map(drop)
+        unsafe {
+            crate::vkfn::create_graphics_pipelines(
+                self.native_ptr(),
+                cache.unwrap_or(VkPipelineCache::NULL),
+                infos.len() as _,
+                infos.as_ptr_empty_null() as _,
+                opt_pointer(allocation_callbacks),
+                objects.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Create graphics pipelines
@@ -1381,16 +1387,18 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         allocation_callbacks: Option<&VkAllocationCallbacks>,
         objects: &mut [VkPipeline],
     ) -> crate::Result<()> {
-        crate::vkfn::create_compute_pipelines(
-            self.native_ptr(),
-            cache.unwrap_or(VkPipelineCache::NULL),
-            infos.len() as _,
-            infos.as_ptr_empty_null() as _,
-            opt_pointer(allocation_callbacks),
-            objects.as_mut_ptr(),
-        )
-        .into_result()
-        .map(drop)
+        unsafe {
+            crate::vkfn::create_compute_pipelines(
+                self.native_ptr(),
+                cache.unwrap_or(VkPipelineCache::NULL),
+                infos.len() as _,
+                infos.as_ptr_empty_null() as _,
+                opt_pointer(allocation_callbacks),
+                objects.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Create compute pipelines
@@ -1513,9 +1521,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<()> {
         assert_eq!(info.0.commandBufferCount as usize, sink.len());
 
-        crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Allocate command buffers from an existing command pool
@@ -1532,8 +1542,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         &'s self,
         info: &CommandBufferAllocateInfo,
     ) -> crate::Result<Vec<CommandBufferObject<&'s Self>>> {
-        let mut sink = crate::alloc::alloc_sink_buffer(info.0.commandBufferCount as _);
-        self.allocate_command_buffers(info, &mut sink)?;
+        let mut sink = unsafe { crate::alloc::alloc_sink_buffer(info.0.commandBufferCount as _) };
+        unsafe {
+            self.allocate_command_buffers(info, &mut sink)?;
+        }
 
         Ok(sink)
     }
@@ -1555,8 +1567,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<[CommandBufferObject<&'s Self>; N]> {
         let mut sink =
             [const { unsafe { core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::zeroed().assume_init() } }; N];
-        crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
-            .into_result()?;
+        unsafe {
+            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
+                .into_result()?;
+        }
 
         Ok(sink)
     }
@@ -1570,9 +1584,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     #[inline]
     unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkfn::invalidate_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr_empty_null())
+        unsafe {
+            crate::vkfn::invalidate_mapped_memory_ranges(
+                self.native_ptr(),
+                ranges.len() as _,
+                ranges.as_ptr_empty_null(),
+            )
             .into_result()
             .map(drop)
+        }
     }
 
     /// Flush `MappedMemoryRange`s
@@ -1583,22 +1603,26 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     #[inline]
     unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
-        crate::vkfn::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr_empty_null())
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr_empty_null())
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Update the contents of descriptor set objects
     #[implements]
     #[inline]
     unsafe fn update_descriptor_sets_raw(&self, writes: &[VkWriteDescriptorSet], copies: &[VkCopyDescriptorSet]) {
-        crate::vkfn::update_descriptor_sets(
-            self.native_ptr(),
-            writes.len() as _,
-            slice_as_ptr_empty_null(writes),
-            copies.len() as _,
-            slice_as_ptr_empty_null(copies),
-        );
+        unsafe {
+            crate::vkfn::update_descriptor_sets(
+                self.native_ptr(),
+                writes.len() as _,
+                slice_as_ptr_empty_null(writes),
+                copies.len() as _,
+                slice_as_ptr_empty_null(copies),
+            )
+        }
     }
 
     /// Update the contents of descriptor set objects
@@ -1618,7 +1642,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     #[inline]
     unsafe fn wait(&self) -> crate::Result<()> {
-        crate::vkfn::device_wait_idle(self.native_ptr()).into_result().map(drop)
+        unsafe { crate::vkfn::device_wait_idle(self.native_ptr()).into_result().map(drop) }
     }
 
     /// Query the memory requirements for a sparse image
@@ -1664,9 +1688,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         memory: VkDeviceMemory,
         offset: VkDeviceSize,
     ) -> crate::Result<()> {
-        crate::vkfn::bind_buffer_memory(self.native_ptr(), buffer, memory, offset)
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::bind_buffer_memory(self.native_ptr(), buffer, memory, offset)
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Multiple Binding for Buffers
@@ -1674,14 +1700,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[inline]
     unsafe fn bind_buffers_raw(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
         #[cfg(feature = "Allow1_1APIs")]
-        {
+        unsafe {
             crate::vkfn::bind_buffer_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
         }
 
         #[cfg(not(feature = "Allow1_1APIs"))]
-        {
+        unsafe {
             self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
@@ -1694,9 +1720,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements]
     #[inline]
     unsafe fn bind_image_raw(&self, image: VkImage, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
-        crate::vkfn::bind_image_memory(self.native_ptr(), image, memory, offset)
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::bind_image_memory(self.native_ptr(), image, memory, offset)
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Multiple Binding for Images
@@ -1704,14 +1732,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[inline]
     unsafe fn bind_images_raw(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
         #[cfg(feature = "Allow1_1APIs")]
-        {
+        unsafe {
             crate::vkfn::bind_image_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
         }
 
         #[cfg(not(feature = "Allow1_1APIs"))]
-        {
+        unsafe {
             self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
                 .into_result()
                 .map(drop)
@@ -1830,23 +1858,27 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut h = core::mem::MaybeUninit::uninit();
 
         #[cfg(feature = "Allow1_1APIs")]
-        crate::vkfn::create_descriptor_update_template(
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_descriptor_update_template(
+                self.native_ptr(),
+                info,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
         #[cfg(not(feature = "Allow1_1APIs"))]
-        self.create_descriptor_update_template_khr_fn().0(
-            self.native_ptr(),
-            info,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            self.create_descriptor_update_template_khr_fn().0(
+                self.native_ptr(),
+                info,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { h.assume_init() })
     }
 
     /// Create a new descriptor update template
@@ -1939,9 +1971,11 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         handle: std::os::unix::io::RawFd,
         sink: &mut core::mem::MaybeUninit<VkMemoryFdPropertiesKHR>,
     ) -> crate::Result<()> {
-        self.get_memory_fd_properties_khr_fn().0(self.native_ptr(), handle_type as _, handle, sink.as_mut_ptr())
-            .into_result()
-            .map(drop)
+        unsafe {
+            self.get_memory_fd_properties_khr_fn().0(self.native_ptr(), handle_type as _, handle, sink.as_mut_ptr())
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Get a POSIX file descriptor for a memory object
@@ -1978,9 +2012,16 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         ptr: *mut core::ffi::c_void,
         sink: &mut core::mem::MaybeUninit<VkMemoryHostPointerPropertiesEXT>,
     ) -> crate::Result<()> {
-        self.get_memory_host_pointer_properties_ext_fn().0(self.native_ptr(), handle_type as _, ptr, sink.as_mut_ptr())
+        unsafe {
+            self.get_memory_host_pointer_properties_ext_fn().0(
+                self.native_ptr(),
+                handle_type as _,
+                ptr,
+                sink.as_mut_ptr(),
+            )
             .into_result()
             .map(drop)
+        }
     }
 
     /// Get Properties of External Memory Win32 Handles
@@ -2465,14 +2506,16 @@ pub trait QueueMut: Queue + VkHandleMut {
         batches: &[VkBindSparseInfo],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
-        crate::vkfn::queue_bind_sparse(
-            self.native_ptr_mut(),
-            batches.len() as _,
-            batches.as_ptr_empty_null(),
-            fence.map_or(VkFence::NULL, |x| x.0),
-        )
-        .into_result()
-        .map(drop)
+        unsafe {
+            crate::vkfn::queue_bind_sparse(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr_empty_null(),
+                fence.map_or(VkFence::NULL, |x| x.0),
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Submits a sequence of semaphores or command buffers to a queue
@@ -2548,14 +2591,16 @@ pub trait QueueMut: Queue + VkHandleMut {
         batches: &[VkSubmitInfo],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
-        crate::vkfn::queue_submit(
-            self.native_ptr_mut(),
-            batches.len() as _,
-            batches.as_ptr_empty_null(),
-            fence.map_or(VkFence::NULL, |x| x.0),
-        )
-        .into_result()
-        .map(drop)
+        unsafe {
+            crate::vkfn::queue_submit(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                batches.as_ptr_empty_null(),
+                fence.map_or(VkFence::NULL, |x| x.0),
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Submits command buffers to a queue

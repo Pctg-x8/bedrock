@@ -10,7 +10,7 @@ pub trait FnTransmute: Sized {
 }
 macro_rules! FnTransmuteImpl {
 	(for $($t: ty),*) => {
-		$(impl FnTransmute for $t { unsafe fn from_fn(p: PFN_vkVoidFunction) -> Self { std::mem::transmute(p) } })*
+		$(impl FnTransmute for $t { unsafe fn from_fn(p: PFN_vkVoidFunction) -> Self { unsafe { core::mem::transmute(p) } } })*
 	}
 }
 

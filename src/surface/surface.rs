@@ -1,8 +1,8 @@
 use derives::{bitflags_newtype, implements};
 
 use crate::{
-    vk::*, Extends, ImageUsageFlags, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure,
-    VulkanStructureProvider,
+    Extends, ImageUsageFlags, InstanceChild, VkHandle, VkObject, VkRawHandle, VulkanStructure, VulkanStructureProvider,
+    vk::*,
 };
 
 use super::ffi_helper::opt_pointer;
@@ -32,7 +32,7 @@ impl<Instance: crate::Instance> SurfaceObject<Instance> {
         pd: PhysicalDevice,
         create_info: &(impl SurfaceCreateInfo + ?Sized),
     ) -> crate::Result<Self> {
-        Ok(Self(create_info.execute(&pd, None)?, pd.transfer_instance()))
+        Ok(Self(unsafe { create_info.execute(&pd, None)? }, pd.transfer_instance()))
     }
 }
 impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
@@ -256,15 +256,17 @@ impl SurfaceCreateInfo for VkWaylandSurfaceCreateInfoKHR {
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::create_wayland_surface_khr(
-            pd.instance().native_ptr(),
-            self,
-            opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::create_wayland_surface_khr(
+                pd.instance().native_ptr(),
+                self,
+                opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(h.assume_init())
+        Ok(unsafe { h.assume_init() })
     }
 }
 

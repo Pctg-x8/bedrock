@@ -1,8 +1,8 @@
-use crate::vk::*;
 use crate::GenericVulkanStructure;
 use crate::VkHandle;
 use crate::VulkanStructure;
 use crate::VulkanStructureAsRef;
+use crate::vk::*;
 
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
@@ -56,7 +56,7 @@ impl<'d> ImportMemoryFdInfo<'d> {
     }
 
     pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
-        core::mem::transmute(&mut self.0.pNext)
+        unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
 
@@ -92,6 +92,6 @@ impl<'d> MemoryGetFdInfo<'d> {
     }
 
     pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
-        core::mem::transmute(&mut self.0.pNext)
+        unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }

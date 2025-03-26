@@ -1,6 +1,6 @@
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle,
-    VkHandleMut, VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef,
+    DeviceChild, DeviceChildHandle, GenericVulkanStructure, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut,
+    VkObject, VkRawHandle, VulkanStructure, VulkanStructureAsRef, vk::*,
 };
 use derives::implements;
 
@@ -35,17 +35,19 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     unsafe fn map_raw(&mut self, range: core::ops::Range<VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
         let mut p = core::mem::MaybeUninit::uninit();
 
-        crate::vkfn::map_memory(
-            self.device_handle(),
-            self.native_ptr_mut(),
-            range.start,
-            range.end - range.start,
-            0,
-            p.as_mut_ptr(),
-        )
-        .into_result()?;
+        unsafe {
+            crate::vkfn::map_memory(
+                self.device_handle(),
+                self.native_ptr_mut(),
+                range.start,
+                range.end - range.start,
+                0,
+                p.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
 
-        Ok(p.assume_init())
+        Ok(unsafe { p.assume_init() })
     }
 
     /// Map a memory object into application address space
@@ -69,7 +71,7 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     #[implements]
     #[inline]
     unsafe fn unmap(&mut self) {
-        crate::vkfn::unmap_memory(self.device_handle(), self.native_ptr_mut());
+        unsafe { crate::vkfn::unmap_memory(self.device_handle(), self.native_ptr_mut()) }
     }
 }
 DerefContainerBracketImpl!(for mut DeviceMemoryMut {});
@@ -182,7 +184,7 @@ impl<'d> MemoryAllocateInfo<'d> {
     }
 
     pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
-        core::mem::transmute(&mut self.0.pNext)
+        unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
 
@@ -252,7 +254,7 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     }
 
     pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
-        core::mem::transmute(&mut self.0.pNext)
+        unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
 
@@ -272,28 +274,28 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn get<T>(&self, offset: usize) -> &T {
-        &*(self.0.add(offset) as *const T)
+        unsafe { &*(self.0.add(offset) as *const T) }
     }
 
     /// Get a mutable reference in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn get_mut<T>(&self, offset: usize) -> &mut T {
-        &mut *(self.0.add(offset) as *mut T)
+        unsafe { &mut *(self.0.add(offset) as *mut T) }
     }
 
     /// Get a slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn slice<T>(&self, offset: usize, count: usize) -> &[T] {
-        core::slice::from_raw_parts(self.0.add(offset) as *const T, count)
+        unsafe { core::slice::from_raw_parts(self.0.add(offset) as *const T, count) }
     }
 
     /// Get a mutable slice in mapped memory with byte offsets
     /// # Safety
     /// Caller must guarantee that the pointer and its alignment are valid
     pub const unsafe fn slice_mut<T>(&self, offset: usize, count: usize) -> &mut [T] {
-        core::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count)
+        unsafe { core::slice::from_raw_parts_mut(self.0.add(offset) as *mut T, count) }
     }
 
     /// Clone data from slice at the specified offset in mapped memory.
@@ -301,7 +303,7 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// Caller must guarantee that the pointer and its alignment are valid
     #[inline(always)]
     pub unsafe fn clone_from_slice_at<T: Clone>(&self, offset: usize, src: &[T]) {
-        self.slice_mut(offset, src.len()).clone_from_slice(src);
+        unsafe { self.slice_mut(offset, src.len()).clone_from_slice(src) };
     }
 
     /// Clone data from slice at the specified offset in mapped memory.
@@ -309,7 +311,7 @@ impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'
     /// Caller must guarantee that the pointer and its alignment are valid
     #[inline(always)]
     pub unsafe fn clone_at<T: Clone>(&self, offset: usize, src: &T) {
-        *self.get_mut(offset) = src.clone();
+        unsafe { *self.get_mut(offset) = src.clone() };
     }
 
     #[implements]

@@ -8,7 +8,7 @@ pub(crate) const fn empty_sink_buffer<T>() -> Vec<T> {
 #[inline(always)]
 pub(crate) unsafe fn alloc_sink_buffer<T>(count: usize) -> Vec<T> {
     let mut xs = Vec::with_capacity(count);
-    xs.set_len(count);
+    unsafe { xs.set_len(count) };
 
     xs
 }

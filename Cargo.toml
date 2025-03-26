@@ -10,7 +10,7 @@ version = "0.1.0-vk1.4.305"
 authors = ["S.Percentage <Syn.Tri.Naga@gmail.com>"]
 description = "Glue library between Vulkan and Rust"
 license = "MIT"
-edition = "2021"
+edition = "2024"
 
 [features]
 default = ["alloc"]

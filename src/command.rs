@@ -3,9 +3,9 @@
 use derives::implements;
 
 use crate::{
-    ffi_helper::slice_as_ptr_empty_null, vk::*, DescriptorSet, DeviceChild, DeviceChildHandle, LayoutTransition,
-    QueryPipelineStatisticFlags, SubpassRef, VkDeviceChildNonExtDestroyable, VkHandleMut, VkHandleRef, VkHandleRefMut,
-    VkObject, VkRawHandle, VulkanStructure,
+    DescriptorSet, DeviceChild, DeviceChildHandle, LayoutTransition, QueryPipelineStatisticFlags, SubpassRef,
+    VkDeviceChildNonExtDestroyable, VkHandleMut, VkHandleRef, VkHandleRefMut, VkObject, VkRawHandle, VulkanStructure,
+    ffi_helper::slice_as_ptr_empty_null, vk::*,
 };
 #[implements]
 use crate::{FilterMode, PipelineStageFlags, QueryResultFlags, StencilFaceMask};
@@ -282,9 +282,11 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     unsafe fn reset(&mut self, flags: VkCommandPoolResetFlags) -> crate::Result<()> {
-        crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Free command buffers
@@ -292,12 +294,14 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// Application cannot use passed command buffers after this call
     #[implements]
     unsafe fn free(&mut self, buffers: &[VkHandleRefMut<VkCommandBuffer>]) {
-        crate::vkfn::free_command_buffers(
-            self.device().native_ptr(),
-            self.native_ptr_mut(),
-            buffers.len() as _,
-            slice_as_ptr_empty_null(buffers) as *const _,
-        );
+        unsafe {
+            crate::vkfn::free_command_buffers(
+                self.device().native_ptr(),
+                self.native_ptr_mut(),
+                buffers.len() as _,
+                slice_as_ptr_empty_null(buffers) as *const _,
+            )
+        }
     }
 
     /// Trim a command pool
@@ -454,7 +458,9 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
         info: &CommandBufferBeginInfo,
         device: &'d Device,
     ) -> crate::Result<CmdRecord<'d, Self, Device>> {
-        crate::vkfn::begin_command_buffer(self.native_ptr_mut(), info.as_raw_ref()).into_result()?;
+        unsafe {
+            crate::vkfn::begin_command_buffer(self.native_ptr_mut(), info.as_raw_ref()).into_result()?;
+        }
 
         Ok(CmdRecord { ptr: self, device })
     }
@@ -474,7 +480,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
         &'d mut self,
         device: &'d Device,
     ) -> crate::Result<CmdRecord<'d, Self, Device>> {
-        self.begin_raw(&CommandBufferBeginInfo::new(), device)
+        unsafe { self.begin_raw(&CommandBufferBeginInfo::new(), device) }
     }
 
     /// Start recording a primary command buffer that will be submitted once
@@ -491,7 +497,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
         &'d mut self,
         device: &'d Device,
     ) -> crate::Result<CmdRecord<'d, Self, Device>> {
-        self.begin_raw(&CommandBufferBeginInfo::new().onetime_submit(), device)
+        unsafe { self.begin_raw(&CommandBufferBeginInfo::new().onetime_submit(), device) }
     }
 
     /// Start recording a secondary command buffer
@@ -533,7 +539,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
             ih
         };
 
-        self.begin_raw(&binfo.with_inheritance_info(&ih), device)
+        unsafe { self.begin_raw(&binfo.with_inheritance_info(&ih), device) }
     }
 
     /// Reset a command buffer to the initial state
@@ -547,9 +553,11 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     #[implements]
     #[inline]
     unsafe fn reset(&mut self, flags: VkCommandBufferResetFlags) -> crate::Result<()> {
-        crate::vkfn::reset_command_buffer(self.native_ptr_mut(), flags)
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::reset_command_buffer(self.native_ptr_mut(), flags)
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Locking CommandBuffer with CommandPool to satisfy externally synchronization restriction.
@@ -858,23 +866,27 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         writes: &[VkWriteDescriptorSet],
     ) -> Self {
         #[cfg(feature = "Allow1_4APIs")]
-        crate::vkfn::cmd_push_descriptor_set(
-            self.ptr.native_ptr_mut(),
-            bind_point as _,
-            pipeline_layout.native_ptr(),
-            set,
-            writes.len() as _,
-            slice_as_ptr_empty_null(writes),
-        );
+        unsafe {
+            crate::vkfn::cmd_push_descriptor_set(
+                self.ptr.native_ptr_mut(),
+                bind_point as _,
+                pipeline_layout.native_ptr(),
+                set,
+                writes.len() as _,
+                slice_as_ptr_empty_null(writes),
+            );
+        }
         #[cfg(not(feature = "Allow1_4APIs"))]
-        (self.device.cmd_push_descriptor_set_khr_fn())(
-            self.ptr.native_ptr_mut(),
-            bind_point as _,
-            pipeline_layout.native_ptr(),
-            set,
-            writes.len() as _,
-            slice_as_ptr_empty_null(writes),
-        );
+        unsafe {
+            (self.device.cmd_push_descriptor_set_khr_fn())(
+                self.ptr.native_ptr_mut(),
+                bind_point as _,
+                pipeline_layout.native_ptr(),
+                set,
+                writes.len() as _,
+                slice_as_ptr_empty_null(writes),
+            );
+        }
 
         self
     }
@@ -1424,11 +1436,13 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     /// Caller must be primary buffer and in the render pass when executing secondary command buffer
     #[inline(always)]
     pub unsafe fn execute_commands(self, buffers: &[VkHandleRef<VkCommandBuffer>]) -> Self {
-        crate::vkfn::cmd_execute_commands(
-            self.ptr.native_ptr_mut(),
-            buffers.len() as _,
-            slice_as_ptr_empty_null(buffers) as _,
-        );
+        unsafe {
+            crate::vkfn::cmd_execute_commands(
+                self.ptr.native_ptr_mut(),
+                buffers.len() as _,
+                slice_as_ptr_empty_null(buffers) as _,
+            );
+        }
         self
     }
 }

@@ -2,10 +2,10 @@
 
 use derives::implements;
 
-use crate::ffi_helper::{slice_as_ptr_empty_null, ArrayFFIExtensions};
+use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
 use crate::{
-    vk::*, DeviceChild, DeviceChildHandle, ImageLayout, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut,
-    VkHandleRef, VkObject, VkRawHandle, VulkanStructure,
+    DeviceChild, DeviceChildHandle, ImageLayout, VkDeviceChildNonExtDestroyable, VkHandle, VkHandleMut, VkHandleRef,
+    VkObject, VkRawHandle, VulkanStructure, vk::*,
 };
 
 /// Opaque handle to a descriptor set layout object
@@ -389,9 +389,11 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         info: &VkDescriptorSetAllocateInfo,
         objects: &mut [VkDescriptorSet],
     ) -> crate::Result<()> {
-        crate::vkfn::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr())
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr())
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Allocate one or more descriptor sets
@@ -456,9 +458,11 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     #[implements]
     #[inline]
     unsafe fn reset(&mut self, flags: VkDescriptorPoolResetFlags) -> crate::Result<()> {
-        crate::vkfn::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), flags)
-            .into_result()
-            .map(drop)
+        unsafe {
+            crate::vkfn::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), flags)
+                .into_result()
+                .map(drop)
+        }
     }
 
     /// Free one or more descriptor sets
@@ -471,14 +475,16 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     #[implements]
     #[inline]
     unsafe fn free(&mut self, sets: &[DescriptorSet]) -> crate::Result<()> {
-        crate::vkfn::free_descriptor_sets(
-            self.device_handle(),
-            self.native_ptr(),
-            sets.len() as _,
-            sets.as_ptr_empty_null() as _,
-        )
-        .into_result()
-        .map(drop)
+        unsafe {
+            crate::vkfn::free_descriptor_sets(
+                self.device_handle(),
+                self.native_ptr(),
+                sets.len() as _,
+                sets.as_ptr_empty_null() as _,
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 }
 DerefContainerBracketImpl!(for mut DescriptorPoolMut {});

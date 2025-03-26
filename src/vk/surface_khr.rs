@@ -139,26 +139,30 @@ pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(
 
 #[implements]
 #[cfg(not(feature = "DynamicLoaded"))]
-extern "system" {
-    pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
-    pub fn vkGetPhysicalDeviceSurfaceSupportKHR(
+unsafe extern "system" {
+    pub unsafe fn vkDestroySurfaceKHR(
+        instance: VkInstance,
+        surface: VkSurfaceKHR,
+        pAllocator: *const VkAllocationCallbacks,
+    );
+    pub unsafe fn vkGetPhysicalDeviceSurfaceSupportKHR(
         physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: u32,
         surface: VkSurfaceKHR,
         pSupported: *mut VkBool32,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfaceFormatsKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pSurfaceFormatCount: *mut u32,
         pSurfaceFormats: *mut VkSurfaceFormatKHR,
     ) -> VkResult;
-    pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(
+    pub unsafe fn vkGetPhysicalDeviceSurfacePresentModesKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR,
         pPresentModeCount: *mut u32,

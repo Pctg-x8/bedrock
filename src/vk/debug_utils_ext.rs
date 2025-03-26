@@ -73,7 +73,7 @@ pub struct VkDebugUtilsLabelEXT {
 impl VkDebugUtilsLabelEXT {
     #[inline]
     pub const unsafe fn label_name_cstr(&self) -> &core::ffi::CStr {
-        core::ffi::CStr::from_ptr(self.pLabelName)
+        unsafe { core::ffi::CStr::from_ptr(self.pLabelName) }
     }
 }
 
@@ -93,7 +93,7 @@ impl VkDebugUtilsObjectNameInfoEXT {
         if self.pObjectName.is_null() {
             None
         } else {
-            Some(core::ffi::CStr::from_ptr(self.pObjectName))
+            Some(unsafe { core::ffi::CStr::from_ptr(self.pObjectName) })
         }
     }
 }
@@ -134,7 +134,7 @@ impl VkDebugUtilsMessengerCallbackDataEXT {
         if self.queueLabelCount == 0 {
             &[]
         } else {
-            core::slice::from_raw_parts(self.pQueueLabels, self.queueLabelCount as _)
+            unsafe { core::slice::from_raw_parts(self.pQueueLabels, self.queueLabelCount as _) }
         }
     }
 
@@ -143,7 +143,7 @@ impl VkDebugUtilsMessengerCallbackDataEXT {
         if self.cmdBufLabelCount == 0 {
             &[]
         } else {
-            core::slice::from_raw_parts(self.pCmdBufLabels, self.cmdBufLabelCount as _)
+            unsafe { core::slice::from_raw_parts(self.pCmdBufLabels, self.cmdBufLabelCount as _) }
         }
     }
 
@@ -152,7 +152,7 @@ impl VkDebugUtilsMessengerCallbackDataEXT {
         if self.objectCount == 0 {
             &[]
         } else {
-            core::slice::from_raw_parts(self.pObjects, self.objectCount as _)
+            unsafe { core::slice::from_raw_parts(self.pObjects, self.objectCount as _) }
         }
     }
 }

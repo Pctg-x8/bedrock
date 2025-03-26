@@ -168,7 +168,7 @@ pub struct GenericVulkanStructure {
 }
 impl GenericVulkanStructure {
     pub const unsafe fn cast_unchecked<T>(&self) -> &T {
-        std::mem::transmute(self)
+        unsafe { core::mem::transmute(self) }
     }
 }
 
@@ -181,11 +181,11 @@ pub struct GenericVulkanSinkStructure {
 }
 impl GenericVulkanSinkStructure {
     pub const unsafe fn cast_ref_unchecked<T>(&self) -> &T {
-        core::mem::transmute(self)
+        unsafe { core::mem::transmute(self) }
     }
 
     pub const unsafe fn cast_mut_unchecked<T>(&mut self) -> &mut T {
-        core::mem::transmute(self)
+        unsafe { core::mem::transmute(self) }
     }
 }
 
