@@ -4,6 +4,30 @@ use crate::*;
 use core::mem::MaybeUninit;
 
 #[inline]
+pub unsafe fn get_physical_device_features(
+    physical_device: VkPhysicalDevice,
+    sink: &mut MaybeUninit<PhysicalDeviceFeatures>,
+) {
+    unsafe { crate::vkfn::get_physical_device_features(physical_device, sink.as_mut_ptr()) }
+}
+
+#[inline]
+pub unsafe fn get_physical_device_properties(
+    physical_device: VkPhysicalDevice,
+    sink: &mut MaybeUninit<PhysicalDeviceProperties>,
+) {
+    unsafe { crate::vkfn::get_physical_device_properties(physical_device, sink.as_mut_ptr()) }
+}
+
+#[inline]
+pub unsafe fn get_physical_device_memory_properties(
+    physical_device: VkPhysicalDevice,
+    sink: &mut MaybeUninit<PhysicalDeviceMemoryProperties>,
+) {
+    unsafe { crate::vkfn::get_physical_device_memory_properties(physical_device, sink.as_mut_ptr()) }
+}
+
+#[inline]
 pub unsafe fn get_device_queue(device: VkDevice, family_index: u32, index: u32) -> VkQueue {
     let mut h = MaybeUninit::uninit();
     unsafe {

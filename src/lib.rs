@@ -172,6 +172,7 @@ pub type Rect2D = VkRect2D;
 pub type Viewport = VkViewport;
 pub type Extent3D = VkExtent3D;
 pub type Offset3D = VkOffset3D;
+pub type Format = VkFormat;
 
 // Spreading single value to all dimensions
 impl Extent2D {
