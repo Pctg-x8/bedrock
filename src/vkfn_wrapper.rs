@@ -230,3 +230,8 @@ pub unsafe fn reset_fences(device: VkDevice, fences: &[VkHandleRefMut<VkFence>])
             .map(drop)
     }
 }
+
+#[inline]
+pub unsafe fn get_fence_status(device: VkDevice, fence: VkFence) -> crate::Result<VkResult> {
+    unsafe { crate::vkfn::get_fence_status(device, fence).into_result() }
+}
