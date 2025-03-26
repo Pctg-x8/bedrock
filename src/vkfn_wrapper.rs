@@ -14,6 +14,64 @@ pub unsafe fn get_device_queue(device: VkDevice, family_index: u32, index: u32) 
 }
 
 #[inline]
+pub unsafe fn queue_wait_idle(queue: VkQueue) -> crate::Result<()> {
+    unsafe { crate::vkfn::queue_wait_idle(queue).into_result().map(drop) }
+}
+
+#[inline]
+pub unsafe fn device_wait_idle(device: VkDevice) -> crate::Result<()> {
+    unsafe { crate::vkfn::device_wait_idle(device).into_result().map(drop) }
+}
+
+#[inline]
+pub unsafe fn queue_submit(queue: VkQueue, submit_info: &[VkSubmitInfo], fence: Option<VkFence>) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::queue_submit(
+            queue,
+            submit_info.len() as _,
+            submit_info.as_ptr(),
+            fence.unwrap_or(VkFence::NULL),
+        )
+        .into_result()
+        .map(drop)
+    }
+}
+
+#[cfg(feature = "Allow1_3APIs")]
+#[inline]
+pub unsafe fn queue_submit2(queue: VkQueue, submit_info: &[SubmitInfo2], fence: Option<VkFence>) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::queue_submit2(
+            queue,
+            submit_info.len() as _,
+            submit_info.as_ptr() as *const _ as _,
+            fence.unwrap_or(VkFence::NULL),
+        )
+        .into_result()
+        .map(drop)
+    }
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[inline]
+pub unsafe fn queue_present(queue: VkQueue, present_info: &PresentInfo) -> crate::Result<VkResult> {
+    unsafe { crate::vkfn::queue_present_khr(queue, present_info as *const _ as _).into_result() }
+}
+
+#[inline]
+pub unsafe fn queue_bind_sparse(
+    queue: VkQueue,
+    infos: &[VkBindSparseInfo],
+    fence: Option<VkFence>,
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::queue_bind_sparse(queue, infos.len() as _, infos.as_ptr(), fence.unwrap_or(VkFence::NULL))
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
 pub unsafe fn create_command_pool(
     device: VkDevice,
     create_info: &CommandPoolCreateInfo,
