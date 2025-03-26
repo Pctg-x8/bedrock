@@ -171,6 +171,7 @@ impl<Instance> DeviceObject<Instance> {
         Self {
             handle,
             parent,
+            #[cfg(feature = "Implements")]
             ext: DeviceExtFunctions::new(handle),
         }
     }
