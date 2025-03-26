@@ -245,6 +245,14 @@ impl<'r, 'rs> SubmitInfo<'r, 'rs> {
             PhantomData,
         )
     }
+
+    pub const unsafe fn from_raw(raw: VkSubmitInfo) -> Self {
+        Self(raw, PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkSubmitInfo {
+        self.0
+    }
 }
 
 #[repr(transparent)]
