@@ -319,42 +319,7 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
                 *self.ext.create_render_pass_2_khr.resolve()
             }
-
-            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
-                *self.ext.cmd_begin_render_pass_2_khr.resolve()
-            }
-
-            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
-                *self.ext.cmd_end_render_pass_2_khr.resolve()
-            }
-
-            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
-                *self.ext.cmd_next_subpass_2_khr.resolve()
-            }
         }
-    }
-
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_synchronization2",
-        not(feature = "Allow1_3APIs")
-    ))]
-    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
-        *self.ext.cmd_pipeline_barrier_2_khr.resolve()
-    }
-
-    #[cfg(all(
-        feature = "Implements",
-        feature = "VK_KHR_push_descriptor",
-        not(feature = "Allow1_4APIs")
-    ))]
-    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
-        *self.ext.cmd_push_descriptor_set_khr.resolve()
-    }
-
-    #[cfg(all(feature = "Implements", feature = "VK_EXT_sample_locations"))]
-    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
-        *self.ext.cmd_set_sample_locations_ext.resolve()
     }
 }
 #[implements]
