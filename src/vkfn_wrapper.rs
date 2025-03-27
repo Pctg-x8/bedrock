@@ -441,3 +441,32 @@ pub unsafe fn reset_fences(device: VkDevice, fences: &[VkHandleRefMut<VkFence>])
 pub unsafe fn get_fence_status(device: VkDevice, fence: VkFence) -> crate::Result<VkResult> {
     unsafe { crate::vkfn::get_fence_status(device, fence).into_result() }
 }
+
+#[inline]
+pub unsafe fn create_semaphore(
+    device: VkDevice,
+    create_info: &SemaphoreCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkSemaphore> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_semaphore(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_semaphore(
+    device: VkDevice,
+    semaphore: VkSemaphore,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_semaphore(device, semaphore, opt_pointer(allocation_callbacks)) }
+}
