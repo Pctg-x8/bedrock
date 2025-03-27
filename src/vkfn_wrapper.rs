@@ -27,6 +27,7 @@ pub unsafe fn get_physical_device_memory_properties(
     unsafe { crate::vkfn::get_physical_device_memory_properties(physical_device, sink.as_mut_ptr()) }
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_support(
     physical_device: VkPhysicalDevice,
@@ -47,6 +48,7 @@ pub unsafe fn get_physical_device_surface_support(
     Ok(unsafe { sink.assume_init() == VK_TRUE })
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_capabilities(
     physical_device: VkPhysicalDevice,
@@ -60,6 +62,7 @@ pub unsafe fn get_physical_device_surface_capabilities(
     }
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_format_count(
     physical_device: VkPhysicalDevice,
@@ -79,6 +82,7 @@ pub unsafe fn get_physical_device_surface_format_count(
     Ok(unsafe { v.assume_init() })
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_formats(
     physical_device: VkPhysicalDevice,
@@ -94,6 +98,7 @@ pub unsafe fn get_physical_device_surface_formats(
     Ok((v, r))
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_present_mode_count(
     physical_device: VkPhysicalDevice,
@@ -113,6 +118,7 @@ pub unsafe fn get_physical_device_surface_present_mode_count(
     Ok(unsafe { v.assume_init() })
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_present_modes(
     physical_device: VkPhysicalDevice,
@@ -133,6 +139,7 @@ pub unsafe fn get_physical_device_surface_present_modes(
     Ok((v, r))
 }
 
+#[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn destroy_surface(
     instance: VkInstance,
@@ -140,6 +147,90 @@ pub unsafe fn destroy_surface(
     allocation_callbacks: Option<&VkAllocationCallbacks>,
 ) {
     unsafe { crate::vkfn::destroy_surface_khr(instance, surface, opt_pointer(allocation_callbacks)) }
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[inline]
+pub unsafe fn create_swapchain(
+    device: VkDevice,
+    create_info: &SwapchainCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkSwapchainKHR> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_swapchain_khr(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[inline]
+pub unsafe fn destroy_swapchain(
+    device: VkDevice,
+    swapchain: VkSwapchainKHR,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_swapchain_khr(device, swapchain, opt_pointer(allocation_callbacks)) }
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[inline]
+pub unsafe fn get_swapchain_image_count(device: VkDevice, swapchain: VkSwapchainKHR) -> crate::Result<u32> {
+    let mut v = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_swapchain_images_khr(device, swapchain, v.as_mut_ptr(), core::ptr::null_mut())
+            .into_result()?;
+    }
+
+    Ok(unsafe { v.assume_init() })
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[inline]
+pub unsafe fn get_swapchain_images(
+    device: VkDevice,
+    swapchain: VkSwapchainKHR,
+    sink: &mut [VkImage],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r =
+        unsafe { crate::vkfn::get_swapchain_images_khr(device, swapchain, &mut v, sink.as_mut_ptr()).into_result()? };
+
+    Ok((v, r))
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[inline]
+pub unsafe fn acquire_next_image(
+    device: VkDevice,
+    mut swapchain: VkHandleRefMut<VkSwapchainKHR>,
+    timeout: u64,
+    mut semaphore: Option<VkHandleRefMut<VkSemaphore>>,
+    mut fence: Option<VkHandleRefMut<VkFence>>,
+) -> crate::Result<u32> {
+    let mut v = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::acquire_next_image_khr(
+            device,
+            swapchain.native_ptr_mut(),
+            timeout,
+            semaphore
+                .as_mut()
+                .map_or(VkSemaphore::NULL, VkHandleRefMut::native_ptr_mut),
+            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
+            v.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { v.assume_init() })
 }
 
 #[inline]

@@ -3,16 +3,16 @@ use crate::*;
 /// Opaque handle to a image object, backed by Swapchain.
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkImage::OBJECT_TYPE)]
-pub struct SwapchainImage<Swapchain: crate::Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkExtent3D);
-unsafe impl<Swapchain: crate::Swapchain + Sync> Sync for SwapchainImage<Swapchain> {}
-unsafe impl<Swapchain: crate::Swapchain + Send> Send for SwapchainImage<Swapchain> {}
-impl<Swapchain: crate::Swapchain> DeviceChildHandle for SwapchainImage<Swapchain> {
+pub struct SwapchainImage<Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkExtent3D);
+unsafe impl<Swapchain: Sync> Sync for SwapchainImage<Swapchain> {}
+unsafe impl<Swapchain: Send> Send for SwapchainImage<Swapchain> {}
+impl<Swapchain: DeviceChildHandle> DeviceChildHandle for SwapchainImage<Swapchain> {
     #[inline(always)]
     fn device_handle(&self) -> VkDevice {
         self.1.device_handle()
     }
 }
-impl<Swapchain: crate::Swapchain> DeviceChild for SwapchainImage<Swapchain> {
+impl<Swapchain: DeviceChild> DeviceChild for SwapchainImage<Swapchain> {
     type ConcreteDevice = Swapchain::ConcreteDevice;
 
     #[inline(always)]
@@ -36,7 +36,7 @@ impl<Swapchain: crate::Swapchain> Image for SwapchainImage<Swapchain> {
         VK_IMAGE_VIEW_TYPE_2D
     }
 }
-impl<Swapchain: crate::Swapchain + Clone> SwapchainImage<&'_ Swapchain> {
+impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
     /// Clones parent reference
     #[inline(always)]
     pub fn clone_parent(self) -> SwapchainImage<Swapchain> {
