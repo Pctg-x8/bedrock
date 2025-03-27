@@ -28,6 +28,121 @@ pub unsafe fn get_physical_device_memory_properties(
 }
 
 #[inline]
+pub unsafe fn get_physical_device_surface_support(
+    physical_device: VkPhysicalDevice,
+    queue_family_index: u32,
+    surface: VkSurfaceKHR,
+) -> crate::Result<bool> {
+    let mut sink = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_physical_device_surface_support_khr(
+            physical_device,
+            queue_family_index,
+            surface,
+            sink.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { sink.assume_init() == VK_TRUE })
+}
+
+#[inline]
+pub unsafe fn get_physical_device_surface_capabilities(
+    physical_device: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+    sink: &mut MaybeUninit<SurfaceCapabilities>,
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::get_physical_device_surface_capabilities_khr(physical_device, surface, sink.as_mut_ptr())
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
+pub unsafe fn get_physical_device_surface_format_count(
+    physical_device: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+) -> crate::Result<u32> {
+    let mut v = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_physical_device_surface_formats_khr(
+            physical_device,
+            surface,
+            v.as_mut_ptr(),
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { v.assume_init() })
+}
+
+#[inline]
+pub unsafe fn get_physical_device_surface_formats(
+    physical_device: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+    sink: &mut [SurfaceFormat],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r = unsafe {
+        crate::vkfn::get_physical_device_surface_formats_khr(physical_device, surface, &mut v, sink.as_mut_ptr())
+            .into_result()?
+    };
+
+    Ok((v, r))
+}
+
+#[inline]
+pub unsafe fn get_physical_device_surface_present_mode_count(
+    physical_device: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+) -> crate::Result<u32> {
+    let mut v = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_physical_device_surface_present_modes_khr(
+            physical_device,
+            surface,
+            v.as_mut_ptr(),
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { v.assume_init() })
+}
+
+#[inline]
+pub unsafe fn get_physical_device_surface_present_modes(
+    physical_device: VkPhysicalDevice,
+    surface: VkSurfaceKHR,
+    sink: &mut [PresentMode],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r = unsafe {
+        crate::vkfn::get_physical_device_surface_present_modes_khr(
+            physical_device,
+            surface,
+            &mut v,
+            sink.as_mut_ptr() as _,
+        )
+        .into_result()?
+    };
+
+    Ok((v, r))
+}
+
+#[inline]
+pub unsafe fn destroy_surface(
+    instance: VkInstance,
+    surface: VkSurfaceKHR,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_surface_khr(instance, surface, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
 pub unsafe fn get_device_queue(device: VkDevice, family_index: u32, index: u32) -> VkQueue {
     let mut h = MaybeUninit::uninit();
     unsafe {
