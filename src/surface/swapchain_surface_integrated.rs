@@ -177,14 +177,14 @@ impl<'r> SwapchainCreateInfo<'r> {
     }
 
     /// Default: Inherit
-    pub const fn pre_transform(mut self, tf: VkSurfaceTransformFlagsKHR) -> Self {
-        self.0.preTransform = tf as _;
+    pub const fn pre_transform(mut self, tf: SurfaceTransformFlags) -> Self {
+        self.0.preTransform = tf.bits();
         self
     }
 
     /// Default: Inherit
-    pub const fn composite_alpha(mut self, a: VkCompositeAlphaFlagsKHR) -> Self {
-        self.0.compositeAlpha = a as _;
+    pub const fn composite_alpha(mut self, a: CompositeAlphaFlags) -> Self {
+        self.0.compositeAlpha = a.bits();
         self
     }
 
