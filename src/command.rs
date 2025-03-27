@@ -2,6 +2,7 @@
 
 use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
+use core::ops::Range;
 use derives::implements;
 
 #[derive(VkHandle, VkObject)]
@@ -137,34 +138,6 @@ impl<Device: Clone> CommandBufferObject<&'_ Device> {
     /// clones internally-referenced parent object
     pub const fn clone_parent(&self) -> CommandBufferObject<Device> {
         CommandBufferObject(self.0, core::marker::PhantomData)
-    }
-}
-
-/// The recording state of command buffers
-#[implements]
-#[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
-pub struct CmdRecord<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized> {
-    ptr: &'d mut CommandBuffer,
-    device: &'d Device,
-}
-#[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
-{
-    pub const fn new(ptr: &'d mut CommandBuffer, device: &'d Device) -> Self {
-        Self { ptr, device }
-    }
-}
-#[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer>, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
-{
-    #[inline(always)]
-    pub fn as_dyn_ref<'r>(&'r mut self) -> CmdRecord<'r, dyn VkHandleMut<Handle = VkCommandBuffer> + 'r, Device> {
-        CmdRecord {
-            ptr: self.ptr as _,
-            device: self.device,
-        }
     }
 }
 
@@ -466,93 +439,19 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     /// # Safety
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
     #[implements]
-    unsafe fn begin_raw<'d, Device: 'd + crate::Device + ?Sized>(
+    unsafe fn begin<'d, ExtFnProvider: 'd + ?Sized>(
         &'d mut self,
         info: &CommandBufferBeginInfo,
-        device: &'d Device,
-    ) -> crate::Result<CmdRecord<'d, Self, Device>> {
+        ext_fn_provider: &'d ExtFnProvider,
+    ) -> crate::Result<CmdRecord<'d, Self, ExtFnProvider>> {
         unsafe {
             crate::vkfn::begin_command_buffer(self.native_ptr_mut(), info.as_raw_ref()).into_result()?;
         }
 
-        Ok(CmdRecord { ptr: self, device })
-    }
-
-    /// Start recording a primary command buffer
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    ///
-    /// # Safety
-    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
-    #[implements]
-    #[inline]
-    unsafe fn begin<'d, Device: 'd + crate::Device + ?Sized>(
-        &'d mut self,
-        device: &'d Device,
-    ) -> crate::Result<CmdRecord<'d, Self, Device>> {
-        unsafe { self.begin_raw(&CommandBufferBeginInfo::new(), device) }
-    }
-
-    /// Start recording a primary command buffer that will be submitted once
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    ///
-    /// # Safety
-    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
-    #[implements]
-    unsafe fn begin_once<'d, Device: 'd + crate::Device + ?Sized>(
-        &'d mut self,
-        device: &'d Device,
-    ) -> crate::Result<CmdRecord<'d, Self, Device>> {
-        unsafe { self.begin_raw(&CommandBufferBeginInfo::new().onetime_submit(), device) }
-    }
-
-    /// Start recording a secondary command buffer
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    ///
-    /// # Safety
-    /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
-    #[implements]
-    unsafe fn begin_inherit<'d, Device: 'd + crate::Device + ?Sized>(
-        &'d mut self,
-        device: &'d Device,
-        renderpass: Option<(
-            Option<&(impl crate::Framebuffer + ?Sized)>,
-            &(impl crate::RenderPass + ?Sized),
-            u32,
-        )>,
-        query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>,
-    ) -> crate::Result<CmdRecord<'d, Self, Device>> {
-        let binfo = CommandBufferBeginInfo::new();
-        let binfo = if renderpass.is_some() {
-            binfo.renderpass_continue()
-        } else {
-            binfo
-        };
-
-        let ih = CommandBufferInheritanceInfo::new();
-        let ih = if let Some((f, r, s)) = renderpass {
-            ih.rendering(r.subpass(s), f)
-        } else {
-            ih
-        };
-        let ih = if let Some((oq, psf)) = query {
-            ih.occlusion_query(oq).pipeline_statistics(psf)
-        } else {
-            ih
-        };
-
-        unsafe { self.begin_raw(&binfo.with_inheritance_info(&ih), device) }
+        Ok(CmdRecord {
+            ptr: self,
+            ext_fn_provider,
+        })
     }
 
     /// Reset a command buffer to the initial state
@@ -580,7 +479,10 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
         &'b mut self,
         pool: &'p mut Pool,
     ) -> SynchronizedCommandBuffer<'p, 'b, Pool, Self> {
-        SynchronizedCommandBuffer { pool, buffer: self }
+        SynchronizedCommandBuffer {
+            _pool: pool,
+            buffer: self,
+        }
     }
 }
 DerefContainerBracketImpl!(for mut CommandBufferMut {});
@@ -592,7 +494,7 @@ pub struct SynchronizedCommandBuffer<
     Pool: crate::CommandPoolMut + ?Sized + 'p,
     Buffer: crate::CommandBufferMut + ?Sized + 'b,
 > {
-    pool: &'p mut Pool,
+    _pool: &'p mut Pool,
     buffer: &'b mut Buffer,
 }
 #[implements]
@@ -606,52 +508,12 @@ impl<'p, 'b: 'p, Pool: crate::CommandPoolMut + 'p, Buffer: crate::CommandBufferM
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[inline(always)]
-    pub fn begin_raw(
-        &mut self,
+    pub fn begin<ExtFnProvider: 'b + ?Sized>(
+        &'b mut self,
         info: &CommandBufferBeginInfo,
-    ) -> crate::Result<CmdRecord<Buffer, Pool::ConcreteDevice>> {
-        unsafe { self.buffer.begin_raw(info, self.pool.device()) }
-    }
-
-    /// Start recording a primary command buffer
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[inline(always)]
-    pub fn begin(&mut self) -> crate::Result<CmdRecord<Buffer, Pool::ConcreteDevice>> {
-        unsafe { self.buffer.begin(self.pool.device()) }
-    }
-
-    /// Start recording a primary command buffer that will be submitted once
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[inline(always)]
-    pub fn begin_once(&mut self) -> crate::Result<CmdRecord<Buffer, Pool::ConcreteDevice>> {
-        unsafe { self.buffer.begin_once(self.pool.device()) }
-    }
-
-    /// Start recording a secondary command buffer
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[inline(always)]
-    pub fn begin_inherit(
-        &mut self,
-        renderpass: Option<(
-            Option<&(impl crate::Framebuffer + ?Sized)>,
-            &(impl crate::RenderPass + ?Sized),
-            u32,
-        )>,
-        query: Option<(OcclusionQuery, QueryPipelineStatisticFlags)>,
-    ) -> crate::Result<CmdRecord<Buffer, Pool::ConcreteDevice>> {
-        unsafe { self.buffer.begin_inherit(self.pool.device(), renderpass, query) }
+        ext_fn_provider: &'b ExtFnProvider,
+    ) -> crate::Result<CmdRecord<'b, Buffer, ExtFnProvider>> {
+        unsafe { self.buffer.begin(info, ext_fn_provider) }
     }
 
     /// Reset a command buffer to the initial state
@@ -665,10 +527,87 @@ impl<'p, 'b: 'p, Pool: crate::CommandPoolMut + 'p, Buffer: crate::CommandBufferM
     }
 }
 
+/// Functions from extension
+pub trait DeviceExtCommandFunctionProvider {
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
+
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[cfg(not(feature = "Allow1_3APIs"))]
+    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
+
+    #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[cfg(not(feature = "Allow1_4APIs"))]
+    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
+
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
+}
+DerefContainerWithGuardsBracketImpl!(for DeviceExtCommandFunctionProvider {
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
+
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[cfg(not(feature = "Allow1_3APIs"))]
+    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
+
+    #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[cfg(not(feature = "Allow1_4APIs"))]
+    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
+
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
+});
+
+/// The recording state of command buffers
+#[implements]
+#[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
+pub struct CmdRecord<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+{
+    ptr: &'d mut CommandBuffer,
+    ext_fn_provider: &'d ExtFnProvider,
+}
+#[implements]
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
+{
+    pub const fn new(ptr: &'d mut CommandBuffer, ext_fn_provider: &'d ExtFnProvider) -> Self {
+        Self { ptr, ext_fn_provider }
+    }
+}
+#[implements]
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer>, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
+{
+    #[inline(always)]
+    pub fn as_dyn_ref<'r>(
+        &'r mut self,
+    ) -> CmdRecord<'r, dyn VkHandleMut<Handle = VkCommandBuffer> + 'r, ExtFnProvider> {
+        CmdRecord {
+            ptr: self.ptr as _,
+            ext_fn_provider: self.ext_fn_provider,
+        }
+    }
+}
+
 /// Common Commands: End Recording
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Finish recording a command buffer
     #[inline]
@@ -703,8 +642,8 @@ pub enum PipelineBindPoint {
 
 /// Graphics Commands: Manipulating with Render Passes
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Begin a new render pass
     #[inline]
@@ -735,50 +674,31 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn begin_render_pass_2(
-        self,
-        begin_info: &crate::RenderPassBeginInfo,
-        subpass_begin_info: &VkSubpassBeginInfoKHR,
-    ) -> Self {
-        #[cfg(feature = "Allow1_2APIs")]
-        unsafe {
-            crate::vkfn::cmd_begin_render_pass2(self.ptr.native_ptr_mut(), begin_info.as_ref(), subpass_begin_info);
-        }
-
-        #[cfg(not(feature = "Allow1_2APIs"))]
-        unsafe {
-            (self.device.cmd_begin_render_pass_2_khr_fn().0)(
-                self.ptr.native_ptr_mut(),
-                begin_info.as_ref(),
-                subpass_begin_info,
-            );
-        }
-
-        self
-    }
-
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[inline]
-    pub fn next_subpass_2(
-        self,
-        subpass_begin_info: &VkSubpassBeginInfoKHR,
-        subpass_end_info: &VkSubpassEndInfoKHR,
-    ) -> Self
+    pub fn begin_render_pass2(self, begin_info: &RenderPassBeginInfo, subpass_begin_info: &SubpassBeginInfo) -> Self
     where
-        Device: crate::Device,
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
-        #[cfg(feature = "Allow1_2APIs")]
         unsafe {
-            crate::vkfn::cmd_next_subpass2(self.ptr.native_ptr_mut(), subpass_begin_info, subpass_end_info);
+            (self.ext_fn_provider.cmd_begin_render_pass_2_khr_fn().0)(
+                self.ptr.native_ptr_mut(),
+                begin_info as *const _ as _,
+                subpass_begin_info as *const _ as _,
+            );
         }
 
-        #[cfg(not(feature = "Allow1_2APIs"))]
+        self
+    }
+
+    #[cfg(feature = "Allow1_2APIs")]
+    #[inline]
+    pub fn begin_render_pass2(self, begin_info: &RenderPassBeginInfo, subpass_begin_info: &SubpassBeginInfo) -> Self {
         unsafe {
-            (self.device.cmd_next_subpass_2_khr_fn().0)(
-                self.ptr.native_ptr_mut(),
-                subpass_begin_info,
-                subpass_end_info,
+            crate::vkfn::cmd_begin_render_pass2(
+                self.ptr.native_ptr(),
+                begin_info as *const _ as _,
+                subpass_begin_info as *const _ as _,
             );
         }
 
@@ -786,16 +706,59 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn end_render_pass_2(self, subpass_end_info: &VkSubpassEndInfoKHR) -> Self {
-        #[cfg(feature = "Allow1_2APIs")]
+    pub fn next_subpass2(self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self
+    where
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
+    {
+        unsafe {
+            (self.ext_fn_provider.cmd_next_subpass_2_khr_fn().0)(
+                self.ptr.native_ptr_mut(),
+                subpass_begin_info as *const _ as _,
+                subpass_end_info as *const _ as _,
+            );
+        }
+
+        self
+    }
+
+    #[cfg(feature = "Allow1_2APIs")]
+    #[inline]
+    pub fn next_subpass2(self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self {
+        unsafe {
+            crate::vkfn::cmd_next_subpass2(
+                self.ptr.native_ptr_mut(),
+                subpass_begin_info as *const _ as _,
+                subpass_end_info as *const _ as _,
+            );
+        }
+
+        self
+    }
+
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[cfg(not(feature = "Allow1_2APIs"))]
+    #[inline]
+    pub fn end_render_pass2(self, subpass_end_info: &SubpassEndInfo) -> Self
+    where
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
+    {
+        unsafe {
+            (self.device.cmd_end_render_pass_2_khr_fn().0)(
+                self.ptr.native_ptr_mut(),
+                subpass_end_info as *const _ as _,
+            );
+        }
+
+        self
+    }
+
+    #[cfg(feature = "Allow1_2APIs")]
+    #[inline]
+    pub fn end_render_pass2(self, subpass_end_info: &SubpassEndInfo) -> Self {
         unsafe {
             crate::vkfn::cmd_end_render_pass2(self.ptr.native_ptr_mut(), subpass_end_info);
-        }
-
-        #[cfg(not(feature = "Allow1_2APIs"))]
-        unsafe {
-            (self.device.cmd_end_render_pass_2_khr_fn().0)(self.ptr.native_ptr_mut(), subpass_end_info);
         }
 
         self
@@ -804,8 +767,8 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
 /// Graphics/Compute Commands: Pipeline Setup
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Bind a pipeline object to a command buffer
     #[inline]
@@ -870,6 +833,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Push descriptor updates into a command buffer
     #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[cfg(not(feature = "Allow1_4APIs"))]
     #[inline(always)]
     pub unsafe fn push_descriptor_set_raw(
         self,
@@ -877,10 +841,12 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
         set: u32,
         writes: &[VkWriteDescriptorSet],
-    ) -> Self {
-        #[cfg(feature = "Allow1_4APIs")]
+    ) -> Self
+    where
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
+    {
         unsafe {
-            crate::vkfn::cmd_push_descriptor_set(
+            (self.ext_fn_provider.cmd_push_descriptor_set_khr_fn().0)(
                 self.ptr.native_ptr_mut(),
                 bind_point as _,
                 pipeline_layout.native_ptr(),
@@ -889,9 +855,22 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
                 slice_as_ptr_empty_null(writes),
             );
         }
-        #[cfg(not(feature = "Allow1_4APIs"))]
+
+        self
+    }
+
+    /// Push descriptor updates into a command buffer
+    #[cfg(feature = "Allow1_4APIs")]
+    #[inline(always)]
+    pub unsafe fn push_descriptor_set_raw(
+        self,
+        bind_point: PipelineBindPoint,
+        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        set: u32,
+        writes: &[VkWriteDescriptorSet],
+    ) -> Self {
         unsafe {
-            (self.device.cmd_push_descriptor_set_khr_fn())(
+            crate::vkfn::cmd_push_descriptor_set(
                 self.ptr.native_ptr_mut(),
                 bind_point as _,
                 pipeline_layout.native_ptr(),
@@ -906,7 +885,33 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Push descriptor updates into a command buffer
     #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[cfg(not(feature = "Allow1_4APIs"))]
     #[cfg(feature = "alloc")]
+    #[inline]
+    pub fn push_descriptor_set_alloc(
+        self,
+        bind_point: PipelineBindPoint,
+        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        set: u32,
+        writes: &[crate::DescriptorSetWriteInfo],
+    ) -> Self
+    where
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
+    {
+        unsafe {
+            self.push_descriptor_set_raw(
+                bind_point,
+                pipeline_layout,
+                set,
+                &crate::alloc::collect_vec(writes.iter().map(|x| x.make_structure())),
+            )
+        }
+    }
+
+    /// Push descriptor updates into a command buffer
+    #[cfg(feature = "Allow1_4APIs")]
+    #[cfg(feature = "alloc")]
+    #[inline]
     pub fn push_descriptor_set_alloc(
         self,
         bind_point: PipelineBindPoint,
@@ -927,12 +932,12 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
 /// Graphics Commands: Updating dynamic states
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Set the viewport on a command buffer
     #[inline(always)]
-    pub fn set_viewport(self, first: u32, viewports: &[VkViewport]) -> Self {
+    pub fn set_viewport(self, first: u32, viewports: &[Viewport]) -> Self {
         unsafe {
             crate::vkfn::cmd_set_viewport(
                 self.ptr.native_ptr_mut(),
@@ -946,7 +951,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Set the dynamic scissor rectangles on a command buffer
     #[inline(always)]
-    pub fn set_scissor(self, first: u32, scissors: &[VkRect2D]) -> Self {
+    pub fn set_scissor(self, first: u32, scissors: &[Rect2D]) -> Self {
         unsafe {
             crate::vkfn::cmd_set_scissor(
                 self.ptr.native_ptr_mut(),
@@ -987,7 +992,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Set the depth bounds test values for a command buffer
     #[inline(always)]
-    pub fn set_depth_bounds(self, bounds: core::ops::Range<f32>) -> Self {
+    pub fn set_depth_bounds(self, bounds: Range<f32>) -> Self {
         unsafe {
             crate::vkfn::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
         }
@@ -1023,19 +1028,23 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Set the sample locations state
     #[cfg(feature = "VK_EXT_sample_locations")]
-    #[inline(always)]
-    pub fn set_sample_locations(self, info: &VkSampleLocationsInfoEXT) -> Self {
+    #[inline]
+    pub fn set_sample_locations(self, info: &VkSampleLocationsInfoEXT) -> Self
+    where
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
+    {
         unsafe {
-            self.device().cmd_set_sample_locations_ext_fn().0(self.ptr.native_ptr_mut(), info);
+            (self.ext_fn_provider.cmd_set_sample_locations_ext_fn().0)(self.ptr.native_ptr_mut(), info);
         }
+
         self
     }
 }
 
 /// Graphics Commands: Binding Buffers
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Bind an index buffer to a command buffer
     #[inline(always)]
@@ -1058,7 +1067,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
     /// Bind vertex buffers to a command buffer
     #[inline(always)]
-    pub fn bind_vertex_buffers(self, first: u32, buffers: &[VkHandleRef<VkBuffer>], offsets: &[VkDeviceSize]) -> Self {
+    pub fn bind_vertex_buffers(self, first: u32, buffers: &[VkHandleRef<VkBuffer>], offsets: &[DeviceSize]) -> Self {
         assert_eq!(buffers.len(), offsets.len());
 
         unsafe {
@@ -1079,7 +1088,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
         self,
         first: u32,
         buffers: &[VkHandleRef<VkBuffer>; N],
-        offsets: &[VkDeviceSize; N],
+        offsets: &[DeviceSize; N],
     ) -> Self {
         unsafe {
             crate::vkfn::cmd_bind_vertex_buffers(
@@ -1096,8 +1105,8 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Dev
 
 /// Graphics Commands: Inside a Render Pass
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Draw primitives
     #[inline(always)]
@@ -1142,7 +1151,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn draw_indirect(
         self,
         buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: VkDeviceSize,
+        offset: DeviceSize,
         draw_count: u32,
         stride: u32,
     ) -> Self {
@@ -1163,7 +1172,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn draw_indexed_indirect(
         self,
         buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: VkDeviceSize,
+        offset: DeviceSize,
         draw_count: u32,
         stride: u32,
     ) -> Self {
@@ -1182,8 +1191,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Compute Commands: Dispatching kernels
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Dispatch compute work items
     #[inline(always)]
@@ -1199,7 +1208,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn dispatch_indirect(
         self,
         buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: VkDeviceSize,
+        offset: DeviceSize,
     ) -> Self {
         unsafe {
             crate::vkfn::cmd_dispatch_indirect(self.ptr.native_ptr_mut(), buffer.native_ptr(), offset);
@@ -1210,8 +1219,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Transfer Commands: Copying resources
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Copy data between buffer regions
     #[inline(always)]
@@ -1332,8 +1341,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn update_buffer<T>(
         self,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: VkDeviceSize,
-        size: VkDeviceSize,
+        dst_offset: DeviceSize,
+        size: DeviceSize,
         data: &T,
     ) -> Self {
         assert!(
@@ -1356,8 +1365,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Transfer-like(clearing/filling) commands
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Fill a region of a buffer with a fixed value.
     /// `size` is number of bytes to fill
@@ -1365,8 +1374,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn fill_buffer(
         self,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: VkDeviceSize,
-        size: VkDeviceSize,
+        dst_offset: DeviceSize,
+        size: DeviceSize,
         data: u32,
     ) -> Self {
         unsafe {
@@ -1440,8 +1449,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Executing Subcommands
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Execute a secondary command buffer from a primary command buffer
     /// # Safety
@@ -1462,8 +1471,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics Commands: Resolving an image to another image
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Resolve regions of an image
     #[inline(always)]
@@ -1492,8 +1501,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Synchronization between command buffers/queues
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Set an event object to signaled state
     #[inline(always)]
@@ -1575,14 +1584,18 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     }
 
     /// Insert a memory dependency
-    #[cfg(all(feature = "VK_KHR_synchronization2", not(feature = "Allow1_3APIs")))]
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[cfg(not(feature = "Allow1_3APIs"))]
     #[inline(always)]
     pub fn pipeline_barrier_2(self, dependency_info: &crate::DependencyInfo) -> Self
     where
-        Device: crate::Device,
+        ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
         unsafe {
-            (self.device.cmd_pipeline_barrier_2_khr_fn().0)(self.ptr.native_ptr_mut(), dependency_info as *const _ as _)
+            (self.ext_fn_provider.cmd_pipeline_barrier_2_khr_fn().0)(
+                self.ptr.native_ptr_mut(),
+                dependency_info as *const _ as _,
+            )
         }
 
         self
@@ -1600,8 +1613,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Querying
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Begin a query
     #[inline(always)]
@@ -1628,11 +1641,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
     /// Reset queries in a query pool
     #[inline(always)]
-    pub fn reset_query_pool(
-        self,
-        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
-        range: core::ops::Range<u32>,
-    ) -> Self {
+    pub fn reset_query_pool(self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), range: Range<u32>) -> Self {
         unsafe {
             crate::vkfn::cmd_reset_query_pool(
                 self.ptr.native_ptr_mut(),
@@ -1664,10 +1673,10 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
     pub fn copy_query_pool_results(
         self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
-        range: core::ops::Range<u32>,
+        range: Range<u32>,
         dst: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: VkDeviceSize,
-        stride: VkDeviceSize,
+        dst_offset: DeviceSize,
+        stride: DeviceSize,
         flags: QueryResultFlags,
     ) -> Self {
         unsafe {
@@ -1688,8 +1697,8 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Dev
 
 /// Graphics/Compute Commands: Miscellaneous
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Device: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, Device>
+impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
+    CmdRecord<'d, CommandBuffer, ExtFnProvider>
 {
     /// Inject imperative command generation in method-chaining
     #[inline(always)]

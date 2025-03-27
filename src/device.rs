@@ -357,6 +357,41 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
         *self.ext.cmd_set_sample_locations_ext.resolve()
     }
 }
+#[implements]
+impl<Instance: crate::Instance> DeviceExtCommandFunctionProvider for DeviceObject<Instance> {
+    cfg_if! {
+        if #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))] {
+            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
+                *self.ext.cmd_begin_render_pass_2_khr.resolve()
+            }
+
+            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
+                *self.ext.cmd_end_render_pass_2_khr.resolve()
+            }
+
+            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
+                *self.ext.cmd_next_subpass_2_khr.resolve()
+            }
+        }
+    }
+
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[cfg(not(feature = "Allow1_3APIs"))]
+    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
+        *self.ext.cmd_pipeline_barrier_2_khr.resolve()
+    }
+
+    #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[cfg(not(feature = "Allow1_4APIs"))]
+    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
+        *self.ext.cmd_push_descriptor_set_khr.resolve()
+    }
+
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
+        *self.ext.cmd_set_sample_locations_ext.resolve()
+    }
+}
 impl<Instance: crate::Instance + Clone> DeviceObject<&'_ Instance> {
     /// Clones parent reference
     #[inline]
@@ -2005,28 +2040,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[cfg(not(feature = "Allow1_2APIs"))]
     #[implements("VK_KHR_create_renderpass2")]
     fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
-
-    #[cfg(not(feature = "Allow1_3APIs"))]
-    #[implements("VK_KHR_synchronization2")]
-    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
-
-    #[cfg(not(feature = "Allow1_4APIs"))]
-    #[implements("VK_KHR_push_descriptor")]
-    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
-
-    #[implements("VK_EXT_sample_locations")]
-    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
 }
-DerefContainerBracketImpl!(for Device {
+DerefContainerWithGuardsBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_maintenance1")]
     ForwardFnPtr!(deref get_trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
@@ -2092,113 +2107,6 @@ DerefContainerBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_2APIs"))]
     #[implements("VK_KHR_create_renderpass2")]
     ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
-
-    #[cfg(not(feature = "Allow1_3APIs"))]
-    #[implements("VK_KHR_synchronization2")]
-    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
-
-    #[cfg(not(feature = "Allow1_4APIs"))]
-    #[implements("VK_KHR_push_descriptor")]
-    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
-
-    #[implements("VK_EXT_sample_locations")]
-    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
-});
-GuardsImpl!(for Device {
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_maintenance1")]
-    ForwardFnPtr!(deref get_trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref create_descriptor_update_template_khr_fn -> PFN_vkCreateDescriptorUpdateTemplateKHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref destroy_descriptor_update_template_khr_fn -> PFN_vkDestroyDescriptorUpdateTemplateKHR);
-        #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_descriptor_update_template")]
-    ForwardFnPtr!(deref update_descriptor_set_with_template_khr_fn -> PFN_vkUpdateDescriptorSetWithTemplateKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    ForwardFnPtr!(deref bind_buffer_memory2_khr_fn -> PFN_vkBindBufferMemory2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_bind_memory2")]
-    ForwardFnPtr!(deref bind_image_memory2_khr_fn -> PFN_vkBindImageMemory2KHR);
-
-    #[implements("VK_EXT_image_drm_format_modifier")]
-    ForwardFnPtr!(deref get_image_drm_format_modifier_properties_ext_fn -> PFN_vkGetImageDrmFormatModifierPropertiesEXT);
-
-    #[implements("VK_KHR_external_fence_fd")]
-    ForwardFnPtr!(deref get_fence_fd_khr_fn -> PFN_vkGetFenceFdKHR);
-    #[implements("VK_KHR_external_fence_fd")]
-    ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
-
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
-
-    #[implements("VK_KHR_external_memory_fd")]
-    ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
-    #[implements("VK_KHR_external_memory_fd")]
-    ForwardFnPtr!(deref get_memory_fd_properties_khr_fn -> PFN_vkGetMemoryFdPropertiesKHR);
-
-    #[implements("VK_EXT_external_memory_host")]
-    ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
-
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
-
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
-
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_buffer_memory_requirements_2_khr_fn -> PFN_vkGetBufferMemoryRequirements2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_image_memory_requirements_2_khr_fn -> PFN_vkGetImageMemoryRequirements2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_memory_requirements2")]
-    ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
-
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
-
-    #[cfg(not(feature = "Allow1_3APIs"))]
-    #[implements("VK_KHR_synchronization2")]
-    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
-
-    #[cfg(not(feature = "Allow1_4APIs"))]
-    #[implements("VK_KHR_push_descriptor")]
-    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
-
-    #[implements("VK_EXT_sample_locations")]
-    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
 });
 
 /// Child of a device object(raw handle)

@@ -442,24 +442,28 @@ fn main() {
         &br::CommandBufferFixedCountAllocateInfo::<'_, 1>::new(&mut init_cp, br::CommandBufferLevel::Primary),
     )
     .unwrap();
-    unsafe { init_cb.begin_once(&vk_device).unwrap() }
-        .copy_buffer(
-            &staging_buffer,
-            &device_buffer,
-            &[br::BufferCopy::mirror(0, total_buffer_size as _)],
-        )
-        .pipeline_barrier_2(&br::DependencyInfo::new(
-            &[br::MemoryBarrier2::new()
-                .from(br::PipelineStageFlags2::COPY, br::AccessFlags2::TRANSFER.write)
-                .to(
-                    br::PipelineStageFlags2::VERTEX_INPUT | br::PipelineStageFlags2::VERTEX_SHADER,
-                    br::AccessFlags2::VERTEX_ATTRIBUTE_READ | br::AccessFlags2::UNIFORM_READ,
-                )],
-            &[],
-            &[],
-        ))
-        .end()
-        .unwrap();
+    unsafe {
+        init_cb
+            .begin(&br::CommandBufferBeginInfo::new().onetime_submit(), &vk_device)
+            .unwrap()
+    }
+    .copy_buffer(
+        &staging_buffer,
+        &device_buffer,
+        &[br::BufferCopy::mirror(0, total_buffer_size as _)],
+    )
+    .pipeline_barrier_2(&br::DependencyInfo::new(
+        &[br::MemoryBarrier2::new()
+            .from(br::PipelineStageFlags2::COPY, br::AccessFlags2::TRANSFER.write)
+            .to(
+                br::PipelineStageFlags2::VERTEX_INPUT | br::PipelineStageFlags2::VERTEX_SHADER,
+                br::AccessFlags2::VERTEX_ATTRIBUTE_READ | br::AccessFlags2::UNIFORM_READ,
+            )],
+        &[],
+        &[],
+    ))
+    .end()
+    .unwrap();
     vk_queue
         .submit2(
             &[br::SubmitInfo2::new(
@@ -499,7 +503,7 @@ fn main() {
         &br::CommandBufferFixedCountAllocateInfo::<'_, 1>::new(&mut update_cp, br::CommandBufferLevel::Primary),
     )
     .unwrap();
-    unsafe { update_cb.begin(&vk_device).unwrap() }
+    unsafe { update_cb.begin(&br::CommandBufferBeginInfo::new(), &vk_device).unwrap() }
         .copy_buffer(
             &staging_buffer,
             &device_buffer,
@@ -528,8 +532,8 @@ fn main() {
     )
     .unwrap();
     for (cb, fb) in cb.iter_mut().zip(framebuffers.iter()) {
-        unsafe { cb.begin(&vk_device).unwrap() }
-            .begin_render_pass_2(
+        unsafe { cb.begin(&br::CommandBufferBeginInfo::new(), &vk_device).unwrap() }
+            .begin_render_pass2(
                 &br::RenderPassBeginInfo::new(
                     &renderpass,
                     fb,
@@ -540,14 +544,14 @@ fn main() {
                     .into_rect(br::vk::VkOffset2D::ZERO),
                     &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
                 ),
-                &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
+                &br::vk::VkSubpassBeginInfo::new(br::SubpassContents::Inline),
             )
             .bind_pipeline(br::PipelineBindPoint::Graphics, &pipeline)
             .push_constant(&pl, br::vk::VK_SHADER_STAGE_VERTEX_BIT, 0, &[640.0f32, 480.0])
             .bind_descriptor_sets(br::PipelineBindPoint::Graphics, &pl, 0, &[object_descriptor], &[])
             .bind_vertex_buffers(0, &[device_buffer.as_transparent_ref()], &[vertex_buffer_offset as _])
             .draw(3, 1, 0, 0)
-            .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
+            .end_render_pass2(&br::vk::VkSubpassEndInfo::new())
             .end()
             .unwrap();
     }

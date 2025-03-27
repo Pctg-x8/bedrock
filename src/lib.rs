@@ -42,6 +42,12 @@ pub mod vkfn;
 #[cfg(feature = "Implements")]
 pub mod vkfn_wrapper;
 
+macro_rules! DerefContainerWithGuardsBracketImpl {
+    (for $t: path { $($required: item)* }) => {
+        DerefContainerBracketImpl!(for $t { $($required)* });
+        GuardsImpl!(for $t { $($required)* });
+    }
+}
 macro_rules! DerefContainerBracketImpl {
     (for mut $t: path { $($required: item)* }) => {
         impl<'s, T> $t for &'s mut T where T: $t + ?Sized { $($required)* }

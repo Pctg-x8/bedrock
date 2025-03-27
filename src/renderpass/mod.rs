@@ -147,18 +147,22 @@ impl<'d> AsRef<VkRenderPassBeginInfo> for RenderPassBeginInfo<'d> {
 }
 
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-impl VkSubpassBeginInfoKHR {
-    pub const fn new(contents: VkSubpassContents) -> Self {
+pub type SubpassBeginInfo = VkSubpassBeginInfoKHR;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+impl SubpassBeginInfo {
+    pub const fn new(contents: SubpassContents) -> Self {
         Self {
             sType: Self::TYPE,
             pNext: core::ptr::null(),
-            contents,
+            contents: contents as _,
         }
     }
 }
 
 #[cfg(feature = "VK_KHR_create_renderpass2")]
-impl VkSubpassEndInfoKHR {
+pub type SubpassEndInfo = VkSubpassEndInfoKHR;
+#[cfg(feature = "VK_KHR_create_renderpass2")]
+impl SubpassEndInfo {
     pub const fn new() -> Self {
         Self {
             sType: Self::TYPE,
