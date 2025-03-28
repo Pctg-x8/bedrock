@@ -488,17 +488,12 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
 DerefContainerBracketImpl!(for mut CommandBufferMut {});
 GuardsImpl!(for mut CommandBufferMut {});
 
-pub struct SynchronizedCommandBuffer<
-    'p,
-    'b: 'p,
-    Pool: crate::CommandPoolMut + ?Sized + 'p,
-    Buffer: crate::CommandBufferMut + ?Sized + 'b,
-> {
+pub struct SynchronizedCommandBuffer<'p, 'b: 'p, Pool: ?Sized + 'p, Buffer: ?Sized + 'b> {
     _pool: &'p mut Pool,
     buffer: &'b mut Buffer,
 }
 #[implements]
-impl<'p, 'b: 'p, Pool: crate::CommandPoolMut + 'p, Buffer: crate::CommandBufferMut + 'b>
+impl<'p, 'b: 'p, Pool: ?Sized + 'p, Buffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'b>
     SynchronizedCommandBuffer<'p, 'b, Pool, Buffer>
 {
     /// Start recording a command buffer
@@ -513,7 +508,14 @@ impl<'p, 'b: 'p, Pool: crate::CommandPoolMut + 'p, Buffer: crate::CommandBufferM
         info: &CommandBufferBeginInfo,
         ext_fn_provider: &'b ExtFnProvider,
     ) -> crate::Result<CmdRecord<'b, Buffer, ExtFnProvider>> {
-        unsafe { self.buffer.begin(info, ext_fn_provider) }
+        unsafe {
+            crate::vkfn::begin_command_buffer(self.buffer.native_ptr_mut(), info.as_raw_ref()).into_result()?;
+        }
+
+        Ok(CmdRecord {
+            ptr: self.buffer,
+            ext_fn_provider,
+        })
     }
 
     /// Reset a command buffer to the initial state
@@ -523,7 +525,11 @@ impl<'p, 'b: 'p, Pool: crate::CommandPoolMut + 'p, Buffer: crate::CommandBufferM
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[inline(always)]
     pub fn reset(&mut self, flags: VkCommandBufferResetFlags) -> crate::Result<()> {
-        unsafe { self.buffer.reset(flags) }
+        unsafe {
+            crate::vkfn::reset_command_buffer(self.buffer.native_ptr_mut(), flags)
+                .into_result()
+                .map(drop)
+        }
     }
 }
 
