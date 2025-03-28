@@ -644,7 +644,7 @@ impl<'b, Image: VkHandle<Handle = VkImage> + 'b> ImageMemoryRequirementsInfo2<'b
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
 pub struct BindImageMemoryInfo<'b>(
-    VkBindImageMemoryInfo,
+    VkBindImageMemoryInfoKHR,
     core::marker::PhantomData<(VkHandleRef<'b, VkImage>, VkHandleRef<'b, VkDeviceMemory>)>,
 );
 #[cfg(feature = "VK_KHR_bind_memory2")]
@@ -655,8 +655,8 @@ impl<'b> BindImageMemoryInfo<'b> {
         offset: DeviceSize,
     ) -> Self {
         Self(
-            VkBindImageMemoryInfo {
-                sType: VkBindImageMemoryInfo::TYPE,
+            VkBindImageMemoryInfoKHR {
+                sType: VkBindImageMemoryInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 image: image.native_ptr(),
                 memory: memory.native_ptr(),
@@ -666,11 +666,11 @@ impl<'b> BindImageMemoryInfo<'b> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkBindImageMemoryInfo) -> Self {
+    pub const unsafe fn from_raw(raw: VkBindImageMemoryInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkBindImageMemoryInfo {
+    pub const fn into_raw(self) -> VkBindImageMemoryInfoKHR {
         self.0
     }
 }

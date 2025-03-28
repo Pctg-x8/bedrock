@@ -358,7 +358,7 @@ impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
 pub struct BindBufferMemoryInfo<'b>(
-    VkBindBufferMemoryInfo,
+    VkBindBufferMemoryInfoKHR,
     core::marker::PhantomData<(VkHandleRef<'b, VkBuffer>, VkHandleRef<'b, VkDeviceMemory>)>,
 );
 #[cfg(feature = "VK_KHR_bind_memory2")]
@@ -369,8 +369,8 @@ impl<'b> BindBufferMemoryInfo<'b> {
         offset: DeviceSize,
     ) -> Self {
         Self(
-            VkBindBufferMemoryInfo {
-                sType: VkBindBufferMemoryInfo::TYPE,
+            VkBindBufferMemoryInfoKHR {
+                sType: VkBindBufferMemoryInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 buffer: buffer.native_ptr(),
                 memory: memory.native_ptr(),
@@ -380,11 +380,11 @@ impl<'b> BindBufferMemoryInfo<'b> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkBindBufferMemoryInfo) -> Self {
+    pub const unsafe fn from_raw(raw: VkBindBufferMemoryInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkBindBufferMemoryInfo {
+    pub const fn into_raw(self) -> VkBindBufferMemoryInfoKHR {
         self.0
     }
 }
