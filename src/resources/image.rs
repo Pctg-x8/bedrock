@@ -528,6 +528,12 @@ impl<'d> ImageCreateInfo<'d> {
         self
     }
 }
+impl AsRef<VkImageCreateInfo> for ImageCreateInfo<'_> {
+    #[inline(always)]
+    fn as_ref(&self) -> &VkImageCreateInfo {
+        &self.0
+    }
+}
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct ImageSubresource<S: Image>(S, VkImageSubresource);
