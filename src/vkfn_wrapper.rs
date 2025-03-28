@@ -666,3 +666,61 @@ pub unsafe fn free_memory(
 ) {
     unsafe { crate::vkfn::free_memory(device, memory, opt_pointer(allocation_callbacks)) }
 }
+
+#[inline]
+pub unsafe fn create_image_view(
+    device: VkDevice,
+    create_info: &ImageViewCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkImageView> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_image_view(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_image_view(
+    device: VkDevice,
+    image_view: VkImageView,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_image_view(device, image_view, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn create_buffer_view(
+    device: VkDevice,
+    create_info: &BufferViewCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkBufferView> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_buffer_view(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_buffer_view(
+    device: VkDevice,
+    buffer_view: VkBufferView,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_buffer_view(device, buffer_view, opt_pointer(allocation_callbacks)) }
+}

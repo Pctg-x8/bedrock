@@ -1,4 +1,4 @@
-FROM node:23
+FROM node:22
 
 # Install tools
 RUN npm install -g firebase-tools
