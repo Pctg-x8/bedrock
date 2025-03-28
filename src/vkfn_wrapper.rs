@@ -470,3 +470,199 @@ pub unsafe fn destroy_semaphore(
 ) {
     unsafe { crate::vkfn::destroy_semaphore(device, semaphore, opt_pointer(allocation_callbacks)) }
 }
+
+#[inline]
+pub unsafe fn create_buffer(
+    device: VkDevice,
+    create_info: &BufferCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkBuffer> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_buffer(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_buffer(device: VkDevice, buffer: VkBuffer, allocation_callbacks: Option<&VkAllocationCallbacks>) {
+    unsafe { crate::vkfn::destroy_buffer(device, buffer, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn get_buffer_memory_requirements(device: VkDevice, buffer: VkBuffer) -> VkMemoryRequirements {
+    let mut sink = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_buffer_memory_requirements(device, buffer, sink.as_mut_ptr());
+
+        sink.assume_init()
+    }
+}
+
+#[cfg(feature = "Allow1_1APIs")]
+#[inline]
+pub unsafe fn get_buffer_memory_requirements2(
+    device: VkDevice,
+    info: &BufferMemoryRequirementsInfo2<'_, impl VkHandle<Handle = VkBuffer>>,
+    sink: &mut MaybeUninit<VkMemoryRequirements2>,
+) {
+    unsafe { crate::vkfn::get_buffer_memory_requirements2(device, info as *const _ as _, sink.as_mut_ptr()) }
+}
+
+#[inline]
+pub unsafe fn bind_buffer_memory(
+    device: VkDevice,
+    buffer: VkBuffer,
+    memory: VkDeviceMemory,
+    offset: DeviceSize,
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::bind_buffer_memory(device, buffer, memory, offset)
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[cfg(feature = "Allow1_1APIs")]
+#[inline]
+pub unsafe fn bind_buffer_memory2(device: VkDevice, bind_infos: &[BindBufferMemoryInfo]) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::bind_buffer_memory2(device, bind_infos.len() as _, bind_infos.as_ptr() as _)
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
+pub unsafe fn create_image(
+    device: VkDevice,
+    create_info: &ImageCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkImage> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_image(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_image(device: VkDevice, image: VkImage, allocation_callbacks: Option<&VkAllocationCallbacks>) {
+    unsafe { crate::vkfn::destroy_image(device, image, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn get_image_memory_requirements(device: VkDevice, image: VkImage) -> VkMemoryRequirements {
+    let mut sink = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_image_memory_requirements(device, image, sink.as_mut_ptr());
+
+        sink.assume_init()
+    }
+}
+
+#[cfg(feature = "Allow1_1APIs")]
+#[inline]
+pub unsafe fn get_image_memory_requirements2(
+    device: VkDevice,
+    info: &ImageMemoryRequirementsInfo2<'_, impl VkHandle<Handle = VkImage>>,
+    sink: &mut MaybeUninit<VkMemoryRequirements2>,
+) {
+    unsafe { crate::vkfn::get_image_memory_requirements2(device, info as *const _ as _, sink.as_mut_ptr()) }
+}
+
+#[inline]
+pub unsafe fn bind_image_memory(
+    device: VkDevice,
+    image: VkImage,
+    memory: VkDeviceMemory,
+    offset: DeviceSize,
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::bind_image_memory(device, image, memory, offset)
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[cfg(feature = "Allow1_1APIs")]
+#[inline]
+pub unsafe fn bind_image_memory2(device: VkDevice, bind_infos: &[BindImageMemoryInfo]) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::bind_image_memory2(device, bind_infos.len() as _, bind_infos.as_ptr() as _)
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
+pub unsafe fn create_sampler(
+    device: VkDevice,
+    create_info: &SamplerCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkSampler> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_sampler(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_sampler(
+    device: VkDevice,
+    sampler: VkSampler,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_sampler(device, sampler, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn allocate_memory(
+    device: VkDevice,
+    allocate_info: &MemoryAllocateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkDeviceMemory> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::allocate_memory(
+            device,
+            allocate_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn free_memory(
+    device: VkDevice,
+    memory: VkDeviceMemory,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::free_memory(device, memory, opt_pointer(allocation_callbacks)) }
+}

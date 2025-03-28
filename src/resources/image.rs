@@ -601,9 +601,12 @@ impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-pub struct ImageMemoryRequirementsInfo2<'b, Image: self::Image + 'b>(VkImageMemoryRequirementsInfo2KHR, &'b Image);
+pub struct ImageMemoryRequirementsInfo2<'b, Image: VkHandle<Handle = VkImage> + 'b>(
+    VkImageMemoryRequirementsInfo2KHR,
+    &'b Image,
+);
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-impl<'b, Image: self::Image + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
+impl<'b, Image: VkHandle<Handle = VkImage> + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
     pub fn new(image: &'b Image) -> Self {
         Self(
             VkImageMemoryRequirementsInfo2KHR {
@@ -635,6 +638,40 @@ impl<'b, Image: self::Image + 'b> ImageMemoryRequirementsInfo2<'b, Image> {
                 sink.as_mut_ptr(),
             );
         }
+    }
+}
+
+#[cfg(feature = "VK_KHR_bind_memory2")]
+#[repr(transparent)]
+pub struct BindImageMemoryInfo<'b>(
+    VkBindImageMemoryInfo,
+    core::marker::PhantomData<(VkHandleRef<'b, VkImage>, VkHandleRef<'b, VkDeviceMemory>)>,
+);
+#[cfg(feature = "VK_KHR_bind_memory2")]
+impl<'b> BindImageMemoryInfo<'b> {
+    pub fn new(
+        image: &'b (impl VkHandle<Handle = VkImage> + ?Sized),
+        memory: &'b (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        offset: DeviceSize,
+    ) -> Self {
+        Self(
+            VkBindImageMemoryInfo {
+                sType: VkBindImageMemoryInfo::TYPE,
+                pNext: core::ptr::null(),
+                image: image.native_ptr(),
+                memory: memory.native_ptr(),
+                memoryOffset: offset,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkBindImageMemoryInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkBindImageMemoryInfo {
+        self.0
     }
 }
 

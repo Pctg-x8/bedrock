@@ -355,6 +355,40 @@ impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2
     }
 }
 
+#[cfg(feature = "VK_KHR_bind_memory2")]
+#[repr(transparent)]
+pub struct BindBufferMemoryInfo<'b>(
+    VkBindBufferMemoryInfo,
+    core::marker::PhantomData<(VkHandleRef<'b, VkBuffer>, VkHandleRef<'b, VkDeviceMemory>)>,
+);
+#[cfg(feature = "VK_KHR_bind_memory2")]
+impl<'b> BindBufferMemoryInfo<'b> {
+    pub fn new(
+        buffer: &'b (impl VkHandle<Handle = VkBuffer> + ?Sized),
+        memory: &'b (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        offset: DeviceSize,
+    ) -> Self {
+        Self(
+            VkBindBufferMemoryInfo {
+                sType: VkBindBufferMemoryInfo::TYPE,
+                pNext: core::ptr::null(),
+                buffer: buffer.native_ptr(),
+                memory: memory.native_ptr(),
+                memoryOffset: offset,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkBindBufferMemoryInfo) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkBindBufferMemoryInfo {
+        self.0
+    }
+}
+
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(transparent)]
