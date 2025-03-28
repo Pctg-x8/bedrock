@@ -443,13 +443,13 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
         &'d mut self,
         info: &CommandBufferBeginInfo,
         ext_fn_provider: &'d ExtFnProvider,
-    ) -> crate::Result<CmdRecord<'d, Self, ExtFnProvider>> {
+    ) -> crate::Result<CmdRecord<'d, ExtFnProvider>> {
         unsafe {
             crate::vkfn::begin_command_buffer(self.native_ptr_mut(), info.as_raw_ref()).into_result()?;
         }
 
         Ok(CmdRecord {
-            ptr: self,
+            ptr: self.as_transparent_ref_mut(),
             ext_fn_provider,
         })
     }
@@ -475,27 +475,33 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     /// Locking CommandBuffer with CommandPool to satisfy externally synchronization restriction.
     /// # Safety
     /// This command buffer must be allocated from `pool`.
-    unsafe fn synchronize_with<'p, 'b: 'p, Pool: 'p + crate::CommandPoolMut + ?Sized>(
+    unsafe fn synchronize_with<'p, 'b: 'p>(
         &'b mut self,
-        pool: &'p mut Pool,
-    ) -> SynchronizedCommandBuffer<'p, 'b, Pool, Self> {
+        pool: &'p mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
+    ) -> SynchronizedCommandBuffer<'p, 'b> {
         SynchronizedCommandBuffer {
-            _pool: pool,
-            buffer: self,
+            _pool: pool.as_transparent_ref_mut(),
+            buffer: self.as_transparent_ref_mut(),
         }
     }
 }
 DerefContainerBracketImpl!(for mut CommandBufferMut {});
 GuardsImpl!(for mut CommandBufferMut {});
 
-pub struct SynchronizedCommandBuffer<'p, 'b: 'p, Pool: ?Sized + 'p, Buffer: ?Sized + 'b> {
-    _pool: &'p mut Pool,
-    buffer: &'b mut Buffer,
+pub struct SynchronizedCommandBuffer<'p, 'b: 'p> {
+    _pool: VkHandleRefMut<'p, VkCommandPool>,
+    buffer: VkHandleRefMut<'b, VkCommandBuffer>,
 }
 #[implements]
-impl<'p, 'b: 'p, Pool: ?Sized + 'p, Buffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'b>
-    SynchronizedCommandBuffer<'p, 'b, Pool, Buffer>
-{
+impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
+    /// Constructs the synchronized binding.
+    pub const unsafe fn new_unchecked(
+        pool: VkHandleRefMut<'p, VkCommandPool>,
+        buffer: VkHandleRefMut<'b, VkCommandBuffer>,
+    ) -> Self {
+        Self { _pool: pool, buffer }
+    }
+
     /// Start recording a command buffer
     /// # Failures
     /// On failure, this command returns
@@ -507,13 +513,13 @@ impl<'p, 'b: 'p, Pool: ?Sized + 'p, Buffer: VkHandleMut<Handle = VkCommandBuffer
         &'b mut self,
         info: &CommandBufferBeginInfo,
         ext_fn_provider: &'b ExtFnProvider,
-    ) -> crate::Result<CmdRecord<'b, Buffer, ExtFnProvider>> {
+    ) -> crate::Result<CmdRecord<'b, ExtFnProvider>> {
         unsafe {
             crate::vkfn::begin_command_buffer(self.buffer.native_ptr_mut(), info.as_raw_ref()).into_result()?;
         }
 
         Ok(CmdRecord {
-            ptr: self.buffer,
+            ptr: self.buffer.as_transparent_ref_mut(),
             ext_fn_provider,
         })
     }
@@ -582,39 +588,21 @@ DerefContainerWithGuardsBracketImpl!(for DeviceExtCommandFunctionProvider {
 /// The recording state of command buffers
 #[implements]
 #[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
-pub struct CmdRecord<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-{
-    ptr: &'d mut CommandBuffer,
+pub struct CmdRecord<'d, ExtFnProvider: 'd + ?Sized> {
+    ptr: VkHandleRefMut<'d, VkCommandBuffer>,
+    #[allow(dead_code)]
     ext_fn_provider: &'d ExtFnProvider,
 }
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
-    pub const fn new(ptr: &'d mut CommandBuffer, ext_fn_provider: &'d ExtFnProvider) -> Self {
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
+    pub const fn new(ptr: VkHandleRefMut<'d, VkCommandBuffer>, ext_fn_provider: &'d ExtFnProvider) -> Self {
         Self { ptr, ext_fn_provider }
-    }
-}
-#[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer>, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
-    #[inline(always)]
-    pub fn as_dyn_ref<'r>(
-        &'r mut self,
-    ) -> CmdRecord<'r, dyn VkHandleMut<Handle = VkCommandBuffer> + 'r, ExtFnProvider> {
-        CmdRecord {
-            ptr: self.ptr as _,
-            ext_fn_provider: self.ext_fn_provider,
-        }
     }
 }
 
 /// Common Commands: End Recording
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Finish recording a command buffer
     #[inline]
     pub fn end(self) -> crate::Result<()> {
@@ -648,12 +636,10 @@ pub enum PipelineBindPoint {
 
 /// Graphics Commands: Manipulating with Render Passes
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Begin a new render pass
     #[inline]
-    pub fn begin_render_pass(self, info: &crate::RenderPassBeginInfo, contents: SubpassContents) -> Self {
+    pub fn begin_render_pass(mut self, info: &crate::RenderPassBeginInfo, contents: SubpassContents) -> Self {
         unsafe {
             crate::vkfn::cmd_begin_render_pass(self.ptr.native_ptr_mut(), info.as_ref(), contents as _);
         }
@@ -663,7 +649,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Transition to the next subpass of a render pass
     #[inline]
-    pub fn next_subpass(self, contents: SubpassContents) -> Self {
+    pub fn next_subpass(mut self, contents: SubpassContents) -> Self {
         unsafe {
             crate::vkfn::cmd_next_subpass(self.ptr.native_ptr_mut(), contents as _);
         }
@@ -673,7 +659,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// End the current render pass
     #[inline]
-    pub fn end_render_pass(self) -> Self {
+    pub fn end_render_pass(mut self) -> Self {
         unsafe { crate::vkfn::cmd_end_render_pass(self.ptr.native_ptr_mut()) };
 
         self
@@ -682,7 +668,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     #[cfg(feature = "VK_KHR_create_renderpass2")]
     #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn begin_render_pass2(self, begin_info: &RenderPassBeginInfo, subpass_begin_info: &SubpassBeginInfo) -> Self
+    pub fn begin_render_pass2(mut self, begin_info: &RenderPassBeginInfo, subpass_begin_info: &SubpassBeginInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -699,10 +685,14 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     #[cfg(feature = "Allow1_2APIs")]
     #[inline]
-    pub fn begin_render_pass2(self, begin_info: &RenderPassBeginInfo, subpass_begin_info: &SubpassBeginInfo) -> Self {
+    pub fn begin_render_pass2(
+        mut self,
+        begin_info: &RenderPassBeginInfo,
+        subpass_begin_info: &SubpassBeginInfo,
+    ) -> Self {
         unsafe {
             crate::vkfn::cmd_begin_render_pass2(
-                self.ptr.native_ptr(),
+                self.ptr.native_ptr_mut(),
                 begin_info as *const _ as _,
                 subpass_begin_info as *const _ as _,
             );
@@ -714,7 +704,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     #[cfg(feature = "VK_KHR_create_renderpass2")]
     #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn next_subpass2(self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self
+    pub fn next_subpass2(mut self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -731,7 +721,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     #[cfg(feature = "Allow1_2APIs")]
     #[inline]
-    pub fn next_subpass2(self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self {
+    pub fn next_subpass2(mut self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self {
         unsafe {
             crate::vkfn::cmd_next_subpass2(
                 self.ptr.native_ptr_mut(),
@@ -746,7 +736,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     #[cfg(feature = "VK_KHR_create_renderpass2")]
     #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn end_render_pass2(self, subpass_end_info: &SubpassEndInfo) -> Self
+    pub fn end_render_pass2(mut self, subpass_end_info: &SubpassEndInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -762,7 +752,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     #[cfg(feature = "Allow1_2APIs")]
     #[inline]
-    pub fn end_render_pass2(self, subpass_end_info: &SubpassEndInfo) -> Self {
+    pub fn end_render_pass2(mut self, subpass_end_info: &SubpassEndInfo) -> Self {
         unsafe {
             crate::vkfn::cmd_end_render_pass2(self.ptr.native_ptr_mut(), subpass_end_info);
         }
@@ -773,13 +763,11 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
 /// Graphics/Compute Commands: Pipeline Setup
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Bind a pipeline object to a command buffer
     #[inline]
     pub fn bind_pipeline(
-        self,
+        mut self,
         bind_point: PipelineBindPoint,
         pipeline: &(impl VkHandle<Handle = VkPipeline> + ?Sized),
     ) -> Self {
@@ -792,7 +780,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     /// Binds descriptor sets to a command buffer
     #[inline]
     pub fn bind_descriptor_sets(
-        self,
+        mut self,
         bind_point: PipelineBindPoint,
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
         first: u32,
@@ -818,7 +806,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     /// Update the value of push constant
     #[inline]
     pub fn push_constant<T>(
-        self,
+        mut self,
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
         stage: VkShaderStageFlags,
         offset: u32,
@@ -869,7 +857,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     #[cfg(feature = "Allow1_4APIs")]
     #[inline(always)]
     pub unsafe fn push_descriptor_set_raw(
-        self,
+        mut self,
         bind_point: PipelineBindPoint,
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
         set: u32,
@@ -938,12 +926,10 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
 /// Graphics Commands: Updating dynamic states
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Set the viewport on a command buffer
     #[inline(always)]
-    pub fn set_viewport(self, first: u32, viewports: &[Viewport]) -> Self {
+    pub fn set_viewport(mut self, first: u32, viewports: &[Viewport]) -> Self {
         unsafe {
             crate::vkfn::cmd_set_viewport(
                 self.ptr.native_ptr_mut(),
@@ -957,7 +943,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the dynamic scissor rectangles on a command buffer
     #[inline(always)]
-    pub fn set_scissor(self, first: u32, scissors: &[Rect2D]) -> Self {
+    pub fn set_scissor(mut self, first: u32, scissors: &[Rect2D]) -> Self {
         unsafe {
             crate::vkfn::cmd_set_scissor(
                 self.ptr.native_ptr_mut(),
@@ -971,7 +957,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the dynamic line width state
     #[inline(always)]
-    pub fn set_line_width(self, w: f32) -> Self {
+    pub fn set_line_width(mut self, w: f32) -> Self {
         unsafe {
             crate::vkfn::cmd_set_line_width(self.ptr.native_ptr_mut(), w);
         }
@@ -980,7 +966,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the depth bias dynamic state
     #[inline(always)]
-    pub fn set_depth_bias(self, constant_factor: f32, clamp: f32, slope_factor: f32) -> Self {
+    pub fn set_depth_bias(mut self, constant_factor: f32, clamp: f32, slope_factor: f32) -> Self {
         unsafe {
             crate::vkfn::cmd_set_depth_bias(self.ptr.native_ptr_mut(), constant_factor, clamp, slope_factor);
         }
@@ -989,7 +975,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the values of blend constants
     #[inline(always)]
-    pub fn set_blend_constants(self, blend_constants: &[f32; 4]) -> Self {
+    pub fn set_blend_constants(mut self, blend_constants: &[f32; 4]) -> Self {
         unsafe {
             crate::vkfn::cmd_set_blend_constants(self.ptr.native_ptr_mut(), blend_constants.as_ptr());
         }
@@ -998,7 +984,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the depth bounds test values for a command buffer
     #[inline(always)]
-    pub fn set_depth_bounds(self, bounds: Range<f32>) -> Self {
+    pub fn set_depth_bounds(mut self, bounds: Range<f32>) -> Self {
         unsafe {
             crate::vkfn::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
         }
@@ -1007,7 +993,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the stencil compare mask dynamic state
     #[inline(always)]
-    pub fn set_stencil_compare_mask(self, face_mask: StencilFaceMask, compare_mask: u32) -> Self {
+    pub fn set_stencil_compare_mask(mut self, face_mask: StencilFaceMask, compare_mask: u32) -> Self {
         unsafe {
             crate::vkfn::cmd_set_stencil_compare_mask(self.ptr.native_ptr_mut(), face_mask as _, compare_mask);
         }
@@ -1016,7 +1002,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the stencil write mask dynamic state
     #[inline(always)]
-    pub fn set_stencil_write_mask(self, face_mask: StencilFaceMask, write_mask: u32) -> Self {
+    pub fn set_stencil_write_mask(mut self, face_mask: StencilFaceMask, write_mask: u32) -> Self {
         unsafe {
             crate::vkfn::cmd_set_stencil_write_mask(self.ptr.native_ptr_mut(), face_mask as _, write_mask);
         }
@@ -1025,7 +1011,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Set the stencil reference dynamic state
     #[inline(always)]
-    pub fn set_stencil_reference(self, face_mask: StencilFaceMask, reference: u32) -> Self {
+    pub fn set_stencil_reference(mut self, face_mask: StencilFaceMask, reference: u32) -> Self {
         unsafe {
             crate::vkfn::cmd_set_stencil_reference(self.ptr.native_ptr_mut(), face_mask as _, reference);
         }
@@ -1035,7 +1021,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     /// Set the sample locations state
     #[cfg(feature = "VK_EXT_sample_locations")]
     #[inline]
-    pub fn set_sample_locations(self, info: &VkSampleLocationsInfoEXT) -> Self
+    pub fn set_sample_locations(mut self, info: &VkSampleLocationsInfoEXT) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -1049,13 +1035,11 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
 /// Graphics Commands: Binding Buffers
 #[implements]
-impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Bind an index buffer to a command buffer
     #[inline(always)]
     pub fn bind_index_buffer(
-        self,
+        mut self,
         buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
         offset: usize,
         index_type: IndexType,
@@ -1073,7 +1057,12 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
     /// Bind vertex buffers to a command buffer
     #[inline(always)]
-    pub fn bind_vertex_buffers(self, first: u32, buffers: &[VkHandleRef<VkBuffer>], offsets: &[DeviceSize]) -> Self {
+    pub fn bind_vertex_buffers(
+        mut self,
+        first: u32,
+        buffers: &[VkHandleRef<VkBuffer>],
+        offsets: &[DeviceSize],
+    ) -> Self {
         assert_eq!(buffers.len(), offsets.len());
 
         unsafe {
@@ -1091,7 +1080,7 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
     /// Bind vertex buffers to a command buffer
     #[inline(always)]
     pub fn bind_vertex_buffer_array<const N: usize>(
-        self,
+        mut self,
         first: u32,
         buffers: &[VkHandleRef<VkBuffer>; N],
         offsets: &[DeviceSize; N],
@@ -1111,12 +1100,10 @@ impl<'d, CommandBuffer: 'd + VkHandleMut<Handle = VkCommandBuffer> + ?Sized, Ext
 
 /// Graphics Commands: Inside a Render Pass
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Draw primitives
     #[inline(always)]
-    pub fn draw(self, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) -> Self {
+    pub fn draw(mut self, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) -> Self {
         unsafe {
             crate::vkfn::cmd_draw(
                 self.ptr.native_ptr_mut(),
@@ -1132,7 +1119,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Issue an indexed draw into a command buffer
     #[inline(always)]
     pub fn draw_indexed(
-        self,
+        mut self,
         index_count: u32,
         instance_count: u32,
         first_index: u32,
@@ -1155,7 +1142,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Issue an indirect draw into a command buffer
     #[inline(always)]
     pub fn draw_indirect(
-        self,
+        mut self,
         buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
         offset: DeviceSize,
         draw_count: u32,
@@ -1176,7 +1163,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Perform an indexed indirect draw
     #[inline(always)]
     pub fn draw_indexed_indirect(
-        self,
+        mut self,
         buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
         offset: DeviceSize,
         draw_count: u32,
@@ -1197,12 +1184,10 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Compute Commands: Dispatching kernels
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Dispatch compute work items
     #[inline(always)]
-    pub fn dispatch(self, group_count_x: u32, group_count_y: u32, group_count_z: u32) -> Self {
+    pub fn dispatch(mut self, group_count_x: u32, group_count_y: u32, group_count_z: u32) -> Self {
         unsafe {
             crate::vkfn::cmd_dispatch(self.ptr.native_ptr_mut(), group_count_x, group_count_y, group_count_z);
         }
@@ -1212,7 +1197,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Dispatch compute work items using indirect parameters
     #[inline(always)]
     pub fn dispatch_indirect(
-        self,
+        mut self,
         buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         offset: DeviceSize,
     ) -> Self {
@@ -1225,13 +1210,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Transfer Commands: Copying resources
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Copy data between buffer regions
     #[inline(always)]
     pub fn copy_buffer(
-        self,
+        mut self,
         src: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         regions: &[BufferCopy],
@@ -1251,7 +1234,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Copy data between images
     #[inline(always)]
     pub fn copy_image(
-        self,
+        mut self,
         src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
         dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
@@ -1275,7 +1258,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Copy regions of an image, potentially performing format conversion
     #[inline(always)]
     pub fn blit_image(
-        self,
+        mut self,
         src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
         dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
@@ -1301,7 +1284,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Copy data from a buffer into an image
     #[inline(always)]
     pub fn copy_buffer_to_image(
-        self,
+        mut self,
         src_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         dst_layout: ImageLayout,
@@ -1323,7 +1306,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Copy image data into a buffer
     #[inline(always)]
     pub fn copy_image_to_buffer(
-        self,
+        mut self,
         src_image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
         dst_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
@@ -1345,7 +1328,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Update a buffer's contents from host memory
     #[inline(always)]
     pub fn update_buffer<T>(
-        self,
+        mut self,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: DeviceSize,
         size: DeviceSize,
@@ -1371,14 +1354,12 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Graphics/Compute Commands: Transfer-like(clearing/filling) commands
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Fill a region of a buffer with a fixed value.
     /// `size` is number of bytes to fill
     #[inline(always)]
     pub fn fill_buffer(
-        self,
+        mut self,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: DeviceSize,
         size: DeviceSize,
@@ -1393,7 +1374,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Clear regions of a color image
     #[inline(always)]
     pub fn clear_color_image(
-        self,
+        mut self,
         image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         layout: ImageLayout,
         colors: &[ClearColorValue],
@@ -1417,7 +1398,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Fill regions of a combined depth/stencil image
     #[inline(always)]
     pub fn clear_depth_stencil_image(
-        self,
+        mut self,
         image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         layout: ImageLayout,
         depth: f32,
@@ -1439,7 +1420,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
     /// Clear regions within currently bound framebuffer attachments
     #[inline(always)]
-    pub fn clear_attachments(self, attachments: &[VkClearAttachment], rects: &[VkClearRect]) -> Self {
+    pub fn clear_attachments(mut self, attachments: &[VkClearAttachment], rects: &[VkClearRect]) -> Self {
         unsafe {
             crate::vkfn::cmd_clear_attachments(
                 self.ptr.native_ptr_mut(),
@@ -1455,15 +1436,13 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Graphics Commands: Executing Subcommands
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Execute a secondary command buffer from a primary command buffer
     /// # Safety
     ///
     /// Caller must be primary buffer and in the render pass when executing secondary command buffer
     #[inline(always)]
-    pub unsafe fn execute_commands(self, buffers: &[VkHandleRef<VkCommandBuffer>]) -> Self {
+    pub unsafe fn execute_commands(mut self, buffers: &[VkHandleRef<VkCommandBuffer>]) -> Self {
         unsafe {
             crate::vkfn::cmd_execute_commands(
                 self.ptr.native_ptr_mut(),
@@ -1477,13 +1456,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Graphics Commands: Resolving an image to another image
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Resolve regions of an image
     #[inline(always)]
     pub fn resolve_image(
-        self,
+        mut self,
         src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         src_layout: ImageLayout,
         dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
@@ -1507,12 +1484,14 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Graphics/Compute Commands: Synchronization between command buffers/queues
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Set an event object to signaled state
     #[inline(always)]
-    pub fn set_event(self, event: &(impl VkHandle<Handle = VkEvent> + ?Sized), stage_mask: PipelineStageFlags) -> Self {
+    pub fn set_event(
+        mut self,
+        event: &(impl VkHandle<Handle = VkEvent> + ?Sized),
+        stage_mask: PipelineStageFlags,
+    ) -> Self {
         unsafe {
             crate::vkfn::cmd_set_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
         }
@@ -1522,7 +1501,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Reset an event object to non-signaled state
     #[inline(always)]
     pub fn reset_event(
-        self,
+        mut self,
         event: &(impl VkHandle<Handle = VkEvent> + ?Sized),
         stage_mask: PipelineStageFlags,
     ) -> Self {
@@ -1535,7 +1514,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Wait for one or more events and insert a set of memory
     #[inline(always)]
     pub fn wait_events(
-        self,
+        mut self,
         events: &[VkHandleRef<VkEvent>],
         src_stage_mask: PipelineStageFlags,
         dst_stage_mask: PipelineStageFlags,
@@ -1564,7 +1543,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Insert a memory dependency
     #[inline(always)]
     pub fn pipeline_barrier(
-        self,
+        mut self,
         src_stage_mask: PipelineStageFlags,
         dst_stage_mask: PipelineStageFlags,
         dependency_flags: VkDependencyFlags,
@@ -1593,7 +1572,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     #[cfg(feature = "VK_KHR_synchronization2")]
     #[cfg(not(feature = "Allow1_3APIs"))]
     #[inline(always)]
-    pub fn pipeline_barrier_2(self, dependency_info: &crate::DependencyInfo) -> Self
+    pub fn pipeline_barrier_2(mut self, dependency_info: &crate::DependencyInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -1610,7 +1589,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Insert a memory dependency
     #[cfg(feature = "Allow1_3APIs")]
     #[inline(always)]
-    pub fn pipeline_barrier_2(self, dependency_info: &crate::DependencyInfo) -> Self {
+    pub fn pipeline_barrier_2(mut self, dependency_info: &crate::DependencyInfo) -> Self {
         unsafe { crate::vkfn::cmd_pipeline_barrier2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _) }
 
         self
@@ -1619,13 +1598,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Graphics/Compute Commands: Querying
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Begin a query
     #[inline(always)]
     pub fn begin_query(
-        self,
+        mut self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         query: u32,
         flags: VkQueryControlFlags,
@@ -1638,7 +1615,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
     /// Ends a query
     #[inline(always)]
-    pub fn end_query(self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), query: u32) -> Self {
+    pub fn end_query(mut self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), query: u32) -> Self {
         unsafe {
             crate::vkfn::cmd_end_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query);
         }
@@ -1647,7 +1624,11 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
     /// Reset queries in a query pool
     #[inline(always)]
-    pub fn reset_query_pool(self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), range: Range<u32>) -> Self {
+    pub fn reset_query_pool(
+        mut self,
+        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        range: Range<u32>,
+    ) -> Self {
         unsafe {
             crate::vkfn::cmd_reset_query_pool(
                 self.ptr.native_ptr_mut(),
@@ -1662,7 +1643,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     /// Write a device timestamp into a query object
     #[inline(always)]
     pub fn write_timestamp(
-        self,
+        mut self,
         stage: PipelineStageFlags,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         query: u32,
@@ -1677,7 +1658,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
     #[inline(always)]
     #[allow(clippy::too_many_arguments)]
     pub fn copy_query_pool_results(
-        self,
+        mut self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
         range: Range<u32>,
         dst: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
@@ -1703,9 +1684,7 @@ impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, Ext
 
 /// Graphics/Compute Commands: Miscellaneous
 #[implements]
-impl<'d, CommandBuffer: VkHandleMut<Handle = VkCommandBuffer> + ?Sized + 'd, ExtFnProvider: 'd + ?Sized>
-    CmdRecord<'d, CommandBuffer, ExtFnProvider>
-{
+impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     /// Inject imperative command generation in method-chaining
     #[inline(always)]
     pub fn inject(self, op: impl FnOnce(Self) -> Self) -> Self {
