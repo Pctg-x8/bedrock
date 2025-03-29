@@ -668,6 +668,48 @@ pub unsafe fn free_memory(
 }
 
 #[inline]
+pub unsafe fn map_memory(
+    device: VkDevice,
+    memory: VkDeviceMemory,
+    offest: DeviceSize,
+    size: DeviceSize,
+    flags: br::vk::VkMemoryMapFlags,
+) -> crate::Result<*mut core::ffi::c_void> {
+    let mut p = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::map_memory(device, memory, offset, size, flags, p.as_mut_ptr()).into_result()?;
+    }
+
+    Ok(unsafe { p.assume_init() })
+}
+
+#[inline]
+pub unsafe fn unmap_memory(device: VkDevice, memory: VkDeviceMemory) {
+    unsafe { crate::vkfn::unmap_memory(device, memory) }
+}
+
+#[inline]
+pub unsafe fn invalidate_mapped_memory_ranges(
+    device: VkDevice,
+    memory_ranges: &[VkMappedMemoryRange],
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::invalidate_mapped_memory_ranges(device, memory_ranges.len() as _, memory_ranges.as_ptr())
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
+pub unsafe fn flush_mapped_memory_ranges(device: VkDevice, memory_ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::flush_mapped_memory_ranges(device, memory_ranges.len() as _, memory_ranges.as_ptr())
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[inline]
 pub unsafe fn create_image_view(
     device: VkDevice,
     create_info: &ImageViewCreateInfo,
