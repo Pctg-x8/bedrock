@@ -225,12 +225,38 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     }
 
     #[inline]
+    pub const unsafe fn for_buffer_raw(buffer: VkBuffer) -> Self {
+        Self(
+            VkMemoryDedicatedAllocateInfoKHR {
+                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                image: VkImage::NULL,
+                buffer,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline]
     pub fn for_image(image: &'d (impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
         Self(
             VkMemoryDedicatedAllocateInfoKHR {
                 sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 image: image.native_ptr(),
+                buffer: VkBuffer::NULL,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline]
+    pub const unsafe fn for_image_raw(image: VkImage) -> Self {
+        Self(
+            VkMemoryDedicatedAllocateInfoKHR {
+                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                image,
                 buffer: VkBuffer::NULL,
             },
             core::marker::PhantomData,
