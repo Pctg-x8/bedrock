@@ -27,6 +27,54 @@ pub unsafe fn get_physical_device_memory_properties(
     unsafe { crate::vkfn::get_physical_device_memory_properties(physical_device, sink.as_mut_ptr()) }
 }
 
+#[cfg(feature = "VK_KHR_xlib_surface")]
+#[inline]
+pub unsafe fn get_physical_device_xlib_presentation_support(
+    physical_device: VkPhysicalDevice,
+    queue_family_index: u32,
+    dpy: *mut x11::xlib::Display,
+    visual_id: x11::xlib::VisualID,
+) -> bool {
+    unsafe {
+        crate::vkfn::get_physical_device_xlib_presentation_support_khr(
+            physical_device,
+            queue_family_index,
+            dpy,
+            visual_id,
+        ) == VK_TRUE
+    }
+}
+
+#[cfg(feature = "VK_KHR_xcb_surface")]
+pub unsafe fn get_physical_device_xcb_presentation_support(
+    physical_device: VkPhysicalDevice,
+    queue_family_index: u32,
+    connection: *mut xcb::ffi::xcb_connection_t,
+    visual_id: xcb::x::Visualid,
+) -> bool {
+    unsafe {
+        crate::vkfn::get_physical_device_xcb_presentation_support_khr(
+            physical_device,
+            queue_family_index,
+            connection,
+            visual_id,
+        ) == VK_TRUE
+    }
+}
+
+#[cfg(feature = "VK_KHR_wayland_surface")]
+#[inline]
+pub unsafe fn get_physical_device_wayland_presentation_support(
+    physical_device: VkPhysicalDevice,
+    queue_family_index: u32,
+    display: *mut core::ffi::c_void,
+) -> bool {
+    unsafe {
+        crate::vkfn::get_physical_device_wayland_presentation_support_khr(physical_device, queue_family_index, display)
+            == VK_TRUE
+    }
+}
+
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_support(
