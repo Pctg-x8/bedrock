@@ -1374,12 +1374,12 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[implements]
     #[inline]
-    unsafe fn invalidate_memory_range(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+    unsafe fn invalidate_memory_range(&self, ranges: &[MappedMemoryRange]) -> crate::Result<()> {
         unsafe {
             crate::vkfn::invalidate_mapped_memory_ranges(
                 self.native_ptr(),
                 ranges.len() as _,
-                ranges.as_ptr_empty_null(),
+                ranges.as_ptr_empty_null() as _,
             )
             .into_result()
             .map(drop)
@@ -1393,11 +1393,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Memory object in `ranges` must be currently host mapped
     #[implements]
     #[inline]
-    unsafe fn flush_mapped_memory_ranges(&self, ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+    unsafe fn flush_mapped_memory_ranges(&self, ranges: &[MappedMemoryRange]) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::flush_mapped_memory_ranges(self.native_ptr(), ranges.len() as _, ranges.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
+            crate::vkfn::flush_mapped_memory_ranges(
+                self.native_ptr(),
+                ranges.len() as _,
+                ranges.as_ptr_empty_null() as _,
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
