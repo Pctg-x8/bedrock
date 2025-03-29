@@ -55,10 +55,10 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
-    fn map(&mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemoryRange<Self>> {
+    fn map(&mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemory<Self>> {
         let p = unsafe { self.map_raw(range.start as _..range.end as _)? };
 
-        Ok(MappedMemoryRange(p, self))
+        Ok(MappedMemory(p, self))
     }
 
     /// Unmap a previously mapped memory object
@@ -281,13 +281,44 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     }
 }
 
+/// Structure specifying a mapped memory range.
+pub struct MappedMemoryRange<'a>(
+    VkMappedMemoryRange,
+    core::marker::PhantomData<&'a dyn VkHandle<Handle = VkDeviceMemory>>,
+);
+impl<'a> MappedMemoryRange<'a> {
+    pub fn new(
+        memory: &'a (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        range: core::ops::Range<DeviceSize>,
+    ) -> Self {
+        Self(
+            VkMappedMemoryRange {
+                sType: VkMappedMemoryRange::TYPE,
+                pNext: core::ptr::null(),
+                memory: memory.native_ptr(),
+                offset: range.start,
+                size: range.end - range.start,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkMappedMemoryRange) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkMappedMemoryRange {
+        self.0
+    }
+}
+
 /// Specifies the block of mapped memory in a `DeviceMemory`
-pub struct MappedMemoryRange<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm>(
+pub struct MappedMemory<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm>(
     *mut core::ffi::c_void,
     &'m mut DeviceMemory,
 );
 #[allow(clippy::mut_from_ref)]
-impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemoryRange<'m, DeviceMemory> {
+impl<'m, DeviceMemory: crate::DeviceMemoryMut + ?Sized + 'm> MappedMemory<'m, DeviceMemory> {
     /// Returns a pointer to the head of the mapped region
     pub const fn ptr(&self) -> *mut core::ffi::c_void {
         self.0

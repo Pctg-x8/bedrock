@@ -691,19 +691,19 @@ pub unsafe fn unmap_memory(device: VkDevice, memory: VkDeviceMemory) {
 #[inline]
 pub unsafe fn invalidate_mapped_memory_ranges(
     device: VkDevice,
-    memory_ranges: &[VkMappedMemoryRange],
+    memory_ranges: &[MappedMemoryRange],
 ) -> crate::Result<()> {
     unsafe {
-        crate::vkfn::invalidate_mapped_memory_ranges(device, memory_ranges.len() as _, memory_ranges.as_ptr())
+        crate::vkfn::invalidate_mapped_memory_ranges(device, memory_ranges.len() as _, memory_ranges.as_ptr() as _)
             .into_result()
             .map(drop)
     }
 }
 
 #[inline]
-pub unsafe fn flush_mapped_memory_ranges(device: VkDevice, memory_ranges: &[VkMappedMemoryRange]) -> crate::Result<()> {
+pub unsafe fn flush_mapped_memory_ranges(device: VkDevice, memory_ranges: &[MappedMemoryRange]) -> crate::Result<()> {
     unsafe {
-        crate::vkfn::flush_mapped_memory_ranges(device, memory_ranges.len() as _, memory_ranges.as_ptr())
+        crate::vkfn::flush_mapped_memory_ranges(device, memory_ranges.len() as _, memory_ranges.as_ptr() as _)
             .into_result()
             .map(drop)
     }
