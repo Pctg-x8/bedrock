@@ -671,9 +671,9 @@ pub unsafe fn free_memory(
 pub unsafe fn map_memory(
     device: VkDevice,
     memory: VkDeviceMemory,
-    offest: DeviceSize,
+    offset: DeviceSize,
     size: DeviceSize,
-    flags: br::vk::VkMemoryMapFlags,
+    flags: VkMemoryMapFlags,
 ) -> crate::Result<*mut core::ffi::c_void> {
     let mut p = MaybeUninit::uninit();
     unsafe {
