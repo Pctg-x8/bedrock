@@ -303,6 +303,19 @@ impl<'a> MappedMemoryRange<'a> {
         )
     }
 
+    pub const unsafe fn new_raw(memory: VkDeviceMemory, offset: DeviceSize, size: DeviceSize) -> Self {
+        Self(
+            VkMappedMemoryRange {
+                sType: VkMappedMemoryRange::TYPE,
+                pNext: core::ptr::null(),
+                memory,
+                offset,
+                size,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
     pub const unsafe fn from_raw(raw: VkMappedMemoryRange) -> Self {
         Self(raw, core::marker::PhantomData)
     }
