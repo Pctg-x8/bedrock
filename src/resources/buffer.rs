@@ -315,6 +315,7 @@ impl<'d> BufferViewCreateInfo<'d> {
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[repr(transparent)]
 pub struct BufferMemoryRequirementsInfo2<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b>(
     VkBufferMemoryRequirementsInfo2KHR,
     &'b Buffer,

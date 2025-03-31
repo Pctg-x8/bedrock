@@ -607,6 +607,7 @@ impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
+#[repr(transparent)]
 pub struct ImageMemoryRequirementsInfo2<'b, Image: VkHandle<Handle = VkImage> + 'b>(
     VkImageMemoryRequirementsInfo2KHR,
     &'b Image,
