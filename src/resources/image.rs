@@ -607,7 +607,6 @@ impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[repr(transparent)]
 pub struct ImageMemoryRequirementsInfo2<'b, Image: VkHandle<Handle = VkImage> + 'b>(
     VkImageMemoryRequirementsInfo2KHR,
     &'b Image,
@@ -645,6 +644,14 @@ impl<'b, Image: VkHandle<Handle = VkImage> + 'b> ImageMemoryRequirementsInfo2<'b
                 sink.as_mut_ptr(),
             );
         }
+    }
+}
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+impl<Image: VkHandle<Handle = VkImage>> AsRef<VkImageMemoryRequirementsInfo2KHR>
+    for ImageMemoryRequirementsInfo2<'_, Image>
+{
+    fn as_ref(&self) -> &VkImageMemoryRequirementsInfo2KHR {
+        &self.0
     }
 }
 

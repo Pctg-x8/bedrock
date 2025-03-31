@@ -315,7 +315,6 @@ impl<'d> BufferViewCreateInfo<'d> {
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-#[repr(transparent)]
 pub struct BufferMemoryRequirementsInfo2<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b>(
     VkBufferMemoryRequirementsInfo2KHR,
     &'b Buffer,
@@ -353,6 +352,14 @@ impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2
                 sink.as_mut_ptr(),
             );
         }
+    }
+}
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
+impl<Buffer: VkHandle<Handle = VkBuffer>> AsRef<VkBufferMemoryRequirementsInfo2KHR>
+    for BufferMemoryRequirementsInfo2<'_, Buffer>
+{
+    fn as_ref(&self) -> &VkBufferMemoryRequirementsInfo2KHR {
+        &self.0
     }
 }
 

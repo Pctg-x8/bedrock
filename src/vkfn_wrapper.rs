@@ -561,7 +561,7 @@ pub unsafe fn get_buffer_memory_requirements2(
     info: &BufferMemoryRequirementsInfo2<'_, impl VkHandle<Handle = VkBuffer>>,
     sink: &mut MaybeUninit<VkMemoryRequirements2>,
 ) {
-    unsafe { crate::vkfn::get_buffer_memory_requirements2(device, info as *const _ as _, sink.as_mut_ptr()) }
+    unsafe { crate::vkfn::get_buffer_memory_requirements2(device, info.as_ref() as *const _, sink.as_mut_ptr()) }
 }
 
 #[inline]
@@ -630,7 +630,7 @@ pub unsafe fn get_image_memory_requirements2(
     info: &ImageMemoryRequirementsInfo2<'_, impl VkHandle<Handle = VkImage>>,
     sink: &mut MaybeUninit<VkMemoryRequirements2>,
 ) {
-    unsafe { crate::vkfn::get_image_memory_requirements2(device, info as *const _ as _, sink.as_mut_ptr()) }
+    unsafe { crate::vkfn::get_image_memory_requirements2(device, info.as_ref() as *const _, sink.as_mut_ptr()) }
 }
 
 #[inline]
