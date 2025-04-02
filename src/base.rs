@@ -1101,14 +1101,24 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Lists physical device's format capabilities
     /// # Safety
     /// Caller must guarantee that all write operations to `out` are safe.
-    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[implements("Allow1_1APIs")]
     #[inline]
     unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR) {
-        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
             crate::vkfn::get_physical_device_format_properties2(self.native_ptr(), format, out);
         }
-        #[cfg(not(feature = "Allow1_1APIs"))]
+    }
+
+    /// Lists physical device's format capabilities
+    /// # Safety
+    /// Caller must guarantee that all write operations to `out` are safe.
+    #[cfg(not(feature = "Allow1_1APIs"))]
+    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[inline]
+    unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR)
+    where
+        Self::ConcreateInstance: InstanceExtensions,
+    {
         unsafe {
             self.instance().get_physical_device_format_properties2_khr_fn().0(self.native_ptr(), format, out);
         }
@@ -2019,7 +2029,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
+    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
+    where
+        Self::ConcreteInstance: InstanceExtensions,
+    {
         unsafe {
             self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
         }
