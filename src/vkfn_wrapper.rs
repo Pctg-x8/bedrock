@@ -852,3 +852,23 @@ pub unsafe fn destroy_render_pass(
 ) {
     unsafe { crate::vkfn::destroy_render_pass(device, render_pass, opt_pointer(allocation_callbacks)) }
 }
+
+#[inline]
+pub unsafe fn destroy_pipeline(
+    device: VkDevice,
+    pipeline: VkPipeline,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_pipeline(device, pipeline, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn destroy_pipeline_layout(
+    device: VkDevice,
+    pipeline_layout: VkPipelineLayout,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe {
+        crate::vkfn::destroy_pipeline_layout(device, pipeline_layout, opt_pointer(allocation_callbacks));
+    }
+}
