@@ -1117,7 +1117,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR)
     where
-        Self::ConcreateInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceExtensions,
     {
         unsafe {
             self.instance().get_physical_device_format_properties2_khr_fn().0(self.native_ptr(), format, out);
