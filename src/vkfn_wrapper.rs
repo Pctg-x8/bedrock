@@ -814,3 +814,32 @@ pub unsafe fn destroy_buffer_view(
 ) {
     unsafe { crate::vkfn::destroy_buffer_view(device, buffer_view, opt_pointer(allocation_callbacks)) }
 }
+
+#[inline]
+pub unsafe fn create_framebuffer(
+    device: VkDevice,
+    create_info: &FramebufferCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkFramebuffer> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_framebuffer(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn destroy_framebuffer(
+    device: VkDevice,
+    framebuffer: VkFramebuffer,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_framebuffer(device, framebuffer, opt_pointer(allocation_callbacks)) }
+}
