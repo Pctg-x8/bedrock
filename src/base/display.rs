@@ -84,9 +84,10 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
 
     /// Release access to an acquired VkDisplayKHR
     #[implements("VK_EXT_direct_mode_display")]
-    pub fn release(&self) {
-        use crate::Instance;
-
+    pub fn release(&self)
+    where
+        PhysicalDevice::ConcreteInstance: InstanceExtensions,
+    {
         unsafe {
             self.1.instance().release_display_ext_fn().0(self.1.native_ptr(), self.native_ptr());
         }
@@ -99,9 +100,10 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     #[implements("VK_EXT_acquire_xlib_display")]
-    pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()> {
-        use crate::Instance;
-
+    pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()>
+    where
+        PhysicalDevice::ConcreteInstance: InstanceExtensions,
+    {
         unsafe {
             self.1.instance().acquire_xlib_display_ext_fn().0(self.1.native_ptr(), dpy, self.native_ptr())
                 .into_result()

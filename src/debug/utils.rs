@@ -9,9 +9,12 @@ GuardsImpl!(for DebugUtilsMessenger {});
 
 #[derive(VkHandle, VkObject, InstanceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT)]
-pub struct DebugUtilsMessengerObject<Instance: crate::Instance>(VkDebugUtilsMessengerEXT, #[parent] Instance);
+pub struct DebugUtilsMessengerObject<Instance: crate::Instance + InstanceExtensions>(
+    VkDebugUtilsMessengerEXT,
+    #[parent] Instance,
+);
 #[implements]
-impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
+impl<Instance: crate::Instance + InstanceExtensions> Drop for DebugUtilsMessengerObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
@@ -19,10 +22,10 @@ impl<Instance: crate::Instance> Drop for DebugUtilsMessengerObject<Instance> {
         }
     }
 }
-unsafe impl<Instance: crate::Instance + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
-unsafe impl<Instance: crate::Instance + Send> Send for DebugUtilsMessengerObject<Instance> {}
-impl<Instance: crate::Instance> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
-impl<Instance: crate::Instance> DebugUtilsMessengerObject<Instance> {
+unsafe impl<Instance: crate::Instance + InstanceExtensions + Sync> Sync for DebugUtilsMessengerObject<Instance> {}
+unsafe impl<Instance: crate::Instance + InstanceExtensions + Send> Send for DebugUtilsMessengerObject<Instance> {}
+impl<Instance: crate::Instance + InstanceExtensions> DebugUtilsMessenger for DebugUtilsMessengerObject<Instance> {}
+impl<Instance: crate::Instance + InstanceExtensions> DebugUtilsMessengerObject<Instance> {
     /// Create a debug messenger object
     /// # Failures
     /// On failure, this command returns
@@ -51,7 +54,7 @@ impl<Instance: crate::Instance> DebugUtilsMessengerObject<Instance> {
         (h, p)
     }
 }
-impl<Instance: crate::Instance + Clone> DebugUtilsMessengerObject<&'_ Instance> {
+impl<Instance: crate::Instance + InstanceExtensions + Clone> DebugUtilsMessengerObject<&'_ Instance> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DebugUtilsMessengerObject<Instance> {
