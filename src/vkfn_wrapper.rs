@@ -854,12 +854,69 @@ pub unsafe fn destroy_render_pass(
 }
 
 #[inline]
+pub unsafe fn create_graphics_pipelines_unchecked(
+    device: VkDevice,
+    pipeline_cache: Option<VkPipelineCache>,
+    create_infos: &[GraphicsPipelineCreateInfo],
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    results: &mut [VkPipeline],
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::create_graphics_pipelines(
+            device,
+            pipeline_cache.unwrap_or(VkPipelineCache::NULL),
+            create_infos.len() as _,
+            create_infos.as_ptr() as _,
+            opt_pointer(allocation_callbacks),
+            results.as_mut_ptr(),
+        )
+        .into_result()
+        .map(drop)
+    }
+}
+
+#[inline]
+pub unsafe fn create_graphics_pipeline_array<const N: usize>(
+    device: VkDevice,
+    pipeline_cache: Option<VkPipelineCache>,
+    create_infos: &[GraphicsPipelineCreateInfo; N],
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<[VkPipeline; N]> {
+    let mut results = [VkPipeline::NULL; N];
+    unsafe {
+        create_graphics_pipelines_unchecked(device, pipeline_cache, create_infos, allocation_callbacks, &mut results)?;
+    }
+
+    Ok(results)
+}
+
+#[inline]
 pub unsafe fn destroy_pipeline(
     device: VkDevice,
     pipeline: VkPipeline,
     allocation_callbacks: Option<&VkAllocationCallbacks>,
 ) {
     unsafe { crate::vkfn::destroy_pipeline(device, pipeline, opt_pointer(allocation_callbacks)) }
+}
+
+#[inline]
+pub unsafe fn create_pipeline_layout(
+    device: VkDevice,
+    create_info: &PipelineLayoutCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkPipelineLayout> {
+    let mut h = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::create_pipeline_layout(
+            device,
+            create_info as *const _ as _,
+            opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { h.assume_init() })
 }
 
 #[inline]

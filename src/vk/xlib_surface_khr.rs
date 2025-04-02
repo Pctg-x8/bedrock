@@ -1,7 +1,7 @@
 //! VK_KHR_xlib_surface extensions
 
 use super::*;
-use derives::{implements, vk_ext_command};
+use derives::vk_ext_command;
 use x11::xlib::*;
 
 pub const VK_KHR_XLIB_SURFACE_SPEC_VERSION: usize = 6;
