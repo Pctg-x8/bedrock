@@ -1537,8 +1537,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         display: *mut x11::xlib::Display,
         visual: x11::xlib::VisualID,
     ) -> bool {
-        crate::vkfn::get_physical_device_xlib_presentation_support_khr(self.native_ptr(), queue_family, display, visual)
-            != 0
+        unsafe {
+            crate::vkfn::get_physical_device_xlib_presentation_support_khr(
+                self.native_ptr(),
+                queue_family,
+                display,
+                visual,
+            ) != 0
+        }
     }
 
     /// Query physical device for presentation to X11 server using XCB
@@ -1552,12 +1558,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         connection: *mut xcb::ffi::xcb_connection_t,
         visual: xcb::x::Visualid,
     ) -> bool {
-        crate::vkfn::get_physical_device_xcb_presentation_support_khr(
-            self.native_ptr(),
-            queue_family,
-            connection,
-            visual,
-        ) != 0
+        unsafe {
+            crate::vkfn::get_physical_device_xcb_presentation_support_khr(
+                self.native_ptr(),
+                queue_family,
+                connection,
+                visual,
+            ) != 0
+        }
     }
 
     /// Query physical device for presentation to Wayland
@@ -1881,31 +1889,6 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |x| Display(x, self))))
     }
 
-    /// Query the VkDisplayKHR corresponding to an X11 RandR Output
-    /// # Failures
-    /// On failure, this command returns
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    ///
-    /// # Safety
-    /// Provided `dpy` must be a valid reference
-    #[implements("VK_EXT_acquire_xlib_display")]
-    #[inline]
-    unsafe fn get_randr_output_display(
-        self,
-        dpy: *mut x11::xlib::Display,
-        rr_output: x11::xrandr::RROutput,
-    ) -> crate::Result<Display<Self>>
-    where
-        Self: Sized,
-    {
-        let mut d = core::mem::MaybeUninit::uninit();
-
-        self.instance().get_randr_output_display_ext_fn().0(self.native_ptr(), dpy, rr_output, d.as_mut_ptr())
-            .into_result()?;
-
-        Ok(Display(d.assume_init(), self))
-    }
-
     /// Create a `Surface` object representing a display plane and mode
     /// # Failures
     /// On failure, this command returns
@@ -1937,6 +1920,32 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         Ok(unsafe { h.assume_init() })
     }
 
+    /// Query the VkDisplayKHR corresponding to an X11 RandR Output
+    /// # Failures
+    /// On failure, this command returns
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    ///
+    /// # Safety
+    /// Provided `dpy` must be a valid reference
+    #[implements("VK_EXT_acquire_xlib_display")]
+    #[inline]
+    unsafe fn get_randr_output_display(
+        self,
+        dpy: *mut x11::xlib::Display,
+        rr_output: x11::xrandr::RROutput,
+    ) -> crate::Result<Display<Self>>
+    where
+        Self: Sized,
+        Self::ConcreteInstance: InstanceExtensions,
+    {
+        let mut d = core::mem::MaybeUninit::uninit();
+
+        self.instance().get_randr_output_display_ext_fn().0(self.native_ptr(), dpy, rr_output, d.as_mut_ptr())
+            .into_result()?;
+
+        Ok(Display(d.assume_init(), self))
+    }
+
     /// Reports capabilities of a surface on a physical device
     ///
     /// # Failures
@@ -1954,7 +1963,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
         sink: &mut core::mem::MaybeUninit<VkSurfaceCapabilities2KHR>,
-    ) -> crate::Result<()> {
+    ) -> crate::Result<()>
+    where
+        Self::ConcreteInstance: InstanceExtensions,
+    {
         self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
             self.native_ptr(),
             surface_info,
@@ -1967,14 +1979,24 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Returns properties of a physical device
     /// # Safety
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[implements("Allow1_1APIs")]
     #[inline]
     unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>) {
-        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
             crate::vkfn::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
         }
-        #[cfg(not(feature = "Allow1_1APIs"))]
+    }
+
+    /// Returns properties of a physical device
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[cfg(not(feature = "Allow1_1APIs"))]
+    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[inline]
+    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>)
+    where
+        Self::ConcreteInstance: InstanceExtensions,
+    {
         unsafe {
             self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
         }
@@ -1983,14 +2005,21 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Reports capabilities of a physical device
     /// # Safety
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[implements("Allow1_1APIs")]
     #[inline]
     unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
-        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
             crate::vkfn::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
         }
-        #[cfg(not(feature = "Allow1_1APIs"))]
+    }
+
+    /// Reports capabilities of a physical device
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[cfg(not(feature = "Allow1_1APIs"))]
+    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[inline]
+    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
         unsafe {
             self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
         }
@@ -2005,7 +2034,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * [`VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_EXT_full_screen_exclusive")]
     #[inline]
-    fn surface_present_mode2_count(&self, surface_info: &VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<u32> {
+    fn surface_present_mode2_count(&self, surface_info: &VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<u32>
+    where
+        Self::ConcreteInstance: InstanceExtensions,
+    {
         let mut n = 0;
         unsafe {
             self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
@@ -2033,7 +2065,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
         sink: &mut [VkPresentModeKHR],
-    ) -> crate::Result<u32> {
+    ) -> crate::Result<u32>
+    where
+        Self::ConcreteInstance: InstanceExtensions,
+    {
         let mut n = sink.len() as _;
         unsafe {
             self.instance().get_physical_device_surface_present_modes_2_ext_fn().0(
@@ -2060,7 +2095,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn surface_present_modes2_alloc(
         &self,
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
-    ) -> crate::Result<Vec<VkPresentModeKHR>> {
+    ) -> crate::Result<Vec<VkPresentModeKHR>>
+    where
+        Self::ConcreteInstance: InstanceExtensions,
+    {
         let n = self.surface_present_mode2_count(surface_info)?;
         if n == 0 {
             // no items
