@@ -843,3 +843,12 @@ pub unsafe fn destroy_framebuffer(
 ) {
     unsafe { crate::vkfn::destroy_framebuffer(device, framebuffer, opt_pointer(allocation_callbacks)) }
 }
+
+#[inline]
+pub unsafe fn destroy_render_pass(
+    device: VkDevice,
+    render_pass: VkRenderPass,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) {
+    unsafe { crate::vkfn::destroy_render_pass(device, render_pass, opt_pointer(allocation_callbacks)) }
+}
