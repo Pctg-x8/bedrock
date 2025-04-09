@@ -1977,13 +1977,15 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     where
         Self::ConcreteInstance: InstanceExtensions,
     {
-        self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
-            self.native_ptr(),
-            surface_info,
-            sink.as_mut_ptr(),
-        )
-        .into_result()
-        .map(drop)
+        unsafe {
+            self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
+                self.native_ptr(),
+                surface_info,
+                sink.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
     }
 
     /// Returns properties of a physical device

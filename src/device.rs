@@ -2201,6 +2201,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements("alloc")]
+    #[allow(deprecated)]
     fn submit(
         &mut self,
         batches: &[impl SubmissionBatch],
@@ -2220,36 +2221,6 @@ pub trait QueueMut: Queue + VkHandleMut {
         unsafe { self.submit_raw(&batches, fence) }
     }
 
-    #[implements]
-    fn submit_alt<'r>(
-        &mut self,
-        batches: impl IntoIterator<Item = SubmissionBatch2<'r>>,
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
-
-        unsafe { self.submit_raw(&batches, fence) }
-    }
-
-    #[implements]
-    #[inline]
-    fn submit_alt3<'r>(
-        &mut self,
-        batches: &'r [SubmissionBatch3<'r>],
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_submit(
-                self.native_ptr_mut(),
-                batches.len() as _,
-                slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
-            )
-            .into_result()
-            .map(drop)
-        }
-    }
-
     /// Submits a sequence of semaphores or command buffers to a queue
     /// # Failure
     /// On failure, this command returns
@@ -2263,14 +2234,14 @@ pub trait QueueMut: Queue + VkHandleMut {
     #[implements]
     unsafe fn submit_raw(
         &mut self,
-        batches: &[VkSubmitInfo],
+        batches: &[SubmitInfo],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_submit(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr_empty_null(),
+                batches.as_ptr_empty_null() as _,
                 fence.map_or(VkFence::NULL, |x| x.0),
             )
             .into_result()
