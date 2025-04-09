@@ -56,7 +56,7 @@ impl<'d> ImportSemaphoreWin32HandleInfo<'d> {
                 pNext: core::ptr::null(),
                 semaphore: semaphore.native_ptr(),
                 flags: 0,
-                handleType: handle.0 as _,
+                handleType: handle_type as _,
                 handle: windows::Win32::Foundation::HANDLE(0),
                 name: windows::core::PCWSTR(name.as_ptr()),
             },
