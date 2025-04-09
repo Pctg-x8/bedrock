@@ -75,6 +75,16 @@ pub unsafe fn get_physical_device_wayland_presentation_support(
     }
 }
 
+#[cfg(feature = "VK_KHR_win32_surface")]
+pub unsafe fn get_physical_device_win32_presentation_support(
+    physical_device: VkPhysicalDevice,
+    queue_family_index: u32,
+) -> bool {
+    unsafe {
+        crate::vkfn::get_physical_device_win32_presentation_support_khr(physical_device, queue_family_index) == VK_TRUE
+    }
+}
+
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_support(
