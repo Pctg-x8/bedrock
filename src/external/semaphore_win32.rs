@@ -26,10 +26,9 @@ pub struct ImportSemaphoreWin32HandleInfo<'d>(
 );
 impl<'d> ImportSemaphoreWin32HandleInfo<'d> {
     #[inline]
-    pub fn new(
+    pub fn by_handle(
         semaphore: &'d (impl VkHandle<Handle = VkSemaphore> + ?Sized),
         handle: ExternalSemaphoreHandleWin32,
-        name: &'d widestring::WideCStr,
     ) -> Self {
         Self(
             VkImportSemaphoreWin32HandleInfoKHR {
@@ -39,6 +38,26 @@ impl<'d> ImportSemaphoreWin32HandleInfo<'d> {
                 flags: 0,
                 handleType: handle.0 as _,
                 handle: handle.1,
+                name: windows::core::PCWSTR::null(),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline]
+    pub fn by_name(
+        semaphore: &'d (impl VkHandle<Handle = VkSemaphore> + ?Sized),
+        handle_type: ExternalSemaphoreHandleTypeWin32,
+        name: &widestring::WideCStr,
+    ) -> Self {
+        Self(
+            VkImportSemaphoreWin32HandleInfoKHR {
+                sType: VkImportSemaphoreWin32HandleInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                semaphore: semaphore.native_ptr(),
+                flags: 0,
+                handleType: handle.0 as _,
+                handle: windows::Win32::Foundation::HANDLE(0),
                 name: windows::core::PCWSTR(name.as_ptr()),
             },
             core::marker::PhantomData,
