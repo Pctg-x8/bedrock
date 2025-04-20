@@ -125,11 +125,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _dbg = br::DebugUtilsMessengerObject::new(
         &instance,
         &br::DebugUtilsMessengerCreateInfo::new(
-            br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
-                | br::vk::VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
-            br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
-                | br::vk::VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
+            br::DebugUtilsMessageSeverityFlags::ERROR | br::DebugUtilsMessageSeverityFlags::WARNING,
+            br::DebugUtilsMessageTypeFlags::GENERAL
+                | br::DebugUtilsMessageTypeFlags::PERFORMANCE
+                | br::DebugUtilsMessageTypeFlags::VALIDATION,
             vk_debug,
         ),
     )?;
@@ -422,15 +421,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ),
     )?;
     for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
-        unsafe { cb.begin(&device)? }
-            .begin_render_pass_2(
+        unsafe { cb.begin(&br::CommandBufferBeginInfo::new(), &device)? }
+            .begin_render_pass2(
                 &br::RenderPassBeginInfo::new(
                     &render_pass,
                     fb,
                     scissors[0].clone(),
                     &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
                 ),
-                &br::vk::VkSubpassBeginInfo::new(br::vk::VK_SUBPASS_CONTENTS_INLINE),
+                &br::vk::VkSubpassBeginInfo::new(br::SubpassContents::Inline),
             )
             .bind_pipeline(br::PipelineBindPoint::Graphics, &pipeline)
             .bind_descriptor_sets(br::PipelineBindPoint::Graphics, &pl, 0, &[descriptors[0]], &[])
@@ -442,7 +441,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )
             .bind_vertex_buffers(0, &[vbuf.as_transparent_ref()], &[0])
             .draw(3, 1, 0, 0)
-            .end_render_pass_2(&br::vk::VkSubpassEndInfo::new())
+            .end_render_pass2(&br::vk::VkSubpassEndInfo::new())
             .end()?;
     }
 
@@ -455,7 +454,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             br::CommandBufferLevel::Primary,
         ),
     )?;
-    unsafe { transfer_command_buffers[0].begin(&device)? }
+    unsafe { transfer_command_buffers[0].begin(&br::CommandBufferBeginInfo::new(), &device)? }
         .copy_buffer(
             &host_buffer,
             &ubuf,
@@ -479,7 +478,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         &device,
         &br::CommandBufferAllocateInfo::new(&mut init_command_pool, 1, br::CommandBufferLevel::Primary),
     )?;
-    unsafe { init_command_buffers[0].begin_once(&device)? }
+    unsafe { init_command_buffers[0].begin(&br::CommandBufferBeginInfo::new().onetime_submit(), &device)? }
         .copy_buffer(
             &host_buffer,
             &vbuf,
@@ -654,7 +653,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 ),
             )?;
             for (cb, fb) in command_buffers.iter_mut().zip(framebuffers.iter()) {
-                unsafe { cb.begin(&device)? }
+                unsafe { cb.begin(&br::CommandBufferBeginInfo::new(), &device)? }
                     .begin_render_pass(
                         &br::RenderPassBeginInfo::new(
                             &render_pass,

@@ -247,17 +247,6 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
     }
 
     cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_EXT_full_screen_exclusive"))] {
-            fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
-                *self.ext.acquire_full_screen_exclusive_mode_ext.resolve()
-            }
-            fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
-                *self.ext.release_full_screen_exclusive_mode_ext.resolve()
-            }
-        }
-    }
-
-    cfg_if! {
         if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_fd"))] {
             fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
                 *self.ext.get_memory_fd_khr.resolve()
@@ -272,28 +261,6 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
         if #[cfg(all(feature = "Implements", feature = "VK_EXT_external_memory_host"))] {
             fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
                 *self.ext.get_memory_host_pointer_properties_ext.resolve()
-            }
-        }
-    }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_semaphore_win32"))] {
-            fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
-                *self.ext.import_semaphore_win32_handle_khr.resolve()
-            }
-            fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
-                *self.ext.get_semaphore_win32_handle_khr.resolve()
-            }
-        }
-    }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_external_memory_win32"))] {
-            fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
-                *self.ext.get_memory_win32_handle_khr.resolve()
-            }
-            fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
-                *self.ext.get_memory_win32_handle_properties_khr.resolve()
             }
         }
     }
@@ -320,6 +287,42 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
                 *self.ext.create_render_pass_2_khr.resolve()
             }
         }
+    }
+}
+#[implements("VK_KHR_external_semaphore_win32")]
+impl<Instance: crate::Instance> DeviceExternalSemaphoreWin32Extension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
+        *self.ext.import_semaphore_win32_handle_khr.resolve()
+    }
+
+    #[inline(always)]
+    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
+        *self.ext.get_semaphore_win32_handle_khr.resolve()
+    }
+}
+#[implements("VK_KHR_external_memory_win32")]
+impl<Instance: crate::Instance> DeviceExternalMemoryWin32Extension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
+        *self.ext.get_memory_win32_handle_khr.resolve()
+    }
+
+    #[inline(always)]
+    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
+        *self.ext.get_memory_win32_handle_properties_khr.resolve()
+    }
+}
+#[implements("VK_EXT_full_screen_exclusive")]
+impl<Instance: crate::Instance> DeviceFullScreenExclusiveExtension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
+        *self.ext.acquire_full_screen_exclusive_mode_ext.resolve()
+    }
+
+    #[inline(always)]
+    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
+        *self.ext.release_full_screen_exclusive_mode_ext.resolve()
     }
 }
 #[implements]
@@ -1822,55 +1825,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Get Properties of External Memory Win32 Handles
-    /// # Safety
-    /// sink must be constructed correctly
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
-    #[implements("VK_KHR_external_memory_win32")]
-    #[inline]
-    unsafe fn memory_win32_handle_properties(
-        &self,
-        handle_type: crate::ExternalMemoryHandleTypeWin32,
-        handle: windows::Win32::Foundation::HANDLE,
-        sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
-    ) -> crate::Result<()> {
-        self.get_memory_win32_handle_properties_khr_fn().0(
-            self.native_ptr(),
-            handle_type as _,
-            handle,
-            sink.as_mut_ptr(),
-        )
-        .into_result()
-        .map(drop)
-    }
-
-    /// Get a Windows HANDLE for a memory object
-    ///
-    /// A returned handle needs to be closed by caller
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    #[implements("VK_KHR_external_memory_win32")]
-    #[inline]
-    fn get_memory_win32_handle(
-        &self,
-        info: &crate::MemoryGetWin32HandleInfo,
-    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
-        let mut handle = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            self.get_memory_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr()).into_result()?;
-
-            Ok(handle.assume_init())
-        }
-    }
-
     /// Import a fence from a POSIX file descriptor
     /// # Failures
     /// On failure, this command returns
@@ -1905,46 +1859,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         }
     }
 
-    /// Import a semaphore from a Windows HANDLE
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
-    #[implements("VK_KHR_external_semaphore_win32")]
-    #[inline]
-    fn import_semaphore_win32_handle(&self, info: &crate::ImportSemaphoreWin32HandleInfo) -> crate::Result<()> {
-        unsafe {
-            self.import_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info.0)
-                .into_result()
-                .map(drop)
-        }
-    }
-
-    /// Get a Windows HANDLE for a semaphore
-    ///
-    /// A returned handle needs to be closed by caller
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * VK_ERROR_TOO_MANY_OBJECTS
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    #[implements("VK_KHR_external_semaphore_win32")]
-    #[inline]
-    fn get_semaphore_win32_handle(
-        &self,
-        info: &crate::SemaphoreGetWin32HandleInfo,
-    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
-        let mut handle = core::mem::MaybeUninit::uninit();
-
-        unsafe {
-            self.get_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr())
-                .into_result()?;
-
-            Ok(handle.assume_init())
-        }
-    }
-
     // Extension Function Providers
 
     #[cfg(not(feature = "Allow1_1APIs"))]
@@ -1976,11 +1890,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements("VK_KHR_external_fence_fd")]
     fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR;
 
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
-
     #[implements("VK_KHR_external_memory_fd")]
     fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR;
     #[implements("VK_KHR_external_memory_fd")]
@@ -1988,16 +1897,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
 
     #[implements("VK_EXT_external_memory_host")]
     fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
-
-    #[implements("VK_KHR_external_semaphore_win32")]
-    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
-    #[implements("VK_KHR_external_semaphore_win32")]
-    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
-
-    #[implements("VK_KHR_external_memory_win32")]
-    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
-    #[implements("VK_KHR_external_memory_win32")]
-    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
 
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_memory_requirements2")]
@@ -2043,11 +1942,6 @@ DerefContainerWithGuardsBracketImpl!(for Device {
     #[implements("VK_KHR_external_fence_fd")]
     ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
 
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
-    #[implements("VK_EXT_full_screen_exclusive")]
-    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
-
     #[implements("VK_KHR_external_memory_fd")]
     ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
     #[implements("VK_KHR_external_memory_fd")]
@@ -2055,16 +1949,6 @@ DerefContainerWithGuardsBracketImpl!(for Device {
 
     #[implements("VK_EXT_external_memory_host")]
     ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
-
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
-    #[implements("VK_KHR_external_semaphore_win32")]
-    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
-
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
-    #[implements("VK_KHR_external_memory_win32")]
-    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
 
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_memory_requirements2")]
@@ -2079,6 +1963,126 @@ DerefContainerWithGuardsBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_2APIs"))]
     #[implements("VK_KHR_create_renderpass2")]
     ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
+});
+
+#[implements("VK_KHR_external_semaphore_win32")]
+pub trait DeviceExternalSemaphoreWin32Extension: Device {
+    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
+    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
+
+    /// Import a semaphore from a Windows HANDLE
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
+    #[inline]
+    fn import_semaphore_win32_handle(&self, info: &crate::ImportSemaphoreWin32HandleInfo) -> crate::Result<()> {
+        unsafe {
+            self.import_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info.0)
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Get a Windows HANDLE for a semaphore
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * VK_ERROR_TOO_MANY_OBJECTS
+    /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    #[inline]
+    fn get_semaphore_win32_handle(
+        &self,
+        info: &crate::SemaphoreGetWin32HandleInfo,
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        let mut handle = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_semaphore_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr())
+                .into_result()?;
+
+            Ok(handle.assume_init())
+        }
+    }
+}
+#[implements("VK_KHR_external_semaphore_win32")]
+DerefContainerWithGuardsBracketImpl!(for DeviceExternalSemaphoreWin32Extension {
+    ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
+    ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
+});
+
+#[implements("VK_KHR_external_memory_win32")]
+pub trait DeviceExternalMemoryWin32Extension: Device {
+    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
+    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
+
+    /// Get Properties of External Memory Win32 Handles
+    /// # Safety
+    /// sink must be constructed correctly
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[inline]
+    unsafe fn memory_win32_handle_properties(
+        &self,
+        handle_type: crate::ExternalMemoryHandleTypeWin32,
+        handle: windows::Win32::Foundation::HANDLE,
+        sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
+    ) -> crate::Result<()> {
+        unsafe {
+            self.get_memory_win32_handle_properties_khr_fn().0(
+                self.native_ptr(),
+                handle_type as _,
+                handle,
+                sink.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
+    }
+
+    /// Get a Windows HANDLE for a memory object
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[inline]
+    fn get_memory_win32_handle(
+        &self,
+        info: &crate::MemoryGetWin32HandleInfo,
+    ) -> crate::Result<windows::Win32::Foundation::HANDLE> {
+        let mut handle = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_memory_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr()).into_result()?;
+
+            Ok(handle.assume_init())
+        }
+    }
+}
+#[implements("VK_KHR_external_memory_win32")]
+DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryWin32Extension {
+    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
+    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
+});
+
+#[implements("VK_EXT_full_screen_exclusive")]
+pub trait DeviceFullScreenExclusiveExtension: Device {
+    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
+    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
+}
+#[implements("VK_EXT_full_screen_exclusive")]
+DerefContainerWithGuardsBracketImpl!(for DeviceFullScreenExclusiveExtension {
+    ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
+    ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
 });
 
 /// Child of a device object(raw handle)
@@ -2197,6 +2201,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements("alloc")]
+    #[allow(deprecated)]
     fn submit(
         &mut self,
         batches: &[impl SubmissionBatch],
@@ -2216,36 +2221,6 @@ pub trait QueueMut: Queue + VkHandleMut {
         unsafe { self.submit_raw(&batches, fence) }
     }
 
-    #[implements]
-    fn submit_alt<'r>(
-        &mut self,
-        batches: impl IntoIterator<Item = SubmissionBatch2<'r>>,
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        let batches = batches.into_iter().map(|x| x.0).collect::<Vec<_>>();
-
-        unsafe { self.submit_raw(&batches, fence) }
-    }
-
-    #[implements]
-    #[inline]
-    fn submit_alt3<'r>(
-        &mut self,
-        batches: &'r [SubmissionBatch3<'r>],
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_submit(
-                self.native_ptr_mut(),
-                batches.len() as _,
-                slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
-            )
-            .into_result()
-            .map(drop)
-        }
-    }
-
     /// Submits a sequence of semaphores or command buffers to a queue
     /// # Failure
     /// On failure, this command returns
@@ -2259,14 +2234,14 @@ pub trait QueueMut: Queue + VkHandleMut {
     #[implements]
     unsafe fn submit_raw(
         &mut self,
-        batches: &[VkSubmitInfo],
+        batches: &[SubmitInfo],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         unsafe {
             crate::vkfn::queue_submit(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr_empty_null(),
+                batches.as_ptr_empty_null() as _,
                 fence.map_or(VkFence::NULL, |x| x.0),
             )
             .into_result()

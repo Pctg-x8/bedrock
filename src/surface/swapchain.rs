@@ -47,9 +47,10 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_EXT_full_screen_exclusive")]
-    fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        use crate::Device;
-
+    fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()>
+    where
+        Self::ConcreteDevice: DeviceFullScreenExclusiveExtension,
+    {
         unsafe {
             self.device().acquire_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
                 .into_result()
@@ -59,9 +60,10 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
 
     /// Release full-screen exclusive mode from a swapchain.
     #[implements("VK_EXT_full_screen_exclusive")]
-    fn release_full_screen_exclusive_mode(&self) -> crate::Result<()> {
-        use crate::Device;
-
+    fn release_full_screen_exclusive_mode(&self) -> crate::Result<()>
+    where
+        Self::ConcreteDevice: DeviceFullScreenExclusiveExtension,
+    {
         unsafe {
             self.device().release_full_screen_exclusive_mode_ext_fn().0(self.device().native_ptr(), self.native_ptr())
                 .into_result()
