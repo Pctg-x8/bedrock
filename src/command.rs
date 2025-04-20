@@ -267,9 +267,9 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    unsafe fn reset(&mut self, flags: VkCommandPoolResetFlags) -> crate::Result<()> {
+    unsafe fn reset(&mut self, flags: CommandPoolResetFlags) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags)
+            crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags.bits())
                 .into_result()
                 .map(drop)
         }
