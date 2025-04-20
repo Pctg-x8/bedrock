@@ -1239,7 +1239,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
         src_layout: ImageLayout,
         dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
         dst_layout: ImageLayout,
-        regions: &[VkImageCopy],
+        regions: &[ImageCopy],
     ) -> Self {
         unsafe {
             crate::vkfn::cmd_copy_image(
@@ -2011,3 +2011,5 @@ impl From<BufferCopy> for VkBufferCopy {
         value.0
     }
 }
+
+pub type ImageCopy = VkImageCopy;

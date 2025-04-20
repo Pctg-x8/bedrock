@@ -865,6 +865,18 @@ impl AspectMask {
     pub const METADATA: Self = Self(VK_IMAGE_ASPECT_METADATA_BIT);
 }
 
+pub type ImageSubresourceLayers = VkImageSubresourceLayers;
+impl ImageSubresourceLayers {
+    pub const fn new(aspect_mask: AspectMask, mip_level: u32, layer_range: core::ops::Range<u32>) -> Self {
+        Self {
+            aspectMask: aspect_mask.bits(),
+            mipLevel: mip_level,
+            baseArrayLayer: layer_range.start,
+            layerCount: layer_range.end - layer_range.start
+        }
+    }
+}
+
 /// Opaque handle to a image view object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkImageView::OBJECT_TYPE)]
