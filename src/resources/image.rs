@@ -872,7 +872,7 @@ impl ImageSubresourceLayers {
             aspectMask: aspect_mask.bits(),
             mipLevel: mip_level,
             baseArrayLayer: layer_range.start,
-            layerCount: layer_range.end - layer_range.start
+            layerCount: layer_range.end - layer_range.start,
         }
     }
 }
