@@ -2308,7 +2308,7 @@ impl MemoryHeapFlags {
 }
 
 /// List of queue families
-pub struct QueueFamilies(pub Vec<VkQueueFamilyProperties>);
+pub struct QueueFamilies(pub Vec<QueueFamilyProperties>);
 impl QueueFamilies {
     /// Find a queue family index containing specified bitflags
     pub fn find_matching_index(&self, flags: QueueFlags) -> Option<u32> {
@@ -2323,7 +2323,7 @@ impl QueueFamilies {
         self.0
             .iter()
             .enumerate()
-            .find_map(|(n, &VkQueueFamilyProperties { queueFlags, .. })| {
+            .find_map(|(n, &QueueFamilyProperties { queueFlags, .. })| {
                 ((queueFlags & flags.0) != 0 && exclude != n as u32).then_some(n as _)
             })
     }
@@ -2331,6 +2331,11 @@ impl QueueFamilies {
     /// Number of queue families
     pub fn count(&self) -> u32 {
         self.0.len() as _
+    }
+
+    #[inline(always)]
+    pub fn iter(&self) -> impl Iterator<Item = &QueueFamilyProperties> {
+        self.0.iter()
     }
 
     /// Number of queues in selected queue family
@@ -2344,8 +2349,15 @@ impl QueueFamilies {
     }
 
     /// Minimum granularity supported for image transfer operations on the queues in selected queue family
-    pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &VkExtent3D {
+    pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &Extent3D {
         &self.0[family_index as usize].minImageTransferGranularity
+    }
+}
+
+pub type QueueFamilyProperties = VkQueueFamilyProperties;
+impl QueueFamilyProperties {
+    pub const fn queue_flags(&self) -> QueueFlags {
+        QueueFlags(self.queueFlags)
     }
 }
 
