@@ -1042,6 +1042,13 @@ vk_bitmask! {
     }
 }
 
+#[cfg(feature = "Allow1_1APIs")]
+vk_bitmask! {
+    extending enum VkMemoryHeapFlagBits {
+        pub VK_MEMORY_HEAP_MULTI_INSTANCE_BIT: 1
+    }
+}
+
 pub type VkDeviceCreateFlags = VkFlags;
 vk_bitmask! {
     pub enum VkDeviceCreateFlagBits {}

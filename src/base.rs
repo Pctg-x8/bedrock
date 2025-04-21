@@ -2195,17 +2195,22 @@ impl MemoryType {
 }
 
 pub type MemoryHeap = VkMemoryHeap;
+impl MemoryHeap {
+    pub const fn flags(&self) -> MemoryHeapFlags {
+        MemoryHeapFlags(self.flags)
+    }
+}
 
 /// Device memory properties
 #[repr(transparent)]
 pub struct MemoryProperties(VkPhysicalDeviceMemoryProperties);
 impl MemoryProperties {
     #[inline(always)]
-    pub fn types(&self) -> &[VkMemoryType] {
+    pub fn types(&self) -> &[MemoryType] {
         &self.0.memoryTypes[..self.0.memoryTypeCount as _]
     }
     #[inline(always)]
-    pub fn heaps(&self) -> &[VkMemoryHeap] {
+    pub fn heaps(&self) -> &[MemoryHeap] {
         &self.0.memoryHeaps[..self.0.memoryHeapCount as _]
     }
 
@@ -2277,25 +2282,29 @@ impl MemoryPropertyFlags {
     /// The memory type only allows device access to the memory.
     pub const LAZILY_ALLOCATED: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
 
-    pub const fn is_device_local(&self) -> bool {
-        self.has(Self::DEVICE_LOCAL)
-    }
+    #[cfg(feature = "Allow1_1APIs")]
+    /// The memory type only allows device access to the memory, and allows protected queue operations to access the memory.
+    pub const PROTECTED: Self = Self(VK_MEMORY_PROPERTY_PROTECTED_BIT);
+}
 
-    pub const fn is_host_visible(&self) -> bool {
-        self.has(Self::HOST_VISIBLE)
-    }
+/// Bitmask specifying attribute flags for a heap
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[bitflags_newtype]
+pub struct MemoryHeapFlags(VkMemoryHeapFlags);
+impl MemoryHeapFlags {
+    /// Empty set
+    pub const EMPTY: Self = Self(0);
 
-    pub const fn is_host_coherent(&self) -> bool {
-        self.has(Self::HOST_COHERENT)
-    }
+    /// The heap corresponds to device-local memory.
+    /// Device-local memory may have different performance characteristics than host-local memory,
+    /// and may support different memory property flags.
+    pub const DEVICE_LOCAL: Self = Self(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
 
-    pub const fn is_host_cached(&self) -> bool {
-        self.has(Self::HOST_CACHED)
-    }
-
-    pub const fn is_lazily_allocated(&self) -> bool {
-        self.has(Self::LAZILY_ALLOCATED)
-    }
+    #[cfg(feature = "Allow1_1APIs")]
+    /// In a logical device representing more than one physical device,
+    /// there is a per-physical device instance of the heap memory.
+    /// By default, an allocation from such a heap will be replicated to each physical device's instance of the heap.
+    pub const MULTI_INSTANCE: Self = Self(VK_MEMORY_HEAP_MULTI_INSTANCE_BIT);
 }
 
 /// List of queue families
