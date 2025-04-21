@@ -2363,6 +2363,7 @@ impl QueueFamilyProperties {
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
+#[bitflags_newtype]
 pub struct QueueFlags(VkQueueFlags);
 impl QueueFlags {
     /// Empty bits
@@ -2375,26 +2376,6 @@ impl QueueFlags {
     pub const TRANSFER: Self = QueueFlags(VK_QUEUE_TRANSFER_BIT);
     /// Supports only sparse memory management operations
     pub const SPARSE_BINDING: Self = QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT);
-    /// Supports graphics operations
-    pub const fn graphics(self) -> Self {
-        QueueFlags(self.bits() | Self::GRAPHICS.0)
-    }
-    /// Supports compute operations
-    pub const fn compute(self) -> Self {
-        QueueFlags(self.0 | Self::COMPUTE.0)
-    }
-    /// Supports transfer operations
-    pub const fn transfer(self) -> Self {
-        QueueFlags(self.0 | Self::TRANSFER.0)
-    }
-    /// Supports sparse memory management operatinons
-    pub const fn sparse_binding(self) -> Self {
-        QueueFlags(self.0 | Self::SPARSE_BINDING.0)
-    }
-
-    pub const fn bits(self) -> VkQueueFlags {
-        self.0
-    }
 }
 
 #[cfg(feature = "VK_KHR_display")]
