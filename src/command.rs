@@ -825,6 +825,28 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
         self
     }
 
+    /// Update the values of push constant
+    #[inline]
+    pub fn push_constant_slice<T>(
+        mut self,
+        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        stage: VkShaderStageFlags,
+        offset: u32,
+        values: &[T],
+    ) -> Self {
+        unsafe {
+            crate::vkfn::cmd_push_constants(
+                self.ptr.native_ptr_mut(),
+                pipeline_layout.native_ptr(),
+                stage,
+                offset,
+                (core::mem::size_of::<T>() * values.len()) as _,
+                values.as_ptr() as *const _,
+            );
+        }
+        self
+    }
+
     /// Push descriptor updates into a command buffer
     #[cfg(feature = "VK_KHR_push_descriptor")]
     #[cfg(not(feature = "Allow1_4APIs"))]
