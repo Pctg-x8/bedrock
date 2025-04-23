@@ -204,6 +204,12 @@ pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
     fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m, Self> {
         PipelineShader::new(self, entry_point)
     }
+
+    /// Constructs a new [`PipelineShaderStage`] data.
+    #[inline(always)]
+    fn on_stage<'m, 's>(&'m self, stage: ShaderStage, entry_point: &'m CStr) -> PipelineShaderStage<'m, 's> {
+        PipelineShaderStage::new(stage, self, entry_point)
+    }
 }
 DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
@@ -636,7 +642,8 @@ DerefContainerBracketImpl!(for SpecializationConstants {
     }
 });
 
-impl VkSpecializationMapEntry {
+pub type SpecializationMapEntry = VkSpecializationMapEntry;
+impl SpecializationMapEntry {
     pub const fn for_byte_range(constant_id: u32, byte_range: core::ops::Range<u32>) -> Self {
         Self {
             constantID: constant_id,
@@ -823,7 +830,9 @@ impl<'d> SpecializationInfo<'d> {
         )
     }
 
-    pub const fn from_any_type<T: 'd>(entries: &'d [VkSpecializationMapEntry], data: &'d T) -> Self {
+    /// # Safety
+    /// `data` must have enough size.
+    pub const unsafe fn from_any_type<T: 'd>(entries: &'d [SpecializationMapEntry], data: &'d T) -> Self {
         Self(
             VkSpecializationInfo {
                 mapEntryCount: entries.len() as _,
@@ -835,7 +844,9 @@ impl<'d> SpecializationInfo<'d> {
         )
     }
 
-    pub const fn from_binary(entries: &'d [VkSpecializationMapEntry], data: &'d [u8]) -> Self {
+    /// # Safety
+    /// `data` must have enough size.
+    pub const unsafe fn from_binary(entries: &'d [SpecializationMapEntry], data: &'d [u8]) -> Self {
         Self(
             VkSpecializationInfo {
                 mapEntryCount: entries.len() as _,
