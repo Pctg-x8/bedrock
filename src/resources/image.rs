@@ -60,6 +60,33 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
         xs
     }
 
+    /// Retrieve information about an image subresource
+    #[implements]
+    fn layout_info(&self, subresource: &ImageSubresource) -> VkSubresourceLayout {
+        let mut s = core::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::get_image_subresource_layout(
+                self.device_handle(),
+                self.native_ptr(),
+                subresource,
+                s.as_mut_ptr(),
+            );
+
+            s.assume_init()
+        }
+    }
+
+    #[inline]
+    fn memory_barrier(&self, subresource_range: ImageSubresourceRange, trans: LayoutTransition) -> ImageMemoryBarrier {
+        ImageMemoryBarrier::new(self, subresource_range, trans)
+    }
+
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[inline]
+    fn memory_barrier2<'r>(&'r self, subresource_range: ImageSubresourceRange) -> crate::ImageMemoryBarrier2<'r> {
+        crate::ImageMemoryBarrier2::new(self, subresource_range)
+    }
+
     /// Returns an image's DRM format modifier
     #[implements("VK_EXT_image_drm_format_modifier")]
     #[inline]
@@ -128,53 +155,6 @@ GuardsImpl!(for Image {
 
 pub trait DeviceChildImage: Image + DeviceChild {}
 impl<T: Image + DeviceChild> DeviceChildImage for T {}
-
-pub trait ImageSubresourceSlice: Image {
-    /// method chaining helper
-    fn by_ref(&self) -> &Self {
-        self
-    }
-
-    /// Creates subresource
-    #[inline]
-    fn subresource(self, aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> ImageSubresource<Self>
-    where
-        Self: Sized,
-    {
-        ImageSubresource(
-            self,
-            VkImageSubresource {
-                aspectMask: aspect_mask.0,
-                mipLevel: mip_level,
-                arrayLayer: array_layer,
-            },
-        )
-    }
-
-    /// Creates subresource-range
-    #[inline]
-    fn subresource_range(
-        self,
-        aspect_mask: AspectMask,
-        mip_level: core::ops::Range<u32>,
-        array_layers: core::ops::Range<u32>,
-    ) -> ImageSubresourceRange<Self>
-    where
-        Self: Sized,
-    {
-        ImageSubresourceRange(
-            self,
-            VkImageSubresourceRange {
-                aspectMask: aspect_mask.0,
-                baseMipLevel: mip_level.start,
-                levelCount: mip_level.len() as _,
-                baseArrayLayer: array_layers.start,
-                layerCount: array_layers.len() as _,
-            },
-        )
-    }
-}
-impl<T> ImageSubresourceSlice for T where T: Image {}
 
 pub trait ImageChild {
     type ConcreteImage: crate::Image;
@@ -535,77 +515,6 @@ impl AsRef<VkImageCreateInfo> for ImageCreateInfo<'_> {
     }
 }
 
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
-pub struct ImageSubresource<S: Image>(S, VkImageSubresource);
-impl<S: Image> ImageSubresource<S> {
-    /// Retrieve information about an image subresource
-    #[implements]
-    pub fn layout_info(&self) -> VkSubresourceLayout {
-        let mut s = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_image_subresource_layout(
-                self.0.device_handle(),
-                self.0.native_ptr(),
-                &self.1,
-                s.as_mut_ptr(),
-            );
-
-            s.assume_init()
-        }
-    }
-
-    pub fn make_ref(&self) -> ImageSubresource<&S> {
-        ImageSubresource(&self.0, self.1.clone())
-    }
-}
-impl<S: Image> From<ImageSubresource<S>> for VkImageSubresource {
-    fn from(value: ImageSubresource<S>) -> Self {
-        value.1
-    }
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct ImageSubresourceRange<S: Image>(S, VkImageSubresourceRange);
-impl<S: Image> ImageSubresourceRange<S> {
-    /// Builds ImageView information
-    pub fn view_builder(self) -> ImageViewBuilder<S> {
-        ImageViewBuilder::new(self.0, self.1)
-    }
-
-    /// Retrieves single subresource in this range
-    pub fn subresource(self, mip_level_offset: u32, array_layer_offset: u32) -> ImageSubresource<S> {
-        ImageSubresource(
-            self.0,
-            VkImageSubresource {
-                aspectMask: self.1.aspectMask,
-                mipLevel: self.1.baseMipLevel + mip_level_offset,
-                arrayLayer: self.1.baseArrayLayer + array_layer_offset,
-            },
-        )
-    }
-
-    pub fn make_ref(&self) -> ImageSubresourceRange<&S> {
-        ImageSubresourceRange(&self.0, self.1.clone())
-    }
-}
-impl<'r, S: Image> ImageSubresourceRange<&'r S> {
-    #[inline]
-    pub fn memory_barrier(self, trans: LayoutTransition) -> ImageMemoryBarrier {
-        ImageMemoryBarrier::new(self.0, self.1, trans)
-    }
-
-    #[cfg(feature = "VK_KHR_synchronization2")]
-    #[inline]
-    pub fn memory_barrier2(self) -> crate::ImageMemoryBarrier2<'r> {
-        crate::ImageMemoryBarrier2::new(self.0, self.1)
-    }
-}
-impl<S: Image> From<ImageSubresourceRange<S>> for VkImageSubresourceRange {
-    fn from(value: ImageSubresourceRange<S>) -> Self {
-        value.1
-    }
-}
-
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 pub struct ImageMemoryRequirementsInfo2<'b, Image: VkHandle<Handle = VkImage> + 'b>(
     VkImageMemoryRequirementsInfo2KHR,
@@ -865,6 +774,17 @@ impl AspectMask {
     pub const METADATA: Self = Self(VK_IMAGE_ASPECT_METADATA_BIT);
 }
 
+pub type ImageSubresource = VkImageSubresource;
+impl ImageSubresource {
+    pub const fn new(aspect_mask: AspectMask, mip_level: u32, array_layer: u32) -> Self {
+        Self {
+            aspectMask: aspect_mask.bits(),
+            mipLevel: mip_level,
+            arrayLayer: array_layer,
+        }
+    }
+}
+
 pub type ImageSubresourceLayers = VkImageSubresourceLayers;
 impl ImageSubresourceLayers {
     pub const fn new(aspect_mask: AspectMask, mip_level: u32, layer_range: core::ops::Range<u32>) -> Self {
@@ -873,6 +793,33 @@ impl ImageSubresourceLayers {
             mipLevel: mip_level,
             baseArrayLayer: layer_range.start,
             layerCount: layer_range.end - layer_range.start,
+        }
+    }
+}
+
+pub type ImageSubresourceRange = VkImageSubresourceRange;
+impl ImageSubresourceRange {
+    /// Constructs a new [`ImageSubresourceRange`] data
+    pub const fn new(
+        aspect_mask: AspectMask,
+        mip_range: core::ops::Range<u32>,
+        array_layer_range: core::ops::Range<u32>,
+    ) -> Self {
+        Self {
+            aspectMask: aspect_mask.bits(),
+            baseMipLevel: mip_range.start,
+            levelCount: mip_range.end - mip_range.start,
+            baseArrayLayer: array_layer_range.start,
+            layerCount: array_layer_range.end - array_layer_range.start,
+        }
+    }
+
+    /// Retrieves single subresource slice in this range
+    pub const fn subresource(&self, mip_level_offset: u32, array_layer_offset: u32) -> ImageSubresource {
+        ImageSubresource {
+            aspectMask: self.aspectMask,
+            mipLevel: self.baseMipLevel + mip_level_offset,
+            arrayLayer: self.baseArrayLayer + array_layer_offset,
         }
     }
 }
@@ -968,7 +915,7 @@ pub struct ImageViewCreateInfo<'r>(
 impl<'r> ImageViewCreateInfo<'r> {
     pub fn new(
         source: &'r (impl VkHandle<Handle = VkImage> + ?Sized),
-        subresource_range: VkImageSubresourceRange,
+        subresource_range: ImageSubresourceRange,
         view_type: VkImageViewType,
         format: VkFormat,
     ) -> Self {

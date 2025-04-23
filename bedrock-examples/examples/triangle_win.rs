@@ -1,10 +1,10 @@
 use std::rc::Rc;
 
 use bedrock::{
-    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, ShaderModule,
-    VkHandle, VkHandleMut,
+    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, Image, QueueMut,
+    ShaderModule, VkHandle, VkHandleMut,
 };
-use br::{Device, Fence, ImageSubresourceSlice, Instance, MemoryBound, PhysicalDevice, RenderPass, Status, Swapchain};
+use br::{Device, Fence, Instance, MemoryBound, PhysicalDevice, RenderPass, Status, Swapchain};
 use windows::{
     core::PCSTR,
     Win32::{
@@ -299,10 +299,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .images_alloc()?
         .into_iter()
         .map(|b| {
-            b.clone_parent()
-                .subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
-                .view_builder()
-                .create()
+            br::ImageViewObject::new(
+                b,
+                &br::ImageViewCreateInfo::new(
+                    &b,
+                    br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
+                    b.dimension(),
+                    b.format(),
+                ),
+            )
         })
         .collect::<Result<Vec<_>, _>>()?;
     let mut framebuffers = back_buffer_views
@@ -587,10 +592,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .images_alloc()?
                 .into_iter()
                 .map(|b| {
-                    b.clone_parent()
-                        .subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
-                        .view_builder()
-                        .create()
+                    br::ImageViewObject::new(
+                        b,
+                        &br::ImageViewCreateInfo::new(
+                            &b,
+                            br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
+                            b.dimension(),
+                            b.format(),
+                        ),
+                    )
                 })
                 .collect::<Result<Vec<_>, _>>()?;
             framebuffers = back_buffer_views
@@ -616,8 +626,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     &pl,
                     render_pass.subpass(0),
                     &[
-                        vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
-                        fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+                        vsh.on_stage(br::ShaderStage::Vertex, c"main"),
+                        fsh.on_stage(br::ShaderStage::Fragment, c"main"),
                     ],
                     &br::PipelineVertexInputStateCreateInfo::new(&vi_bindings, &vi_attributes),
                     &br::PipelineInputAssemblyStateCreateInfo::new(br::PrimitiveTopology::TriangleList),

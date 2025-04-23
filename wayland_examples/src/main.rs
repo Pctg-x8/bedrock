@@ -1,6 +1,6 @@
 use bedrock::{
-    self as br, CommandBufferMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut, ImageSubresourceSlice,
-    Instance, MemoryBound, PhysicalDevice, QueueMut, RenderPass, ShaderModule, Swapchain, VkHandle, VkHandleMut,
+    self as br, CommandBufferMut, DescriptorPoolMut, Device, DeviceMemoryMut, Fence, FenceMut, Image, Instance,
+    MemoryBound, PhysicalDevice, QueueMut, RenderPass, ShaderModule, Swapchain, VkHandle, VkHandleMut,
 };
 use core::ffi::*;
 use std::{
@@ -266,9 +266,15 @@ fn main() {
     let backbuffer_views = backbuffers
         .iter()
         .map(|bb| {
-            bb.subresource_range(br::AspectMask::COLOR, 0..1, 0..1)
-                .view_builder()
-                .create()
+            br::ImageViewObject::new(
+                bb,
+                &br::ImageViewCreateInfo::new(
+                    &bb,
+                    br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
+                    bb.dimension(),
+                    bb.format(),
+                ),
+            )
         })
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
