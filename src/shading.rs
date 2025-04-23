@@ -200,11 +200,6 @@ impl<Device: crate::Device> ShaderModuleObject<Device> {
 }
 
 pub trait ShaderModule: VkHandle<Handle = VkShaderModule> {
-    #[inline(always)]
-    fn with_entry_point<'m>(&'m self, entry_point: &'m CStr) -> PipelineShader<'m, Self> {
-        PipelineShader::new(self, entry_point)
-    }
-
     /// Constructs a new [`PipelineShaderStage`] data.
     #[inline(always)]
     fn on_stage<'m, 's>(&'m self, stage: ShaderStage, entry_point: &'m CStr) -> PipelineShaderStage<'m, 's> {
@@ -628,137 +623,6 @@ impl VkVertexInputBindingDescription {
     }
 }
 
-pub trait SpecializationConstants {
-    const ENTRIES: &'static [VkSpecializationMapEntry];
-
-    fn as_ptr(&self) -> *const c_void;
-}
-DerefContainerBracketImpl!(for SpecializationConstants {
-    const ENTRIES: &'static [VkSpecializationMapEntry] = T::ENTRIES;
-
-    #[inline(always)]
-    fn as_ptr(&self) -> *const c_void {
-        T::as_ptr(&**self)
-    }
-});
-
-pub type SpecializationMapEntry = VkSpecializationMapEntry;
-impl SpecializationMapEntry {
-    pub const fn for_byte_range(constant_id: u32, byte_range: core::ops::Range<u32>) -> Self {
-        Self {
-            constantID: constant_id,
-            offset: byte_range.start,
-            size: (byte_range.end - byte_range.start) as _,
-        }
-    }
-
-    pub const fn for_type<T>(constant_id: u32, offset: u32) -> Self {
-        Self {
-            constantID: constant_id,
-            offset,
-            size: core::mem::size_of::<T>(),
-        }
-    }
-}
-
-pub trait PipelineShaderProvider {
-    type ExtraStorage<'d>
-    where
-        Self: 'd;
-
-    fn base_struct<'d, 's>(
-        &'d self,
-        stage: ShaderStage,
-        extras: &'s Self::ExtraStorage<'d>,
-    ) -> PipelineShaderStage<'d, 's>;
-    fn make_extras<'d>(&'d self) -> Self::ExtraStorage<'d>;
-}
-impl<T: PipelineShaderProvider> PipelineShaderProvider for &'_ T {
-    type ExtraStorage<'d>
-        = T::ExtraStorage<'d>
-    where
-        Self: 'd;
-
-    #[inline(always)]
-    fn base_struct<'d, 's>(
-        &'d self,
-        stage: ShaderStage,
-        extras: &'s Self::ExtraStorage<'d>,
-    ) -> PipelineShaderStage<'d, 's> {
-        T::base_struct(&self, stage, extras)
-    }
-    #[inline(always)]
-    fn make_extras<'d>(&'d self) -> Self::ExtraStorage<'d> {
-        T::make_extras(&**self)
-    }
-}
-impl<T: PipelineShaderProvider> PipelineShaderProvider for &'_ mut T {
-    type ExtraStorage<'d>
-        = T::ExtraStorage<'d>
-    where
-        Self: 'd;
-
-    #[inline(always)]
-    fn base_struct<'d, 's>(
-        &'d self,
-        stage: ShaderStage,
-        extras: &'s Self::ExtraStorage<'d>,
-    ) -> PipelineShaderStage<'d, 's> {
-        T::base_struct(&self, stage, extras)
-    }
-    #[inline(always)]
-    fn make_extras<'d>(&'d self) -> Self::ExtraStorage<'d> {
-        T::make_extras(&**self)
-    }
-}
-impl<T: PipelineShaderProvider> PipelineShaderProvider for Box<T> {
-    type ExtraStorage<'d>
-        = T::ExtraStorage<'d>
-    where
-        Self: 'd;
-
-    #[inline(always)]
-    fn base_struct<'d, 's>(
-        &'d self,
-        stage: ShaderStage,
-        extras: &'s Self::ExtraStorage<'d>,
-    ) -> PipelineShaderStage<'d, 's> {
-        T::base_struct(&self, stage, extras)
-    }
-    #[inline(always)]
-    fn make_extras<'d>(&'d self) -> Self::ExtraStorage<'d> {
-        T::make_extras(&**self)
-    }
-}
-
-pub struct PipelineShader<'m, M: 'm + ShaderModule + ?Sized>(&'m M, &'m CStr);
-impl<'m, M: 'm + ShaderModule + ?Sized> PipelineShader<'m, M> {
-    #[inline(always)]
-    pub const fn new(module: &'m M, entry_point: &'m CStr) -> Self {
-        Self(module, entry_point)
-    }
-
-    #[inline(always)]
-    pub fn on_stage<'s>(self, stage: ShaderStage) -> PipelineShaderStage<'m, 's> {
-        PipelineShaderStage::new(stage, self.0, self.1)
-    }
-}
-impl<M: ShaderModule + ?Sized> PipelineShaderProvider for PipelineShader<'_, M> {
-    type ExtraStorage<'d>
-        = ()
-    where
-        Self: 'd;
-
-    fn base_struct<'d, 's>(
-        &'d self,
-        stage: ShaderStage,
-        _extras: &'s Self::ExtraStorage<'d>,
-    ) -> PipelineShaderStage<'d, 's> {
-        PipelineShaderStage::new(stage, &self.0, &self.1)
-    }
-    fn make_extras<'d>(&'d self) -> Self::ExtraStorage<'d> {}
-}
-
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PipelineShaderStage<'d, 's>(
@@ -808,6 +672,39 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
     pub const fn with_specialization_info(mut self, info: &'s SpecializationInfo<'d>) -> Self {
         self.0.pSpecializationInfo = info as *const _ as _;
         self
+    }
+}
+
+pub unsafe trait SpecializationConstants {
+    const ENTRIES: &'static [SpecializationMapEntry];
+
+    fn as_ptr(&self) -> *const c_void;
+}
+DerefContainerBracketImpl!(unsafe for SpecializationConstants {
+    const ENTRIES: &'static [SpecializationMapEntry] = T::ENTRIES;
+
+    #[inline(always)]
+    fn as_ptr(&self) -> *const c_void {
+        T::as_ptr(&**self)
+    }
+});
+
+pub type SpecializationMapEntry = VkSpecializationMapEntry;
+impl SpecializationMapEntry {
+    pub const fn for_byte_range(constant_id: u32, byte_range: core::ops::Range<u32>) -> Self {
+        Self {
+            constantID: constant_id,
+            offset: byte_range.start,
+            size: (byte_range.end - byte_range.start) as _,
+        }
+    }
+
+    pub const fn for_type<T>(constant_id: u32, offset: u32) -> Self {
+        Self {
+            constantID: constant_id,
+            offset,
+            size: core::mem::size_of::<T>(),
+        }
     }
 }
 

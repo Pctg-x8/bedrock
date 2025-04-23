@@ -338,8 +338,8 @@ fn main() {
                 &pl,
                 renderpass.subpass(0),
                 &[
-                    vsh.with_entry_point(c"main").on_stage(br::ShaderStage::Vertex),
-                    fsh.with_entry_point(c"main").on_stage(br::ShaderStage::Fragment),
+                    vsh.on_stage(br::ShaderStage::Vertex, c"main"),
+                    fsh.on_stage(br::ShaderStage::Fragment, c"main"),
                 ],
                 &br::PipelineVertexInputStateCreateInfo::new(&vi_bindings, &vi_attrs),
                 &br::PipelineInputAssemblyStateCreateInfo::new(br::PrimitiveTopology::TriangleList),

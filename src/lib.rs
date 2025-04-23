@@ -49,6 +49,17 @@ macro_rules! DerefContainerWithGuardsBracketImpl {
     }
 }
 macro_rules! DerefContainerBracketImpl {
+    (unsafe for mut $t: path { $($required: item)* }) => {
+        unsafe impl<'s, T> $t for &'s mut T where T: $t + ?Sized { $($required)* }
+        unsafe impl<T> $t for Box<T> where T: $t + ?Sized { $($required)* }
+    };
+    (unsafe for $t: path { $($required: item)* }) => {
+        unsafe impl<'s, T> $t for &'s T where T: $t + ?Sized { $($required)* }
+        unsafe impl<T> $t for std::rc::Rc<T> where T: $t + ?Sized { $($required)* }
+        unsafe impl<T> $t for std::sync::Arc<T> where T: $t + ?Sized { $($required)* }
+
+        DerefContainerBracketImpl!(unsafe for mut $t { $($required)* });
+    };
     (for mut $t: path { $($required: item)* }) => {
         impl<'s, T> $t for &'s mut T where T: $t + ?Sized { $($required)* }
         impl<T> $t for Box<T> where T: $t + ?Sized { $($required)* }
@@ -59,7 +70,7 @@ macro_rules! DerefContainerBracketImpl {
         impl<T> $t for std::sync::Arc<T> where T: $t + ?Sized { $($required)* }
 
         DerefContainerBracketImpl!(for mut $t { $($required)* });
-    }
+    };
 }
 macro_rules! GuardsImpl {
     (for mut $t: path { $($required: item)* }) => {
