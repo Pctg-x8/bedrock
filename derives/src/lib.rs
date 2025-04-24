@@ -748,3 +748,64 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
     }
     .into()
 }
+
+/// Provides safe implementation for [`SpecializationConstants`] by deriving from structs.
+#[proc_macro_derive(SpecializationConstants, attributes(constant_id))]
+pub fn safe_derive_spec_constant(tok: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(tok as syn::DeriveInput);
+    let name = &input.ident;
+    let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
+
+    match input.data {
+        syn::Data::Struct(syn::DataStruct { ref fields, .. }) => {
+            let mut entries = Vec::with_capacity(fields.len());
+            for f in fields {
+                let mut constant_ids = f.attrs.iter().filter_map(|a| match a {
+                    syn::Attribute {
+                        style: syn::AttrStyle::Outer,
+                        meta: syn::Meta::NameValue(ref nv),
+                        ..
+                    } if nv.path.is_ident("constant_id") => Some(Ok(nv.value.clone())),
+                    syn::Attribute {
+                        style: syn::AttrStyle::Outer,
+                        meta: syn::Meta::List(ref ml),
+                        ..
+                    } if ml.path.is_ident("constant_id") => Some(ml.parse_args::<syn::Expr>()),
+                    _ => None,
+                });
+                let Some(first_cid) = constant_ids.next() else {
+                    return syn::Error::new_spanned(f, "Missing constant_id attribute")
+                        .into_compile_error()
+                        .into();
+                };
+                if constant_ids.next().is_some() {
+                    return syn::Error::new_spanned(f, "One or more constant_id attributes found on same field")
+                        .into_compile_error()
+                        .into();
+                }
+                let constant_id = try_compile_error!(first_cid);
+
+                let ty = &f.ty;
+                let ident = &f.ident;
+                entries.push(quote! { bedrock::SpecializationMapEntry {
+                    constantID: #constant_id,
+                    offset: core::mem::offset_of!(Self, #ident),
+                    size: core::mem::size_of::<#ty>(),
+                } });
+            }
+
+            quote! {
+                unsafe impl<#impl_generics> bedrock::SpecializationConstants for #name #ty_generics #where_clause {
+                    const ENTRIES: &'static [bedrock::SpecializationMapEntry] = &[#(#entries),*];
+
+                    #[inline(always)]
+                    fn as_ptr(&self) -> *const core::ffi::c_void {
+                        self as *const _ as _
+                    }
+                }
+            }
+            .into()
+        }
+        _ => unimplemented!("unsupported"),
+    }
+}

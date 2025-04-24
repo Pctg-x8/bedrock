@@ -379,13 +379,13 @@ pub struct PipelineLayoutCreateInfo<'d>(
     VkPipelineLayoutCreateInfo,
     core::marker::PhantomData<(
         &'d dyn VkHandle<Handle = VkDescriptorSetLayout>,
-        &'d [VkPushConstantRange],
+        &'d [PushConstantRange],
     )>,
 );
 impl<'d> PipelineLayoutCreateInfo<'d> {
     pub const fn new(
         descriptor_set_layouts: &'d [VkHandleRef<'d, VkDescriptorSetLayout>],
-        push_constant_ranges: &'d [VkPushConstantRange],
+        push_constant_ranges: &'d [PushConstantRange],
     ) -> Self {
         Self(
             VkPipelineLayoutCreateInfo {
@@ -480,7 +480,8 @@ impl<Device: crate::Device> PipelineLayoutObject<Device> {
     }
 }
 
-impl VkPushConstantRange {
+pub type PushConstantRange = VkPushConstantRange;
+impl PushConstantRange {
     pub const fn new(shader_stage: VkShaderStageFlags, byte_range: Range<u32>) -> Self {
         Self {
             stageFlags: shader_stage,
@@ -590,36 +591,6 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
 
     pub const fn into_raw(self) -> VkPipelineDynamicStateCreateInfo {
         self.0
-    }
-}
-
-impl VkVertexInputBindingDescription {
-    /// Consumed per vertex with stride
-    pub const fn per_vertex(binding: u32, stride: u32) -> Self {
-        Self {
-            binding,
-            stride,
-            inputRate: VK_VERTEX_INPUT_RATE_VERTEX,
-        }
-    }
-
-    /// Consumed per instance with stride
-    pub const fn per_instance(binding: u32, stride: u32) -> Self {
-        Self {
-            binding,
-            stride,
-            inputRate: VK_VERTEX_INPUT_RATE_INSTANCE,
-        }
-    }
-
-    /// Consumed per vertex the structured data
-    pub const fn per_vertex_typed<T>(binding: u32) -> Self {
-        Self::per_vertex(binding, core::mem::size_of::<T>() as _)
-    }
-
-    /// Consumed per instance the structured data
-    pub const fn per_instance_typed<T>(binding: u32) -> Self {
-        Self::per_instance(binding, core::mem::size_of::<T>() as _)
     }
 }
 
@@ -764,20 +735,53 @@ impl<'d> SpecializationInfo<'d> {
     }
 }
 
+pub type VertexInputBindingDescription = VkVertexInputBindingDescription;
+impl VertexInputBindingDescription {
+    /// Consumed per vertex with stride
+    pub const fn per_vertex(binding: u32, stride: u32) -> Self {
+        Self {
+            binding,
+            stride,
+            inputRate: VK_VERTEX_INPUT_RATE_VERTEX,
+        }
+    }
+
+    /// Consumed per instance with stride
+    pub const fn per_instance(binding: u32, stride: u32) -> Self {
+        Self {
+            binding,
+            stride,
+            inputRate: VK_VERTEX_INPUT_RATE_INSTANCE,
+        }
+    }
+
+    /// Consumed per vertex the structured data
+    pub const fn per_vertex_typed<T>(binding: u32) -> Self {
+        Self::per_vertex(binding, core::mem::size_of::<T>() as _)
+    }
+
+    /// Consumed per instance the structured data
+    pub const fn per_instance_typed<T>(binding: u32) -> Self {
+        Self::per_instance(binding, core::mem::size_of::<T>() as _)
+    }
+}
+
+pub type VertexInputAttributeDescription = VkVertexInputAttributeDescription;
+
 /// Structure specifying parameters of a newly created pipeline vertex input state
 #[repr(transparent)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PipelineVertexInputStateCreateInfo<'d>(
     VkPipelineVertexInputStateCreateInfo,
     core::marker::PhantomData<(
-        &'d [VkVertexInputBindingDescription],
-        &'d [VkVertexInputAttributeDescription],
+        &'d [VertexInputBindingDescription],
+        &'d [VertexInputAttributeDescription],
     )>,
 );
 impl<'d> PipelineVertexInputStateCreateInfo<'d> {
     pub const fn new(
-        bindings: &'d [VkVertexInputBindingDescription],
-        attributes: &'d [VkVertexInputAttributeDescription],
+        bindings: &'d [VertexInputBindingDescription],
+        attributes: &'d [VertexInputAttributeDescription],
     ) -> Self {
         Self(
             VkPipelineVertexInputStateCreateInfo {

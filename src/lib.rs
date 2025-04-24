@@ -27,6 +27,8 @@ extern crate xcb;
 use cfg_if::cfg_if;
 use derives::*;
 
+pub use derives::SpecializationConstants;
+
 #[macro_use]
 pub mod vk;
 use vk::*;
