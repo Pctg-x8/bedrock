@@ -789,7 +789,7 @@ pub fn safe_derive_spec_constant(tok: TokenStream) -> TokenStream {
                 let ident = &f.ident;
                 entries.push(quote! { bedrock::SpecializationMapEntry {
                     constantID: #constant_id,
-                    offset: core::mem::offset_of!(Self, #ident),
+                    offset: core::mem::offset_of!(Self, #ident) as _,
                     size: core::mem::size_of::<#ty>(),
                 } });
             }
