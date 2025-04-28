@@ -5334,6 +5334,7 @@ ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 ExportExtensions!("VK_EXT_acquire_drm_display": acquire_drm_display_ext);
+ExportExtensions!("VK_NV_acquire_winrt_display": acquire_winrt_display_nv);
 
 // Promoted Extensions
 ExportExtensions!("VK_KHR_multiview": multiview_khr);
