@@ -197,6 +197,157 @@ pub unsafe fn get_physical_device_surface_present_modes(
     Ok((v, r))
 }
 
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_physical_device_display_property_count(physical_device: VkPhysicalDevice) -> crate::Result<u32> {
+    let mut count = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_physical_device_display_properties_khr(
+            physical_device,
+            count.as_mut_ptr(),
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { count.assume_init() })
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_physical_device_display_properties(
+    physical_device: VkPhysicalDevice,
+    sink: &mut [DisplayProperties],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r = unsafe {
+        crate::vkfn::get_physical_device_display_properties_khr(physical_device, &mut v, sink.as_mut_ptr())
+            .into_result()?
+    };
+
+    Ok((v, r))
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_physical_device_display_plane_property_count(
+    physical_device: VkPhysicalDevice,
+) -> crate::Result<u32> {
+    let mut count = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_physical_device_display_plane_properties_khr(
+            physical_device,
+            count.as_mut_ptr(),
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { count.assume_init() })
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_physical_device_display_plane_properties(
+    physical_device: VkPhysicalDevice,
+    sink: &mut [DisplayPlaneProperties],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r = unsafe {
+        crate::vkfn::get_physical_device_display_plane_properties_khr(physical_device, &mut v, sink.as_mut_ptr())
+            .into_result()?
+    };
+
+    Ok((v, r))
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_display_mode_property_count(
+    physical_device: VkPhysicalDevice,
+    display: VkDisplayKHR,
+) -> crate::Result<u32> {
+    let mut count = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_display_mode_properties_khr(
+            physical_device,
+            display,
+            count.as_mut_ptr(),
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { count.assume_init() })
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_display_mode_properties(
+    physical_device: VkPhysicalDevice,
+    display: VkDisplayKHR,
+    sink: &mut [DisplayModeProperties],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r = unsafe {
+        crate::vkfn::get_display_mode_properties_khr(physical_device, display, &mut v, sink.as_mut_ptr() as _)
+            .into_result()?
+    };
+
+    Ok((v, r))
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_display_plane_capabilities(
+    physical_device: VkPhysicalDevice,
+    mode: VkDisplayModeKHR,
+    plane_index: u32,
+    sink: &mut MaybeUninit<VkDisplayPlaneCapabilitiesKHR>,
+) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::get_display_plane_capabilities_khr(physical_device, mode, plane_index, sink.as_mut_ptr())
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_display_plane_supported_display_count(
+    physical_device: VkPhysicalDevice,
+    plane_index: u32,
+) -> crate::Result<u32> {
+    let mut count = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_display_plane_supported_displays_khr(
+            physical_device,
+            plane_index,
+            count.as_mut_ptr(),
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(unsafe { count.assume_init() })
+}
+
+#[cfg(feature = "VK_KHR_display")]
+#[inline]
+pub unsafe fn get_display_plane_supported_displays(
+    physical_device: VkPhysicalDevice,
+    plane_index: u32,
+    sink: &mut [VkDisplayKHR],
+) -> crate::Result<(u32, VkResult)> {
+    let mut v = sink.len() as _;
+    let r = unsafe {
+        crate::vkfn::get_display_plane_supported_displays_khr(physical_device, plane_index, &mut v, sink.as_mut_ptr())
+            .into_result()?
+    };
+
+    Ok((v, r))
+}
+
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn destroy_surface(

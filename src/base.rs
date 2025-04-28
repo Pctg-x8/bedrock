@@ -1756,7 +1756,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements("VK_KHR_display", "alloc")]
-    fn display_properties_alloc(&self) -> crate::Result<Vec<DisplayProperties<&Self>>> {
+    fn display_properties_alloc(&self) -> crate::Result<Vec<DisplayPropertiesWithPhysicalDeviceRef<&Self>>> {
         let n = self.display_property_count()?;
         if n == 0 {
             // no items
@@ -1767,7 +1767,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         self.display_properties(&mut xs)?;
 
         Ok(crate::alloc::collect_vec(
-            xs.into_iter().map(move |x| DisplayProperties(x, self)),
+            xs.into_iter()
+                .map(move |x| DisplayPropertiesWithPhysicalDeviceRef(x, self)),
         ))
     }
 
@@ -1818,7 +1819,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements("VK_KHR_display", "alloc")]
-    fn display_plane_properties_alloc(&self) -> crate::Result<Vec<DisplayPlaneProperties<&Self>>> {
+    fn display_plane_properties_alloc(&self) -> crate::Result<Vec<DisplayPlanePropertiesWithPhysicalDeviceRef<&Self>>> {
         let n = self.display_plane_property_count()?;
         if n == 0 {
             // no items
@@ -1829,7 +1830,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         self.display_plane_properties(&mut xs)?;
 
         Ok(crate::alloc::collect_vec(
-            xs.into_iter().map(move |x| DisplayPlaneProperties(x, self)),
+            xs.into_iter()
+                .map(move |x| DisplayPlanePropertiesWithPhysicalDeviceRef(x, self)),
         ))
     }
 
