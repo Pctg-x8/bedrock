@@ -1,8 +1,8 @@
 use std::rc::Rc;
 
 use bedrock::{
-    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, Image, QueueMut,
-    ShaderModule, VkHandle, VkHandleMut,
+    self as br, CommandBufferMut, CommandPoolMut, DescriptorPoolMut, DeviceMemoryMut, FenceMut, QueueMut, ShaderModule,
+    VkHandle, VkHandleMut,
 };
 use br::{Device, Fence, Instance, MemoryBound, PhysicalDevice, RenderPass, Status, Swapchain};
 use windows::{
@@ -299,15 +299,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .images_alloc()?
         .into_iter()
         .map(|b| {
-            br::ImageViewObject::new(
-                b,
-                &br::ImageViewCreateInfo::new(
-                    &b,
-                    br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
-                    b.dimension(),
-                    b.format(),
-                ),
+            br::ImageViewBuilder::new(
+                b.clone_parent(),
+                br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
             )
+            .create()
         })
         .collect::<Result<Vec<_>, _>>()?;
     let mut framebuffers = back_buffer_views
@@ -592,15 +588,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .images_alloc()?
                 .into_iter()
                 .map(|b| {
-                    br::ImageViewObject::new(
-                        b,
-                        &br::ImageViewCreateInfo::new(
-                            &b,
-                            br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
-                            b.dimension(),
-                            b.format(),
-                        ),
+                    br::ImageViewBuilder::new(
+                        b.clone_parent(),
+                        br::ImageSubresourceRange::new(br::AspectMask::COLOR, 0..1, 0..1),
                     )
+                    .create()
                 })
                 .collect::<Result<Vec<_>, _>>()?;
             framebuffers = back_buffer_views

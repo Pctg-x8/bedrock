@@ -88,7 +88,7 @@ pub enum PresentMode {
 /// Presentation transforms supported on a device
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[bitflags_newtype]
-pub struct SurfaceTransformFlags(VkSurfaceTransformFlagsKHR);
+pub struct SurfaceTransformFlags(pub(crate) VkSurfaceTransformFlagsKHR);
 impl SurfaceTransformFlags {
     /// The image content is presented without being transformed
     pub const IDENTITY: Self = Self(VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR);

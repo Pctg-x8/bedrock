@@ -129,6 +129,7 @@ VK_EXT_descriptor_buffer = [
 VK_KHR_maintenance7 = ["Allow1_1APIs"]
 VK_KHR_maintenance8 = ["Allow1_1APIs"]
 VK_EXT_acquire_drm_display = ["VK_EXT_direct_mode_display"]
+VK_NV_acquire_winrt_display = ["VK_EXT_direct_mode_display"]
 
 # 1.1 promoted extensions
 VK_KHR_multiview = ["VK_KHR_get_physical_device_properties2"]

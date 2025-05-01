@@ -12,7 +12,7 @@
 
 use crate::{PFN, StaticCallable, VulkanSinkStructure, VulkanStructure, ffi_helper::FixedCStrBuffer};
 use core::ffi::*;
-use derives::{implements, vk_raw_handle};
+use derives::{implements, promote_1_1, vk_raw_handle};
 
 #[inline]
 pub const fn VK_MAKE_VERSION(variant: u8, major: u16, minor: u16, patch: u16) -> u32 {
@@ -343,6 +343,15 @@ pub const VK_MAX_MEMORY_HEAPS: usize = 16;
 pub const VK_MAX_EXTENSION_NAME_SIZE: usize = 256;
 pub const VK_MAX_DESCRIPTION_SIZE: usize = 256;
 
+#[cfg(any(
+    feature = "Allow1_1APIs",
+    feature = "VK_KHR_external_fence_capabilities",
+    feature = "VK_KHR_external_memory_capabilities",
+    feature = "VK_KHR_external_semaphore_capabilities"
+))]
+#[promote_1_1]
+pub const VK_LUID_SIZE_KHR: usize = 8;
+
 pub type VkPipelineCacheHeaderVersion = i32;
 pub const VK_PIPELINE_CACHE_HEADER_VERSION_ONE: VkPipelineCacheHeaderVersion = 1;
 
@@ -440,6 +449,10 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES: VkStructu
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES: VkStructureType = 100_0145_002;
 pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2: VkStructureType = 100_0145_003;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES: VkStructureType = 100_0063_000;
+#[promote_1_1]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR: VkStructureType = 100_0059_001;
+#[promote_1_1]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType = 100_0071_004;
 
 pub const VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD: VkStructureType = 100_0041_000;
 pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV: VkStructureType = 100_0056_000;
@@ -1772,6 +1785,26 @@ pub struct VkPhysicalDeviceProperties {
     pub pipelineCacheUUID: [u8; VK_UUID_SIZE],
     pub limits: VkPhysicalDeviceLimits,
     pub sparseProperties: VkPhysicalDeviceSparseProperties,
+}
+
+#[cfg(any(
+    feature = "VK_KHR_external_fence_capabilities",
+    feature = "VK_KHR_external_memory_capabilities",
+    feature = "VK_KHR_external_semaphore_capabilities",
+    feature = "Allow1_1APIs"
+))]
+#[repr(C)]
+#[derive(Debug, PartialEq, VulkanSinkStructure)]
+#[promote_1_1(suffix = "KHR")]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR)]
+pub struct VkPhysicalDeviceIDPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub deviceUUID: [u8; VK_UUID_SIZE],
+    pub driverUUID: [u8; VK_UUID_SIZE],
+    pub deviceLUID: [u8; VK_LUID_SIZE_KHR],
+    pub deviceNodeMask: u32,
+    pub deviceLUIDValid: VkBool32,
 }
 
 #[repr(C)]
@@ -5334,6 +5367,7 @@ ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 ExportExtensions!("VK_EXT_acquire_drm_display": acquire_drm_display_ext);
+ExportExtensions!("VK_NV_acquire_winrt_display": acquire_winrt_display_nv);
 
 // Promoted Extensions
 ExportExtensions!("VK_KHR_multiview": multiview_khr);

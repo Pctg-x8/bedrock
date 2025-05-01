@@ -162,27 +162,54 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     }
 }
 
-pub struct DisplayProperties<PhysicalDevice: crate::PhysicalDevice>(
-    pub(crate) VkDisplayPropertiesKHR,
+pub type DisplayProperties = VkDisplayPropertiesKHR;
+impl DisplayProperties {
+    pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
+        SurfaceTransformFlags(self.supportedTransforms)
+    }
+
+    pub const fn plane_reorder_possible(&self) -> bool {
+        self.planeReorderPossible != 0
+    }
+
+    pub const fn persistent_content(&self) -> bool {
+        self.persistentContent != 0
+    }
+
+    pub const fn display_name(&self) -> Option<&core::ffi::CStr> {
+        if self.displayName.is_null() {
+            return None;
+        }
+
+        Some(unsafe { core::ffi::CStr::from_ptr(self.displayName) })
+    }
+}
+
+pub struct DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice: crate::PhysicalDevice>(
+    pub(crate) DisplayProperties,
     pub(crate) PhysicalDevice,
 );
-impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayProperties<PhysicalDevice>> for VkDisplayPropertiesKHR {
-    fn from(v: DisplayProperties<PhysicalDevice>) -> Self {
+impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice>>
+    for VkDisplayPropertiesKHR
+{
+    fn from(v: DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice>) -> Self {
         v.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice> {
     type Target = VkDisplayPropertiesKHR;
     fn deref(&self) -> &VkDisplayPropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPropertiesKHR> for DisplayProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPropertiesKHR>
+    for DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice>
+{
     fn as_ref(&self) -> &VkDisplayPropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> DisplayProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDevice> DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice> {
     /// A handle that is used to refer to the display described here.
     /// This handle will be valid for the lifetime of the Vulkan instance.
     pub const fn display(&self) -> Display<&PhysicalDevice> {
@@ -205,31 +232,33 @@ impl<PhysicalDevice: crate::PhysicalDevice> DisplayProperties<PhysicalDevice> {
     }
 }
 
-pub struct DisplayPlaneProperties<PhysicalDevice: crate::PhysicalDevice>(
+pub type DisplayPlaneProperties = VkDisplayPlanePropertiesKHR;
+
+pub struct DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice: crate::PhysicalDevice>(
     pub(crate) VkDisplayPlanePropertiesKHR,
     pub(crate) PhysicalDevice,
 );
-impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPlaneProperties<PhysicalDevice>>
+impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice>>
     for VkDisplayPlanePropertiesKHR
 {
-    fn from(v: DisplayPlaneProperties<PhysicalDevice>) -> Self {
+    fn from(v: DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice>) -> Self {
         v.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPlaneProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice> {
     type Target = VkDisplayPlanePropertiesKHR;
     fn deref(&self) -> &VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
 impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPlanePropertiesKHR>
-    for DisplayPlaneProperties<PhysicalDevice>
+    for DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice>
 {
     fn as_ref(&self) -> &VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlaneProperties<PhysicalDevice> {
+impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice> {
     /// The handle of the display the plane is currently associated with.
     /// If the plane is not currently attached to any displays, this will be `None`
     pub const fn current_display(&self) -> Option<Display<&PhysicalDevice>> {
