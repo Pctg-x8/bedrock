@@ -2222,8 +2222,10 @@ impl MemoryProperties {
         index_mask: u32,
     ) -> Option<u32> {
         self.types().iter().enumerate().find_map(|(i, mt)| {
-            (index_mask & (1u32 << i) != 0 && mt.property_flags().has(mask) && !mt.property_flags().has(exclude))
-                .then_some(i as _)
+            (index_mask & (1u32 << i) != 0
+                && mt.property_flags().has_all(mask)
+                && !mt.property_flags().has_any(exclude))
+            .then_some(i as _)
         })
     }
 
@@ -2252,12 +2254,12 @@ impl MemoryProperties {
     pub fn is_coherent(&self, index: u32) -> bool {
         self.0.memoryTypes[index as usize]
             .property_flags()
-            .has(MemoryPropertyFlags::HOST_COHERENT)
+            .has_any(MemoryPropertyFlags::HOST_COHERENT)
     }
     pub fn is_cached(&self, index: u32) -> bool {
         self.0.memoryTypes[index as usize]
             .property_flags()
-            .has(MemoryPropertyFlags::HOST_CACHED)
+            .has_any(MemoryPropertyFlags::HOST_CACHED)
     }
 }
 
