@@ -91,7 +91,7 @@ pub struct VkMultisamplePropertiesEXT {
 }
 
 vk_ext_command! {
-    pub fn vkCmdSEtSampleLocationsEXT(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT);
+    pub fn vkCmdSetSampleLocationsEXT(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT);
 }
 
 vk_ext_command! {
