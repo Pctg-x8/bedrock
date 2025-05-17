@@ -4,7 +4,7 @@ pub const VK_EXT_DEBUG_MARKER_SPEC_VERSION: usize = 4;
 pub static VK_EXT_DEBUG_MARKER_EXTENSION_NAME: &'static str = "VK_EXT_debug_marker";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_NAME_INFO_EXT: VkStructureType = ext_enum_value(23, 0) as _;
 pub const VK_STRUCTURE_TYPE_DEBUG_MARKER_OBJECT_TAG_INFO_EXT: VkStructureType = ext_enum_value(23, 1) as _;

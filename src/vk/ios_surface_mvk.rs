@@ -4,9 +4,7 @@ pub const VK_MVK_IOS_SURFACE_SPEC_VERSION: usize = 2;
 pub static VK_MVK_IOS_SURFACE_EXTENSION_NAME: &'static str = "VK_MVK_ios_surface";
 
 use super::*;
-use crate::PFN;
-#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
-use crate::StaticCallable;
+use derives::vk_ext_command;
 
 pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
 

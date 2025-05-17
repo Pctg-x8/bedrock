@@ -4,7 +4,7 @@ pub const VK_NV_CLIP_SPACE_W_SCALING_SPEC_VERSION: usize = 1;
 pub static VK_NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME: &'static str = "VK_NV_clip_space_w_scaling";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 pub const VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV: VkDynamicState = ext_enum_value(88, 0) as _;
 

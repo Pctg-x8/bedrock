@@ -1,7 +1,7 @@
 //! VK_KHR_display_swapchain extensions
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = ext_enum_value(4, 0) as _;
 
