@@ -224,7 +224,7 @@ fn main() {
     .composite_alpha(
         if surface_props
             .supported_composite_alpha()
-            .has(br::CompositeAlphaFlags::OPAQUE)
+            .has_any(br::CompositeAlphaFlags::OPAQUE)
         {
             br::vk::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
         } else {

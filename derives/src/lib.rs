@@ -530,10 +530,16 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
                 self.0
             }
 
-            /// Returns true if specified bits are contained in this flag.
+            /// Returns true if any of specified bits are contained in this flag.
             #[inline(always)]
-            pub const fn has(self, other: Self) -> bool {
+            pub const fn has_any(self, other: Self) -> bool {
                 (self.0 & other.0) != 0
+            }
+
+            /// Returns true if all of specified bits are contained in this flag.
+            #[inline(always)]
+            pub const fn has_all(self, other: Self) -> bool {
+                (self.0 & other.0) == other.0
             }
 
             /// merge two flags (const alias of BitOr)
