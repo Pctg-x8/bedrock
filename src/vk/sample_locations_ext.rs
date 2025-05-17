@@ -4,7 +4,7 @@ pub const VK_EXT_SAMPLE_LOCATIONS_SPEC_VERSION: usize = 1;
 pub const VK_EXT_SAMPLE_LOCATIONS_EXTENSION_NAME: &str = "VK_EXT_sample_locations";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 pub const VK_DYNAMIC_STATE_SAMPLE_LOCATIONS_EXT: VkDynamicState = ext_enum_value(144, 0) as _;
 

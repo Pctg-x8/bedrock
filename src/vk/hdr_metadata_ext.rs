@@ -5,6 +5,7 @@ pub static VK_EXT_HDR_METADATA_EXTENSION_NAME: &'static str = "VK_EXT_hdr_metada
 
 use super::*;
 use crate::PFN;
+use derives::vk_ext_command;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq)]
