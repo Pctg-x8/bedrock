@@ -6,27 +6,6 @@ pub const VK_AMD_BUFFER_MARKER_EXTENSION_NAME: &str = "VK_AMD_buffer_marker";
 use super::*;
 use crate::PFN;
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdWriteBufferMarkerAMD)]
-pub struct PFN_vkCmdWriteBufferMarkerAMD(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        pipelineStage: VkPipelineStageFlags,
-        dstBuffer: VkBuffer,
-        dstOffset: VkDeviceSize,
-        marker: u32,
-    ),
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCmdWriteBufferMarkerAMD(
-        commandBuffer: VkCommandBuffer,
-        pipelineStage: VkPipelineStageFlags,
-        dstBuffer: VkBuffer,
-        dstOffset: VkDeviceSize,
-        marker: u32,
-    );
+vk_ext_command! {
+    pub fn vkCmdWriteBufferMarkerAMD(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, marker: u32);
 }

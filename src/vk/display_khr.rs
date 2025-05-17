@@ -3,8 +3,9 @@
 pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
 pub const VK_KHR_DISPLAY_EXTENSION_NAME: &str = "VK_KHR_display";
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -59,7 +60,7 @@ pub struct VkDisplayModePropertiesKHR {
     pub parameters: VkDisplayModeParametersKHR,
 }
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR)]
 pub struct VkDisplayModeCreateInfoKHR {
     pub sType: VkStructureType,
@@ -88,7 +89,7 @@ pub struct VkDisplayPlanePropertiesKHR {
     pub currentStackIndex: u32,
 }
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR)]
 pub struct VkDisplaySurfaceCreateInfoKHR {
     pub sType: VkStructureType,
@@ -103,125 +104,37 @@ pub struct VkDisplaySurfaceCreateInfoKHR {
     pub imageExtent: VkExtent2D,
 }
 
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceDisplayPropertiesKHR)]
-pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayPropertiesKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceDisplayPlanePropertiesKHR)]
-pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        pProertyCount: *mut u32,
-        pProperties: *mut VkDisplayPlanePropertiesKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetDisplayPlaneSupportedDisplaysKHR)]
-pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        planeIndex: u32,
-        pDisplayCount: *mut u32,
-        pDisplays: *mut VkDisplayKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetDisplayModePropertiesKHR)]
-pub struct PFN_vkGetDisplayModePropertiesKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        display: VkDisplayKHR,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayModePropertiesKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateDisplayModeKHR)]
-pub struct PFN_vkCreateDisplayModeKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        display: VkDisplayKHR,
-        pCreateInfo: *const VkDisplayModeCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pMode: *mut VkDisplayModeKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetDisplayPlaneCapabilitiesKHR)]
-pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        mode: VkDisplayModeKHR,
-        planeIndex: u32,
-        pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateDisplayPlaneSurfaceKHR)]
-pub struct PFN_vkCreateDisplayPlaneSurfaceKHR(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult;
+    static_callable;
+}
 
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkGetPhysicalDeviceDisplayPropertiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayPropertiesKHR,
-    ) -> VkResult;
-    pub unsafe fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayPlanePropertiesKHR,
-    ) -> VkResult;
-    pub unsafe fn vkGetDisplayPlaneSupportedDisplaysKHR(
-        physicalDevice: VkPhysicalDevice,
-        planeIndex: u32,
-        pDisplayCount: *mut u32,
-        pDisplays: *mut VkDisplayKHR,
-    ) -> VkResult;
-    pub unsafe fn vkGetDisplayModePropertiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        display: VkDisplayKHR,
-        pPropertyCount: *mut u32,
-        pProperties: *mut VkDisplayModePropertiesKHR,
-    ) -> VkResult;
-    pub unsafe fn vkCreateDisplayModeKHR(
-        physicalDevice: VkPhysicalDevice,
-        display: VkDisplayKHR,
-        pCreateInfo: *const VkDisplayModeCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pMode: *mut VkDisplayModeKHR,
-    ) -> VkResult;
-    pub unsafe fn vkGetDisplayPlaneCapabilitiesKHR(
-        physicalDevice: VkPhysicalDevice,
-        mode: VkDisplayModeKHR,
-        planeIndex: u32,
-        pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR,
-    ) -> VkResult;
-    pub unsafe fn vkCreateDisplayPlaneSurfaceKHR(
-        instance: VkInstance,
-        pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkGetDisplayModePropertiesKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkCreateDisplayModeKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    static_callable;
 }

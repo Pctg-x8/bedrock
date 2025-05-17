@@ -16,7 +16,7 @@ pub struct VkViewportWScalingNV {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV)]
 pub struct VkPipelineViewportWScalingStateCreateInfoNV {
     pub sType: VkStructureType,
@@ -26,14 +26,6 @@ pub struct VkPipelineViewportWScalingStateCreateInfoNV {
     pub pViewportWScalings: *const VkViewportWScalingNV,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdSetViewportWScalingNV)]
-pub struct PFN_vkCmdSetViewportWScalingNV(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        firstViewprt: u32,
-        viewportCount: u32,
-        pViewportWScalings: *const VkViewportWScalingNV,
-    ),
-);
+vk_ext_command! {
+    pub fn vkCmdSetViewportWScalingNV(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewportWScalings: *const VkViewportWScalingNV);
+}

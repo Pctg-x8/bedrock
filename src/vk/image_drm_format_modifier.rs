@@ -5,7 +5,7 @@ pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &'static str = "VK_EX
 
 use super::*;
 use crate::PFN;
-use crate::ffi_helper::ArrayFFIExtensions;
+use crate::ffi_helper::slice_as_ptr_empty_null;
 
 pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = ext_enum_value(159, 0) as _;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT: VkStructureType =
@@ -30,6 +30,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkDrmFormatModifierPropertiesEXT {
     pub drmFormatModifier: u64,
     pub drmFormatModifierPlaneCount: u32,
@@ -37,8 +38,8 @@ pub struct VkDrmFormatModifierPropertiesEXT {
 }
 
 #[repr(C)]
-#[derive(VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT)]
 pub struct VkDrmFormatModifierPropertiesListEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -76,7 +77,7 @@ impl VkDrmFormatModifierPropertiesListEXT {
 }
 
 #[repr(C)]
-#[derive(VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_DRM_FORMAT_MODIFIER_INFO_EXT)]
 pub struct VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
     pub sType: VkStructureType,
@@ -88,7 +89,7 @@ pub struct VkPhysicalDeviceImageDrmFormatModifierInfoEXT {
 }
 
 #[repr(C)]
-#[derive(VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_LIST_CREATE_INFO_EXT)]
 pub struct VkImageDrmFormatModifierListCreateInfoEXT {
     pub sType: VkStructureType,
@@ -97,18 +98,18 @@ pub struct VkImageDrmFormatModifierListCreateInfoEXT {
     pub pDrmFormatModifiers: *const u64,
 }
 impl VkImageDrmFormatModifierListCreateInfoEXT {
-    pub unsafe fn from_values(modifiers: &[u64]) -> Self {
+    pub const unsafe fn from_values(modifiers: &[u64]) -> Self {
         Self {
             sType: Self::TYPE,
             pNext: std::ptr::null(),
             drmFormatModifierCount: modifiers.len() as _,
-            pDrmFormatModifiers: modifiers.as_ptr_empty_null(),
+            pDrmFormatModifiers: slice_as_ptr_empty_null(modifiers),
         }
     }
 }
 
 #[repr(C)]
-#[derive(VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_EXPLICIT_CREATE_INFO_EXT)]
 pub struct VkImageDrmFormatModifierExplicitCreateInfoEXT {
     pub sType: VkStructureType,
@@ -119,28 +120,17 @@ pub struct VkImageDrmFormatModifierExplicitCreateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_IMAGE_DRM_FORMAT_MODIFIER_PROPERTIES_EXT)]
 pub struct VkImageDrmFormatModifierPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub drmFormatModifier: u64,
 }
-impl VkImageDrmFormatModifierPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[repr(C)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct VkDrmFormatModifierProperties2EXT {
     pub drmFormatModifier: u64,
     pub drmFormatModifierPlaneCount: u32,
@@ -149,8 +139,8 @@ pub struct VkDrmFormatModifierProperties2EXT {
 
 #[cfg(feature = "VK_KHR_format_feature_flags2")]
 #[repr(C)]
-#[derive(VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_2_EXT)]
 pub struct VkDrmFormatModifierPropertiesList2EXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -158,22 +148,6 @@ pub struct VkDrmFormatModifierPropertiesList2EXT {
     pub pDrmFormatModifierProperties: *mut VkDrmFormatModifierProperties2EXT,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetImageDrmFormatModifierPropertiesEXT)]
-pub struct PFN_vkGetImageDrmFormatModifierPropertiesEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        image: VkImage,
-        pProperties: *mut VkImageDrmFormatModifierPropertiesEXT,
-    ) -> VkResult,
-);
-
-#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
-unsafe extern "system" {
-    pub unsafe fn vkGetImageDrmFormatModifierPropertiesEXT(
-        device: VkDevice,
-        image: VkImage,
-        pProperties: *mut VkImageDrmFormatModifierPropertiesEXT,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkGetImageDrmFormatModifierPropertiesEXT(device: VkDevice, image: VkImage, pProperties: *mut VkImageDrmFormatModifierPropertiesEXT) -> VkResult;
 }

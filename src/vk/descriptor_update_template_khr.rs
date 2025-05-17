@@ -50,7 +50,7 @@ pub struct VkDescriptorUpdateTemplateEntryKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
@@ -69,7 +69,7 @@ pub struct VkDescriptorUpdateTemplateCreateInfoKHR {
     pub set: u32,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCreateDescriptorUpdateTemplateKHR(
         device: VkDevice,
         pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR,
@@ -78,9 +78,9 @@ vk_ext_command!(
     ) -> VkResult;
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkDestroyDescriptorUpdateTemplateKHR(
         device: VkDevice,
         descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
@@ -88,9 +88,9 @@ vk_ext_command!(
     );
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkUpdateDescriptorSetWithTemplateKHR(
         device: VkDevice,
         descriptorSet: VkDescriptorSet,
@@ -99,7 +99,7 @@ vk_ext_command!(
     );
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "VK_EXT_debug_report")] {

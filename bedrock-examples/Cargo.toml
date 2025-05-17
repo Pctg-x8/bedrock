@@ -12,7 +12,11 @@ VK_KHR_win32_surface = ["bedrock/VK_KHR_win32_surface"]
 Allow1_3APIs = ["bedrock/Allow1_3APIs"]
 
 [dependencies]
-bedrock = { path = "..", features = ["Implements", "VK_EXT_debug_utils"] }
+bedrock = { path = "..", features = [
+    "Implements",
+    "VK_EXT_debug_utils",
+    "VK_EXT_full_screen_exclusive",
+] }
 
 [target.'cfg(windows)'.dev-dependencies.windows]
 version = "0.51"

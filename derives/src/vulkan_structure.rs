@@ -107,7 +107,7 @@ pub fn derive(tok: TokenStream) -> TokenStream {
     try_compile_error!(extract_required_head_fields(&fields));
 
     quote! {
-        unsafe impl #impl_generics crate::VulkanStructureAsRef for #name #ty_generics #where_clause {
+        unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
             #[inline(always)]
             fn as_generic(&self) -> &crate::GenericVulkanStructure {
                 unsafe { core::mem::transmute(self) }
@@ -118,7 +118,7 @@ pub fn derive(tok: TokenStream) -> TokenStream {
                 unsafe { core::mem::transmute(self) }
             }
         }
-        unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
+        unsafe impl #impl_generics crate::TypedVulkanStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
     }
@@ -161,7 +161,7 @@ pub fn derive_sink(tok: TokenStream) -> TokenStream {
     }
 
     quote! {
-        unsafe impl #impl_generics crate::VulkanSinkStructureAsRef for #name #ty_generics #where_clause {
+        unsafe impl #impl_generics crate::VulkanSinkStructure for #name #ty_generics #where_clause {
             #[inline(always)]
             fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
                 unsafe { core::mem::transmute(self) }
@@ -172,7 +172,7 @@ pub fn derive_sink(tok: TokenStream) -> TokenStream {
                 unsafe { core::mem::transmute(self) }
             }
         }
-        unsafe impl #impl_generics crate::VulkanSinkStructure for #name #ty_generics #where_clause {
+        unsafe impl #impl_generics crate::TypedVulkanSinkStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
     }

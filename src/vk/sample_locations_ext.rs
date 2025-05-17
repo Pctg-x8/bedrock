@@ -22,7 +22,7 @@ pub struct VkSampleLocationEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLE_LOCATIONS_INFO_EXT)]
 pub struct VkSampleLocationsInfoEXT {
     pub sType: VkStructureType,
@@ -47,7 +47,7 @@ pub struct VkSubpassSampleLocationsEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_SAMPLE_LOCATIONS_BEGIN_INFO_EXT)]
 pub struct VkRenderPassSampleLocationsBeginInfoEXT {
     pub sType: VkStructureType,
@@ -59,7 +59,7 @@ pub struct VkRenderPassSampleLocationsBeginInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_SAMPLE_LOCATIONS_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
     pub sType: VkStructureType,
@@ -69,8 +69,8 @@ pub struct VkPipelineSampleLocationsStateCreateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT)]
+#[derive(Clone, Debug, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLE_LOCATIONS_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -80,67 +80,20 @@ pub struct VkPhysicalDeviceSampleLocationsPropertiesEXT {
     pub sampleLocationSubpixelBits: u32,
     pub variableSampleLocations: VkBool32,
 }
-impl VkPhysicalDeviceSampleLocationsPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT)]
+#[derive(Clone, Debug, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MULTISAMPLE_PROPERTIES_EXT)]
 pub struct VkMultisamplePropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub maxSampleLocationGridSize: VkExtent2D,
 }
-impl VkMultisamplePropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
 
-        p
-    }
+vk_ext_command! {
+    pub fn vkCmdSEtSampleLocationsEXT(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT);
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdSetSampleLocationsEXT)]
-pub struct PFN_vkCmdSetSampleLocationsEXT(
-    pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pSampleLocationsInfo: *const VkSampleLocationsInfoEXT),
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPhysicalDeviceMultisamplePropertiesEXT)]
-pub struct PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT(
-    pub  unsafe extern "system" fn(
-        physicalDevice: VkPhysicalDevice,
-        samples: VkSampleCountFlags,
-        pMultisampleProperties: *mut VkMultisamplePropertiesEXT,
-    ),
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCmdSetSampleLocationsEXT(
-        commandBuffer: VkCommandBuffer,
-        pSampleLocationsInfo: *const VkSampleLocationsInfoEXT,
-    );
-    pub unsafe fn vkGetPhysicalDeviceMultisamplePropertiesEXT(
-        physicalDevice: VkPhysicalDevice,
-        samples: VkSampleCountFlags,
-        pMultisampleProperties: *mut VkMultisamplePropertiesEXT,
-    );
+vk_ext_command! {
+    pub fn vkGetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice: VkPhysicalDevice, samples: VkSampleCountFlags, pMultisampleProperties: *mut VkMultisamplePropertiesEXT);
 }

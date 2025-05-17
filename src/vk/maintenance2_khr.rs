@@ -31,25 +31,13 @@ pub const VK_IMAGE_LAYOUT_DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL_KHR: VkImag
 pub const VK_IMAGE_LAYOUT_DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL_KHR: VkImageLayout = ext_enum_value(118, 1) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDevicePointClippingPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub pointClippingBehavior: VkPointClippingBehaviorKHR,
-}
-impl VkPhysicalDevicePointClippingPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
 }
 
 #[promote_1_1(suffix = "KHR")]
@@ -60,7 +48,7 @@ pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES_KHR: VkPointClippingBehavio
 pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_KHR: VkPointClippingBehaviorKHR = 1;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkRenderPassInputAttachmentAspectCreateInfoKHR {
@@ -80,7 +68,7 @@ pub struct VkInputAttachmentAspectReferenceKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkImageViewUsageCreateInfoKHR {
@@ -98,7 +86,7 @@ pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT_KHR: VkTessellationDomainOrig
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT_KHR: VkTessellationDomainOriginKHR = 1;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPipelineTessellationDomainOriginStateCreateInfoKHR {

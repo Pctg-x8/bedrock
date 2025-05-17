@@ -147,7 +147,7 @@ GuardsImpl!(for Status {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FenceCreateInfo<'d>(
     VkFenceCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
 impl<'d> FenceCreateInfo<'d> {
     pub const fn new(flags: VkFenceCreateFlags) -> Self {
@@ -170,7 +170,7 @@ impl<'d> FenceCreateInfo<'d> {
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl TypedVulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
@@ -257,7 +257,7 @@ impl<Device: crate::Device> FenceObject<Device> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SemaphoreCreateInfo<'d>(
     VkSemaphoreCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
 impl<'d> SemaphoreCreateInfo<'d> {
     pub const fn new() -> Self {
@@ -280,7 +280,7 @@ impl<'d> SemaphoreCreateInfo<'d> {
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl TypedVulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }

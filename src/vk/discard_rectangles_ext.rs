@@ -15,28 +15,16 @@ pub const VK_DISCARD_RECTANGLE_MODE_EXCLUSIVE_EXT: VkDiscardRectangleModeEXT = 1
 pub type VkPipelineDiscardRectangleStateCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceDiscardRectanglePropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub maxDiscardRectangles: u32,
 }
-impl VkPhysicalDeviceDiscardRectanglePropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub sType: VkStructureType,
@@ -47,14 +35,6 @@ pub struct VkPipelineDiscardRectangleStateCreateInfoEXT {
     pub pDiscardRectangles: *const VkRect2D,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCmdSetDiscardRectangleEXT)]
-pub struct PFN_vkCmdSetDiscardRectangleEXT(
-    pub  unsafe extern "system" fn(
-        commandBuffer: VkCommandBuffer,
-        firstDiscardRectangle: u32,
-        discardRectangleCount: u32,
-        pDiscardRectangles: *const VkRect2D,
-    ),
-);
+vk_ext_command! {
+    pub fn vkCmdSetDiscardRectangleEXT(commandBuffer: VkCommandBuffer, firstDiscardRectangle: u32, discardRectangleCount: u32, pDiscardRectangles: *const VkRect2D);
+}

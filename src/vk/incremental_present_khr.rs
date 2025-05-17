@@ -31,7 +31,7 @@ pub struct VkPresentRegionKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR)]
 pub struct VkPresentRegionsKHR {
     pub sType: VkStructureType,

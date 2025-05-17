@@ -72,7 +72,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkFormatProperties3KHR {

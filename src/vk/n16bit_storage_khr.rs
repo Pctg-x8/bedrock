@@ -9,7 +9,7 @@ use super::*;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR: VkStructureType = ext_enum_value(84, 0) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDevice16BitStorageFeaturesKHR {
@@ -23,16 +23,4 @@ pub struct VkPhysicalDevice16BitStorageFeaturesKHR {
     pub storagePushConstant16: VkBool32,
     /// 16-bit integer/floating-point variables supported in shader inputs and outputs
     pub storageInputOutput16: VkBool32,
-}
-impl VkPhysicalDevice16BitStorageFeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
 }

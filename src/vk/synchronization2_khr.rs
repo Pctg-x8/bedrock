@@ -143,7 +143,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkMemoryBarrier2KHR {
@@ -156,7 +156,7 @@ pub struct VkMemoryBarrier2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkBufferMemoryBarrier2KHR {
@@ -174,7 +174,7 @@ pub struct VkBufferMemoryBarrier2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkImageMemoryBarrier2KHR {
@@ -193,7 +193,7 @@ pub struct VkImageMemoryBarrier2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkDependencyInfoKHR {
@@ -209,7 +209,7 @@ pub struct VkDependencyInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkSubmitInfo2KHR {
@@ -225,7 +225,7 @@ pub struct VkSubmitInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkSemaphoreSubmitInfoKHR {
@@ -238,7 +238,7 @@ pub struct VkSemaphoreSubmitInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkCommandBufferSubmitInfoKHR {
@@ -249,7 +249,7 @@ pub struct VkCommandBufferSubmitInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR)]
 #[promote_1_3(suffix = "KHR")]
@@ -258,51 +258,39 @@ pub struct VkPhysicalDeviceSynchronization2FeaturesKHR {
     pub pNext: *mut c_void,
     pub synchronization2: VkBool32,
 }
-impl VkPhysicalDeviceSynchronization2FeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
 
-        p
-    }
-}
-
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdSetEvent2KHR(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdResetEvent2KHR(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdWaitEvents2KHR(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdPipelineBarrier2KHR(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdWriteTimestamp2KHR(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkQueueSubmit2KHR(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult;
     suffix = "KHR";
     promote = "1.3";
-);
+}

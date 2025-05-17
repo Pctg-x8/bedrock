@@ -12,7 +12,7 @@ pub const VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR: VkStructureType = ext_e
 pub type VkXcbSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR)]
 pub struct VkXcbSurfaceCreateInfoKHR {
     pub sType: VkStructureType,
@@ -22,13 +22,12 @@ pub struct VkXcbSurfaceCreateInfoKHR {
     pub window: xcb::x::Window,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    suffix = "KHR";
     static_callable;
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32;
-    suffix = "KHR";
     static_callable;
-);
+}

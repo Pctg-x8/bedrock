@@ -9,35 +9,14 @@ use crate::PFN;
 pub const VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR: VkImageLayout = ext_enum_value(112, 0) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR)]
 pub struct VkSharedPresentSurfaceCapabilitiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub sharedPresentSupportedUsageFlags: VkImageUsageFlags,
 }
-impl VkSharedPresentSurfaceCapabilitiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
 
-        p
-    }
-}
-
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetSwapchainStatusKHR)]
-pub struct PFN_vkGetSwapchainStatusKHR(
-    pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult,
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkGetSwapchainStatusKHR(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
+vk_ext_command! {
+    pub fn vkGetSwapchainStatusKHR(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult;
 }

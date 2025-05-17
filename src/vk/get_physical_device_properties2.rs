@@ -28,7 +28,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR: VkSt
     ext_enum_value(60, 8) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkFormatProperties2KHR {
@@ -36,21 +36,9 @@ pub struct VkFormatProperties2KHR {
     pub pNext: *mut c_void,
     pub formatProperties: VkFormatProperties,
 }
-impl VkFormatProperties2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
@@ -59,21 +47,9 @@ pub struct VkPhysicalDeviceFeatures2KHR {
     pub pNext: *mut c_void,
     pub features: VkPhysicalDeviceFeatures,
 }
-impl VkPhysicalDeviceFeatures2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceProperties2KHR {
@@ -81,21 +57,9 @@ pub struct VkPhysicalDeviceProperties2KHR {
     pub pNext: *mut c_void,
     pub properties: VkPhysicalDeviceProperties,
 }
-impl VkPhysicalDeviceProperties2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkImageFormatProperties2KHR {
@@ -103,21 +67,9 @@ pub struct VkImageFormatProperties2KHR {
     pub pNext: *mut c_void,
     pub imageFormatProperties: VkImageFormatProperties,
 }
-impl VkImageFormatProperties2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceImageFormatInfo2KHR {
@@ -131,7 +83,7 @@ pub struct VkPhysicalDeviceImageFormatInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkQueueFamilyProperties2KHR {
@@ -139,21 +91,9 @@ pub struct VkQueueFamilyProperties2KHR {
     pub pNext: *mut c_void,
     pub queueFamilyProperties: VkQueueFamilyProperties,
 }
-impl VkQueueFamilyProperties2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceMemoryProperties2KHR {
@@ -161,21 +101,9 @@ pub struct VkPhysicalDeviceMemoryProperties2KHR {
     pub pNext: *mut c_void,
     pub memoryProperties: VkPhysicalDeviceMemoryProperties,
 }
-impl VkPhysicalDeviceMemoryProperties2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkSparseImageFormatProperties2KHR {
@@ -183,21 +111,9 @@ pub struct VkSparseImageFormatProperties2KHR {
     pub pNext: *mut c_void,
     pub properties: VkSparseImageFormatProperties,
 }
-impl VkSparseImageFormatProperties2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
@@ -210,44 +126,44 @@ pub struct VkPhysicalDeviceSparseImageFormatInfo2KHR {
     pub tiling: VkImageTiling,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceFeatures2KHR(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceProperties2KHR(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2KHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR, pImageFormatProperties: *mut VkImageFormatProperties2KHR) -> VkResult;
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2KHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}

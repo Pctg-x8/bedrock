@@ -23,7 +23,7 @@ vk_bitmask! {
 pub type VkMemoryUnmapFlagsKHR = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_MAP_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkMemoryMapInfoKHR {
@@ -34,7 +34,7 @@ pub struct VkMemoryMapInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkMemoryUnmapInfoKHR {
@@ -44,14 +44,14 @@ pub struct VkMemoryUnmapInfoKHR {
     pub memory: VkDeviceMemory,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkMapMemory2KHR(device: VkDevice, pMemoryMapInfo: *const VkMemoryMapInfoKHR, ppData: *mut *mut core::ffi::c_void) -> VkResult;
     suffix = "KHR";
     promote = "1.4";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkUnmapMemory2KHR(device: VkDevice, pMemoryUnmapInfo: *const VkMemoryUnmapInfoKHR) -> VkResult;
     suffix = "KHR";
     promote = "1.4";
-);
+}

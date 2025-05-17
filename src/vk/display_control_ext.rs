@@ -18,7 +18,7 @@ pub type VkDisplayEventTypeEXT = i32;
 pub const VK_DISPLAY_EVENT_TYPE_FIRST_PIXEL_OUT_EXT: VkDisplayEventTypeEXT = 0;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_POWER_INFO_EXT)]
 pub struct VkDisplayPowerInfoEXT {
     pub sType: VkStructureType,
@@ -27,7 +27,7 @@ pub struct VkDisplayPowerInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_EVENT_INFO_EXT)]
 pub struct VkDeviceEventInfoEXT {
     pub sType: VkStructureType,
@@ -36,7 +36,7 @@ pub struct VkDeviceEventInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DISPLAY_EVENT_INFO_EXT)]
 pub struct VkDisplayEventInfoEXT {
     pub sType: VkStructureType,
@@ -45,7 +45,7 @@ pub struct VkDisplayEventInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SWAPCHAIN_COUNTER_CREATE_INFO_EXT)]
 pub struct VkSwapchainCounterCreateInfoEXT {
     pub sType: VkStructureType,
@@ -53,76 +53,18 @@ pub struct VkSwapchainCounterCreateInfoEXT {
     pub surfaceCounters: VkSurfaceCounterFlagsEXT,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDisplayPowerControlEXT)]
-pub struct PFN_vkDisplayPowerControlEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        display: VkDisplayKHR,
-        pDisplayPowerInfo: *const VkDisplayPowerInfoEXT,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkRegisterDeviceEventEXT)]
-pub struct PFN_vkRegisterDeviceEventEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pDeviceEventInfo: *const VkDeviceEventInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pFence: *mut VkFence,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkRegisterDisplayEventEXT)]
-pub struct PFN_vkRegisterDisplayEventEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        display: VkDisplayKHR,
-        pDisplayEventInfo: *const VkDisplayEventInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pFence: *mut VkFence,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetSwapchainCounterEXT)]
-pub struct PFN_vkGetSwapchainCounterEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        counter: VkSurfaceCounterFlagsEXT,
-        pCounterValue: *mut u64,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkDisplayPowerControlEXT(device: VkDevice, display: VkDisplayKHR, pDisplayPowerInfo: *const VkDisplayPowerInfoEXT) -> VkResult;
+}
 
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkDisplayPowerControlEXT(
-        device: VkDevice,
-        display: VkDisplayKHR,
-        pDisplayPowerInfo: *const VkDisplayPowerInfoEXT,
-    ) -> VkResult;
-    pub unsafe fn vkRegisterDeviceEventEXT(
-        device: VkDevice,
-        pDeviceEventInfo: *const VkDeviceEventInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pFence: *mut VkFence,
-    ) -> VkResult;
-    pub unsafe fn vkRegisterDisplayEventEXT(
-        device: VkDevice,
-        display: VkDisplayKHR,
-        pDisplayEventInfo: *const VkDisplayEventInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pFence: *mut VkFence,
-    ) -> VkResult;
-    pub unsafe fn vkGetSwapchainCounterEXT(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        counter: VkSurfaceCounterFlagsEXT,
-        pCounterValue: *mut u64,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkRegisterDeviceEventEXT(device: VkDevice, pDeviceEventInfo: *const VkDeviceInfoEXT, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkRegisterDisplayEventEXT(device: VkDevice, display: VkDisplayKHR, pDisplayEventInfo: *const VkDisplayEventInfoEXT, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkGetSwapchainCounterEXT(device: VkDevice, swapchain: VkSwapchainKHR, counter: VkSurfaceCounterFlagsEXT, pCounterValue: *mut u64) -> VkResult;
 }

@@ -8,7 +8,7 @@ use super::*;
 pub type VkPipelineCoverageToColorStateCreateFlagsNV = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV)]
 pub struct VkPipelineCoverageToColorStateCreateInfoNV {
     pub sType: VkStructureType,

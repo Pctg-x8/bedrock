@@ -19,7 +19,7 @@ pub const VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR: VkStructu
 pub const VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ_KHR: VkImageLayout = ext_enum_value(233, 0) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR)]
 #[promote_1_4(suffix = "KHR")]
@@ -30,7 +30,7 @@ pub struct VkPhysicalDeviceDynamicRenderingLocalReadFeaturesKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkRenderingAttachmentLocationInfoKHR {
@@ -41,7 +41,7 @@ pub struct VkRenderingAttachmentLocationInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkRenderingInputAttachmentIndexInfoKHR {
@@ -53,14 +53,14 @@ pub struct VkRenderingInputAttachmentIndexInfoKHR {
     pub pStencilInputAttachmentIndex: *const u32,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdSetRenderingAttachmentLocationsKHR(commandBuffer: VkCommandBuffer, pLocationInfo: *const VkRenderingAttachmentLocationInfoKHR);
     suffix = "KHR";
     promote = "1.4";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdSetRenderingInputAttachmentIndicesKHR(commandBuffer: VkCommandBuffer, pInputAttachmentIndexInfo: *const VkRenderingInputAttachmentIndexInfoKHR);
     suffix = "KHR";
     promote = "1.4";
-);
+}

@@ -74,7 +74,7 @@ pub const VK_FORMAT_A1B5G5R4_UNORM_PACK16_KHR: VkFormat = ext_enum_value(471, 0)
 pub const VK_FORMAT_A8_UNORM_KHR: VkFormat = ext_enum_value(471, 1) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR)]
 #[promote_1_4(suffix = "KHR")]
@@ -83,21 +83,9 @@ pub struct VkPhysicalDeviceMaintenance5FeaturesKHR {
     pub pNext: *mut core::ffi::c_void,
     pub maintenance5: VkBool32,
 }
-impl VkPhysicalDeviceMaintenance5FeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance5PropertiesKHR {
@@ -110,21 +98,9 @@ pub struct VkPhysicalDeviceMaintenance5PropertiesKHR {
     pub nonStrictSinglePixelWideLinesUseParallelogram: VkBool32,
     pub nonStrictWideLinesUseParallelogram: VkBool32,
 }
-impl VkPhysicalDeviceMaintenance5PropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkRenderingAreaInfoKHR {
@@ -138,7 +114,7 @@ pub struct VkRenderingAreaInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkImageSubresource2KHR {
@@ -148,7 +124,7 @@ pub struct VkImageSubresource2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkDeviceImageSubresourceInfoKHR {
@@ -159,7 +135,7 @@ pub struct VkDeviceImageSubresourceInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkSubresourceLayout2KHR {
@@ -167,21 +143,9 @@ pub struct VkSubresourceLayout2KHR {
     pub pNext: *mut core::ffi::c_void,
     pub subresourceLayout: VkSubresourceLayout,
 }
-impl VkSubresourceLayout2KHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPipelineCreateFlags2CreateInfoKHR {
@@ -191,7 +155,7 @@ pub struct VkPipelineCreateFlags2CreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkBufferUsageFlags2CreateInfoKHR {
@@ -200,23 +164,26 @@ pub struct VkBufferUsageFlags2CreateInfoKHR {
     pub usage: VkBufferUsageFlags2KHR,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdBindIndexBuffer2KHR(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, size: VkDeviceSize, indexType: VkIndexType);
     suffix = "KHR";
     promote = "1.4";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetRenderingAreaGranularityKHR(device: VkDevice, pRenderingAreaInfo: *const VkRenderingAreaInfoKHR, pGranularity: *mut VkExtent2D);
     suffix = "KHR";
     promote = "1.4";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetDeviceImageSubresourceLayoutKHR(device: VkDevice, pInfo: *const VkDeviceImageSubresourceInfoKHR, pLayout: *mut VkSubresourceLayout2KHR);
     suffix = "KHR";
     promote = "1.4";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetImageSubresourceLayout2KHR(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2KHR, pLayout: *mut VkSubresourceLayout2KHR);
     suffix = "KHR";
     promote = "1.4";
-);
+}

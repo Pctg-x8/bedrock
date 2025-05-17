@@ -4,7 +4,6 @@ pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION: usize = 1;
 pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &'static str = "VK_KHR_push_descriptor";
 
 use super::*;
-use crate::PFN;
 use derives::{promote_1_4, vk_ext_command};
 
 vk_bitmask! {
@@ -15,50 +14,30 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPhysicalDevicePushDescriptorPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub maxPushDescriptors: u32,
 }
-impl VkPhysicalDevicePushDescriptorPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
 
-        p
-    }
-}
-
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdPushDescriptorSetKHR(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet);
     suffix = "KHR";
     promote = "1.4";
-);
+}
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
         #[promote_1_4(suffix = "KHR")]
         pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
 
-        #[repr(transparent)]
-        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkCmdPushDescriptorSetWithTemplateKHR)]
-        #[promote_1_4(suffix = "KHR")]
-        pub struct PFN_vkCmdPushDescriptorSetWithTemplateKHR(
-            pub unsafe extern "system" fn(
-                commandBuffer: VkCommandBuffer,
-                descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR,
-                layout: VkPipelineLayout,
-                set: u32,
-                pData: *const c_void
-            ),
-        );
+        vk_ext_command! {
+            pub fn vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const c_void);
+            suffix = "KHR";
+            promote = "1.4";
+        }
     }
 }

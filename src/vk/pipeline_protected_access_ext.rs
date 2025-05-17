@@ -20,7 +20,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT)]
 #[promote_1_4(suffix = "EXT")]

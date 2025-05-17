@@ -9,10 +9,8 @@ pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &'static str = "VK_NV_acqu
 
 vk_ext_command! {
     pub fn vkAcquireWinrtDisplayNV(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult;
-    suffix = "NV";
 }
 
 vk_ext_command! {
     pub fn vkGetWinrtDisplayNV(physicalDevice: VkPhysicalDevice, deviceRelativeId: u32, pDisplay: *mut VkDisplayKHR) -> VkResult;
-    suffix = "NV";
 }

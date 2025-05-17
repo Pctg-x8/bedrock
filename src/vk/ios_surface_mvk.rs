@@ -11,7 +11,7 @@ use crate::StaticCallable;
 pub type VkIOSSurfaceCreateFlagsMVK = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK)]
 pub struct VkIOSSurfaceCreateInfoMVK {
     pub sType: VkStructureType,
@@ -20,25 +20,7 @@ pub struct VkIOSSurfaceCreateInfoMVK {
     pub pView: *const c_void,
 }
 
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateIOSSurfaceMVK)]
-pub struct PFN_vkCreateIOSSurfaceMVK(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkIOSSurfaceCreateInfoMVK,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCreateIOSSurfaceMVK(
-        instance: VkInstance,
-        pCreateInfo: *const VkIOSSurfaceCreateInfoMVK,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkCreateIOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkIOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    static_callable;
 }

@@ -5,8 +5,9 @@ pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME: &str = "VK_EXT_validation_cach
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkDebugReportObjectTypeEXT =
     VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT;
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -25,7 +26,7 @@ pub const VK_VALIDATION_CACHE_HEADER_VERSION_ONE_EXT: VkValidationCacheHeaderVer
 pub type VkValidationCacheCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_VALIDATION_CACHE_CREATE_INFO_EXT)]
 pub struct VkValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
@@ -36,7 +37,7 @@ pub struct VkValidationCacheCreateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO_EXT)]
 pub struct VkShaderModuleValidationCacheCreateInfoEXT {
     pub sType: VkStructureType,
@@ -44,74 +45,18 @@ pub struct VkShaderModuleValidationCacheCreateInfoEXT {
     pub validationCache: VkValidationCacheEXT,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateValidationCacheEXT)]
-pub struct PFN_vkCreateValidationCacheEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pCreateInfo: *const VkValidationCacheCreateInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pValidationCache: *mut VkValidationCacheEXT,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDestroyValidationCacheEXT)]
-pub struct PFN_vkDestroyValidationCacheEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        validationCache: VkValidationCacheEXT,
-        pAllocator: *const VkAllocationCallbacks,
-    ),
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkMergeValidationCachesEXT)]
-pub struct PFN_vkMergeValidationCachesEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        dstCache: VkValidationCacheEXT,
-        srcCacheCount: u32,
-        pSrcCaches: *const VkValidationCacheEXT,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetValidationCacheDataEXT)]
-pub struct PFN_vkGetValidationCacheDataEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        validationCache: VkValidationCacheEXT,
-        pDataSize: *mut usize,
-        pData: *mut c_void,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkCreateValidationCacheEXT(device: VkDevice, pCreateInfo: *const VkValidationCacheCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pValidationCache: *mut VkValidationCacheEXT) -> VkResult;
+}
 
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCreateValidationCacheEXT(
-        device: VkDevice,
-        pCreateInfo: *const VkValidationCacheCreateInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pValidationCache: *mut VkValidationCacheEXT,
-    ) -> VkResult;
-    pub unsafe fn vkDestroyValidationCacheEXT(
-        device: VkDevice,
-        validationCache: VkValidationCacheEXT,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-    pub unsafe fn vkMergeValidationCachesEXT(
-        device: VkDevice,
-        dstCache: VkValidationCacheEXT,
-        srcCacheCount: u32,
-        pSrcCaches: *const VkValidationCacheEXT,
-    ) -> VkResult;
-    pub unsafe fn vkGetValidationCacheDataEXT(
-        device: VkDevice,
-        validationCache: VkValidationCacheEXT,
-        pDataSize: *mut usize,
-        pData: *mut c_void,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkDestroyValidationCacheEXT(device: VkDevice, validationCache: VkValidationCacheEXT, pAllocator: *const VkAllocationCallbacks);
+}
+
+vk_ext_command! {
+    pub fn vkMergeValidationCachesEXT(device: VkDevice, dstCache: VkValidationCacheEXT, srcCacheCount: u32, pSrcCaches: *const VkValidationCacheEXT) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkGetValidationCacheDataEXT(device: VkDevice, validationCache: VkValidationCacheEXT, pDataSize: *mut usize, pData: *mut c_void) -> VkResult;
 }

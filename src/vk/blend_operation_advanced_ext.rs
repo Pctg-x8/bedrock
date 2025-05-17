@@ -58,29 +58,18 @@ pub const VK_BLEND_OVERLAP_DISJOINT_EXT: VkBlendOverlapEXT = 1;
 pub const VK_BLEND_OVERLAP_CONJOINT_EXT: VkBlendOverlapEXT = 2;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT)]
 pub struct VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub advancedBlendCoherentOperations: VkBool32,
 }
-impl VkPhysicalDeviceBlendOperationAdvancedFeaturesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -91,21 +80,9 @@ pub struct VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     pub advancedBlendCorrelatedOverlap: VkBool32,
     pub advancedBlendAllOperations: VkBool32,
 }
-impl VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineColorBlendAdvancedStateCreateInfoEXT {
     pub sType: VkStructureType,

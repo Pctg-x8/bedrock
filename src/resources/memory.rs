@@ -152,7 +152,7 @@ impl<Device: crate::Device> DeviceMemoryObject<Device> {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MemoryAllocateInfo<'d>(
     VkMemoryAllocateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
 impl<'d> MemoryAllocateInfo<'d> {
     pub const fn new(size: VkDeviceSize, memory_type_index: u32) -> Self {
@@ -175,12 +175,12 @@ impl<'d> MemoryAllocateInfo<'d> {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
@@ -192,13 +192,13 @@ impl<'d> MemoryAllocateInfo<'d> {
 pub struct MemoryDedicatedAllocateInfo<'d>(
     VkMemoryDedicatedAllocateInfoKHR,
     core::marker::PhantomData<(
-        Option<&'d dyn VulkanStructureAsRef>,
+        Option<&'d dyn VulkanStructure>,
         Option<&'d dyn VkHandle<Handle = VkImage>>,
         Option<&'d dyn VkHandle<Handle = VkBuffer>>,
     )>,
 );
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
-unsafe impl VulkanStructureAsRef for MemoryDedicatedAllocateInfo<'_> {
+unsafe impl VulkanStructure for MemoryDedicatedAllocateInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -271,12 +271,12 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }

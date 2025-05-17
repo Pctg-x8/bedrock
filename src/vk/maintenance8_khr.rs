@@ -13,7 +13,7 @@ pub type VkAccessFlagBits3KHR = VkFlags64;
 pub const VK_ACCESS_3_NONE_KHR: VkAccessFlagBits3KHR = 0;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR)]
 pub struct VkPhysicalDeviceMaintenance8FeaturesKHR {
@@ -21,21 +21,9 @@ pub struct VkPhysicalDeviceMaintenance8FeaturesKHR {
     pub pNext: *mut core::ffi::c_void,
     pub maintenance8: VkBool32,
 }
-impl VkPhysicalDeviceMaintenance8FeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR)]
 pub struct VkMemoryBarrierAccessFlags3KHR {
     pub sType: VkStructureType,

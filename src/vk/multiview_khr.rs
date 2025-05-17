@@ -20,7 +20,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR: VkStructur
 pub const VK_DEPENDENCY_VIEW_LOCAL_BIT_KHR: VkDependencyFlagBits = ext_enum_value(EXT_NUMBER, 0) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkRenderPassMultiviewCreateInfoKHR {
@@ -35,7 +35,7 @@ pub struct VkRenderPassMultiviewCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceMultiviewFeaturesKHR {
@@ -48,21 +48,9 @@ pub struct VkPhysicalDeviceMultiviewFeaturesKHR {
     /// Multiple views in a renderpass w/ tessellation shader
     pub multiviewTessellationShader: VkBool32,
 }
-impl VkPhysicalDeviceMultiviewFeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceMultiviewPropertiesKHR {
@@ -72,16 +60,4 @@ pub struct VkPhysicalDeviceMultiviewPropertiesKHR {
     pub maxMultiviewViewCount: u32,
     /// max instance index for a draw in a multiview subpass
     pub maxMultiviewInstanceIndex: u32,
-}
-impl VkPhysicalDeviceMultiviewPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
 }

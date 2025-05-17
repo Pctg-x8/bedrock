@@ -11,7 +11,7 @@ pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = ext_enu
 pub type VkViSurfaceCreateFlagsNN = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN)]
 pub struct VkViSurfaceCreateInfoNN {
     pub sType: VkStructureType,
@@ -20,25 +20,7 @@ pub struct VkViSurfaceCreateInfoNN {
     pub window: *mut c_void,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateViSurfaceNN)]
-pub struct PFN_vkCreateViSurfaceNN(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkViSurfaceCreateInfoNN,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCreateViSurfaceNN(
-        instance: VkInstance,
-        pCreateInfo: *const VkViSurfaceCreateInfoNN,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkCreateViSurfaceNN(instance: VkInstance, pCreateInfo: *const VkViSurfaceCreateInfoNN, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    static_callable;
 }

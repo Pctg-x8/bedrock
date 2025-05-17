@@ -97,7 +97,7 @@ where
         (d, s)
     }
 }
-impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<Surface> {
+impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<'_, Surface> {
     type ConcreteSurface = Surface;
 
     #[inline(always)]
@@ -108,11 +108,15 @@ impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<
 
 #[repr(transparent)]
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub struct SwapchainCreateInfo<'r>(
+pub struct SwapchainCreateInfo<'r, 'n>(
     VkSwapchainCreateInfoKHR,
-    core::marker::PhantomData<(&'r dyn VkHandle<Handle = VkSurfaceKHR>, Option<&'r [u32]>)>,
+    core::marker::PhantomData<(
+        &'r dyn VkHandle<Handle = VkSurfaceKHR>,
+        Option<&'n dyn VulkanStructure>,
+        Option<&'r [u32]>,
+    )>,
 );
-impl<'r> SwapchainCreateInfo<'r> {
+impl<'r, 'n> SwapchainCreateInfo<'r, 'n> {
     #[inline]
     pub fn new(
         surface: &'r (impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
@@ -152,6 +156,11 @@ impl<'r> SwapchainCreateInfo<'r> {
 
     pub const fn into_raw(self) -> VkSwapchainCreateInfoKHR {
         self.0
+    }
+
+    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next as *const _ as _;
+        self
     }
 
     pub const fn array_layers(mut self, layers: u32) -> Self {
@@ -203,8 +212,12 @@ impl<'r> SwapchainCreateInfo<'r> {
 }
 
 /// Builder object to construct a `Swapchain`, backed with a surface
-pub struct SwapchainBuilder<Surface: crate::Surface>(VkSwapchainCreateInfoKHR, Surface);
-impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
+pub struct SwapchainBuilder<'n, Surface: crate::Surface>(
+    VkSwapchainCreateInfoKHR,
+    Surface,
+    core::marker::PhantomData<Option<&'n dyn VulkanStructure>>,
+);
+impl<'n, Surface: crate::Surface> SwapchainBuilder<'n, Surface> {
     pub fn new(
         surface: Surface,
         min_image_count: u32,
@@ -234,7 +247,13 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
                 oldSwapchain: VkSwapchainKHR::NULL,
             },
             surface,
+            core::marker::PhantomData,
         )
+    }
+
+    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next as *const _ as _;
+        self
     }
 
     pub const fn array_layers(mut self, layers: u32) -> Self {
@@ -320,7 +339,7 @@ impl<Surface: crate::Surface> SwapchainBuilder<Surface> {
         }
     }
 }
-impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<Surface> {
+impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<'_, Surface> {
     type RootStructure = VkSwapchainCreateInfoKHR;
 
     #[inline(always)]

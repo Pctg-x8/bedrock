@@ -17,7 +17,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KH
     ext_enum_value(191, 2) as _;
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
@@ -25,18 +25,6 @@ pub struct VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
     pub pNext: *mut core::ffi::c_void,
     pub maxVertexAttribDivisor: u32,
     pub supportsNonZeroFirstInstance: VkBool32,
-}
-impl VkPhysicalDeviceVertexAttributeDivisorPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
 }
 
 #[repr(C)]
@@ -48,7 +36,7 @@ pub struct VkVertexInputBindingDivisorDescriptionKHR {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPipelineVertexInputDivisorStateCreateInfoKHR {
@@ -59,7 +47,7 @@ pub struct VkPipelineVertexInputDivisorStateCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR)]
 #[promote_1_4(suffix = "KHR")]

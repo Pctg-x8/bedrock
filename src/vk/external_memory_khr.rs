@@ -19,7 +19,7 @@ pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = VkResult::ext_err_val
 pub const VK_QUEUE_FAMILY_EXTERNAL_KHR: u32 = !1;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExternalMemoryImageCreateInfoKHR {
@@ -29,7 +29,7 @@ pub struct VkExternalMemoryImageCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExternalMemoryBufferCreateInfoKHR {
@@ -39,7 +39,7 @@ pub struct VkExternalMemoryBufferCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExportMemoryAllocateInfoKHR {

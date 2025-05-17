@@ -18,9 +18,9 @@ pub enum ExternalMemoryHandleTypeWin32 {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImportMemoryWin32HandleInfo<'d>(
     VkImportMemoryWin32HandleInfoKHR,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructureAsRef>, Option<&'d WideCStr>)>,
+    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d WideCStr>)>,
 );
-unsafe impl VulkanStructureAsRef for ImportMemoryWin32HandleInfo<'_> {
+unsafe impl VulkanStructure for ImportMemoryWin32HandleInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -60,12 +60,12 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
@@ -74,9 +74,9 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExportMemoryWin32HandleInfo<'d>(
     VkExportMemoryWin32HandleInfoKHR,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructureAsRef>, &'d WideCStr)>,
+    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, &'d WideCStr)>,
 );
-unsafe impl VulkanStructureAsRef for ExportMemoryWin32HandleInfo<'_> {
+unsafe impl VulkanStructure for ExportMemoryWin32HandleInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -113,12 +113,12 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
@@ -129,7 +129,7 @@ pub struct MemoryGetWin32HandleInfo<'d>(
     pub(crate) VkMemoryGetWin32HandleInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
 );
-unsafe impl VulkanStructureAsRef for MemoryGetWin32HandleInfo<'_> {
+unsafe impl VulkanStructure for MemoryGetWin32HandleInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -165,7 +165,7 @@ impl<'d> MemoryGetWin32HandleInfo<'d> {
         self.0
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }

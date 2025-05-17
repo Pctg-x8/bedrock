@@ -3,8 +3,9 @@
 pub const VK_KHR_SWAPCHAIN_SPEC_VERSION: usize = 68;
 pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &str = "VK_KHR_swapchain";
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -35,7 +36,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR)]
 pub struct VkSwapchainCreateInfoKHR {
     pub sType: VkStructureType,
@@ -59,7 +60,7 @@ pub struct VkSwapchainCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR)]
 pub struct VkPresentInfoKHR {
     pub sType: VkStructureType,
@@ -72,81 +73,27 @@ pub struct VkPresentInfoKHR {
     pub pResults: *mut VkResult,
 }
 
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateSwapchainKHR)]
-pub struct PFN_vkCreateSwapchainKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pCreateInfo: *const VkSwapchainCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSwapchain: *mut VkSwapchainKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDestroySwapchainKHR)]
-pub struct PFN_vkDestroySwapchainKHR(
-    pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks),
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetSwapchainImagesKHR)]
-pub struct PFN_vkGetSwapchainImagesKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pSwapchainImageCount: *mut u32,
-        pSwapchainImages: *mut VkImage,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkAcquireNextImageKHR)]
-pub struct PFN_vkAcquireNextImageKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        timeout: u64,
-        semaphore: VkSemaphore,
-        fence: VkFence,
-        pImageIndex: *mut u32,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkQueuePresentKHR)]
-pub struct PFN_vkQueuePresentKHR(
-    pub unsafe extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkCreateSwapchainKHR(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult;
+    static_callable;
+}
 
-#[implements]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCreateSwapchainKHR(
-        device: VkDevice,
-        pCreateInfo: *const VkSwapchainCreateInfoKHR,
-        pAllocator: *const VkAllocationCallbacks,
-        pSwapchain: *mut VkSwapchainKHR,
-    ) -> VkResult;
-    pub unsafe fn vkDestroySwapchainKHR(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pAllocator: *const VkAllocationCallbacks,
-    );
-    pub unsafe fn vkGetSwapchainImagesKHR(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pSwapchainImageCount: *mut u32,
-        pSwapchainImages: *mut VkImage,
-    ) -> VkResult;
-    pub unsafe fn vkAcquireNextImageKHR(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        timeout: u64,
-        semaphore: VkSemaphore,
-        fence: VkFence,
-        pImageIndex: *mut u32,
-    ) -> VkResult;
-    pub unsafe fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+vk_ext_command! {
+    pub fn vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks);
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkGetSwapchainImagesKHR(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult;
+    static_callable;
+}
+
+vk_ext_command! {
+    pub fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+    static_callable;
 }

@@ -25,7 +25,7 @@ pub const VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HAN
     ext_enum_value(317, 12) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceDescriptorBufferPropertiesEXT {
     pub sType: VkStructureType,
@@ -64,42 +64,18 @@ pub struct VkPhysicalDeviceDescriptorBufferPropertiesEXT {
     pub resourceDescriptorBufferAddressSpaceSize: VkDeviceSize,
     pub descriptorBufferAddressSpaceSize: VkDeviceSize,
 }
-impl VkPhysicalDeviceDescriptorBufferPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_DENSITY_MAP_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
     pub combinedImageSamplerDensityMapDescriptorSize: usize,
 }
-impl VkPhysicalDeviceDescriptorBufferDensityMapPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_FEATURES_EXT)]
 pub struct VkPhysicalDeviceDescriptorBufferFeaturesEXT {
@@ -110,21 +86,9 @@ pub struct VkPhysicalDeviceDescriptorBufferFeaturesEXT {
     pub descriptorBufferImageLayoutIgnored: VkBool32,
     pub descriptorBufferPushDescriptors: VkBool32,
 }
-impl VkPhysicalDeviceDescriptorBufferFeaturesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_ADDRESS_INFO_EXT)]
 pub struct VkDescriptorAddressInfoEXT {
     pub sType: VkStructureType,
@@ -135,7 +99,7 @@ pub struct VkDescriptorAddressInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_INFO_EXT)]
 pub struct VkDescriptorBufferBindingInfoEXT {
     pub sType: VkStructureType,
@@ -145,7 +109,7 @@ pub struct VkDescriptorBufferBindingInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_BUFFER_BINDING_PUSH_DESCRIPTOR_BUFFER_HANDLE_EXT)]
 pub struct VkDescriptorBufferBindingPushDescriptorBufferHandleEXT {
     pub sType: VkStructureType,
@@ -154,6 +118,7 @@ pub struct VkDescriptorBufferBindingPushDescriptorBufferHandleEXT {
 }
 
 #[repr(C)]
+#[derive(Clone, Copy)]
 pub union VkDescriptorDataEXT {
     pub pSampler: *const VkSampler,
     pub pCombinedImageSampler: *const VkDescriptorImageInfo,
@@ -168,7 +133,7 @@ pub union VkDescriptorDataEXT {
 }
 
 #[repr(C)]
-#[derive(VulkanStructure)]
+#[derive(Clone, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_GET_INFO_EXT)]
 pub struct VkDescriptorGetInfoEXT {
     pub sType: VkStructureType,
@@ -178,7 +143,7 @@ pub struct VkDescriptorGetInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT)]
 pub struct VkBufferCaptureDescriptorDataInfoEXT {
     pub sType: VkStructureType,
@@ -187,7 +152,7 @@ pub struct VkBufferCaptureDescriptorDataInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_CAPTURE_DESCRIPTOR_DATA_INFO_EXT)]
 pub struct VkImageCaptureDescriptorDataInfoEXT {
     pub sType: VkStructureType,
@@ -196,7 +161,7 @@ pub struct VkImageCaptureDescriptorDataInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_VIEW_CAPTURE_DESCRIPTOR_DATA_INFO_EXT)]
 pub struct VkImageViewCaptureDescriptorDataInfoEXT {
     pub sType: VkStructureType,
@@ -205,7 +170,7 @@ pub struct VkImageViewCaptureDescriptorDataInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_CAPTURE_DESCRIPTOR_DATA_INFO_EXT)]
 pub struct VkSamplerCaptureDescriptorDataInfoEXT {
     pub sType: VkStructureType,
@@ -214,7 +179,7 @@ pub struct VkSamplerCaptureDescriptorDataInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_OPAQUE_CAPTURE_DESCRIPTOR_DATA_CREATE_INFO_EXT)]
 pub struct VkOpaqueCaptureDescriptorDataCreateInfoEXT {
     pub sType: VkStructureType,
@@ -222,43 +187,42 @@ pub struct VkOpaqueCaptureDescriptorDataCreateInfoEXT {
     pub opaqueCaptureDescriptorData: *const core::ffi::c_void,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetDescriptorSetLayoutSizeEXT(device: VkDevice, layout: VkDescriptorSetLayout, pLayoutSizeInBytes: *mut VkDeviceSize);
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetDescriptorSetLayoutBindingOffsetEXT(device: VkDevice, layout: VkDescriptorSetLayout, binding: u32, pOffset: *mut VkDeviceSize);
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetDescriptorEXT(device: VkDevice, pDescriptorInfo: *const VkDescriptorGetInfoEXT, dataSize: usize, pDescriptor: *mut core::ffi::c_void);
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkCmdBindDescriptorBuffersEXT(commandBuffer: VkCommandBuffer, bufferCount: u32, pBindingInfos: *const VkDescriptorBufferBindingInfoEXT);
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkCmdSetDescriptorBufferOffsetsEXT(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, setCount: u32, pBufferIndices: *const u32, pOffsets: *const VkDeviceSize);
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkCmdBindDescriptorBufferEmbeddedSamplersEXT(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32);
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetBufferOpaqueCaptureDescriptorDataEXT(device: VkDevice, pInfo: *const VkBufferCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult;
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetImageOpaqueCaptureDescriptorDataEXT(device: VkDevice, pInfo: *const VkImageCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult;
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetImageViewOpaqueCaptureDescriptorDataEXT(device: VkDevice, pInfo: *const VkImageViewCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult;
-    suffix = "EXT";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetSamplerOpaqueCaptureDescriptorDataEXT(device: VkDevice, pInfo: *const VkSamplerCaptureDescriptorDataInfoEXT, pData: *mut core::ffi::c_void) -> VkResult;
-    suffix = "EXT";
-);
+}

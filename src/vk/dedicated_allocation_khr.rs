@@ -10,7 +10,7 @@ pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR: VkStructureType =
 pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR: VkStructureType = ext_enum_value(128, 1) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkMemoryDedicatedRequirementsKHR {
@@ -19,21 +19,9 @@ pub struct VkMemoryDedicatedRequirementsKHR {
     pub prefersDedicatedAllocation: VkBool32,
     pub requiresDedicatedAllocation: VkBool32,
 }
-impl VkMemoryDedicatedRequirementsKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let p = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*p).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*p).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkMemoryDedicatedAllocateInfoKHR {

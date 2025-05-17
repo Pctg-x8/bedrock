@@ -355,7 +355,7 @@ impl<Device: crate::Device> ImageObject<Device> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ImageCreateInfo<'d>(
     VkImageCreateInfo,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructureAsRef>, Option<&'d [u32]>)>,
+    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d [u32]>)>,
 );
 impl<'d> ImageCreateInfo<'d> {
     #[inline(always)]
@@ -391,7 +391,7 @@ impl<'d> ImageCreateInfo<'d> {
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl TypedVulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
@@ -726,7 +726,7 @@ impl ImageFlags {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ImageSparseMemoryRequirementsInfo2<'r>(
     pub(crate) VkImageSparseMemoryRequirementsInfo2KHR,
-    core::marker::PhantomData<(Option<&'r dyn VulkanStructureAsRef>, &'r dyn VkHandle<Handle = VkImage>)>,
+    core::marker::PhantomData<(Option<&'r dyn VulkanStructure>, &'r dyn VkHandle<Handle = VkImage>)>,
 );
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 impl<'r> ImageSparseMemoryRequirementsInfo2<'r> {
@@ -751,7 +751,7 @@ impl<'r> ImageSparseMemoryRequirementsInfo2<'r> {
     }
 
     #[inline]
-    pub fn with_next(mut self, next: &'r (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'r (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }

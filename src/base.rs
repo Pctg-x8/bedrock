@@ -399,7 +399,7 @@ impl<'d> ApplicationInfo<'d> {
 pub struct InstanceCreateInfo<'d>(
     VkInstanceCreateInfo,
     core::marker::PhantomData<(
-        Option<&'d dyn VulkanStructureAsRef>,
+        Option<&'d dyn VulkanStructure>,
         &'d ApplicationInfo<'d>,
         &'d [CStrFFIRef<'d>],
     )>,
@@ -434,7 +434,7 @@ impl<'d> InstanceCreateInfo<'d> {
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }

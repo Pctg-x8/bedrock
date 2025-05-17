@@ -56,7 +56,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT)]
 #[promote_1_2(suffix = "EXT")]
 pub struct VkDescriptorSetLayoutBindingFlagsCreateInfoEXT {
@@ -67,7 +67,7 @@ pub struct VkDescriptorSetLayoutBindingFlagsCreateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT)]
 #[promote_1_2(suffix = "EXT")]
@@ -95,21 +95,9 @@ pub struct VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
     pub descriptorBindingVariableDescriptorCount: VkBool32,
     pub runtimeDescriptorArray: VkBool32,
 }
-impl VkPhysicalDeviceDescriptorIndexingFeaturesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_PROPERTIES_EXT)]
 #[promote_1_2(suffix = "EXT")]
 pub struct VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
@@ -139,21 +127,9 @@ pub struct VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
     pub maxDescriptorSetUpdateAfterBindStorageImages: u32,
     pub maxDescriptorSetUpdateAfterBindInputAttachments: u32,
 }
-impl VkPhysicalDeviceDescriptorIndexingPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT)]
 #[promote_1_2(suffix = "EXT")]
 pub struct VkDescriptorSetVariableDescriptorCountAllocateInfoEXT {
@@ -164,23 +140,11 @@ pub struct VkDescriptorSetVariableDescriptorCountAllocateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_LAYOUT_SUPPORT_EXT)]
 #[promote_1_2(suffix = "EXT")]
 pub struct VkDescriptorSetVariableDescriptorCountLayoutSupportEXT {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
     pub maxVariableDescriptorCount: u32,
-}
-impl VkDescriptorSetVariableDescriptorCountLayoutSupportEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
 }

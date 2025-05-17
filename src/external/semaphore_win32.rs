@@ -109,7 +109,7 @@ impl<'d> SemaphoreGetWin32HandleInfo<'d> {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct D3D12FenceSubmitInfo<'t>(
     VkD3D12FenceSubmitInfoKHR,
-    core::marker::PhantomData<(Option<&'t dyn VulkanStructureAsRef>, &'t [u64])>,
+    core::marker::PhantomData<(Option<&'t dyn VulkanStructure>, &'t [u64])>,
 );
 impl<'t> D3D12FenceSubmitInfo<'t> {
     pub const fn new(wait_semaphore_values: &'t [u64], signal_semaphore_values: &'t [u64]) -> Self {
@@ -134,12 +134,12 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
         self.0
     }
 
-    pub fn with_next(mut self, next: &'t (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'t (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
-unsafe impl<'t> VulkanStructureAsRef for D3D12FenceSubmitInfo<'t> {
+unsafe impl<'t> VulkanStructure for D3D12FenceSubmitInfo<'t> {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         self.0.as_generic()
@@ -156,7 +156,7 @@ unsafe impl<'t> VulkanStructureAsRef for D3D12FenceSubmitInfo<'t> {
 pub struct ExportSemaphoreWin32HandleInfo<'d>(
     VkExportSemaphoreWin32HandleInfoKHR,
     core::marker::PhantomData<(
-        Option<&'d dyn VulkanStructureAsRef>,
+        Option<&'d dyn VulkanStructure>,
         Option<&'d windows::Win32::Security::SECURITY_ATTRIBUTES>,
         &'d widestring::WideCStr,
     )>,
@@ -187,12 +187,12 @@ impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
         self.0
     }
 
-    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
-unsafe impl VulkanStructureAsRef for ExportSemaphoreWin32HandleInfo<'_> {
+unsafe impl VulkanStructure for ExportSemaphoreWin32HandleInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         self.0.as_generic()

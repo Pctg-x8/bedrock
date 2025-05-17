@@ -6,7 +6,7 @@ pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME: &str = "VK_KHR_iamge_format_l
 use super::*;
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
+#[derive(Clone, Debug, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR)]
 pub struct VkImageFormatListCreateInfoKHR {
     pub sType: VkStructureType,
