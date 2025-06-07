@@ -3,8 +3,9 @@
 pub const VK_KHR_EXTERNAL_MEMORY_WIN32_SPEC_VERSION: usize = 1;
 pub static VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_memory_win32";
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 0) as _;
 pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 1) as _;
@@ -12,7 +13,7 @@ pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType 
 pub const VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(74, 3) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -23,7 +24,7 @@ pub struct VkImportMemoryWin32HandleInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR)]
 pub struct VkExportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -34,28 +35,16 @@ pub struct VkExportMemoryWin32HandleInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR)]
 pub struct VkMemoryWin32HandlePropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryTypeBits: u32,
 }
-impl VkMemoryWin32HandlePropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR)]
 pub struct VkMemoryGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -64,24 +53,10 @@ pub struct VkMemoryGetWin32HandleInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetMemoryWin32HandleKHR)]
-pub struct PFN_vkGetMemoryWin32HandleKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR,
-        pHandle: *mut windows::Win32::Foundation::HANDLE,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetMemoryWin32HandlePropertiesKHR)]
-pub struct PFN_vkGetMemoryWin32HandlePropertiesKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        handleType: VkExternalMemoryHandleTypeFlagsKHR,
-        handle: windows::Win32::Foundation::HANDLE,
-        pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkGetMemoryWin32HandleKHR(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkGetMemoryWin32HandlePropertiesKHR(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, handle: windows::Win32::Foundation::HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult;
+}

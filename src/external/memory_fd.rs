@@ -12,9 +12,9 @@ pub enum ExternalMemoryHandleTypeFd {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ImportMemoryFdInfo<'d>(
     VkImportMemoryFdInfoKHR,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
-unsafe impl VulkanStructureAsRef for ImportMemoryFdInfo<'_> {
+unsafe impl VulkanStructure for ImportMemoryFdInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -46,12 +46,12 @@ impl<'d> ImportMemoryFdInfo<'d> {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
@@ -87,7 +87,7 @@ impl<'d> MemoryGetFdInfo<'d> {
         self.0
     }
 
-    pub const unsafe fn next_sink<T: VulkanStructureAsRef>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }

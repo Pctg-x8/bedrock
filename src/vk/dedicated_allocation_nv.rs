@@ -10,7 +10,7 @@ pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV: VkStruct
 pub const VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV: VkStructureType = ext_enum_value(27, 2) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV)]
 pub struct VkDedicatedAllocationImageCreateInfoNV {
     pub sType: VkStructureType,
@@ -19,7 +19,7 @@ pub struct VkDedicatedAllocationImageCreateInfoNV {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_BUFFER_CREATE_INFO_NV)]
 pub struct VkDedicatedAllocationBufferCreateInfoNV {
     pub sType: VkStructureType,
@@ -28,7 +28,7 @@ pub struct VkDedicatedAllocationBufferCreateInfoNV {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV)]
 pub struct VkDedicatedAllocationMemoryAllocateInfoNV {
     pub sType: VkStructureType,

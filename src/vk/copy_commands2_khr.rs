@@ -30,7 +30,7 @@ pub const VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2_KHR: VkStructureType = ext_enum_
 pub const VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2_KHR: VkStructureType = ext_enum_value(338, 10) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_COPY_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkBufferCopy2KHR {
@@ -42,7 +42,7 @@ pub struct VkBufferCopy2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_BUFFER_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkCopyBufferInfo2KHR {
@@ -55,7 +55,7 @@ pub struct VkCopyBufferInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_COPY_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkImageCopy2KHR {
@@ -69,7 +69,7 @@ pub struct VkImageCopy2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_IMAGE_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkCopyImageInfo2KHR {
@@ -84,7 +84,7 @@ pub struct VkCopyImageInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_IMAGE_COPY_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkBufferImageCopy2KHR {
@@ -99,7 +99,7 @@ pub struct VkBufferImageCopy2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_BUFFER_TO_IMAGE_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkCopyBufferToImageInfo2KHR {
@@ -113,7 +113,7 @@ pub struct VkCopyBufferToImageInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_BUFFER_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkCopyImageToBufferInfo2KHR {
@@ -127,7 +127,7 @@ pub struct VkCopyImageToBufferInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_BLIT_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkImageBlit2KHR {
@@ -140,7 +140,7 @@ pub struct VkImageBlit2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BLIT_IMAGE_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkBlitImageInfo2KHR {
@@ -156,7 +156,7 @@ pub struct VkBlitImageInfo2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_RESOLVE_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkImageResolve2KHR {
@@ -170,7 +170,7 @@ pub struct VkImageResolve2KHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RESOLVE_IMAGE_INFO_2_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkResolveImageInfo2KHR {
@@ -184,38 +184,38 @@ pub struct VkResolveImageInfo2KHR {
     pub pRegions: *const VkImageResolve2KHR,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdCopyBuffer2KHR(commandBuffer: VkCommandBuffer, pCopyBufferInfo: *const VkCopyBufferInfo2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdCopyImage2KHR(commandBuffer: VkCommandBuffer, pCopyImageInfo: *const VkCopyImageInfo2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdCopyBufferToImage2KHR(commandBuffer: VkCommandBuffer, pCopyBuferToImageInfo: *const VkCopyBufferToImageInfo2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdCopyImageToBuffer2KHR(commandBuffer: VkCommandBuffer, pCopyImageToBufferInfo: *const VkCopyImageToBufferInfo2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdBlitImage2KHR(commandBuffer: VkCommandBuffer, pBlitImageInfo: *const VkBlitImageInfo2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdResolveImage2KHR(commandBuffer: VkCommandBuffer, pResolveImageInfo: *const VkResolveImageInfo2KHR);
     suffix = "KHR";
     promote = "1.3";
-);
+}

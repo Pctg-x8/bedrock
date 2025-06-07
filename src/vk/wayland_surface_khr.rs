@@ -12,7 +12,7 @@ pub const VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR: VkStructureType = e
 pub type VkWaylandSurfaceCreateFlagsKHR = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR)]
 pub struct VkWaylandSurfaceCreateInfoKHR {
     pub sType: VkStructureType,
@@ -24,13 +24,12 @@ pub struct VkWaylandSurfaceCreateInfoKHR {
     pub surface: *mut c_void,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCreateWaylandSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    suffix = "KHR";
     static_callable;
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut c_void) -> VkBool32;
-    suffix = "KHR";
     static_callable;
-);
+}

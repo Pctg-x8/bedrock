@@ -14,7 +14,7 @@ pub const VK_COVERAGE_MODULATION_MODE_RGBA_NV: VkCoverageModulationModeNV = 3;
 pub type VkPipelineCoverageModulationStateCreateFlagsNV = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV)]
 pub struct VkPipelineCoverageModulationStateCreateInfoNV {
     pub sType: VkStructureType,

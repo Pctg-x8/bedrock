@@ -1997,40 +1997,26 @@ impl From<BufferMemoryBarrier> for VkBufferMemoryBarrier {
     }
 }
 
-#[repr(transparent)]
-pub struct BufferCopy(pub VkBufferCopy);
+pub type BufferCopy = VkBufferCopy;
 impl BufferCopy {
-    #[inline(always)]
     pub const fn mirror(offset: VkDeviceSize, size: VkDeviceSize) -> Self {
-        Self(VkBufferCopy {
+        Self {
             srcOffset: offset,
             dstOffset: offset,
             size,
-        })
+        }
     }
 
-    #[inline(always)]
     pub const fn mirror_data<T>(offset: VkDeviceSize) -> Self {
         Self::mirror(offset, core::mem::size_of::<T>() as _)
     }
 
-    #[inline(always)]
     pub const fn copy_data<T>(src_offset: VkDeviceSize, dst_offset: VkDeviceSize) -> Self {
-        Self(VkBufferCopy {
+        Self {
             srcOffset: src_offset,
             dstOffset: dst_offset,
             size: core::mem::size_of::<T>() as _,
-        })
-    }
-}
-impl From<VkBufferCopy> for BufferCopy {
-    fn from(value: VkBufferCopy) -> Self {
-        Self(value)
-    }
-}
-impl From<BufferCopy> for VkBufferCopy {
-    fn from(value: BufferCopy) -> Self {
-        value.0
+        }
     }
 }
 

@@ -10,7 +10,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR: VkStru
 pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR: VkStructureType = ext_enum_value(169, 1) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance3PropertiesKHR {
@@ -19,21 +19,9 @@ pub struct VkPhysicalDeviceMaintenance3PropertiesKHR {
     pub maxPerSetDescriptors: u32,
     pub maxMemoryAllocationSize: VkDeviceSize,
 }
-impl VkPhysicalDeviceMaintenance3PropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDescriptorSetLayoutSupportKHR {
@@ -41,21 +29,9 @@ pub struct VkDescriptorSetLayoutSupportKHR {
     pub pNext: *mut c_void,
     pub supported: VkBool32,
 }
-impl VkDescriptorSetLayoutSupportKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
 
-        p
-    }
-}
-
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetDescriptorSetLayoutSupportKHR(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupportKHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}

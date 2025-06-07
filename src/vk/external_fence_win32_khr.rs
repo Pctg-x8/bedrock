@@ -3,8 +3,9 @@
 pub const VK_KHR_EXTERNAL_FENCE_WIN32_SPEC_VERSION: usize = 1;
 pub static VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_fence_win32";
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(115, 0) as _;
 pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = ext_enum_value(115, 1) as _;
@@ -12,7 +13,7 @@ pub const VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = e
 
 #[cfg(windows)]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR)]
 pub struct VkImportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -25,7 +26,7 @@ pub struct VkImportFenceWin32HandleInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR)]
 pub struct VkExportFenceWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -35,7 +36,7 @@ pub struct VkExportFenceWin32HandleInfoKHR {
     pub name: windows::core::PCWSTR,
 }
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR)]
 pub struct VkFenceGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
@@ -44,22 +45,10 @@ pub struct VkFenceGetWin32HandleInfoKHR {
     pub handleType: VkExternalFenceHandleTypeFlagsKHR,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkImportFenceWin32HandleKHR)]
-pub struct PFN_vkImportFenceWin32HandleKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetFenceWin32HandleKHR)]
-pub struct PFN_vkGetFenceWin32HandleKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR,
-        pHandle: *mut windows::Win32::Foundation::HANDLE,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkImportFenceWin32HandleKHR(device: VkDevice, pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkGetFenceWin32HandleKHR(device: VkDevice, pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult;
+}

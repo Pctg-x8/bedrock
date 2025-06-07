@@ -37,7 +37,7 @@ pub type VkRenderingFlagsKHR = VkFlags;
 pub const VK_ATTACHMENT_STORE_OP_NONE_KHR: VkAttachmentStoreOp = ext_enum_value(302, 0) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDERING_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkRenderingInfoKHR {
@@ -54,7 +54,7 @@ pub struct VkRenderingInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Clone, VulkanStructure)]
+#[derive(Clone, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkRenderingAttachmentInfoKHR {
@@ -71,7 +71,7 @@ pub struct VkRenderingAttachmentInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RENDERING_CREATE_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkPipelineRenderingCreateInfoKHR {
@@ -85,7 +85,7 @@ pub struct VkPipelineRenderingCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES_KHR)]
 #[promote_1_3(suffix = "KHR")]
@@ -94,21 +94,9 @@ pub struct VkPhysicalDeviceDynamicRenderingFeaturesKHR {
     pub pNext: *mut core::ffi::c_void,
     pub dynamicRendering: VkBool32,
 }
-impl VkPhysicalDeviceDynamicRenderingFeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_RENDERING_INFO_KHR)]
 #[promote_1_3(suffix = "KHR")]
 pub struct VkCommandBufferInheritanceRenderingInfoKHR {
@@ -123,13 +111,14 @@ pub struct VkCommandBufferInheritanceRenderingInfoKHR {
     pub rasterizationSamples: VkSampleCountFlagBits,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdBeginRenderingKHR(commandBuffer: VkCommandBuffer, pRenderingInfo: *const VkRenderingInfoKHR);
     suffix = "KHR";
     promote = "1.3";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkCmdEndRenderingKHR(commandBuffer: VkCommandBuffer);
     suffix = "KHR";
     promote = "1.3";
-);
+}

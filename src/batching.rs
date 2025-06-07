@@ -110,7 +110,7 @@ impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
 pub struct SubmitInfo<'r, 'rs, 'n>(
     VkSubmitInfo,
     PhantomData<(
-        Option<&'n dyn VulkanStructureAsRef>,
+        Option<&'n dyn VulkanStructure>,
         &'rs [VkHandleRef<'r, VkSemaphore>],
         &'rs [PipelineStageFlags],
         &'rs [VkHandleRef<'r, VkCommandBuffer>],
@@ -188,7 +188,7 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'n (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }

@@ -63,7 +63,7 @@ pub struct VkExternalMemoryPropertiesKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceExternalImageFormatInfoKHR {
@@ -73,7 +73,7 @@ pub struct VkPhysicalDeviceExternalImageFormatInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_IMAGE_FORMAT_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExternalImageFormatPropertiesKHR {
@@ -81,21 +81,9 @@ pub struct VkExternalImageFormatPropertiesKHR {
     pub pNext: *mut c_void,
     pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
 }
-impl VkExternalImageFormatPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceExternalBufferInfoKHR {
@@ -107,7 +95,7 @@ pub struct VkPhysicalDeviceExternalBufferInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExternalBufferPropertiesKHR {
@@ -115,21 +103,9 @@ pub struct VkExternalBufferPropertiesKHR {
     pub pNext: *mut c_void,
     pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
 }
-impl VkExternalBufferPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceIDPropertiesKHR {
@@ -141,21 +117,9 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,
 }
-impl VkPhysicalDeviceIDPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
 
-        p
-    }
-}
-
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}

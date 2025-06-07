@@ -12,7 +12,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStr
     VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceVariablePointersFeaturesKHR {
@@ -20,18 +20,6 @@ pub struct VkPhysicalDeviceVariablePointersFeaturesKHR {
     pub pNext: *mut c_void,
     pub variablePointersStorageBuffer: VkBool32,
     pub variablePointers: VkBool32,
-}
-impl VkPhysicalDeviceVariablePointersFeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
 }
 
 #[promote_1_1(suffix = "KHR")]

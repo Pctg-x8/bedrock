@@ -4,7 +4,7 @@ pub const VK_AMD_SHADER_INFO_SPEC_VERSION: usize = 1;
 pub const VK_AMD_SHADER_INFO_EXTENSION_NAME: &str = "VK_AMD_shader_info";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 pub type VkShaderInfoTypeAMD = i32;
 pub const VK_SHADER_INFO_TYPE_STATISTICS_AMD: VkShaderInfoTypeAMD = 0;
@@ -33,29 +33,6 @@ pub struct VkShaderStatisticsInfoAMD {
     pub computeWorkGroupSize: [u32; 3],
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetShaderInfoKHR)]
-pub struct PFN_vkGetShaderInfoAMD(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pipeline: VkPipeline,
-        shaderStage: VkShaderStageFlags,
-        infoType: VkShaderInfoTypeAMD,
-        pInfoSize: *mut usize,
-        pInfo: *mut c_void,
-    ) -> VkResult,
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkGetShaderInfoAMD(
-        device: VkDevice,
-        pipeline: VkPipeline,
-        shaderStage: VkShaderStageFlags,
-        infoType: VkShaderInfoTypeAMD,
-        pInfoSize: *mut usize,
-        pInfo: *mut c_void,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkGetShaderInfoAMD(device: VkDevice, pipeline: VkPipeline, shaderStage: VkShaderStageFlags, infoType: VkShaderInfoTypeAMD, pInfoSize: *mut usize, pInfo: *mut c_void) -> VkResult;
 }

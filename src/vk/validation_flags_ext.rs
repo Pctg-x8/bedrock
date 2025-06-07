@@ -12,7 +12,7 @@ pub const VK_VALIDATION_CHECK_ALL_EXT: VkValidationCheckEXT = 0;
 pub const VK_VALIDATION_CHECK_SHADERS_EXT: VkValidationCheckEXT = 1;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT)]
 pub struct VkValidationFlagsEXT {
     pub sType: VkStructureType,

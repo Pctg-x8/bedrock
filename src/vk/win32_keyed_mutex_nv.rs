@@ -6,7 +6,7 @@ pub static VK_NV_WIN32_KEYED_MUTEX_EXTENSION_NAME: &'static str = "VK_NV_win32_k
 use super::*;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_NV)]
 pub struct VkWin32KeyedMutexAcquireReleaseInfoNV {
     pub sType: VkStructureType,

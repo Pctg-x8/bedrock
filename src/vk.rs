@@ -10,7 +10,7 @@
 ** SPDX-License-Identifier: Apache-2.0
 */
 
-use crate::{PFN, StaticCallable, VulkanSinkStructure, VulkanStructure, ffi_helper::FixedCStrBuffer};
+use crate::{PFN, StaticCallable, TypedVulkanSinkStructure, TypedVulkanStructure, ffi_helper::FixedCStrBuffer};
 use core::ffi::*;
 use derives::{implements, promote_1_1, vk_raw_handle};
 
@@ -1495,7 +1495,7 @@ pub type PFN_vkInternalFreeNotification = extern "system" fn(
 pub type PFN_vkVoidFunction = extern "system" fn();
 
 #[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
+#[derive(Debug, Clone, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_APPLICATION_INFO)]
 pub struct VkApplicationInfo {
     pub sType: VkStructureType,
@@ -1508,7 +1508,7 @@ pub struct VkApplicationInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
+#[derive(Debug, Clone, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)]
 pub struct VkInstanceCreateInfo {
     pub sType: VkStructureType,
@@ -1794,7 +1794,7 @@ pub struct VkPhysicalDeviceProperties {
     feature = "Allow1_1APIs"
 ))]
 #[repr(C)]
-#[derive(Debug, PartialEq, VulkanSinkStructure)]
+#[derive(Debug, PartialEq, TypedVulkanSinkStructure)]
 #[promote_1_1(suffix = "KHR")]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR)]
 pub struct VkPhysicalDeviceIDPropertiesKHR {
@@ -1866,7 +1866,7 @@ impl Clone for VkPhysicalDeviceMemoryProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)]
 pub struct VkDeviceQueueCreateInfo {
     pub sType: VkStructureType,
@@ -1878,7 +1878,7 @@ pub struct VkDeviceQueueCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)]
 pub struct VkDeviceCreateInfo {
     pub sType: VkStructureType,
@@ -1910,7 +1910,7 @@ pub struct VkLayerProperties {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, VulkanStructure)]
+#[derive(Debug, Clone, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBMIT_INFO)]
 pub struct VkSubmitInfo {
     pub sType: VkStructureType,
@@ -1925,7 +1925,7 @@ pub struct VkSubmitInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO)]
 pub struct VkMemoryAllocateInfo {
     pub sType: VkStructureType,
@@ -1935,7 +1935,7 @@ pub struct VkMemoryAllocateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE)]
 pub struct VkMappedMemoryRange {
     pub sType: VkStructureType,
@@ -2054,7 +2054,7 @@ pub struct VkSparseImageMemoryBindInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO)]
 pub struct VkBindSparseInfo {
     pub sType: VkStructureType,
@@ -2072,7 +2072,7 @@ pub struct VkBindSparseInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO)]
 pub struct VkFenceCreateInfo {
     pub sType: VkStructureType,
@@ -2081,7 +2081,7 @@ pub struct VkFenceCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO)]
 pub struct VkSemaphoreCreateInfo {
     pub sType: VkStructureType,
@@ -2090,7 +2090,7 @@ pub struct VkSemaphoreCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO)]
 pub struct VkEventCreateInfo {
     pub sType: VkStructureType,
@@ -2099,7 +2099,7 @@ pub struct VkEventCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO)]
 pub struct VkQueryPoolCreateInfo {
     pub sType: VkStructureType,
@@ -2111,7 +2111,7 @@ pub struct VkQueryPoolCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO)]
 pub struct VkBufferCreateInfo {
     pub sType: VkStructureType,
@@ -2125,7 +2125,7 @@ pub struct VkBufferCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO)]
 pub struct VkBufferViewCreateInfo {
     pub sType: VkStructureType,
@@ -2138,7 +2138,7 @@ pub struct VkBufferViewCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)]
 pub struct VkImageCreateInfo {
     pub sType: VkStructureType,
@@ -2198,7 +2198,7 @@ pub struct VkImageSubresourceRange {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)]
 pub struct VkImageViewCreateInfo {
     pub sType: VkStructureType,
@@ -2212,7 +2212,7 @@ pub struct VkImageViewCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)]
 pub struct VkShaderModuleCreateInfo {
     pub sType: VkStructureType,
@@ -2223,7 +2223,7 @@ pub struct VkShaderModuleCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO)]
 pub struct VkPipelineCacheCreateInfo {
     pub sType: VkStructureType,
@@ -2251,7 +2251,7 @@ pub struct VkSpecializationInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)]
 pub struct VkPipelineShaderStageCreateInfo {
     pub sType: VkStructureType,
@@ -2281,7 +2281,7 @@ pub struct VkVertexInputAttributeDescription {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)]
 pub struct VkPipelineVertexInputStateCreateInfo {
     pub sType: VkStructureType,
@@ -2294,7 +2294,7 @@ pub struct VkPipelineVertexInputStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)]
 pub struct VkPipelineInputAssemblyStateCreateInfo {
     pub sType: VkStructureType,
@@ -2305,7 +2305,7 @@ pub struct VkPipelineInputAssemblyStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO)]
 pub struct VkPipelineTessellationStateCreateInfo {
     pub sType: VkStructureType,
@@ -2360,7 +2360,7 @@ pub struct VkRect2D {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)]
 pub struct VkPipelineViewportStateCreateInfo {
     pub sType: VkStructureType,
@@ -2373,7 +2373,7 @@ pub struct VkPipelineViewportStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO)]
 pub struct VkPipelineRasterizationStateCreateInfo {
     pub sType: VkStructureType,
@@ -2392,7 +2392,7 @@ pub struct VkPipelineRasterizationStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)]
 pub struct VkPipelineMultisampleStateCreateInfo {
     pub sType: VkStructureType,
@@ -2419,7 +2419,7 @@ pub struct VkStencilOpState {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO)]
 pub struct VkPipelineDepthStencilStateCreateInfo {
     pub sType: VkStructureType,
@@ -2450,7 +2450,7 @@ pub struct VkPipelineColorBlendAttachmentState {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO)]
 pub struct VkPipelineColorBlendStateCreateInfo {
     pub sType: VkStructureType,
@@ -2464,7 +2464,7 @@ pub struct VkPipelineColorBlendStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO)]
 pub struct VkPipelineDynamicStateCreateInfo {
     pub sType: VkStructureType,
@@ -2475,7 +2475,7 @@ pub struct VkPipelineDynamicStateCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO)]
 pub struct VkGraphicsPipelineCreateInfo {
     pub sType: VkStructureType,
@@ -2500,7 +2500,7 @@ pub struct VkGraphicsPipelineCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO)]
 pub struct VkComputePipelineCreateInfo {
     pub sType: VkStructureType,
@@ -2521,7 +2521,7 @@ pub struct VkPushConstantRange {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO)]
 pub struct VkPipelineLayoutCreateInfo {
     pub sType: VkStructureType,
@@ -2534,7 +2534,7 @@ pub struct VkPipelineLayoutCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO)]
 pub struct VkSamplerCreateInfo {
     pub sType: VkStructureType,
@@ -2568,7 +2568,7 @@ pub struct VkDescriptorSetLayoutBinding {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)]
 pub struct VkDescriptorSetLayoutCreateInfo {
     pub sType: VkStructureType,
@@ -2586,7 +2586,7 @@ pub struct VkDescriptorPoolSize {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO)]
 pub struct VkDescriptorPoolCreateInfo {
     pub sType: VkStructureType,
@@ -2598,7 +2598,7 @@ pub struct VkDescriptorPoolCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO)]
 pub struct VkDescriptorSetAllocateInfo {
     pub sType: VkStructureType,
@@ -2625,7 +2625,7 @@ pub struct VkDescriptorBufferInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET)]
 pub struct VkWriteDescriptorSet {
     pub sType: VkStructureType,
@@ -2641,7 +2641,7 @@ pub struct VkWriteDescriptorSet {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET)]
 pub struct VkCopyDescriptorSet {
     pub sType: VkStructureType,
@@ -2656,7 +2656,7 @@ pub struct VkCopyDescriptorSet {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)]
 pub struct VkFramebufferCreateInfo {
     pub sType: VkStructureType,
@@ -2812,7 +2812,7 @@ pub struct VkSubpassDependency {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)]
 pub struct VkRenderPassCreateInfo {
     pub sType: VkStructureType,
@@ -2827,7 +2827,7 @@ pub struct VkRenderPassCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO)]
 pub struct VkCommandPoolCreateInfo {
     pub sType: VkStructureType,
@@ -2837,7 +2837,7 @@ pub struct VkCommandPoolCreateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO)]
 pub struct VkCommandBufferAllocateInfo {
     pub sType: VkStructureType,
@@ -2848,7 +2848,7 @@ pub struct VkCommandBufferAllocateInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO)]
 pub struct VkCommandBufferInheritanceInfo {
     pub sType: VkStructureType,
@@ -2862,7 +2862,7 @@ pub struct VkCommandBufferInheritanceInfo {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO)]
 pub struct VkCommandBufferBeginInfo {
     pub sType: VkStructureType,
@@ -2977,7 +2977,7 @@ pub struct VkImageResolve {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_BARRIER)]
 pub struct VkMemoryBarrier {
     pub sType: VkStructureType,
@@ -2987,7 +2987,7 @@ pub struct VkMemoryBarrier {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER)]
 pub struct VkBufferMemoryBarrier {
     pub sType: VkStructureType,
@@ -3002,7 +3002,7 @@ pub struct VkBufferMemoryBarrier {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER)]
 pub struct VkImageMemoryBarrier {
     pub sType: VkStructureType,
@@ -3018,7 +3018,7 @@ pub struct VkImageMemoryBarrier {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)]
 pub struct VkRenderPassBeginInfo {
     pub sType: VkStructureType,

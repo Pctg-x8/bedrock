@@ -278,13 +278,13 @@ pub fn derive_device_child_transferrable(tok: TokenStream) -> TokenStream {
     .into()
 }
 
-#[proc_macro_derive(VulkanStructure, attributes(VulkanStructure))]
+#[proc_macro_derive(TypedVulkanStructure, attributes(VulkanStructure))]
 #[inline(always)]
 pub fn derive_vulkan_structure(input: TokenStream) -> TokenStream {
     vulkan_structure::derive(input)
 }
 
-#[proc_macro_derive(VulkanSinkStructure, attributes(VulkanSinkStructure))]
+#[proc_macro_derive(TypedVulkanSinkStructure, attributes(VulkanSinkStructure))]
 #[inline(always)]
 pub fn derive_vulkan_sink_structure(input: TokenStream) -> TokenStream {
     vulkan_structure::derive_sink(input)
@@ -553,13 +553,15 @@ pub fn bitflags_newtype(_args: TokenStream, target: TokenStream) -> TokenStream 
 }
 
 struct VkExtCommandInput {
+    span: Span,
     base_define: syn::ForeignItemFn,
-    suffix: syn::LitStr,
+    suffix: Option<syn::LitStr>,
     promote: Option<syn::LitStr>,
     static_callable: bool,
 }
 impl syn::parse::Parse for VkExtCommandInput {
     fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+        let span = input.span();
         let base_define = syn::ForeignItemFn::parse(input)?;
 
         let (mut suffix, mut promote, mut static_callable) = (None, None, false);
@@ -595,8 +597,9 @@ impl syn::parse::Parse for VkExtCommandInput {
         }
 
         Ok(Self {
+            span,
             base_define,
-            suffix: suffix.ok_or_else(|| syn::Error::new(input.span(), "suffix extra required"))?,
+            suffix,
             promote,
             static_callable,
         })
@@ -678,7 +681,10 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
 
     let promoted_pfn_impl = if let Some(ref p) = input.promote {
         let base_fn_name = input.base_define.sig.ident.to_string();
-        let Some(promoted_fn_name) = base_fn_name.strip_suffix(&input.suffix.value()) else {
+        let suffix = try_compile_error!(input
+            .suffix
+            .ok_or_else(|| syn::Error::new(input.span, "suffix extra required for promote")));
+        let Some(promoted_fn_name) = base_fn_name.strip_suffix(&suffix.value()) else {
             return syn::Error::new_spanned(&input.base_define.sig.ident, "not suffixed")
                 .into_compile_error()
                 .into();

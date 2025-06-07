@@ -599,7 +599,7 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
 pub struct PipelineShaderStage<'d, 's>(
     pub(crate) VkPipelineShaderStageCreateInfo,
     core::marker::PhantomData<(
-        Option<&'d dyn VulkanStructureAsRef>,
+        Option<&'d dyn VulkanStructure>,
         &'d dyn VkHandle<Handle = VkShaderModule>,
         &'d core::ffi::CStr,
         Option<&'s SpecializationInfo<'d>>,
@@ -635,7 +635,7 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl TypedVulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
@@ -984,7 +984,7 @@ pub enum FrontFace {
 #[derive(Clone, Debug, PartialEq)]
 pub struct PipelineRasterizationStateCreateInfo<'d>(
     VkPipelineRasterizationStateCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
 impl<'d> PipelineRasterizationStateCreateInfo<'d> {
     pub const fn new(polygon_mode: PolygonMode, cull_mode: CullModeFlags, front_face: FrontFace) -> Self {
@@ -1017,7 +1017,7 @@ impl<'d> PipelineRasterizationStateCreateInfo<'d> {
     }
 
     #[inline]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -1065,10 +1065,10 @@ pub enum ConservativeRasterizationMode {
 #[derive(Debug, Clone, PartialEq)]
 pub struct PipelineRasterizationConservativeStateCreateInfo<'d>(
     VkPipelineRasterizationConservativeStateCreateInfoEXT,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
 #[cfg(feature = "VK_EXT_conservative_rasterization")]
-unsafe impl VulkanStructureAsRef for PipelineRasterizationConservativeStateCreateInfo<'_> {
+unsafe impl VulkanStructure for PipelineRasterizationConservativeStateCreateInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -1103,7 +1103,7 @@ impl<'d> PipelineRasterizationConservativeStateCreateInfo<'d> {
     }
 
     #[inline]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -1134,10 +1134,10 @@ pub enum LineRasterizationMode {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PipelineRasterizationLineStateCreateInfo<'d>(
     VkPipelineRasterizationLineStateCreateInfoKHR,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructureAsRef>>,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
 );
 #[cfg(feature = "VK_KHR_line_rasterization")]
-unsafe impl VulkanStructureAsRef for PipelineRasterizationLineStateCreateInfo<'_> {
+unsafe impl VulkanStructure for PipelineRasterizationLineStateCreateInfo<'_> {
     #[inline(always)]
     fn as_generic(&self) -> &GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -1173,7 +1173,7 @@ impl<'d> PipelineRasterizationLineStateCreateInfo<'d> {
     }
 
     #[inline]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructureAsRef + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }

@@ -46,7 +46,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceExternalSemaphoreInfoKHR {
@@ -56,7 +56,7 @@ pub struct VkPhysicalDeviceExternalSemaphoreInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExternalSemaphorePropertiesKHR {
@@ -66,21 +66,9 @@ pub struct VkExternalSemaphorePropertiesKHR {
     pub compatibleHandleTypes: VkExternalSemaphoreHandleTypeFlagsKHR,
     pub externalSemaphoreFeatures: VkExternalSemaphoreFeatureFlagsKHR,
 }
-impl VkExternalSemaphorePropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
 
-        p
-    }
-}
-
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice: VkPhysicalDevice, pExtenalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}

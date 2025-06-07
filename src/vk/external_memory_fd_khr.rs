@@ -4,14 +4,14 @@ pub const VK_KHR_EXTERNAL_MEMORY_FD_SPEC_VERSION: usize = 1;
 pub static VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME: &'static str = "VK_KHR_external_memory";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR: VkStructureType = ext_enum_value(75, 0) as _;
 pub const VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR: VkStructureType = ext_enum_value(75, 1) as _;
 pub const VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR: VkStructureType = ext_enum_value(75, 2) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR)]
 pub struct VkImportMemoryFdInfoKHR {
     pub sType: VkStructureType,
@@ -21,28 +21,16 @@ pub struct VkImportMemoryFdInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR)]
 pub struct VkMemoryFdPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryTypeBits: u32,
 }
-impl VkMemoryFdPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR)]
 pub struct VkMemoryGetFdInfoKHR {
     pub sType: VkStructureType,
@@ -51,24 +39,10 @@ pub struct VkMemoryGetFdInfoKHR {
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetMemoryFdKHR)]
-pub struct PFN_vkGetMemoryFdKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        pGetFdInfo: *const VkMemoryGetFdInfoKHR,
-        pFd: *mut c_int,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetMemoryFdPropertiesKHR)]
-pub struct PFN_vkGetMemoryFdPropertiesKHR(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        handleType: VkExternalMemoryHandleTypeFlagsKHR,
-        fd: c_int,
-        pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkGetMemoryFdKHR(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut c_int) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkGetMemoryFdPropertiesKHR(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, fd: c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult;
+}

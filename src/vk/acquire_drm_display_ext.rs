@@ -7,12 +7,10 @@ use derives::vk_ext_command;
 
 use super::*;
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkAcquireDrmDisplayEXT(physicalDevice: VkPhysicalDevice, drmFd: i32, display: VkDisplayKHR) -> VkResult;
-    suffix = "EXT";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetDrmDisplayEXT(physicalDevice: VkPhysicalDevice, drmFd: i32, connectorId: u32, display: *mut VkDisplayKHR) -> VkResult;
-    suffix = "EXT";
-);
+}

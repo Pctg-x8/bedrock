@@ -3,8 +3,9 @@
 pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 8;
 pub static VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &'static str = "VK_EXT_debug_report";
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -63,7 +64,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Clone, VulkanStructure)]
+#[derive(Clone, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT)]
 pub struct VkDebugReportCallbackCreateInfoEXT {
     pub sType: VkStructureType,
@@ -84,39 +85,14 @@ pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(
     pUserData: *mut c_void,
 ) -> VkBool32;
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateDebugReportCallbackEXT)]
-pub struct PFN_vkCreateDebugReportCallbackEXT(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT,
-        pAllocator: *const VkAllocationCallbacks,
-        pCallback: *mut VkDebugReportCallbackEXT,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDestroyDebugReportCallbackEXT)]
-pub struct PFN_vkDestroyDebugReportCallbackEXT(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        callback: VkDebugReportCallbackEXT,
-        pAllocator: *const VkAllocationCallbacks,
-    ),
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkDebugReportMessageEXT)]
-pub struct PFN_vkDebugReportMessageEXT(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        flags: VkDebugReportFlagsEXT,
-        objectType: VkDebugReportObjectTypeEXT,
-        object: u64,
-        location: usize,
-        messageCode: i32,
-        pLayerPrefix: *const c_char,
-        pMessage: *const c_char,
-    ),
-);
+vk_ext_command! {
+    pub fn vkCreateDebugReportCallbackEXT(instance: VkInstance, pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pCallback: *mut VkDebugReportCallbackEXT) -> VkResult;
+}
+
+vk_ext_command! {
+    pub fn vkDestroyDebugReportCallbackEXT(instance: VkInstance, callback: VkDebugReportCallbackEXT, pAllocator: *const VkAllocationCallbacks);
+}
+
+vk_ext_command! {
+    pub fn vkDebugReportMessageEXT(instance: VkInstance, flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const c_char, pMessage: *const c_char);
+}

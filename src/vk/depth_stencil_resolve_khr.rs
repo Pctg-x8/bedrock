@@ -33,7 +33,7 @@ pub type VkResolveModeFlagsKHR = VkFlags;
 pub const VK_RESOLVE_MODE_NONE_KHR: VkResolveModeFlagBitsKHR = 0;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR)]
 #[promote_1_2(suffix = "KHR")]
 pub struct VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
@@ -44,21 +44,9 @@ pub struct VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
     pub independentResolveNone: VkBool32,
     pub independentResolve: VkBool32,
 }
-impl VkPhysicalDeviceDepthStencilResolvePropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_DEPTH_STENCIL_RESOLVE_KHR)]
 #[promote_1_2(suffix = "KHR")]
 pub struct VkSubpassDescriptionDepthStencilResolveKHR {

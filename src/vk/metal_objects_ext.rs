@@ -33,7 +33,7 @@ vk_bitmask! {
 pub type VkExportMetalObjectTypeFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECT_CREATE_INFO_EXT)]
 pub struct VkExportMetalObjectCreateInfoEXT {
     pub sType: VkStructureType,
@@ -42,7 +42,7 @@ pub struct VkExportMetalObjectCreateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_OBJECTS_INFO_EXT)]
 pub struct VkExportMetalObjectsInfoEXT {
     pub sType: VkStructureType,
@@ -50,7 +50,7 @@ pub struct VkExportMetalObjectsInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_DEVICE_INFO_EXT)]
 pub struct VkExportMetalDeviceInfoEXT {
     pub sType: VkStructureType,
@@ -60,7 +60,7 @@ pub struct VkExportMetalDeviceInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_COMMAND_QUEUE_INFO_EXT)]
 pub struct VkExportMetalCommandQueueInfoEXT {
     pub sType: VkStructureType,
@@ -71,7 +71,7 @@ pub struct VkExportMetalCommandQueueInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_BUFFER_INFO_EXT)]
 pub struct VkExportMetalBufferInfoEXT {
     pub sType: VkStructureType,
@@ -82,7 +82,7 @@ pub struct VkExportMetalBufferInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_METAL_BUFFER_INFO_EXT)]
 pub struct VkImportMetalBufferInfoEXT {
     pub sType: VkStructureType,
@@ -92,7 +92,7 @@ pub struct VkImportMetalBufferInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_TEXTURE_INFO_EXT)]
 pub struct VkExportMetalTextureInfoEXT {
     pub sType: VkStructureType,
@@ -106,7 +106,7 @@ pub struct VkExportMetalTextureInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_METAL_TEXTURE_INFO_EXT)]
 pub struct VkImportMetalTextureInfoEXT {
     pub sType: VkStructureType,
@@ -117,7 +117,7 @@ pub struct VkImportMetalTextureInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_IO_SURFACE_INFO_EXT)]
 pub struct VkExportMetalIOSurfaceInfoEXT {
     pub sType: VkStructureType,
@@ -128,7 +128,7 @@ pub struct VkExportMetalIOSurfaceInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_METAL_IO_SURFACE_INFO_EXT)]
 pub struct VkImportMetalIOSurfaceInfoEXT {
     pub sType: VkStructureType,
@@ -138,7 +138,7 @@ pub struct VkImportMetalIOSurfaceInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_METAL_SHARED_EVENT_INFO_EXT)]
 pub struct VkExportMetalSharedEventInfoEXT {
     pub sType: VkStructureType,
@@ -150,7 +150,7 @@ pub struct VkExportMetalSharedEventInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_METAL_SHARED_EVENT_INFO_EXT)]
 pub struct VkImportMetalSharedEventInfoEXT {
     pub sType: VkStructureType,
@@ -159,7 +159,6 @@ pub struct VkImportMetalSharedEventInfoEXT {
     pub mtlSharedEvent: *mut core::ffi::c_void,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkExportMetalObjectsEXT(device: VkDevice, pMetalObjectsInfo: *mut VkExportMetalObjectsInfoEXT);
-    suffix = "EXT";
-);
+}

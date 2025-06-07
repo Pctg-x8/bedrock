@@ -17,7 +17,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_REDUCTION_MODE_CREATE_INFO_EXT)]
 pub struct VkSamplerReductionModeCreateInfoEXT {
     pub sType: VkStructureType,
@@ -26,23 +26,11 @@ pub struct VkSamplerReductionModeCreateInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub filterMinmaxSingleComponentFormats: VkBool32,
     pub filterMinmaxImageComponentMapping: VkBool32,
-}
-impl VkPhysicalDeviceSamplerFilterMinmaxPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
 }

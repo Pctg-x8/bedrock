@@ -4,7 +4,7 @@ pub const VK_EXT_HDR_METADATA_SPEC_VERSION: usize = 1;
 pub static VK_EXT_HDR_METADATA_EXTENSION_NAME: &'static str = "VK_EXT_hdr_metadata";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq)]
@@ -14,7 +14,7 @@ pub struct VkXYColorEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_HDR_METADATA_EXT)]
 pub struct VkHdrMetadataEXT {
     pub sType: VkStructureType,
@@ -29,25 +29,6 @@ pub struct VkHdrMetadataEXT {
     pub maxFrameAverageLightLevel: c_float,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkSetHdrMetadataEXT)]
-pub struct PFN_vkSetHdrMetadataEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        swapchainCount: u32,
-        pSwapchains: *const VkSwapchainKHR,
-        pMetadata: *const VkHdrMetadataEXT,
-    ),
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkSetHdrMetadataEXT(
-        device: VkDevice,
-        swapchainCount: u32,
-        pSwapchains: *const VkSwapchainKHR,
-        pMetadata: *const VkHdrMetadataEXT,
-    );
+vk_ext_command! {
+    pub fn vkSetHdrMetadataEXT(device: VkDevice, swapchainCount: u32, pSwapchains: *const VkSwapchainKHR, pMetadata: *const VkHdrMetadataEXT);
 }

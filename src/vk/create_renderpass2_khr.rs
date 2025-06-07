@@ -23,7 +23,7 @@ pub const VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR: VkStructureType = ext_enum_val
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR)]
 pub struct VkRenderPassCreateInfo2KHR {
     pub sType: VkStructureType,
@@ -41,7 +41,7 @@ pub struct VkRenderPassCreateInfo2KHR {
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR)]
 pub struct VkAttachmentDescription2KHR {
     pub sType: VkStructureType,
@@ -59,7 +59,7 @@ pub struct VkAttachmentDescription2KHR {
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR)]
 pub struct VkAttachmentReference2KHR {
     pub sType: VkStructureType,
@@ -71,7 +71,7 @@ pub struct VkAttachmentReference2KHR {
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR)]
 pub struct VkSubpassDescription2KHR {
     pub sType: VkStructureType,
@@ -91,7 +91,7 @@ pub struct VkSubpassDescription2KHR {
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR)]
 pub struct VkSubpassDependency2KHR {
     pub sType: VkStructureType,
@@ -108,7 +108,7 @@ pub struct VkSubpassDependency2KHR {
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR)]
 pub struct VkSubpassBeginInfoKHR {
     pub sType: VkStructureType,
@@ -118,33 +118,33 @@ pub struct VkSubpassBeginInfoKHR {
 
 #[promote_1_2(suffix = "KHR")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR)]
 pub struct VkSubpassEndInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const c_void,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCreateRenderPass2KHR(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo2KHR, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
     suffix = "KHR";
     promote = "1.2";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdBeginRenderPass2KHR(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR);
     suffix = "KHR";
     promote = "1.2";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdNextSubpass2KHR(commandBuffer: VkCommandBuffer, pSubpassBeginInfo: *const VkSubpassBeginInfoKHR, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
     suffix = "KHR";
     promote = "1.2";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdEndRenderPass2KHR(commandBuffer: VkCommandBuffer, pSubpassEndInfo: *const VkSubpassEndInfoKHR);
     suffix = "KHR";
     promote = "1.2";
-);
+}

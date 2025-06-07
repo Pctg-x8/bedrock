@@ -4,14 +4,12 @@ pub const VK_MVK_MACOS_SURFACE_SPEC_VERSION: usize = 2;
 pub static VK_MVK_MACOS_SURFACE_EXTENSION_NAME: &'static str = "VK_MVK_macos_surface";
 
 use super::*;
-use crate::PFN;
-#[cfg(all(not(feature = "DynamicLoaded"), feature = "Implements"))]
-use crate::StaticCallable;
+use derives::vk_ext_command;
 
 pub type VkMacOSSurfaceCreateFlagsMVK = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK)]
 pub struct VkMacOSSurfaceCreateInfoMVK {
     pub sType: VkStructureType,
@@ -20,25 +18,7 @@ pub struct VkMacOSSurfaceCreateInfoMVK {
     pub pView: *const c_void,
 }
 
-#[repr(transparent)]
-#[derive(PFN, StaticCallable, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkCreateMacOSSurfaceMVK)]
-pub struct PFN_vkCreateMacOSSurfaceMVK(
-    pub  unsafe extern "system" fn(
-        instance: VkInstance,
-        pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult,
-);
-
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkCreateMacOSSurfaceMVK(
-        instance: VkInstance,
-        pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK,
-        pAllocator: *const VkAllocationCallbacks,
-        pSurface: *mut VkSurfaceKHR,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkCreateMacOSSurfaceMVK(instance: VkInstance, pCreateInfo: *const VkMacOSSurfaceCreateInfoMVK, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    static_callable;
 }

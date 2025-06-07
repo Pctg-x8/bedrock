@@ -129,7 +129,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkSamplerYcbcrConversionCreateInfoKHR {
@@ -146,7 +146,7 @@ pub struct VkSamplerYcbcrConversionCreateInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkSamplerYcbcrConversionInfoKHR {
@@ -156,7 +156,7 @@ pub struct VkSamplerYcbcrConversionInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkBindImagePlaneMemoryInfoKHR {
@@ -166,7 +166,7 @@ pub struct VkBindImagePlaneMemoryInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkImagePlaneMemoryRequirementsInfoKHR {
@@ -176,7 +176,7 @@ pub struct VkImagePlaneMemoryRequirementsInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
@@ -185,21 +185,9 @@ pub struct VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
     /// Sampler color conversion supported
     pub samplerYcbcrConversion: VkBool32,
 }
-impl VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
@@ -207,29 +195,18 @@ pub struct VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     pub pNext: *mut c_void,
     pub combinedImageSamplerDescriptorCount: u32,
 }
-impl VkSamplerYcbcrConversionImageFormatPropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
 
-        p
-    }
-}
-
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCreateSamplerYcbcrConversionKHR(device: VkDevice, pCreateInfo: *const VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult;
     suffix = "KHR";
     promote = "1.1";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkDestroySamplerYcbcrConversionKHR(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

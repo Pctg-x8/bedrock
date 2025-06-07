@@ -25,7 +25,7 @@ pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR: VkStructureType = ext_
 pub const VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR: VkStructureType = ext_enum_value(546, 6) as _;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR)]
 #[promote_1_4(suffix = "KHR")]
@@ -34,21 +34,9 @@ pub struct VkPhysicalDeviceMaintenance6FeaturesKHR {
     pub pNext: *mut core::ffi::c_void,
     pub maintenance6: VkBool32,
 }
-impl VkPhysicalDeviceMaintenance6FeaturesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPhysicalDeviceMaintenance6PropertiesKHR {
@@ -58,21 +46,9 @@ pub struct VkPhysicalDeviceMaintenance6PropertiesKHR {
     pub maxCombinedImageSamplerDescriptorCount: u32,
     pub fragmentShadingRateClampCombinerInputs: VkBool32,
 }
-impl VkPhysicalDeviceMaintenance6PropertiesKHR {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = p.as_mut_ptr();
-            core::ptr::addr_of_mut!((*x).sType).write(<Self as VulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkBindMemoryStatusKHR {
@@ -82,7 +58,7 @@ pub struct VkBindMemoryStatusKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkBindDescriptorSetsInfoKHR {
@@ -98,7 +74,7 @@ pub struct VkBindDescriptorSetsInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPushConstantsInfoKHR {
@@ -113,7 +89,7 @@ pub struct VkPushConstantsInfoKHR {
 
 #[cfg(feature = "VK_KHR_push_descriptor")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPushDescriptorSetInfoKHR {
@@ -128,7 +104,7 @@ pub struct VkPushDescriptorSetInfoKHR {
 
 #[cfg(feature = "VK_KHR_push_descriptor")]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR)]
 #[promote_1_4(suffix = "KHR")]
 pub struct VkPushDescriptorSetWithTemplateInfoKHR {
@@ -140,25 +116,28 @@ pub struct VkPushDescriptorSetWithTemplateInfoKHR {
     pub pData: *const core::ffi::c_void,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdBindDescriptorSets2KHR(commandBuffer: VkCommandBuffer, pBindDescriptorSetsInfo: *const VkBindDescriptorSetsInfoKHR);
     suffix = "KHR";
     promote = "1.4";
-);
-vk_ext_command!(
+}
+
+vk_ext_command! {
     pub fn vkCmdPushConstants2KHR(commandBuffer: VkCommandBuffer, pPushConstantsInfo: *const VkPushConstantsInfoKHR);
     suffix = "KHR";
     promote = "1.4";
-);
+}
+
 #[cfg(feature = "VK_KHR_push_descriptor")]
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdPushDescriptorSet2KHR(commandBuffer: VkCommandBuffer, pPushDEscriptorSetInof: *const VkPushDescriptorSetInfoKHR);
     suffix = "KHR";
     promote = "1.4";
-);
+}
+
 #[cfg(feature = "VK_KHR_push_descriptor")]
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdPushDescriptorSetWithTemplate2KHR(commandBuffer: VkCommandBuffer, pPushDescriptorSetWithTemplateInfo: *const VkPushDescriptorSetWithTemplateInfoKHR);
     suffix = "KHR";
     promote = "1.4";
-);
+}

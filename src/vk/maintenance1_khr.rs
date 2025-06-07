@@ -29,8 +29,8 @@ vk_bitmask! {
 #[promote_1_1(suffix = "KHR")]
 pub type VkCommandPoolTrimFlagsKHR = VkFlags;
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkTrimCommandPoolKHR(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}

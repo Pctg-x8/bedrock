@@ -4,7 +4,7 @@ pub const VK_GOOGLE_DISPLAY_TIMING_SPEC_VERSION: usize = 1;
 pub static VK_GOOGLE_DISPLAY_TIMING_EXTENSION_NAME: &'static str = "VK_GOOGLE_display_timing";
 
 use super::*;
-use crate::PFN;
+use derives::vk_ext_command;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -30,7 +30,7 @@ pub struct VkPresentTimeGOOGLE {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE)]
 pub struct VkPresentTimesInfoGOOGLE {
     pub sType: VkStructureType,
@@ -39,40 +39,10 @@ pub struct VkPresentTimesInfoGOOGLE {
     pTimes: *const VkPresentTimeGOOGLE,
 }
 
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetRefreshCycleDurationGOOGLE)]
-pub struct PFN_vkGetRefreshCycleDurationGOOGLE(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE,
-    ) -> VkResult,
-);
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetPastPresentationTimingGOOGLE)]
-pub struct PFN_vkGetPastPresentationTimingGOOGLE(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pPresentationTimingCount: *mut u32,
-        pPresentationTimings: *mut VkPastPresentationTimingGOOGLE,
-    ) -> VkResult,
-);
+vk_ext_command! {
+    pub fn vkGetRefreshCycleDurationGOOGLE(device: VkDevice, swapchain: VkSwapchainKHR, pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE) -> VkResult;
+}
 
-#[cfg(feature = "Implements")]
-#[cfg(not(feature = "DynamicLoaded"))]
-unsafe extern "system" {
-    pub unsafe fn vkGetRefreshCycleDurationGOOGLE(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE,
-    ) -> VkResult;
-    pub unsafe fn vkGetPastPresentationTimingGOOGLE(
-        device: VkDevice,
-        swapchain: VkSwapchainKHR,
-        pPresentationTimingCount: *mut u32,
-        pPresentationTimings: *mut VkPastPresentationTimingGOOGLE,
-    ) -> VkResult;
+vk_ext_command! {
+    pub fn vkGetPastPresentationTimingGOOGLE(device: VkDevice, swapchain: VkSwapchainKHR, pPresentationTimingCount: *mut u32, pPresentationTimings: *mut VkPastPresentationTimingGOOGLE) -> VkResult;
 }

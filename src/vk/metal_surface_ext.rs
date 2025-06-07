@@ -12,7 +12,7 @@ pub const VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT: VkStructureType = ext
 pub type VkMetalSurfaceCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT)]
 pub struct VkMetalSurfaceCreateInfoEXT {
     pub sType: VkStructureType,
@@ -22,8 +22,7 @@ pub struct VkMetalSurfaceCreateInfoEXT {
     pub pLayer: *const core::ffi::c_void,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCreateMetalSurfaceEXT(instance: VkInstance, pCreateInfo: *const VkMetalSurfaceCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
-    suffix = "EXT";
     static_callable;
-);
+}

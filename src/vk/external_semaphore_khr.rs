@@ -18,7 +18,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkExportSemaphoreCreateInfoKHR {

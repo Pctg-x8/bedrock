@@ -59,7 +59,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT)]
 #[promote_1_4(suffix = "EXT")]
@@ -70,7 +70,7 @@ pub struct VkPhysicalDeviceHostImageCopyFeaturesEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkPhysicalDeviceHostImageCopyPropertiesEXT {
@@ -85,7 +85,7 @@ pub struct VkPhysicalDeviceHostImageCopyPropertiesEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkMemoryToImageCopyEXT {
@@ -100,7 +100,7 @@ pub struct VkMemoryToImageCopyEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkImageToMemoryCopyEXT {
@@ -115,7 +115,7 @@ pub struct VkImageToMemoryCopyEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkCopyMemoryToImageInfoEXT {
@@ -129,7 +129,7 @@ pub struct VkCopyMemoryToImageInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkCopyImageToMemoryInfoEXT {
@@ -143,7 +143,7 @@ pub struct VkCopyImageToMemoryInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkCopyImageToImageInfoEXT {
@@ -159,7 +159,7 @@ pub struct VkCopyImageToImageInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_INFO_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkHostImageLayoutTransitionInfoEXT {
@@ -172,7 +172,7 @@ pub struct VkHostImageLayoutTransitionInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkSubresourceHostMemcpySizeEXT {
@@ -182,7 +182,7 @@ pub struct VkSubresourceHostMemcpySizeEXT {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, TypedVulkanSinkStructure)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT)]
 #[promote_1_4(suffix = "EXT")]
 pub struct VkHostImageCopyDevicePerformanceQueryEXT {
@@ -194,7 +194,7 @@ pub struct VkHostImageCopyDevicePerformanceQueryEXT {
 
 #[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT)]
 #[promote_1_4(suffix = "EXT")]
@@ -206,7 +206,7 @@ pub struct VkSubresourceLayout2EXT {
 
 #[cfg(not(feature = "VK_KHR_maintenance5"))]
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, VulkanSinkStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, VulkanStructure, TypedVulkanSinkStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT)]
 #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT)]
 #[promote_1_4(suffix = "EXT")]
@@ -216,33 +216,33 @@ pub struct VkImageSubresource2EXT {
     pub imageSubresource: VkImageSubresource,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCopyMemoryToImageEXT(device: VkDevice, pCopyMemoryToImageInfo: *const VkCopyMemoryToImageInfoEXT) -> VkResult;
     suffix = "EXT";
     promote = "1.4";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCopyImageToMemoryEXT(device: VkDevice, pCopyImageToMemoryInfo: *const VkCopyImageToMemoryInfoEXT) -> VkResult;
     suffix = "EXT";
     promote = "1.4";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCopyImageToImageEXT(device: VkDevice, pCopyImageToImageInfo: *const VkCopyImageToImageInfoEXT) -> VkResult;
     suffix = "EXT";
     promote = "1.4";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkTransitionImageLayoutEXT(device: VkDevice, transitionCount: u32, pTransitions: *const VkHostImageLayoutTransitionInfoEXT) -> VkResult;
     suffix = "EXT";
     promote = "1.4";
-);
+}
 
 #[cfg(not(feature = "VK_KHR_maintenance5"))]
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetImageSubresourceLayout2EXT(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource2EXT, pLayout: *mut VkSubresourceLayout2EXT);
     suffix = "EXT";
     promote = "1.4";
-);
+}

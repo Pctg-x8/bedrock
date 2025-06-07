@@ -9,17 +9,17 @@ pub const VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR: VkStructureType = ext_e
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR: VkStructureType = ext_enum_value(158, 1) as _;
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkBindBufferMemory2KHR(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkBindImageMemory2KHR(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult;
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
 vk_bitmask! {
     extending enum VkImageCreateFlagBits {
@@ -29,7 +29,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkBindBufferMemoryInfoKHR {
@@ -41,7 +41,7 @@ pub struct VkBindBufferMemoryInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkBindImageMemoryInfoKHR {

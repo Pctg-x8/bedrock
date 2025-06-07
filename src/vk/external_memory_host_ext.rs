@@ -3,8 +3,9 @@
 pub const VK_EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION: usize = 1;
 pub const VK_EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME: &str = "VK_EXT_external_memory_host";
 
+use derives::vk_ext_command;
+
 use super::*;
-use crate::PFN;
 
 pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT: VkStructureType = ext_enum_value(179, 0) as _;
 pub const VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT: VkStructureType = ext_enum_value(179, 1) as _;
@@ -19,7 +20,7 @@ vk_bitmask! {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash, VulkanStructure)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMPORT_MEMORY_HOST_POINTER_INFO_EXT)]
 pub struct VkImportMemoryHostPointerInfoEXT {
     pub sType: VkStructureType,
@@ -29,55 +30,23 @@ pub struct VkImportMemoryHostPointerInfoEXT {
 }
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT)]
+#[derive(Clone, Debug, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_MEMORY_HOST_POINTER_PROPERTIES_EXT)]
 pub struct VkMemoryHostPointerPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub memoryTypeBits: u32,
 }
-impl VkMemoryHostPointerPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT)]
+#[derive(Clone, Debug, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_HOST_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
     pub minImportedHostPointerAlignment: VkDeviceSize,
 }
-impl VkPhysicalDeviceExternalMemoryHostPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
 
-        p
-    }
+vk_ext_command! {
+    pub fn vkGetMemoryHostPointerPropertiesEXT(device: VkDevice, handleTYpe: VkExternalMemoryHandleTypeFlagsKHR, pHostPointer: *const c_void, pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT) -> VkResult;
 }
-
-#[repr(transparent)]
-#[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-#[pfn_of(vkGetMemoryHostPointerPropertiesEXT)]
-pub struct PFN_vkGetMemoryHostPointerPropertiesEXT(
-    pub  unsafe extern "system" fn(
-        device: VkDevice,
-        handleType: VkExternalMemoryHandleTypeFlagsKHR,
-        pHostPointer: *const c_void,
-        pMemoryHostPointerProperties: *mut VkMemoryHostPointerPropertiesEXT,
-    ) -> VkResult,
-);

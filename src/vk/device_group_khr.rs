@@ -4,7 +4,6 @@ pub const VK_KHR_DEVICE_GROUP_EXTENSION_NAME: &str = "VK_KHR_device_group";
 use derives::{promote_1_1, vk_ext_command};
 
 use super::*;
-use crate::PFN;
 
 #[promote_1_1]
 pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR: VkStructureType = ext_enum_value(61, 0) as _;
@@ -46,7 +45,7 @@ pub const VK_PIPELINE_CREATE_DISPATCH_BASE_KHR: VkPipelineCreateFlagBits = 1 << 
 pub const VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR: VkDependencyFlagBits = 1 << 2;
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkMemoryAllocateFlagsInfoKHR {
@@ -57,7 +56,7 @@ pub struct VkMemoryAllocateFlagsInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDeviceGroupRenderPassBeginInfoKHR {
@@ -69,7 +68,7 @@ pub struct VkDeviceGroupRenderPassBeginInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDeviceGroupCommandBufferBeginInfoKHR {
@@ -79,7 +78,7 @@ pub struct VkDeviceGroupCommandBufferBeginInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDeviceGroupSubmitInfoKHR {
@@ -94,7 +93,7 @@ pub struct VkDeviceGroupSubmitInfoKHR {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+#[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO_KHR)]
 #[promote_1_1(suffix = "KHR")]
 pub struct VkDeviceGroupBindSparseInfoKHR {
@@ -104,23 +103,23 @@ pub struct VkDeviceGroupBindSparseInfoKHR {
     pub memoryDeviceIndex: u32,
 }
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkGetDeviceGroupPeerMemoryFeaturesKHR(device: VkDevice, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32, pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlagsKHR);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdSetDeviceMaskKHR(commandBuffer: VkCommandBuffer, deviceMask: u32);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
-vk_ext_command!(
+vk_ext_command! {
     pub fn vkCmdDispatchBaseKHR(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
     suffix = "KHR";
     promote = "1.1";
-);
+}
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "VK_KHR_bind_memory2")] {
@@ -130,7 +129,7 @@ cfg_if::cfg_if! {
         pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO_KHR: VkStructureType = ext_enum_value(61, 14) as _;
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO_KHR)]
         #[promote_1_1(suffix = "KHR")]
         pub struct VkBindBufferMemoryDeviceGroupInfoKHR {
@@ -141,7 +140,7 @@ cfg_if::cfg_if! {
         }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO_KHR)]
         #[promote_1_1(suffix = "KHR")]
         pub struct VkBindImageMemoryDeviceGroupInfoKHR {
@@ -170,7 +169,7 @@ cfg_if::cfg_if! {
         vk_bitmask! { pub enum VkDeviceGroupPresentModeFlagBitsKHR {} }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanSinkStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanSinkStructure)]
         #[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR)]
         pub struct VkDeviceGroupPresentCapabilitiesKHR {
             pub sType: VkStructureType,
@@ -178,56 +177,17 @@ cfg_if::cfg_if! {
             pub presentMask: [u32; VK_MAX_DEVICE_GROUP_SIZE_KHR],
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
-        impl VkDeviceGroupPresentCapabilitiesKHR {
-            pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-                let mut p = core::mem::MaybeUninit::<Self>::uninit();
-                unsafe {
-                    let x = p.as_mut_ptr();
-                    core::ptr::addr_of_mut!((*x).sType).write(Self::TYPE);
-                    core::ptr::addr_of_mut!((*x).pNext).write(core::ptr::null_mut());
-                }
 
-                p
-            }
+        vk_ext_command! {
+            pub fn vkGetDeviceGroupPresentCapabilitiesKHR(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult;
         }
 
-        #[repr(transparent)]
-        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkGetDeviceGroupPresentCapabilitiesKHR)]
-        pub struct PFN_vkGetDeviceGroupPresentCapabilitiesKHR(
-            pub unsafe extern "system" fn(
-                device: VkDevice,
-                pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR
-            ) -> VkResult
-        );
-        #[repr(transparent)]
-        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkGetDeviceGroupSurfacePresentModesKHR)]
-        pub struct PFN_vkGetDeviceGroupSurfacePresentModesKHR(
-            pub unsafe extern "system" fn(
-                device: VkDevice,
-                surface: VkSurfaceKHR,
-                pModes: *mut VkDeviceGroupPresentModeFlagsKHR
-            ) -> VkResult
-        );
-        #[repr(transparent)]
-        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkGetPhysicalDevicePresentRectanglesKHR)]
-        pub struct PFN_vkGetPhysicalDevicePresentRectanglesKHR(
-            pub unsafe extern "system" fn(
-                physicalDevice: VkPhysicalDevice,
-                surface: VkSurfaceKHR,
-                pRectCount: *mut u32,
-                pRects: *mut VkRect2D
-            ) -> VkResult
-        );
+        vk_ext_command! {
+            pub fn vkGetDeviceGroupSurfacePresentModesKHR(device: VkDevice, surface: VkSurfaceKHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult;
+        }
 
-        #[implements]
-        #[cfg(not(feature = "DynamicLoaded"))]
-        unsafe extern "system" {
-            pub unsafe fn vkGetDeviceGroupPresentCapabilitiesKHR(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult;
-            pub unsafe fn vkGetDeviceGroupSurfacePresentModesKHR(device: VkDevice, surface: VkSurfaceKHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult;
-            pub unsafe fn vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult;
+        vk_ext_command! {
+            pub fn vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult;
         }
     }
 }
@@ -247,7 +207,7 @@ cfg_if::cfg_if! {
         }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR)]
         pub struct VkImageSwapchainCreateInfoKHR {
             pub sType: VkStructureType,
@@ -256,7 +216,7 @@ cfg_if::cfg_if! {
         }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR)]
         pub struct VkBindImageMemorySwapchainInfoKHR {
             pub sType: VkStructureType,
@@ -266,7 +226,7 @@ cfg_if::cfg_if! {
         }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR)]
         pub struct VkAcquireNextImageInfoKHR {
             pub sType: VkStructureType,
@@ -279,7 +239,7 @@ cfg_if::cfg_if! {
         }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR)]
         pub struct VkDeviceGroupPresentInfoKHR {
             pub sType: VkStructureType,
@@ -290,7 +250,7 @@ cfg_if::cfg_if! {
         }
 
         #[repr(C)]
-        #[derive(Debug, Clone, PartialEq, Eq, VulkanStructure)]
+        #[derive(Debug, Clone, PartialEq, Eq, TypedVulkanStructure)]
         #[VulkanStructure(type = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR)]
         pub struct VkDeviceGroupSwapchainCreateInfoKHR {
             pub sType: VkStructureType,
@@ -298,21 +258,8 @@ cfg_if::cfg_if! {
             pub modes: VkDeviceGroupPresentModeFlagsKHR
         }
 
-        #[repr(transparent)]
-        #[derive(PFN, Clone, Copy, Debug, PartialEq, Eq)]
-        #[pfn_of(vkAcquireNextImage2KHR)]
-        pub struct PFN_vkAcquireNextImage2KHR(
-            pub unsafe extern "system" fn(
-                device: VkDevice,
-                pAcquireInfo: *const VkAcquireNextImageInfoKHR,
-                pImageIndex: *mut u32
-            ) -> VkResult
-        );
-
-        #[cfg(feature = "Implements")]
-        #[cfg(not(feature = "DynamicLoaded"))]
-        unsafe extern "system" {
-            pub unsafe fn vkAcquireNextImage2KHR(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHR, pImageIndex: *mut u32) -> VkResult;
+        vk_ext_command! {
+            pub fn vkAcquireNextImage2KHR(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHR, pImageIndex: *mut u32) -> VkResult;
         }
     }
 }

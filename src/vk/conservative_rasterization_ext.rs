@@ -13,8 +13,8 @@ pub const VK_CONSERVATIVE_RASTERIZATION_MODE_UNDERESTIMATE_EXT: VkConservativeRa
 pub type VkPipelineRasterizationConservativeStateCreateFlagsEXT = VkFlags;
 
 #[repr(C)]
-#[derive(Clone, Debug, VulkanStructure)]
-#[VulkanStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT)]
+#[derive(Clone, Debug, TypedVulkanSinkStructure)]
+#[VulkanSinkStructure(type = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT)]
 pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
     pub sType: VkStructureType,
     pub pNext: *mut c_void,
@@ -28,21 +28,9 @@ pub struct VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
     pub fullyCoveredFragmentShaderInputVariable: VkBool32,
     pub conservativeRasterizationPostDepthCoverage: VkBool32,
 }
-impl VkPhysicalDeviceConservativeRasterizationPropertiesEXT {
-    pub fn uninit_sink() -> core::mem::MaybeUninit<Self> {
-        let mut p = core::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            let x = &mut *p.as_mut_ptr();
-            x.sType = Self::TYPE;
-            x.pNext = core::ptr::null_mut();
-        }
-
-        p
-    }
-}
 
 #[repr(C)]
-#[derive(Clone, Debug, PartialEq, VulkanStructure)]
+#[derive(Clone, Debug, PartialEq, TypedVulkanStructure)]
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT)]
 pub struct VkPipelineRasterizationConservativeStateCreateInfoEXT {
     pub sType: VkStructureType,
