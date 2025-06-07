@@ -1127,7 +1127,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn new_graphics_pipelines<'s>(
         &'s self,
         infos: &[GraphicsPipelineCreateInfo],
-        cache: Option<&impl crate::PipelineCache>,
+        cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
         let mut hs = vec![VkPipeline::NULL; infos.len()];
 
@@ -1151,7 +1151,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn new_graphics_pipeline_array<'s, const N: usize>(
         &'s self,
         infos: &[GraphicsPipelineCreateInfo; N],
-        cache: Option<&impl crate::PipelineCache>,
+        cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
         let mut hs = [VkPipeline::NULL; N];
 
@@ -1205,7 +1205,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn new_compute_pipelines<'s>(
         &'s self,
         infos: &[ComputePipelineCreateInfo],
-        cache: Option<&(impl crate::PipelineCache + ?Sized)>,
+        cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
         let mut pipelines = vec![VkPipeline::NULL; infos.len()];
 
@@ -1230,7 +1230,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     fn new_compute_pipeline_array<'s, const N: usize>(
         &'s self,
         infos: &[ComputePipelineCreateInfo; N],
-        cache: Option<&(impl crate::PipelineCache + ?Sized)>,
+        cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
         let mut pipelines = [VkPipeline::NULL; N];
 
