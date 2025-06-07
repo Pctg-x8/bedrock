@@ -1090,3 +1090,31 @@ pub unsafe fn destroy_pipeline_layout(
         crate::vkfn::destroy_pipeline_layout(device, pipeline_layout, opt_pointer(allocation_callbacks));
     }
 }
+
+#[inline]
+pub unsafe fn get_pipeline_cache_data_byte_length(
+    device: VkDevice,
+    pipeline_cache: VkPipelineCache,
+) -> crate::Result<usize> {
+    let mut len = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_pipeline_cache_data(device, pipeline_cache, len.as_mut_ptr(), core::ptr::null_mut())
+            .into_result()?;
+    }
+
+    Ok(unsafe { len.assume_init() })
+}
+
+#[inline]
+pub unsafe fn get_pipeline_cache_data(
+    device: VkDevice,
+    pipeline_cache: VkPipelineCache,
+    sink: &mut [u8],
+) -> crate::Result<(usize, VkResult)> {
+    let mut len = sink.len();
+    let r = unsafe {
+        crate::vkfn::get_pipeline_cache_data(device, pipeline_cache, &mut len, sink.as_mut_ptr() as _).into_result()?
+    };
+
+    Ok((len, r))
+}
