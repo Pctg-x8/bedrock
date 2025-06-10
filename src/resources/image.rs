@@ -164,12 +164,30 @@ pub trait ImageChild {
 DerefContainerBracketImpl!(for ImageChild {
     type ConcreteImage = T::ConcreteImage;
 
+    #[inline(always)]
     fn image(&self) -> &Self::ConcreteImage { T::image(self) }
 });
 GuardsImpl!(for ImageChild {
     type ConcreteImage = T::ConcreteImage;
 
+    #[inline(always)]
     fn image(&self) -> &Self::ConcreteImage { T::image(&self) }
+});
+
+pub trait ImageChildMut: ImageChild {
+    fn image_mut(&mut self) -> &mut Self::ConcreteImage;
+}
+DerefContainerBracketImpl!(for mut ImageChildMut {
+    #[inline(always)]
+    fn image_mut(&mut self) -> &mut Self::ConcreteImage {
+        T::image_mut(self)
+    }
+});
+GuardsImpl!(for mut ImageChildMut {
+    #[inline(always)]
+    fn image_mut(&mut self) -> &mut Self::ConcreteImage {
+        T::image_mut(self)
+    }
 });
 
 pub trait ImageView: VkHandle<Handle = VkImageView> {}
@@ -859,6 +877,12 @@ impl<Image: self::Image> ImageChild for ImageViewObject<Image> {
     #[inline(always)]
     fn image(&self) -> &Image {
         &self.1
+    }
+}
+impl<Image: self::Image> ImageChildMut for ImageViewObject<Image> {
+    #[inline(always)]
+    fn image_mut(&mut self) -> &mut Image {
+        &mut self.1
     }
 }
 impl<Image: DeviceChildHandle> ImageView for ImageViewObject<Image> {}
