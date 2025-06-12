@@ -54,6 +54,7 @@ macro_rules! DerefContainerBracketImpl {
     (unsafe for mut $t: path { $($required: item)* }) => {
         unsafe impl<'s, T> $t for &'s mut T where T: $t + ?Sized { $($required)* }
         unsafe impl<T> $t for Box<T> where T: $t + ?Sized { $($required)* }
+        unsafe impl<T> $t for core::mem::ManuallyDrop<T> where T: $t { $($required)* }
     };
     (unsafe for $t: path { $($required: item)* }) => {
         unsafe impl<'s, T> $t for &'s T where T: $t + ?Sized { $($required)* }
@@ -65,6 +66,7 @@ macro_rules! DerefContainerBracketImpl {
     (for mut $t: path { $($required: item)* }) => {
         impl<'s, T> $t for &'s mut T where T: $t + ?Sized { $($required)* }
         impl<T> $t for Box<T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for core::mem::ManuallyDrop<T> where T: $t { $($required)* }
     };
     (for $t: path { $($required: item)* }) => {
         impl<'s, T> $t for &'s T where T: $t + ?Sized { $($required)* }
