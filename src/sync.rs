@@ -176,7 +176,8 @@ impl<'d> FenceCreateInfo<'d> {
     }
 }
 
-#[derive(VkHandle)]
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VkFence::OBJECT_TYPE)]
 pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
 #[implements]
 impl<Device: VkHandle<Handle = VkDevice>> Drop for FenceObject<Device> {
