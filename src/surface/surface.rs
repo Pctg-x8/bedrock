@@ -137,6 +137,11 @@ impl SurfaceCapabilities {
         SurfaceTransformFlags(self.supportedTransforms)
     }
 
+    /// The surface's current transform relative to the presentation engine's natural orientation
+    pub const fn current_transform(&self) -> SurfaceTransformFlags {
+        SurfaceTransformFlags(self.currentTransform)
+    }
+
     /// The alpha compositing modes supported by the presentation engine for the surface
     pub const fn supported_composite_alpha(&self) -> CompositeAlphaFlags {
         CompositeAlphaFlags(self.supportedCompositeAlpha)
