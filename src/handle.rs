@@ -141,6 +141,19 @@ pub trait VkRawHandle {
     fn raw_handle_value(&self) -> u64;
 }
 
+/// Extension methods(not dyn compatible) for `VkHandle`
+pub trait VkHandleExt: VkHandle {
+    /// Checks the equality between vulkan objects by their handle value.
+    #[inline(always)]
+    fn eq_handle(&self, other: &Self) -> bool
+    where
+        Self::Handle: VkRawHandle,
+    {
+        self.native_ptr().raw_handle_value() == other.native_ptr().raw_handle_value()
+    }
+}
+impl<T: VkHandle> VkHandleExt for T {}
+
 pub trait VkDeviceChildNonExtDestroyable {
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks);
 }
