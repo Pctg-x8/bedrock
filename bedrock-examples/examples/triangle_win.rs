@@ -6,18 +6,18 @@ use bedrock::{
 };
 use br::{Device, Fence, Instance, MemoryBound, PhysicalDevice, RenderPass, Status, Swapchain};
 use windows::{
-    core::PCSTR,
     Win32::{
         Foundation::{HINSTANCE, HWND, LPARAM, LRESULT, RECT, WPARAM},
         Graphics::Gdi::HBRUSH,
         System::LibraryLoader::GetModuleHandleA,
         UI::WindowsAndMessaging::{
-            AdjustWindowRectEx, CreateWindowExA, DefWindowProcA, DispatchMessageA, LoadCursorA, LoadIconA,
-            PeekMessageA, PostQuitMessage, RegisterClassExA, SetProcessDPIAware, TranslateMessage, CS_OWNDC,
-            CW_USEDEFAULT, HICON, IDC_ARROW, IDI_APPLICATION, MSG, PM_REMOVE, WM_DESTROY, WM_QUIT, WNDCLASSEXA,
-            WS_EX_APPWINDOW, WS_OVERLAPPEDWINDOW, WS_VISIBLE,
+            AdjustWindowRectEx, CS_OWNDC, CW_USEDEFAULT, CreateWindowExA, DefWindowProcA, DispatchMessageA, HICON,
+            IDC_ARROW, IDI_APPLICATION, LoadCursorA, LoadIconA, MSG, PM_REMOVE, PeekMessageA, PostQuitMessage,
+            RegisterClassExA, SetProcessDPIAware, TranslateMessage, WM_DESTROY, WM_QUIT, WNDCLASSEXA, WS_EX_APPWINDOW,
+            WS_OVERLAPPEDWINDOW, WS_VISIBLE,
         },
     },
+    core::PCSTR,
 };
 
 #[repr(C)]
