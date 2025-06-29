@@ -168,6 +168,10 @@ impl<'r, H> VkHandleRef<'r, H> {
         Self(r.native_ptr(), core::marker::PhantomData)
     }
 
+    pub const fn from_raw_ref(h: &'r H) -> &'r Self {
+        unsafe { core::mem::transmute(h) }
+    }
+
     /// simple raw handle wrapper without any lifetime constraints.
     /// # Safety
     /// owner of the handle must be alive while the handle will be used.
@@ -195,6 +199,10 @@ pub struct VkHandleRefMut<'r, H>(
 impl<'r, H> VkHandleRefMut<'r, H> {
     pub fn new(r: &'r mut (impl VkHandleMut<Handle = H> + ?Sized)) -> Self {
         Self(r.native_ptr(), core::marker::PhantomData)
+    }
+
+    pub const fn from_raw_ref(h: &'r H) -> &'r Self {
+        unsafe { core::mem::transmute(h) }
     }
 
     /// simple raw handle wrapper without any lifetime constraints.
