@@ -9316,8 +9316,10 @@ pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,
 }
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType = 1000071004;
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
     #[inline(always)]
@@ -9330,6 +9332,7 @@ unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
         unsafe { core::mem::transmute(self) }
     }
 }
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
 unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;

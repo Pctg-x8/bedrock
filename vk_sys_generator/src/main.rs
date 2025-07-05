@@ -114,7 +114,6 @@ fn main() -> std::io::Result<()> {
     }
 
     // chaotic requirement structure
-    o.write(b"#[cfg(any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\"))]\n")?;
     Struct::new(
         "PhysicalDeviceIDPropertiesKHR",
         &const {
@@ -132,7 +131,7 @@ fn main() -> std::io::Result<()> {
         vk_ext_enum(72, 4) as _,
         StructUsage::Sink,
     )
-    .emit(&mut o)?;
+    .emit_extra_cfg(&mut o, "any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\")")?;
     o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     o.write(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
     o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;

@@ -842,6 +842,41 @@ impl Struct {
 
         unimplemented!();
     }
+
+    pub fn emit_extra_cfg(&self, w: &mut impl std::io::Write, cfg: &str) -> std::io::Result<()> {
+        assert!(self.extensions.is_empty(), "struct def has some extensions");
+        assert!(self.promoted.is_none());
+        // no extensions: simple define
+        let type_name = format!("Vk{}", self.name);
+
+        writeln!(w, "#[cfg({cfg})]")?;
+        Self::emit_core(
+            w,
+            &type_name,
+            &self.members,
+            self.stype.map(|(_, _, u)| u),
+            self.cloneable,
+            self.copyable,
+        )?;
+        if let Some((up, v, u)) = self.stype {
+            writeln!(w, "#[cfg({cfg})]")?;
+            Self::emit_structure_type_const(w, up, v)?;
+            if u == StructUsage::Source || u == StructUsage::Both {
+                writeln!(w, "#[cfg({cfg})]")?;
+                Self::emit_vulkan_structure_impl(w, &type_name)?;
+                writeln!(w, "#[cfg({cfg})]")?;
+                Self::emit_typed_vulkan_structure_impl(w, &type_name, up)?;
+            }
+            if u == StructUsage::Sink || u == StructUsage::Both {
+                writeln!(w, "#[cfg({cfg})]")?;
+                Self::emit_vulkan_sink_structure_impl(w, &type_name)?;
+                writeln!(w, "#[cfg({cfg})]")?;
+                Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up)?;
+            }
+        }
+
+        Ok(())
+    }
 }
 
 pub struct StructMember {
