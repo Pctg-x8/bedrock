@@ -5060,7 +5060,7 @@ pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO: VkStructureType = VK_ST
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkExportMemoryWin32HandleInfoKHRKHR {
+pub struct VkExportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
@@ -5072,7 +5072,7 @@ pub struct VkExportMemoryWin32HandleInfoKHRKHR {
 pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073001;
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHRKHR {
+unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHR {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -5085,7 +5085,7 @@ unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHRKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHRKHR {
+unsafe impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHR {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
 }
 

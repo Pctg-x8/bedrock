@@ -2571,7 +2571,7 @@ const STRUCTS: &'static [Struct] = &[
     .extensions(&[("KHR", "external_memory")])
     .promoted("1_1"),
     Struct::new(
-        "ExportMemoryWin32HandleInfoKHR",
+        "ExportMemoryWin32HandleInfo",
         &[
             Struct::member("pAttributes", "*const windows::Win32::Security::SECURITY_ATTRIBUTES"),
             Struct::member("dwAccess", "u32"),
