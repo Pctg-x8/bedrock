@@ -492,7 +492,11 @@ impl Object {
         writeln!(w, "#[repr(transparent)]")?;
         writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]")?;
         writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "pub struct {}(pub {value_type});", self.name)?;
+        writeln!(
+            w,
+            "pub struct {}(pub {value_type}, pub core::marker::PhantomData<*mut u8>);",
+            self.name
+        )?;
 
         if let Some(x) = self.extension {
             writeln!(w, "#[cfg(feature = {x:?})]")?;
@@ -504,7 +508,10 @@ impl Object {
             "    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_{};",
             self.object_type_const_name
         )?;
-        writeln!(w, "    const NULL: Self = Self({null_expr});")?;
+        writeln!(
+            w,
+            "    const NULL: Self = Self({null_expr}, core::marker::PhantomData);"
+        )?;
         w.write(b"\n")?;
         writeln!(w, "    #[inline(always)]")?;
         writeln!(w, "    fn raw_handle_value(&self) -> u64 {{")?;
