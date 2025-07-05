@@ -1542,6 +1542,7 @@ pub struct GraphicsPipelineCreateInfo<'d>(
         Option<&'d PipelineDepthStencilStateCreateInfo>,
         &'d PipelineColorBlendStateCreateInfo<'d>,
         Option<&'d PipelineDynamicStateCreateInfo<'d>>,
+        Option<&'d dyn VkHandle<Handle = VkPipeline>>,
     )>,
 );
 impl<'d> GraphicsPipelineCreateInfo<'d> {
@@ -1582,12 +1583,72 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
         )
     }
 
+    #[inline]
+    pub fn derived_by_handle(parent: &'d (impl VkHandle<Handle = VkPipeline> + ?Sized)) -> Self {
+        Self(
+            VkGraphicsPipelineCreateInfo {
+                sType: VkGraphicsPipelineCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+                stageCount: 0,
+                pStages: core::ptr::null(),
+                pVertexInputState: core::ptr::null(),
+                pInputAssemblyState: core::ptr::null(),
+                pTessellationState: core::ptr::null(),
+                pViewportState: core::ptr::null(),
+                pRasterizationState: core::ptr::null(),
+                pMultisampleState: core::ptr::null(),
+                pDepthStencilState: core::ptr::null(),
+                pColorBlendState: core::ptr::null(),
+                pDynamicState: core::ptr::null(),
+                layout: VkPipelineLayout::NULL,
+                renderPass: VkRenderPass::NULL,
+                subpass: 0,
+                basePipelineHandle: parent.native_ptr(),
+                basePipelineIndex: -1,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const fn derived_by_index(index: i32) -> Self {
+        Self(
+            VkGraphicsPipelineCreateInfo {
+                sType: VkGraphicsPipelineCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+                stageCount: 0,
+                pStages: core::ptr::null(),
+                pVertexInputState: core::ptr::null(),
+                pInputAssemblyState: core::ptr::null(),
+                pTessellationState: core::ptr::null(),
+                pViewportState: core::ptr::null(),
+                pRasterizationState: core::ptr::null(),
+                pMultisampleState: core::ptr::null(),
+                pDepthStencilState: core::ptr::null(),
+                pColorBlendState: core::ptr::null(),
+                pDynamicState: core::ptr::null(),
+                layout: VkPipelineLayout::NULL,
+                renderPass: VkRenderPass::NULL,
+                subpass: 0,
+                basePipelineHandle: VkPipeline::NULL,
+                basePipelineIndex: index,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
     pub const unsafe fn from_raw(raw: VkGraphicsPipelineCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
     pub const fn into_raw(self) -> VkGraphicsPipelineCreateInfo {
         self.0
+    }
+
+    pub const fn allow_derivatives(mut self) -> Self {
+        self.0.flags |= VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
+        self
     }
 
     #[inline(always)]
