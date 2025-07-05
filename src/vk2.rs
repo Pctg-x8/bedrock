@@ -9000,7 +9000,7 @@ unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceCapabilities2KHR {
 }
 
 #[cfg(all(feature = "VK_KHR_surface"))]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkSurfaceFormatKHR {

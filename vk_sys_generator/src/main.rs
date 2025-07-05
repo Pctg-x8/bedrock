@@ -4193,11 +4193,13 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .extensions(&[("KHR", "surface")]),
-    Struct::new(
+    Struct::typed(
         "SurfaceCapabilities2",
+        "SURFACE_CAPABILITIES_2",
+        vk_ext_enum(120, 1) as _,
+        StructUsage::Sink,
         &[Struct::member("surfaceCapabilities", "VkSurfaceCapabilitiesKHR")],
     )
-    .stype("SURFACE_CAPABILITIES_2", vk_ext_enum(120, 1) as _, StructUsage::Sink)
     .extensions(&[("KHR", "get_surface_capabilities2")]),
     Struct::new(
         "SurfaceFormat",
@@ -4206,12 +4208,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("colorSpace", "VkColorSpaceKHR"),
         ],
     )
+    .copyable()
     .extensions(&[("KHR", "surface")]),
-    Struct::new(
+    Struct::typed(
         "SurfaceFormat2",
+        "SURFACE_FORMAT_2",
+        vk_ext_enum(120, 2) as _,
+        StructUsage::Sink,
         &[Struct::member("surfaceFormat", "VkSurfaceFormatKHR")],
     )
-    .stype("SURFACE_FORMAT_2", vk_ext_enum(120, 2) as _, StructUsage::Sink)
     .extensions(&[("KHR", "get_surface_capabilities2")]),
     Struct::new(
         "SwapchainCreateInfo",
