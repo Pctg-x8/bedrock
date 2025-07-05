@@ -133,14 +133,18 @@ fn main() -> std::io::Result<()> {
     )
     .emit_extra_cfg(&mut o, "any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\")")?;
     o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write(b"#[rustfmt::skip]\n")?;
     o.write(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
     o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write(b"#[rustfmt::skip]\n")?;
     o.write(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;\n")?;
 
     // struct aliasing
     o.write(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
+    o.write(b"#[rustfmt::skip]\n")?;
     o.write(b"pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;\n")?;
     o.write(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
+    o.write(b"#[rustfmt::skip]\n")?;
     o.write(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;\n")?;
 
     for s in UNIONS {
