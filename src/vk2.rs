@@ -6683,7 +6683,7 @@ unsafe impl crate::TypedVulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR
 pub struct VkMetalSurfaceCreateInfoEXT {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub flags: VkMetalSurfaceCreateFlags,
+    pub flags: VkMetalSurfaceCreateFlagsEXT,
     pub pLayer: *const core::ffi::c_void,
 }
 #[cfg(all(feature = "VK_EXT_metal_surface"))]

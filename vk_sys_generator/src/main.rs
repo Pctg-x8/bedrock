@@ -3208,17 +3208,15 @@ const STRUCTS: &'static [Struct] = &[
         StructUsage::Sink,
     )
     .extensions(&[("KHR", "external_memory_win32")]),
-    Struct::new(
+    Struct::typed(
         "MetalSurfaceCreateInfo",
-        &[
-            Struct::member("flags", "VkMetalSurfaceCreateFlags"),
-            Struct::member("pLayer", "*const core::ffi::c_void"),
-        ],
-    )
-    .stype(
         "METAL_SURFACE_CREATE_INFO",
         vk_ext_enum(218, 0) as _,
         StructUsage::Source,
+        &[
+            Struct::member("flags", "VkMetalSurfaceCreateFlagsEXT"),
+            Struct::member("pLayer", "*const core::ffi::c_void"),
+        ],
     )
     .extensions(&[("EXT", "metal_surface")]),
     Struct::new("Offset2D", &[Struct::member("x", "i32"), Struct::member("y", "i32")])
