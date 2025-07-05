@@ -1,6 +1,6 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
-use crate::ffi_helper::{CStrFFIRef, opt_cstr_ptr, opt_pointer, slice_as_ptr_empty_null};
+use crate::ffi_helper::{CStrFFIRef, slice_as_ptr_empty_null};
 use crate::*;
 use derives::implements;
 
@@ -395,7 +395,7 @@ impl<'d> ApplicationInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct InstanceCreateInfo<'d>(
     VkInstanceCreateInfo,
     core::marker::PhantomData<(
@@ -498,7 +498,12 @@ pub unsafe fn new_instance_raw(
     let mut h = core::mem::MaybeUninit::uninit();
 
     unsafe {
-        crate::vkfn::create_instance(&info.0, opt_pointer(allocation_callbacks), h.as_mut_ptr()).into_result()?;
+        crate::vkfn::create_instance(
+            &info.0,
+            crate::ffi_helper::opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
     }
     Ok(unsafe { h.assume_init() })
 }
@@ -569,8 +574,12 @@ pub fn enumerate_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties
 pub fn instance_extension_property_count_cstr(layer_name: Option<&core::ffi::CStr>) -> crate::Result<u32> {
     let mut n = 0;
     unsafe {
-        crate::vkfn::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, core::ptr::null_mut())
-            .into_result()?;
+        crate::vkfn::enumerate_instance_extension_properties(
+            crate::ffi_helper::opt_cstr_ptr(layer_name),
+            &mut n,
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
     }
 
     Ok(n)
@@ -591,8 +600,12 @@ pub fn instance_extension_properties_cstr(
 ) -> crate::Result<u32> {
     let mut n = sink.len() as _;
     unsafe {
-        crate::vkfn::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, sink.as_mut_ptr())
-            .into_result()?;
+        crate::vkfn::enumerate_instance_extension_properties(
+            crate::ffi_helper::opt_cstr_ptr(layer_name),
+            &mut n,
+            sink.as_mut_ptr(),
+        )
+        .into_result()?;
     }
 
     Ok(n)
@@ -782,7 +795,7 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
             self.create_debug_report_callback_ext_fn().0(
                 self.native_ptr(),
                 info.as_raw_ref(),
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -830,7 +843,11 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) {
         unsafe {
-            self.destroy_debug_report_callback_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+            self.destroy_debug_report_callback_ext_fn().0(
+                self.native_ptr(),
+                obj,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
+            );
         }
     }
 
@@ -854,7 +871,7 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
             self.create_debug_utils_messenger_ext_fn().0(
                 self.native_ptr(),
                 info,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -875,7 +892,11 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) {
         unsafe {
-            self.destroy_debug_utils_messenger_ext_fn().0(self.native_ptr(), obj, opt_pointer(allocation_callbacks));
+            self.destroy_debug_utils_messenger_ext_fn().0(
+                self.native_ptr(),
+                obj,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
+            );
         }
     }
 }
@@ -997,7 +1018,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         unsafe {
             crate::vkfn::enumerate_device_extension_properties(
                 self.native_ptr(),
-                opt_cstr_ptr(layer_name),
+                crate::ffi_helper::opt_cstr_ptr(layer_name),
                 &mut n,
                 core::ptr::null_mut(),
             )
@@ -1025,7 +1046,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         unsafe {
             crate::vkfn::enumerate_device_extension_properties(
                 self.native_ptr(),
-                opt_cstr_ptr(layer_name),
+                crate::ffi_helper::opt_cstr_ptr(layer_name),
                 &mut n,
                 sink.as_mut_ptr(),
             )
@@ -1682,7 +1703,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 self.native_ptr(),
                 display,
                 info,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1923,7 +1944,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             crate::vkfn::create_display_plane_surface_khr(
                 self.instance().native_ptr(),
                 info,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;

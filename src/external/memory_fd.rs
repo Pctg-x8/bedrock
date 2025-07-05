@@ -9,7 +9,7 @@ pub enum ExternalMemoryHandleTypeFd {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct ImportMemoryFdInfo<'d>(
     VkImportMemoryFdInfoKHR,
     core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
@@ -57,7 +57,7 @@ impl<'d> ImportMemoryFdInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct MemoryGetFdInfo<'d>(
     pub(crate) VkMemoryGetFdInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,

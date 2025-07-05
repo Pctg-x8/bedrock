@@ -14,7 +14,7 @@ pub enum QueryType {
 
 /// Structure specifying parameters of a newly created query pool
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct QueryPoolCreateInfo(VkQueryPoolCreateInfo);
 impl QueryPoolCreateInfo {
     pub const fn new(query_type: QueryType, count: u32) -> Self {
@@ -52,7 +52,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for QueryPoolObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_query_pool(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }

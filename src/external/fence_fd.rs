@@ -8,7 +8,7 @@ pub enum ExternalFenceFdType {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct ImportFenceFdInfo<'d>(
     pub(crate) VkImportFenceFdInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkFence>>,
@@ -47,7 +47,7 @@ impl<'d> ImportFenceFdInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct FenceFdGetInfo<'d>(
     pub(crate) VkFenceGetFdInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkFence>>,

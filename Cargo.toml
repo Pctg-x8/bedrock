@@ -1,4 +1,10 @@
-workspace = { members = ["vk_entrypoint_builder"] }
+workspace = { members = [
+    "vk_entrypoint_builder",
+    "vk_sys_generator",
+], exclude = [
+    "wayland_examples",
+    "bedrock-examples",
+] }
 
 [package]
 name = "bedrock"

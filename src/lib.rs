@@ -30,8 +30,14 @@ use derives::*;
 pub use derives::SpecializationConstants;
 
 #[macro_use]
-pub mod vk;
-use vk::*;
+mod vk1;
+mod vk2;
+pub mod vk {
+    pub use crate::vk1::*;
+    pub use crate::vk2::*;
+}
+use crate::vk::*;
+
 pub mod error;
 mod resolver;
 #[cfg(feature = "Implements")]
@@ -212,6 +218,30 @@ impl Extent3D {
             depth: value,
         }
     }
+
+    pub const fn new1(width: u32) -> Self {
+        Self {
+            width,
+            height: 1,
+            depth: 1,
+        }
+    }
+
+    pub const fn new2(width: u32, height: u32) -> Self {
+        Self {
+            width,
+            height,
+            depth: 1,
+        }
+    }
+
+    pub const fn new(width: u32, height: u32, depth: u32) -> Self {
+        Self { width, height, depth }
+    }
+
+    pub const fn as_2d_ref(&self) -> &VkExtent2D {
+        unsafe { std::mem::transmute(self) }
+    }
 }
 impl Offset2D {
     pub const fn spread1(value: i32) -> Self {
@@ -225,6 +255,22 @@ impl Offset3D {
             y: value,
             z: value,
         }
+    }
+
+    pub const fn new1(x: i32) -> Self {
+        Self { x, y: 0, z: 0 }
+    }
+
+    pub const fn new2(x: i32, y: i32) -> Self {
+        Self { x, y, z: 0 }
+    }
+
+    pub const fn new(x: i32, y: i32, z: i32) -> Self {
+        Self { x, y, z }
+    }
+
+    pub const fn as_2d_ref(&self) -> &VkOffset2D {
+        unsafe { std::mem::transmute(self) }
     }
 }
 
@@ -278,6 +324,22 @@ impl AsRef<Extent2D> for Extent3D {
 impl AsRef<Offset2D> for Offset3D {
     fn as_ref(&self) -> &Offset2D {
         unsafe { core::mem::transmute(self) }
+    }
+}
+
+// From conversion to smaller-dimension
+impl From<Offset3D> for Offset2D {
+    fn from(value: Offset3D) -> Self {
+        Self { x: value.x, y: value.y }
+    }
+}
+
+impl From<Extent3D> for Extent2D {
+    fn from(value: Extent3D) -> Self {
+        Self {
+            width: value.width,
+            height: value.height,
+        }
     }
 }
 

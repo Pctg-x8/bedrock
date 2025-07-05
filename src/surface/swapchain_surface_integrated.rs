@@ -24,7 +24,7 @@ where
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.handle.destroy(self.device.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_swapchain_khr(self.device.native_ptr(), self.handle, core::ptr::null());
         }
     }
 }
@@ -90,7 +90,7 @@ where
 
         // Note: DeviceとSurfaceをdropさせない（Swapchainだけ消す）
         unsafe {
-            self.handle.destroy(self.device.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_swapchain_khr(self.device.native_ptr(), self.handle, core::ptr::null());
         }
         core::mem::forget(self);
 

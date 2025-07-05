@@ -150,7 +150,7 @@ DerefContainerBracketImpl!(for Swapchain {
 });
 
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct SwapchainCreateInfo<'r, 'n>(
     VkSwapchainCreateInfoKHR,
     core::marker::PhantomData<(

@@ -17,7 +17,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for DescriptorSetLayoutObject<Dev
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_descriptor_set_layout(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -92,7 +92,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for DescriptorPoolObject<Device> 
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_descriptor_pool(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -208,7 +208,7 @@ pub enum DescriptorType {
 impl DescriptorType {
     pub const fn make_size(self, count: u32) -> VkDescriptorPoolSize {
         VkDescriptorPoolSize {
-            _type: self as _,
+            r#type: self as _,
             descriptorCount: count,
         }
     }
@@ -219,7 +219,7 @@ impl DescriptorType {
 }
 
 #[repr(transparent)]
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Clone)]
 pub struct DescriptorSetLayoutBinding<'s> {
     raw: VkDescriptorSetLayoutBinding,
     immutable_samplers: core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
@@ -284,7 +284,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct DescriptorSetLayoutCreateInfo<'d, 's>(
     VkDescriptorSetLayoutCreateInfo,
     core::marker::PhantomData<&'d [DescriptorSetLayoutBinding<'s>]>,
@@ -331,7 +331,7 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 */
 
 #[repr(transparent)]
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct DescriptorPoolCreateInfo<'d>(
     VkDescriptorPoolCreateInfo,
     core::marker::PhantomData<&'d [VkDescriptorPoolSize]>,
@@ -535,7 +535,7 @@ impl DescriptorPointer {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct DescriptorBufferInfo<'r>(
     VkDescriptorBufferInfo,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkBuffer>>,
@@ -567,7 +567,7 @@ impl<'r> DescriptorBufferInfo<'r> {
 }
 
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct DescriptorImageInfo<'r>(
     VkDescriptorImageInfo,
     core::marker::PhantomData<(

@@ -1,8 +1,6 @@
 //! Vulkan Commands
 
-use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
-use core::ops::Range;
 use derives::implements;
 
 #[derive(VkHandle, VkObject)]
@@ -13,7 +11,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for CommandPoolObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_command_pool(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -142,7 +140,7 @@ impl<Device: Clone> CommandBufferObject<&'_ Device> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct CommandPoolCreateInfo(VkCommandPoolCreateInfo);
 impl CommandPoolCreateInfo {
     pub const fn new(queue_family_index: u32) -> Self {
@@ -193,7 +191,7 @@ impl CommandPoolResetFlags {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct CommandBufferAllocateInfo<'r>(
     pub(crate) VkCommandBufferAllocateInfo,
     core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
@@ -227,7 +225,7 @@ impl<'r> CommandBufferAllocateInfo<'r> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct CommandBufferFixedCountAllocateInfo<'r, const N: usize>(
     VkCommandBufferAllocateInfo,
     core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
@@ -285,7 +283,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
                 self.device().native_ptr(),
                 self.native_ptr_mut(),
                 buffers.len() as _,
-                slice_as_ptr_empty_null(buffers) as *const _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as *const _,
             )
         }
     }
@@ -309,7 +307,7 @@ DerefContainerBracketImpl!(for mut CommandPoolMut {});
 GuardsImpl!(for mut CommandPoolMut {});
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct CommandBufferBeginInfo<'d>(
     VkCommandBufferBeginInfo,
     core::marker::PhantomData<Option<&'d CommandBufferInheritanceInfo<'d>>>,
@@ -361,7 +359,7 @@ impl<'d> CommandBufferBeginInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct CommandBufferInheritanceInfo<'d>(
     VkCommandBufferInheritanceInfo,
     core::marker::PhantomData<(
@@ -490,6 +488,7 @@ GuardsImpl!(for mut CommandBufferMut {});
 
 pub struct SynchronizedCommandBuffer<'p, 'b: 'p> {
     _pool: VkHandleRefMut<'p, VkCommandPool>,
+    #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
     buffer: VkHandleRefMut<'b, VkCommandBuffer>,
 }
 #[implements]
@@ -794,9 +793,9 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 pipeline_layout.native_ptr(),
                 first,
                 descriptor_sets.len() as _,
-                slice_as_ptr_empty_null(descriptor_sets) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(descriptor_sets) as _,
                 dynamic_offsets.len() as _,
-                slice_as_ptr_empty_null(dynamic_offsets),
+                crate::ffi_helper::slice_as_ptr_empty_null(dynamic_offsets),
             );
         }
 
@@ -868,7 +867,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 pipeline_layout.native_ptr(),
                 set,
                 writes.len() as _,
-                slice_as_ptr_empty_null(writes),
+                crate::ffi_helper::slice_as_ptr_empty_null(writes),
             );
         }
 
@@ -892,7 +891,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 pipeline_layout.native_ptr(),
                 set,
                 writes.len() as _,
-                slice_as_ptr_empty_null(writes),
+                crate::ffi_helper::slice_as_ptr_empty_null(writes),
             );
         }
 
@@ -957,7 +956,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 self.ptr.native_ptr_mut(),
                 first,
                 viewports.len() as _,
-                slice_as_ptr_empty_null(viewports),
+                crate::ffi_helper::slice_as_ptr_empty_null(viewports),
             );
         }
         self
@@ -971,7 +970,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 self.ptr.native_ptr_mut(),
                 first,
                 scissors.len() as _,
-                slice_as_ptr_empty_null(scissors),
+                crate::ffi_helper::slice_as_ptr_empty_null(scissors),
             );
         }
         self
@@ -1006,7 +1005,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
 
     /// Set the depth bounds test values for a command buffer
     #[inline(always)]
-    pub fn set_depth_bounds(mut self, bounds: Range<f32>) -> Self {
+    pub fn set_depth_bounds(mut self, bounds: core::ops::Range<f32>) -> Self {
         unsafe {
             crate::vkfn::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
         }
@@ -1092,8 +1091,8 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 self.ptr.native_ptr_mut(),
                 first,
                 buffers.len() as _,
-                slice_as_ptr_empty_null(buffers) as _,
-                slice_as_ptr_empty_null(offsets),
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(offsets),
             );
         }
         self
@@ -1112,8 +1111,8 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 self.ptr.native_ptr_mut(),
                 first,
                 N as _,
-                slice_as_ptr_empty_null(buffers) as _,
-                slice_as_ptr_empty_null(offsets),
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(offsets),
             );
         }
         self
@@ -1247,7 +1246,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 src.native_ptr(),
                 dst.native_ptr(),
                 regions.len() as _,
-                slice_as_ptr_empty_null(regions) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(regions) as _,
             );
         }
         self
@@ -1271,7 +1270,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                slice_as_ptr_empty_null(regions),
+                crate::ffi_helper::slice_as_ptr_empty_null(regions),
             );
         }
         self
@@ -1296,7 +1295,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                slice_as_ptr_empty_null(regions),
+                crate::ffi_helper::slice_as_ptr_empty_null(regions),
                 filter as _,
             );
         }
@@ -1319,7 +1318,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 dst_image.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                slice_as_ptr_empty_null(regions),
+                crate::ffi_helper::slice_as_ptr_empty_null(regions),
             );
         }
         self
@@ -1341,7 +1340,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 src_layout as _,
                 dst_buffer.native_ptr(),
                 regions.len() as _,
-                slice_as_ptr_empty_null(regions),
+                crate::ffi_helper::slice_as_ptr_empty_null(regions),
             );
         }
         self
@@ -1409,9 +1408,9 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 self.ptr.native_ptr_mut(),
                 image.native_ptr(),
                 layout as _,
-                slice_as_ptr_empty_null(colors),
+                crate::ffi_helper::slice_as_ptr_empty_null(colors),
                 ranges.len() as _,
-                slice_as_ptr_empty_null(ranges),
+                crate::ffi_helper::slice_as_ptr_empty_null(ranges),
             );
         }
         self
@@ -1434,7 +1433,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 layout as _,
                 &VkClearDepthStencilValue { depth, stencil },
                 ranges.len() as _,
-                slice_as_ptr_empty_null(ranges),
+                crate::ffi_helper::slice_as_ptr_empty_null(ranges),
             );
         }
         self
@@ -1447,9 +1446,9 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
             crate::vkfn::cmd_clear_attachments(
                 self.ptr.native_ptr_mut(),
                 attachments.len() as _,
-                slice_as_ptr_empty_null(attachments),
+                crate::ffi_helper::slice_as_ptr_empty_null(attachments),
                 rects.len() as _,
-                slice_as_ptr_empty_null(rects),
+                crate::ffi_helper::slice_as_ptr_empty_null(rects),
             );
         }
         self
@@ -1469,7 +1468,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
             crate::vkfn::cmd_execute_commands(
                 self.ptr.native_ptr_mut(),
                 buffers.len() as _,
-                slice_as_ptr_empty_null(buffers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
             );
         }
         self
@@ -1497,7 +1496,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                slice_as_ptr_empty_null(regions),
+                crate::ffi_helper::slice_as_ptr_empty_null(regions),
             )
         };
         self
@@ -1548,15 +1547,15 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
             crate::vkfn::cmd_wait_events(
                 self.ptr.native_ptr_mut(),
                 events.len() as _,
-                slice_as_ptr_empty_null(events) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(events) as _,
                 src_stage_mask.0,
                 dst_stage_mask.0,
                 memory_barriers.len() as _,
-                slice_as_ptr_empty_null(memory_barriers),
+                crate::ffi_helper::slice_as_ptr_empty_null(memory_barriers),
                 buffer_memory_barriers.len() as _,
-                slice_as_ptr_empty_null(buffer_memory_barriers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffer_memory_barriers) as _,
                 image_memory_barriers.len() as _,
-                slice_as_ptr_empty_null(image_memory_barriers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(image_memory_barriers) as _,
             );
         }
         self
@@ -1580,11 +1579,11 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
                 dst_stage_mask.0,
                 dependency_flags,
                 memory_barriers.len() as _,
-                slice_as_ptr_empty_null(memory_barriers),
+                crate::ffi_helper::slice_as_ptr_empty_null(memory_barriers),
                 buffer_memory_barriers.len() as _,
-                slice_as_ptr_empty_null(buffer_memory_barriers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffer_memory_barriers) as _,
                 image_memory_barriers.len() as _,
-                slice_as_ptr_empty_null(image_memory_barriers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(image_memory_barriers) as _,
             );
         }
         self
@@ -1649,7 +1648,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     pub fn reset_query_pool(
         mut self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
-        range: Range<u32>,
+        range: core::ops::Range<u32>,
     ) -> Self {
         unsafe {
             crate::vkfn::cmd_reset_query_pool(
@@ -1682,7 +1681,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     pub fn copy_query_pool_results(
         mut self,
         pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
-        range: Range<u32>,
+        range: core::ops::Range<u32>,
         dst: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: DeviceSize,
         stride: DeviceSize,
@@ -1869,7 +1868,7 @@ impl AccessFlags {
 #[repr(transparent)]
 pub struct ImageMemoryBarrier(VkImageMemoryBarrier);
 impl ImageMemoryBarrier {
-    /// Construct a new barrier descriptor from discrete pair of resource and subresource range
+    /// Construct a new barrier descriptor from discrete pair of resource and subresource core::ops::Range
     pub fn new(
         res: &(impl VkHandle<Handle = VkImage> + ?Sized),
         subres: impl Into<VkImageSubresourceRange>,

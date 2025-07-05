@@ -1,0 +1,10415 @@
+#![allow(clippy::inconsistent_digit_grouping)]
+#![allow(non_upper_case_globals, non_camel_case_types, non_snake_case, dead_code)]
+
+//! Vulkan API Definitions 1.4.305 with some extensions
+
+/*
+** Copyright 2025 S.Percentage.
+** Original C Header: Copyright 2015-2025 The Khronos Group Inc.
+**
+** SPDX-License-Identifier: Apache-2.0
+*/
+
+#[inline]
+pub const fn VK_MAKE_VERSION(variant: u8, major: u16, minor: u16, patch: u16) -> u32 {
+    ((variant as u32) << 29) | ((major as u32) << 22) | ((minor as u32) << 12) | patch as u32
+}
+
+pub const fn VK_VARIANT_VERSION(v: u32) -> u8 {
+    (v >> 29) as _
+}
+
+#[inline]
+pub const fn VK_MAJOR_VERSION(v: u32) -> u16 {
+    ((v >> 22) & 0x7f) as _
+}
+
+#[inline]
+pub const fn VK_MINOR_VERSION(v: u32) -> u16 {
+    ((v >> 12) & 0x3ff) as _
+}
+
+#[inline]
+pub const fn VK_PATCH_VERSION(v: u32) -> u16 {
+    (v & 0xfff) as _
+}
+
+/// (major, minor, patch)
+#[inline]
+pub const fn vk_deserialize_version(v: u32) -> (u16, u16, u16) {
+    (VK_MAJOR_VERSION(v), VK_MINOR_VERSION(v), VK_PATCH_VERSION(v))
+}
+
+/// Vulkan 1.0 version number
+pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(0, 1, 0, 0);
+
+/// Version of this file
+pub const VK_HEADER_VERSION: u16 = 305;
+pub const VK_HEADER_VERSION_COMPLETE: u32 = VK_MAKE_VERSION(0, 1, 4, VK_HEADER_VERSION);
+
+pub type VkSampleMask = u32;
+pub type VkBool32 = u32;
+pub type VkFlags = u32;
+pub type VkFlags64 = u64;
+pub type VkDeviceSize = u64;
+pub type VkDeviceAddress = u64;
+
+
+pub type VkAccessFlags = VkFlags;
+pub type VkAccessFlagBits = VkFlags;
+pub const VK_ACCESS_INDIRECT_COMMAND_READ_BIT: VkAccessFlagBits = 0x00000001;
+pub const VK_ACCESS_INDEX_READ_BIT: VkAccessFlagBits = 0x00000002;
+pub const VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT: VkAccessFlagBits = 0x00000004;
+pub const VK_ACCESS_UNIFORM_READ_BIT: VkAccessFlagBits = 0x00000008;
+pub const VK_ACCESS_INPUT_ATTACHMENT_READ_BIT: VkAccessFlagBits = 0x00000010;
+pub const VK_ACCESS_SHADER_READ_BIT: VkAccessFlagBits = 0x00000020;
+pub const VK_ACCESS_SHADER_WRITE_BIT: VkAccessFlagBits = 0x00000040;
+pub const VK_ACCESS_COLOR_ATTACHMENT_READ_BIT: VkAccessFlagBits = 0x00000080;
+pub const VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT: VkAccessFlagBits = 0x00000100;
+pub const VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT: VkAccessFlagBits = 0x00000200;
+pub const VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT: VkAccessFlagBits = 0x00000400;
+pub const VK_ACCESS_TRANSFER_READ_BIT: VkAccessFlagBits = 0x00000800;
+pub const VK_ACCESS_TRANSFER_WRITE_BIT: VkAccessFlagBits = 0x00001000;
+pub const VK_ACCESS_HOST_READ_BIT: VkAccessFlagBits = 0x00002000;
+pub const VK_ACCESS_HOST_WRITE_BIT: VkAccessFlagBits = 0x00004000;
+pub const VK_ACCESS_MEMORY_READ_BIT: VkAccessFlagBits = 0x00008000;
+pub const VK_ACCESS_MEMORY_WRITE_BIT: VkAccessFlagBits = 0x00010000;
+#[cfg(feature = "VK_EXT_blend_operation_advanced")]
+pub const VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT: VkAccessFlagBits = 0x00080000;
+
+#[cfg(feature = "VK_KHR_android_surface")]
+pub type VkAndroidSurfaceCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_android_surface")]
+pub type VkAndroidSurfaceCreateFlagBitsKHR = VkFlags;
+
+pub type VkAttachmentDescriptionFlags = VkFlags;
+pub type VkAttachmentDescriptionFlagBits = VkFlags;
+pub const VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT: VkAttachmentDescriptionFlagBits = 0x00000001;
+
+pub type VkBufferCreateFlags = VkFlags;
+pub type VkBufferCreateFlagBits = VkFlags;
+pub const VK_BUFFER_CREATE_SPARSE_BINDING_BIT: VkBufferCreateFlagBits = 0x00000001;
+pub const VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT: VkBufferCreateFlagBits = 0x00000002;
+pub const VK_BUFFER_CREATE_SPARSE_ALIASED_BIT: VkBufferCreateFlagBits = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_BUFFER_CREATE_PROTECTED_BIT: VkBufferCreateFlagBits = 0x00000008;
+
+pub type VkBufferUsageFlags = VkFlags;
+pub type VkBufferUsageFlagBits = VkFlags;
+pub const VK_BUFFER_USAGE_TRANSFER_SRC_BIT: VkBufferUsageFlagBits = 0x00000001;
+pub const VK_BUFFER_USAGE_TRANSFER_DST_BIT: VkBufferUsageFlagBits = 0x00000002;
+pub const VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000004;
+pub const VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000008;
+pub const VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000010;
+pub const VK_BUFFER_USAGE_STORAGE_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000020;
+pub const VK_BUFFER_USAGE_INDEX_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000040;
+pub const VK_BUFFER_USAGE_VERTEX_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000080;
+pub const VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT: VkBufferUsageFlagBits = 0x00000100;
+
+pub type VkBufferViewCreateFlags = VkFlags;
+pub type VkBufferViewCreateFlagBits = VkFlags;
+
+pub type VkColorComponentFlags = VkFlags;
+pub type VkColorComponentFlagBits = VkFlags;
+pub const VK_COLOR_COMPONENT_R_BIT: VkColorComponentFlagBits = 0x00000001;
+pub const VK_COLOR_COMPONENT_G_BIT: VkColorComponentFlagBits = 0x00000002;
+pub const VK_COLOR_COMPONENT_B_BIT: VkColorComponentFlagBits = 0x00000004;
+pub const VK_COLOR_COMPONENT_A_BIT: VkColorComponentFlagBits = 0x00000008;
+
+pub type VkCommandPoolCreateFlags = VkFlags;
+pub type VkCommandPoolCreateFlagBits = VkFlags;
+pub const VK_COMMAND_POOL_CREATE_TRANSIENT_BIT: VkCommandPoolCreateFlagBits = 0x00000001;
+pub const VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT: VkCommandPoolCreateFlagBits = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_COMMAND_POOL_CREATE_PROTECTED_BIT: VkCommandPoolCreateFlagBits = 0x00000004;
+
+pub type VkCommandPoolResetFlags = VkFlags;
+pub type VkCommandPoolResetFlagBits = VkFlags;
+pub const VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT: VkCommandPoolResetFlagBits = 0x00000001;
+
+pub type VkCommandBufferResetFlags = VkFlags;
+pub type VkCommandBufferResetFlagBits = VkFlags;
+pub const VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT: VkCommandBufferResetFlagBits = 0x00000001;
+
+pub type VkCommandBufferUsageFlags = VkFlags;
+pub type VkCommandBufferUsageFlagBits = VkFlags;
+pub const VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: VkCommandBufferUsageFlagBits = 0x00000001;
+pub const VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: VkCommandBufferUsageFlagBits = 0x00000002;
+pub const VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: VkCommandBufferUsageFlagBits = 0x00000004;
+
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkCompositeAlphaFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkCompositeAlphaFlagBitsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR: VkCompositeAlphaFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR: VkCompositeAlphaFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR: VkCompositeAlphaFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR: VkCompositeAlphaFlagBitsKHR = 0x00000008;
+
+pub type VkCullModeFlags = VkFlags;
+pub type VkCullModeFlagBits = VkFlags;
+pub const VK_CULL_MODE_FRONT_BIT: VkCullModeFlagBits = 0x00000001;
+pub const VK_CULL_MODE_BACK_BIT: VkCullModeFlagBits = 0x00000002;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+pub type VkDebugReportFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub type VkDebugReportFlagBitsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_INFORMATION_BIT_EXT: VkDebugReportFlagBitsEXT = 0x00000001;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_WARNING_BIT_EXT: VkDebugReportFlagBitsEXT = 0x00000002;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT: VkDebugReportFlagBitsEXT = 0x00000004;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_ERROR_BIT_EXT: VkDebugReportFlagBitsEXT = 0x00000008;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_DEBUG_BIT_EXT: VkDebugReportFlagBitsEXT = 0x00000010;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessageSeverityFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessageSeverityFlagBitsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000001;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000002;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000004;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000008;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessageTypeFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessageTypeFlagBitsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT: VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000001;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT: VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000002;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT: VkDebugUtilsMessageTypeFlagBitsEXT = 0x00000004;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessengerCallbackDataFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessengerCallbackDataFlagBitsEXT = VkFlags;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessengerCreateFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type VkDebugUtilsMessengerCreateFlagBitsEXT = VkFlags;
+
+pub type VkDependencyFlags = VkFlags;
+pub type VkDependencyFlagBits = VkFlags;
+pub const VK_DEPENDENCY_BY_REGION_BIT: VkDependencyFlagBits = 0x00000001;
+pub const VK_DEPENDENCY_VIEW_LOCAL_BIT: VkDependencyFlagBits = 0x00000002;
+#[cfg(feature = "VK_KHR_device_group")]
+pub const VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR: VkDependencyFlagBits = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_DEPENDENCY_DEVICE_GROUP_BIT: VkDependencyFlagBits = 0x00000004;
+
+pub type VkDescriptorPoolCreateFlags = VkFlags;
+pub type VkDescriptorPoolCreateFlagBits = VkFlags;
+pub const VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT: VkDescriptorPoolCreateFlagBits = 0x00000001;
+
+pub type VkDescriptorPoolResetFlags = VkFlags;
+pub type VkDescriptorPoolResetFlagBits = VkFlags;
+
+pub type VkDescriptorSetLayoutCreateFlags = VkFlags;
+pub type VkDescriptorSetLayoutCreateFlagBits = VkFlags;
+
+pub type VkDeviceCreateFlags = VkFlags;
+pub type VkDeviceCreateFlagBits = VkFlags;
+
+pub type VkDeviceQueueCreateFlags = VkFlags;
+pub type VkDeviceQueueCreateFlagBits = VkFlags;
+pub const VK_DEVICE_QUEUE_CREATE_PROTECTED_BIT: VkDeviceQueueCreateFlagBits = 0x00000001;
+
+#[cfg(feature = "VK_KHR_display")]
+pub type VkDisplayModeCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_display")]
+pub type VkDisplayModeCreateFlagBitsKHR = VkFlags;
+
+#[cfg(feature = "VK_KHR_display")]
+pub type VkDisplayPlaneAlphaFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_display")]
+pub type VkDisplayPlaneAlphaFlagBitsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR: VkDisplayPlaneAlphaFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR: VkDisplayPlaneAlphaFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR: VkDisplayPlaneAlphaFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR: VkDisplayPlaneAlphaFlagBitsKHR = 0x00000008;
+
+#[cfg(feature = "VK_KHR_display")]
+pub type VkDisplaySurfaceCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_display")]
+pub type VkDisplaySurfaceCreateFlagBitsKHR = VkFlags;
+
+pub type VkEventCreateFlags = VkFlags;
+pub type VkEventCreateFlagBits = VkFlags;
+
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub type VkExternalFenceFeatureFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalFenceFeatureFlags = VkExternalFenceFeatureFlagsKHR;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub type VkExternalFenceFeatureFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalFenceFeatureFlagBits = VkExternalFenceFeatureFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR: VkExternalFenceFeatureFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT: VkExternalFenceFeatureFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR: VkExternalFenceFeatureFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT: VkExternalFenceFeatureFlagBitsKHR = 0x00000002;
+
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub type VkExternalFenceHandleTypeFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalFenceHandleTypeFlags = VkExternalFenceHandleTypeFlagsKHR;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub type VkExternalFenceHandleTypeFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalFenceHandleTypeFlagBits = VkExternalFenceHandleTypeFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_BIT: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT: VkExternalFenceHandleTypeFlagBitsKHR = 0x00000008;
+
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub type VkExternalMemoryFeatureFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryFeatureFlags = VkExternalMemoryFeatureFlagsKHR;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub type VkExternalMemoryFeatureFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryFeatureFlagBits = VkExternalMemoryFeatureFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_KHR: VkExternalMemoryFeatureFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT: VkExternalMemoryFeatureFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_KHR: VkExternalMemoryFeatureFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT: VkExternalMemoryFeatureFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_KHR: VkExternalMemoryFeatureFlagBitsKHR = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT: VkExternalMemoryFeatureFlagBitsKHR = 0x00000004;
+
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub type VkExternalMemoryHandleTypeFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryHandleTypeFlags = VkExternalMemoryHandleTypeFlagsKHR;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub type VkExternalMemoryHandleTypeFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryHandleTypeFlagBits = VkExternalMemoryHandleTypeFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000010;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000010;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000020;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000020;
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000040;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000040;
+
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub type VkExternalSemaphoreFeatureFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalSemaphoreFeatureFlags = VkExternalSemaphoreFeatureFlagsKHR;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub type VkExternalSemaphoreFeatureFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalSemaphoreFeatureFlagBits = VkExternalSemaphoreFeatureFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT_KHR: VkExternalSemaphoreFeatureFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_FEATURE_EXPORTABLE_BIT: VkExternalSemaphoreFeatureFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT_KHR: VkExternalSemaphoreFeatureFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_FEATURE_IMPORTABLE_BIT: VkExternalSemaphoreFeatureFlagBitsKHR = 0x00000002;
+
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub type VkExternalSemaphoreHandleTypeFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalSemaphoreHandleTypeFlags = VkExternalSemaphoreHandleTypeFlagsKHR;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub type VkExternalSemaphoreHandleTypeFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalSemaphoreHandleTypeFlagBits = VkExternalSemaphoreHandleTypeFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_FD_BIT: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_BIT: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT_KHR: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D12_FENCE_BIT: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "Allow1_1APIs")]
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_D3D11_FENCE_BIT: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000008;
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT_KHR: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000010;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_EXTERNAL_SEMAPHORE_HANDLE_TYPE_SYNC_FD_BIT: VkExternalSemaphoreHandleTypeFlagBitsKHR = 0x00000010;
+
+pub type VkFenceCreateFlags = VkFlags;
+pub type VkFenceCreateFlagBits = VkFlags;
+pub const VK_FENCE_CREATE_SIGNALED_BIT: VkFenceCreateFlagBits = 0x00000001;
+
+#[cfg(feature = "VK_KHR_external_fence")]
+pub type VkFenceImportFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkFenceImportFlags = VkFenceImportFlagsKHR;
+#[cfg(feature = "VK_KHR_external_fence")]
+pub type VkFenceImportFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkFenceImportFlagBits = VkFenceImportFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_fence")]
+pub const VK_FENCE_IMPORT_TEMPORARY_BIT_KHR: VkFenceImportFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FENCE_IMPORT_TEMPORARY_BIT: VkFenceImportFlagBitsKHR = 0x00000001;
+
+pub type VkFormatFeatureFlags = VkFlags;
+pub type VkFormatFeatureFlagBits = VkFlags;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT: VkFormatFeatureFlagBits = 0x00000001;
+pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_BIT: VkFormatFeatureFlagBits = 0x00000002;
+pub const VK_FORMAT_FEATURE_STORAGE_IMAGE_ATOMIC_BIT: VkFormatFeatureFlagBits = 0x00000004;
+pub const VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits = 0x00000008;
+pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_BIT: VkFormatFeatureFlagBits = 0x00000010;
+pub const VK_FORMAT_FEATURE_STORAGE_TEXEL_BUFFER_ATOMIC_BIT: VkFormatFeatureFlagBits = 0x00000020;
+pub const VK_FORMAT_FEATURE_VERTEX_BUFFER_BIT: VkFormatFeatureFlagBits = 0x00000040;
+pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT: VkFormatFeatureFlagBits = 0x00000080;
+pub const VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BLEND_BIT: VkFormatFeatureFlagBits = 0x00000100;
+pub const VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT: VkFormatFeatureFlagBits = 0x00000200;
+pub const VK_FORMAT_FEATURE_BLIT_SRC_BIT: VkFormatFeatureFlagBits = 0x00000400;
+pub const VK_FORMAT_FEATURE_BLIT_DST_BIT: VkFormatFeatureFlagBits = 0x00000800;
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT: VkFormatFeatureFlagBits = 0x00001000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT_KHR: VkFormatFeatureFlagBits = 0x00020000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_MIDPOINT_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x00020000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT_KHR: VkFormatFeatureFlagBits = 0x00040000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_LINEAR_FILTER_BIT: VkFormatFeatureFlagBits = 0x00040000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT_KHR: VkFormatFeatureFlagBits = 0x00080000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_SEPARATE_RECONSTRUCTION_FILTER_BIT: VkFormatFeatureFlagBits = 0x00080000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT_KHR: VkFormatFeatureFlagBits = 0x00100000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_BIT: VkFormatFeatureFlagBits = 0x00100000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT_KHR: VkFormatFeatureFlagBits = 0x00200000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_YCBCR_CONVERSION_CHROMA_RECONSTRUCTION_EXPLICIT_FORCEABLE_BIT: VkFormatFeatureFlagBits = 0x00200000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_DISJOINT_BIT_KHR: VkFormatFeatureFlagBits = 0x00400000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_DISJOINT_BIT: VkFormatFeatureFlagBits = 0x00400000;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT_KHR: VkFormatFeatureFlagBits = 0x00800000;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_FEATURE_COSITED_CHROMA_SAMPLES_BIT: VkFormatFeatureFlagBits = 0x00800000;
+
+pub type VkFramebufferCreateFlags = VkFlags;
+pub type VkFramebufferCreateFlagBits = VkFlags;
+
+#[cfg(feature = "VK_EXT_metal_surface")]
+pub type VkMetalSurfaceCreateFlagsEXT = VkFlags;
+#[cfg(feature = "VK_EXT_metal_surface")]
+pub type VkMetalSurfaceCreateFlagBitsEXT = VkFlags;
+
+pub type VkPipelineCacheCreateFlags = VkFlags;
+pub type VkPipelineCacheCreateFlagBits = VkFlags;
+
+pub type VkPipelineCreateFlags = VkFlags;
+pub type VkPipelineCreateFlagBits = VkFlags;
+pub const VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT: VkPipelineCreateFlagBits = 0x00000001;
+pub const VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT: VkPipelineCreateFlagBits = 0x00000002;
+pub const VK_PIPELINE_CREATE_DERIVATIVE_BIT: VkPipelineCreateFlagBits = 0x00000004;
+#[cfg(feature = "VK_KHR_device_group")]
+pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR: VkPipelineCreateFlagBits = 0x00000008;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_PIPELINE_CREATE_VIEW_INDEX_FROM_DEVICE_INDEX_BIT: VkPipelineCreateFlagBits = 0x00000008;
+#[cfg(feature = "VK_KHR_device_group")]
+pub const VK_PIPELINE_CREATE_DISPATCH_BASE_BIT_KHR: VkPipelineCreateFlagBits = 0x00000010;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_PIPELINE_CREATE_DISPATCH_BASE_BIT: VkPipelineCreateFlagBits = 0x00000010;
+
+pub type VkPipelineLayoutCreateFlags = VkFlags;
+pub type VkPipelineLayoutCreateFlagBits = VkFlags;
+
+pub type VkPipelineDepthStencilStateCreateFlags = VkFlags;
+pub type VkPipelineDepthStencilStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineDynamicStateCreateFlags = VkFlags;
+pub type VkPipelineDynamicStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineColorBlendStateCreateFlags = VkFlags;
+pub type VkPipelineColorBlendStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineMultisampleStateCreateFlags = VkFlags;
+pub type VkPipelineMultisampleStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineRasterizationStateCreateFlags = VkFlags;
+pub type VkPipelineRasterizationStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineViewportStateCreateFlags = VkFlags;
+pub type VkPipelineViewportStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineTessellationStateCreateFlags = VkFlags;
+pub type VkPipelineTessellationStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineInputAssemblyStateCreateFlags = VkFlags;
+pub type VkPipelineInputAssemblyStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineVertexInputStateCreateFlags = VkFlags;
+pub type VkPipelineVertexInputStateCreateFlagBits = VkFlags;
+
+pub type VkPipelineShaderStageCreateFlags = VkFlags;
+pub type VkPipelineShaderStageCreateFlagBits = VkFlags;
+
+pub type VkPipelineStageFlags = VkFlags;
+pub type VkPipelineStageFlagBits = VkFlags;
+pub const VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT: VkPipelineStageFlagBits = 0x00000001;
+pub const VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT: VkPipelineStageFlagBits = 0x00000002;
+pub const VK_PIPELINE_STAGE_VERTEX_INPUT_BIT: VkPipelineStageFlagBits = 0x00000004;
+pub const VK_PIPELINE_STAGE_VERTEX_SHADER_BIT: VkPipelineStageFlagBits = 0x00000008;
+pub const VK_PIPELINE_STAGE_TESSELLATION_CONTROL_SHADER_BIT: VkPipelineStageFlagBits = 0x00000010;
+pub const VK_PIPELINE_STAGE_TESSELLATION_EVALUATION_SHADER_BIT: VkPipelineStageFlagBits = 0x00000020;
+pub const VK_PIPELINE_STAGE_GEOMETRY_SHADER_BIT: VkPipelineStageFlagBits = 0x00000040;
+pub const VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT: VkPipelineStageFlagBits = 0x00000080;
+pub const VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT: VkPipelineStageFlagBits = 0x00000100;
+pub const VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT: VkPipelineStageFlagBits = 0x00000200;
+pub const VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT: VkPipelineStageFlagBits = 0x00000400;
+pub const VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT: VkPipelineStageFlagBits = 0x00000800;
+pub const VK_PIPELINE_STAGE_TRANSFER_BIT: VkPipelineStageFlagBits = 0x00001000;
+pub const VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT: VkPipelineStageFlagBits = 0x00002000;
+pub const VK_PIPELINE_STAGE_HOST_BIT: VkPipelineStageFlagBits = 0x00004000;
+pub const VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT: VkPipelineStageFlagBits = 0x00008000;
+pub const VK_PIPELINE_STAGE_ALL_COMMANDS_BIT: VkPipelineStageFlagBits = 0x00010000;
+
+pub type VkInstanceCreateFlags = VkFlags;
+pub type VkInstanceCreateFlagBits = VkFlags;
+
+pub type VkImageAspectFlags = VkFlags;
+pub type VkImageAspectFlagBits = VkFlags;
+pub const VK_IMAGE_ASPECT_COLOR_BIT: VkImageAspectFlagBits = 0x00000001;
+pub const VK_IMAGE_ASPECT_DEPTH_BIT: VkImageAspectFlagBits = 0x00000002;
+pub const VK_IMAGE_ASPECT_STENCIL_BIT: VkImageAspectFlagBits = 0x00000004;
+pub const VK_IMAGE_ASPECT_METADATA_BIT: VkImageAspectFlagBits = 0x00000008;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_IMAGE_ASPECT_PLANE_0_BIT_KHR: VkImageAspectFlagBits = 0x00000010;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_ASPECT_PLANE_0_BIT: VkImageAspectFlagBits = 0x00000010;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_IMAGE_ASPECT_PLANE_1_BIT_KHR: VkImageAspectFlagBits = 0x00000020;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_ASPECT_PLANE_1_BIT: VkImageAspectFlagBits = 0x00000020;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_IMAGE_ASPECT_PLANE_2_BIT_KHR: VkImageAspectFlagBits = 0x00000040;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_ASPECT_PLANE_2_BIT: VkImageAspectFlagBits = 0x00000040;
+
+pub type VkImageUsageFlags = VkFlags;
+pub type VkImageUsageFlagBits = VkFlags;
+pub const VK_IMAGE_USAGE_TRANSFER_SRC_BIT: VkImageUsageFlagBits = 0x00000001;
+pub const VK_IMAGE_USAGE_TRANSFER_DST_BIT: VkImageUsageFlagBits = 0x00000002;
+pub const VK_IMAGE_USAGE_SAMPLED_BIT: VkImageUsageFlagBits = 0x00000004;
+pub const VK_IMAGE_USAGE_STORAGE_BIT: VkImageUsageFlagBits = 0x00000008;
+pub const VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT: VkImageUsageFlagBits = 0x00000010;
+pub const VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT: VkImageUsageFlagBits = 0x00000020;
+pub const VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT: VkImageUsageFlagBits = 0x00000040;
+pub const VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT: VkImageUsageFlagBits = 0x00000080;
+
+pub type VkImageCreateFlags = VkFlags;
+pub type VkImageCreateFlagBits = VkFlags;
+pub const VK_IMAGE_CREATE_SPARSE_BINDING_BIT: VkImageCreateFlagBits = 0x00000001;
+pub const VK_IMAGE_CREATE_SPARSE_RESIDENCY_BIT: VkImageCreateFlagBits = 0x00000002;
+pub const VK_IMAGE_CREATE_SPARSE_ALIASED_BIT: VkImageCreateFlagBits = 0x00000004;
+pub const VK_IMAGE_CREATE_MUTABLE_FORMAT_BIT: VkImageCreateFlagBits = 0x00000008;
+pub const VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x00000010;
+#[cfg(feature = "VK_KHR_bind_memory2")]
+pub const VK_IMAGE_CREATE_ALIAS_BIT_KHR: VkImageCreateFlagBits = 0x00000020;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_CREATE_ALIAS_BIT: VkImageCreateFlagBits = 0x00000020;
+#[cfg(feature = "VK_KHR_bind_memory2")]
+#[cfg(feature = "VK_KHR_device_group")]
+pub const VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR: VkImageCreateFlagBits = 0x00000040;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT: VkImageCreateFlagBits = 0x00000040;
+#[cfg(feature = "VK_KHR_maintenance2")]
+pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT_KHR: VkImageCreateFlagBits = 0x00000080;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_CREATE_BLOCK_TEXEL_VIEW_COMPATIBLE_BIT: VkImageCreateFlagBits = 0x00000080;
+#[cfg(feature = "VK_KHR_maintenance2")]
+pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT_KHR: VkImageCreateFlagBits = 0x00000100;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_CREATE_EXTENDED_USAGE_BIT: VkImageCreateFlagBits = 0x00000100;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_IMAGE_CREATE_DISJOINT_BIT_KHR: VkImageCreateFlagBits = 0x00000200;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_IMAGE_CREATE_DISJOINT_BIT: VkImageCreateFlagBits = 0x00000200;
+pub const VK_IMAGE_CREATE_PROTECTED_BIT: VkImageCreateFlagBits = 0x00000800;
+
+pub type VkImageViewCreateFlags = VkFlags;
+pub type VkImageViewCreateFlagBits = VkFlags;
+
+pub type VkMemoryPropertyFlags = VkFlags;
+pub type VkMemoryPropertyFlagBits = VkFlags;
+pub const VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT: VkMemoryPropertyFlagBits = 0x00000001;
+pub const VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT: VkMemoryPropertyFlagBits = 0x00000002;
+pub const VK_MEMORY_PROPERTY_HOST_COHERENT_BIT: VkMemoryPropertyFlagBits = 0x00000004;
+pub const VK_MEMORY_PROPERTY_HOST_CACHED_BIT: VkMemoryPropertyFlagBits = 0x00000008;
+pub const VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT: VkMemoryPropertyFlagBits = 0x00000010;
+pub const VK_MEMORY_PROPERTY_PROTECTED_BIT: VkMemoryPropertyFlagBits = 0x00000020;
+
+pub type VkMemoryHeapFlags = VkFlags;
+pub type VkMemoryHeapFlagBits = VkFlags;
+pub const VK_MEMORY_HEAP_DEVICE_LOCAL_BIT: VkMemoryHeapFlagBits = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_MEMORY_HEAP_MULTI_INSTANCE_BIT: VkMemoryHeapFlagBits = 0x00000002;
+
+pub type VkMemoryMapFlags = VkFlags;
+pub type VkMemoryMapFlagBits = VkFlags;
+
+pub type VkQueryControlFlags = VkFlags;
+pub type VkQueryControlFlagBits = VkFlags;
+pub const VK_QUERY_CONTROL_PRECISE_BIT: VkQueryControlFlagBits = 0x00000001;
+
+pub type VkQueryPipelineStatisticFlags = VkFlags;
+pub type VkQueryPipelineStatisticFlagBits = VkFlags;
+pub const VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_VERTICES_BIT: VkQueryPipelineStatisticFlagBits = 0x00000001;
+pub const VK_QUERY_PIPELINE_STATISTIC_INPUT_ASSEMBLY_PRIMITIVES_BIT: VkQueryPipelineStatisticFlagBits = 0x00000002;
+pub const VK_QUERY_PIPELINE_STATISTIC_VERTEX_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlagBits = 0x00000004;
+pub const VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlagBits = 0x00000008;
+pub const VK_QUERY_PIPELINE_STATISTIC_GEOMETRY_SHADER_PRIMITIVES_BIT: VkQueryPipelineStatisticFlagBits = 0x00000010;
+pub const VK_QUERY_PIPELINE_STATISTIC_CLIPPING_INVOCATIONS_BIT: VkQueryPipelineStatisticFlagBits = 0x00000020;
+pub const VK_QUERY_PIPELINE_STATISTIC_CLIPPING_PRIMITIVES_BIT: VkQueryPipelineStatisticFlagBits = 0x00000040;
+pub const VK_QUERY_PIPELINE_STATISTIC_FRAGMENT_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlagBits = 0x00000080;
+pub const VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_CONTROL_SHADER_PATCHES_BIT: VkQueryPipelineStatisticFlagBits = 0x00000100;
+pub const VK_QUERY_PIPELINE_STATISTIC_TESSELLATION_EVALUATION_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlagBits = 0x00000200;
+pub const VK_QUERY_PIPELINE_STATISTIC_COMPUTE_SHADER_INVOCATIONS_BIT: VkQueryPipelineStatisticFlagBits = 0x00000400;
+
+pub type VkQueryPoolCreateFlags = VkFlags;
+pub type VkQueryPoolCreateFlagBits = VkFlags;
+
+pub type VkQueryResultFlags = VkFlags;
+pub type VkQueryResultFlagBits = VkFlags;
+pub const VK_QUERY_RESULT_64_BIT: VkQueryResultFlagBits = 0x00000001;
+pub const VK_QUERY_RESULT_WAIT_BIT: VkQueryResultFlagBits = 0x00000002;
+pub const VK_QUERY_RESULT_WITH_AVAILABILITY_BIT: VkQueryResultFlagBits = 0x00000004;
+pub const VK_QUERY_RESULT_PARTIAL_BIT: VkQueryResultFlagBits = 0x00000008;
+
+pub type VkQueueFlags = VkFlags;
+pub type VkQueueFlagBits = VkFlags;
+pub const VK_QUEUE_GRAPHICS_BIT: VkQueueFlagBits = 0x00000001;
+pub const VK_QUEUE_COMPUTE_BIT: VkQueueFlagBits = 0x00000002;
+pub const VK_QUEUE_TRANSFER_BIT: VkQueueFlagBits = 0x00000004;
+pub const VK_QUEUE_SPARSE_BINDING_BIT: VkQueueFlagBits = 0x00000008;
+pub const VK_QUEUE_PROTECTED_BIT: VkQueueFlagBits = 0x00000010;
+
+pub type VkRenderPassCreateFlags = VkFlags;
+pub type VkRenderPassCreateFlagBits = VkFlags;
+
+pub type VkSampleCountFlags = VkFlags;
+pub type VkSampleCountFlagBits = VkFlags;
+pub const VK_SAMPLE_COUNT_1_BIT: VkSampleCountFlagBits = 0x00000001;
+pub const VK_SAMPLE_COUNT_2_BIT: VkSampleCountFlagBits = 0x00000002;
+pub const VK_SAMPLE_COUNT_4_BIT: VkSampleCountFlagBits = 0x00000004;
+pub const VK_SAMPLE_COUNT_8_BIT: VkSampleCountFlagBits = 0x00000008;
+pub const VK_SAMPLE_COUNT_16_BIT: VkSampleCountFlagBits = 0x00000010;
+pub const VK_SAMPLE_COUNT_32_BIT: VkSampleCountFlagBits = 0x00000020;
+pub const VK_SAMPLE_COUNT_64_BIT: VkSampleCountFlagBits = 0x00000040;
+
+pub type VkSamplerCreateFlags = VkFlags;
+pub type VkSamplerCreateFlagBits = VkFlags;
+
+pub type VkSemaphoreCreateFlags = VkFlags;
+pub type VkSemaphoreCreateFlagBits = VkFlags;
+
+#[cfg(feature = "VK_KHR_external_semaphore")]
+pub type VkSemaphoreImportFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkSemaphoreImportFlags = VkSemaphoreImportFlagsKHR;
+#[cfg(feature = "VK_KHR_external_semaphore")]
+pub type VkSemaphoreImportFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkSemaphoreImportFlagBits = VkSemaphoreImportFlagBitsKHR;
+#[cfg(feature = "VK_KHR_external_semaphore")]
+pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT_KHR: VkSemaphoreImportFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SEMAPHORE_IMPORT_TEMPORARY_BIT: VkSemaphoreImportFlagBitsKHR = 0x00000001;
+
+pub type VkShaderModuleCreateFlags = VkFlags;
+pub type VkShaderModuleCreateFlagBits = VkFlags;
+
+pub type VkShaderStageFlags = VkFlags;
+pub type VkShaderStageFlagBits = VkFlags;
+pub const VK_SHADER_STAGE_VERTEX_BIT: VkShaderStageFlagBits = 0x00000001;
+pub const VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT: VkShaderStageFlagBits = 0x00000002;
+pub const VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT: VkShaderStageFlagBits = 0x00000004;
+pub const VK_SHADER_STAGE_GEOMETRY_BIT: VkShaderStageFlagBits = 0x00000008;
+pub const VK_SHADER_STAGE_FRAGMENT_BIT: VkShaderStageFlagBits = 0x00000010;
+pub const VK_SHADER_STAGE_COMPUTE_BIT: VkShaderStageFlagBits = 0x00000020;
+
+pub type VkSparseMemoryBindFlags = VkFlags;
+pub type VkSparseMemoryBindFlagBits = VkFlags;
+pub const VK_SPARSE_MEMORY_BIND_METADATA_BIT: VkSparseMemoryBindFlagBits = 0x00000001;
+
+pub type VkSparseImageFormatFlags = VkFlags;
+pub type VkSparseImageFormatFlagBits = VkFlags;
+pub const VK_SPARSE_IMAGE_FORMAT_SINGLE_MIPTAIL_BIT: VkSparseImageFormatFlagBits = 0x00000001;
+pub const VK_SPARSE_IMAGE_FORMAT_ALIGNED_MIP_SIZE_BIT: VkSparseImageFormatFlagBits = 0x00000002;
+pub const VK_SPARSE_IMAGE_FORMAT_NONSTANDARD_BLOCK_SIZE_BIT: VkSparseImageFormatFlagBits = 0x00000004;
+
+pub type VkStencilFaceFlags = VkFlags;
+pub type VkStencilFaceFlagBits = VkFlags;
+pub const VK_STENCIL_FACE_FRONT_BIT: VkStencilFaceFlagBits = 0x00000001;
+pub const VK_STENCIL_FACE_BACK_BIT: VkStencilFaceFlagBits = 0x00000002;
+
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkSubgroupFeatureFlags = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkSubgroupFeatureFlagBits = VkFlags;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_BASIC_BIT: VkSubgroupFeatureFlagBits = 0x00000001;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_VOTE_BIT: VkSubgroupFeatureFlagBits = 0x00000002;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_ARITHMETIC_BIT: VkSubgroupFeatureFlagBits = 0x00000004;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_BALLOT_BIT: VkSubgroupFeatureFlagBits = 0x00000008;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_SHUFFLE_BIT: VkSubgroupFeatureFlagBits = 0x00000010;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT: VkSubgroupFeatureFlagBits = 0x00000020;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_CLUSTERED_BIT: VkSubgroupFeatureFlagBits = 0x00000040;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_SUBGROUP_FEATURE_QUAD_BIT: VkSubgroupFeatureFlagBits = 0x00000080;
+
+pub type VkSubpassDescriptionFlags = VkFlags;
+pub type VkSubpassDescriptionFlagBits = VkFlags;
+
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkSurfaceTransformFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkSurfaceTransformFlagBitsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000001;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000002;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000004;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000008;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000010;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000020;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000040;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000080;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR: VkSurfaceTransformFlagBitsKHR = 0x00000100;
+
+#[cfg(feature = "VK_KHR_swapchain")]
+pub type VkSwapchainCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_swapchain")]
+pub type VkSwapchainCreateFlagBitsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_swapchain")]
+#[cfg(feature = "VK_KHR_device_group")]
+pub const VK_SWAPCHAIN_CREATE_SPLIT_INSTNACE_BIND_REGIONS_BIT_KHR: VkSwapchainCreateFlagBitsKHR = 0x00000001;
+
+#[cfg(feature = "VK_KHR_wayland_surface")]
+pub type VkWaylandSurfaceCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_wayland_surface")]
+pub type VkWaylandSurfaceCreateFlagBitsKHR = VkFlags;
+
+#[cfg(feature = "VK_KHR_win32_surface")]
+pub type VkWin32SurfaceCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_win32_surface")]
+pub type VkWin32SurfaceCreateFlagBitsKHR = VkFlags;
+
+#[cfg(feature = "VK_KHR_xcb_surface")]
+pub type VkXcbSurfaceCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_xcb_surface")]
+pub type VkXcbSurfaceCreateFlagBitsKHR = VkFlags;
+
+#[cfg(feature = "VK_KHR_xlib_surface")]
+pub type VkXlibSurfaceCreateFlagsKHR = VkFlags;
+#[cfg(feature = "VK_KHR_xlib_surface")]
+pub type VkXlibSurfaceCreateFlagBitsKHR = VkFlags;
+pub const VK_SHADER_STAGE_ALL_GRAPHICS: VkShaderStageFlags = 0x0000001f;
+pub const VK_SHADER_STAGE_ALL: VkShaderStageFlags = 0x7fffffff;
+pub const VK_CULL_MODE_NONE: VkCullModeFlags = 0;
+pub const VK_CULL_MODE_FRONT_AND_BACK: VkCullModeFlags = 3;
+pub const VK_STENCIL_FACE_FRONT_AND_BACK: VkStencilFaceFlags = 3;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkInstance(pub *mut core::ffi::c_void);
+impl crate::VkRawHandle for VkInstance {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_INSTANCE;
+    const NULL: Self = Self(core::ptr::null_mut());
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0 as usize as _
+    }
+}
+pub const VK_OBJECT_TYPE_INSTANCE: VkObjectType = 1;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkPhysicalDevice(pub *mut core::ffi::c_void);
+impl crate::VkRawHandle for VkPhysicalDevice {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PHYSICAL_DEVICE;
+    const NULL: Self = Self(core::ptr::null_mut());
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0 as usize as _
+    }
+}
+pub const VK_OBJECT_TYPE_PHYSICAL_DEVICE: VkObjectType = 2;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDevice(pub *mut core::ffi::c_void);
+impl crate::VkRawHandle for VkDevice {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE;
+    const NULL: Self = Self(core::ptr::null_mut());
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0 as usize as _
+    }
+}
+pub const VK_OBJECT_TYPE_DEVICE: VkObjectType = 3;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkQueue(pub *mut core::ffi::c_void);
+impl crate::VkRawHandle for VkQueue {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_QUEUE;
+    const NULL: Self = Self(core::ptr::null_mut());
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0 as usize as _
+    }
+}
+pub const VK_OBJECT_TYPE_QUEUE: VkObjectType = 4;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkCommandBuffer(pub *mut core::ffi::c_void);
+impl crate::VkRawHandle for VkCommandBuffer {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
+    const NULL: Self = Self(core::ptr::null_mut());
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0 as usize as _
+    }
+}
+pub const VK_OBJECT_TYPE_COMMAND_BUFFER: VkObjectType = 6;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDeviceMemory(pub u64);
+impl crate::VkRawHandle for VkDeviceMemory {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_DEVICE_MEMORY: VkObjectType = 8;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkCommandPool(pub u64);
+impl crate::VkRawHandle for VkCommandPool {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_COMMAND_POOL;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_COMMAND_POOL: VkObjectType = 25;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkBuffer(pub u64);
+impl crate::VkRawHandle for VkBuffer {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_BUFFER: VkObjectType = 9;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkBufferView(pub u64);
+impl crate::VkRawHandle for VkBufferView {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER_VIEW;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_BUFFER_VIEW: VkObjectType = 13;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkImage(pub u64);
+impl crate::VkRawHandle for VkImage {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_IMAGE: VkObjectType = 10;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkImageView(pub u64);
+impl crate::VkRawHandle for VkImageView {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE_VIEW;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_IMAGE_VIEW: VkObjectType = 14;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkShaderModule(pub u64);
+impl crate::VkRawHandle for VkShaderModule {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SHADER_MODULE;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_SHADER_MODULE: VkObjectType = 15;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkPipeline(pub u64);
+impl crate::VkRawHandle for VkPipeline {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PIPELINE;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_PIPELINE: VkObjectType = 19;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkPipelineLayout(pub u64);
+impl crate::VkRawHandle for VkPipelineLayout {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PIPELINE_LAYOUT;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_PIPELINE_LAYOUT: VkObjectType = 17;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSampler(pub u64);
+impl crate::VkRawHandle for VkSampler {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SAMPLER;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_SAMPLER: VkObjectType = 21;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDescriptorSet(pub u64);
+impl crate::VkRawHandle for VkDescriptorSet {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_SET;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_DESCRIPTOR_SET: VkObjectType = 23;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDescriptorSetLayout(pub u64);
+impl crate::VkRawHandle for VkDescriptorSetLayout {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT: VkObjectType = 20;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDescriptorPool(pub u64);
+impl crate::VkRawHandle for VkDescriptorPool {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_POOL;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_DESCRIPTOR_POOL: VkObjectType = 22;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkFence(pub u64);
+impl crate::VkRawHandle for VkFence {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_FENCE;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_FENCE: VkObjectType = 7;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSemaphore(pub u64);
+impl crate::VkRawHandle for VkSemaphore {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SEMAPHORE;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_SEMAPHORE: VkObjectType = 5;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkEvent(pub u64);
+impl crate::VkRawHandle for VkEvent {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_EVENT;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_EVENT: VkObjectType = 11;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkQueryPool(pub u64);
+impl crate::VkRawHandle for VkQueryPool {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_QUERY_POOL;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_QUERY_POOL: VkObjectType = 12;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkFramebuffer(pub u64);
+impl crate::VkRawHandle for VkFramebuffer {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_FRAMEBUFFER;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_FRAMEBUFFER: VkObjectType = 24;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkRenderPass(pub u64);
+impl crate::VkRawHandle for VkRenderPass {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_RENDER_PASS;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_RENDER_PASS: VkObjectType = 18;
+
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkPipelineCache(pub u64);
+impl crate::VkRawHandle for VkPipelineCache {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PIPELINE_CACHE;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+pub const VK_OBJECT_TYPE_PIPELINE_CACHE: VkObjectType = 16;
+
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDisplayKHR(pub u64);
+#[cfg(feature = "VK_KHR_display")]
+impl crate::VkRawHandle for VkDisplayKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 1000002000;
+
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDisplayModeKHR(pub u64);
+#[cfg(feature = "VK_KHR_display")]
+impl crate::VkRawHandle for VkDisplayModeKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 1000002001;
+
+#[cfg(feature = "VK_KHR_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSurfaceKHR(pub u64);
+#[cfg(feature = "VK_KHR_surface")]
+impl crate::VkRawHandle for VkSurfaceKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 1000000000;
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkSwapchainKHR(pub u64);
+#[cfg(feature = "VK_KHR_swapchain")]
+impl crate::VkRawHandle for VkSwapchainKHR {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 1000001000;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDebugReportCallbackEXT(pub u64);
+#[cfg(feature = "VK_EXT_debug_report")]
+impl crate::VkRawHandle for VkDebugReportCallbackEXT {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkDebugUtilsMessengerEXT(pub u64);
+#[cfg(feature = "VK_EXT_debug_utils")]
+impl crate::VkRawHandle for VkDebugUtilsMessengerEXT {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT;
+    const NULL: Self = Self(0);
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0
+    }
+}
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT: VkObjectType = 1000128000;
+pub const VK_LOD_CLAMP_NONE: f32 = 1000.0;
+pub const VK_REMAINING_MIP_LEVELS: u32 = 0xffff_ffff;
+pub const VK_REMAINING_ARRAY_LAYERS: u32 = 0xffff_ffff;
+pub const VK_WHOLE_SIZE: u64 = !0;
+pub const VK_ATTACHMENT_UNUSED: u32 = 0xffff_ffff;
+pub const VK_TRUE: VkBool32 = 1;
+pub const VK_FALSE: VkBool32 = 0;
+pub const VK_QUEUE_FAMILY_IGNORED: u32 = 0xffff_ffff;
+pub const VK_SUBPASS_EXTERNAL: u32 = 0xffff_ffff;
+pub const VK_MAX_PHYSICAL_DEVICE_NAME_SIZE: usize = 256;
+pub const VK_UUID_SIZE: usize = 16;
+pub const VK_MAX_MEMORY_TYPES: usize = 32;
+pub const VK_MAX_MEMORY_HEAPS: usize = 16;
+pub const VK_MAX_EXTENSION_NAME_SIZE: usize = 256;
+pub const VK_MAX_DESCRIPTION_SIZE: usize = 256;
+#[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
+pub const VK_LUID_SIZE_KHR: usize = 8;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_LUID_SIZE: usize = VK_LUID_SIZE_KHR;
+#[cfg(feature = "VK_KHR_external_memory")]
+pub const VK_QUEUE_FAMILY_EXTERNAL_KHR: u32 = !1;
+#[cfg(feature = "Allow1_1APIs")]pub const VK_QUEUE_FAMILY_EXTERNAL: u32 = !1;
+
+#[repr(transparent)]
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct VkResult(pub i32);
+pub const VK_SUCCESS: VkResult = VkResult(0);
+pub const VK_NOT_READY: VkResult = VkResult(1);
+pub const VK_TIMEOUT: VkResult = VkResult(2);
+pub const VK_EVENT_SET: VkResult = VkResult(3);
+pub const VK_EVENT_RESET: VkResult = VkResult(4);
+pub const VK_INCOMPLETE: VkResult = VkResult(5);
+pub const VK_ERROR_OUT_OF_HOST_MEMORY: VkResult = VkResult(-1);
+pub const VK_ERROR_OUT_OF_DEVICE_MEMORY: VkResult = VkResult(-2);
+pub const VK_ERROR_INITIALIZATION_FAILED: VkResult = VkResult(-3);
+pub const VK_ERROR_DEVICE_LOST: VkResult = VkResult(-4);
+pub const VK_ERROR_MEMORY_MAP_FAILED: VkResult = VkResult(-5);
+pub const VK_ERROR_LAYER_NOT_PRESENT: VkResult = VkResult(-6);
+pub const VK_ERROR_EXTENSION_NOT_PRESENT: VkResult = VkResult(-7);
+pub const VK_ERROR_FEATURE_NOT_PRESENT: VkResult = VkResult(-8);
+pub const VK_ERROR_INCOMPATIBLE_DRIVER: VkResult = VkResult(-9);
+pub const VK_ERROR_TOO_MANY_OBJECTS: VkResult = VkResult(-10);
+pub const VK_ERROR_FORMAT_NOT_SUPPORTED: VkResult = VkResult(-11);
+pub const VK_ERROR_FRAGMENTED_POOL: VkResult = VkResult(-12);
+pub const VK_ERROR_UNKNOWN: VkResult = VkResult(-13);
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_ERROR_SURFACE_LOST_KHR: VkResult = VkResult(-1000000000);
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_ERROR_NATIVE_WINDOW_IN_USE_KHR: VkResult = VkResult(-1000000001);
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_SUBOPTIMAL_KHR: VkResult = VkResult(1000001003);
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_ERROR_OUT_OF_DATE_KHR: VkResult = VkResult(-1000001004);
+#[cfg(feature = "VK_KHR_display_swapchain")]
+pub const VK_ERROR_INCOMPATIBLE_DISPLAY_KHR: VkResult = VkResult(-1000003001);
+#[cfg(feature = "VK_KHR_external_memory")]
+pub const VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR: VkResult = VkResult(-1000072003);
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_ERROR_INVALID_EXTERNAL_HANDLE: VkResult = VkResult(-1000072003);
+
+pub type VkStructureType = i32;
+pub type VkObjectType = i32;
+
+pub type VkAttachmentLoadOp = i32;
+pub const VK_ATTACHMENT_LOAD_OP_LOAD: VkAttachmentLoadOp = 0;
+pub const VK_ATTACHMENT_LOAD_OP_CLEAR: VkAttachmentLoadOp = 1;
+pub const VK_ATTACHMENT_LOAD_OP_DONT_CARE: VkAttachmentLoadOp = 2;
+
+pub type VkAttachmentStoreOp = i32;
+pub const VK_ATTACHMENT_STORE_OP_STORE: VkAttachmentStoreOp = 0;
+pub const VK_ATTACHMENT_STORE_OP_DONT_CARE: VkAttachmentStoreOp = 1;
+
+pub type VkBlendFactor = i32;
+pub const VK_BLEND_FACTOR_ZERO: VkBlendFactor = 0;
+pub const VK_BLEND_FACTOR_ONE: VkBlendFactor = 1;
+pub const VK_BLEND_FACTOR_SRC_COLOR: VkBlendFactor = 2;
+pub const VK_BLEND_FACTOR_ONE_MINUS_SRC_COLOR: VkBlendFactor = 3;
+pub const VK_BLEND_FACTOR_DST_COLOR: VkBlendFactor = 4;
+pub const VK_BLEND_FACTOR_ONE_MINUS_DST_COLOR: VkBlendFactor = 5;
+pub const VK_BLEND_FACTOR_SRC_ALPHA: VkBlendFactor = 6;
+pub const VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA: VkBlendFactor = 7;
+pub const VK_BLEND_FACTOR_DST_ALPHA: VkBlendFactor = 8;
+pub const VK_BLEND_FACTOR_ONE_MINUS_DST_ALPHA: VkBlendFactor = 9;
+pub const VK_BLEND_FACTOR_CONSTANT_COLOR: VkBlendFactor = 10;
+pub const VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_COLOR: VkBlendFactor = 11;
+pub const VK_BLEND_FACTOR_CONSTANT_ALPHA: VkBlendFactor = 12;
+pub const VK_BLEND_FACTOR_ONE_MINUS_CONSTANT_ALPHA: VkBlendFactor = 13;
+pub const VK_BLEND_FACTOR_SRC_ALPHA_STAURATE: VkBlendFactor = 14;
+pub const VK_BLEND_FACTOR_SRC1_COLOR: VkBlendFactor = 15;
+pub const VK_BLEND_FACTOR_ONE_MINUS_SRC1_COLOR: VkBlendFactor = 16;
+pub const VK_BLEND_FACTOR_SRC1_ALPHA: VkBlendFactor = 17;
+pub const VK_BLEND_FACTOR_ONE_MINUS_SRC1_ALPHA: VkBlendFactor = 18;
+
+pub type VkBlendOp = i32;
+pub const VK_BLEND_OP_ADD: VkBlendOp = 0;
+pub const VK_BLEND_OP_SUBTRACT: VkBlendOp = 1;
+pub const VK_BLEND_OP_REVERSE_SUBTRACT: VkBlendOp = 2;
+pub const VK_BLEND_OP_MIN: VkBlendOp = 3;
+pub const VK_BLEND_OP_MAX: VkBlendOp = 4;
+
+pub type VkBorderColor = i32;
+pub const VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK: VkBorderColor = 0;
+pub const VK_BORDER_COLOR_INT_TRANSPARENT_BLACK: VkBorderColor = 1;
+pub const VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK: VkBorderColor = 2;
+pub const VK_BORDER_COLOR_INT_OPAQUE_BLACK: VkBorderColor = 3;
+pub const VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE: VkBorderColor = 4;
+pub const VK_BORDER_COLOR_INT_OPAQUE_WHITE: VkBorderColor = 5;
+
+pub type VkComponentSwizzle = i32;
+pub const VK_COMPONENT_SWIZZLE_IDENTITY: VkComponentSwizzle = 0;
+pub const VK_COMPONENT_SWIZZLE_ZERO: VkComponentSwizzle = 1;
+pub const VK_COMPONENT_SWIZZLE_ONE: VkComponentSwizzle = 2;
+pub const VK_COMPONENT_SWIZZLE_R: VkComponentSwizzle = 3;
+pub const VK_COMPONENT_SWIZZLE_G: VkComponentSwizzle = 4;
+pub const VK_COMPONENT_SWIZZLE_B: VkComponentSwizzle = 5;
+pub const VK_COMPONENT_SWIZZLE_A: VkComponentSwizzle = 6;
+
+pub type VkCommandBufferLevel = i32;
+pub const VK_COMMAND_BUFFER_LEVEL_PRIMARY: VkCommandBufferLevel = 0;
+pub const VK_COMMAND_BUFFER_LEVEL_SECONDARY: VkCommandBufferLevel = 1;
+
+pub type VkCompareOp = i32;
+pub const VK_COMPARE_OP_NEVER: VkCompareOp = 0;
+pub const VK_COMPARE_OP_LESS: VkCompareOp = 1;
+pub const VK_COMPARE_OP_EQUAL: VkCompareOp = 2;
+pub const VK_COMPARE_OP_LESS_OR_EQUAL: VkCompareOp = 3;
+pub const VK_COMPARE_OP_GREATER: VkCompareOp = 4;
+pub const VK_COMPARE_OP_NOT_EQUAL: VkCompareOp = 5;
+pub const VK_COMPARE_OP_GREATER_OR_EQUAL: VkCompareOp = 6;
+pub const VK_COMPARE_OP_ALWAYS: VkCompareOp = 7;
+
+pub type VkDescriptorType = i32;
+pub const VK_DESCRIPTOR_TYPE_SAMPLER: VkDescriptorType = 0;
+pub const VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER: VkDescriptorType = 1;
+pub const VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE: VkDescriptorType = 2;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_IMAGE: VkDescriptorType = 3;
+pub const VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER: VkDescriptorType = 4;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER: VkDescriptorType = 5;
+pub const VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER: VkDescriptorType = 6;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_BUFFER: VkDescriptorType = 7;
+pub const VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC: VkDescriptorType = 8;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC: VkDescriptorType = 9;
+pub const VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT: VkDescriptorType = 10;
+
+pub type VkDynamicState = i32;
+pub const VK_DYNAMIC_STATE_VIEWPORT: VkDynamicState = 0;
+pub const VK_DYNAMIC_STATE_SCISSOR: VkDynamicState = 1;
+pub const VK_DYNAMIC_STATE_LINE_WIDTH: VkDynamicState = 2;
+pub const VK_DYNAMIC_STATE_DEPTH_BIAS: VkDynamicState = 3;
+pub const VK_DYNAMIC_STATE_BLEND_CONSTANTS: VkDynamicState = 4;
+pub const VK_DYNAMIC_STATE_DEPTH_BOUNDS: VkDynamicState = 5;
+pub const VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK: VkDynamicState = 6;
+pub const VK_DYNAMIC_STATE_STENCIL_WRITE_MASK: VkDynamicState = 7;
+pub const VK_DYNAMIC_STATE_STENCIL_REFERENCE: VkDynamicState = 8;
+
+pub type VkFilter = i32;
+pub const VK_FILTER_NEAREST: VkFilter = 0;
+pub const VK_FILTER_LINEAR: VkFilter = 1;
+
+pub type VkFrontFace = i32;
+pub const VK_FRONT_FACE_COUNTER_CLOCKWISE: VkFrontFace = 0;
+pub const VK_FRONT_FACE_CLOCKWISE: VkFrontFace = 1;
+
+pub type VkImageLayout = i32;
+pub const VK_IMAGE_LAYOUT_UNDEFINED: VkImageLayout = 0;
+pub const VK_IMAGE_LAYOUT_GENERAL: VkImageLayout = 1;
+pub const VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: VkImageLayout = 2;
+pub const VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL: VkImageLayout = 3;
+pub const VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL: VkImageLayout = 4;
+pub const VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL: VkImageLayout = 5;
+pub const VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL: VkImageLayout = 6;
+pub const VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL: VkImageLayout = 7;
+pub const VK_IMAGE_LAYOUT_PREINITIALIZED: VkImageLayout = 8;
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_IMAGE_LAYOUT_PRESENT_SRC_KHR: VkImageLayout = 1000001002;
+
+pub type VkImageTiling = i32;
+pub const VK_IMAGE_TILING_OPTIMAL: VkImageTiling = 0;
+pub const VK_IMAGE_TILING_LINEAR: VkImageTiling = 1;
+
+pub type VkImageType = i32;
+pub const VK_IMAGE_TYPE_1D: VkImageType = 0;
+pub const VK_IMAGE_TYPE_2D: VkImageType = 1;
+pub const VK_IMAGE_TYPE_3D: VkImageType = 2;
+
+pub type VkImageViewType = i32;
+pub const VK_IMAGE_VIEW_TYPE_1D: VkImageViewType = 0;
+pub const VK_IMAGE_VIEW_TYPE_2D: VkImageViewType = 1;
+pub const VK_IMAGE_VIEW_TYPE_3D: VkImageViewType = 2;
+pub const VK_IMAGE_VIEW_TYPE_CUBE: VkImageViewType = 3;
+pub const VK_IMAGE_VIEW_TYPE_1D_ARRAY: VkImageViewType = 4;
+pub const VK_IMAGE_VIEW_TYPE_2D_ARRAY: VkImageViewType = 5;
+pub const VK_IMAGE_VIEW_TYPE_CUBE_ARRAY: VkImageViewType = 6;
+
+pub type VkIndexType = i32;
+pub const VK_INDEX_TYPE_UINT16: VkIndexType = 0;
+pub const VK_INDEX_TYPE_UINT32: VkIndexType = 1;
+
+pub type VkSharingMode = i32;
+pub const VK_SHARING_MODE_EXCLUSIVE: VkSharingMode = 0;
+pub const VK_SHARING_MODE_CONCURRENT: VkSharingMode = 1;
+
+pub type VkLogicOp = i32;
+pub const VK_LOGIC_OP_CLEAR: VkLogicOp = 0;
+pub const VK_LOGIC_OP_AND: VkLogicOp = 1;
+pub const VK_LOGIC_OP_AND_REVERSE: VkLogicOp = 2;
+pub const VK_LOGIC_OP_COPY: VkLogicOp = 3;
+pub const VK_LOGIC_OP_AND_INVERTED: VkLogicOp = 4;
+pub const VK_LOGIC_OP_NO_OP: VkLogicOp = 5;
+pub const VK_LOGIC_OP_XOR: VkLogicOp = 6;
+pub const VK_LOGIC_OP_OR: VkLogicOp = 7;
+pub const VK_LOGIC_OP_NOR: VkLogicOp = 8;
+pub const VK_LOGIC_OP_EQUIVALENT: VkLogicOp = 9;
+pub const VK_LOGIC_OP_INVERT: VkLogicOp = 10;
+pub const VK_LOGIC_OP_OR_REVERSE: VkLogicOp = 11;
+pub const VK_LOGIC_OP_COPY_INVERTED: VkLogicOp = 12;
+pub const VK_LOGIC_OP_OR_INVERTED: VkLogicOp = 13;
+pub const VK_LOGIC_OP_NAND: VkLogicOp = 14;
+pub const VK_LOGIC_OP_SET: VkLogicOp = 15;
+
+pub type VkPhysicalDeviceType = i32;
+pub const VK_PHYSICAL_DEVICE_TYPE_OTHER: VkPhysicalDeviceType = 0;
+pub const VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: VkPhysicalDeviceType = 1;
+pub const VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: VkPhysicalDeviceType = 2;
+pub const VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: VkPhysicalDeviceType = 3;
+pub const VK_PHYSICAL_DEVICE_TYPE_CPU: VkPhysicalDeviceType = 4;
+
+pub type VkPipelineBindPoint = i32;
+pub const VK_PIPELINE_BIND_POINT_GRAPHICS: VkPipelineBindPoint = 0;
+pub const VK_PIPELINE_BIND_POINT_COMPUTE: VkPipelineBindPoint = 1;
+
+pub type VkPolygonMode = i32;
+pub const VK_POLYGON_MODE_FILL: VkPolygonMode = 0;
+pub const VK_POLYGON_MODE_LINE: VkPolygonMode = 1;
+pub const VK_POLYGON_MODE_POINT: VkPolygonMode = 2;
+
+pub type VkPrimitiveTopology = i32;
+pub const VK_PRIMITIVE_TOPOLOGY_POINT_LIST: VkPrimitiveTopology = 0;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_LIST: VkPrimitiveTopology = 1;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_STRIP: VkPrimitiveTopology = 2;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST: VkPrimitiveTopology = 3;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: VkPrimitiveTopology = 4;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN: VkPrimitiveTopology = 5;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY: VkPrimitiveTopology = 6;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY: VkPrimitiveTopology = 7;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY: VkPrimitiveTopology = 8;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY: VkPrimitiveTopology = 9;
+pub const VK_PRIMITIVE_TOPOLOGY_PATCH_LIST: VkPrimitiveTopology = 10;
+
+pub type VkQueryType = i32;
+pub const VK_QUERY_TYPE_OCCLUSION: VkQueryType = 0;
+pub const VK_QUERY_TYPE_PIPELINE_STATISTICS: VkQueryType = 1;
+pub const VK_QUERY_TYPE_TIMESTAMP: VkQueryType = 2;
+
+pub type VkSubpassContents = i32;
+pub const VK_SUBPASS_CONTENTS_INLINE: VkSubpassContents = 0;
+pub const VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS: VkSubpassContents = 1;
+
+pub type VkStencilOp = i32;
+pub const VK_STENCIL_OP_KEEP: VkStencilOp = 0;
+pub const VK_STENCIL_OP_ZERO: VkStencilOp = 1;
+pub const VK_STENCIL_OP_REPLACE: VkStencilOp = 2;
+pub const VK_STENCIL_OP_INCREMENT_AND_CLAMP: VkStencilOp = 3;
+pub const VK_STENCIL_OP_DECREMENT_AND_CLAMP: VkStencilOp = 4;
+pub const VK_STENCIL_OP_INVERT: VkStencilOp = 5;
+pub const VK_STENCIL_OP_INCREMENT_AND_WRAP: VkStencilOp = 6;
+pub const VK_STENCIL_OP_DECREMENT_AND_WRAP: VkStencilOp = 7;
+
+pub type VkSystemAllocationScope = i32;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_COMMAND: VkSystemAllocationScope = 0;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_OBJECT: VkSystemAllocationScope = 1;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_CACHE: VkSystemAllocationScope = 2;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_DEVICE: VkSystemAllocationScope = 3;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE: VkSystemAllocationScope = 4;
+
+pub type VkInternalAllocationType = i32;
+pub const VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE: VkInternalAllocationType = 0;
+
+pub type VkSamplerAddressMode = i32;
+pub const VK_SAMPLER_ADDRESS_MODE_REPEAT: VkSamplerAddressMode = 0;
+pub const VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT: VkSamplerAddressMode = 1;
+pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE: VkSamplerAddressMode = 2;
+pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER: VkSamplerAddressMode = 3;
+pub const VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
+
+pub type VkSamplerMipmapMode = i32;
+pub const VK_SAMPLER_MIPMAP_MODE_NEAREST: VkSamplerMipmapMode = 0;
+pub const VK_SAMPLER_MIPMAP_MODE_LINEAR: VkSamplerMipmapMode = 1;
+
+pub type VkVertexInputRate = i32;
+pub const VK_VERTEX_INPUT_RATE_VERTEX: VkVertexInputRate = 0;
+pub const VK_VERTEX_INPUT_RATE_INSTANCE: VkVertexInputRate = 1;
+
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkColorSpaceKHR = i32;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_COLOR_SPACE_SRGB_NONLINEAR_KHR: VkColorSpaceKHR = 0;
+
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkPresentModeKHR = i32;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_IMMEDIATE_KHR: VkPresentModeKHR = 0;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_MAILBOX_KHR: VkPresentModeKHR = 1;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_FIFO_KHR: VkPresentModeKHR = 2;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_FIFO_RELAXED_KHR: VkPresentModeKHR = 3;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+pub type VkDebugReportObjectTypeEXT = i32;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_UNKNOWN_EXT: VkDebugReportObjectTypeEXT = 0;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_INSTANCE_EXT: VkDebugReportObjectTypeEXT = 1;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_PHYSICAL_DEVICE_EXT: VkDebugReportObjectTypeEXT = 2;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_EXT: VkDebugReportObjectTypeEXT = 3;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_QUEUE_EXT: VkDebugReportObjectTypeEXT = 4;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SEMAPHORE_EXT: VkDebugReportObjectTypeEXT = 5;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_BUFFER_EXT: VkDebugReportObjectTypeEXT = 6;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_FENCE_EXT: VkDebugReportObjectTypeEXT = 7;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEVICE_MEMORY_EXT: VkDebugReportObjectTypeEXT = 8;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_EXT: VkDebugReportObjectTypeEXT = 9;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_EXT: VkDebugReportObjectTypeEXT = 10;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_EVENT_EXT: VkDebugReportObjectTypeEXT = 11;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_QUERY_POOL_EXT: VkDebugReportObjectTypeEXT = 12;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_BUFFER_VIEW_EXT: VkDebugReportObjectTypeEXT = 13;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_IMAGE_VIEW_EXT: VkDebugReportObjectTypeEXT = 14;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SHADER_MODULE_EXT: VkDebugReportObjectTypeEXT = 15;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_CACHE_EXT: VkDebugReportObjectTypeEXT = 16;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_LAYOUT_EXT: VkDebugReportObjectTypeEXT = 17;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_RENDER_PASS_EXT: VkDebugReportObjectTypeEXT = 18;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_PIPELINE_EXT: VkDebugReportObjectTypeEXT = 19;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT_EXT: VkDebugReportObjectTypeEXT = 20;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_EXT: VkDebugReportObjectTypeEXT = 21;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_POOL_EXT: VkDebugReportObjectTypeEXT = 22;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_SET_EXT: VkDebugReportObjectTypeEXT = 23;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_FRAMEBUFFER_EXT: VkDebugReportObjectTypeEXT = 24;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_COMMAND_POOL_EXT: VkDebugReportObjectTypeEXT = 25;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SURFACE_KHR_EXT: VkDebugReportObjectTypeEXT = 26;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_SWAPCHAIN_KHR_EXT: VkDebugReportObjectTypeEXT = 27;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT_EXT: VkDebugReportObjectTypeEXT = 28;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DISPLAY_KHR_EXT: VkDebugReportObjectTypeEXT = 29;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_DISPLAY_MODE_KHR_EXT: VkDebugReportObjectTypeEXT = 30;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_OBJECT_TABLE_NVX_EXT: VkDebugReportObjectTypeEXT = 31;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX_EXT: VkDebugReportObjectTypeEXT = 32;
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT: VkDebugReportObjectTypeEXT = 33;
+
+pub type VkFormat = i32;
+pub const VK_FORMAT_UNDEFINED: VkFormat = 0;
+pub const VK_FORMAT_R4G4_UNORM_PACK8: VkFormat = 1;
+pub const VK_FORMAT_R4G4B4A4_UNORM_PACK16: VkFormat = 2;
+pub const VK_FORMAT_B4G4R4A4_UNORM_PACK16: VkFormat = 3;
+pub const VK_FORMAT_R5G6B5_UNORM_PACK16: VkFormat = 4;
+pub const VK_FORMAT_B5G6R5_UNORM_PACK16: VkFormat = 5;
+pub const VK_FORMAT_R5G5B5A1_UNORM_PACK16: VkFormat = 6;
+pub const VK_FORMAT_B5G5R5A1_UNORM_PACK16: VkFormat = 7;
+pub const VK_FORMAT_A1R5G5B5_UNORM_PACK16: VkFormat = 8;
+pub const VK_FORMAT_R8_UNORM: VkFormat = 9;
+pub const VK_FORMAT_R8_SNORM: VkFormat = 10;
+pub const VK_FORMAT_R8_USCALED: VkFormat = 11;
+pub const VK_FORMAT_R8_SSCALED: VkFormat = 12;
+pub const VK_FORMAT_R8_UINT: VkFormat = 13;
+pub const VK_FORMAT_R8_SINT: VkFormat = 14;
+pub const VK_FORMAT_R8_SRGB: VkFormat = 15;
+pub const VK_FORMAT_R8G8_UNORM: VkFormat = 16;
+pub const VK_FORMAT_R8G8_SNORM: VkFormat = 17;
+pub const VK_FORMAT_R8G8_USCALED: VkFormat = 18;
+pub const VK_FORMAT_R8G8_SSCALED: VkFormat = 19;
+pub const VK_FORMAT_R8G8_UINT: VkFormat = 20;
+pub const VK_FORMAT_R8G8_SINT: VkFormat = 21;
+pub const VK_FORMAT_R8G8_SRGB: VkFormat = 22;
+pub const VK_FORMAT_R8G8B8_UNORM: VkFormat = 23;
+pub const VK_FORMAT_R8G8B8_SNORM: VkFormat = 24;
+pub const VK_FORMAT_R8G8B8_USCALED: VkFormat = 25;
+pub const VK_FORMAT_R8G8B8_SSCALED: VkFormat = 26;
+pub const VK_FORMAT_R8G8B8_UINT: VkFormat = 27;
+pub const VK_FORMAT_R8G8B8_SINT: VkFormat = 28;
+pub const VK_FORMAT_R8G8B8_SRGB: VkFormat = 29;
+pub const VK_FORMAT_B8G8R8_UNORM: VkFormat = 30;
+pub const VK_FORMAT_B8G8R8_SNORM: VkFormat = 31;
+pub const VK_FORMAT_B8G8R8_USCALED: VkFormat = 32;
+pub const VK_FORMAT_B8G8R8_SSCALED: VkFormat = 33;
+pub const VK_FORMAT_B8G8R8_UINT: VkFormat = 34;
+pub const VK_FORMAT_B8G8R8_SINT: VkFormat = 35;
+pub const VK_FORMAT_B8G8R8_SRGB: VkFormat = 36;
+pub const VK_FORMAT_R8G8B8A8_UNORM: VkFormat = 37;
+pub const VK_FORMAT_R8G8B8A8_SNORM: VkFormat = 38;
+pub const VK_FORMAT_R8G8B8A8_USCALED: VkFormat = 39;
+pub const VK_FORMAT_R8G8B8A8_SSCALED: VkFormat = 40;
+pub const VK_FORMAT_R8G8B8A8_UINT: VkFormat = 41;
+pub const VK_FORMAT_R8G8B8A8_SINT: VkFormat = 42;
+pub const VK_FORMAT_R8G8B8A8_SRGB: VkFormat = 43;
+pub const VK_FORMAT_B8G8R8A8_UNORM: VkFormat = 44;
+pub const VK_FORMAT_B8G8R8A8_SNORM: VkFormat = 45;
+pub const VK_FORMAT_B8G8R8A8_USCALED: VkFormat = 46;
+pub const VK_FORMAT_B8G8R8A8_SSCALED: VkFormat = 47;
+pub const VK_FORMAT_B8G8R8A8_UINT: VkFormat = 48;
+pub const VK_FORMAT_B8G8R8A8_SINT: VkFormat = 49;
+pub const VK_FORMAT_B8G8R8A8_SRGB: VkFormat = 50;
+pub const VK_FORMAT_A8B8G8R8_UNORM_PACK32: VkFormat = 51;
+pub const VK_FORMAT_A8B8G8R8_SNORM_PACK32: VkFormat = 52;
+pub const VK_FORMAT_A8B8G8R8_USCALED_PACK32: VkFormat = 53;
+pub const VK_FORMAT_A8B8G8R8_SSCALED_PACK32: VkFormat = 54;
+pub const VK_FORMAT_A8B8G8R8_UINT_PACK32: VkFormat = 55;
+pub const VK_FORMAT_A8B8G8R8_SINT_PACK32: VkFormat = 56;
+pub const VK_FORMAT_A8B8G8R8_SRGB_PACK32: VkFormat = 57;
+pub const VK_FORMAT_A2R10G10B10_UNORM_PACK32: VkFormat = 58;
+pub const VK_FORMAT_A2R10G10B10_SNORM_PACK32: VkFormat = 59;
+pub const VK_FORMAT_A2R10G10B10_USCALED_PACK32: VkFormat = 60;
+pub const VK_FORMAT_A2R10G10B10_SSCALED_PACK32: VkFormat = 61;
+pub const VK_FORMAT_A2R10G10B10_UINT_PACK32: VkFormat = 62;
+pub const VK_FORMAT_A2R10G10B10_SINT_PACK32: VkFormat = 63;
+pub const VK_FORMAT_A2B10G10R10_UNORM_PACK32: VkFormat = 64;
+pub const VK_FORMAT_A2B10G10R10_SNORM_PACK32: VkFormat = 65;
+pub const VK_FORMAT_A2B10G10R10_USCALED_PACK32: VkFormat = 66;
+pub const VK_FORMAT_A2B10G10R10_SSCALED_PACK32: VkFormat = 67;
+pub const VK_FORMAT_A2B10G10R10_UINT_PACK32: VkFormat = 68;
+pub const VK_FORMAT_A2B10G10R10_SINT_PACK32: VkFormat = 69;
+pub const VK_FORMAT_R16_UNORM: VkFormat = 70;
+pub const VK_FORMAT_R16_SNORM: VkFormat = 71;
+pub const VK_FORMAT_R16_USCALED: VkFormat = 72;
+pub const VK_FORMAT_R16_SSCALED: VkFormat = 73;
+pub const VK_FORMAT_R16_UINT: VkFormat = 74;
+pub const VK_FORMAT_R16_SINT: VkFormat = 75;
+pub const VK_FORMAT_R16_SFLOAT: VkFormat = 76;
+pub const VK_FORMAT_R16G16_UNORM: VkFormat = 77;
+pub const VK_FORMAT_R16G16_SNORM: VkFormat = 78;
+pub const VK_FORMAT_R16G16_USCALED: VkFormat = 79;
+pub const VK_FORMAT_R16G16_SSCALED: VkFormat = 80;
+pub const VK_FORMAT_R16G16_UINT: VkFormat = 81;
+pub const VK_FORMAT_R16G16_SINT: VkFormat = 82;
+pub const VK_FORMAT_R16G16_SFLOAT: VkFormat = 83;
+pub const VK_FORMAT_R16G16B16_UNORM: VkFormat = 84;
+pub const VK_FORMAT_R16G16B16_SNORM: VkFormat = 85;
+pub const VK_FORMAT_R16G16B16_USCALED: VkFormat = 86;
+pub const VK_FORMAT_R16G16B16_SSCALED: VkFormat = 87;
+pub const VK_FORMAT_R16G16B16_UINT: VkFormat = 88;
+pub const VK_FORMAT_R16G16B16_SINT: VkFormat = 89;
+pub const VK_FORMAT_R16G16B16_SFLOAT: VkFormat = 90;
+pub const VK_FORMAT_R16G16B16A16_UNORM: VkFormat = 91;
+pub const VK_FORMAT_R16G16B16A16_SNORM: VkFormat = 92;
+pub const VK_FORMAT_R16G16B16A16_USCALED: VkFormat = 93;
+pub const VK_FORMAT_R16G16B16A16_SSCALED: VkFormat = 94;
+pub const VK_FORMAT_R16G16B16A16_UINT: VkFormat = 95;
+pub const VK_FORMAT_R16G16B16A16_SINT: VkFormat = 96;
+pub const VK_FORMAT_R16G16B16A16_SFLOAT: VkFormat = 97;
+pub const VK_FORMAT_R32_UINT: VkFormat = 98;
+pub const VK_FORMAT_R32_SINT: VkFormat = 99;
+pub const VK_FORMAT_R32_SFLOAT: VkFormat = 100;
+pub const VK_FORMAT_R32G32_UINT: VkFormat = 101;
+pub const VK_FORMAT_R32G32_SINT: VkFormat = 102;
+pub const VK_FORMAT_R32G32_SFLOAT: VkFormat = 103;
+pub const VK_FORMAT_R32G32B32_UINT: VkFormat = 104;
+pub const VK_FORMAT_R32G32B32_SINT: VkFormat = 105;
+pub const VK_FORMAT_R32G32B32_SFLOAT: VkFormat = 106;
+pub const VK_FORMAT_R32G32B32A32_UINT: VkFormat = 107;
+pub const VK_FORMAT_R32G32B32A32_SINT: VkFormat = 108;
+pub const VK_FORMAT_R32G32B32A32_SFLOAT: VkFormat = 109;
+pub const VK_FORMAT_R64_UINT: VkFormat = 110;
+pub const VK_FORMAT_R64_SINT: VkFormat = 111;
+pub const VK_FORMAT_R64_SFLOAT: VkFormat = 112;
+pub const VK_FORMAT_R64G64_UINT: VkFormat = 113;
+pub const VK_FORMAT_R64G64_SINT: VkFormat = 114;
+pub const VK_FORMAT_R64G64_SFLOAT: VkFormat = 115;
+pub const VK_FORMAT_R64G64B64_UINT: VkFormat = 116;
+pub const VK_FORMAT_R64G64B64_SINT: VkFormat = 117;
+pub const VK_FORMAT_R64G64B64_SFLOAT: VkFormat = 118;
+pub const VK_FORMAT_R64G64B64A64_UINT: VkFormat = 119;
+pub const VK_FORMAT_R64G64B64A64_SINT: VkFormat = 120;
+pub const VK_FORMAT_R64G64B64A64_SFLOAT: VkFormat = 121;
+pub const VK_FORMAT_B10G11R11_UFLOAT_PACK32: VkFormat = 122;
+pub const VK_FORMAT_E5B9G9R9_UFLOAT_PACK32: VkFormat = 123;
+pub const VK_FORMAT_D16_UNORM: VkFormat = 124;
+pub const VK_FORMAT_X8_D24_UNORM_PACK32: VkFormat = 125;
+pub const VK_FORMAT_D32_SFLOAT: VkFormat = 126;
+pub const VK_FORMAT_S8_UINT: VkFormat = 127;
+pub const VK_FORMAT_D16_UNORM_S8_UINT: VkFormat = 128;
+pub const VK_FORMAT_D24_UNORM_S8_UINT: VkFormat = 129;
+pub const VK_FORMAT_D32_SFLOAT_S8_UINT: VkFormat = 130;
+pub const VK_FORMAT_BC1_RGB_UNORM_BLOCK: VkFormat = 131;
+pub const VK_FORMAT_BC1_RGB_SRGB_BLOCK: VkFormat = 132;
+pub const VK_FORMAT_BC1_RGBA_UNORM_BLOCK: VkFormat = 133;
+pub const VK_FORMAT_BC1_RGBA_SRGB_BLOCK: VkFormat = 134;
+pub const VK_FORMAT_BC2_UNORM_BLOCK: VkFormat = 135;
+pub const VK_FORMAT_BC2_SRGB_BLOCK: VkFormat = 136;
+pub const VK_FORMAT_BC3_UNORM_BLOCK: VkFormat = 137;
+pub const VK_FORMAT_BC3_SRGB_BLOCK: VkFormat = 138;
+pub const VK_FORMAT_BC4_UNORM_BLOCK: VkFormat = 139;
+pub const VK_FORMAT_BC4_SNORM_BLOCK: VkFormat = 140;
+pub const VK_FORMAT_BC5_UNORM_BLOCK: VkFormat = 141;
+pub const VK_FORMAT_BC5_SNORM_BLOCK: VkFormat = 142;
+pub const VK_FORMAT_BC6H_UFLOAT_BLOCK: VkFormat = 143;
+pub const VK_FORMAT_BC6H_SFLOAT_BLOCK: VkFormat = 144;
+pub const VK_FORMAT_BC7_UNORM_BLOCK: VkFormat = 145;
+pub const VK_FORMAT_BC7_SRGB_BLOCK: VkFormat = 146;
+pub const VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK: VkFormat = 147;
+pub const VK_FORMAT_ETC2_R8G8B8_SRGB_BLOCK: VkFormat = 148;
+pub const VK_FORMAT_ETC2_R8G8B8A1_UNORM_BLOCK: VkFormat = 149;
+pub const VK_FORMAT_ETC2_R8G8B8A1_SRGB_BLOCK: VkFormat = 150;
+pub const VK_FORMAT_ETC2_R8G8B8A8_UNORM_BLOCK: VkFormat = 151;
+pub const VK_FORMAT_ETC2_R8G8B8A8_SRGB_BLOCK: VkFormat = 152;
+pub const VK_FORMAT_EAC_R11_UNORM_BLOCK: VkFormat = 153;
+pub const VK_FORMAT_EAC_R11_SNORM_BLOCK: VkFormat = 154;
+pub const VK_FORMAT_EAC_R11G11_UNORM_BLOCK: VkFormat = 155;
+pub const VK_FORMAT_EAC_R11G11_SNORM_BLOCK: VkFormat = 156;
+pub const VK_FORMAT_ASTC_4x4_UNORM_BLOCK: VkFormat = 157;
+pub const VK_FORMAT_ASTC_4x4_SRGB_BLOCK: VkFormat = 158;
+pub const VK_FORMAT_ASTC_5x4_UNORM_BLOCK: VkFormat = 159;
+pub const VK_FORMAT_ASTC_5x4_SRGB_BLOCK: VkFormat = 160;
+pub const VK_FORMAT_ASTC_5x5_UNORM_BLOCK: VkFormat = 161;
+pub const VK_FORMAT_ASTC_5x5_SRGB_BLOCK: VkFormat = 162;
+pub const VK_FORMAT_ASTC_6x5_UNORM_BLOCK: VkFormat = 163;
+pub const VK_FORMAT_ASTC_6x5_SRGB_BLOCK: VkFormat = 164;
+pub const VK_FORMAT_ASTC_6x6_UNORM_BLOCK: VkFormat = 165;
+pub const VK_FORMAT_ASTC_6x6_SRGB_BLOCK: VkFormat = 166;
+pub const VK_FORMAT_ASTC_8x5_UNORM_BLOCK: VkFormat = 167;
+pub const VK_FORMAT_ASTC_8x5_SRGB_BLOCK: VkFormat = 168;
+pub const VK_FORMAT_ASTC_8x6_UNORM_BLOCK: VkFormat = 169;
+pub const VK_FORMAT_ASTC_8x6_SRGB_BLOCK: VkFormat = 170;
+pub const VK_FORMAT_ASTC_8x8_UNORM_BLOCK: VkFormat = 171;
+pub const VK_FORMAT_ASTC_8x8_SRGB_BLOCK: VkFormat = 172;
+pub const VK_FORMAT_ASTC_10x5_UNORM_BLOCK: VkFormat = 173;
+pub const VK_FORMAT_ASTC_10x5_SRGB_BLOCK: VkFormat = 174;
+pub const VK_FORMAT_ASTC_10x6_UNORM_BLOCK: VkFormat = 175;
+pub const VK_FORMAT_ASTC_10x6_SRGB_BLOCK: VkFormat = 176;
+pub const VK_FORMAT_ASTC_10x8_UNORM_BLOCK: VkFormat = 177;
+pub const VK_FORMAT_ASTC_10x8_SRGB_BLOCK: VkFormat = 178;
+pub const VK_FORMAT_ASTC_10x10_UNORM_BLOCK: VkFormat = 179;
+pub const VK_FORMAT_ASTC_10x10_SRGB_BLOCK: VkFormat = 180;
+pub const VK_FORMAT_ASTC_12x10_UNORM_BLOCK: VkFormat = 181;
+pub const VK_FORMAT_ASTC_12x10_SRGB_BLOCK: VkFormat = 182;
+pub const VK_FORMAT_ASTC_12x12_UNORM_BLOCK: VkFormat = 183;
+pub const VK_FORMAT_ASTC_12x12_SRGB_BLOCK: VkFormat = 184;
+
+pub type PFN_vkInternalAllocationNotification = extern "system" fn(pUserData: *mut core::ffi::c_void, size: usize, allocationType: VkInternalAllocationType, allocationScope: VkSystemAllocationScope);
+
+pub type PFN_vkInternalFreeNotification = extern "system" fn(pUserData: *mut core::ffi::c_void, size: usize, allocationType: VkInternalAllocationType, allocationScope: VkSystemAllocationScope);
+
+pub type PFN_vkReallocationFunction = extern "system" fn(pUserData: *mut core::ffi::c_void, pOriginal: *mut core::ffi::c_void, size: usize, alignment: usize, allocationScope: VkSystemAllocationScope) -> *mut core::ffi::c_void;
+
+pub type PFN_vkAllocationFunction = extern "system" fn(pUserData: *mut core::ffi::c_void, size: usize, alignment: usize, allocationScope: VkSystemAllocationScope) -> *mut core::ffi::c_void;
+
+pub type PFN_vkFreeFunction = extern "system" fn(pUserData: *mut core::ffi::c_void, pMemory: *mut core::ffi::c_void);
+
+pub type PFN_vkVoidFunction = extern "system" fn();
+
+#[cfg(feature = "VK_EXT_debug_report")]
+pub type PFN_vkDebugReportCallbackEXT = extern "system" fn(flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char, pUserData: *mut core::ffi::c_void) -> VkBool32;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub type PFN_vkDebugUtilsMessengerCallbackEXT = extern "system" fn(messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT, pUserData: *mut core::ffi::c_void) -> VkBool32;
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkAllocationCallbacks {
+    pub pUserData: *mut core::ffi::c_void,
+    pub pfnAllocation: PFN_vkAllocationFunction,
+    pub pfnReallocation: PFN_vkReallocationFunction,
+    pub pfnFree: PFN_vkFreeFunction,
+    pub pfnInternalAllocation: Option<PFN_vkInternalAllocationNotification>,
+    pub pfnInternalFree: Option<PFN_vkInternalFreeNotification>,
+}
+
+#[cfg(all(feature = "VK_KHR_android_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkAndroidSurfaceCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkAndroidSurfaceCreateFlagsKHR,
+    pub window: *mut android::ANativeWindow,
+}
+#[cfg(all(feature = "VK_KHR_android_surface"))]
+pub const VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000008000;
+#[cfg(all(feature = "VK_KHR_android_surface"))]
+unsafe impl crate::VulkanStructure for VkAndroidSurfaceCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_android_surface"))]
+unsafe impl crate::TypedVulkanStructure for VkAndroidSurfaceCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkApplicationInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pApplicationName: *const core::ffi::c_char,
+    pub applicationVersion: u32,
+    pub pEngineName: *const core::ffi::c_char,
+    pub engineVersion: u32,
+    pub apiVersion: u32,
+}
+pub const VK_STRUCTURE_TYPE_APPLICATION_INFO: VkStructureType = 0;
+unsafe impl crate::VulkanStructure for VkApplicationInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkApplicationInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkAttachmentDescription {
+    pub flags: VkAttachmentDescriptionFlags,
+    pub format: VkFormat,
+    pub samples: VkSampleCountFlagBits,
+    pub loadOp: VkAttachmentLoadOp,
+    pub storeOp: VkAttachmentStoreOp,
+    pub stencilLoadOp: VkAttachmentLoadOp,
+    pub stencilStoreOp: VkAttachmentStoreOp,
+    pub initialLayout: VkImageLayout,
+    pub finalLayout: VkImageLayout,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkAttachmentReference {
+    pub attachment: u32,
+    pub layout: VkImageLayout,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkBindSparseInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub waitSemaphoreCount: u32,
+    pub pWaitSemaphores: *const VkSemaphore,
+    pub bufferBindCount: u32,
+    pub pBufferBinds: *const VkSparseBufferMemoryBindInfo,
+    pub imageOpaqueBindCount: u32,
+    pub pImageOpaqueBinds: *const VkSparseImageOpaqueMemoryBindInfo,
+    pub imageBindCount: u32,
+    pub pImageBinds: *const VkSparseImageMemoryBindInfo,
+    pub signalSemaphoreCount: u32,
+    pub pSignalSemaphores: *const VkSemaphore,
+}
+pub const VK_STRUCTURE_TYPE_BIND_SPARSE_INFO: VkStructureType = 7;
+unsafe impl crate::VulkanStructure for VkBindSparseInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkBindSparseInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkBufferCopy {
+    pub srcOffset: VkDeviceSize,
+    pub dstOffset: VkDeviceSize,
+    pub size: VkDeviceSize,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkBufferCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkBufferCreateFlags,
+    pub size: VkDeviceSize,
+    pub usage: VkBufferUsageFlags,
+    pub sharingMode: VkSharingMode,
+    pub queueFamilyIndexCount: u32,
+    pub pQueueFamilyIndices: *const u32,
+}
+pub const VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO: VkStructureType = 12;
+unsafe impl crate::VulkanStructure for VkBufferCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkBufferCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkBufferImageCopy {
+    pub bufferOffset: VkDeviceSize,
+    pub bufferRowLength: u32,
+    pub bufferImageHeight: u32,
+    pub imageSubresource: VkImageSubresourceLayers,
+    pub imageOffset: VkOffset3D,
+    pub imageExtent: VkExtent3D,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkBufferMemoryBarrier {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcAccessMask: VkAccessFlags,
+    pub dstAccessMask: VkAccessFlags,
+    pub srcQueueFamilyIndex: u32,
+    pub dstQueueFamilyIndex: u32,
+    pub buffer: VkBuffer,
+    pub offset: VkDeviceSize,
+    pub size: VkDeviceSize,
+}
+pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER: VkStructureType = 44;
+unsafe impl crate::VulkanStructure for VkBufferMemoryBarrier {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkBufferMemoryBarrier {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkBufferViewCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkBufferViewCreateFlags,
+    pub buffer: VkBuffer,
+    pub format: VkFormat,
+    pub offset: VkDeviceSize,
+    pub range: VkDeviceSize,
+}
+pub const VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO: VkStructureType = 13;
+unsafe impl crate::VulkanStructure for VkBufferViewCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkBufferViewCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkClearAttachment {
+    pub aspectMask: VkImageAspectFlags,
+    pub colorAttachment: u32,
+    pub clearValue: VkClearValue,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkClearDepthStencilValue {
+    pub depth: core::ffi::c_float,
+    pub stencil: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkClearRect {
+    pub rect: VkRect2D,
+    pub baseArrayLayer: u32,
+    pub layerCount: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkCommandBufferAllocateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub commandPool: VkCommandPool,
+    pub level: VkCommandBufferLevel,
+    pub commandBufferCount: u32,
+}
+pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO: VkStructureType = 40;
+unsafe impl crate::VulkanStructure for VkCommandBufferAllocateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferAllocateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkCommandBufferBeginInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkCommandBufferUsageFlags,
+    pub pInheritanceInfo: *const VkCommandBufferInheritanceInfo,
+}
+pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO: VkStructureType = 42;
+unsafe impl crate::VulkanStructure for VkCommandBufferBeginInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferBeginInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkCommandBufferInheritanceInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub renderPass: VkRenderPass,
+    pub subpass: u32,
+    pub framebuffer: VkFramebuffer,
+    pub occlusionQueryEnable: VkBool32,
+    pub queryFlags: VkQueryControlFlags,
+    pub pipelineStatistics: VkQueryPipelineStatisticFlags,
+}
+pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO: VkStructureType = 41;
+unsafe impl crate::VulkanStructure for VkCommandBufferInheritanceInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferInheritanceInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkCommandPoolCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkCommandPoolCreateFlags,
+    pub queueFamilyIndex: u32,
+}
+pub const VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO: VkStructureType = 39;
+unsafe impl crate::VulkanStructure for VkCommandPoolCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkCommandPoolCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkComponentMapping {
+    pub r: VkComponentSwizzle,
+    pub g: VkComponentSwizzle,
+    pub b: VkComponentSwizzle,
+    pub a: VkComponentSwizzle,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkComputePipelineCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineCreateFlags,
+    pub stage: VkPipelineShaderStageCreateInfo,
+    pub layout: VkPipelineLayout,
+    pub basePipelineHandle: VkPipeline,
+    pub basePipelineIndex: i32,
+}
+pub const VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO: VkStructureType = 29;
+unsafe impl crate::VulkanStructure for VkComputePipelineCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkComputePipelineCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkCopyDescriptorSet {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcSet: VkDescriptorSet,
+    pub srcBinding: u32,
+    pub srcArrayElement: u32,
+    pub dstSet: VkDescriptorSet,
+    pub dstBinding: u32,
+    pub dstArrayElement: u32,
+    pub descriptorCount: u32,
+}
+pub const VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET: VkStructureType = 36;
+unsafe impl crate::VulkanStructure for VkCopyDescriptorSet {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkCopyDescriptorSet {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
+}
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkD3D12FenceSubmitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub waitSemaphoreValuesCount: u32,
+    pub pWaitSemaphoreValues: *const u64,
+    pub signalSemaphoreValuesCount: u32,
+    pub pSignalSemaphoreValues: *const u64,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+pub const VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR: VkStructureType = 1000078002;
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::VulkanStructure for VkD3D12FenceSubmitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkD3D12FenceSubmitInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_EXT_debug_report"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDebugReportCallbackCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDebugReportFlagsEXT,
+    pub pfnCallback: PFN_vkDebugReportCallbackEXT,
+    pub pUserData: *mut core::ffi::c_void,
+}
+#[cfg(all(feature = "VK_EXT_debug_report"))]
+pub const VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT: VkStructureType = 1000011000;
+#[cfg(all(feature = "VK_EXT_debug_report"))]
+unsafe impl crate::VulkanStructure for VkDebugReportCallbackCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_report"))]
+unsafe impl crate::TypedVulkanStructure for VkDebugReportCallbackCreateInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+}
+
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDebugUtilsLabelEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pLabelName: *const core::ffi::c_char,
+    pub pColor: [core::ffi::c_float; 4],
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT: VkStructureType = 1000128002;
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::VulkanStructure for VkDebugUtilsLabelEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsLabelEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+}
+
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDebugUtilsMessengerCallbackDataEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDebugUtilsMessengerCallbackDataFlagsEXT,
+    pub pMessageIdName: *const core::ffi::c_char,
+    pub messageIdNumber: i32,
+    pub pMessage: *const core::ffi::c_char,
+    pub queueLabelCount: u32,
+    pub pQueueLabels: *const VkDebugUtilsLabelEXT,
+    pub cmdBufLabelCount: u32,
+    pub pCmdBufLabels: *const VkDebugUtilsLabelEXT,
+    pub objectCount: u32,
+    pub pObjects: *const VkDebugUtilsObjectNameInfoEXT,
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT: VkStructureType = 1000128003;
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::VulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
+}
+
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDebugUtilsMessengerCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDebugUtilsMessengerCreateFlagsEXT,
+    pub messageSeverity: VkDebugUtilsMessageSeverityFlagsEXT,
+    pub messageType: VkDebugUtilsMessageTypeFlagsEXT,
+    pub pfnUserCallback: PFN_vkDebugUtilsMessengerCallbackEXT,
+    pub pUserData: *mut core::ffi::c_void,
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT: VkStructureType = 1000128004;
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::VulkanStructure for VkDebugUtilsMessengerCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsMessengerCreateInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+}
+
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDebugUtilsObjectNameInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectType: VkObjectType,
+    pub objectHandle: u64,
+    pub pObjectName: *const core::ffi::c_char,
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT: VkStructureType = 1000128000;
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::VulkanStructure for VkDebugUtilsObjectNameInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsObjectNameInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+}
+
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDebugUtilsObjectTagInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectType: VkObjectType,
+    pub objectHandle: u64,
+    pub tagName: u64,
+    pub tagSize: u64,
+    pub pTag: *const core::ffi::c_void,
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+pub const VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT: VkStructureType = 1000128001;
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::VulkanStructure for VkDebugUtilsObjectTagInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_debug_utils"))]
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsObjectTagInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorBufferInfo {
+    pub buffer: VkBuffer,
+    pub offset: VkDeviceSize,
+    pub range: VkDeviceSize,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorImageInfo {
+    pub sampler: VkSampler,
+    pub imageView: VkImageView,
+    pub imageLayout: VkImageLayout,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorPoolCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDescriptorPoolCreateFlags,
+    pub maxSets: u32,
+    pub poolSizeCount: u32,
+    pub pPoolSizes: *const VkDescriptorPoolSize,
+}
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO: VkStructureType = 33;
+unsafe impl crate::VulkanStructure for VkDescriptorPoolCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorPoolCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorPoolSize {
+    pub r#type: VkDescriptorType,
+    pub descriptorCount: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorSetAllocateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub descriptorPool: VkDescriptorPool,
+    pub descriptorSetCount: u32,
+    pub pSetLayouts: *const VkDescriptorSetLayout,
+}
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO: VkStructureType = 34;
+unsafe impl crate::VulkanStructure for VkDescriptorSetAllocateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorSetAllocateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorSetLayoutBinding {
+    pub binding: u32,
+    pub descriptorType: VkDescriptorType,
+    pub descriptorCount: u32,
+    pub stageFlags: VkShaderStageFlags,
+    pub pImmutableSamplers: *const VkSampler,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDescriptorSetLayoutCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDescriptorSetLayoutCreateFlags,
+    pub bindingCount: u32,
+    pub pBindings: *const VkDescriptorSetLayoutBinding,
+}
+pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO: VkStructureType = 32;
+unsafe impl crate::VulkanStructure for VkDescriptorSetLayoutCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorSetLayoutCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDeviceCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDeviceCreateFlags,
+    pub queueCreateInfoCount: u32,
+    pub pQueueCreateInfos: *const VkDeviceQueueCreateInfo,
+    pub enabledLayerCount: u32,
+    pub ppEnabledLayerNames: *const *const core::ffi::c_char,
+    pub enabledExtensionCount: u32,
+    pub ppEnabledExtensionNames: *const *const core::ffi::c_char,
+    pub pEnabledFeatures: *const VkPhysicalDeviceFeatures,
+}
+pub const VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO: VkStructureType = 3;
+unsafe impl crate::VulkanStructure for VkDeviceCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkDeviceCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDeviceQueueCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDeviceQueueCreateFlags,
+    pub queueFamilyIndex: u32,
+    pub queueCount: u32,
+    pub pQueuePriorities: *const core::ffi::c_float,
+}
+pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO: VkStructureType = 2;
+unsafe impl crate::VulkanStructure for VkDeviceQueueCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkDeviceQueueCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDispatchIndirectCommand {
+    pub x: u32,
+    pub y: u32,
+    pub z: u32,
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayModeCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDisplayModeCreateFlagsKHR,
+    pub parameters: VkDisplayModeParametersKHR,
+}
+#[cfg(all(feature = "VK_KHR_display"))]
+pub const VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR: VkStructureType = 1000002000;
+#[cfg(all(feature = "VK_KHR_display"))]
+unsafe impl crate::VulkanStructure for VkDisplayModeCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_display"))]
+unsafe impl crate::TypedVulkanStructure for VkDisplayModeCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayModeParametersKHR {
+    pub visibleRegion: VkExtent2D,
+    pub refreshRate: u32,
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayModePropertiesKHR {
+    pub displayMode: VkDisplayModeKHR,
+    pub parameters: VkDisplayModeParametersKHR,
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayPlaneCapabilitiesKHR {
+    pub supportedAlpha: VkDisplayPlaneAlphaFlagsKHR,
+    pub minSrcPosition: VkOffset2D,
+    pub maxSrcPosition: VkOffset2D,
+    pub minSrcExtent: VkExtent2D,
+    pub maxSrcExtent: VkExtent2D,
+    pub minDstPosition: VkOffset2D,
+    pub maxDstPosition: VkOffset2D,
+    pub minDstExtent: VkExtent2D,
+    pub maxDstExtent: VkExtent2D,
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayPlanePropertiesKHR {
+    pub currentDisplay: VkDisplayKHR,
+    pub currentStackIndex: u32,
+}
+
+#[cfg(all(feature = "VK_KHR_display_swapchain"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayPresentInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcRect: VkRect2D,
+    pub dstRect: VkRect2D,
+    pub persistent: VkBool32,
+}
+#[cfg(all(feature = "VK_KHR_display_swapchain"))]
+pub const VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR: VkStructureType = 1000003000;
+#[cfg(all(feature = "VK_KHR_display_swapchain"))]
+unsafe impl crate::VulkanStructure for VkDisplayPresentInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_display_swapchain"))]
+unsafe impl crate::TypedVulkanStructure for VkDisplayPresentInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplayPropertiesKHR {
+    pub display: VkDisplayKHR,
+    pub displayName: *const core::ffi::c_char,
+    pub physicalDimensions: VkExtent2D,
+    pub physicalResolution: VkExtent2D,
+    pub supportedTransforms: VkSurfaceTransformFlagsKHR,
+    pub planeReorderPossible: VkBool32,
+    pub persistentContent: VkBool32,
+}
+
+#[cfg(all(feature = "VK_KHR_display"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDisplaySurfaceCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkDisplaySurfaceCreateFlagsKHR,
+    pub displayMode: VkDisplayModeKHR,
+    pub planeIndex: u32,
+    pub planeStackIndex: u32,
+    pub transform: VkSurfaceTransformFlagBitsKHR,
+    pub globalAlpha: core::ffi::c_float,
+    pub alphaMode: VkDisplayPlaneAlphaFlagBitsKHR,
+    pub imageExtent: VkExtent2D,
+}
+#[cfg(all(feature = "VK_KHR_display"))]
+pub const VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000002001;
+#[cfg(all(feature = "VK_KHR_display"))]
+unsafe impl crate::VulkanStructure for VkDisplaySurfaceCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_display"))]
+unsafe impl crate::TypedVulkanStructure for VkDisplaySurfaceCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDrawIndexedIndirectCommand {
+    pub indexCount: u32,
+    pub instanceCount: u32,
+    pub firstIndex: u32,
+    pub vertexOffset: i32,
+    pub firstInstance: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkDrawIndirectCommand {
+    pub vertexCount: u32,
+    pub instanceCount: u32,
+    pub firstVertex: u32,
+    pub firstInstance: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkEventCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkEventCreateFlags,
+}
+pub const VK_STRUCTURE_TYPE_EVENT_CREATE_INFO: VkStructureType = 10;
+unsafe impl crate::VulkanStructure for VkEventCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkEventCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
+}
+
+#[cfg(all(feature = "VK_KHR_external_fence"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExportFenceCreateInfoKHR {
+    pub handleTypes: VkExternalFenceHandleTypeFlags,
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExportFenceCreateInfo = VkExportFenceCreateInfoKHR;
+
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExportFenceWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
+    pub dwAccess: u32,
+    pub name: windows::core::PCWSTR,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+pub const VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114001;
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+unsafe impl crate::VulkanStructure for VkExportFenceWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkExportFenceWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkVkExportMemoryAllocateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleTypes: VkExternalMemoryHandleTypeFlags,
+}
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR: VkStructureType = 1000072002;
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+unsafe impl crate::VulkanStructure for VkVkExportMemoryAllocateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+unsafe impl crate::TypedVulkanStructure for VkVkExportMemoryAllocateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkVkExportMemoryAllocateInfo = VkVkExportMemoryAllocateInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExportMemoryWin32HandleInfoKHRKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
+    pub dwAccess: u32,
+    pub name: windows::core::PCWSTR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+pub const VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073001;
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHRKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHRKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_semaphore"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExportSemaphoreCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalSemaphoreHandleTypeFlags,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore"))]
+pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR: VkStructureType = 1000077000;
+#[cfg(all(feature = "VK_KHR_external_semaphore"))]
+unsafe impl crate::VulkanStructure for VkExportSemaphoreCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore"))]
+unsafe impl crate::TypedVulkanStructure for VkExportSemaphoreCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExportSemaphoreCreateInfo = VkExportSemaphoreCreateInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExportSemaphoreWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pAttributes: *const windows::Win32::Security::SECURITY_ATTRIBUTES,
+    pub dwAccess: u32,
+    pub name: windows::core::PCWSTR,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+pub const VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078001;
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::VulkanStructure for VkExportSemaphoreWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkExportSemaphoreWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExtensionProperties {
+    pub extensionName: crate::ffi_helper::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
+    pub specVersion: u32,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkExtent2D {
+    pub width: u32,
+    pub height: u32,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkExtent3D {
+    pub width: u32,
+    pub height: u32,
+    pub depth: u32,
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalBufferPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR: VkStructureType = 1000071003;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::VulkanSinkStructure for VkExternalBufferPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalBufferPropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalBufferProperties = VkExternalBufferPropertiesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalFencePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub exportFromImportedHandleTypes: VkExternalFenceHandleTypeFlagsKHR,
+    pub compatibleHandleTypes: VkExternalFenceHandleTypeFlagsKHR,
+    pub externalFenceFeatures: VkExternalFenceFeatureFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR: VkStructureType = 1000112001;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+unsafe impl crate::VulkanSinkStructure for VkExternalFencePropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalFencePropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalFenceProperties = VkExternalFencePropertiesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalImageFormatPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub externalMemoryProperties: VkExternalMemoryPropertiesKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+pub const VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureType = 1000071001;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::VulkanSinkStructure for VkExternalImageFormatPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalImageFormatPropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalImageFormatProperties = VkExternalImageFormatPropertiesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalMemoryBufferCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR: VkStructureType = 1000072000;
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+unsafe impl crate::VulkanStructure for VkExternalMemoryBufferCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+unsafe impl crate::TypedVulkanStructure for VkExternalMemoryBufferCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryBufferCreateInfo = VkExternalMemoryBufferCreateInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalMemoryImageCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR: VkStructureType = 1000072001;
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+unsafe impl crate::VulkanStructure for VkExternalMemoryImageCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory"))]
+unsafe impl crate::TypedVulkanStructure for VkExternalMemoryImageCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryImageCreateInfo = VkExternalMemoryImageCreateInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalMemoryPropertiesKHR {
+    pub externalMemoryFeatures: VkExternalMemoryFeatureFlagsKHR,
+    pub exportFromImportedHandleTypes: VkExternalMemoryHandleTypeFlagsKHR,
+    pub compatibleHandleTypes: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalMemoryProperties = VkExternalMemoryPropertiesKHR;
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkExternalSemaphorePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub exportFromImportedHandleTypes: VkExternalSemaphoreHandleTypeFlagsKHR,
+    pub compatibleHandleTypes: VkExternalSemaphoreHandleTypeFlagsKHR,
+    pub externalSemaphoreFeatures: VkExternalSemaphoreFeatureFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000076001;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+unsafe impl crate::VulkanSinkStructure for VkExternalSemaphorePropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalSemaphorePropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkExternalSemaphoreProperties = VkExternalSemaphorePropertiesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR;
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkFenceCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkFenceCreateFlags,
+}
+pub const VK_STRUCTURE_TYPE_FENCE_CREATE_INFO: VkStructureType = 8;
+unsafe impl crate::VulkanStructure for VkFenceCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkFenceCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+}
+
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkFenceGetFdInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub fence: VkFence,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+pub const VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR: VkStructureType = 1000115001;
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+unsafe impl crate::VulkanStructure for VkFenceGetFdInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+unsafe impl crate::TypedVulkanStructure for VkFenceGetFdInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkFenceGetWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub fence: VkFence,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+pub const VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114002;
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+unsafe impl crate::VulkanStructure for VkFenceGetWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkFenceGetWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkFormatProperties {
+    pub linearTilingFeatures: VkFormatFeatureFlags,
+    pub optimalTilingFeatures: VkFormatFeatureFlags,
+    pub bufferFeatures: VkFormatFeatureFlags,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkFramebufferCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkFramebufferCreateFlags,
+    pub renderPass: VkRenderPass,
+    pub attachmentCount: u32,
+    pub pAttachments: *const VkImageView,
+    pub width: u32,
+    pub height: u32,
+    pub layers: u32,
+}
+pub const VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO: VkStructureType = 37;
+unsafe impl crate::VulkanStructure for VkFramebufferCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkFramebufferCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkGraphicsPipelineCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineCreateFlags,
+    pub stageCount: u32,
+    pub pStages: *const VkPipelineShaderStageCreateInfo,
+    pub pVertexInputState: *const VkPipelineVertexInputStateCreateInfo,
+    pub pInputAssemblyState: *const VkPipelineInputAssemblyStateCreateInfo,
+    pub pTessellationState: *const VkPipelineTessellationStateCreateInfo,
+    pub pViewportState: *const VkPipelineViewportStateCreateInfo,
+    pub pRasterizationState: *const VkPipelineRasterizationStateCreateInfo,
+    pub pMultisampleState: *const VkPipelineMultisampleStateCreateInfo,
+    pub pDepthStencilState: *const VkPipelineDepthStencilStateCreateInfo,
+    pub pColorBlendState: *const VkPipelineColorBlendStateCreateInfo,
+    pub pDynamicState: *const VkPipelineDynamicStateCreateInfo,
+    pub layout: VkPipelineLayout,
+    pub renderPass: VkRenderPass,
+    pub subpass: u32,
+    pub basePipelineHandle: VkPipeline,
+    pub basePipelineIndex: i32,
+}
+pub const VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO: VkStructureType = 28;
+unsafe impl crate::VulkanStructure for VkGraphicsPipelineCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkGraphicsPipelineCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageBlit {
+    pub srcSubresource: VkImageSubresourceLayers,
+    pub srcOffsets: [VkOffset3D; 2],
+    pub dstSubresource: VkImageSubresourceLayers,
+    pub dstOffsets: [VkOffset3D; 2],
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageCopy {
+    pub srcSubresource: VkImageSubresourceLayers,
+    pub srcOffset: VkOffset3D,
+    pub dstSubresource: VkImageSubresourceLayers,
+    pub dstOffset: VkOffset3D,
+    pub extent: VkExtent3D,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkImageCreateFlags,
+    pub imageType: VkImageType,
+    pub format: VkFormat,
+    pub extent: VkExtent3D,
+    pub mipLevels: u32,
+    pub arrayLayers: u32,
+    pub samples: VkSampleCountFlagBits,
+    pub tiling: VkImageTiling,
+    pub usage: VkImageUsageFlags,
+    pub sharingMode: VkSharingMode,
+    pub queueFamilyIndexCount: u32,
+    pub pQueueFamilyIndices: *const u32,
+    pub initialLayout: VkImageLayout,
+}
+pub const VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO: VkStructureType = 14;
+unsafe impl crate::VulkanStructure for VkImageCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkImageCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageFormatProperties {
+    pub maxExtent: VkExtent3D,
+    pub maxMipLevels: u32,
+    pub maxArrayLayers: u32,
+    pub sampleCounts: VkSampleCountFlags,
+    pub maxResourceSize: VkDeviceSize,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageMemoryBarrier {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcAccessMask: VkAccessFlags,
+    pub dstAccessMask: VkAccessFlags,
+    pub oldLayout: VkImageLayout,
+    pub newLayout: VkImageLayout,
+    pub srcQueueFamilyIndex: u32,
+    pub dstQueueFamilyIndex: u32,
+    pub image: VkImage,
+    pub subresourceRange: VkImageSubresourceRange,
+}
+pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER: VkStructureType = 45;
+unsafe impl crate::VulkanStructure for VkImageMemoryBarrier {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkImageMemoryBarrier {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageResolve {
+    pub srcSubresource: VkImageSubresourceLayers,
+    pub srcOffset: VkOffset3D,
+    pub dstSubresource: VkImageSubresourceLayers,
+    pub dstOffset: VkOffset3D,
+    pub extent: VkExtent3D,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageSubresource {
+    pub aspectMask: VkImageAspectFlags,
+    pub mipLevel: u32,
+    pub arrayLayer: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageSubresourceLayers {
+    pub aspectMask: VkImageAspectFlags,
+    pub mipLevel: u32,
+    pub baseArrayLayer: u32,
+    pub layerCount: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageSubresourceRange {
+    pub aspectMask: VkImageAspectFlags,
+    pub baseMipLevel: u32,
+    pub levelCount: u32,
+    pub baseArrayLayer: u32,
+    pub layerCount: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImageViewCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkImageViewCreateFlags,
+    pub image: VkImage,
+    pub viewType: VkImageViewType,
+    pub format: VkFormat,
+    pub components: VkComponentMapping,
+    pub subresourceRange: VkImageSubresourceRange,
+}
+pub const VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO: VkStructureType = 15;
+unsafe impl crate::VulkanStructure for VkImageViewCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkImageViewCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+}
+
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImportFenceFdInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub fence: VkFence,
+    pub flags: VkFenceImportFlagsKHR,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
+    pub fd: core::ffi::c_int,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR: VkStructureType = 1000115000;
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+unsafe impl crate::VulkanStructure for VkImportFenceFdInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+unsafe impl crate::TypedVulkanStructure for VkImportFenceFdInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImportFenceWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub fence: VkFence,
+    pub flags: VkFenceImportFlagsKHR,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
+    pub handle: windows::Win32::Foundation::HANDLE,
+    pub name: windows::core::PCWSTR,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+pub const VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000114000;
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+unsafe impl crate::VulkanStructure for VkImportFenceWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkImportFenceWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImportMemoryFdInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalMemoryHandleTypeFlags,
+    pub fd: core::ffi::c_int,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR: VkStructureType = 1000074000;
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+unsafe impl crate::VulkanStructure for VkImportMemoryFdInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+unsafe impl crate::TypedVulkanStructure for VkImportMemoryFdInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImportMemoryWin32HandleInfoKKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+    pub handle: windows::Win32::Foundation::HANDLE,
+    pub name: windows::core::PCWSTR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073000;
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::VulkanStructure for VkImportMemoryWin32HandleInfoKKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkImportMemoryWin32HandleInfoKKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImportSemaphoreFdInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub flags: VkSemaphoreImportFlagsKHR,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
+    pub fd: core::ffi::c_int,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR: VkStructureType = 1000079000;
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+unsafe impl crate::VulkanStructure for VkImportSemaphoreFdInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+unsafe impl crate::TypedVulkanStructure for VkImportSemaphoreFdInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkImportSemaphoreWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub flags: VkSemaphoreImportFlagsKHR,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
+    pub handle: windows::Win32::Foundation::HANDLE,
+    pub name: windows::core::PCWSTR,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+pub const VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078000;
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::VulkanStructure for VkImportSemaphoreWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkImportSemaphoreWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkInstanceCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkInstanceCreateFlags,
+    pub pApplicationInfo: *const VkApplicationInfo,
+    pub enabledLayerCount: u32,
+    pub ppEnabledLayerNames: *const *const core::ffi::c_char,
+    pub enabledExtensionCount: u32,
+    pub ppEnabledExtensionNames: *const *const core::ffi::c_char,
+}
+pub const VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO: VkStructureType = 1;
+unsafe impl crate::VulkanStructure for VkInstanceCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkInstanceCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkLayerProperties {
+    pub layerName: crate::ffi_helper::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
+    pub specVersion: u32,
+    pub implementationVersion: u32,
+    pub description: crate::ffi_helper::FixedCStrBuffer<VK_MAX_DESCRIPTION_SIZE>,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMappedMemoryRange {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub memory: VkDeviceMemory,
+    pub offset: VkDeviceSize,
+    pub size: VkDeviceSize,
+}
+pub const VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE: VkStructureType = 6;
+unsafe impl crate::VulkanStructure for VkMappedMemoryRange {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkMappedMemoryRange {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryAllocateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub allocationSize: VkDeviceSize,
+    pub memoryTypeIndex: u32,
+}
+pub const VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO: VkStructureType = 5;
+unsafe impl crate::VulkanStructure for VkMemoryAllocateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkMemoryAllocateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryBarrier {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcAccessMask: VkAccessFlags,
+    pub dstAccessMask: VkAccessFlags,
+}
+pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER: VkStructureType = 46;
+unsafe impl crate::VulkanStructure for VkMemoryBarrier {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryFdPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub memoryTypeBits: u32,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+pub const VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR: VkStructureType = 1000074001;
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+unsafe impl crate::VulkanSinkStructure for VkMemoryFdPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkMemoryFdPropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryGetFdInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub memory: VkDeviceMemory,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+pub const VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR: VkStructureType = 1000074002;
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+unsafe impl crate::VulkanStructure for VkMemoryGetFdInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+unsafe impl crate::TypedVulkanStructure for VkMemoryGetFdInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryGetWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub memory: VkDeviceMemory,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+pub const VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073003;
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::VulkanStructure for VkMemoryGetWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkMemoryGetWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryRequirements {
+    pub size: VkDeviceSize,
+    pub alignment: VkDeviceSize,
+    pub memoryTypeBits: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryType {
+    pub propertyFlags: VkMemoryPropertyFlags,
+    pub heapIndex: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryHeap {
+    pub size: VkDeviceSize,
+    pub flags: VkMemoryHeapFlags,
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMemoryWin32HandlePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub memoryTypeBits: u32,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType = 1000073002;
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::VulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
+}
+
+#[cfg(all(feature = "VK_EXT_metal_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkMetalSurfaceCreateInfoEXT {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkMetalSurfaceCreateFlags,
+    pub pLayer: *const core::ffi::c_void,
+}
+#[cfg(all(feature = "VK_EXT_metal_surface"))]
+pub const VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT: VkStructureType = 1000217000;
+#[cfg(all(feature = "VK_EXT_metal_surface"))]
+unsafe impl crate::VulkanStructure for VkMetalSurfaceCreateInfoEXT {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_EXT_metal_surface"))]
+unsafe impl crate::TypedVulkanStructure for VkMetalSurfaceCreateInfoEXT {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkOffset2D {
+    pub x: i32,
+    pub y: i32,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkOffset3D {
+    pub x: i32,
+    pub y: i32,
+    pub z: i32,
+}
+
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceExternalBufferInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkBufferCreateFlags,
+    pub usage: VkBufferUsageFlags,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR: VkStructureType = 1000071002;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalBufferInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalBufferInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkPhysicalDeviceExternalBufferInfo = VkPhysicalDeviceExternalBufferInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceExternalFenceInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalFenceHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR: VkStructureType = 1000112000;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalFenceInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalFenceInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkPhysicalDeviceExternalFenceInfo = VkPhysicalDeviceExternalFenceInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceExternalImageFormatInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR: VkStructureType = 1000071000;
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalImageFormatInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalImageFormatInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkPhysicalDeviceExternalImageFormatInfo = VkPhysicalDeviceExternalImageFormatInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceExternalSemaphoreInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR: VkStructureType = 1000076000;
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalSemaphoreInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalSemaphoreInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkPhysicalDeviceExternalSemaphoreInfo = VkPhysicalDeviceExternalSemaphoreInfoKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR;
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceFeatures {
+    pub robustBufferAccess: VkBool32,
+    pub fullDrawIndexUint32: VkBool32,
+    pub imageCubeArray: VkBool32,
+    pub independentBlend: VkBool32,
+    pub geometryShader: VkBool32,
+    pub tessellationShader: VkBool32,
+    pub sampleRateShading: VkBool32,
+    pub dualSrcBlend: VkBool32,
+    pub logicOp: VkBool32,
+    pub multiDrawIndirect: VkBool32,
+    pub drawIndirectFirstInstance: VkBool32,
+    pub depthClamp: VkBool32,
+    pub depthBiasClamp: VkBool32,
+    pub fillModeNonSolid: VkBool32,
+    pub depthBounds: VkBool32,
+    pub wideLines: VkBool32,
+    pub largePoints: VkBool32,
+    pub alphaToOne: VkBool32,
+    pub multiViewport: VkBool32,
+    pub samplerAnisotropy: VkBool32,
+    pub textureCompressionETC2: VkBool32,
+    pub textureCompressionASTC_LDR: VkBool32,
+    pub textureCompressionBC: VkBool32,
+    pub occlusionQueryPrecise: VkBool32,
+    pub pipelineStatisticsQuery: VkBool32,
+    pub vertexPipelineStoresAndAtomics: VkBool32,
+    pub fragmentStoresAndAtomics: VkBool32,
+    pub shaderTessellationAndGeometryPointSize: VkBool32,
+    pub shaderImageGatherExtended: VkBool32,
+    pub shaderStorageImageExtendedFormats: VkBool32,
+    pub shaderStorageImageMultisample: VkBool32,
+    pub shaderStorageImageReadWithoutFormat: VkBool32,
+    pub shaderStorageImageWriteWithoutFormat: VkBool32,
+    pub shaderUniformBufferArrayDynamicIndexing: VkBool32,
+    pub shaderSampledImageArrayDynamicIndexing: VkBool32,
+    pub shaderStorageBufferArrayDynamicIndexing: VkBool32,
+    pub shaderStorageImageArrayDynamicIndexing: VkBool32,
+    pub shaderClipDistance: VkBool32,
+    pub shaderCullDistance: VkBool32,
+    pub shaderFloat64: VkBool32,
+    pub shaderInt64: VkBool32,
+    pub shaderInt16: VkBool32,
+    pub shaderResourceResidency: VkBool32,
+    pub shaderResourceMinLod: VkBool32,
+    pub sparseBinding: VkBool32,
+    pub sparseResidencyBuffer: VkBool32,
+    pub sparseResidencyImage2D: VkBool32,
+    pub sparseResidencyImage3D: VkBool32,
+    pub sparseResidency2Samples: VkBool32,
+    pub sparseResidency4Samples: VkBool32,
+    pub sparseResidency8Samples: VkBool32,
+    pub sparseResidency16Samples: VkBool32,
+    pub sparseResidencyAliased: VkBool32,
+    pub variableMultisampleRate: VkBool32,
+    pub inheritedQueries: VkBool32,
+}
+
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceIDPropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub deviceUUID: [u8; VK_UUID_SIZE],
+    pub driverUUID: [u8; VK_UUID_SIZE],
+    pub deviceLUID: [u8; VK_LUID_SIZE],
+    pub deviceNodeMask: u32,
+    pub deviceLUIDValid: VkBool32,
+}
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType = 1000071004;
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;
+}
+#[cfg(feature = "Allow1_1APIs")]
+pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceLimits {
+    pub maxImageDimension1D: u32,
+    pub maxImageDimension2D: u32,
+    pub maxImageDimension3D: u32,
+    pub maxImageDimensionCube: u32,
+    pub maxImageArrayLayers: u32,
+    pub maxTexelBufferElements: u32,
+    pub maxUniformBufferRange: u32,
+    pub maxStorageBufferRange: u32,
+    pub maxPushConstantsSize: u32,
+    pub maxMemoryAllocationCount: u32,
+    pub maxSamplerAllocationCount: u32,
+    pub bufferImageGranularity: VkDeviceSize,
+    pub sparseAddressSpaceSize: VkDeviceSize,
+    pub maxBoundDescriptorSets: u32,
+    pub maxPerStageDescriptorSamplers: u32,
+    pub maxPerStageDescriptorUniformBuffers: u32,
+    pub maxPerStageDescriptorStorageBuffers: u32,
+    pub maxPerStageDescriptorSampledImages: u32,
+    pub maxPerStageDescriptorStorageImages: u32,
+    pub maxPerStageDescriptorInputAttachments: u32,
+    pub maxPerStageResources: u32,
+    pub maxDescriptorSetSamplers: u32,
+    pub maxDescriptorSetUniformBuffers: u32,
+    pub maxDescriptorSetUniformBuffersDynamic: u32,
+    pub maxDescriptorSetStorageBuffers: u32,
+    pub maxDescriptorSetStorageBuffersDynamic: u32,
+    pub maxDescriptorSetSampledImages: u32,
+    pub maxDescriptorSetStorageImages: u32,
+    pub maxDescriptorSetInputAttachments: u32,
+    pub maxVertexInputAttributes: u32,
+    pub maxVertexInputBindings: u32,
+    pub maxVertexInputAttributeOffset: u32,
+    pub maxVertexInputBindingStride: u32,
+    pub maxVertexOutputComponents: u32,
+    pub maxTessellationGenerationLevel: u32,
+    pub maxTessellationPatchSize: u32,
+    pub maxTessellationControlPerVertexInputComponents: u32,
+    pub maxTessellationControlPerVertexOutputComponents: u32,
+    pub maxTessellationControlPerPatchOutputComponents: u32,
+    pub maxTessellationControlTotalOutputComponents: u32,
+    pub maxTessellationEvaluationInputComponents: u32,
+    pub maxTessellationEvaluationOutputComponents: u32,
+    pub maxGeometryShaderInvocations: u32,
+    pub maxGeometryInputComponents: u32,
+    pub maxGeometryOutputComponents: u32,
+    pub maxGeometryOutputVertices: u32,
+    pub maxGeometryTotalOutputComponents: u32,
+    pub maxFragmentInputComponents: u32,
+    pub maxFragmentOutputAttachments: u32,
+    pub maxFragmentDualSrcAttachments: u32,
+    pub maxFragmentCombinedOutputResources: u32,
+    pub maxComputeSharedMemorySize: u32,
+    pub maxComputeWorkGroupCount: [u32; 3],
+    pub maxComputeWorkGroupInvocations: u32,
+    pub maxComputeWorkGroupSize: [u32; 3],
+    pub subPixelPrecisionBits: u32,
+    pub subTexelPrecisionBits: u32,
+    pub mipmapPrecisionBits: u32,
+    pub maxDrawIndexedIndexValue: u32,
+    pub maxDrawIndirectCount: u32,
+    pub maxSamplerLodBias: core::ffi::c_float,
+    pub maxSamplerAnisotropy: core::ffi::c_float,
+    pub maxViewports: u32,
+    pub maxViewportDimensions: [u32; 2],
+    pub viewportBoundsRange: [core::ffi::c_float; 2],
+    pub viewportSubPixelBits: u32,
+    pub minMemoryMapAlignment: usize,
+    pub minTexelBufferOffsetAlignment: VkDeviceSize,
+    pub minUniformBufferOffsetAlignment: VkDeviceSize,
+    pub minStorageBufferOffsetAlignment: VkDeviceSize,
+    pub minTexelOffset: i32,
+    pub maxTexelOffset: u32,
+    pub minTexelGatherOffset: i32,
+    pub maxTexelGatherOffset: u32,
+    pub minInterpolationOffset: core::ffi::c_float,
+    pub maxInterpolationOffset: core::ffi::c_float,
+    pub subPixelInterpolationOffsetBits: u32,
+    pub maxFramebufferWidth: u32,
+    pub maxFramebufferHeight: u32,
+    pub maxFramebufferLayers: u32,
+    pub framebufferColorSampleCounts: VkSampleCountFlags,
+    pub framebufferDepthSampleCounts: VkSampleCountFlags,
+    pub framebufferStencilSampleCounts: VkSampleCountFlags,
+    pub framebufferNoAttachmentsSampleCounts: VkSampleCountFlags,
+    pub maxColorAttachments: u32,
+    pub sampledImageColorSampleCounts: VkSampleCountFlags,
+    pub sampledImageIntegerSampleCounts: VkSampleCountFlags,
+    pub sampledImageDepthSampleCounts: VkSampleCountFlags,
+    pub sampledImageStencilSampleCounts: VkSampleCountFlags,
+    pub storageImageSampleCounts: VkSampleCountFlags,
+    pub maxSampleMaskWords: u32,
+    pub timestampComputeAndGraphics: VkBool32,
+    pub timestampPeriod: core::ffi::c_float,
+    pub maxClipDistances: u32,
+    pub maxCullDistances: u32,
+    pub maxCombinedClipAndCullDistances: u32,
+    pub discreteQueuePriorities: u32,
+    pub pointSizeRange: [core::ffi::c_float; 2],
+    pub lineWidthRange: [core::ffi::c_float; 2],
+    pub pointSizeGranularity: core::ffi::c_float,
+    pub lineWidthGranularity: core::ffi::c_float,
+    pub strictLines: VkBool32,
+    pub standardSampleLocations: VkBool32,
+    pub optimalBufferCopyOffsetAlignment: VkDeviceSize,
+    pub optimalBufferCopyRowPitchAlignment: VkDeviceSize,
+    pub nonCoherentAtomSize: VkDeviceSize,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceMemoryProperties {
+    pub memoryTypeCount: u32,
+    pub memoryTypes: [VkMemoryType; VK_MAX_MEMORY_TYPES],
+    pub memoryHeapCount: u32,
+    pub memoryHeaps: [VkMemoryHeap; VK_MAX_MEMORY_HEAPS],
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceProperties {
+    pub apiVersion: u32,
+    pub driverVersion: u32,
+    pub vendorID: u32,
+    pub deviceID: u32,
+    pub deviceType: VkPhysicalDeviceType,
+    pub deviceName: crate::ffi_helper::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
+    pub pipelineCacheUUID: [u8; VK_UUID_SIZE],
+    pub limits: VkPhysicalDeviceLimits,
+    pub sparseProperties: VkPhysicalDeviceSparseProperties,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceSparseProperties {
+    pub residencyStandard2DBlockShape: VkBool32,
+    pub residencyStandard2DMultisampleBlockShape: VkBool32,
+    pub residencyStandard3DBlockShape: VkBool32,
+    pub residencyAlignedMipSize: VkBool32,
+    pub residencyNonResidentStrict: VkBool32,
+}
+
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPhysicalDeviceSurfaceInfo2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub surface: VkSurfaceKHR,
+}
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR: VkStructureType = 1000119000;
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineCacheCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineCacheCreateFlags,
+    pub initialDataSize: usize,
+    pub pInitialData: *const core::ffi::c_void,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO: VkStructureType = 17;
+unsafe impl crate::VulkanStructure for VkPipelineCacheCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineCacheCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineColorBlendAttachmentState {
+    pub blendEnable: VkBool32,
+    pub srcColorBlendFactor: VkBlendFactor,
+    pub dstColorBlendFactor: VkBlendFactor,
+    pub colorBlendOp: VkBlendOp,
+    pub srcAlphaBlendFactor: VkBlendFactor,
+    pub dstAlphaBlendFactor: VkBlendFactor,
+    pub alphaBlendOp: VkBlendOp,
+    pub colorWriteMask: VkColorComponentFlags,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineColorBlendStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineColorBlendStateCreateFlags,
+    pub logicOpEnable: VkBool32,
+    pub logicOp: VkLogicOp,
+    pub attachmentCount: u32,
+    pub pAttachments: *const VkPipelineColorBlendAttachmentState,
+    pub blendConstants: [core::ffi::c_float; 4],
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO: VkStructureType = 26;
+unsafe impl crate::VulkanStructure for VkPipelineColorBlendStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineColorBlendStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineDepthStencilStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineDepthStencilStateCreateFlags,
+    pub depthTestEnable: VkBool32,
+    pub depthWriteEnable: VkBool32,
+    pub depthCompareOp: VkCompareOp,
+    pub depthBoundsTestEnable: VkBool32,
+    pub stencilTestEnable: VkBool32,
+    pub front: VkStencilOpState,
+    pub back: VkStencilOpState,
+    pub minDepthBounds: core::ffi::c_float,
+    pub maxDepthBounds: core::ffi::c_float,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO: VkStructureType = 25;
+unsafe impl crate::VulkanStructure for VkPipelineDepthStencilStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineDepthStencilStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineDynamicStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineDynamicStateCreateFlags,
+    pub dynamicStateCount: u32,
+    pub pDynamicStates: *const VkDynamicState,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO: VkStructureType = 27;
+unsafe impl crate::VulkanStructure for VkPipelineDynamicStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineDynamicStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineInputAssemblyStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineInputAssemblyStateCreateFlags,
+    pub topology: VkPrimitiveTopology,
+    pub primitiveRestartEnable: VkBool32,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO: VkStructureType = 20;
+unsafe impl crate::VulkanStructure for VkPipelineInputAssemblyStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineInputAssemblyStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineLayoutCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineLayoutCreateFlags,
+    pub setLayoutCount: u32,
+    pub pSetLayouts: *const VkDescriptorSetLayout,
+    pub pushConstantRangeCount: u32,
+    pub pPushConstantRanges: *const VkPushConstantRange,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO: VkStructureType = 30;
+unsafe impl crate::VulkanStructure for VkPipelineLayoutCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineLayoutCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineMultisampleStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineMultisampleStateCreateFlags,
+    pub rasterizationSamples: VkSampleCountFlagBits,
+    pub sampleShadingEnable: VkBool32,
+    pub minSampleShading: core::ffi::c_float,
+    pub pSampleMask: *const VkSampleMask,
+    pub alphaToCoverageEnable: VkBool32,
+    pub alphaToOneEnable: VkBool32,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO: VkStructureType = 24;
+unsafe impl crate::VulkanStructure for VkPipelineMultisampleStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineMultisampleStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineRasterizationStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineRasterizationStateCreateFlags,
+    pub depthClampEnable: VkBool32,
+    pub rasterizerDiscardEnable: VkBool32,
+    pub polygonMode: VkPolygonMode,
+    pub cullMode: VkCullModeFlags,
+    pub frontFace: VkFrontFace,
+    pub depthBiasEnable: VkBool32,
+    pub depthBiasConstantFactor: core::ffi::c_float,
+    pub depthBiasClamp: core::ffi::c_float,
+    pub depthBiasSlopeFactor: core::ffi::c_float,
+    pub lineWidth: core::ffi::c_float,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO: VkStructureType = 23;
+unsafe impl crate::VulkanStructure for VkPipelineRasterizationStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineRasterizationStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineShaderStageCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineShaderStageCreateFlags,
+    pub stage: VkShaderStageFlagBits,
+    pub module: VkShaderModule,
+    pub pName: *const core::ffi::c_char,
+    pub pSpecializationInfo: *const VkSpecializationInfo,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO: VkStructureType = 18;
+unsafe impl crate::VulkanStructure for VkPipelineShaderStageCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineShaderStageCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineTessellationStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineTessellationStateCreateFlags,
+    pub patchControlPoints: u32,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO: VkStructureType = 21;
+unsafe impl crate::VulkanStructure for VkPipelineTessellationStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineTessellationStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineVertexInputStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineVertexInputStateCreateFlags,
+    pub vertexBindingDescriptionCount: u32,
+    pub pVertexBindingDescriptions: *const VkVertexInputBindingDescription,
+    pub vertexAttributeDescriptionCount: u32,
+    pub pVertexAttributeDescriptions: *const VkVertexInputAttributeDescription,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO: VkStructureType = 19;
+unsafe impl crate::VulkanStructure for VkPipelineVertexInputStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineVertexInputStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPipelineViewportStateCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineViewportStateCreateFlags,
+    pub viewportCount: u32,
+    pub pViewports: *const VkViewport,
+    pub scissorCount: u32,
+    pub pScissors: *const VkRect2D,
+}
+pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO: VkStructureType = 22;
+unsafe impl crate::VulkanStructure for VkPipelineViewportStateCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkPipelineViewportStateCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+}
+
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPresentInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub waitSemaphoreCount: u32,
+    pub pWaitSemaphores: *const VkSemaphore,
+    pub swapchainCount: u32,
+    pub pSwapchains: *const VkSwapchainKHR,
+    pub pImageIndices: *const u32,
+    pub pResults: *mut VkResult,
+}
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+pub const VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: VkStructureType = 1000001001;
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+unsafe impl crate::VulkanStructure for VkPresentInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+unsafe impl crate::TypedVulkanStructure for VkPresentInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkPushConstantRange {
+    pub stageFlags: VkShaderStageFlags,
+    pub offset: u32,
+    pub size: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkQueryPoolCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkQueryPoolCreateFlags,
+    pub queryType: VkQueryType,
+    pub queryCount: u32,
+    pub pipelineStatistics: VkQueryPipelineStatisticFlags,
+}
+pub const VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO: VkStructureType = 11;
+unsafe impl crate::VulkanStructure for VkQueryPoolCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkQueryPoolCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkQueueFamilyProperties {
+    pub queueFlags: VkQueueFlags,
+    pub queueCount: u32,
+    pub timestampValidBits: u32,
+    pub minImageTransferGranularity: VkExtent3D,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkRect2D {
+    pub offset: VkOffset2D,
+    pub extent: VkExtent2D,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkRenderPassBeginInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub renderPass: VkRenderPass,
+    pub framebuffer: VkFramebuffer,
+    pub renderArea: VkRect2D,
+    pub clearValueCount: u32,
+    pub pClearValues: *const VkClearValue,
+}
+pub const VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO: VkStructureType = 43;
+unsafe impl crate::VulkanStructure for VkRenderPassBeginInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkRenderPassBeginInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkRenderPassCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkRenderPassCreateFlags,
+    pub attachmentCount: u32,
+    pub pAttachments: *const VkAttachmentDescription,
+    pub subpassCount: u32,
+    pub pSubpasses: *const VkSubpassDescription,
+    pub dependencyCount: u32,
+    pub pDependencies: *const VkSubpassDependency,
+}
+pub const VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO: VkStructureType = 38;
+unsafe impl crate::VulkanStructure for VkRenderPassCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkRenderPassCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSamplerCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSamplerCreateFlags,
+    pub magFilter: VkFilter,
+    pub minFilter: VkFilter,
+    pub mipmapMode: VkSamplerMipmapMode,
+    pub addressModeU: VkSamplerAddressMode,
+    pub addressModeV: VkSamplerAddressMode,
+    pub addressModeW: VkSamplerAddressMode,
+    pub mipLodBias: core::ffi::c_float,
+    pub anisotropyEnable: VkBool32,
+    pub maxAnisotropy: core::ffi::c_float,
+    pub compareEnable: VkBool32,
+    pub compareOp: VkCompareOp,
+    pub minLod: core::ffi::c_float,
+    pub maxLod: core::ffi::c_float,
+    pub borderColor: VkBorderColor,
+    pub unnormalizedCoordinates: VkBool32,
+}
+pub const VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO: VkStructureType = 31;
+unsafe impl crate::VulkanStructure for VkSamplerCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkSamplerCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSemaphoreCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSemaphoreCreateFlags,
+}
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO: VkStructureType = 9;
+unsafe impl crate::VulkanStructure for VkSemaphoreCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+}
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSemaphoreGetFdInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagBits,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR: VkStructureType = 1000079001;
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+unsafe impl crate::VulkanStructure for VkSemaphoreGetFdInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreGetFdInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSemaphoreGetWin32HandleInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagBits,
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000078003;
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::VulkanStructure for VkSemaphoreGetWin32HandleInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreGetWin32HandleInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkShaderModuleCreateInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkShaderModuleCreateFlags,
+    pub codeSize: usize,
+    pub pCode: *const u32,
+}
+pub const VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO: VkStructureType = 16;
+unsafe impl crate::VulkanStructure for VkShaderModuleCreateInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkShaderModuleCreateInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseBufferMemoryBindInfo {
+    pub buffer: VkBuffer,
+    pub bindCount: u32,
+    pub pBinds: *const VkSparseMemoryBind,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseImageFormatProperties {
+    pub aspectMask: VkImageAspectFlags,
+    pub imageGranularity: VkExtent3D,
+    pub flags: VkSparseImageFormatFlags,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseImageMemoryBind {
+    pub subresource: VkImageSubresource,
+    pub offset: VkOffset3D,
+    pub extent: VkExtent3D,
+    pub memory: VkDeviceMemory,
+    pub memoryOffset: VkDeviceSize,
+    pub flags: VkSparseMemoryBindFlags,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseImageMemoryBindInfo {
+    pub image: VkImage,
+    pub bindCount: u32,
+    pub pBinds: *const VkSparseImageMemoryBind,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseImageMemoryRequirements {
+    pub formatProperties: VkSparseImageFormatProperties,
+    pub imageMipTailFirstLod: u32,
+    pub imageMipTailSize: VkDeviceSize,
+    pub imageMipTailOffset: VkDeviceSize,
+    pub imageMipTailStride: VkDeviceSize,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseImageOpaqueMemoryBindInfo {
+    pub image: VkImage,
+    pub bindCount: u32,
+    pub pBinds: *const VkSparseMemoryBind,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSparseMemoryBind {
+    pub reosurceOffset: VkDeviceSize,
+    pub size: VkDeviceSize,
+    pub memory: VkDeviceMemory,
+    pub memoryOffset: VkDeviceSize,
+    pub flags: VkSparseMemoryBindFlags,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSpecializationInfo {
+    pub mapEntryCount: u32,
+    pub pMapEntries: *const VkSpecializationMapEntry,
+    pub dataSize: usize,
+    pub pData: *const core::ffi::c_void,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSpecializationMapEntry {
+    pub constantID: u32,
+    pub offset: u32,
+    pub size: usize,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkStencilOpState {
+    pub failOp: VkStencilOp,
+    pub passOp: VkStencilOp,
+    pub depthFailOp: VkStencilOp,
+    pub compareOp: VkCompareOp,
+    pub compareMask: u32,
+    pub writeMask: u32,
+    pub reference: u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSubmitInfo {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub waitSemaphoreCount: u32,
+    pub pWaitSemaphores: *const VkSemaphore,
+    pub pWaitDstStageMask: *const VkPipelineStageFlags,
+    pub commandBufferCount: u32,
+    pub pCommandBuffers: *const VkCommandBuffer,
+    pub signalSemaphoreCount: u32,
+    pub pSignalSemaphores: *const VkSemaphore,
+}
+pub const VK_STRUCTURE_TYPE_SUBMIT_INFO: VkStructureType = 4;
+unsafe impl crate::VulkanStructure for VkSubmitInfo {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkSubmitInfo {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSubpassDependency {
+    pub srcSubpass: u32,
+    pub dstSubpass: u32,
+    pub srcStageMask: VkPipelineStageFlags,
+    pub dstStageMask: VkPipelineStageFlags,
+    pub srcAccessMask: VkAccessFlags,
+    pub dstAccessMask: VkAccessFlags,
+    pub dependencyFlags: VkDependencyFlags,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSubpassDescription {
+    pub flags: VkSubpassDescriptionFlags,
+    pub pipelineBindPoint: VkPipelineBindPoint,
+    pub inputAttachmentCount: u32,
+    pub pInputAttachments: *const VkAttachmentReference,
+    pub colorAttachmentCount: u32,
+    pub pColorAttachments: *const VkAttachmentReference,
+    pub pResolveAttachments: *const VkAttachmentReference,
+    pub pDepthStencilAttachment: *const VkAttachmentReference,
+    pub preserveAttachmentCount: u32,
+    pub pPreserveAttachments: *const u32,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSubresourceLayout {
+    pub offset: VkDeviceSize,
+    pub size: VkDeviceSize,
+    pub rowPitch: VkDeviceSize,
+    pub arrayPitch: VkDeviceSize,
+    pub depthPitch: VkDeviceSize,
+}
+
+#[cfg(all(feature = "VK_KHR_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSurfaceCapabilitiesKHR {
+    pub minImageCount: u32,
+    pub maxImageCount: u32,
+    pub currentExtent: VkExtent2D,
+    pub minImageExtent: VkExtent2D,
+    pub maxImageExtent: VkExtent2D,
+    pub maxImageArrayLayers: u32,
+    pub supportedTransforms: VkSurfaceTransformFlagsKHR,
+    pub currentTransform: VkSurfaceTransformFlagBitsKHR,
+    pub supportedCompositeAlpha: VkCompositeAlphaFlagsKHR,
+    pub supportedUsageFlags: VkImageUsageFlags,
+}
+
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSurfaceCapabilities2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub surfaceCapabilities: VkSurfaceCapabilitiesKHR,
+}
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR: VkStructureType = 1000119001;
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+unsafe impl crate::VulkanSinkStructure for VkSurfaceCapabilities2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceCapabilities2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSurfaceFormatKHR {
+    pub format: VkFormat,
+    pub colorSpace: VkColorSpaceKHR,
+}
+
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSurfaceFormat2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub surfaceFormat: VkSurfaceFormatKHR,
+}
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+pub const VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR: VkStructureType = 1000119002;
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+unsafe impl crate::VulkanSinkStructure for VkSurfaceFormat2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
+unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceFormat2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkSwapchainCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSwapchainCreateFlagsKHR,
+    pub surface: VkSurfaceKHR,
+    pub minImageCount: u32,
+    pub imageFormat: VkFormat,
+    pub imageColorSpace: VkColorSpaceKHR,
+    pub imageExtent: VkExtent2D,
+    pub imageArrayLayers: u32,
+    pub imageUsage: VkImageUsageFlags,
+    pub imageSharingMode: VkSharingMode,
+    pub queueFamilyIndexCount: u32,
+    pub pQueueFamilyIndices: *const u32,
+    pub preTransform: VkSurfaceTransformFlagBitsKHR,
+    pub compositeAlpha: VkCompositeAlphaFlagBitsKHR,
+    pub presentMode: VkPresentModeKHR,
+    pub clipped: VkBool32,
+    pub oldSwapchain: VkSwapchainKHR,
+}
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+pub const VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: VkStructureType = 1000001000;
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+unsafe impl crate::VulkanStructure for VkSwapchainCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_swapchain"))]
+unsafe impl crate::TypedVulkanStructure for VkSwapchainCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkVertexInputAttributeDescription {
+    pub location: u32,
+    pub binding: u32,
+    pub format: VkFormat,
+    pub offset: u32,
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct VkVertexInputBindingDescription {
+    pub binding: u32,
+    pub stride: u32,
+    pub inputRate: VkVertexInputRate,
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkViewport {
+    pub x: core::ffi::c_float,
+    pub y: core::ffi::c_float,
+    pub width: core::ffi::c_float,
+    pub height: core::ffi::c_float,
+    pub minDepth: core::ffi::c_float,
+    pub maxDepth: core::ffi::c_float,
+}
+
+#[cfg(all(feature = "VK_KHR_wayland_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkWaylandSurfaceCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkWaylandSurfaceCreateFlagsKHR,
+    pub display: *mut core::ffi::c_void,
+    pub surface: *mut core::ffi::c_void,
+}
+#[cfg(all(feature = "VK_KHR_wayland_surface"))]
+pub const VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000006000;
+#[cfg(all(feature = "VK_KHR_wayland_surface"))]
+unsafe impl crate::VulkanStructure for VkWaylandSurfaceCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_wayland_surface"))]
+unsafe impl crate::TypedVulkanStructure for VkWaylandSurfaceCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_win32_keyed_mutex"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkWin32KeyedMutexAcquireReleaseInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub acquireCount: u32,
+    pub pAcquireSyncs: *const VkDeviceMemory,
+    pub pAcquireKeys: *const u64,
+    pub pAcquireTimeouts: *const u32,
+    pub releaseCount: u32,
+    pub pReleaseSyncs: *const VkDeviceMemory,
+    pub pReleaseKeys: *const u64,
+}
+#[cfg(all(feature = "VK_KHR_win32_keyed_mutex"))]
+pub const VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR: VkStructureType = 1000075000;
+#[cfg(all(feature = "VK_KHR_win32_keyed_mutex"))]
+unsafe impl crate::VulkanStructure for VkWin32KeyedMutexAcquireReleaseInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_win32_keyed_mutex"))]
+unsafe impl crate::TypedVulkanStructure for VkWin32KeyedMutexAcquireReleaseInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_win32_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkWin32SurfaceCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkWin32SurfaceCreateFlagsKHR,
+    pub hinstance: windows::Win32::Foundation::HINSTANCE,
+    pub hwnd: windows::Win32::Foundation::HWND,
+}
+#[cfg(all(feature = "VK_KHR_win32_surface"))]
+pub const VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000009000;
+#[cfg(all(feature = "VK_KHR_win32_surface"))]
+unsafe impl crate::VulkanStructure for VkWin32SurfaceCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_win32_surface"))]
+unsafe impl crate::TypedVulkanStructure for VkWin32SurfaceCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+}
+
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkWriteDescriptorSet {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub dstSet: VkDescriptorSet,
+    pub dstBinding: u32,
+    pub dstArrayElement: u32,
+    pub descriptorCount: u32,
+    pub descriptorType: VkDescriptorType,
+    pub pImageInfo: *const VkDescriptorImageInfo,
+    pub pBufferInfo: *const VkDescriptorBufferInfo,
+    pub pTexelBufferView: *const VkBufferView,
+}
+pub const VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET: VkStructureType = 35;
+unsafe impl crate::VulkanStructure for VkWriteDescriptorSet {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+unsafe impl crate::TypedVulkanStructure for VkWriteDescriptorSet {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+}
+
+#[cfg(all(feature = "VK_KHR_xcb_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkXcbSurfaceCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkXcbSurfaceCreateFlagsKHR,
+    pub connection: *mut xcb::ffi::xcb_connection_t,
+    pub window: xcb::x::Window,
+}
+#[cfg(all(feature = "VK_KHR_xcb_surface"))]
+pub const VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000005000;
+#[cfg(all(feature = "VK_KHR_xcb_surface"))]
+unsafe impl crate::VulkanStructure for VkXcbSurfaceCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_xcb_surface"))]
+unsafe impl crate::TypedVulkanStructure for VkXcbSurfaceCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+}
+
+#[cfg(all(feature = "VK_KHR_xlib_surface"))]
+#[derive(Clone)]
+#[repr(C)]
+pub struct VkXlibSurfaceCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkXlibSurfaceCreateFlagsKHR,
+    pub dpy: *mut x11::xlib::Display,
+    pub window: x11::xlib::Window,
+}
+#[cfg(all(feature = "VK_KHR_xlib_surface"))]
+pub const VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR: VkStructureType = 1000004000;
+#[cfg(all(feature = "VK_KHR_xlib_surface"))]
+unsafe impl crate::VulkanStructure for VkXlibSurfaceCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_xlib_surface"))]
+unsafe impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub union VkClearColorValue {
+    pub float32: [core::ffi::c_float; 4],
+    pub int32: [i32; 4],
+    pub uint32: [u32; 4],
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub union VkClearValue {
+    pub color: VkClearColorValue,
+    pub depthStencil: VkClearDepthStencilValue,
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateInstance(pub unsafe extern "system" fn(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateInstance {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateInstance";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateInstance {
+    const STATIC: Self = Self(vkCreateInstance);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyInstance(pub unsafe extern "system" fn(instance: VkInstance, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyInstance {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyInstance";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyInstance {
+    const STATIC: Self = Self(vkDestroyInstance);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEnumeratePhysicalDevices(pub unsafe extern "system" fn(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDevices {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumeratePhysicalDevices";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkEnumeratePhysicalDevices {
+    const STATIC: Self = Self(vkEnumeratePhysicalDevices);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceFeatures(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFeatures";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFeatures {
+    const STATIC: Self = Self(vkGetPhysicalDeviceFeatures);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFormatProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceImageFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, pImageFormatProperties: *mut VkImageFormatProperties) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceImageFormatProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceQueueFamilyProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceMemoryProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceMemoryProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetInstanceProcAddr(pub unsafe extern "system" fn(instance: VkInstance, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetInstanceProcAddr {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetInstanceProcAddr";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetInstanceProcAddr {
+    const STATIC: Self = Self(vkGetInstanceProcAddr);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetDeviceProcAddr(pub unsafe extern "system" fn(device: VkDevice, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetDeviceProcAddr {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceProcAddr";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetDeviceProcAddr {
+    const STATIC: Self = Self(vkGetDeviceProcAddr);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDevice(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDevice {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDevice";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateDevice {
+    const STATIC: Self = Self(vkCreateDevice);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyDevice(pub unsafe extern "system" fn(device: VkDevice, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyDevice {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDevice";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyDevice {
+    const STATIC: Self = Self(vkDestroyDevice);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEnumerateInstanceExtensionProperties(pub unsafe extern "system" fn(pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceExtensionProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateInstanceExtensionProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceExtensionProperties {
+    const STATIC: Self = Self(vkEnumerateInstanceExtensionProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEnumerateDeviceExtensionProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkEnumerateDeviceExtensionProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateDeviceExtensionProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceExtensionProperties {
+    const STATIC: Self = Self(vkEnumerateDeviceExtensionProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEnumerateInstanceLayerProperties(pub unsafe extern "system" fn(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceLayerProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateInstanceLayerProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceLayerProperties {
+    const STATIC: Self = Self(vkEnumerateInstanceLayerProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEnumerateDeviceLayerProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkEnumerateDeviceLayerProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateDeviceLayerProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceLayerProperties {
+    const STATIC: Self = Self(vkEnumerateDeviceLayerProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetDeviceQueue(pub unsafe extern "system" fn(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetDeviceQueue {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceQueue";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetDeviceQueue {
+    const STATIC: Self = Self(vkGetDeviceQueue);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueueSubmit(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueSubmit";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkQueueSubmit {
+    const STATIC: Self = Self(vkQueueSubmit);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueueWaitIdle(pub unsafe extern "system" fn(queue: VkQueue) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkQueueWaitIdle {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueWaitIdle";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkQueueWaitIdle {
+    const STATIC: Self = Self(vkQueueWaitIdle);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDeviceWaitIdle(pub unsafe extern "system" fn(device: VkDevice) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDeviceWaitIdle {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDeviceWaitIdle";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDeviceWaitIdle {
+    const STATIC: Self = Self(vkDeviceWaitIdle);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkAllocateMemory(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkAllocateMemory {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAllocateMemory";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkAllocateMemory {
+    const STATIC: Self = Self(vkAllocateMemory);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkFreeMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkFreeMemory {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkFreeMemory";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkFreeMemory {
+    const STATIC: Self = Self(vkFreeMemory);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkMapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: *mut *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkMapMemory {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkMapMemory";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkMapMemory {
+    const STATIC: Self = Self(vkMapMemory);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkUnmapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkUnmapMemory {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkUnmapMemory";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkUnmapMemory {
+    const STATIC: Self = Self(vkUnmapMemory);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkFlushMappedMemoryRanges(pub unsafe extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkFlushMappedMemoryRanges {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkFlushMappedMemoryRanges";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkFlushMappedMemoryRanges {
+    const STATIC: Self = Self(vkFlushMappedMemoryRanges);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkInvalidateMappedMemoryRanges(pub unsafe extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkInvalidateMappedMemoryRanges {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkInvalidateMappedMemoryRanges";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkInvalidateMappedMemoryRanges {
+    const STATIC: Self = Self(vkInvalidateMappedMemoryRanges);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetDeviceMemoryCommitment(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pCommitmentMemoryInBytes: *mut VkDeviceSize));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryCommitment {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceMemoryCommitment";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetDeviceMemoryCommitment {
+    const STATIC: Self = Self(vkGetDeviceMemoryCommitment);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkBindBufferMemory(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkBindBufferMemory";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkBindBufferMemory {
+    const STATIC: Self = Self(vkBindBufferMemory);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkBindImageMemory(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkBindImageMemory";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkBindImageMemory {
+    const STATIC: Self = Self(vkBindImageMemory);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetBufferMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferMemoryRequirements";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements {
+    const STATIC: Self = Self(vkGetBufferMemoryRequirements);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetImageMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageMemoryRequirements";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements {
+    const STATIC: Self = Self(vkGetImageMemoryRequirements);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetImageSparseMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSparseMemoryRequirements";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetImageSparseMemoryRequirements {
+    const STATIC: Self = Self(vkGetImageSparseMemoryRequirements);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSparseImageFormatProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueueBindSparse(pub unsafe extern "system" fn(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkQueueBindSparse {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueBindSparse";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkQueueBindSparse {
+    const STATIC: Self = Self(vkQueueBindSparse);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateFence(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateFence {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateFence";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateFence {
+    const STATIC: Self = Self(vkCreateFence);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyFence(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyFence {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyFence";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyFence {
+    const STATIC: Self = Self(vkDestroyFence);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkResetFences(pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkResetFences {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkResetFences";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkResetFences {
+    const STATIC: Self = Self(vkResetFences);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetFenceStatus(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetFenceStatus {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetFenceStatus";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetFenceStatus {
+    const STATIC: Self = Self(vkGetFenceStatus);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkWaitForFences(pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence, waitAll: VkBool32, timeout: u64) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkWaitForFences {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkWaitForFences";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkWaitForFences {
+    const STATIC: Self = Self(vkWaitForFences);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateSemaphore(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSemaphoreCreateInfo, pAllocator: *const VkAllocationCallbacks, pSemaphore: *mut VkSemaphore) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateSemaphore {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSemaphore";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateSemaphore {
+    const STATIC: Self = Self(vkCreateSemaphore);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroySemaphore(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroySemaphore {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySemaphore";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroySemaphore {
+    const STATIC: Self = Self(vkDestroySemaphore);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateEvent(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkEventCreateInfo, pAllocator: *const VkAllocationCallbacks, pEvent: *mut VkEvent) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateEvent {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateEvent";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateEvent {
+    const STATIC: Self = Self(vkCreateEvent);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyEvent {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyEvent";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyEvent {
+    const STATIC: Self = Self(vkDestroyEvent);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetEventStatus(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetEventStatus {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetEventStatus";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetEventStatus {
+    const STATIC: Self = Self(vkGetEventStatus);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkSetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkSetEvent {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkSetEvent";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkSetEvent {
+    const STATIC: Self = Self(vkSetEvent);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkResetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkResetEvent {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkResetEvent";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkResetEvent {
+    const STATIC: Self = Self(vkResetEvent);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateQueryPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkQueryPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pQueryPool: *mut VkQueryPool) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateQueryPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateQueryPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateQueryPool {
+    const STATIC: Self = Self(vkCreateQueryPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyQueryPool(pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyQueryPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyQueryPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyQueryPool {
+    const STATIC: Self = Self(vkDestroyQueryPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetQueryPoolResults(pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: *mut core::ffi::c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetQueryPoolResults {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetQueryPoolResults";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetQueryPoolResults {
+    const STATIC: Self = Self(vkGetQueryPoolResults);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateBuffer(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkBufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pBuffer: *mut VkBuffer) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateBuffer {
+    const STATIC: Self = Self(vkCreateBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyBuffer(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyBuffer {
+    const STATIC: Self = Self(vkDestroyBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateBufferView(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkBufferViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkBufferView) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateBufferView {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateBufferView";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateBufferView {
+    const STATIC: Self = Self(vkCreateBufferView);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyBufferView(pub unsafe extern "system" fn(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyBufferView {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyBufferView";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyBufferView {
+    const STATIC: Self = Self(vkDestroyBufferView);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateImage(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkImageCreateInfo, pAllocator: *const VkAllocationCallbacks, pImage: *mut VkImage) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateImage {
+    const STATIC: Self = Self(vkCreateImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyImage(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyImage {
+    const STATIC: Self = Self(vkDestroyImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetImageSubresourceLayout(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource, pLayout: *mut VkSubresourceLayout));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetImageSubresourceLayout {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSubresourceLayout";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetImageSubresourceLayout {
+    const STATIC: Self = Self(vkGetImageSubresourceLayout);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateImageView(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkImageViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkImageView) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateImageView {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateImageView";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateImageView {
+    const STATIC: Self = Self(vkCreateImageView);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyImageView(pub unsafe extern "system" fn(device: VkDevice, view: VkImageView, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyImageView {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyImageView";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyImageView {
+    const STATIC: Self = Self(vkDestroyImageView);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateShaderModule(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkShaderModuleCreateInfo, pAllocator: *const VkAllocationCallbacks, pModule: *mut VkShaderModule) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateShaderModule {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateShaderModule";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateShaderModule {
+    const STATIC: Self = Self(vkCreateShaderModule);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyShaderModule(pub unsafe extern "system" fn(device: VkDevice, module: VkShaderModule, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyShaderModule {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyShaderModule";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyShaderModule {
+    const STATIC: Self = Self(vkDestroyShaderModule);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreatePipelineCache(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkPipelineCacheCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineCache: *mut VkPipelineCache) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreatePipelineCache {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreatePipelineCache";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreatePipelineCache {
+    const STATIC: Self = Self(vkCreatePipelineCache);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyPipelineCache(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyPipelineCache {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyPipelineCache";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineCache {
+    const STATIC: Self = Self(vkDestroyPipelineCache);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPipelineCacheData(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPipelineCacheData {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPipelineCacheData";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetPipelineCacheData {
+    const STATIC: Self = Self(vkGetPipelineCacheData);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkMergePipelineCaches(pub unsafe extern "system" fn(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkMergePipelineCaches {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkMergePipelineCaches";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkMergePipelineCaches {
+    const STATIC: Self = Self(vkMergePipelineCaches);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateGraphicsPipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateGraphicsPipelines {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateGraphicsPipelines";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateGraphicsPipelines {
+    const STATIC: Self = Self(vkCreateGraphicsPipelines);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateComputePipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateComputePipelines {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateComputePipelines";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateComputePipelines {
+    const STATIC: Self = Self(vkCreateComputePipelines);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyPipeline(pub unsafe extern "system" fn(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyPipeline {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyPipeline";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyPipeline {
+    const STATIC: Self = Self(vkDestroyPipeline);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreatePipelineLayout(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreatePipelineLayout {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreatePipelineLayout";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreatePipelineLayout {
+    const STATIC: Self = Self(vkCreatePipelineLayout);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyPipelineLayout(pub unsafe extern "system" fn(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyPipelineLayout {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyPipelineLayout";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineLayout {
+    const STATIC: Self = Self(vkDestroyPipelineLayout);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateSampler(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSamplerCreateInfo, pAllocator: *const VkAllocationCallbacks, pSampler: *mut VkSampler) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateSampler {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSampler";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateSampler {
+    const STATIC: Self = Self(vkCreateSampler);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroySampler(pub unsafe extern "system" fn(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroySampler {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySampler";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroySampler {
+    const STATIC: Self = Self(vkDestroySampler);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDescriptorSetLayout(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pSetLayout: *mut VkDescriptorSetLayout) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorSetLayout {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDescriptorSetLayout";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorSetLayout {
+    const STATIC: Self = Self(vkCreateDescriptorSetLayout);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyDescriptorSetLayout(pub unsafe extern "system" fn(device: VkDevice, descriptorSetLayout: VkDescriptorSetLayout, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorSetLayout {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDescriptorSetLayout";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorSetLayout {
+    const STATIC: Self = Self(vkDestroyDescriptorSetLayout);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pPool: *mut VkDescriptorPool) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDescriptorPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorPool {
+    const STATIC: Self = Self(vkCreateDescriptorPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDescriptorPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorPool {
+    const STATIC: Self = Self(vkDestroyDescriptorPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkResetDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkResetDescriptorPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkResetDescriptorPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkResetDescriptorPool {
+    const STATIC: Self = Self(vkResetDescriptorPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkAllocateDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkDescriptorSetAllocateInfo, pDescriptorSets: *mut VkDescriptorSet) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkAllocateDescriptorSets {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAllocateDescriptorSets";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkAllocateDescriptorSets {
+    const STATIC: Self = Self(vkAllocateDescriptorSets);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkFreeDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkFreeDescriptorSets {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkFreeDescriptorSets";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkFreeDescriptorSets {
+    const STATIC: Self = Self(vkFreeDescriptorSets);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkUpdateDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet, descriptorCopyCount: u32, pDescriptorCopies: *const VkCopyDescriptorSet));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSets {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkUpdateDescriptorSets";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkUpdateDescriptorSets {
+    const STATIC: Self = Self(vkUpdateDescriptorSets);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateFramebuffer(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkFramebufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pFramebuffer: *mut VkFramebuffer) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateFramebuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateFramebuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateFramebuffer {
+    const STATIC: Self = Self(vkCreateFramebuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyFramebuffer(pub unsafe extern "system" fn(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyFramebuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyFramebuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyFramebuffer {
+    const STATIC: Self = Self(vkDestroyFramebuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateRenderPass(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateRenderPass {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateRenderPass";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateRenderPass {
+    const STATIC: Self = Self(vkCreateRenderPass);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyRenderPass(pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyRenderPass {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyRenderPass";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyRenderPass {
+    const STATIC: Self = Self(vkDestroyRenderPass);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetRenderAreaGranularity(pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkGetRenderAreaGranularity {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetRenderAreaGranularity";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkGetRenderAreaGranularity {
+    const STATIC: Self = Self(vkGetRenderAreaGranularity);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateCommandPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkCommandPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pCommandPool: *mut VkCommandPool) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateCommandPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateCommandPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCreateCommandPool {
+    const STATIC: Self = Self(vkCreateCommandPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyCommandPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyCommandPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkDestroyCommandPool {
+    const STATIC: Self = Self(vkDestroyCommandPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkResetCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkResetCommandPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkResetCommandPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkResetCommandPool {
+    const STATIC: Self = Self(vkResetCommandPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkAllocateCommandBuffers(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkCommandBufferAllocateInfo, pCommandBuffers: *mut VkCommandBuffer) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkAllocateCommandBuffers {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAllocateCommandBuffers";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkAllocateCommandBuffers {
+    const STATIC: Self = Self(vkAllocateCommandBuffers);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkFreeCommandBuffers(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkFreeCommandBuffers {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkFreeCommandBuffers";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkFreeCommandBuffers {
+    const STATIC: Self = Self(vkFreeCommandBuffers);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkBeginCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pBeginInfo: *const VkCommandBufferBeginInfo) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkBeginCommandBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkBeginCommandBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkBeginCommandBuffer {
+    const STATIC: Self = Self(vkBeginCommandBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEndCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkEndCommandBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEndCommandBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkEndCommandBuffer {
+    const STATIC: Self = Self(vkEndCommandBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkResetCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult);
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkResetCommandBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkResetCommandBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkResetCommandBuffer {
+    const STATIC: Self = Self(vkResetCommandBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkEnumerateInstanceVersion(pub unsafe extern "system" fn(pApiVersion: *mut u32) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceVersion {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateInstanceVersion";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceVersion {
+    const STATIC: Self = Self(vkEnumerateInstanceVersion);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroySurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroySurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+impl crate::resolver::StaticCallable for PFN_vkDestroySurfaceKHR {
+    const STATIC: Self = Self(vkDestroySurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceSupportKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceSupportKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceCapabilitiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceFormatsKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceFormatsKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfacePresentModesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceSurfacePresentModesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateSwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateSwapchainKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSwapchainKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+impl crate::resolver::StaticCallable for PFN_vkCreateSwapchainKHR {
+    const STATIC: Self = Self(vkCreateSwapchainKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroySwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroySwapchainKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySwapchainKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+impl crate::resolver::StaticCallable for PFN_vkDestroySwapchainKHR {
+    const STATIC: Self = Self(vkDestroySwapchainKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetSwapchainImagesKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl crate::resolver::PFN for PFN_vkGetSwapchainImagesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSwapchainImagesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+impl crate::resolver::StaticCallable for PFN_vkGetSwapchainImagesKHR {
+    const STATIC: Self = Self(vkGetSwapchainImagesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkAcquireNextImageKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl crate::resolver::PFN for PFN_vkAcquireNextImageKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireNextImageKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+impl crate::resolver::StaticCallable for PFN_vkAcquireNextImageKHR {
+    const STATIC: Self = Self(vkAcquireNextImageKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueuePresentKHR(pub unsafe extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+unsafe impl crate::resolver::PFN for PFN_vkQueuePresentKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueuePresentKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_swapchain")]
+impl crate::resolver::StaticCallable for PFN_vkQueuePresentKHR {
+    const STATIC: Self = Self(vkQueuePresentKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceDisplayPropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPropertiesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceDisplayPlanePropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPlanePropertiesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDisplayPlaneSupportedDisplaysKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
+    const STATIC: Self = Self(vkGetDisplayPlaneSupportedDisplaysKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetDisplayModePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkGetDisplayModePropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDisplayModePropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkGetDisplayModePropertiesKHR {
+    const STATIC: Self = Self(vkGetDisplayModePropertiesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDisplayModeKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDisplayModeKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDisplayModeKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkCreateDisplayModeKHR {
+    const STATIC: Self = Self(vkCreateDisplayModeKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkGetDisplayPlaneCapabilitiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDisplayPlaneCapabilitiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkGetDisplayPlaneCapabilitiesKHR {
+    const STATIC: Self = Self(vkGetDisplayPlaneCapabilitiesKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDisplayPlaneSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDisplayPlaneSurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDisplayPlaneSurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display")]
+impl crate::resolver::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR {
+    const STATIC: Self = Self(vkCreateDisplayPlaneSurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display_swapchain")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateSharedSwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, swapchainCount: u32, pCreateInfos: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchains: *mut VkSwapchainKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_display_swapchain")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateSharedSwapchainKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSharedSwapchainKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateXlibSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateXlibSurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateXlibSurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+impl crate::resolver::StaticCallable for PFN_vkCreateXlibSurfaceKHR {
+    const STATIC: Self = Self(vkCreateXlibSurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut x11::xlib::Display, visualID: x11::xlib::VisualID) -> VkBool32);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceXlibPresentationSupportKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xlib_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceXlibPresentationSupportKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateXcbSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateXcbSurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateXcbSurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+impl crate::resolver::StaticCallable for PFN_vkCreateXcbSurfaceKHR {
+    const STATIC: Self = Self(vkCreateXcbSurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceXcbPresentationSupportKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_xcb_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceXcbPresentationSupportKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateWaylandSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateWaylandSurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateWaylandSurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+impl crate::resolver::StaticCallable for PFN_vkCreateWaylandSurfaceKHR {
+    const STATIC: Self = Self(vkCreateWaylandSurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut core::ffi::c_void) -> VkBool32);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceWaylandPresentationSupportKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_wayland_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceWaylandPresentationSupportKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_android_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateAndroidSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_android_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateAndroidSurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateAndroidSurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_android_surface")]
+impl crate::resolver::StaticCallable for PFN_vkCreateAndroidSurfaceKHR {
+    const STATIC: Self = Self(vkCreateAndroidSurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateWin32SurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateWin32SurfaceKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateWin32SurfaceKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+impl crate::resolver::StaticCallable for PFN_vkCreateWin32SurfaceKHR {
+    const STATIC: Self = Self(vkCreateWin32SurfaceKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceWin32PresentationSupportKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_win32_surface")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
+    const STATIC: Self = Self(vkGetPhysicalDeviceWin32PresentationSupportKHR);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_surface")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateMetalSurfaceEXT(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkMetalSurfaceCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_surface")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateMetalSurfaceEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateMetalSurfaceEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_metal_surface")]
+impl crate::resolver::StaticCallable for PFN_vkCreateMetalSurfaceEXT {
+    const STATIC: Self = Self(vkCreateMetalSurfaceEXT);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetMemoryWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+unsafe impl crate::resolver::PFN for PFN_vkGetMemoryWin32HandleKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryWin32HandleKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetMemoryWin32HandlePropertiesKHR(pub unsafe extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, handle: windows::Win32::Foundation::HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+unsafe impl crate::resolver::PFN for PFN_vkGetMemoryWin32HandlePropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryWin32HandlePropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetMemoryFdKHR(pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut core::ffi::c_int) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+unsafe impl crate::resolver::PFN for PFN_vkGetMemoryFdKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryFdKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetMemoryFdPropertiesKHR(pub unsafe extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, fd: core::ffi::c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+unsafe impl crate::resolver::PFN for PFN_vkGetMemoryFdPropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryFdPropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkImportSemaphoreWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+unsafe impl crate::resolver::PFN for PFN_vkImportSemaphoreWin32HandleKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkImportSemaphoreWin32HandleKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetSemaphoreWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreWin32HandleKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreWin32HandleKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkImportSemaphoreFdKHR(pub unsafe extern "system" fn(device: VkDevice, pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+unsafe impl crate::resolver::PFN for PFN_vkImportSemaphoreFdKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkImportSemaphoreFdKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetSemaphoreFdKHR(pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkSemaphoreGetFdInfoKHR, pFd: *mut core::ffi::c_int) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreFdKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreFdKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkImportFenceWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+unsafe impl crate::resolver::PFN for PFN_vkImportFenceWin32HandleKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkImportFenceWin32HandleKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetFenceWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+unsafe impl crate::resolver::PFN for PFN_vkGetFenceWin32HandleKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetFenceWin32HandleKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkImportFenceFdKHR(pub unsafe extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+unsafe impl crate::resolver::PFN for PFN_vkImportFenceFdKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkImportFenceFdKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetFenceFdKHR(pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut core::ffi::c_int) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+unsafe impl crate::resolver::PFN for PFN_vkGetFenceFdKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetFenceFdKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pSurfaceCapabilities: *mut VkSurfaceCapabilities2KHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceCapabilities2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceSurfaceFormats2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormat2KHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceFormats2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceFormats2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDebugReportCallbackEXT(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pCallback: *mut VkDebugReportCallbackEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDebugReportCallbackEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDebugReportCallbackEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyDebugReportCallbackEXT(pub unsafe extern "system" fn(instance: VkInstance, callback: VkDebugReportCallbackEXT, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyDebugReportCallbackEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDebugReportCallbackEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDebugReportMessageEXT(pub unsafe extern "system" fn(instance: VkInstance, flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_report")]
+unsafe impl crate::resolver::PFN for PFN_vkDebugReportMessageEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDebugReportMessageEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkSetDebugUtilsObjectNameEXT(pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkSetDebugUtilsObjectNameEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkSetDebugUtilsObjectNameEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkSetDebugUtilsObjectTagEXT(pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkSetDebugUtilsObjectTagEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkSetDebugUtilsObjectTagEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueueBeginDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkQueueBeginDebugUtilsLabelEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueBeginDebugUtilsLabelEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkQueueEndDebugUtilsLabelEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueEndDebugUtilsLabelEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkQueueInsertDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkQueueInsertDebugUtilsLabelEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueInsertDebugUtilsLabelEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCreateDebugUtilsMessengerEXT(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDebugUtilsMessengerCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pDebugUtilsMessenger: *mut VkDebugUtilsMessengerEXT) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkCreateDebugUtilsMessengerEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDebugUtilsMessengerEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkDestroyDebugUtilsMessengerEXT(pub unsafe extern "system" fn(instance: VkInstance, debugUtilsMessenger: VkDebugUtilsMessengerEXT, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkDestroyDebugUtilsMessengerEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDebugUtilsMessengerEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkSubmitDebugUtilsMessageEXT(pub unsafe extern "system" fn(instance: VkInstance, messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkSubmitDebugUtilsMessageEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkSubmitDebugUtilsMessageEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalBufferPropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceExternalBufferProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalBufferProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalBufferProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_1APIs")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalBufferProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceExternalBufferProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalSemaphorePropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceExternalSemaphoreProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalSemaphoreProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_1APIs")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceExternalSemaphoreProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalFencePropertiesKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkGetPhysicalDeviceExternalFenceProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_1APIs")]
+unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalFenceProperties {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalFenceProperties";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_1APIs")]
+impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalFenceProperties {
+    const STATIC: Self = Self(vkGetPhysicalDeviceExternalFenceProperties);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBindPipeline(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBindPipeline {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindPipeline";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBindPipeline {
+    const STATIC: Self = Self(vkCmdBindPipeline);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetViewport(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetViewport {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetViewport";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetViewport {
+    const STATIC: Self = Self(vkCmdSetViewport);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetScissor(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetScissor {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetScissor";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetScissor {
+    const STATIC: Self = Self(vkCmdSetScissor);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetLineWidth(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, lineWidth: core::ffi::c_float));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetLineWidth {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetLineWidth";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetLineWidth {
+    const STATIC: Self = Self(vkCmdSetLineWidth);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetDepthBias(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: core::ffi::c_float, depthBiasClamp: core::ffi::c_float, depthBiasSlopeFactor: core::ffi::c_float));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetDepthBias {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDepthBias";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBias {
+    const STATIC: Self = Self(vkCmdSetDepthBias);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetBlendConstants(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, blendConstants: *const core::ffi::c_float));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetBlendConstants {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetBlendConstants";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetBlendConstants {
+    const STATIC: Self = Self(vkCmdSetBlendConstants);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetDepthBounds(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, minDepthBounds: core::ffi::c_float, maxDepthBounds: core::ffi::c_float));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetDepthBounds {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDepthBounds";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBounds {
+    const STATIC: Self = Self(vkCmdSetDepthBounds);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetStencilCompareMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilCompareMask {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetStencilCompareMask";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilCompareMask {
+    const STATIC: Self = Self(vkCmdSetStencilCompareMask);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetStencilWriteMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilWriteMask {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetStencilWriteMask";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilWriteMask {
+    const STATIC: Self = Self(vkCmdSetStencilWriteMask);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetStencilReference(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilReference {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetStencilReference";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilReference {
+    const STATIC: Self = Self(vkCmdSetStencilReference);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBindDescriptorSets(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet, dynamicOffsetCount: u32, pDynamicOffsets: *const u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBindDescriptorSets {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindDescriptorSets";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBindDescriptorSets {
+    const STATIC: Self = Self(vkCmdBindDescriptorSets);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBindIndexBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, indexType: VkIndexType));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBindIndexBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindIndexBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBindIndexBuffer {
+    const STATIC: Self = Self(vkCmdBindIndexBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBindVertexBuffers(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstBinding: u32, bindingCount: u32, pBuffers: *const VkBuffer, pOffsets: *const VkDeviceSize));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBindVertexBuffers {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindVertexBuffers";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBindVertexBuffers {
+    const STATIC: Self = Self(vkCmdBindVertexBuffers);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdDraw(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdDraw {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDraw";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdDraw {
+    const STATIC: Self = Self(vkCmdDraw);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdDrawIndexed(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndexed {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDrawIndexed";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexed {
+    const STATIC: Self = Self(vkCmdDrawIndexed);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdDrawIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndirect {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDrawIndirect";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndirect {
+    const STATIC: Self = Self(vkCmdDrawIndirect);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdDrawIndexedIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndexedIndirect {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDrawIndexedIndirect";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexedIndirect {
+    const STATIC: Self = Self(vkCmdDrawIndexedIndirect);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdDispatch(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdDispatch {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDispatch";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdDispatch {
+    const STATIC: Self = Self(vkCmdDispatch);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdDispatchIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchIndirect {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDispatchIndirect";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdDispatchIndirect {
+    const STATIC: Self = Self(vkCmdDispatchIndirect);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdCopyBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferCopy));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdCopyBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdCopyBuffer {
+    const STATIC: Self = Self(vkCmdCopyBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdCopyImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageCopy));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdCopyImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdCopyImage {
+    const STATIC: Self = Self(vkCmdCopyImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBlitImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageBlit, filters: VkFilter));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBlitImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBlitImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBlitImage {
+    const STATIC: Self = Self(vkCmdBlitImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdCopyBufferToImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkBufferImageCopy));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdCopyBufferToImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyBufferToImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdCopyBufferToImage {
+    const STATIC: Self = Self(vkCmdCopyBufferToImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdCopyImageToBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferImageCopy));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdCopyImageToBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyImageToBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdCopyImageToBuffer {
+    const STATIC: Self = Self(vkCmdCopyImageToBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdUpdateBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: *const core::ffi::c_void));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdUpdateBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdUpdateBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdUpdateBuffer {
+    const STATIC: Self = Self(vkCmdUpdateBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdFillBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, data: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdFillBuffer {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdFillBuffer";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdFillBuffer {
+    const STATIC: Self = Self(vkCmdFillBuffer);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdClearColorImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pColor: *const VkClearColorValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdClearColorImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdClearColorImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdClearColorImage {
+    const STATIC: Self = Self(vkCmdClearColorImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdClearDepthStencilImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pDepthStencil: *const VkClearDepthStencilValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdClearDepthStencilImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdClearDepthStencilImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdClearDepthStencilImage {
+    const STATIC: Self = Self(vkCmdClearDepthStencilImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdClearAttachments(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, attachmentCount: u32, pAttachments: *const VkClearAttachment, rectCount: u32, pRects: *const VkClearRect));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdClearAttachments {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdClearAttachments";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdClearAttachments {
+    const STATIC: Self = Self(vkCmdClearAttachments);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdResolveImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageResolve));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdResolveImage {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResolveImage";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdResolveImage {
+    const STATIC: Self = Self(vkCmdResolveImage);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdSetEvent(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetEvent";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent {
+    const STATIC: Self = Self(vkCmdSetEvent);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdResetEvent(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetEvent";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent {
+    const STATIC: Self = Self(vkCmdResetEvent);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdWaitEvents(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWaitEvents";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents {
+    const STATIC: Self = Self(vkCmdWaitEvents);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdPipelineBarrier(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, dependencyFlags: VkDependencyFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPipelineBarrier";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier {
+    const STATIC: Self = Self(vkCmdPipelineBarrier);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBeginQuery(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBeginQuery {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginQuery";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBeginQuery {
+    const STATIC: Self = Self(vkCmdBeginQuery);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdEndQuery(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdEndQuery {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndQuery";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdEndQuery {
+    const STATIC: Self = Self(vkCmdEndQuery);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdResetQueryPool(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdResetQueryPool {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetQueryPool";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdResetQueryPool {
+    const STATIC: Self = Self(vkCmdResetQueryPool);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdWriteTimestamp(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, queryPool: VkQueryPool, query: u32));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteTimestamp";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp {
+    const STATIC: Self = Self(vkCmdWriteTimestamp);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdCopyQueryPoolResults(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdCopyQueryPoolResults {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyQueryPoolResults";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdCopyQueryPoolResults {
+    const STATIC: Self = Self(vkCmdCopyQueryPoolResults);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdPushConstants(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineLayout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: *const core::ffi::c_void));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdPushConstants {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushConstants";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdPushConstants {
+    const STATIC: Self = Self(vkCmdPushConstants);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBeginRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBeginRenderPass {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginRenderPass";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdBeginRenderPass {
+    const STATIC: Self = Self(vkCmdBeginRenderPass);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdNextSubpass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, contents: VkSubpassContents));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdNextSubpass {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdNextSubpass";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdNextSubpass {
+    const STATIC: Self = Self(vkCmdNextSubpass);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdEndRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdEndRenderPass {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndRenderPass";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdEndRenderPass {
+    const STATIC: Self = Self(vkCmdEndRenderPass);
+}
+
+#[cfg(feature = "Implements")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdExecuteCommands(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer));
+#[cfg(feature = "Implements")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdExecuteCommands {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdExecuteCommands";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Implements")]
+impl crate::resolver::StaticCallable for PFN_vkCmdExecuteCommands {
+    const STATIC: Self = Self(vkCmdExecuteCommands);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdBeginDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdBeginDebugUtilsLabelEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginDebugUtilsLabelEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdEndDebugUtilsLabelEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndDebugUtilsLabelEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PFN_vkCmdInsertDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_EXT_debug_utils")]
+unsafe impl crate::resolver::PFN for PFN_vkCmdInsertDebugUtilsLabelEXT {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdInsertDebugUtilsLabelEXT";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+
+#[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
+#[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
+#[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
+unsafe extern "system" {
+    pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
+    pub fn vkDestroyInstance(instance: VkInstance, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkEnumeratePhysicalDevices(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult;
+    pub fn vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures);
+    pub fn vkGetPhysicalDeviceFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties);
+    pub fn vkGetPhysicalDeviceImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, pImageFormatProperties: *mut VkImageFormatProperties) -> VkResult;
+    pub fn vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties);
+    pub fn vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties);
+    pub fn vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties);
+    pub fn vkGetInstanceProcAddr(instance: VkInstance, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>;
+    pub fn vkGetDeviceProcAddr(device: VkDevice, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>;
+    pub fn vkCreateDevice(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult;
+    pub fn vkDestroyDevice(device: VkDevice, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkEnumerateInstanceExtensionProperties(pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
+    pub fn vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult;
+    pub fn vkEnumerateInstanceLayerProperties(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
+    pub fn vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
+    pub fn vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue);
+    pub fn vkQueueSubmit(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: VkFence) -> VkResult;
+    pub fn vkQueueWaitIdle(queue: VkQueue) -> VkResult;
+    pub fn vkDeviceWaitIdle(device: VkDevice) -> VkResult;
+    pub fn vkAllocateMemory(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult;
+    pub fn vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: *mut *mut core::ffi::c_void) -> VkResult;
+    pub fn vkUnmapMemory(device: VkDevice, memory: VkDeviceMemory);
+    pub fn vkFlushMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
+    pub fn vkInvalidateMappedMemoryRanges(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult;
+    pub fn vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, pCommitmentMemoryInBytes: *mut VkDeviceSize);
+    pub fn vkBindBufferMemory(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult;
+    pub fn vkBindImageMemory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult;
+    pub fn vkGetBufferMemoryRequirements(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements);
+    pub fn vkGetImageMemoryRequirements(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements);
+    pub fn vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements);
+    pub fn vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties);
+    pub fn vkQueueBindSparse(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: VkFence) -> VkResult;
+    pub fn vkCreateFence(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult;
+    pub fn vkDestroyFence(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkResetFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult;
+    pub fn vkGetFenceStatus(device: VkDevice, fence: VkFence) -> VkResult;
+    pub fn vkWaitForFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence, waitAll: VkBool32, timeout: u64) -> VkResult;
+    pub fn vkCreateSemaphore(device: VkDevice, pCreateInfo: *const VkSemaphoreCreateInfo, pAllocator: *const VkAllocationCallbacks, pSemaphore: *mut VkSemaphore) -> VkResult;
+    pub fn vkDestroySemaphore(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateEvent(device: VkDevice, pCreateInfo: *const VkEventCreateInfo, pAllocator: *const VkAllocationCallbacks, pEvent: *mut VkEvent) -> VkResult;
+    pub fn vkDestroyEvent(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkGetEventStatus(device: VkDevice, event: VkEvent) -> VkResult;
+    pub fn vkSetEvent(device: VkDevice, event: VkEvent) -> VkResult;
+    pub fn vkResetEvent(device: VkDevice, event: VkEvent) -> VkResult;
+    pub fn vkCreateQueryPool(device: VkDevice, pCreateInfo: *const VkQueryPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pQueryPool: *mut VkQueryPool) -> VkResult;
+    pub fn vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: *mut core::ffi::c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult;
+    pub fn vkCreateBuffer(device: VkDevice, pCreateInfo: *const VkBufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pBuffer: *mut VkBuffer) -> VkResult;
+    pub fn vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateBufferView(device: VkDevice, pCreateInfo: *const VkBufferViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkBufferView) -> VkResult;
+    pub fn vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateImage(device: VkDevice, pCreateInfo: *const VkImageCreateInfo, pAllocator: *const VkAllocationCallbacks, pImage: *mut VkImage) -> VkResult;
+    pub fn vkDestroyImage(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkGetImageSubresourceLayout(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource, pLayout: *mut VkSubresourceLayout);
+    pub fn vkCreateImageView(device: VkDevice, pCreateInfo: *const VkImageViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkImageView) -> VkResult;
+    pub fn vkDestroyImageView(device: VkDevice, view: VkImageView, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateShaderModule(device: VkDevice, pCreateInfo: *const VkShaderModuleCreateInfo, pAllocator: *const VkAllocationCallbacks, pModule: *mut VkShaderModule) -> VkResult;
+    pub fn vkDestroyShaderModule(device: VkDevice, module: VkShaderModule, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreatePipelineCache(device: VkDevice, pCreateInfo: *const VkPipelineCacheCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineCache: *mut VkPipelineCache) -> VkResult;
+    pub fn vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult;
+    pub fn vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult;
+    pub fn vkCreateGraphicsPipelines(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
+    pub fn vkCreateComputePipelines(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
+    pub fn vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreatePipelineLayout(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult;
+    pub fn vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateSampler(device: VkDevice, pCreateInfo: *const VkSamplerCreateInfo, pAllocator: *const VkAllocationCallbacks, pSampler: *mut VkSampler) -> VkResult;
+    pub fn vkDestroySampler(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateDescriptorSetLayout(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pSetLayout: *mut VkDescriptorSetLayout) -> VkResult;
+    pub fn vkDestroyDescriptorSetLayout(device: VkDevice, descriptorSetLayout: VkDescriptorSetLayout, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateDescriptorPool(device: VkDevice, pCreateInfo: *const VkDescriptorPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pPool: *mut VkDescriptorPool) -> VkResult;
+    pub fn vkDestroyDescriptorPool(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkResetDescriptorPool(device: VkDevice, descriptorPool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult;
+    pub fn vkAllocateDescriptorSets(device: VkDevice, pAllocateInfo: *const VkDescriptorSetAllocateInfo, pDescriptorSets: *mut VkDescriptorSet) -> VkResult;
+    pub fn vkFreeDescriptorSets(device: VkDevice, descriptorPool: VkDescriptorPool, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet) -> VkResult;
+    pub fn vkUpdateDescriptorSets(device: VkDevice, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet, descriptorCopyCount: u32, pDescriptorCopies: *const VkCopyDescriptorSet);
+    pub fn vkCreateFramebuffer(device: VkDevice, pCreateInfo: *const VkFramebufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pFramebuffer: *mut VkFramebuffer) -> VkResult;
+    pub fn vkDestroyFramebuffer(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkCreateRenderPass(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult;
+    pub fn vkDestroyRenderPass(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkGetRenderAreaGranularity(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D);
+    pub fn vkCreateCommandPool(device: VkDevice, pCreateInfo: *const VkCommandPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pCommandPool: *mut VkCommandPool) -> VkResult;
+    pub fn vkDestroyCommandPool(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks);
+    pub fn vkResetCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult;
+    pub fn vkAllocateCommandBuffers(device: VkDevice, pAllocateInfo: *const VkCommandBufferAllocateInfo, pCommandBuffers: *mut VkCommandBuffer) -> VkResult;
+    pub fn vkFreeCommandBuffers(device: VkDevice, commandPool: VkCommandPool, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
+    pub fn vkBeginCommandBuffer(commandBuffer: VkCommandBuffer, pBeginInfo: *const VkCommandBufferBeginInfo) -> VkResult;
+    pub fn vkEndCommandBuffer(commandBuffer: VkCommandBuffer) -> VkResult;
+    pub fn vkResetCommandBuffer(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]
+    pub fn vkEnumerateInstanceVersion(pApiVersion: *mut u32) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]
+    pub fn vkDestroySurfaceKHR(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "VK_KHR_surface")]
+    pub fn vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]
+    pub fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]
+    pub fn vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_surface")]
+    pub fn vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]
+    pub fn vkCreateSwapchainKHR(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]
+    pub fn vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks);
+    #[cfg(feature = "VK_KHR_swapchain")]
+    pub fn vkGetSwapchainImagesKHR(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]
+    pub fn vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult;
+    #[cfg(feature = "VK_KHR_swapchain")]
+    pub fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkGetDisplayModePropertiesKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkCreateDisplayModeKHR(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkGetDisplayPlaneCapabilitiesKHR(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_display")]
+    pub fn vkCreateDisplayPlaneSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_xlib_surface")]
+    pub fn vkCreateXlibSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_xlib_surface")]
+    pub fn vkGetPhysicalDeviceXlibPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut x11::xlib::Display, visualID: x11::xlib::VisualID) -> VkBool32;
+    #[cfg(feature = "VK_KHR_xcb_surface")]
+    pub fn vkCreateXcbSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_xcb_surface")]
+    pub fn vkGetPhysicalDeviceXcbPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32;
+    #[cfg(feature = "VK_KHR_wayland_surface")]
+    pub fn vkCreateWaylandSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_wayland_surface")]
+    pub fn vkGetPhysicalDeviceWaylandPresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut core::ffi::c_void) -> VkBool32;
+    #[cfg(feature = "VK_KHR_android_surface")]
+    pub fn vkCreateAndroidSurfaceKHR(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_win32_surface")]
+    pub fn vkCreateWin32SurfaceKHR(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "VK_KHR_win32_surface")]
+    pub fn vkGetPhysicalDeviceWin32PresentationSupportKHR(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32;
+    #[cfg(feature = "VK_EXT_metal_surface")]
+    pub fn vkCreateMetalSurfaceEXT(instance: VkInstance, pCreateInfo: *const VkMetalSurfaceCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult;
+    #[cfg(feature = "Allow1_1APIs")]
+    pub fn vkGetPhysicalDeviceExternalBufferProperties(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR);
+    #[cfg(feature = "Allow1_1APIs")]
+    pub fn vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR);
+    #[cfg(feature = "Allow1_1APIs")]
+    pub fn vkGetPhysicalDeviceExternalFenceProperties(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR);
+    pub fn vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
+    pub fn vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport);
+    pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);
+    pub fn vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: core::ffi::c_float);
+    pub fn vkCmdSetDepthBias(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: core::ffi::c_float, depthBiasClamp: core::ffi::c_float, depthBiasSlopeFactor: core::ffi::c_float);
+    pub fn vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: *const core::ffi::c_float);
+    pub fn vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: core::ffi::c_float, maxDepthBounds: core::ffi::c_float);
+    pub fn vkCmdSetStencilCompareMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32);
+    pub fn vkCmdSetStencilWriteMask(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32);
+    pub fn vkCmdSetStencilReference(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32);
+    pub fn vkCmdBindDescriptorSets(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet, dynamicOffsetCount: u32, pDynamicOffsets: *const u32);
+    pub fn vkCmdBindIndexBuffer(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, indexType: VkIndexType);
+    pub fn vkCmdBindVertexBuffers(commandBuffer: VkCommandBuffer, firstBinding: u32, bindingCount: u32, pBuffers: *const VkBuffer, pOffsets: *const VkDeviceSize);
+    pub fn vkCmdDraw(commandBuffer: VkCommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32);
+    pub fn vkCmdDrawIndexed(commandBuffer: VkCommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32);
+    pub fn vkCmdDrawIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32);
+    pub fn vkCmdDrawIndexedIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32);
+    pub fn vkCmdDispatch(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
+    pub fn vkCmdDispatchIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize);
+    pub fn vkCmdCopyBuffer(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferCopy);
+    pub fn vkCmdCopyImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageCopy);
+    pub fn vkCmdBlitImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageBlit, filters: VkFilter);
+    pub fn vkCmdCopyBufferToImage(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkBufferImageCopy);
+    pub fn vkCmdCopyImageToBuffer(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferImageCopy);
+    pub fn vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: *const core::ffi::c_void);
+    pub fn vkCmdFillBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, data: u32);
+    pub fn vkCmdClearColorImage(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pColor: *const VkClearColorValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange);
+    pub fn vkCmdClearDepthStencilImage(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pDepthStencil: *const VkClearDepthStencilValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange);
+    pub fn vkCmdClearAttachments(commandBuffer: VkCommandBuffer, attachmentCount: u32, pAttachments: *const VkClearAttachment, rectCount: u32, pRects: *const VkClearRect);
+    pub fn vkCmdResolveImage(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageResolve);
+    pub fn vkCmdSetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
+    pub fn vkCmdResetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags);
+    pub fn vkCmdWaitEvents(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier);
+    pub fn vkCmdPipelineBarrier(commandBuffer: VkCommandBuffer, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, dependencyFlags: VkDependencyFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier);
+    pub fn vkCmdBeginQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags);
+    pub fn vkCmdEndQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32);
+    pub fn vkCmdResetQueryPool(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32);
+    pub fn vkCmdWriteTimestamp(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, queryPool: VkQueryPool, query: u32);
+    pub fn vkCmdCopyQueryPoolResults(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags);
+    pub fn vkCmdPushConstants(commandBuffer: VkCommandBuffer, pipelineLayout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: *const core::ffi::c_void);
+    pub fn vkCmdBeginRenderPass(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents);
+    pub fn vkCmdNextSubpass(commandBuffer: VkCommandBuffer, contents: VkSubpassContents);
+    pub fn vkCmdEndRenderPass(commandBuffer: VkCommandBuffer);
+    pub fn vkCmdExecuteCommands(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer);
+}
+
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_KHR_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_surface";
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_KHR_SURFACE_SPEC_VERSION: usize = 25;
+
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_KHR_SWAPCHAIN_EXTENSION_NAME: &'static str = "VK_KHR_swapchain";
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_KHR_SWAPCHAIN_SPEC_VERSION: usize = 68;
+
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_KHR_DISPLAY_EXTENSION_NAME: &'static str = "VK_KHR_display";
+#[cfg(feature = "VK_KHR_display")]
+pub const VK_KHR_DISPLAY_SPEC_VERSION: usize = 21;
+
+#[cfg(feature = "VK_KHR_display_swapchain")]
+pub const VK_KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME: &'static str = "VK_KHR_display_swapchain";
+#[cfg(feature = "VK_KHR_display_swapchain")]
+pub const VK_KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_xlib_surface")]
+pub const VK_KHR_XLIB_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_xlib_surface";
+#[cfg(feature = "VK_KHR_xlib_surface")]
+pub const VK_KHR_XLIB_SURFACE_SPEC_VERSION: usize = 6;
+
+#[cfg(feature = "VK_KHR_xcb_surface")]
+pub const VK_KHR_XCB_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_xcb_surface";
+#[cfg(feature = "VK_KHR_xcb_surface")]
+pub const VK_KHR_XCB_SURFACE_SPEC_VERSION: usize = 6;
+
+#[cfg(feature = "VK_KHR_wayland_surface")]
+pub const VK_KHR_WAYLAND_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_wayland_surface";
+#[cfg(feature = "VK_KHR_wayland_surface")]
+pub const VK_KHR_WAYLAND_SURFACE_SPEC_VERSION: usize = 6;
+
+#[cfg(feature = "VK_KHR_android_surface")]
+pub const VK_KHR_ANDROID_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_android_surface";
+#[cfg(feature = "VK_KHR_android_surface")]
+pub const VK_KHR_ANDROID_SURFACE_SPEC_VERSION: usize = 6;
+
+#[cfg(feature = "VK_KHR_win32_surface")]
+pub const VK_KHR_WIN32_SURFACE_EXTENSION_NAME: &'static str = "VK_KHR_win32_surface";
+#[cfg(feature = "VK_KHR_win32_surface")]
+pub const VK_KHR_WIN32_SURFACE_SPEC_VERSION: usize = 6;
+
+#[cfg(feature = "VK_EXT_metal_surface")]
+pub const VK_EXT_METAL_SURFACE_EXTENSION_NAME: &'static str = "VK_EXT_metal_surface";
+#[cfg(feature = "VK_EXT_metal_surface")]
+pub const VK_EXT_METAL_SURFACE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
+pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME: &'static str = "VK_KHR_sampler_mirror_clamp_to_edge";
+#[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
+pub const VK_KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_win32_keyed_mutex")]
+pub const VK_KHR_WIN32_KEYED_MUTEX_EXTENSION_NAME: &'static str = "VK_KHR_win32_keyed_mutex";
+#[cfg(feature = "VK_KHR_win32_keyed_mutex")]
+pub const VK_KHR_WIN32_KEYED_MUTEX_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_memory")]
+pub const VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME: &'static str = "VK_KHR_external_memory";
+#[cfg(feature = "VK_KHR_external_memory")]
+pub const VK_KHR_EXTERNAL_MEMORY_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME: &'static str = "VK_KHR_external_memory_capabilities";
+#[cfg(feature = "VK_KHR_external_memory_capabilities")]
+pub const VK_KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+pub const VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_memory_win32";
+#[cfg(feature = "VK_KHR_external_memory_win32")]
+pub const VK_KHR_EXTERNAL_MEMORY_WIN32_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+pub const VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME: &'static str = "VK_KHR_external_memory_fd";
+#[cfg(feature = "VK_KHR_external_memory_fd")]
+pub const VK_KHR_EXTERNAL_MEMORY_FD_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_semaphore")]
+pub const VK_KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME: &'static str = "VK_KHR_external_semaphore";
+#[cfg(feature = "VK_KHR_external_semaphore")]
+pub const VK_KHR_EXTERNAL_SEMAPHORE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_semaphore_win32";
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
+pub const VK_KHR_EXTERNAL_SEMAPHORE_WIN32_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME: &'static str = "VK_KHR_external_semaphore_fd";
+#[cfg(feature = "VK_KHR_external_semaphore_fd")]
+pub const VK_KHR_EXTERNAL_SEMAPHORE_FD_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+pub const VK_KHR_EXTERNAL_FENCE_WIN32_EXTENSION_NAME: &'static str = "VK_KHR_external_fence_win32";
+#[cfg(feature = "VK_KHR_external_fence_win32")]
+pub const VK_KHR_EXTERNAL_FENCE_WIN32_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+pub const VK_KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME: &'static str = "VK_KHR_external_fence_fd";
+#[cfg(feature = "VK_KHR_external_fence_fd")]
+pub const VK_KHR_EXTERNAL_FENCE_FD_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+pub const VK_KHR_GET_SURFACE_CAPABILITIES2_EXTENSION_NAME: &'static str = "VK_KHR_get_surface_capabilities2";
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+pub const VK_KHR_GET_SURFACE_CAPABILITIES2_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_EXT_DEBUG_REPORT_EXTENSION_NAME: &'static str = "VK_EXT_debug_report";
+#[cfg(feature = "VK_EXT_debug_report")]
+pub const VK_EXT_DEBUG_REPORT_SPEC_VERSION: usize = 8;
+
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_EXT_DEBUG_UTILS_EXTENSION_NAME: &'static str = "VK_EXT_debug_utils";
+#[cfg(feature = "VK_EXT_debug_utils")]
+pub const VK_EXT_DEBUG_UTILS_SPEC_VERSION: usize = 2;

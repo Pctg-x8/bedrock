@@ -109,7 +109,7 @@ impl<'b> BufferMemoryBarrier2<'b> {
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct ImageMemoryBarrier2<'r>(
     VkImageMemoryBarrier2KHR,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkImage>>,

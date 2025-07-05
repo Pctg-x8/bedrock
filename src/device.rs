@@ -1,8 +1,6 @@
 //! Vulkan Device and Queues
 
-use crate::ffi_helper::{
-    ArrayFFIExtensions, CStrFFIRef, opt_pointer, slice_as_mut_ptr_empty_null, slice_as_ptr_empty_null,
-};
+use crate::ffi_helper::{CStrFFIRef, slice_as_ptr_empty_null};
 use crate::*;
 use cfg_if::cfg_if;
 use derives::implements;
@@ -495,7 +493,7 @@ impl<'d> DeviceQueueCreateInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct DeviceCreateInfo<'d>(
     VkDeviceCreateInfo,
     core::marker::PhantomData<(
@@ -550,7 +548,7 @@ impl<'d> DeviceCreateInfo<'d> {
 
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct PhysicalDeviceFeatures2<'r>(
     VkPhysicalDeviceFeatures2KHR,
     core::marker::PhantomData<Option<&'r mut dyn VulkanStructure>>,
@@ -679,7 +677,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_fence(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -706,7 +704,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_semaphore(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -733,7 +731,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_event(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -762,7 +760,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::allocate_memory(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -789,7 +787,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_buffer(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -816,7 +814,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_buffer_view(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -844,7 +842,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_sampler(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -874,7 +872,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_image(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -902,7 +900,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_image_view(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -929,7 +927,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_render_pass(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -958,7 +956,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_render_pass2(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -968,7 +966,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             (self.create_render_pass_2_khr_fn().0)(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -995,7 +993,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_framebuffer(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1023,7 +1021,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_shader_module(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1050,7 +1048,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_pipeline_cache(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1077,7 +1075,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_pipeline_layout(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1108,8 +1106,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 self.native_ptr(),
                 cache.unwrap_or(VkPipelineCache::NULL),
                 infos.len() as _,
-                infos.as_ptr_empty_null() as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 objects.as_mut_ptr(),
             )
             .into_result()
@@ -1186,8 +1184,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 self.native_ptr(),
                 cache.unwrap_or(VkPipelineCache::NULL),
                 infos.len() as _,
-                infos.as_ptr_empty_null() as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 objects.as_mut_ptr(),
             )
             .into_result()
@@ -1261,7 +1259,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_command_pool(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1288,7 +1286,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_query_pool(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1382,7 +1380,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::invalidate_mapped_memory_ranges(
                 self.native_ptr(),
                 ranges.len() as _,
-                ranges.as_ptr_empty_null() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(ranges) as _,
             )
             .into_result()
             .map(drop)
@@ -1401,7 +1399,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::flush_mapped_memory_ranges(
                 self.native_ptr(),
                 ranges.len() as _,
-                ranges.as_ptr_empty_null() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(ranges) as _,
             )
             .into_result()
             .map(drop)
@@ -1499,16 +1497,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     unsafe fn bind_buffers_raw(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
         #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            crate::vkfn::bind_buffer_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
+            crate::vkfn::bind_buffer_memory2(
+                self.native_ptr(),
+                bounds.len() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
+            )
+            .into_result()
+            .map(drop)
         }
 
         #[cfg(not(feature = "Allow1_1APIs"))]
         unsafe {
-            self.bind_buffer_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
+            self.bind_buffer_memory2_khr_fn().0(
+                self.native_ptr(),
+                bounds.len() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1531,16 +1537,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     unsafe fn bind_images_raw(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
         #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            crate::vkfn::bind_image_memory2(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
+            crate::vkfn::bind_image_memory2(
+                self.native_ptr(),
+                bounds.len() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
+            )
+            .into_result()
+            .map(drop)
         }
 
         #[cfg(not(feature = "Allow1_1APIs"))]
         unsafe {
-            self.bind_image_memory2_khr_fn().0(self.native_ptr(), bounds.len() as _, bounds.as_ptr_empty_null())
-                .into_result()
-                .map(drop)
+            self.bind_image_memory2_khr_fn().0(
+                self.native_ptr(),
+                bounds.len() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1562,7 +1576,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::wait_for_fences(
                 self.native_ptr(),
                 objects.len() as _,
-                objects.as_ptr_empty_null() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(objects) as _,
                 wait_all as _,
                 timeout.unwrap_or(std::u64::MAX),
             )
@@ -1585,9 +1599,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[inline]
     fn reset_multiple_fences(&self, objects: &[VkHandleRefMut<VkFence>]) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::reset_fences(self.native_ptr(), objects.len() as _, objects.as_ptr_empty_null() as _)
-                .into_result()
-                .map(drop)
+            crate::vkfn::reset_fences(
+                self.native_ptr(),
+                objects.len() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(objects) as _,
+            )
+            .into_result()
+            .map(drop)
         }
     }
 
@@ -1614,7 +1632,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_swapchain_khr(
                 self.native_ptr(),
                 info as *const _ as _,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1663,7 +1681,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             crate::vkfn::create_descriptor_update_template(
                 self.native_ptr(),
                 info,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1673,7 +1691,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             self.create_descriptor_update_template_khr_fn().0(
                 self.native_ptr(),
                 info,
-                opt_pointer(allocation_callbacks),
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
             .into_result()?;
@@ -1704,7 +1722,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             set: 0,
             pipelineLayout: VkPipelineLayout::NULL,
             descriptorUpdateEntryCount: entries.len() as _,
-            pDescriptorUpdateEntries: entries.as_ptr_empty_null(),
+            pDescriptorUpdateEntries: crate::ffi_helper::slice_as_ptr_empty_null(entries),
             templateType: VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
             descriptorSetLayout: dsl.native_ptr(),
         };
@@ -1741,7 +1759,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
             set: 0,
             pipelineLayout: VkPipelineLayout::NULL,
             descriptorUpdateEntryCount: entries.len() as _,
-            pDescriptorUpdateEntries: entries.as_ptr_empty_null(),
+            pDescriptorUpdateEntries: crate::ffi_helper::slice_as_ptr_empty_null(entries),
             templateType: if dsl.is_none() {
                 VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR
             } else {
@@ -2185,7 +2203,7 @@ pub trait QueueMut: Queue + VkHandleMut {
             crate::vkfn::queue_bind_sparse(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr_empty_null(),
+                crate::ffi_helper::slice_as_ptr_empty_null(batches),
                 fence.map_or(VkFence::NULL, |x| x.0),
             )
             .into_result()
@@ -2241,7 +2259,7 @@ pub trait QueueMut: Queue + VkHandleMut {
             crate::vkfn::queue_submit(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                batches.as_ptr_empty_null() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(batches) as _,
                 fence.map_or(VkFence::NULL, |x| x.0),
             )
             .into_result()
@@ -2317,11 +2335,11 @@ impl<'r> PresentInfo<'r> {
                 sType: VkPresentInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 waitSemaphoreCount: wait_semaphores.len() as _,
-                pWaitSemaphores: wait_semaphores.as_ptr_empty_null() as _,
+                pWaitSemaphores: crate::ffi_helper::slice_as_ptr_empty_null(wait_semaphores) as _,
                 swapchainCount: swapchains.len() as _,
-                pSwapchains: slice_as_ptr_empty_null(swapchains) as _,
-                pImageIndices: slice_as_ptr_empty_null(image_indices),
-                pResults: slice_as_mut_ptr_empty_null(results),
+                pSwapchains: crate::ffi_helper::slice_as_ptr_empty_null(swapchains) as _,
+                pImageIndices: crate::ffi_helper::slice_as_ptr_empty_null(image_indices),
+                pResults: crate::ffi_helper::slice_as_mut_ptr_empty_null(results),
             },
             core::marker::PhantomData,
         )
@@ -2401,11 +2419,11 @@ impl<'b, 'r> SubmitInfo2<'b, 'r> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 waitSemaphoreInfoCount: wait_semaphores.len() as _,
-                pWaitSemaphoreInfos: slice_as_ptr_empty_null(wait_semaphores) as _,
+                pWaitSemaphoreInfos: crate::ffi_helper::slice_as_ptr_empty_null(wait_semaphores) as _,
                 commandBufferInfoCount: command_buffers.len() as _,
-                pCommandBufferInfos: slice_as_ptr_empty_null(command_buffers) as _,
+                pCommandBufferInfos: crate::ffi_helper::slice_as_ptr_empty_null(command_buffers) as _,
                 signalSemaphoreInfoCount: signal_semaphores.len() as _,
-                pSignalSemaphoreInfos: slice_as_ptr_empty_null(signal_semaphores) as _,
+                pSignalSemaphoreInfos: crate::ffi_helper::slice_as_ptr_empty_null(signal_semaphores) as _,
             },
             core::marker::PhantomData,
         )

@@ -45,7 +45,7 @@ impl core::fmt::Debug for VkResult {
             VK_ERROR_INVALID_SHADER_NV => "Invalid GLSL shader",
             #[cfg(feature = "VK_KHR_maintenance1")]
             VK_ERROR_OUT_OF_POOL_MEMORY_KHR => "A pool memory allocation has failed",
-            #[cfg(feature = "VK_KHR_external_memory_capabilities")]
+            #[cfg(feature = "VK_KHR_external_memory")]
             VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR => "An external handle is not a valid handle of ths specified type",
             #[cfg(feature = "VK_KHR_buffer_device_address")]
             VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR => {

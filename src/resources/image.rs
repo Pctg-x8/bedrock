@@ -239,7 +239,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for ImageObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_image(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -370,7 +370,7 @@ impl<Device: crate::Device> ImageObject<Device> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct ImageCreateInfo<'d>(
     VkImageCreateInfo,
     core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d [u32]>)>,
@@ -851,7 +851,7 @@ impl<Image: DeviceChildHandle> Drop for ImageViewObject<Image> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.device_handle(), core::ptr::null());
+            crate::vkfn::destroy_image_view(self.1.device_handle(), self.0, core::ptr::null());
         }
     }
 }
@@ -931,7 +931,7 @@ impl<Image: DeviceChild> ImageViewObject<Image> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct ImageViewCreateInfo<'r>(
     VkImageViewCreateInfo,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkImage>>,
@@ -951,7 +951,12 @@ impl<'r> ImageViewCreateInfo<'r> {
                 image: source.native_ptr(),
                 viewType: view_type,
                 format,
-                components: VkComponentMapping::default(),
+                components: VkComponentMapping {
+                    r: VK_COMPONENT_SWIZZLE_R,
+                    g: VK_COMPONENT_SWIZZLE_G,
+                    b: VK_COMPONENT_SWIZZLE_B,
+                    a: VK_COMPONENT_SWIZZLE_A,
+                },
                 subresourceRange: subresource_range,
             },
             core::marker::PhantomData,
@@ -994,7 +999,12 @@ impl<I: Image> ImageViewBuilder<I> {
                     image: source.native_ptr(),
                     viewType: source.dimension(),
                     format: source.format(),
-                    components: VkComponentMapping::default(),
+                    components: VkComponentMapping {
+                        r: VK_COMPONENT_SWIZZLE_R,
+                        g: VK_COMPONENT_SWIZZLE_G,
+                        b: VK_COMPONENT_SWIZZLE_B,
+                        a: VK_COMPONENT_SWIZZLE_A,
+                    },
                     subresourceRange: subresource_range,
                 })
             },

@@ -111,11 +111,11 @@ pub enum StencilFaceMask {
     /// Only the back set of stencil state
     Back = VK_STENCIL_FACE_BACK_BIT,
     /// Both sets of stencil state
-    Both = VK_STENCIL_FRONT_AND_BACK,
+    Both = VK_STENCIL_FACE_FRONT_AND_BACK,
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct ShaderModuleCreateInfo<'d>(VkShaderModuleCreateInfo, core::marker::PhantomData<&'d [u32]>);
 impl<'d> ShaderModuleCreateInfo<'d> {
     pub const fn new(code: &'d [u32]) -> Self {
@@ -150,7 +150,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for ShaderModuleObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_shader_module(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -210,7 +210,7 @@ DerefContainerBracketImpl!(for ShaderModule {});
 GuardsImpl!(for ShaderModule {});
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct PipelineCacheCreateInfo<'d>(VkPipelineCacheCreateInfo, core::marker::PhantomData<&'d [u8]>);
 impl<'d> PipelineCacheCreateInfo<'d> {
     pub const fn new(initial_data: &'d [u8]) -> Self {
@@ -244,7 +244,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineCacheObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_pipeline_cache(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -374,7 +374,7 @@ DerefContainerBracketImpl!(for mut PipelineCacheMut {});
 GuardsImpl!(for mut PipelineCacheMut {});
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct PipelineLayoutCreateInfo<'d>(
     VkPipelineLayoutCreateInfo,
     core::marker::PhantomData<(
@@ -419,7 +419,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineLayoutObject<Device> 
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_pipeline_layout(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -512,7 +512,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_pipeline(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -566,7 +566,7 @@ GuardsImpl!(for Pipeline {});
 
 /// Structure specifying parameters of a newly created pipeline dynamic state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct PipelineDynamicStateCreateInfo<'d>(
     VkPipelineDynamicStateCreateInfo,
     core::marker::PhantomData<&'d [VkDynamicState]>,
@@ -595,7 +595,7 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct PipelineShaderStage<'d, 's>(
     pub(crate) VkPipelineShaderStageCreateInfo,
     core::marker::PhantomData<(
@@ -680,7 +680,7 @@ impl SpecializationMapEntry {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct SpecializationInfo<'d>(
     VkSpecializationInfo,
     core::marker::PhantomData<(&'d [VkSpecializationMapEntry], &'d dyn core::any::Any)>,
@@ -770,7 +770,7 @@ pub type VertexInputAttributeDescription = VkVertexInputAttributeDescription;
 
 /// Structure specifying parameters of a newly created pipeline vertex input state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct PipelineVertexInputStateCreateInfo<'d>(
     VkPipelineVertexInputStateCreateInfo,
     core::marker::PhantomData<(
@@ -841,7 +841,7 @@ pub enum PrimitiveTopology {
 
 /// Structure specifying parameters of a newly created pipeline input assembly state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct PipelineInputAssemblyStateCreateInfo(VkPipelineInputAssemblyStateCreateInfo);
 impl PipelineInputAssemblyStateCreateInfo {
     pub const fn new(topology: PrimitiveTopology) -> Self {
@@ -870,7 +870,7 @@ impl PipelineInputAssemblyStateCreateInfo {
 
 /// Structure specifying parameters of a newly created pipeline tessellation state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct PipelineTessellationStateCreateInfo(VkPipelineTessellationStateCreateInfo);
 impl PipelineTessellationStateCreateInfo {
     pub const fn new(patch_control_points: u32) -> Self {
@@ -893,7 +893,7 @@ impl PipelineTessellationStateCreateInfo {
 
 /// Structure specifying parameters of a newly created pipeline viewport state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct PipelineViewportStateCreateInfo<'d>(
     VkPipelineViewportStateCreateInfo,
     core::marker::PhantomData<(&'d [VkViewport], &'d [VkRect2D])>,
@@ -981,7 +981,7 @@ pub enum FrontFace {
 
 /// Structure specifying parameters of a newly created pipeline rasterization state
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone)]
 pub struct PipelineRasterizationStateCreateInfo<'d>(
     VkPipelineRasterizationStateCreateInfo,
     core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
@@ -1188,7 +1188,7 @@ impl<'d> PipelineRasterizationLineStateCreateInfo<'d> {
 
 /// Structure specifying parameters of a newly created pipeline multisample state
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone)]
 pub struct PipelineMultisampleStateCreateInfo<'d> {
     data: VkPipelineMultisampleStateCreateInfo,
     samplemask_lifetime_binder: PhantomData<&'d [VkSampleMask]>,
@@ -1272,7 +1272,7 @@ impl<'d> PipelineMultisampleStateCreateInfo<'d> {
 
 /// Structure specifying parameters of a newly created pipeline depth stencil state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone)]
 pub struct PipelineDepthStencilStateCreateInfo(VkPipelineDepthStencilStateCreateInfo);
 impl PipelineDepthStencilStateCreateInfo {
     pub const fn new() -> Self {
@@ -1379,7 +1379,7 @@ impl PipelineDepthStencilStateCreateInfo {
 
 /// Structure specifying parameters of a newly created pipeline color blend state
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone)]
 pub struct PipelineColorBlendStateCreateInfo<'d>(
     VkPipelineColorBlendStateCreateInfo,
     core::marker::PhantomData<&'d [VkPipelineColorBlendAttachmentState]>,
@@ -1526,7 +1526,7 @@ impl VkPipelineColorBlendAttachmentState {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct GraphicsPipelineCreateInfo<'d>(
     VkGraphicsPipelineCreateInfo,
     core::marker::PhantomData<(
@@ -1614,7 +1614,7 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
 
 /// Structure specifying parameters of a newly created compute pipeline
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct ComputePipelineCreateInfo<'d>(
     VkComputePipelineCreateInfo,
     core::marker::PhantomData<(

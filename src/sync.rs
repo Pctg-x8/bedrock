@@ -144,7 +144,7 @@ GuardsImpl!(for Status {
 });
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct FenceCreateInfo<'d>(
     VkFenceCreateInfo,
     core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
@@ -183,7 +183,7 @@ pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
 impl<Device: VkHandle<Handle = VkDevice>> Drop for FenceObject<Device> {
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_fence(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -255,7 +255,7 @@ impl<Device: crate::Device> FenceObject<Device> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct SemaphoreCreateInfo<'d>(
     VkSemaphoreCreateInfo,
     core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
@@ -295,7 +295,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for SemaphoreObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_semaphore(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -356,7 +356,7 @@ impl<Device: crate::Device> SemaphoreObject<Device> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct EventCreateInfo(VkEventCreateInfo);
 impl EventCreateInfo {
     pub const fn new() -> Self {
@@ -376,7 +376,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for EventObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_event(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }

@@ -1,3 +1,6 @@
+// potentially not used when Implements is off
+#![allow(dead_code)]
+
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct FixedCStrBuffer<const L: usize>([u8; L]);

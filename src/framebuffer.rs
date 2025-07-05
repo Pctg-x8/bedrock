@@ -90,7 +90,7 @@ impl<'r, Device: crate::Device> FramebufferObject<'r, Device> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct FramebufferCreateInfo<'r, 'rs>(
     VkFramebufferCreateInfo,
     core::marker::PhantomData<(

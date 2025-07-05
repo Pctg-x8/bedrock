@@ -102,6 +102,15 @@ fn main() {
         .interfaces
         .xdg_wm_base
         .expect("no xdg_wm_base found in a roundtrip");
+    let _surface = compositor.create_surface();
+    struct XDGWmBaseListenerInstance;
+    impl XDGWmBaseListener for XDGWmBaseListenerInstance {
+        fn ping(&mut self, obj: &mut XDGWmBase, serial: c_uint) {
+            obj.pong(serial);
+        }
+    }
+    let mut xdg_wm_base_listener = XDGWmBaseListenerInstance;
+    xdg_wm_base.add_listener(&mut xdg_wm_base_listener);
     let mut surface = compositor.create_surface();
     let mut xdg_surface = xdg_wm_base.get_xdg_surface(&mut surface);
     struct XDGSurfaceListenerInstance;
@@ -197,7 +206,7 @@ fn main() {
                 &[c"VK_KHR_swapchain".into()],
             )
             .with_next(
-                &br::PhysicalDeviceFeatures2::new(Default::default())
+                &br::PhysicalDeviceFeatures2::new(unsafe { core::mem::MaybeUninit::zeroed().assume_init() })
                     .with_next(&mut br::PhysicalDeviceSynchronization2Features::new(true)),
             ),
         )
@@ -214,7 +223,7 @@ fn main() {
             format: br::vk::VK_FORMAT_R8G8B8A8_SRGB,
             colorSpace: br::vk::VK_COLOR_SPACE_SRGB_NONLINEAR_KHR,
         },
-        br::vk::VkExtent2D {
+        br::Extent2D {
             width: 640,
             height: 480,
         },
@@ -289,11 +298,11 @@ fn main() {
         .collect::<Result<Vec<_>, _>>()
         .unwrap();
 
-    let rect = br::vk::VkExtent2D {
+    let rect = br::Extent2D {
         width: 640,
         height: 480,
     }
-    .into_rect(br::vk::VkOffset2D::ZERO);
+    .into_rect(br::Offset2D::ZERO);
     let viewport = rect.make_viewport(0.0..1.0);
 
     let dsl_ub1 = br::DescriptorSetLayoutObject::new(
@@ -312,15 +321,15 @@ fn main() {
         &br::ShaderModuleCreateInfo::new(&read_spv_binary("./shaders/triangle.fspv").unwrap()),
     )
     .unwrap();
-    let vi_bindings = [br::vk::VkVertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
+    let vi_bindings = [br::VertexInputBindingDescription::per_vertex_typed::<Vertex>(0)];
     let vi_attrs = [
-        br::vk::VkVertexInputAttributeDescription {
+        br::VertexInputAttributeDescription {
             location: 0,
             binding: 0,
             format: br::vk::VK_FORMAT_R32G32B32A32_SFLOAT,
             offset: 0,
         },
-        br::vk::VkVertexInputAttributeDescription {
+        br::VertexInputAttributeDescription {
             location: 1,
             binding: 0,
             format: br::vk::VK_FORMAT_R32G32B32A32_SFLOAT,
@@ -331,7 +340,7 @@ fn main() {
         &vk_device,
         &br::PipelineLayoutCreateInfo::new(
             &[dsl_ub1.as_transparent_ref()],
-            &[br::vk::VkPushConstantRange::for_type::<[f32; 2]>(
+            &[br::PushConstantRange::for_type::<[f32; 2]>(
                 br::vk::VK_SHADER_STAGE_VERTEX_BIT,
                 0,
             )],
@@ -543,21 +552,21 @@ fn main() {
                 &br::RenderPassBeginInfo::new(
                     &renderpass,
                     fb,
-                    br::vk::VkExtent2D {
+                    br::Extent2D {
                         width: 640,
                         height: 480,
                     }
-                    .into_rect(br::vk::VkOffset2D::ZERO),
+                    .into_rect(br::Offset2D::ZERO),
                     &[br::ClearValue::color_f32([0.0, 0.0, 0.0, 1.0])],
                 ),
-                &br::vk::VkSubpassBeginInfo::new(br::SubpassContents::Inline),
+                &br::SubpassBeginInfo::new(br::SubpassContents::Inline),
             )
             .bind_pipeline(br::PipelineBindPoint::Graphics, &pipeline)
             .push_constant(&pl, br::vk::VK_SHADER_STAGE_VERTEX_BIT, 0, &[640.0f32, 480.0])
             .bind_descriptor_sets(br::PipelineBindPoint::Graphics, &pl, 0, &[object_descriptor], &[])
             .bind_vertex_buffers(0, &[device_buffer.as_transparent_ref()], &[vertex_buffer_offset as _])
             .draw(3, 1, 0, 0)
-            .end_render_pass2(&br::vk::VkSubpassEndInfo::new())
+            .end_render_pass2(&br::SubpassEndInfo::new())
             .end()
             .unwrap();
     }
@@ -1040,10 +1049,15 @@ static XDG_WM_BASE_INTERFACE: wl_interface = wl_interface::new(
         ),
         wl_message::new(c"pong", c"u", &[core::ptr::null()]),
     ],
-    &[],
+    &[wl_message::new(c"ping", c"u", &[core::ptr::null()])],
 );
 pub const XDG_WM_BASE_DESTROY: u32 = 0;
 pub const XDG_WM_BASE_GET_XDG_SURFACE: u32 = 2;
+pub const XDG_WM_BASE_PONG: u32 = 3;
+
+pub trait XDGWmBaseListener {
+    fn ping(&mut self, obj: &mut XDGWmBase, serial: c_uint);
+}
 
 pub const WL_DISPLAY_GET_REGISTRY: u32 = 1;
 pub const WL_REGISTRY_BIND: u32 = 0;
@@ -1190,6 +1204,34 @@ impl XDGWmBase {
 
             OwnedXDGSurface::new(ptr).unwrap()
         }
+    }
+
+    #[inline]
+    pub fn pong(&mut self, serial: c_uint) {
+        unsafe {
+            wl_proxy_marshal(self as *mut _ as _, XDG_WM_BASE_PONG, serial);
+        }
+    }
+
+    #[inline]
+    pub fn add_listener<L: XDGWmBaseListener + 'static>(&mut self, listener: &mut L) {
+        extern "C" fn ping<L: XDGWmBaseListener + 'static>(data: *mut c_void, obj: *mut wl_proxy, serial: c_uint) {
+            unsafe { (&mut *(data as *mut L)).ping(&mut *(obj as *mut XDGWmBase), serial) }
+        }
+        #[repr(C)]
+        struct ListenerFunctionPointers {
+            ping: extern "C" fn(*mut c_void, *mut wl_proxy, c_uint),
+        }
+        let callbacks: &'static ListenerFunctionPointers = &ListenerFunctionPointers { ping: ping::<L> };
+
+        let res = unsafe {
+            wl_proxy_add_listener(
+                self as *mut _ as _,
+                callbacks as *const ListenerFunctionPointers as *const _,
+                listener as *mut L as _,
+            )
+        };
+        assert!(res >= 0, "wl_proxy_add_listener failed: {res}");
     }
 }
 

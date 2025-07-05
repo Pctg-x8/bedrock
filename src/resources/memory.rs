@@ -82,7 +82,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for DeviceMemoryObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::free_memory(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -149,7 +149,7 @@ impl<Device: crate::Device> DeviceMemoryObject<Device> {
 
 /// Structure containing parameters of a memory allocation
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct MemoryAllocateInfo<'d>(
     VkMemoryAllocateInfo,
     core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,

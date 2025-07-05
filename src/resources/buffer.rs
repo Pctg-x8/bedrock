@@ -19,7 +19,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for BufferObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_buffer(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -123,7 +123,7 @@ pub struct BufferViewObject<Buffer: DeviceChildHandle>(VkBufferView, Buffer);
 impl<Buffer: DeviceChildHandle> Drop for BufferViewObject<Buffer> {
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.device_handle(), core::ptr::null());
+            crate::vkfn::destroy_buffer_view(self.1.device_handle(), self.0, core::ptr::null());
         }
     }
 }
@@ -197,7 +197,7 @@ impl<Buffer: DeviceChild> BufferViewObject<Buffer> {
 
 /// Builder structure specifying the parameters of a newly created buffer object
 #[repr(transparent)]
-#[derive(Clone, Debug, Hash, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct BufferCreateInfo<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
 impl<'s> BufferCreateInfo<'s> {
     /// Creates a new buffer description with provided byte-size and usage flags
@@ -279,7 +279,7 @@ impl crate::VulkanStructureProvider for BufferCreateInfo<'_> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub struct BufferViewCreateInfo<'d>(
     VkBufferViewCreateInfo,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkBuffer>>,

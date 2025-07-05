@@ -13,7 +13,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for SamplerObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            self.0.destroy(self.1.native_ptr(), core::ptr::null());
+            crate::vkfn::destroy_sampler(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
@@ -76,7 +76,7 @@ impl<Device: crate::Device> SamplerObject<Device> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Clone)]
 pub struct SamplerCreateInfo(VkSamplerCreateInfo);
 impl Default for SamplerCreateInfo {
     #[inline(always)]
