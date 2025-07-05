@@ -633,6 +633,7 @@ impl Struct {
         hashable: bool,
     ) -> std::io::Result<()> {
         let mut derives = Vec::with_capacity(8);
+        derives.push("Debug");
         if cloneable {
             derives.push("Clone");
         }
