@@ -2204,12 +2204,14 @@ pub type VkChromaLocation = i32;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_COSITED_EVEN_KHR: VkChromaLocationKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_COSITED_EVEN: VkChromaLocationKHR = 0;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_MIDPOINT_KHR: VkChromaLocationKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_CHROMA_LOCATION_MIDPOINT: VkChromaLocationKHR = 1;
@@ -2373,6 +2375,7 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT: VkDebugReportObj
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR: VkDebugReportObjectTypeEXT = 1000085000;
+#[cfg(feature = "VK_EXT_debug_report")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkDebugReportObjectTypeEXT = 1000085000;
@@ -2380,6 +2383,7 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkDebugReportO
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR: VkDebugReportObjectTypeEXT = 1000156000;
+#[cfg(feature = "VK_EXT_debug_report")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkDebugReportObjectTypeEXT = 1000156000;
@@ -2419,6 +2423,7 @@ pub type VkDescriptorUpdateTemplateType = i32;
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET_KHR: VkDescriptorUpdateTemplateTypeKHR = 0;
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET: VkDescriptorUpdateTemplateTypeKHR = 0;
@@ -2604,12 +2609,14 @@ pub type VkPointClippingBehavior = i32;
 #[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES_KHR: VkPointClippingBehaviorKHR = 0;
+#[cfg(feature = "VK_KHR_maintenance2")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_POINT_CLIPPING_BEHAVIOR_ALL_CLIP_PLANES: VkPointClippingBehaviorKHR = 0;
 #[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES_KHR: VkPointClippingBehaviorKHR = 1;
+#[cfg(feature = "VK_KHR_maintenance2")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_POINT_CLIPPING_BEHAVIOR_USER_CLIP_PLANES: VkPointClippingBehaviorKHR = 1;
@@ -2703,30 +2710,35 @@ pub type VkSamplerYcbcrModelConversion = i32;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_RGB_IDENTITY: VkSamplerYcbcrModelConversionKHR = 0;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY_KHR: VkSamplerYcbcrModelConversionKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_IDENTITY: VkSamplerYcbcrModelConversionKHR = 1;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709_KHR: VkSamplerYcbcrModelConversionKHR = 2;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_709: VkSamplerYcbcrModelConversionKHR = 2;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601_KHR: VkSamplerYcbcrModelConversionKHR = 3;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_601: VkSamplerYcbcrModelConversionKHR = 3;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020_KHR: VkSamplerYcbcrModelConversionKHR = 4;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_MODEL_CONVERSION_YCBCR_2020: VkSamplerYcbcrModelConversionKHR = 4;
@@ -2741,12 +2753,14 @@ pub type VkSamplerYcbcrRange = i32;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL_KHR: VkSamplerYcbcrRangeKHR = 0;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_FULL: VkSamplerYcbcrRangeKHR = 0;
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW_KHR: VkSamplerYcbcrRangeKHR = 1;
+#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_SAMPLER_YCBCR_RANGE_ITU_NARROW: VkSamplerYcbcrRangeKHR = 1;
@@ -2807,12 +2821,14 @@ pub type VkTessellationDomainOrigin = i32;
 #[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT_KHR: VkTessellationDomainOriginKHR = 0;
+#[cfg(feature = "VK_KHR_maintenance2")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_UPPER_LEFT: VkTessellationDomainOriginKHR = 0;
 #[cfg(feature = "VK_KHR_maintenance2")]
 #[rustfmt::skip]
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT_KHR: VkTessellationDomainOriginKHR = 1;
+#[cfg(feature = "VK_KHR_maintenance2")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub const VK_TESSELLATION_DOMAIN_ORIGIN_LOWER_LEFT: VkTessellationDomainOriginKHR = 1;

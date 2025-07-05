@@ -230,6 +230,9 @@ impl Enum {
             }
 
             if let Some(v) = member.promoted {
+                if let Some((x, _)) = self.extension {
+                    writeln!(w, "#[cfg(feature = {x:?})]")?;
+                }
                 writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
                 writeln!(w, "#[rustfmt::skip]")?;
                 writeln!(
