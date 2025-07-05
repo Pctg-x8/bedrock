@@ -60,7 +60,6 @@ pub type VkDeviceSize = u64;
 #[rustfmt::skip]
 pub type VkDeviceAddress = u64;
 
-
 #[rustfmt::skip]
 pub type VkAccessFlags = VkFlags;
 #[rustfmt::skip]
