@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 pub fn emit_type_alias(w: &mut impl std::io::Write, name: &str, alias_type: &str) -> std::io::Result<()> {
+    writeln!(w, "#[rustfmt::skip]")?;
     writeln!(w, "pub type {name} = {alias_type};")
 }
 
@@ -9,6 +10,7 @@ pub fn emit_c_enum_type(w: &mut impl std::io::Write, name: &str) -> std::io::Res
 }
 
 pub fn emit_const(w: &mut impl std::io::Write, name: &str, r#type: &str, value: &str) -> std::io::Result<()> {
+    writeln!(w, "#[rustfmt::skip]")?;
     writeln!(w, "pub const {name}: {type} = {value};")
 }
 
@@ -19,6 +21,7 @@ pub fn emit_result_const(w: &mut impl std::io::Write, name: &str, ext_number: u3
         100_0000_000 + (ext_number - 1) * 1_000 + value
     };
 
+    writeln!(w, "#[rustfmt::skip]")?;
     writeln!(w, "pub const {name}: VkResult = VkResult({value});")
 }
 
@@ -34,6 +37,7 @@ pub fn emit_result_err_const(
         100_0000_000 + (ext_number - 1) * 1_000 + value
     };
 
+    writeln!(w, "#[rustfmt::skip]")?;
     writeln!(w, "pub const {name}: VkResult = VkResult(-{value});")
 }
 
@@ -47,6 +51,7 @@ impl TypeAlias {
     }
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "pub type {} = {};", self.name, self.org_type)
     }
 }
@@ -80,8 +85,10 @@ impl FuncPointer {
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         if let Some((tag, name)) = self.extension {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
             write!(w, "pub type PFN_vk{}{tag} = extern \"system\" fn(", self.name)?;
         } else {
+            writeln!(w, "#[rustfmt::skip]")?;
             write!(w, "pub type PFN_vk{} = extern \"system\" fn(", self.name)?;
         }
         let mut cont = false;
@@ -155,6 +162,7 @@ impl Enum {
         for member in self.members {
             match (self.extension, member.extension) {
                 (None, None) => {
+                    writeln!(w, "#[rustfmt::skip]")?;
                     writeln!(
                         w,
                         "pub const VK_{}_{}: {type_name} = {};",
@@ -163,6 +171,7 @@ impl Enum {
                 }
                 (Some((x, s)), None) | (None, Some((x, s))) => {
                     writeln!(w, "#[cfg(feature = {x:?})]")?;
+                    writeln!(w, "#[rustfmt::skip]")?;
                     writeln!(
                         w,
                         "pub const VK_{}_{}_{s}: {type_name} = {};",
@@ -171,6 +180,7 @@ impl Enum {
                 }
                 (Some(a), Some(b)) if a.0 == b.0 => {
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
+                    writeln!(w, "#[rustfmt::skip]")?;
                     writeln!(
                         w,
                         "pub const VK_{}_{}_{}: {type_name} = {};",
@@ -180,6 +190,7 @@ impl Enum {
                 (Some(a), Some(b)) if a.1 == b.1 => {
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
                     writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
+                    writeln!(w, "#[rustfmt::skip]")?;
                     writeln!(
                         w,
                         "pub const VK_{}_{}_{}: {type_name} = {};",
@@ -190,6 +201,7 @@ impl Enum {
                     // both extension required, using member extension's suffix
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
                     writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
+                    writeln!(w, "#[rustfmt::skip]")?;
                     writeln!(
                         w,
                         "pub const VK_{}_{}_{}: {type_name} = {};",
@@ -350,9 +362,11 @@ impl Bitmask {
                         writeln!(w, "#[cfg(feature = \"{x}\")]")?;
                     }
                     writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+                    writeln!(w, "#[rustfmt::skip]")?;
                     write!(w, "pub const VK_{}_{}_BIT_{tag}: {bits_name} = 0x", self.prefix, e.name)?;
                 }
                 None => {
+                    writeln!(w, "#[rustfmt::skip]")?;
                     write!(w, "pub const VK_{}_{}_BIT: {bits_name} = 0x", self.prefix, e.name)?;
                 }
             }
@@ -365,6 +379,7 @@ impl Bitmask {
 
             if let Some(promoted) = e.promoted {
                 writeln!(w, "#[cfg(feature = \"Allow{promoted}APIs\")]")?;
+                writeln!(w, "#[rustfmt::skip]")?;
                 write!(w, "pub const VK_{}_{}_BIT: {bits_name} = 0x", self.prefix, e.name)?;
 
                 if self.long {
@@ -432,11 +447,13 @@ impl Object {
 
         writeln!(w, "#[repr(transparent)]")?;
         writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]")?;
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "pub struct {}(pub {value_type});", self.name)?;
 
         if let Some(x) = self.extension {
             writeln!(w, "#[cfg(feature = {x:?})]")?;
         }
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "impl crate::VkRawHandle for {} {{", self.name)?;
         writeln!(
             w,
@@ -454,6 +471,7 @@ impl Object {
         if let Some(x) = self.extension {
             writeln!(w, "#[cfg(feature = {x:?})]")?;
         }
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(
             w,
             "pub const VK_OBJECT_TYPE_{}: VkObjectType = {};",
@@ -462,6 +480,7 @@ impl Object {
 
         if let Some((v, n)) = self.promoted {
             writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "pub type {n} = {};", self.name)?;
         }
 
@@ -570,6 +589,7 @@ impl Struct {
         }
 
         writeln!(w, "#[repr(C)]")?;
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "pub struct {type_name} {{")?;
         if let Some(u) = usage {
             // common headers
@@ -594,6 +614,7 @@ impl Struct {
     }
 
     fn emit_vulkan_structure_impl(w: &mut impl std::io::Write, type_name: &str) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "unsafe impl crate::VulkanStructure for {type_name} {{")?;
         writeln!(w, "    #[inline(always)]")?;
         writeln!(w, "    fn as_generic(&self) -> &crate::GenericVulkanStructure {{")?;
@@ -613,6 +634,7 @@ impl Struct {
     }
 
     fn emit_vulkan_sink_structure_impl(w: &mut impl std::io::Write, type_name: &str) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "unsafe impl crate::VulkanSinkStructure for {type_name} {{")?;
         writeln!(w, "    #[inline(always)]")?;
         writeln!(w, "    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {{")?;
@@ -636,6 +658,7 @@ impl Struct {
         type_name: &str,
         structure_type_name: &str,
     ) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "unsafe impl crate::TypedVulkanStructure for {type_name} {{")?;
         writeln!(
             w,
@@ -651,6 +674,7 @@ impl Struct {
         type_name: &str,
         structure_type_name: &str,
     ) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "unsafe impl crate::TypedVulkanSinkStructure for {type_name} {{")?;
         writeln!(
             w,
@@ -666,6 +690,7 @@ impl Struct {
         structure_type_name: &str,
         value: u32,
     ) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(
             w,
             "pub const VK_STRUCTURE_TYPE_{structure_type_name}: VkStructureType = {value};"
@@ -751,10 +776,12 @@ impl Struct {
                 let promoted_type_name = format!("Vk{}", self.name);
 
                 writeln!(w, "#[cfg(feature = \"Allow{pv}APIs\")]")?;
+                writeln!(w, "#[rustfmt::skip]")?;
                 writeln!(w, "pub type {promoted_type_name} = {type_name};")?;
 
                 if let Some((up, _, _)) = self.stype {
                     writeln!(w, "#[cfg(feature = \"Allow{pv}APIs\")]")?;
+                    writeln!(w, "#[rustfmt::skip]")?;
                     writeln!(
                         w,
                         "pub const VK_STRUCTURE_TYPE_{up}: VkStructureType = VK_STRUCTURE_TYPE_{up}_{tag};"
@@ -877,6 +904,7 @@ impl Union {
         }
 
         writeln!(w, "#[repr(C)]")?;
+        writeln!(w, "#[rustfmt::skip]")?;
         w.write(b"pub union ")?;
         self.emit_ident(w)?;
         w.write(b" {\n")?;
@@ -956,6 +984,7 @@ impl Command {
     }
 
     fn emit_pfn(w: &mut impl std::io::Write, type_name: &str, org_fn_name: &str) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(w, "unsafe impl crate::resolver::PFN for {type_name} {{")?;
         writeln!(w, "    const NAME_CSTR: &'static core::ffi::CStr = c\"{org_fn_name}\";")?;
         writeln!(w)?;
@@ -1008,6 +1037,7 @@ impl Command {
         self.emit_feature_gate(w)?;
         writeln!(w, "#[repr(transparent)]")?;
         writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq)]")?;
+        writeln!(w, "#[rustfmt::skip]")?;
         write!(w, "pub struct {type_name}(pub unsafe extern \"system\" fn(")?;
         let mut cont = false;
         if self.is_command_buffer_inst {
@@ -1034,6 +1064,7 @@ impl Command {
         if self.static_callable {
             w.write(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             self.emit_feature_gate(w)?;
+            writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "impl crate::resolver::StaticCallable for {type_name} {{")?;
             writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
             writeln!(w, "}}")?;
@@ -1056,6 +1087,7 @@ impl Command {
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             writeln!(w, "#[repr(transparent)]")?;
             writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq)]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
             write!(w, "pub struct {type_name}(pub unsafe extern \"system\" fn(")?;
             let mut cont = false;
             if self.is_command_buffer_inst {
@@ -1084,6 +1116,7 @@ impl Command {
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             w.write(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "impl crate::resolver::StaticCallable for {type_name} {{")?;
             writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
             writeln!(w, "}}")?;
@@ -1170,6 +1203,7 @@ impl ExtensionHeaderConstants {
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         writeln!(w, "#[cfg(feature = \"{}\")]", self.name)?;
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(
             w,
             "pub const {}_EXTENSION_NAME: &'static str = \"{}\";",
@@ -1177,6 +1211,7 @@ impl ExtensionHeaderConstants {
             self.name
         )?;
         writeln!(w, "#[cfg(feature = \"{}\")]", self.name)?;
+        writeln!(w, "#[rustfmt::skip]")?;
         writeln!(
             w,
             "pub const {}_SPEC_VERSION: usize = {};",
