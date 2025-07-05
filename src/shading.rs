@@ -1611,7 +1611,7 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
         )
     }
 
-    pub const fn derived_by_index(index: i32) -> Self {
+    pub const fn derived_by_index(parent: i32) -> Self {
         Self(
             VkGraphicsPipelineCreateInfo {
                 sType: VkGraphicsPipelineCreateInfo::TYPE,
@@ -1632,7 +1632,7 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
                 renderPass: VkRenderPass::NULL,
                 subpass: 0,
                 basePipelineHandle: VkPipeline::NULL,
-                basePipelineIndex: index,
+                basePipelineIndex: parent,
             },
             core::marker::PhantomData,
         )
@@ -1747,12 +1747,76 @@ impl<'d> ComputePipelineCreateInfo<'d> {
         )
     }
 
+    #[inline]
+    pub fn derived_by_handle(parent: &'d (impl VkHandle<Handle = VkPipeline> + ?Sized)) -> Self {
+        Self(
+            VkComputePipelineCreateInfo {
+                sType: VkComputePipelineCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+                stage: VkPipelineShaderStageCreateInfo {
+                    sType: VkPipelineShaderStageCreateInfo::TYPE,
+                    pNext: core::ptr::null(),
+                    flags: 0,
+                    stage: 0,
+                    module: VkShaderModule::NULL,
+                    pName: core::ptr::null(),
+                    pSpecializationInfo: core::ptr::null(),
+                },
+                layout: VkPipelineLayout::NULL,
+                basePipelineHandle: parent.native_ptr(),
+                basePipelineIndex: -1,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline]
+    pub fn derived_by_index(parent: i32) -> Self {
+        Self(
+            VkComputePipelineCreateInfo {
+                sType: VkComputePipelineCreateInfo::TYPE,
+                pNext: core::ptr::null(),
+                flags: VK_PIPELINE_CREATE_DERIVATIVE_BIT,
+                stage: VkPipelineShaderStageCreateInfo {
+                    sType: VkPipelineShaderStageCreateInfo::TYPE,
+                    pNext: core::ptr::null(),
+                    flags: 0,
+                    stage: 0,
+                    module: VkShaderModule::NULL,
+                    pName: core::ptr::null(),
+                    pSpecializationInfo: core::ptr::null(),
+                },
+                layout: VkPipelineLayout::NULL,
+                basePipelineHandle: VkPipeline::NULL,
+                basePipelineIndex: parent,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
     pub const unsafe fn from_raw(raw: VkComputePipelineCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
     pub const fn into_raw(self) -> VkComputePipelineCreateInfo {
         self.0
+    }
+
+    pub const fn allow_derivatives(mut self) -> Self {
+        self.0.flags |= VK_PIPELINE_CREATE_ALLOW_DERIVATIVES_BIT;
+        self
+    }
+
+    pub const fn set_stage(mut self, stage: PipelineShaderStage<'d, 'd>) -> Self {
+        self.0.stage = stage.0;
+        self
+    }
+
+    #[inline]
+    pub fn set_layout(mut self, layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized)) -> Self {
+        self.0.layout = layout.native_ptr();
+        self
     }
 }
 
