@@ -9338,12 +9338,16 @@ unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR 
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;
 }
 #[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
 pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;
 #[cfg(feature = "Allow1_1APIs")]
+#[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;
 #[cfg(feature = "VK_KHR_variable_pointers")]
+#[rustfmt::skip]
 pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;
 #[cfg(feature = "VK_KHR_variable_pointers")]
+#[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;
 
 #[derive(Clone, Copy)]
