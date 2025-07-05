@@ -19,7 +19,7 @@ pub struct ExternalSemaphoreHandleWin32(
 );
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct ImportSemaphoreWin32HandleInfo<'d>(
     pub(crate) VkImportSemaphoreWin32HandleInfoKHR,
     core::marker::PhantomData<(&'d dyn VkHandle<Handle = VkSemaphore>, &'d widestring::WideCStr)>,
@@ -74,7 +74,7 @@ impl<'d> ImportSemaphoreWin32HandleInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct SemaphoreGetWin32HandleInfo<'d>(
     pub(crate) VkSemaphoreGetWin32HandleInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkSemaphore>>,
@@ -106,7 +106,7 @@ impl<'d> SemaphoreGetWin32HandleInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct D3D12FenceSubmitInfo<'t>(
     VkD3D12FenceSubmitInfoKHR,
     core::marker::PhantomData<(Option<&'t dyn VulkanStructure>, &'t [u64])>,
@@ -152,7 +152,7 @@ unsafe impl<'t> VulkanStructure for D3D12FenceSubmitInfo<'t> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct ExportSemaphoreWin32HandleInfo<'d>(
     VkExportSemaphoreWin32HandleInfoKHR,
     core::marker::PhantomData<(
