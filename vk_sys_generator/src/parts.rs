@@ -143,9 +143,9 @@ impl Enum {
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         let type_name = if let Some((_, s)) = self.extension {
-            format!("{}{s}", self.name)
+            format!("Vk{}{s}", self.name)
         } else {
-            format!("{}", self.name)
+            format!("Vk{}", self.name)
         };
         if let Some((x, _)) = self.extension {
             writeln!(w, "#[cfg(feature = {x:?})]")?;
@@ -157,7 +157,7 @@ impl Enum {
                 (None, None) => {
                     writeln!(
                         w,
-                        "pub const {}_{}: {type_name} = {};",
+                        "pub const VK_{}_{}: {type_name} = {};",
                         self.prefix, member.name, member.value
                     )?;
                 }
@@ -165,7 +165,7 @@ impl Enum {
                     writeln!(w, "#[cfg(feature = {x:?})]")?;
                     writeln!(
                         w,
-                        "pub const {}_{}_{s}: {type_name} = {};",
+                        "pub const VK_{}_{}_{s}: {type_name} = {};",
                         self.prefix, member.name, member.value
                     )?;
                 }
@@ -173,7 +173,7 @@ impl Enum {
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
                     writeln!(
                         w,
-                        "pub const {}_{}_{}: {type_name} = {};",
+                        "pub const VK_{}_{}_{}: {type_name} = {};",
                         self.prefix, member.name, a.1, member.value
                     )?;
                 }
@@ -182,7 +182,7 @@ impl Enum {
                     writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
                     writeln!(
                         w,
-                        "pub const {}_{}_{}: {type_name} = {};",
+                        "pub const VK_{}_{}_{}: {type_name} = {};",
                         self.prefix, member.name, a.1, member.value
                     )?;
                 }
@@ -192,7 +192,7 @@ impl Enum {
                     writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
                     writeln!(
                         w,
-                        "pub const {}_{}_{}: {type_name} = {};",
+                        "pub const VK_{}_{}_{}: {type_name} = {};",
                         self.prefix, member.name, b.1, member.value
                     )?;
                 }

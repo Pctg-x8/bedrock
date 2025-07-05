@@ -1362,14 +1362,10 @@ pub const VK_BORDER_COLOR_INT_OPAQUE_BLACK: VkBorderColor = 3;
 pub const VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE: VkBorderColor = 4;
 pub const VK_BORDER_COLOR_INT_OPAQUE_WHITE: VkBorderColor = 5;
 
-pub type VkComponentSwizzle = i32;
-pub const VK_COMPONENT_SWIZZLE_IDENTITY: VkComponentSwizzle = 0;
-pub const VK_COMPONENT_SWIZZLE_ZERO: VkComponentSwizzle = 1;
-pub const VK_COMPONENT_SWIZZLE_ONE: VkComponentSwizzle = 2;
-pub const VK_COMPONENT_SWIZZLE_R: VkComponentSwizzle = 3;
-pub const VK_COMPONENT_SWIZZLE_G: VkComponentSwizzle = 4;
-pub const VK_COMPONENT_SWIZZLE_B: VkComponentSwizzle = 5;
-pub const VK_COMPONENT_SWIZZLE_A: VkComponentSwizzle = 6;
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkColorSpaceKHR = i32;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_COLOR_SPACE_SRGB_NONLINEAR_KHR: VkColorSpaceKHR = 0;
 
 pub type VkCommandBufferLevel = i32;
 pub const VK_COMMAND_BUFFER_LEVEL_PRIMARY: VkCommandBufferLevel = 0;
@@ -1385,183 +1381,14 @@ pub const VK_COMPARE_OP_NOT_EQUAL: VkCompareOp = 5;
 pub const VK_COMPARE_OP_GREATER_OR_EQUAL: VkCompareOp = 6;
 pub const VK_COMPARE_OP_ALWAYS: VkCompareOp = 7;
 
-pub type VkDescriptorType = i32;
-pub const VK_DESCRIPTOR_TYPE_SAMPLER: VkDescriptorType = 0;
-pub const VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER: VkDescriptorType = 1;
-pub const VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE: VkDescriptorType = 2;
-pub const VK_DESCRIPTOR_TYPE_STORAGE_IMAGE: VkDescriptorType = 3;
-pub const VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER: VkDescriptorType = 4;
-pub const VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER: VkDescriptorType = 5;
-pub const VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER: VkDescriptorType = 6;
-pub const VK_DESCRIPTOR_TYPE_STORAGE_BUFFER: VkDescriptorType = 7;
-pub const VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC: VkDescriptorType = 8;
-pub const VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC: VkDescriptorType = 9;
-pub const VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT: VkDescriptorType = 10;
-
-pub type VkDynamicState = i32;
-pub const VK_DYNAMIC_STATE_VIEWPORT: VkDynamicState = 0;
-pub const VK_DYNAMIC_STATE_SCISSOR: VkDynamicState = 1;
-pub const VK_DYNAMIC_STATE_LINE_WIDTH: VkDynamicState = 2;
-pub const VK_DYNAMIC_STATE_DEPTH_BIAS: VkDynamicState = 3;
-pub const VK_DYNAMIC_STATE_BLEND_CONSTANTS: VkDynamicState = 4;
-pub const VK_DYNAMIC_STATE_DEPTH_BOUNDS: VkDynamicState = 5;
-pub const VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK: VkDynamicState = 6;
-pub const VK_DYNAMIC_STATE_STENCIL_WRITE_MASK: VkDynamicState = 7;
-pub const VK_DYNAMIC_STATE_STENCIL_REFERENCE: VkDynamicState = 8;
-
-pub type VkFilter = i32;
-pub const VK_FILTER_NEAREST: VkFilter = 0;
-pub const VK_FILTER_LINEAR: VkFilter = 1;
-
-pub type VkFrontFace = i32;
-pub const VK_FRONT_FACE_COUNTER_CLOCKWISE: VkFrontFace = 0;
-pub const VK_FRONT_FACE_CLOCKWISE: VkFrontFace = 1;
-
-pub type VkImageLayout = i32;
-pub const VK_IMAGE_LAYOUT_UNDEFINED: VkImageLayout = 0;
-pub const VK_IMAGE_LAYOUT_GENERAL: VkImageLayout = 1;
-pub const VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: VkImageLayout = 2;
-pub const VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL: VkImageLayout = 3;
-pub const VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL: VkImageLayout = 4;
-pub const VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL: VkImageLayout = 5;
-pub const VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL: VkImageLayout = 6;
-pub const VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL: VkImageLayout = 7;
-pub const VK_IMAGE_LAYOUT_PREINITIALIZED: VkImageLayout = 8;
-#[cfg(feature = "VK_KHR_swapchain")]
-pub const VK_IMAGE_LAYOUT_PRESENT_SRC_KHR: VkImageLayout = 1000001002;
-
-pub type VkImageTiling = i32;
-pub const VK_IMAGE_TILING_OPTIMAL: VkImageTiling = 0;
-pub const VK_IMAGE_TILING_LINEAR: VkImageTiling = 1;
-
-pub type VkImageType = i32;
-pub const VK_IMAGE_TYPE_1D: VkImageType = 0;
-pub const VK_IMAGE_TYPE_2D: VkImageType = 1;
-pub const VK_IMAGE_TYPE_3D: VkImageType = 2;
-
-pub type VkImageViewType = i32;
-pub const VK_IMAGE_VIEW_TYPE_1D: VkImageViewType = 0;
-pub const VK_IMAGE_VIEW_TYPE_2D: VkImageViewType = 1;
-pub const VK_IMAGE_VIEW_TYPE_3D: VkImageViewType = 2;
-pub const VK_IMAGE_VIEW_TYPE_CUBE: VkImageViewType = 3;
-pub const VK_IMAGE_VIEW_TYPE_1D_ARRAY: VkImageViewType = 4;
-pub const VK_IMAGE_VIEW_TYPE_2D_ARRAY: VkImageViewType = 5;
-pub const VK_IMAGE_VIEW_TYPE_CUBE_ARRAY: VkImageViewType = 6;
-
-pub type VkIndexType = i32;
-pub const VK_INDEX_TYPE_UINT16: VkIndexType = 0;
-pub const VK_INDEX_TYPE_UINT32: VkIndexType = 1;
-
-pub type VkSharingMode = i32;
-pub const VK_SHARING_MODE_EXCLUSIVE: VkSharingMode = 0;
-pub const VK_SHARING_MODE_CONCURRENT: VkSharingMode = 1;
-
-pub type VkLogicOp = i32;
-pub const VK_LOGIC_OP_CLEAR: VkLogicOp = 0;
-pub const VK_LOGIC_OP_AND: VkLogicOp = 1;
-pub const VK_LOGIC_OP_AND_REVERSE: VkLogicOp = 2;
-pub const VK_LOGIC_OP_COPY: VkLogicOp = 3;
-pub const VK_LOGIC_OP_AND_INVERTED: VkLogicOp = 4;
-pub const VK_LOGIC_OP_NO_OP: VkLogicOp = 5;
-pub const VK_LOGIC_OP_XOR: VkLogicOp = 6;
-pub const VK_LOGIC_OP_OR: VkLogicOp = 7;
-pub const VK_LOGIC_OP_NOR: VkLogicOp = 8;
-pub const VK_LOGIC_OP_EQUIVALENT: VkLogicOp = 9;
-pub const VK_LOGIC_OP_INVERT: VkLogicOp = 10;
-pub const VK_LOGIC_OP_OR_REVERSE: VkLogicOp = 11;
-pub const VK_LOGIC_OP_COPY_INVERTED: VkLogicOp = 12;
-pub const VK_LOGIC_OP_OR_INVERTED: VkLogicOp = 13;
-pub const VK_LOGIC_OP_NAND: VkLogicOp = 14;
-pub const VK_LOGIC_OP_SET: VkLogicOp = 15;
-
-pub type VkPhysicalDeviceType = i32;
-pub const VK_PHYSICAL_DEVICE_TYPE_OTHER: VkPhysicalDeviceType = 0;
-pub const VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: VkPhysicalDeviceType = 1;
-pub const VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: VkPhysicalDeviceType = 2;
-pub const VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: VkPhysicalDeviceType = 3;
-pub const VK_PHYSICAL_DEVICE_TYPE_CPU: VkPhysicalDeviceType = 4;
-
-pub type VkPipelineBindPoint = i32;
-pub const VK_PIPELINE_BIND_POINT_GRAPHICS: VkPipelineBindPoint = 0;
-pub const VK_PIPELINE_BIND_POINT_COMPUTE: VkPipelineBindPoint = 1;
-
-pub type VkPolygonMode = i32;
-pub const VK_POLYGON_MODE_FILL: VkPolygonMode = 0;
-pub const VK_POLYGON_MODE_LINE: VkPolygonMode = 1;
-pub const VK_POLYGON_MODE_POINT: VkPolygonMode = 2;
-
-pub type VkPrimitiveTopology = i32;
-pub const VK_PRIMITIVE_TOPOLOGY_POINT_LIST: VkPrimitiveTopology = 0;
-pub const VK_PRIMITIVE_TOPOLOGY_LINE_LIST: VkPrimitiveTopology = 1;
-pub const VK_PRIMITIVE_TOPOLOGY_LINE_STRIP: VkPrimitiveTopology = 2;
-pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST: VkPrimitiveTopology = 3;
-pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: VkPrimitiveTopology = 4;
-pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN: VkPrimitiveTopology = 5;
-pub const VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY: VkPrimitiveTopology = 6;
-pub const VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY: VkPrimitiveTopology = 7;
-pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY: VkPrimitiveTopology = 8;
-pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY: VkPrimitiveTopology = 9;
-pub const VK_PRIMITIVE_TOPOLOGY_PATCH_LIST: VkPrimitiveTopology = 10;
-
-pub type VkQueryType = i32;
-pub const VK_QUERY_TYPE_OCCLUSION: VkQueryType = 0;
-pub const VK_QUERY_TYPE_PIPELINE_STATISTICS: VkQueryType = 1;
-pub const VK_QUERY_TYPE_TIMESTAMP: VkQueryType = 2;
-
-pub type VkSubpassContents = i32;
-pub const VK_SUBPASS_CONTENTS_INLINE: VkSubpassContents = 0;
-pub const VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS: VkSubpassContents = 1;
-
-pub type VkStencilOp = i32;
-pub const VK_STENCIL_OP_KEEP: VkStencilOp = 0;
-pub const VK_STENCIL_OP_ZERO: VkStencilOp = 1;
-pub const VK_STENCIL_OP_REPLACE: VkStencilOp = 2;
-pub const VK_STENCIL_OP_INCREMENT_AND_CLAMP: VkStencilOp = 3;
-pub const VK_STENCIL_OP_DECREMENT_AND_CLAMP: VkStencilOp = 4;
-pub const VK_STENCIL_OP_INVERT: VkStencilOp = 5;
-pub const VK_STENCIL_OP_INCREMENT_AND_WRAP: VkStencilOp = 6;
-pub const VK_STENCIL_OP_DECREMENT_AND_WRAP: VkStencilOp = 7;
-
-pub type VkSystemAllocationScope = i32;
-pub const VK_SYSTEM_ALLOCATION_SCOPE_COMMAND: VkSystemAllocationScope = 0;
-pub const VK_SYSTEM_ALLOCATION_SCOPE_OBJECT: VkSystemAllocationScope = 1;
-pub const VK_SYSTEM_ALLOCATION_SCOPE_CACHE: VkSystemAllocationScope = 2;
-pub const VK_SYSTEM_ALLOCATION_SCOPE_DEVICE: VkSystemAllocationScope = 3;
-pub const VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE: VkSystemAllocationScope = 4;
-
-pub type VkInternalAllocationType = i32;
-pub const VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE: VkInternalAllocationType = 0;
-
-pub type VkSamplerAddressMode = i32;
-pub const VK_SAMPLER_ADDRESS_MODE_REPEAT: VkSamplerAddressMode = 0;
-pub const VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT: VkSamplerAddressMode = 1;
-pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE: VkSamplerAddressMode = 2;
-pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER: VkSamplerAddressMode = 3;
-pub const VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
-
-pub type VkSamplerMipmapMode = i32;
-pub const VK_SAMPLER_MIPMAP_MODE_NEAREST: VkSamplerMipmapMode = 0;
-pub const VK_SAMPLER_MIPMAP_MODE_LINEAR: VkSamplerMipmapMode = 1;
-
-pub type VkVertexInputRate = i32;
-pub const VK_VERTEX_INPUT_RATE_VERTEX: VkVertexInputRate = 0;
-pub const VK_VERTEX_INPUT_RATE_INSTANCE: VkVertexInputRate = 1;
-
-#[cfg(feature = "VK_KHR_surface")]
-pub type VkColorSpaceKHR = i32;
-#[cfg(feature = "VK_KHR_surface")]
-pub const VK_COLOR_SPACE_SRGB_NONLINEAR_KHR: VkColorSpaceKHR = 0;
-
-#[cfg(feature = "VK_KHR_surface")]
-pub type VkPresentModeKHR = i32;
-#[cfg(feature = "VK_KHR_surface")]
-pub const VK_PRESENT_MODE_IMMEDIATE_KHR: VkPresentModeKHR = 0;
-#[cfg(feature = "VK_KHR_surface")]
-pub const VK_PRESENT_MODE_MAILBOX_KHR: VkPresentModeKHR = 1;
-#[cfg(feature = "VK_KHR_surface")]
-pub const VK_PRESENT_MODE_FIFO_KHR: VkPresentModeKHR = 2;
-#[cfg(feature = "VK_KHR_surface")]
-pub const VK_PRESENT_MODE_FIFO_RELAXED_KHR: VkPresentModeKHR = 3;
+pub type VkComponentSwizzle = i32;
+pub const VK_COMPONENT_SWIZZLE_IDENTITY: VkComponentSwizzle = 0;
+pub const VK_COMPONENT_SWIZZLE_ZERO: VkComponentSwizzle = 1;
+pub const VK_COMPONENT_SWIZZLE_ONE: VkComponentSwizzle = 2;
+pub const VK_COMPONENT_SWIZZLE_R: VkComponentSwizzle = 3;
+pub const VK_COMPONENT_SWIZZLE_G: VkComponentSwizzle = 4;
+pub const VK_COMPONENT_SWIZZLE_B: VkComponentSwizzle = 5;
+pub const VK_COMPONENT_SWIZZLE_A: VkComponentSwizzle = 6;
 
 #[cfg(feature = "VK_EXT_debug_report")]
 pub type VkDebugReportObjectTypeEXT = i32;
@@ -1633,6 +1460,179 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_OBJECT_TABLE_NVX_EXT: VkDebugReportObjectT
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX_EXT: VkDebugReportObjectTypeEXT = 32;
 #[cfg(feature = "VK_EXT_debug_report")]
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT: VkDebugReportObjectTypeEXT = 33;
+
+pub type VkDescriptorType = i32;
+pub const VK_DESCRIPTOR_TYPE_SAMPLER: VkDescriptorType = 0;
+pub const VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER: VkDescriptorType = 1;
+pub const VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE: VkDescriptorType = 2;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_IMAGE: VkDescriptorType = 3;
+pub const VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER: VkDescriptorType = 4;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER: VkDescriptorType = 5;
+pub const VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER: VkDescriptorType = 6;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_BUFFER: VkDescriptorType = 7;
+pub const VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC: VkDescriptorType = 8;
+pub const VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC: VkDescriptorType = 9;
+pub const VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT: VkDescriptorType = 10;
+
+pub type VkDynamicState = i32;
+pub const VK_DYNAMIC_STATE_VIEWPORT: VkDynamicState = 0;
+pub const VK_DYNAMIC_STATE_SCISSOR: VkDynamicState = 1;
+pub const VK_DYNAMIC_STATE_LINE_WIDTH: VkDynamicState = 2;
+pub const VK_DYNAMIC_STATE_DEPTH_BIAS: VkDynamicState = 3;
+pub const VK_DYNAMIC_STATE_BLEND_CONSTANTS: VkDynamicState = 4;
+pub const VK_DYNAMIC_STATE_DEPTH_BOUNDS: VkDynamicState = 5;
+pub const VK_DYNAMIC_STATE_STENCIL_COMPARE_MASK: VkDynamicState = 6;
+pub const VK_DYNAMIC_STATE_STENCIL_WRITE_MASK: VkDynamicState = 7;
+pub const VK_DYNAMIC_STATE_STENCIL_REFERENCE: VkDynamicState = 8;
+
+pub type VkFilter = i32;
+pub const VK_FILTER_NEAREST: VkFilter = 0;
+pub const VK_FILTER_LINEAR: VkFilter = 1;
+
+pub type VkFrontFace = i32;
+pub const VK_FRONT_FACE_COUNTER_CLOCKWISE: VkFrontFace = 0;
+pub const VK_FRONT_FACE_CLOCKWISE: VkFrontFace = 1;
+
+pub type VkImageLayout = i32;
+pub const VK_IMAGE_LAYOUT_UNDEFINED: VkImageLayout = 0;
+pub const VK_IMAGE_LAYOUT_GENERAL: VkImageLayout = 1;
+pub const VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL: VkImageLayout = 2;
+pub const VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL: VkImageLayout = 3;
+pub const VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL: VkImageLayout = 4;
+pub const VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL: VkImageLayout = 5;
+pub const VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL: VkImageLayout = 6;
+pub const VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL: VkImageLayout = 7;
+pub const VK_IMAGE_LAYOUT_PREINITIALIZED: VkImageLayout = 8;
+#[cfg(feature = "VK_KHR_swapchain")]
+pub const VK_IMAGE_LAYOUT_PRESENT_SRC_KHR: VkImageLayout = 1000001002;
+
+pub type VkImageTiling = i32;
+pub const VK_IMAGE_TILING_OPTIMAL: VkImageTiling = 0;
+pub const VK_IMAGE_TILING_LINEAR: VkImageTiling = 1;
+
+pub type VkImageType = i32;
+pub const VK_IMAGE_TYPE_1D: VkImageType = 0;
+pub const VK_IMAGE_TYPE_2D: VkImageType = 1;
+pub const VK_IMAGE_TYPE_3D: VkImageType = 2;
+
+pub type VkImageViewType = i32;
+pub const VK_IMAGE_VIEW_TYPE_1D: VkImageViewType = 0;
+pub const VK_IMAGE_VIEW_TYPE_2D: VkImageViewType = 1;
+pub const VK_IMAGE_VIEW_TYPE_3D: VkImageViewType = 2;
+pub const VK_IMAGE_VIEW_TYPE_CUBE: VkImageViewType = 3;
+pub const VK_IMAGE_VIEW_TYPE_1D_ARRAY: VkImageViewType = 4;
+pub const VK_IMAGE_VIEW_TYPE_2D_ARRAY: VkImageViewType = 5;
+pub const VK_IMAGE_VIEW_TYPE_CUBE_ARRAY: VkImageViewType = 6;
+
+pub type VkIndexType = i32;
+pub const VK_INDEX_TYPE_UINT16: VkIndexType = 0;
+pub const VK_INDEX_TYPE_UINT32: VkIndexType = 1;
+
+pub type VkLogicOp = i32;
+pub const VK_LOGIC_OP_CLEAR: VkLogicOp = 0;
+pub const VK_LOGIC_OP_AND: VkLogicOp = 1;
+pub const VK_LOGIC_OP_AND_REVERSE: VkLogicOp = 2;
+pub const VK_LOGIC_OP_COPY: VkLogicOp = 3;
+pub const VK_LOGIC_OP_AND_INVERTED: VkLogicOp = 4;
+pub const VK_LOGIC_OP_NO_OP: VkLogicOp = 5;
+pub const VK_LOGIC_OP_XOR: VkLogicOp = 6;
+pub const VK_LOGIC_OP_OR: VkLogicOp = 7;
+pub const VK_LOGIC_OP_NOR: VkLogicOp = 8;
+pub const VK_LOGIC_OP_EQUIVALENT: VkLogicOp = 9;
+pub const VK_LOGIC_OP_INVERT: VkLogicOp = 10;
+pub const VK_LOGIC_OP_OR_REVERSE: VkLogicOp = 11;
+pub const VK_LOGIC_OP_COPY_INVERTED: VkLogicOp = 12;
+pub const VK_LOGIC_OP_OR_INVERTED: VkLogicOp = 13;
+pub const VK_LOGIC_OP_NAND: VkLogicOp = 14;
+pub const VK_LOGIC_OP_SET: VkLogicOp = 15;
+
+pub type VkInternalAllocationType = i32;
+pub const VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE: VkInternalAllocationType = 0;
+
+pub type VkPhysicalDeviceType = i32;
+pub const VK_PHYSICAL_DEVICE_TYPE_OTHER: VkPhysicalDeviceType = 0;
+pub const VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: VkPhysicalDeviceType = 1;
+pub const VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU: VkPhysicalDeviceType = 2;
+pub const VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU: VkPhysicalDeviceType = 3;
+pub const VK_PHYSICAL_DEVICE_TYPE_CPU: VkPhysicalDeviceType = 4;
+
+pub type VkPipelineBindPoint = i32;
+pub const VK_PIPELINE_BIND_POINT_GRAPHICS: VkPipelineBindPoint = 0;
+pub const VK_PIPELINE_BIND_POINT_COMPUTE: VkPipelineBindPoint = 1;
+
+pub type VkPolygonMode = i32;
+pub const VK_POLYGON_MODE_FILL: VkPolygonMode = 0;
+pub const VK_POLYGON_MODE_LINE: VkPolygonMode = 1;
+pub const VK_POLYGON_MODE_POINT: VkPolygonMode = 2;
+
+#[cfg(feature = "VK_KHR_surface")]
+pub type VkPresentModeKHR = i32;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_IMMEDIATE_KHR: VkPresentModeKHR = 0;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_MAILBOX_KHR: VkPresentModeKHR = 1;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_FIFO_KHR: VkPresentModeKHR = 2;
+#[cfg(feature = "VK_KHR_surface")]
+pub const VK_PRESENT_MODE_FIFO_RELAXED_KHR: VkPresentModeKHR = 3;
+
+pub type VkPrimitiveTopology = i32;
+pub const VK_PRIMITIVE_TOPOLOGY_POINT_LIST: VkPrimitiveTopology = 0;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_LIST: VkPrimitiveTopology = 1;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_STRIP: VkPrimitiveTopology = 2;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST: VkPrimitiveTopology = 3;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP: VkPrimitiveTopology = 4;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN: VkPrimitiveTopology = 5;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY: VkPrimitiveTopology = 6;
+pub const VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY: VkPrimitiveTopology = 7;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY: VkPrimitiveTopology = 8;
+pub const VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY: VkPrimitiveTopology = 9;
+pub const VK_PRIMITIVE_TOPOLOGY_PATCH_LIST: VkPrimitiveTopology = 10;
+
+pub type VkQueryType = i32;
+pub const VK_QUERY_TYPE_OCCLUSION: VkQueryType = 0;
+pub const VK_QUERY_TYPE_PIPELINE_STATISTICS: VkQueryType = 1;
+pub const VK_QUERY_TYPE_TIMESTAMP: VkQueryType = 2;
+
+pub type VkSamplerAddressMode = i32;
+pub const VK_SAMPLER_ADDRESS_MODE_REPEAT: VkSamplerAddressMode = 0;
+pub const VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT: VkSamplerAddressMode = 1;
+pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE: VkSamplerAddressMode = 2;
+pub const VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER: VkSamplerAddressMode = 3;
+pub const VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE: VkSamplerAddressMode = 4;
+
+pub type VkSamplerMipmapMode = i32;
+pub const VK_SAMPLER_MIPMAP_MODE_NEAREST: VkSamplerMipmapMode = 0;
+pub const VK_SAMPLER_MIPMAP_MODE_LINEAR: VkSamplerMipmapMode = 1;
+
+pub type VkSharingMode = i32;
+pub const VK_SHARING_MODE_EXCLUSIVE: VkSharingMode = 0;
+pub const VK_SHARING_MODE_CONCURRENT: VkSharingMode = 1;
+
+pub type VkStencilOp = i32;
+pub const VK_STENCIL_OP_KEEP: VkStencilOp = 0;
+pub const VK_STENCIL_OP_ZERO: VkStencilOp = 1;
+pub const VK_STENCIL_OP_REPLACE: VkStencilOp = 2;
+pub const VK_STENCIL_OP_INCREMENT_AND_CLAMP: VkStencilOp = 3;
+pub const VK_STENCIL_OP_DECREMENT_AND_CLAMP: VkStencilOp = 4;
+pub const VK_STENCIL_OP_INVERT: VkStencilOp = 5;
+pub const VK_STENCIL_OP_INCREMENT_AND_WRAP: VkStencilOp = 6;
+pub const VK_STENCIL_OP_DECREMENT_AND_WRAP: VkStencilOp = 7;
+
+pub type VkSubpassContents = i32;
+pub const VK_SUBPASS_CONTENTS_INLINE: VkSubpassContents = 0;
+pub const VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS: VkSubpassContents = 1;
+
+pub type VkSystemAllocationScope = i32;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_COMMAND: VkSystemAllocationScope = 0;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_OBJECT: VkSystemAllocationScope = 1;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_CACHE: VkSystemAllocationScope = 2;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_DEVICE: VkSystemAllocationScope = 3;
+pub const VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE: VkSystemAllocationScope = 4;
+
+pub type VkVertexInputRate = i32;
+pub const VK_VERTEX_INPUT_RATE_VERTEX: VkVertexInputRate = 0;
+pub const VK_VERTEX_INPUT_RATE_INSTANCE: VkVertexInputRate = 1;
 
 pub type VkFormat = i32;
 pub const VK_FORMAT_UNDEFINED: VkFormat = 0;
