@@ -1739,7 +1739,6 @@ impl<'d> ComputePipelineCreateInfo<'d> {
                 flags: 0,
                 stage: stage.0,
                 layout: layout.native_ptr(),
-                // TODO: deriving pipeline (派生するときってCreateInfo系は全部nullableになるのかな？)
                 basePipelineHandle: VkPipeline::NULL,
                 basePipelineIndex: -1,
             },
