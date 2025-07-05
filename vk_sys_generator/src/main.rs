@@ -29,8 +29,6 @@ fn main() -> std::io::Result<()> {
         ta.emit(&mut o)?;
     }
 
-    o.write(b"\n")?;
-
     for f in FLAGS {
         o.write(b"\n")?;
         f.emit(&mut o)?;
