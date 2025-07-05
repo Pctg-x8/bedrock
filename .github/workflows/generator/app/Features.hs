@@ -9,7 +9,6 @@ platformIndependent =
     "VK_EXT_debug_marker",
     "VK_EXT_debug_report",
     "VK_EXT_debug_utils",
-    "VK_NV_dedicated_allocation",
     "VK_EXT_depth_range_unrestricted",
     "VK_KHR_descriptor_update_template",
     "VK_NVX_device_generated_commands",

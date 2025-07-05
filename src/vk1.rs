@@ -200,7 +200,6 @@ ExportExtensions!("VK_IMG_filter_cubic": filter_cubic_img);
 ExportExtensions!("VK_AMD_rasterization_order": rasterization_order_amd);
 ExportExtensions!("VK_EXT_debug_marker": debug_marker_ext);
 ExportExtensions!("VK_AMD_gcn_shader": gcn_shader_amd);
-ExportExtensions!("VK_NV_dedicated_allocation": dedicated_allocation_nv);
 ExportExtensions!("VK_AMD_draw_indirect_count": draw_indirect_count_amd);
 ExportExtensions!("VK_AMD_negative_viewport_height": negative_viewport_height_amd);
 ExportExtensions!("VK_AMD_gpu_shader_half_float": gpu_shader_half_float_amd);
