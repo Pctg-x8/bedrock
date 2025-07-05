@@ -9309,8 +9309,8 @@ unsafe impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR {
 pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
-    pub deviceUUID: [u8; VK_UUID_SIZE_KHR],
-    pub driverUUID: [u8; VK_UUID_SIZE_KHR],
+    pub deviceUUID: [u8; VK_UUID_SIZE],
+    pub driverUUID: [u8; VK_UUID_SIZE],
     pub deviceLUID: [u8; VK_LUID_SIZE_KHR],
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,

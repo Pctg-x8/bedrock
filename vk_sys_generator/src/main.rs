@@ -116,8 +116,8 @@ fn main() -> std::io::Result<()> {
         "PhysicalDeviceIDPropertiesKHR",
         &const {
             [
-                Struct::member("deviceUUID", "[u8; VK_UUID_SIZE_KHR]"),
-                Struct::member("driverUUID", "[u8; VK_UUID_SIZE_KHR]"),
+                Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
+                Struct::member("driverUUID", "[u8; VK_UUID_SIZE]"),
                 Struct::member("deviceLUID", "[u8; VK_LUID_SIZE_KHR]"),
                 Struct::member("deviceNodeMask", "u32"),
                 Struct::member("deviceLUIDValid", "VkBool32"),
