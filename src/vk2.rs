@@ -2022,7 +2022,7 @@ pub const VK_MAX_DESCRIPTION_SIZE: usize = 256;
 pub const VK_LUID_SIZE_KHR: usize = 8;
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-pub const VK_LUID_SIZE: usize = VK_LUID_SIZE_KHR;
+pub const VK_LUID_SIZE: usize = 8;
 #[cfg(feature = "VK_KHR_external_memory")]
 #[rustfmt::skip]
 pub const VK_QUEUE_FAMILY_EXTERNAL_KHR: u32 = !1;
@@ -4980,7 +4980,7 @@ unsafe impl crate::TypedVulkanStructure for VkEventCreateInfo {
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkExportFenceCreateInfoKHR {
-    pub handleTypes: VkExternalFenceHandleTypeFlags,
+    pub handleTypes: VkExternalFenceHandleTypeFlagsKHR,
 }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
@@ -5026,7 +5026,7 @@ unsafe impl crate::TypedVulkanStructure for VkExportFenceWin32HandleInfoKHR {
 pub struct VkVkExportMemoryAllocateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub handleTypes: VkExternalMemoryHandleTypeFlags,
+    pub handleTypes: VkExternalMemoryHandleTypeFlagsKHR,
 }
 #[cfg(all(feature = "VK_KHR_external_memory"))]
 #[rustfmt::skip]
@@ -5096,7 +5096,7 @@ unsafe impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHRKHR 
 pub struct VkExportSemaphoreCreateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub handleType: VkExternalSemaphoreHandleTypeFlags,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagsKHR,
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore"))]
 #[rustfmt::skip]
@@ -6107,7 +6107,7 @@ unsafe impl crate::TypedVulkanStructure for VkImportFenceWin32HandleInfoKHR {
 pub struct VkImportMemoryFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub handleType: VkExternalMemoryHandleTypeFlags,
+    pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
     pub fd: core::ffi::c_int,
 }
 #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
@@ -6136,7 +6136,7 @@ unsafe impl crate::TypedVulkanStructure for VkImportMemoryFdInfoKHR {
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-pub struct VkImportMemoryWin32HandleInfoKKHR {
+pub struct VkImportMemoryWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub handleType: VkExternalMemoryHandleTypeFlagsKHR,
@@ -6148,7 +6148,7 @@ pub struct VkImportMemoryWin32HandleInfoKKHR {
 pub const VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR: VkStructureType = 1000073000;
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::VulkanStructure for VkImportMemoryWin32HandleInfoKKHR {
+unsafe impl crate::VulkanStructure for VkImportMemoryWin32HandleInfoKHR {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
@@ -6161,7 +6161,7 @@ unsafe impl crate::VulkanStructure for VkImportMemoryWin32HandleInfoKKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportMemoryWin32HandleInfoKKHR {
+unsafe impl crate::TypedVulkanStructure for VkImportMemoryWin32HandleInfoKHR {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
 }
 
@@ -8601,7 +8601,7 @@ pub struct VkSemaphoreGetFdInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub semaphore: VkSemaphore,
-    pub handleType: VkExternalSemaphoreHandleTypeFlagBits,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagBitsKHR,
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
 #[rustfmt::skip]
@@ -8633,7 +8633,7 @@ pub struct VkSemaphoreGetWin32HandleInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
     pub semaphore: VkSemaphore,
-    pub handleType: VkExternalSemaphoreHandleTypeFlagBits,
+    pub handleType: VkExternalSemaphoreHandleTypeFlagBitsKHR,
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[rustfmt::skip]
@@ -9309,9 +9309,9 @@ unsafe impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR {
 pub struct VkPhysicalDeviceIDPropertiesKHR {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
-    pub deviceUUID: [u8; VK_UUID_SIZE],
-    pub driverUUID: [u8; VK_UUID_SIZE],
-    pub deviceLUID: [u8; VK_LUID_SIZE],
+    pub deviceUUID: [u8; VK_UUID_SIZE_KHR],
+    pub driverUUID: [u8; VK_UUID_SIZE_KHR],
+    pub deviceLUID: [u8; VK_LUID_SIZE_KHR],
     pub deviceNodeMask: u32,
     pub deviceLUIDValid: VkBool32,
 }

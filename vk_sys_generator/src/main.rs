@@ -73,7 +73,7 @@ fn main() -> std::io::Result<()> {
     )?;
     emit_const(&mut o, "VK_LUID_SIZE_KHR", "usize", "8")?;
     writeln!(o, r#"#[cfg(feature = "Allow1_1APIs")]"#)?;
-    emit_const(&mut o, "VK_LUID_SIZE", "usize", "VK_LUID_SIZE_KHR")?;
+    emit_const(&mut o, "VK_LUID_SIZE", "usize", "8")?;
 
     o.write(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
     emit_const(&mut o, "VK_QUEUE_FAMILY_EXTERNAL_KHR", "u32", "!1")?;
@@ -116,9 +116,9 @@ fn main() -> std::io::Result<()> {
         "PhysicalDeviceIDPropertiesKHR",
         &const {
             [
-                Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
-                Struct::member("driverUUID", "[u8; VK_UUID_SIZE]"),
-                Struct::member("deviceLUID", "[u8; VK_LUID_SIZE]"),
+                Struct::member("deviceUUID", "[u8; VK_UUID_SIZE_KHR]"),
+                Struct::member("driverUUID", "[u8; VK_UUID_SIZE_KHR]"),
+                Struct::member("deviceLUID", "[u8; VK_LUID_SIZE_KHR]"),
                 Struct::member("deviceNodeMask", "u32"),
                 Struct::member("deviceLUIDValid", "VkBool32"),
             ]
@@ -2541,7 +2541,7 @@ const STRUCTS: &'static [Struct] = &[
     ),
     Struct::new(
         "ExportFenceCreateInfo",
-        &[Struct::member("handleTypes", "VkExternalFenceHandleTypeFlags")],
+        &[Struct::member("handleTypes", "VkExternalFenceHandleTypeFlagsKHR")],
     )
     .extensions(&[("KHR", "external_fence")])
     .promoted("1_1"),
@@ -2561,7 +2561,7 @@ const STRUCTS: &'static [Struct] = &[
     .extensions(&[("KHR", "external_fence_win32")]),
     Struct::new(
         "VkExportMemoryAllocateInfo",
-        &[Struct::member("handleTypes", "VkExternalMemoryHandleTypeFlags")],
+        &[Struct::member("handleTypes", "VkExternalMemoryHandleTypeFlagsKHR")],
     )
     .stype(
         "EXPORT_MEMORY_ALLOCATE_INFO",
@@ -2586,7 +2586,7 @@ const STRUCTS: &'static [Struct] = &[
     .extensions(&[("KHR", "external_memory_win32")]),
     Struct::new(
         "ExportSemaphoreCreateInfo",
-        &[Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlags")],
+        &[Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagsKHR")],
     )
     .stype(
         "EXPORT_SEMAPHORE_CREATE_INFO",
@@ -2998,14 +2998,14 @@ const STRUCTS: &'static [Struct] = &[
     Struct::new(
         "ImportMemoryFdInfo",
         &[
-            Struct::member("handleType", "VkExternalMemoryHandleTypeFlags"),
+            Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
             Struct::member("fd", "core::ffi::c_int"),
         ],
     )
     .stype("IMPORT_MEMORY_FD_INFO", vk_ext_enum(75, 0) as _, StructUsage::Source)
     .extensions(&[("KHR", "external_memory_fd")]),
     Struct::new(
-        "ImportMemoryWin32HandleInfoK",
+        "ImportMemoryWin32HandleInfo",
         &[
             Struct::member("handleType", "VkExternalMemoryHandleTypeFlagsKHR"),
             Struct::member("handle", "windows::Win32::Foundation::HANDLE"),
@@ -3990,7 +3990,7 @@ const STRUCTS: &'static [Struct] = &[
         "SemaphoreGetFdInfo",
         &[
             Struct::member("semaphore", "VkSemaphore"),
-            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagBits"),
+            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagBitsKHR"),
         ],
     )
     .stype("SEMAPHORE_GET_FD_INFO", vk_ext_enum(80, 1) as _, StructUsage::Source)
@@ -3999,7 +3999,7 @@ const STRUCTS: &'static [Struct] = &[
         "SemaphoreGetWin32HandleInfo",
         &[
             Struct::member("semaphore", "VkSemaphore"),
-            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagBits"),
+            Struct::member("handleType", "VkExternalSemaphoreHandleTypeFlagBitsKHR"),
         ],
     )
     .stype(
