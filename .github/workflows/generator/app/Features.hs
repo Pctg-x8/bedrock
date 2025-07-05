@@ -98,7 +98,6 @@ win32Specific =
     "VK_KHR_external_semaphore_win32",
     "VK_EXT_full_screen_exclusive",
     "VK_KHR_win32_keyed_mutex",
-    "VK_NV_win32_keyed_mutex",
     "VK_KHR_win32_surface",
     "VK_KHR_surface",
     "VK_KHR_get_surface_capabilities2",
