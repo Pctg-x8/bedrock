@@ -3,6 +3,7 @@
 use derives::vk_ext_command;
 
 use super::*;
+use crate::vk2::*;
 
 pub const VK_NV_ACQUIRE_WINRT_DISPLAY_SPEC_VERSION: usize = 1;
 pub const VK_NV_ACQUIRE_WINRT_DISPLAY_EXTENSION_NAME: &'static str = "VK_NV_acquire_winrt_display";

@@ -4,6 +4,7 @@ pub const VK_NN_VI_SURFACE_SPEC_VERSION: usize = 1;
 pub static VK_NN_VI_SURFACE_EXTENSION_NAME: &'static str = "VK_NN_vi_surface";
 
 use super::*;
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 pub const VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN: VkStructureType = ext_enum_value(63, 0) as _;

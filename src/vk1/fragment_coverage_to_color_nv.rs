@@ -4,6 +4,7 @@ pub const VK_NV_FRAGMENT_COVERAGE_TO_COLOR_SPEC_VERSION: usize = 1;
 pub static VK_NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME: &'static str = "VK_NV_fragment_coverage_to_color";
 
 use super::*;
+use crate::vk2::*;
 
 pub type VkPipelineCoverageToColorStateCreateFlagsNV = VkFlags;
 

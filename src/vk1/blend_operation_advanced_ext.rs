@@ -4,6 +4,7 @@ pub const VK_EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION: usize = 2;
 pub static VK_EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME: &'static str = "VK_EXT_blend_operation_advanced";
 
 use super::*;
+use crate::vk2::*;
 
 pub const VK_BlEND_OP_ZERO_EXT: VkBlendOp = ext_enum_value(149, 0) as _;
 pub const VK_BLEND_OP_SRC_EXT: VkBlendOp = ext_enum_value(149, 1) as _;

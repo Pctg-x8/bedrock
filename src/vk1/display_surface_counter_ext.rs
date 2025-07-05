@@ -4,6 +4,7 @@ pub const VK_EXT_DISPLAY_SURFACE_COUNTER_SPEC_VERSION: usize = 1;
 pub static VK_EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME: &'static str = "VK_EXT_display_surface_counter";
 
 use super::*;
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 pub type VkSurfaceCounterFlagsEXT = VkFlags;

@@ -4,6 +4,7 @@ pub const VK_EXT_VALIDATION_FLAGS_SPEC_VERSION: usize = 1;
 pub static VK_EXT_VALIDATION_FLAGS_EXTENSION_NAME: &'static str = "VK_EXT_validation_flags";
 
 use super::*;
+use crate::vk2::*;
 
 pub const VK_STRUCTURE_TYPE_VALIDATION_FLAGS_EXT: VkStructureType = ext_enum_value(62, 0) as _;
 

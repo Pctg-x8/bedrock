@@ -5,6 +5,7 @@ pub const VK_EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME: &'static str = "VK_EX
 
 use super::*;
 use crate::ffi_helper::slice_as_ptr_empty_null;
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 pub const VK_STRUCTURE_TYPE_DRM_FORMAT_MODIFIER_PROPERTIES_LIST_EXT: VkStructureType = ext_enum_value(159, 0) as _;

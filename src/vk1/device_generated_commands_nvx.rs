@@ -4,6 +4,7 @@ pub const VK_NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION: usize = 1;
 pub static VK_NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME: &'static str = "VK_NVX_device_generated_commands";
 
 use super::*;
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 #[repr(transparent)]

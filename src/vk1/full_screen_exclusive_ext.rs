@@ -6,6 +6,7 @@ pub const VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME: &str = "VK_EXT_full_scree
 use derives::vk_ext_command;
 
 use super::*;
+use crate::vk2::*;
 
 pub const VK_STRUCTURE_TYPE_SURFACE_FULL_SCREEN_EXCLUSIVE_INFO_EXT: VkStructureType = ext_enum_value(256, 0) as _;
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_FULL_SCREEN_EXCLUSIVE_EXT: VkStructureType =

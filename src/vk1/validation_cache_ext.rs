@@ -8,6 +8,7 @@ pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkDebugReportObjectT
 use derives::vk_ext_command;
 
 use super::*;
+use crate::vk2::*;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

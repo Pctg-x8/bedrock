@@ -4,6 +4,7 @@ pub const VK_KHR_SHARED_PRESENTABLE_IMAGE_SPEC_VERSION: usize = 1;
 pub static VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME: &'static str = "VK_KHR_shared_presentable_image";
 
 use super::*;
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 pub const VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR: VkImageLayout = ext_enum_value(112, 0) as _;

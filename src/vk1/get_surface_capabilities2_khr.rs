@@ -3,6 +3,7 @@
 pub const VK_KHR_GET_SURFACE_CAPABILITIES_2_SPEC_VERSION: usize = 1;
 pub static VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME: &'static str = "VK_KHR_get_surface_capabilities2";
 
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 use crate::{TypedVulkanSinkStructure, TypedVulkanStructure};

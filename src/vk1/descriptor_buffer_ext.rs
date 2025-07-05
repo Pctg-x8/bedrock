@@ -4,6 +4,7 @@ pub const VK_EXT_DESCRIPTOR_BUFFER_SPEC_VERSION: usize = 1;
 pub const VK_EXT_DESCRIPTOR_BUFFER_EXTENSION_NAME: &'static str = "VK_EXT_descriptor_buffer";
 
 use super::*;
+use crate::vk2::*;
 use derives::vk_ext_command;
 
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_BUFFER_PROPERTIES_EXT: VkStructureType =

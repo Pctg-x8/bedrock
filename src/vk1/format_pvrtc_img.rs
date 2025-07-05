@@ -4,6 +4,7 @@ pub const VK_IMG_FORMAT_PVRTC_SPEC_VERSION: usize = 1;
 pub static VK_IMG_FORMAT_PVRTC_EXTENSION_NAME: &'static str = "VK_IMG_format_pvrtc";
 
 use super::*;
+use crate::vk2::*;
 
 pub const VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG: VkFormat = ext_enum_value(55, 0) as _;
 pub const VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG: VkFormat = ext_enum_value(55, 1) as _;

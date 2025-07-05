@@ -3,6 +3,7 @@
 use derives::vk_ext_command;
 
 use super::*;
+use crate::vk2::*;
 
 pub const VK_EXT_METAL_OBJECTS_SPEC_VERSION: usize = 2;
 pub const VK_EXT_METAL_OBJECTS_EXTENSION_NAME: &'static str = "VK_EXT_metal_objects";
