@@ -1575,7 +1575,6 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
                 layout: layout.native_ptr(),
                 renderPass: pass.0.native_ptr(),
                 subpass: pass.1,
-                // TODO: deriving pipeline (派生するときってCreateInfo系は全部nullableになるのかな？)
                 basePipelineHandle: VkPipeline::NULL,
                 basePipelineIndex: -1,
             },
@@ -1591,23 +1590,66 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
         self.0
     }
 
-    pub const fn tessellation_state(mut self, state: &'d PipelineTessellationStateCreateInfo) -> Self {
+    #[inline(always)]
+    pub fn set_layout(mut self, layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized)) -> Self {
+        self.0.layout = layout.native_ptr();
+        self
+    }
+
+    #[inline(always)]
+    pub fn set_pass(mut self, pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>) -> Self {
+        self.0.renderPass = pass.0.native_ptr();
+        self.0.subpass = pass.1;
+        self
+    }
+
+    pub const fn set_stages(mut self, stages: &'d [PipelineShaderStage<'d, 'd>]) -> Self {
+        self.0.pStages = slice_as_ptr_empty_null(stages) as _;
+        self
+    }
+
+    pub const fn set_vertex_input_state(mut self, state: &'d PipelineVertexInputStateCreateInfo<'d>) -> Self {
+        self.0.pVertexInputState = state as *const _ as _;
+        self
+    }
+
+    pub const fn set_input_assembly_state(mut self, state: &'d PipelineInputAssemblyStateCreateInfo) -> Self {
+        self.0.pInputAssemblyState = state as *const _ as _;
+        self
+    }
+
+    pub const fn set_tessellation_state(mut self, state: &'d PipelineTessellationStateCreateInfo) -> Self {
         self.0.pTessellationState = state as *const _ as _;
         self
     }
 
-    pub const fn multisample_state(mut self, state: &'d PipelineMultisampleStateCreateInfo<'d>) -> Self {
+    pub const fn set_viewport_state(mut self, state: &'d PipelineViewportStateCreateInfo<'d>) -> Self {
+        self.0.pViewportState = state as *const _ as _;
+        self
+    }
+
+    pub const fn set_rasterization_state(mut self, state: &'d PipelineRasterizationStateCreateInfo<'d>) -> Self {
+        self.0.pRasterizationState = state as *const _ as _;
+        self
+    }
+
+    pub const fn set_multisample_state(mut self, state: &'d PipelineMultisampleStateCreateInfo<'d>) -> Self {
         self.0.pMultisampleState = state as *const _ as _;
         self
     }
 
-    pub const fn depth_stencil_state(mut self, state: &'d PipelineDepthStencilStateCreateInfo) -> Self {
+    pub const fn set_depth_stencil_state(mut self, state: &'d PipelineDepthStencilStateCreateInfo) -> Self {
         self.0.pDepthStencilState = state as *const _ as _;
         self
     }
 
-    pub const fn dynamic_state(mut self, state: &'d PipelineDynamicStateCreateInfo<'d>) -> Self {
-        self.0.pDynamicState = state as *const _ as _;
+    pub const fn set_color_blend_state(mut self, state: &'d PipelineColorBlendStateCreateInfo<'d>) -> Self {
+        self.0.pColorBlendState = state as *const _ as _;
+        self
+    }
+
+    pub const fn set_dynamic_state(mut self, states: &'d PipelineDynamicStateCreateInfo) -> Self {
+        self.0.pDynamicState = states as *const _ as _;
         self
     }
 }
