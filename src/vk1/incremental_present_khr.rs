@@ -4,6 +4,7 @@ pub const VK_KHR_INCREMENTAL_PRESENT_SPEC_VERSION: usize = 1;
 pub static VK_KHR_INCREMENTAL_PRESENT_EXTENSION_NAME: &'static str = "VK_KHR_incremental_present";
 
 use super::*;
+use crate::vk2::*;
 
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq)]
