@@ -15,7 +15,7 @@ pub enum ExternalMemoryHandleTypeWin32 {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct ImportMemoryWin32HandleInfo<'d>(
     VkImportMemoryWin32HandleInfoKHR,
     core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d WideCStr>)>,
@@ -71,7 +71,7 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct ExportMemoryWin32HandleInfo<'d>(
     VkExportMemoryWin32HandleInfoKHR,
     core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, &'d WideCStr)>,
@@ -124,7 +124,7 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
 }
 
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct MemoryGetWin32HandleInfo<'d>(
     pub(crate) VkMemoryGetWin32HandleInfoKHR,
     core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
