@@ -547,6 +547,7 @@ pub struct Struct {
     name: &'static str,
     stype: Option<(&'static str, u32, StructUsage)>,
     members: &'static [StructMember],
+    debuggable: bool,
     cloneable: bool,
     copyable: bool,
     equatable: bool,
@@ -560,6 +561,7 @@ impl Struct {
             name,
             stype: None,
             members,
+            debuggable: true,
             cloneable: true,
             copyable: false,
             equatable: false,
@@ -581,6 +583,11 @@ impl Struct {
 
     pub const fn stype(mut self, unique_part: &'static str, value: u32, usage: StructUsage) -> Self {
         self.stype = Some((unique_part, value, usage));
+        self
+    }
+
+    pub const fn non_debuggable(mut self) -> Self {
+        self.debuggable = false;
         self
     }
 
@@ -627,13 +634,16 @@ impl Struct {
         type_name: &str,
         members: &[StructMember],
         usage: Option<StructUsage>,
+        debuggable: bool,
         cloneable: bool,
         copyable: bool,
         equatable: bool,
         hashable: bool,
     ) -> std::io::Result<()> {
         let mut derives = Vec::with_capacity(8);
-        derives.push("Debug");
+        if debuggable {
+            derives.push("Debug");
+        }
         if cloneable {
             derives.push("Clone");
         }
@@ -779,6 +789,7 @@ impl Struct {
                 &type_name,
                 &self.members,
                 self.stype.map(|(_, _, u)| u),
+                self.debuggable,
                 self.cloneable,
                 self.copyable,
                 self.equatable,
@@ -823,6 +834,7 @@ impl Struct {
                 &type_name,
                 &self.members,
                 self.stype.map(|(_, _, u)| u),
+                self.debuggable,
                 self.cloneable,
                 self.copyable,
                 self.equatable,
@@ -882,6 +894,7 @@ impl Struct {
             &type_name,
             &self.members,
             self.stype.map(|(_, _, u)| u),
+            self.debuggable,
             self.cloneable,
             self.copyable,
             self.equatable,

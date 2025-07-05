@@ -2009,7 +2009,8 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("colorAttachment", "u32"),
             Struct::member("clearValue", "VkClearValue"),
         ],
-    ),
+    )
+    .non_debuggable(),
     Struct::new(
         "ClearDepthStencilValue",
         &[

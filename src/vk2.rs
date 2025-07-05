@@ -3723,7 +3723,7 @@ unsafe impl crate::TypedVulkanStructure for VkBufferViewCreateInfo {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkClearAttachment {
