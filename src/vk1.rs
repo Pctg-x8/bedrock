@@ -70,8 +70,6 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES: crate::vk
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_PROPERTIES: crate::vk2::VkStructureType = 100_0145_002;
 pub const VK_STRUCTURE_TYPE_DEVICE_QUEUE_INFO_2: crate::vk2::VkStructureType = 100_0145_003;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_DRAW_PARAMETER_FEATURES: crate::vk2::VkStructureType = 100_0063_000;
-#[promote_1_1]
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR: crate::vk2::VkStructureType = 100_0059_001;
 
 pub const VK_STRUCTURE_TYPE_TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD: crate::vk2::VkStructureType = 100_0041_000;
 pub const VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV: crate::vk2::VkStructureType = 100_0056_000;
@@ -261,26 +259,6 @@ ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
 ExportExtensions!("VK_EXT_acquire_drm_display": acquire_drm_display_ext);
 ExportExtensions!("VK_NV_acquire_winrt_display": acquire_winrt_display_nv);
-
-// Promoted Extensions
-ExportExtensions!("VK_KHR_multiview": multiview_khr);
-ExportExtensions!("VK_KHR_get_physical_device_properties2": get_physical_device_properties2);
-ExportExtensions!("VK_KHR_device_group": device_group_khr);
-ExportExtensions!("VK_KHR_shader_draw_parameters": shader_draw_parameters_khr);
-ExportExtensions!("VK_KHR_maintenance1": maintenance1_khr);
-ExportExtensions!("VK_KHR_device_group_creation": device_group_creation_khr);
-ExportExtensions!("VK_KHR_16bit_storage": n16bit_storage_khr);
-ExportExtensions!("VK_KHR_descriptor_update_template": descriptor_update_template_khr);
-ExportExtensions!("VK_KHR_maintenance2": maintenance2_khr);
-ExportExtensions!("VK_KHR_variable_pointers": variable_pointers_khr);
-ExportExtensions!("VK_KHR_dedicated_allocation": dedicated_allocation_khr);
-ExportExtensions!("VK_KHR_storage_buffer_storage_class": storage_buffer_storage_class_khr);
-ExportExtensions!("VK_KHR_relaxed_block_layout": relaxed_block_layout_khr);
-ExportExtensions!("VK_KHR_get_memory_requirements2": get_memory_requirements2_khr);
-ExportExtensions!("VK_KHR_sampler_ycbcr_conversion": sampler_ycbcr_conversion_khr);
-ExportExtensions!("VK_KHR_bind_memory2": bind_memory2_khr);
-ExportExtensions!("VK_KHR_maintenance3": maintenance3_khr);
-ExportExtensions!("VK_KHR_portability_enumeration": portability_enumeration_khr);
 
 // Promoted Extensions (1.2)
 ExportExtensions!("VK_KHR_create_renderpass2": create_renderpass2_khr);

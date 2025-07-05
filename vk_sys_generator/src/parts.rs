@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub fn emit_type_alias(w: &mut impl std::io::Write, name: &str, alias_type: &str) -> std::io::Result<()> {
     writeln!(w, "#[rustfmt::skip]")?;
@@ -111,10 +111,16 @@ pub struct EnumMember {
     name: &'static str,
     value: isize,
     extension: Option<(&'static str, &'static str)>,
+    promoted: Option<&'static str>,
 }
 impl EnumMember {
     pub const fn extension(mut self, ext: &'static str, suffix: &'static str) -> Self {
         self.extension = Some((ext, suffix));
+        self
+    }
+
+    pub const fn promoted(mut self, version: &'static str) -> Self {
+        self.promoted = Some(version);
         self
     }
 }
@@ -124,6 +130,7 @@ pub struct Enum {
     prefix: &'static str,
     members: &'static [EnumMember],
     extension: Option<(&'static str, &'static str)>,
+    promoted: Option<&'static str>,
 }
 impl Enum {
     pub const fn new(name: &'static str, prefix: &'static str, members: &'static [EnumMember]) -> Self {
@@ -132,6 +139,7 @@ impl Enum {
             prefix,
             members,
             extension: None,
+            promoted: None,
         }
     }
 
@@ -140,11 +148,17 @@ impl Enum {
         self
     }
 
+    pub const fn promoted(mut self, version: &'static str) -> Self {
+        self.promoted = Some(version);
+        self
+    }
+
     pub const fn member(name: &'static str, value: isize) -> EnumMember {
         EnumMember {
             name,
             value,
             extension: None,
+            promoted: None,
         }
     }
 
@@ -158,6 +172,11 @@ impl Enum {
             writeln!(w, "#[cfg(feature = {x:?})]")?;
         }
         emit_c_enum_type(w, &type_name)?;
+        if let Some(v) = self.promoted {
+            writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
+            emit_c_enum_type(w, &format!("Vk{}", self.name))?;
+        }
 
         for member in self.members {
             match (self.extension, member.extension) {
@@ -209,6 +228,16 @@ impl Enum {
                     )?;
                 }
             }
+
+            if let Some(v) = member.promoted {
+                writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
+                writeln!(w, "#[rustfmt::skip]")?;
+                writeln!(
+                    w,
+                    "pub const VK_{}_{}: {type_name} = {};",
+                    self.prefix, member.name, member.value
+                )?;
+            }
         }
 
         Ok(())
@@ -252,6 +281,7 @@ pub struct Bitmask {
     entries: &'static [BitmaskEntry],
     version_since: Option<&'static str>,
     extension: Option<(&'static str, &'static str)>,
+    extra_requirements: &'static [&'static str],
     promoted: Option<&'static str>,
     long: bool,
 }
@@ -269,6 +299,7 @@ impl Bitmask {
             entries,
             version_since: None,
             extension: None,
+            extra_requirements: &[],
             promoted: None,
             long: false,
         }
@@ -286,6 +317,11 @@ impl Bitmask {
 
     pub const fn extension(mut self, tag: &'static str, name: &'static str) -> Self {
         self.extension = Some((tag, name));
+        self
+    }
+
+    pub const fn extra_requirements(mut self, requirements: &'static [&'static str]) -> Self {
+        self.extra_requirements = requirements;
         self
     }
 
@@ -321,8 +357,11 @@ impl Bitmask {
         if let Some((tag, name)) = self.extension {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
         }
+        for x in self.extra_requirements {
+            writeln!(w, "#[cfg(feature = \"{x}\")]")?;
+        }
         emit_type_alias(w, &type_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
-        if let (Some(p), Some((tag, name))) = (self.promoted, self.extension) {
+        if let Some(p) = self.promoted {
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             emit_type_alias(w, &format!("Vk{}", self.name), &type_name)?;
         }
@@ -332,36 +371,33 @@ impl Bitmask {
         if let Some((tag, name)) = self.extension {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
         }
+        for x in self.extra_requirements {
+            writeln!(w, "#[cfg(feature = \"{x}\")]")?;
+        }
         emit_type_alias(w, &bits_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
-        if let (Some(p), Some((tag, name))) = (self.promoted, self.extension) {
+        if let Some(p) = self.promoted {
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             emit_type_alias(w, &format!("Vk{}", self.bits_name), &bits_name)?;
         }
         for e in self.entries {
-            match (self.version_since, e.version_since) {
-                (None, None) => (),
-                (Some(x), None) | (None, Some(x)) => writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?,
-                // fuse cfg if both specification is same
-                (Some(a), Some(b)) if a == b => writeln!(w, "#[cfg(feature = \"Allow{a}APIs\")")?,
-                (Some(a), Some(b)) => {
-                    writeln!(w, "#[cfg(all(feature = \"Allow{a}APIs\", feature = \"Allow{b}APIs\"))")?
-                }
+            let mut feature_requirements = HashSet::<String>::new();
+            feature_requirements.extend(self.version_since.map(|v| format!("Allow{v}APIs")));
+            feature_requirements.extend(e.version_since.map(|v| format!("Allow{v}APIs")));
+            // guard by typedef's extension because define uses the type
+            feature_requirements.extend(self.extension.map(|(tag, name)| format!("VK_{tag}_{name}")));
+            feature_requirements.extend(e.extension.map(|(tag, name)| format!("VK_{tag}_{name}")));
+            feature_requirements.extend(self.extra_requirements.iter().copied().map(String::from));
+            feature_requirements.extend(e.extra_requirements.iter().copied().map(String::from));
+
+            // sort for less diff
+            let mut feature_requirements = feature_requirements.into_iter().collect::<Vec<_>>();
+            feature_requirements.sort();
+            for x in feature_requirements {
+                writeln!(w, "#[cfg(feature = \"{x}\")]")?;
             }
 
-            if e.extension != self.extension
-                && let Some((tag, name)) = self.extension
-            {
-                // guard by typedef's extension because define uses the type
-                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-            }
-
-            // not affected by typedef's extension
             match e.extension {
-                Some((tag, name)) => {
-                    for x in e.extra_requirements {
-                        writeln!(w, "#[cfg(feature = \"{x}\")]")?;
-                    }
-                    writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+                Some((tag, _)) => {
                     writeln!(w, "#[rustfmt::skip]")?;
                     write!(w, "pub const VK_{}_{}_BIT_{tag}: {bits_name} = 0x", self.prefix, e.name)?;
                 }
@@ -400,7 +436,7 @@ pub struct Object {
     object_type_const_name: &'static str,
     object_type_const_value: i32,
     extension: Option<&'static str>,
-    promoted: Option<(&'static str, &'static str)>,
+    promoted: Option<(&'static str, &'static str, &'static str)>,
 }
 impl Object {
     pub const fn new(name: &'static str, const_suffix: &'static str, object_type_value: i32) -> Self {
@@ -424,8 +460,13 @@ impl Object {
         self
     }
 
-    pub const fn promoted(mut self, version: &'static str, promoted_name: &'static str) -> Self {
-        self.promoted = Some((version, promoted_name));
+    pub const fn promoted(
+        mut self,
+        version: &'static str,
+        promoted_name: &'static str,
+        promoted_otype_name: &'static str,
+    ) -> Self {
+        self.promoted = Some((version, promoted_name, promoted_otype_name));
         self
     }
 
@@ -478,10 +519,17 @@ impl Object {
             self.object_type_const_name, self.object_type_const_value
         )?;
 
-        if let Some((v, n)) = self.promoted {
+        if let Some((v, n, on)) = self.promoted {
             writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
             writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "pub type {n} = {};", self.name)?;
+            writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
+            writeln!(w, "#[rustfmt::skip]")?;
+            writeln!(
+                w,
+                "pub const VK_OBJECT_TYPE_{on}: VkObjectType = {};",
+                self.object_type_const_value
+            )?;
         }
 
         Ok(())
@@ -517,7 +565,7 @@ impl Struct {
         }
     }
 
-    pub const fn new_typed(
+    pub const fn typed(
         name: &'static str,
         sty_suffix: &'static str,
         sty_value: u32,
@@ -925,6 +973,7 @@ pub struct Command {
     static_callable: bool,
     version_since: Option<&'static str>,
     extension: Option<(&'static str, &'static str)>,
+    extra_requirements: &'static [&'static str],
     promoted: Option<&'static str>,
 }
 impl Command {
@@ -937,6 +986,7 @@ impl Command {
             static_callable: false,
             version_since: None,
             extension: None,
+            extra_requirements: &[],
             promoted: None,
         }
     }
@@ -950,6 +1000,7 @@ impl Command {
             static_callable: false,
             version_since: None,
             extension: None,
+            extra_requirements: &[],
             promoted: None,
         }
     }
@@ -975,6 +1026,11 @@ impl Command {
 
     pub const fn extension(mut self, tag: &'static str, name: &'static str) -> Self {
         self.extension = Some((tag, name));
+        self
+    }
+
+    pub const fn extra_requirements(mut self, extra_requirements: &'static [&'static str]) -> Self {
+        self.extra_requirements = extra_requirements;
         self
     }
 
@@ -1008,6 +1064,10 @@ impl Command {
         }
         if let Some(v) = self.version_since {
             writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
+        }
+
+        for x in self.extra_requirements {
+            writeln!(w, "#[cfg(feature = \"{x}\")]")?;
         }
 
         Ok(())

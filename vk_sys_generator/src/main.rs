@@ -82,6 +82,11 @@ fn main() -> std::io::Result<()> {
     o.write(b"#[cfg(feature = \"Allow1_1APIs\")]")?;
     emit_const(&mut o, "VK_QUEUE_FAMILY_EXTERNAL", "u32", "!1")?;
 
+    o.write(b"#[cfg(feature = \"VK_KHR_device_group_creation\")]\n")?;
+    emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE_KHR", "usize", "32")?;
+    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE", "usize", "32")?;
+
     o.write(b"\n")?;
 
     emit_result_type(&mut o)?;
@@ -107,6 +112,37 @@ fn main() -> std::io::Result<()> {
         o.write(b"\n")?;
         s.emit(&mut o)?;
     }
+
+    // chaotic requirement structure
+    o.write(b"#[cfg(any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\"))]\n")?;
+    Struct::new(
+        "PhysicalDeviceIDPropertiesKHR",
+        &const {
+            [
+                Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
+                Struct::member("driverUUID", "[u8; VK_UUID_SIZE]"),
+                Struct::member("deviceLUID", "[u8; VK_LUID_SIZE]"),
+                Struct::member("deviceNodeMask", "u32"),
+                Struct::member("deviceLUIDValid", "VkBool32"),
+            ]
+        },
+    )
+    .stype(
+        "PHYSICAL_DEVICE_ID_PROPERTIES_KHR",
+        vk_ext_enum(72, 4) as _,
+        StructUsage::Sink,
+    )
+    .emit(&mut o)?;
+    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
+    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;\n")?;
+
+    // struct aliasing
+    o.write(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
+    o.write(b"pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;\n")?;
+    o.write(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
+    o.write(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;\n")?;
 
     for s in UNIONS {
         o.write(b"\n")?;
@@ -171,6 +207,23 @@ const EXTENSION_HEADER_CONSTANTS: &'static [ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_get_surface_capabilities2", 1),
     ExtensionHeaderConstants::new("VK_EXT_debug_report", 8),
     ExtensionHeaderConstants::new("VK_EXT_debug_utils", 2),
+    ExtensionHeaderConstants::new("VK_KHR_device_group", 4),
+    ExtensionHeaderConstants::new("VK_KHR_device_group_creation", 1),
+    ExtensionHeaderConstants::new("VK_KHR_multiview", 1),
+    ExtensionHeaderConstants::new("VK_KHR_get_physical_device_properties2", 1),
+    ExtensionHeaderConstants::new("VK_KHR_shader_draw_parameters", 1),
+    ExtensionHeaderConstants::new("VK_KHR_portability_enumeration", 1),
+    ExtensionHeaderConstants::new("VK_KHR_get_memory_requirements2", 1),
+    ExtensionHeaderConstants::new("VK_KHR_relaxed_block_layout", 1),
+    ExtensionHeaderConstants::new("VK_KHR_storage_buffer_storage_class", 1),
+    ExtensionHeaderConstants::new("VK_KHR_bind_memory2", 1),
+    ExtensionHeaderConstants::new("VK_KHR_variable_pointers", 1),
+    ExtensionHeaderConstants::new("VK_KHR_dedicated_allocation", 3),
+    ExtensionHeaderConstants::new("VK_KHR_16bit_storage", 1),
+    ExtensionHeaderConstants::new("VK_KHR_sampler_ycbcr_conversion", 14),
+    ExtensionHeaderConstants::new("VK_KHR_maintenance1", 2),
+    ExtensionHeaderConstants::new("VK_KHR_maintenance2", 1),
+    ExtensionHeaderConstants::new("VK_KHR_maintenance3", 1),
 ];
 
 const TYPE_ALIASES: &'static [TypeAlias] = &[
@@ -198,9 +251,23 @@ const OBJECTS: &'static [Object] = &[
     Object::new("VkPipeline", "PIPELINE", 19),
     Object::new("VkPipelineLayout", "PIPELINE_LAYOUT", 17),
     Object::new("VkSampler", "SAMPLER", 21),
+    Object::new(
+        "VkSamplerYcbcrConversionKHR",
+        "SAMPLER_YCBCR_CONVERSION_KHR",
+        vk_ext_enum(157, 0),
+    )
+    .extension("VK_KHR_sampler_ycbcr_conversion")
+    .promoted("1_1", "VkSamplerYcbcrConversion", "SAMPLER_YCBCR_CONVERSION"),
     Object::new("VkDescriptorSet", "DESCRIPTOR_SET", 23),
     Object::new("VkDescriptorSetLayout", "DESCRIPTOR_SET_LAYOUT", 20),
     Object::new("VkDescriptorPool", "DESCRIPTOR_POOL", 22),
+    Object::new(
+        "VkDescriptorUpdateTemplateKHR",
+        "DESCRIPTOR_UPDATE_TEMPLATE_KHR",
+        vk_ext_enum(86, 0),
+    )
+    .extension("VK_KHR_descriptor_update_template")
+    .promoted("1_1", "VkDescriptorUpdateTemplate", "DESCRIPTOR_UPDATE_TEMPLATE"),
     Object::new("VkFence", "FENCE", 7),
     Object::new("VkSemaphore", "SEMAPHORE", 5),
     Object::new("VkEvent", "EVENT", 11),
@@ -292,6 +359,20 @@ const ENUMS: &'static [Enum] = &[
         ],
     ),
     Enum::new(
+        "ChromaLocation",
+        "CHROMA_LOCATION",
+        &[
+            Enum::member("COSITED_EVEN", 0)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+            Enum::member("MIDPOINT", 1)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+        ],
+    )
+    .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+    .promoted("1_1"),
+    Enum::new(
         "ColorSpace",
         "COLOR_SPACE",
         &[Enum::member("SRGB_NONLINEAR", 0).extension("VK_KHR_surface", "KHR")],
@@ -367,6 +448,12 @@ const ENUMS: &'static [Enum] = &[
             Enum::member("OBJECT_TABLE_NVX", 31),
             Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32),
             Enum::member("VALIDATION_CACHE_EXT", 33),
+            Enum::member("DESCRIPTOR_UPDATE_TEMPLATE", vk_ext_enum(86, 0) as _)
+                .extension("VK_KHR_descriptor_update_template", "KHR")
+                .promoted("1_1"),
+            Enum::member("SAMPLER_YCBCR_CONVERSION", vk_ext_enum(157, 0) as _)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
         ],
     )
     .extension("VK_EXT_debug_report", "EXT"),
@@ -387,6 +474,15 @@ const ENUMS: &'static [Enum] = &[
             Enum::member("INPUT_ATTACHMENT", 10),
         ],
     ),
+    Enum::new(
+        "DescriptorUpdateTemplateType",
+        "DESCRIPTOR_UPDATE_TEMPLATE_TYPE",
+        &[Enum::member("DESCRIPTOR_SET", 0)
+            .extension("VK_KHR_descriptor_update_template", "KHR")
+            .promoted("1_1")],
+    )
+    .extension("VK_KHR_descriptor_update_template", "KHR")
+    .promoted("1_1"),
     Enum::new(
         "DynamicState",
         "DYNAMIC_STATE",
@@ -426,6 +522,12 @@ const ENUMS: &'static [Enum] = &[
             Enum::member("TRANSFER_DST_OPTIMAL", 7),
             Enum::member("PREINITIALIZED", 8),
             Enum::member("PRESENT_SRC", vk_ext_enum(2, 2) as _).extension("VK_KHR_swapchain", "KHR"),
+            Enum::member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", vk_ext_enum(118, 0) as _)
+                .extension("VK_KHR_maintenance2", "KHR")
+                .promoted("1_1"),
+            Enum::member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", vk_ext_enum(118, 1) as _)
+                .extension("VK_KHR_maintenance2", "KHR")
+                .promoted("1_1"),
         ],
     ),
     Enum::new(
@@ -500,6 +602,20 @@ const ENUMS: &'static [Enum] = &[
         &[Enum::member("GRAPHICS", 0), Enum::member("COMPUTE", 1)],
     ),
     Enum::new(
+        "PointClippingBehavior",
+        "POINT_CLIPPING_BEHAVIOR",
+        &[
+            Enum::member("ALL_CLIP_PLANES", 0)
+                .extension("VK_KHR_maintenance2", "KHR")
+                .promoted("1_1"),
+            Enum::member("USER_CLIP_PLANES", 1)
+                .extension("VK_KHR_maintenance2", "KHR")
+                .promoted("1_1"),
+        ],
+    )
+    .extension("VK_KHR_maintenance2", "KHR")
+    .promoted("1_1"),
+    Enum::new(
         "PolygonMode",
         "POLYGON_MODE",
         &[
@@ -562,6 +678,43 @@ const ENUMS: &'static [Enum] = &[
         &[Enum::member("NEAREST", 0), Enum::member("LINEAR", 1)],
     ),
     Enum::new(
+        "SamplerYcbcrModelConversion",
+        "SAMPLER_YCBCR_MODEL_CONVERSION",
+        &[
+            Enum::member("RGB_IDENTITY", 0)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+            Enum::member("YCBCR_IDENTITY", 1)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+            Enum::member("YCBCR_709", 2)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+            Enum::member("YCBCR_601", 3)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+            Enum::member("YCBCR_2020", 4)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+        ],
+    )
+    .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+    .promoted("1_1"),
+    Enum::new(
+        "SamplerYcbcrRange",
+        "SAMPLER_YCBCR_RANGE",
+        &[
+            Enum::member("ITU_FULL", 0)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+            Enum::member("ITU_NARROW", 1)
+                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .promoted("1_1"),
+        ],
+    )
+    .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+    .promoted("1_1"),
+    Enum::new(
         "SharingMode",
         "SHARING_MODE",
         &[Enum::member("EXCLUSIVE", 0), Enum::member("CONCURRENT", 1)],
@@ -596,6 +749,20 @@ const ENUMS: &'static [Enum] = &[
             Enum::member("INSTANCE", 4),
         ],
     ),
+    Enum::new(
+        "TessellationDomainOrigin",
+        "TESSELLATION_DOMAIN_ORIGIN",
+        &[
+            Enum::member("UPPER_LEFT", 0)
+                .extension("VK_KHR_maintenance2", "KHR")
+                .promoted("1_1"),
+            Enum::member("LOWER_LEFT", 1)
+                .extension("VK_KHR_maintenance2", "KHR")
+                .promoted("1_1"),
+        ],
+    )
+    .extension("VK_KHR_maintenance2", "KHR")
+    .promoted("1_1"),
     Enum::new(
         "VertexInputRate",
         "VERTEX_INPUT_RATE",
@@ -687,6 +854,22 @@ const FLAGS: &'static [Bitmask] = &[
         ],
     ),
     Bitmask::new(
+        "CommandBufferResetFlags",
+        "CommandBufferResetFlagBits",
+        "COMMAND_BUFFER_RESET",
+        &[Bitmask::entry("RELEASE_RESOURCES", 0)],
+    ),
+    Bitmask::new(
+        "CommandBufferUsageFlags",
+        "CommandBufferUsageFlagBits",
+        "COMMAND_BUFFER_USAGE",
+        &[
+            Bitmask::entry("ONE_TIME_SUBMIT", 0),
+            Bitmask::entry("RENDER_PASS_CONTINUE", 1),
+            Bitmask::entry("SIMULTANEOUS_USE", 2),
+        ],
+    ),
+    Bitmask::new(
         "CommandPoolCreateFlags",
         "CommandPoolCreateFlagBits",
         "COMMAND_POOL_CREATE",
@@ -703,21 +886,13 @@ const FLAGS: &'static [Bitmask] = &[
         &[Bitmask::entry("RELEASE_RESOURCES", 0)],
     ),
     Bitmask::new(
-        "CommandBufferResetFlags",
-        "CommandBufferResetFlagBits",
-        "COMMAND_BUFFER_RESET",
-        &[Bitmask::entry("RELEASE_RESOURCES", 0)],
-    ),
-    Bitmask::new(
-        "CommandBufferUsageFlags",
-        "CommandBufferUsageFlagBits",
-        "COMMAND_BUFFER_USAGE",
-        &[
-            Bitmask::entry("ONE_TIME_SUBMIT", 0),
-            Bitmask::entry("RENDER_PASS_CONTINUE", 1),
-            Bitmask::entry("SIMULTANEOUS_USE", 2),
-        ],
-    ),
+        "CommandPoolTrimFlags",
+        "CommandPoolTrimFlagBits",
+        "COMMAND_POOL_TRIM",
+        &[],
+    )
+    .extension("KHR", "maintenance1")
+    .promoted("1_1"),
     Bitmask::new(
         "CompositeAlphaFlags",
         "CompositeAlphaFlagBits",
@@ -792,7 +967,9 @@ const FLAGS: &'static [Bitmask] = &[
         "DEPENDENCY",
         &[
             Bitmask::entry("BY_REGION", 0),
-            Bitmask::entry("VIEW_LOCAL", 1),
+            Bitmask::entry("VIEW_LOCAL", 1)
+                .extension("KHR", "multiview")
+                .promoted("1_1"),
             Bitmask::entry("DEVICE_GROUP", 2)
                 .extension("KHR", "device_group")
                 .promoted("1_1"),
@@ -816,7 +993,23 @@ const FLAGS: &'static [Bitmask] = &[
         "DESCRIPTOR_SET_LAYOUT_CREATE",
         &[],
     ),
+    Bitmask::new(
+        "DescriptorUpdateTemplateCreateFlags",
+        "DescriptorUpdateTemplateCreateFlagBits",
+        "DESCRIPTOR_UPDATE_TEMPLATE_CREATE",
+        &[],
+    )
+    .extension("KHR", "descriptor_update_template")
+    .promoted("1_1"),
     Bitmask::new("DeviceCreateFlags", "DeviceCreateFlagBits", "DEVICE_CREATE", &[]),
+    Bitmask::new(
+        "DeviceGroupPresentModeFlags",
+        "DeviceGroupPresentModeFlagBits",
+        "DEVICE_GROUP_PRESENT_MODE",
+        &[],
+    )
+    .extension("KHR", "device_group")
+    .extra_requirements(&["VK_KHR_surface"]),
     Bitmask::new(
         "DeviceQueueCreateFlags",
         "DeviceQueueCreateFlagBits",
@@ -1009,6 +1202,12 @@ const FLAGS: &'static [Bitmask] = &[
             Bitmask::entry("BLIT_SRC", 10),
             Bitmask::entry("BLIT_DST", 11),
             Bitmask::entry("SAMPLED_IMAGE_FILTER_LINEAR", 12),
+            Bitmask::entry("TRANSFER_SRC", 14)
+                .extension("KHR", "maintenance1")
+                .promoted("1_1"),
+            Bitmask::entry("TRANSFER_DST", 15)
+                .extension("KHR", "maintenance1")
+                .promoted("1_1"),
             Bitmask::entry("MIDPOINT_CHROMA_SAMPLES", 17)
                 .extension("KHR", "sampler_ycbcr_conversion")
                 .promoted("1_1"),
@@ -1042,12 +1241,147 @@ const FLAGS: &'static [Bitmask] = &[
         &[],
     ),
     Bitmask::new(
+        "InstanceCreateFlags",
+        "InstanceCreateFlagBits",
+        "INSTANCE_CREATE",
+        &[Bitmask::entry("ENUMERATE_PORTABILITY", 0)
+            .extension("KHR", "portability_enumeration")
+            .promoted("1_1")],
+    ),
+    Bitmask::new(
+        "ImageAspectFlags",
+        "ImageAspectFlagBits",
+        "IMAGE_ASPECT",
+        &[
+            Bitmask::entry("COLOR", 0),
+            Bitmask::entry("DEPTH", 1),
+            Bitmask::entry("STENCIL", 2),
+            Bitmask::entry("METADATA", 3),
+            Bitmask::entry("PLANE_0", 4)
+                .extension("KHR", "sampler_ycbcr_conversion")
+                .promoted("1_1"),
+            Bitmask::entry("PLANE_1", 5)
+                .extension("KHR", "sampler_ycbcr_conversion")
+                .promoted("1_1"),
+            Bitmask::entry("PLANE_2", 6)
+                .extension("KHR", "sampler_ycbcr_conversion")
+                .promoted("1_1"),
+        ],
+    ),
+    Bitmask::new(
+        "ImageUsageFlags",
+        "ImageUsageFlagBits",
+        "IMAGE_USAGE",
+        &[
+            Bitmask::entry("TRANSFER_SRC", 0),
+            Bitmask::entry("TRANSFER_DST", 1),
+            Bitmask::entry("SAMPLED", 2),
+            Bitmask::entry("STORAGE", 3),
+            Bitmask::entry("COLOR_ATTACHMENT", 4),
+            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT", 5),
+            Bitmask::entry("TRANSIENT_ATTACHMENT", 6),
+            Bitmask::entry("INPUT_ATTACHMENT", 7),
+        ],
+    ),
+    Bitmask::new(
+        "ImageCreateFlags",
+        "ImageCreateFlagBits",
+        "IMAGE_CREATE",
+        &[
+            Bitmask::entry("SPARSE_BINDING", 0),
+            Bitmask::entry("SPARSE_RESIDENCY", 1),
+            Bitmask::entry("SPARSE_ALIASED", 2),
+            Bitmask::entry("MUTABLE_FORMAT", 3),
+            Bitmask::entry("CUBE_COMPATIBLE", 4),
+            Bitmask::entry("2D_ARRAY_COMPATIBLE", 5)
+                .extension("KHR", "maintenance1")
+                .promoted("1_1"),
+            Bitmask::entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
+                .extension("KHR", "device_group")
+                .extra_requirements(&["VK_KHR_bind_memory2"])
+                .promoted("1_1"),
+            Bitmask::entry("BLOCK_TEXEL_VIEW_COMPATIBLE", 7)
+                .extension("KHR", "maintenance2")
+                .promoted("1_1"),
+            Bitmask::entry("EXTENDED_USAGE", 8)
+                .extension("KHR", "maintenance2")
+                .promoted("1_1"),
+            Bitmask::entry("DISJOINT", 9)
+                .extension("KHR", "sampler_ycbcr_conversion")
+                .promoted("1_1"),
+            Bitmask::entry("ALIAS", 10)
+                .extension("KHR", "bind_memory2")
+                .promoted("1_1"),
+            Bitmask::entry("PROTECTED", 11),
+        ],
+    ),
+    Bitmask::new(
+        "ImageViewCreateFlags",
+        "ImageViewCreateFlagBits",
+        "IMAGE_VIEW_CREATE",
+        &[],
+    ),
+    Bitmask::new(
+        "MemoryAllocateFlags",
+        "MemoryAllocateFlagBits",
+        "MEMORY_ALLOCATE",
+        &[Bitmask::entry("DEVICE_MASK", 0)
+            .extension("KHR", "device_group")
+            .promoted("1_1")],
+    )
+    .extension("KHR", "device_group")
+    .promoted("1_1"),
+    Bitmask::new(
+        "MemoryHeapFlags",
+        "MemoryHeapFlagBits",
+        "MEMORY_HEAP",
+        &[
+            Bitmask::entry("DEVICE_LOCAL", 0),
+            Bitmask::entry("MULTI_INSTANCE", 1).version_since("1_1"),
+        ],
+    ),
+    Bitmask::new(
+        "MemoryPropertyFlags",
+        "MemoryPropertyFlagBits",
+        "MEMORY_PROPERTY",
+        &[
+            Bitmask::entry("DEVICE_LOCAL", 0),
+            Bitmask::entry("HOST_VISIBLE", 1),
+            Bitmask::entry("HOST_COHERENT", 2),
+            Bitmask::entry("HOST_CACHED", 3),
+            Bitmask::entry("LAZILY_ALLOCATED", 4),
+            Bitmask::entry("PROTECTED", 5),
+        ],
+    ),
+    Bitmask::new("MemoryMapFlags", "MemoryMapFlagBits", "MEMORY_MAP", &[]),
+    Bitmask::new(
         "MetalSurfaceCreateFlags",
         "MetalSurfaceCreateFlagBits",
         "METAL_SURFACE_CREATE",
         &[],
     )
     .extension("EXT", "metal_surface"),
+    Bitmask::new(
+        "PeerMemoryFeatureFlags",
+        "PeerMemoryFeatureFlagBits",
+        "PEER_MEMORY_FEATURE",
+        &[
+            Bitmask::entry("COPY_SRC", 0)
+                .extension("KHR", "device_group")
+                .promoted("1_1"),
+            Bitmask::entry("COPY_DST", 1)
+                .extension("KHR", "device_group")
+                .promoted("1_1"),
+            Bitmask::entry("GENERIC_SRC", 2)
+                .extension("KHR", "device_group")
+                .promoted("1_1"),
+            Bitmask::entry("GENERIC_DST", 3)
+                .extension("KHR", "device_group")
+                .promoted("1_1"),
+        ],
+    )
+    .extension("KHR", "device_group")
+    .promoted("1_1"),
     Bitmask::new(
         "PipelineCacheCreateFlags",
         "PipelineCacheCreateFlagBits",
@@ -1160,100 +1494,6 @@ const FLAGS: &'static [Bitmask] = &[
             Bitmask::entry("ALL_COMMANDS", 16),
         ],
     ),
-    Bitmask::new("InstanceCreateFlags", "InstanceCreateFlagBits", "INSTANCE_CREATE", &[]),
-    Bitmask::new(
-        "ImageAspectFlags",
-        "ImageAspectFlagBits",
-        "IMAGE_ASPECT",
-        &[
-            Bitmask::entry("COLOR", 0),
-            Bitmask::entry("DEPTH", 1),
-            Bitmask::entry("STENCIL", 2),
-            Bitmask::entry("METADATA", 3),
-            Bitmask::entry("PLANE_0", 4)
-                .extension("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("PLANE_1", 5)
-                .extension("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("PLANE_2", 6)
-                .extension("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-        ],
-    ),
-    Bitmask::new(
-        "ImageUsageFlags",
-        "ImageUsageFlagBits",
-        "IMAGE_USAGE",
-        &[
-            Bitmask::entry("TRANSFER_SRC", 0),
-            Bitmask::entry("TRANSFER_DST", 1),
-            Bitmask::entry("SAMPLED", 2),
-            Bitmask::entry("STORAGE", 3),
-            Bitmask::entry("COLOR_ATTACHMENT", 4),
-            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT", 5),
-            Bitmask::entry("TRANSIENT_ATTACHMENT", 6),
-            Bitmask::entry("INPUT_ATTACHMENT", 7),
-        ],
-    ),
-    Bitmask::new(
-        "ImageCreateFlags",
-        "ImageCreateFlagBits",
-        "IMAGE_CREATE",
-        &[
-            Bitmask::entry("SPARSE_BINDING", 0),
-            Bitmask::entry("SPARSE_RESIDENCY", 1),
-            Bitmask::entry("SPARSE_ALIASED", 2),
-            Bitmask::entry("MUTABLE_FORMAT", 3),
-            Bitmask::entry("CUBE_COMPATIBLE", 4),
-            Bitmask::entry("ALIAS", 5)
-                .extension("KHR", "bind_memory2")
-                .promoted("1_1"),
-            Bitmask::entry("SPLIT_INSTANCE_BIND_REGIONS", 6)
-                .extension("KHR", "device_group")
-                .extra_requirements(&["VK_KHR_bind_memory2"])
-                .promoted("1_1"),
-            Bitmask::entry("BLOCK_TEXEL_VIEW_COMPATIBLE", 7)
-                .extension("KHR", "maintenance2")
-                .promoted("1_1"),
-            Bitmask::entry("EXTENDED_USAGE", 8)
-                .extension("KHR", "maintenance2")
-                .promoted("1_1"),
-            Bitmask::entry("DISJOINT", 9)
-                .extension("KHR", "sampler_ycbcr_conversion")
-                .promoted("1_1"),
-            Bitmask::entry("PROTECTED", 11),
-        ],
-    ),
-    Bitmask::new(
-        "ImageViewCreateFlags",
-        "ImageViewCreateFlagBits",
-        "IMAGE_VIEW_CREATE",
-        &[],
-    ),
-    Bitmask::new(
-        "MemoryPropertyFlags",
-        "MemoryPropertyFlagBits",
-        "MEMORY_PROPERTY",
-        &[
-            Bitmask::entry("DEVICE_LOCAL", 0),
-            Bitmask::entry("HOST_VISIBLE", 1),
-            Bitmask::entry("HOST_COHERENT", 2),
-            Bitmask::entry("HOST_CACHED", 3),
-            Bitmask::entry("LAZILY_ALLOCATED", 4),
-            Bitmask::entry("PROTECTED", 5),
-        ],
-    ),
-    Bitmask::new(
-        "MemoryHeapFlags",
-        "MemoryHeapFlagBits",
-        "MEMORY_HEAP",
-        &[
-            Bitmask::entry("DEVICE_LOCAL", 0),
-            Bitmask::entry("MULTI_INSTANCE", 1).version_since("1_1"),
-        ],
-    ),
-    Bitmask::new("MemoryMapFlags", "MemoryMapFlagBits", "MEMORY_MAP", &[]),
     Bitmask::new(
         "QueryControlFlags",
         "QueryControlFlagBits",
@@ -1538,6 +1778,20 @@ const FUNC_POINTERS: &'static [FuncPointer] = &[
 ];
 
 const STRUCTS: &'static [Struct] = &[
+    Struct::typed(
+        "AcquireNextImageInfo",
+        "ACQUIRE_NEXT_IMAGE_INFO",
+        vk_ext_enum(61, 10) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("swapchain", "VkSwapchainKHR"),
+            Struct::member("timeout", "u64"),
+            Struct::member("semaphore", "VkSemaphore"),
+            Struct::member("fence", "VkFence"),
+            Struct::member("deviceMask", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "AllocationCallbacks",
         &[
@@ -1595,6 +1849,78 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .copyable(),
+    Struct::typed(
+        "BindBufferMemoryDeviceGroupInfo",
+        "BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO",
+        vk_ext_enum(61, 13) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("deviceIndexCount", "u32"),
+            Struct::member("pDeviceIndices", "*const u32"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "BindBufferMemoryInfo",
+        "BIND_BUFFER_MEMORY_INFO",
+        vk_ext_enum(158, 0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("buffer", "VkBuffer"),
+            Struct::member("memory", "VkDeviceMemory"),
+            Struct::member("memoryOffset", DEVICE_SIZE_TYPE),
+        ],
+    )
+    .extensions(&[("KHR", "bind_memory2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "BindImageMemoryDeviceGroupInfo",
+        "BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO",
+        vk_ext_enum(61, 14) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("deviceIndexCount", "u32"),
+            Struct::member("pDeviceIndices", "*const u32"),
+            Struct::member("splitInstanceBindRegionCount", "u32"),
+            Struct::member("pSplitInstanceBindRegions", "*const VkRect2D"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "bind_memory2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "BindImageMemoryInfo",
+        "BIND_IMAGE_MEMORY_INFO",
+        vk_ext_enum(158, 1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("image", "VkImage"),
+            Struct::member("memory", "VkDeviceMemory"),
+            Struct::member("memoryOffset", DEVICE_SIZE_TYPE),
+        ],
+    )
+    .extensions(&[("KHR", "bind_memory2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "BindImageMemorySwapchainInfo",
+        "BIND_IMAGE_MEMORY_SWAPCHAIN_INFO",
+        vk_ext_enum(61, 9) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("swapchain", "VkSwapchainKHR"),
+            Struct::member("imageIndex", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    Struct::typed(
+        "BindImagePlaneMemoryInfo",
+        "BIND_IMAGE_PLANE_MEMORY_INFO",
+        vk_ext_enum(157, 2) as _,
+        StructUsage::Source,
+        &[Struct::member("planeAspect", "VkImageAspectFlags")],
+    )
+    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .promoted("1_1"),
     Struct::new(
         "BindSparseInfo",
         &[
@@ -1655,6 +1981,15 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("BUFFER_MEMORY_BARRIER", 44, StructUsage::Source),
+    Struct::typed(
+        "BufferMemoryRequirementsInfo2",
+        "BUFFER_MEMORY_REQUIREMENTS_INFO_2",
+        vk_ext_enum(147, 0) as _,
+        StructUsage::Source,
+        &[Struct::member("buffer", "VkBuffer")],
+    )
+    .extensions(&[("KHR", "get_memory_requirements2")])
+    .promoted("1_1"),
     Struct::new(
         "BufferViewCreateInfo",
         &[
@@ -1923,6 +2258,46 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("DESCRIPTOR_SET_LAYOUT_CREATE_INFO", 32, StructUsage::Source),
+    Struct::typed(
+        "DescriptorSetLayoutSupport",
+        "DESCRIPTOR_SET_LAYOUT_SUPPORT",
+        vk_ext_enum(169, 1) as _,
+        StructUsage::Sink,
+        &[Struct::member("supported", "VkBool32")],
+    )
+    .extensions(&[("KHR", "maintenance3")])
+    .promoted("1_1"),
+    Struct::typed(
+        "DescriptorUpdateTemplateCreateInfo",
+        "DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO",
+        vk_ext_enum(86, 0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkDescriptorUpdateTemplateCreateFlagsKHR"),
+            Struct::member("descriptorUpdateEntryCount", "u32"),
+            Struct::member("pDescriptorUpdateEntries", "*const VkDescriptorUpdateTemplateEntryKHR"),
+            Struct::member("templateType", "VkDescriptorUpdateTemplateTypeKHR"),
+            Struct::member("descriptorSetLayout", "VkDescriptorSetLayout"),
+            Struct::member("pipelineBindPoint", "VkPipelineBindPoint"),
+            Struct::member("pipelineLayout", "VkPipelineLayout"),
+            Struct::member("set", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "descriptor_update_template")])
+    .promoted("1_1"),
+    Struct::new(
+        "DescriptorUpdateTemplateEntry",
+        &[
+            Struct::member("dstBinding", "u32"),
+            Struct::member("dstArrayElement", "u32"),
+            Struct::member("descriptorCount", "u32"),
+            Struct::member("descriptorType", "VkDescriptorType"),
+            Struct::member("offset", "usize"),
+            Struct::member("stride", "usize"),
+        ],
+    )
+    .extensions(&[("KHR", "descriptor_update_template")])
+    .promoted("1_1"),
     Struct::new(
         "DeviceCreateInfo",
         &[
@@ -1937,6 +2312,99 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("DEVICE_CREATE_INFO", 3, StructUsage::Source),
+    Struct::typed(
+        "DeviceGroupBindSparseInfo",
+        "DEVICE_GROUP_BIND_SPARSE_INFO",
+        vk_ext_enum(61, 6) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("resourceDeviceIndex", "u32"),
+            Struct::member("memoryDeviceIndex", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group")])
+    .promoted("1_1"),
+    Struct::typed(
+        "DeviceGroupCommandBufferBeginInfo",
+        "DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO",
+        vk_ext_enum(61, 4) as _,
+        StructUsage::Source,
+        &[Struct::member("deviceMask", "u32")],
+    )
+    .extensions(&[("KHR", "device_group")])
+    .promoted("1_1"),
+    Struct::typed(
+        "DeviceGroupCreateInfo",
+        "DEVICE_GROUP_CREATE_INFO",
+        vk_ext_enum(71, 1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("physicalDeviceCount", "u32"),
+            Struct::member("pPhysicalDevices", "*const VkPhysicalDevice"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group_creation")])
+    .promoted("1_1"),
+    Struct::typed(
+        "DeviceGroupPresentCapabilities",
+        "DEVICE_GROUP_PRESENT_CAPABILITIES",
+        vk_ext_enum(61, 7) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("presentMask", "[u32; VK_MAX_DEVICE_GROUP_SIZE_KHR]"),
+            Struct::member("modes", "VkDeviceGroupPresentModeFlagsKHR"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "surface")]),
+    Struct::typed(
+        "DeviceGroupPresentInfo",
+        "DEVICE_GROUP_PRESENT_INFO",
+        vk_ext_enum(61, 11) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("swapchainCount", "u32"),
+            Struct::member("pDeviceMasks", "*const u32"),
+            Struct::member("mode", "VkDeviceGroupPresentModeFlagBitsKHR"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
+    Struct::typed(
+        "DeviceGroupRenderPassBeginInfo",
+        "DEVICE_GROUP_RENDER_PASS_BEGIN_INFO",
+        vk_ext_enum(61, 3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("deviceMask", "u32"),
+            Struct::member("deviceRenderAreaCount", "u32"),
+            Struct::member("pDeviceRenderAreas", "*const VkRect2D"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group")])
+    .promoted("1_1"),
+    Struct::typed(
+        "DeviceGroupSubmitInfo",
+        "DEVICE_GROUP_SUBMIT_INFO",
+        vk_ext_enum(61, 5) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("waitSemaphoreCount", "u32"),
+            Struct::member("pWaitSemaphoreDeviceIndices", "*const u32"),
+            Struct::member("commandBufferCount", "u32"),
+            Struct::member("pCommandBufferDeviceMasks", "*const u32"),
+            Struct::member("signalSemaphoreCount", "u32"),
+            Struct::member("pSignalSemaphoreDeviceIndices", "*const u32"),
+        ],
+    )
+    .extensions(&[("KHR", "device_group")])
+    .promoted("1_1"),
+    Struct::typed(
+        "DeviceGroupSwapchainCreateInfo",
+        "DEVICE_GROUP_SWAPCHAIN_CREATE_INFO",
+        vk_ext_enum(61, 12) as _,
+        StructUsage::Source,
+        &[Struct::member("modes", "VkDeviceGroupPresentModeFlagsKHR")],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "DeviceQueueCreateInfo",
         &[
@@ -2280,6 +2748,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("bufferFeatures", "VkFormatFeatureFlags"),
         ],
     ),
+    Struct::typed(
+        "FormatProperties2",
+        "FORMAT_PROPERTIES_2",
+        vk_ext_enum(60, 2) as _,
+        StructUsage::Sink,
+        &[Struct::member("formatProperties", "VkFormatProperties")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
     Struct::new(
         "FramebufferCreateInfo",
         &[
@@ -2364,8 +2841,20 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("maxResourceSize", "VkDeviceSize"),
         ],
     ),
-    Struct::new(
+    Struct::typed(
+        "ImageFormatProperties2",
+        "IMAGE_FORMAT_PROPERTIES_2",
+        vk_ext_enum(60, 3) as _,
+        StructUsage::Sink,
+        &[Struct::member("imageFormatProperties", "VkImageFormatProperties")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
+    Struct::typed(
         "ImageMemoryBarrier",
+        "IMAGE_MEMORY_BARRIER",
+        45,
+        StructUsage::Source,
         &[
             Struct::member("srcAccessMask", "VkAccessFlags"),
             Struct::member("dstAccessMask", "VkAccessFlags"),
@@ -2376,8 +2865,25 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("image", "VkImage"),
             Struct::member("subresourceRange", "VkImageSubresourceRange"),
         ],
+    ),
+    Struct::typed(
+        "ImageMemoryRequirementsInfo2",
+        "IMAGE_MEMORY_REQUIREMENTS_INFO_2",
+        vk_ext_enum(147, 1) as _,
+        StructUsage::Source,
+        &[Struct::member("image", "VkImage")],
     )
-    .stype("IMAGE_MEMORY_BARRIER", 45, StructUsage::Source),
+    .extensions(&[("KHR", "get_memory_requirements2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "ImagePlaneMemoryRequirementsInfo",
+        "IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO",
+        vk_ext_enum(157, 2) as _,
+        StructUsage::Source,
+        &[Struct::member("planeAspect", "VkImageAspectFlagBits")],
+    )
+    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .promoted("1_1"),
     Struct::new(
         "ImageResolve",
         &[
@@ -2388,6 +2894,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("extent", "VkExtent3D"),
         ],
     ),
+    Struct::typed(
+        "ImageSparseMemoryRequirementsInfo2",
+        "IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2",
+        vk_ext_enum(147, 2) as _,
+        StructUsage::Source,
+        &[Struct::member("image", "VkImage")],
+    )
+    .extensions(&[("KHR", "get_memory_requirements2")])
+    .promoted("1_1"),
     Struct::new(
         "ImageSubresource",
         &[
@@ -2415,6 +2930,14 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("layerCount", "u32"),
         ],
     ),
+    Struct::typed(
+        "ImageSwapchainCreateInfo",
+        "IMAGE_SWAPCHAIN_CREATE_INFO",
+        vk_ext_enum(61, 8) as _,
+        StructUsage::Source,
+        &[Struct::member("swapchain", "VkSwapchainKHR")],
+    )
+    .extensions(&[("KHR", "device_group"), ("KHR", "swapchain")]),
     Struct::new(
         "ImageViewCreateInfo",
         &[
@@ -2427,6 +2950,18 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("IMAGE_VIEW_CREATE_INFO", 15, StructUsage::Source),
+    Struct::typed(
+        "ImageViewUsageCreateInfo",
+        "IMAGE_VIEW_USAGE_CREATE_INFO",
+        vk_ext_enum(118, 2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("sliceOffset", "u32"),
+            Struct::member("sliceCount", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "maintenance2")])
+    .promoted("1_1"),
     Struct::new(
         "ImportFenceFdInfo",
         &[
@@ -2505,6 +3040,16 @@ const STRUCTS: &'static [Struct] = &[
     )
     .extensions(&[("KHR", "external_semaphore_win32")]),
     Struct::new(
+        "InputAttachmentAspectReference",
+        &[
+            Struct::member("subpass", "u32"),
+            Struct::member("inputAttachmentIndex", "u32"),
+            Struct::member("aspectMask", "VkImageAspectFlags"),
+        ],
+    )
+    .extensions(&[("KHR", "maintenance2")])
+    .promoted("1_1"),
+    Struct::new(
         "InstanceCreateInfo",
         &[
             Struct::member("flags", "VkInstanceCreateFlags"),
@@ -2541,6 +3086,20 @@ const STRUCTS: &'static [Struct] = &[
     )
     .stype("MAPPED_MEMORY_RANGE", 6, StructUsage::Source),
     Struct::new(
+        "MemoryAllocateFlagsInfo",
+        &[
+            Struct::member("flags", "VkMemoryAllocateFlags"),
+            Struct::member("deviceMask", "u32"),
+        ],
+    )
+    .stype(
+        "MEMORY_ALLOCATE_FLAGS_INFO",
+        vk_ext_enum(61, 0) as _,
+        StructUsage::Source,
+    )
+    .extensions(&[("KHR", "device_group")])
+    .promoted("1_1"),
+    Struct::new(
         "MemoryAllocateInfo",
         &[
             Struct::member("allocationSize", DEVICE_SIZE_TYPE),
@@ -2556,6 +3115,27 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("MEMORY_BARRIER", 46, StructUsage::Source),
+    Struct::typed(
+        "MemoryDedicatedAllocateInfo",
+        "MEMORY_DEDICATED_ALLOCATE_INFO",
+        vk_ext_enum(128, 1) as _,
+        StructUsage::Source,
+        &[Struct::member("image", "VkImage"), Struct::member("buffer", "VkBuffer")],
+    )
+    .extensions(&[("KHR", "dedicated_allocation")])
+    .promoted("1_1"),
+    Struct::typed(
+        "MemoryDedicatedRequirements",
+        "MEMORY_DEDICATED_REQUIREMENTS",
+        vk_ext_enum(128, 0) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("prefersDedicatedAllocation", "VkBool32"),
+            Struct::member("requiresDedicatedAllocation", "VkBool32"),
+        ],
+    )
+    .extensions(&[("KHR", "dedicated_allocation")])
+    .promoted("1_1"),
     Struct::new("MemoryFdProperties", &[Struct::member("memoryTypeBits", "u32")])
         .stype("MEMORY_FD_PROPERTIES", vk_ext_enum(75, 1) as _, StructUsage::Sink)
         .extensions(&[("KHR", "external_memory_fd")]),
@@ -2589,6 +3169,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("memoryTypeBits", "u32"),
         ],
     ),
+    Struct::typed(
+        "MemoryRequirements2",
+        "MEMORY_REQUIREMENTS_2",
+        vk_ext_enum(147, 3) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryRequirements", "VkMemoryRequirements")],
+    )
+    .extensions(&[("KHR", "get_memory_requirements2")])
+    .promoted("1_1"),
     Struct::new(
         "MemoryType",
         &[
@@ -2636,6 +3225,20 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .copyable(),
+    Struct::typed(
+        "PhysicalDevice16BitStorageFeatures",
+        "PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES",
+        vk_ext_enum(84, 0) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("storageBuffer16BitAccess", "VkBool32"),
+            Struct::member("uniformAndStorageBuffer16BitAccess", "VkBool32"),
+            Struct::member("storagePushConstant16", "VkBool32"),
+            Struct::member("storageInputOutput16", "VkBool32"),
+        ],
+    )
+    .extensions(&[("KHR", "16bit_storage")])
+    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceExternalBufferInfo",
         &[
@@ -2744,26 +3347,42 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("inheritedQueries", "VkBool32"),
         ],
     ),
-    Struct::new(
-        "PhysicalDeviceIDProperties",
+    Struct::typed(
+        "PhysicalDeviceFeatures2",
+        "PHYSICAL_DEVICE_FEATURES_2",
+        vk_ext_enum(60, 0) as _,
+        StructUsage::Both,
+        &[Struct::member("features", "VkPhysicalDeviceFeatures")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDeviceGroupProperties",
+        "PHYSICAL_DEVICE_GROUP_PROPERTIES",
+        vk_ext_enum(71, 0) as _,
+        StructUsage::Sink,
         &[
-            Struct::member("deviceUUID", "[u8; VK_UUID_SIZE]"),
-            Struct::member("driverUUID", "[u8; VK_UUID_SIZE]"),
-            Struct::member("deviceLUID", "[u8; VK_LUID_SIZE]"),
-            Struct::member("deviceNodeMask", "u32"),
-            Struct::member("deviceLUIDValid", "VkBool32"),
+            Struct::member("physicalDeviceCount", "u32"),
+            Struct::member("physicalDevices", "[VkPhysicalDevice; VK_MAX_DEVICE_GROUP_SIZE_KHR]"),
+            Struct::member("subsetAllocation", "VkBool32"),
         ],
     )
-    .stype(
-        "PHYSICAL_DEVICE_ID_PROPERTIES",
-        vk_ext_enum(72, 4) as _,
-        StructUsage::Sink,
+    .extensions(&[("KHR", "device_group_creation")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDeviceImageFormatInfo2",
+        "PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2",
+        vk_ext_enum(60, 4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("format", "VkFormat"),
+            Struct::member("r#type", "VkImageType"),
+            Struct::member("tiling", "VkImageTiling"),
+            Struct::member("usage", "VkImageUsageFlags"),
+            Struct::member("flags", "VkImageCreateFlags"),
+        ],
     )
-    .extensions(&[
-        ("KHR", "external_fence_capabilities"),
-        ("KHR", "external_memory_capabilities"),
-        ("KHR", "external_semaphore_capabilities"),
-    ])
+    .extensions(&[("KHR", "get_physical_device_properties2")])
     .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceLimits",
@@ -2876,6 +3495,18 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("nonCoherentAtomSize", DEVICE_SIZE_TYPE),
         ],
     ),
+    Struct::typed(
+        "PhysicalDeviceMaintenance3Properties",
+        "PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES",
+        vk_ext_enum(169, 0) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("maxPerSetDescriptors", "u32"),
+            Struct::member("maxMemoryAllocationSize", DEVICE_SIZE_TYPE),
+        ],
+    )
+    .extensions(&[("KHR", "maintenance3")])
+    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceMemoryProperties",
         &[
@@ -2885,6 +3516,49 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("memoryHeaps", "[VkMemoryHeap; VK_MAX_MEMORY_HEAPS]"),
         ],
     ),
+    Struct::typed(
+        "PhysicalDeviceMemoryProperties2",
+        "PHYSICAL_DEVICE_MEMORY_PROPERTIES_2",
+        vk_ext_enum(60, 6) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryProperties", "VkPhysicalDeviceMemoryProperties")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDeviceMultiviewFeatures",
+        "PHYSICAL_DEVICE_MULTIVIEW_FEATURES",
+        vk_ext_enum(54, 1) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("multiview", "VkBool32"),
+            Struct::member("multiviewGeometryShader", "VkBool32"),
+            Struct::member("multiviewTessellationShader", "VkBool32"),
+        ],
+    )
+    .extensions(&[("KHR", "multiview")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDeviceMultiviewProperties",
+        "PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES",
+        vk_ext_enum(54, 2) as _,
+        StructUsage::Sink,
+        &[
+            Struct::member("maxMultiviewViewCount", "u32"),
+            Struct::member("maxMultiviewInstanceIndex", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "multiview")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDevicePointClippingProperties",
+        "PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES",
+        vk_ext_enum(118, 0) as _,
+        StructUsage::Sink,
+        &[Struct::member("pointClippingBehavior", "VkPointClippingBehaviorKHR")],
+    )
+    .extensions(&[("KHR", "maintenance2")])
+    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceProperties",
         &[
@@ -2902,6 +3576,39 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("sparseProperties", "VkPhysicalDeviceSparseProperties"),
         ],
     ),
+    Struct::typed(
+        "PhysicalDeviceProperties2",
+        "PHYSICAL_DEVICE_PROPERTIES_2",
+        vk_ext_enum(60, 1) as _,
+        StructUsage::Sink,
+        &[Struct::member("properties", "VkPhysicalDeviceProperties")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDeviceSamplerYcbcrConversionFeatures",
+        "PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES",
+        vk_ext_enum(157, 4) as _,
+        StructUsage::Both,
+        &[Struct::member("samplerYcbcrConversion", "VkBool32")],
+    )
+    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .promoted("1_1"),
+    Struct::typed(
+        "PhysicalDeviceSparseImageFormatInfo2",
+        "PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2",
+        vk_ext_enum(60, 8) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("format", "VkFormat"),
+            Struct::member("r#type", "VkImageType"),
+            Struct::member("samples", "VkSampleCountFlagBits"),
+            Struct::member("usage", "VkImageUsageFlags"),
+            Struct::member("tiling", "VkImageTiling"),
+        ],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
     Struct::new(
         "PhysicalDeviceSparseProperties",
         &[
@@ -2922,6 +3629,18 @@ const STRUCTS: &'static [Struct] = &[
         StructUsage::Source,
     )
     .extensions(&[("KHR", "get_surface_capabilities2")]),
+    Struct::typed(
+        "PhysicalDeviceVariablePointersFeatures",
+        "PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES",
+        vk_ext_enum(121, 0) as _,
+        StructUsage::Both,
+        &[
+            Struct::member("variablePointersStorageBuffer", "VkBool32"),
+            Struct::member("variablePointers", "VkBool32"),
+        ],
+    )
+    .extensions(&[("KHR", "variable_pointers")])
+    .promoted("1_1"),
     Struct::new(
         "PipelineCacheCreateInfo",
         &[
@@ -3042,6 +3761,15 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("PIPELINE_SHADER_STAGE_CREATE_INFO", 18, StructUsage::Source),
+    Struct::typed(
+        "PipelineTessellationDomainOriginStateCreateInfo",
+        "PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO",
+        vk_ext_enum(118, 3) as _,
+        StructUsage::Source,
+        &[Struct::member("domainOrigin", "VkTessellationDomainOriginKHR")],
+    )
+    .extensions(&[("KHR", "maintenance2")])
+    .promoted("1_1"),
     Struct::new(
         "PipelineTessellationStateCreateInfo",
         &[
@@ -3115,6 +3843,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("minImageTransferGranularity", "VkExtent3D"),
         ],
     ),
+    Struct::typed(
+        "QueueFamilyProperties2",
+        "QUEUE_FAMILY_PROPERTIES_2",
+        vk_ext_enum(60, 5) as _,
+        StructUsage::Sink,
+        &[Struct::member("queueFamilyProperties", "VkQueueFamilyProperties")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
     Struct::new(
         "Rect2D",
         &[
@@ -3147,6 +3884,34 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("RENDER_PASS_CREATE_INFO", 38, StructUsage::Source),
+    Struct::typed(
+        "RenderPassInputAttachmentAspectCreateInfo",
+        "RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO",
+        vk_ext_enum(118, 1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("aspectReferenceCount", "u32"),
+            Struct::member("pAspectReferences", "*const VkInputAttachmentAspectReferenceKHR"),
+        ],
+    )
+    .extensions(&[("KHR", "maintenance2")])
+    .promoted("1_1"),
+    Struct::typed(
+        "RenderPassMultiviewCreateInfo",
+        "RENDER_PASS_MULTIVIEW_CREATE_INFO",
+        vk_ext_enum(54, 0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("subpassCount", "u32"),
+            Struct::member("pViewMasks", "*const u32"),
+            Struct::member("dependencyCount", "u32"),
+            Struct::member("pViewOffsets", "*const i32"),
+            Struct::member("correlationMaskCount", "u32"),
+            Struct::member("pCorrelationMasks", "*const u32"),
+        ],
+    )
+    .extensions(&[("KHR", "multiview")])
+    .promoted("1_1"),
     Struct::new(
         "SamplerCreateInfo",
         &[
@@ -3169,6 +3934,42 @@ const STRUCTS: &'static [Struct] = &[
         ],
     )
     .stype("SAMPLER_CREATE_INFO", 31, StructUsage::Source),
+    Struct::typed(
+        "SamplerYcbcrConversionCreateInfo",
+        "SAMPLER_YCBCR_CONVERSION_CREATE_INFO",
+        vk_ext_enum(157, 0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("format", "VkFormat"),
+            Struct::member("ycbcrModel", "VkSamplerYcbcrModelConversionKHR"),
+            Struct::member("ycbcrRange", "VkSamplerYcbcrRangeKHR"),
+            Struct::member("components", "VkComponentMapping"),
+            Struct::member("xChromaOffset", "VkChromaLocationKHR"),
+            Struct::member("yChromaOffset", "VkChromaLocationKHR"),
+            Struct::member("chromaFilter", "VkFilter"),
+            Struct::member("forceExplicitReconstruction", "VkBool32"),
+        ],
+    )
+    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .promoted("1_1"),
+    Struct::typed(
+        "SamplerYcbcrConversionImageFormatProperties",
+        "SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES",
+        vk_ext_enum(157, 5) as _,
+        StructUsage::Sink,
+        &[Struct::member("combinedImageSamplerDescriptorCount", "u32")],
+    )
+    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .promoted("1_1"),
+    Struct::typed(
+        "SamplerYcbcrConversionInfo",
+        "SAMPLER_YCBCR_CONVERSION_INFO",
+        vk_ext_enum(157, 1) as _,
+        StructUsage::Source,
+        &[Struct::member("conversion", "VkSamplerYcbcrConversion")],
+    )
+    .extensions(&[("KHR", "sampler_ycbcr_conversion")])
+    .promoted("1_1"),
     Struct::new(
         "SemaphoreCreateInfo",
         &[Struct::member("flags", "VkSemaphoreCreateFlags")],
@@ -3221,6 +4022,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("flags", "VkSparseImageFormatFlags"),
         ],
     ),
+    Struct::typed(
+        "SparseImageFormatProperties2",
+        "SPARSE_IMAGE_FORMAT_PROPERTIES_2",
+        vk_ext_enum(60, 7) as _,
+        StructUsage::Sink,
+        &[Struct::member("properties", "VkSparseImageFormatProperties")],
+    )
+    .extensions(&[("KHR", "get_physical_device_properties2")])
+    .promoted("1_1"),
     Struct::new(
         "SparseImageMemoryBind",
         &[
@@ -3250,6 +4060,15 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("imageMipTailStride", DEVICE_SIZE_TYPE),
         ],
     ),
+    Struct::typed(
+        "SparseImageMemoryRequirements2",
+        "SPARSE_IMAGE_MEMORY_REQUIREMENTS_2",
+        vk_ext_enum(147, 4) as _,
+        StructUsage::Sink,
+        &[Struct::member("memoryRequirements", "VkSparseImageMemoryRequirements")],
+    )
+    .extensions(&[("KHR", "get_memory_requirements2")])
+    .promoted("1_1"),
     Struct::new(
         "SparseImageOpaqueMemoryBindInfo",
         &[
@@ -5005,6 +5824,276 @@ const COMMANDS: &'static [Command] = &[
     )
     .extension("KHR", "external_fence_capabilities")
     .promoted("1_1"),
+    Command::new(
+        "GetDeviceGroupPeerMemoryFeatures",
+        &[
+            ("device", "VkDevice"),
+            ("heapIndex", "u32"),
+            ("localDeviceIndex", "u32"),
+            ("remoteDeviceIndex", "u32"),
+            ("pPeerMemoryFeatures", "*mut VkPeerMemoryFeatureFlags"),
+        ],
+    )
+    .extension("KHR", "device_group")
+    .promoted("1_1"),
+    Command::new(
+        "GetDeviceGroupPresentCapabilities",
+        &[
+            ("device", "VkDevice"),
+            (
+                "pDeviceGroupPresentCapabilities",
+                "*mut VkDeviceGroupPresentCapabilitiesKHR",
+            ),
+        ],
+    )
+    .failable()
+    .extension("KHR", "device_group")
+    .extra_requirements(&["VK_KHR_surface"]),
+    Command::new(
+        "GetDeviceGroupSurfacePresentModes",
+        &[
+            ("device", "VkDevice"),
+            ("surface", "VkSurfaceKHR"),
+            ("pModes", "*mut VkDeviceGroupPresentModeFlagsKHR"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "device_group")
+    .extra_requirements(&["VK_KHR_surface"]),
+    Command::new(
+        "GetPhysicalDevicePresentRectangles",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("surface", "VkSurfaceKHR"),
+            ("pRectCount", "*mut u32"),
+            ("pRects", "*mut VkRect2D"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "device_group")
+    .extra_requirements(&["VK_KHR_surface"]),
+    Command::new(
+        "AcquireNextImage2",
+        &[
+            ("device", "VkDevice"),
+            ("pAcquireInfo", "*const VkAcquireNextImageInfoKHR"),
+            ("pImageIndex", "*mut u32"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "device_group")
+    .extra_requirements(&["VK_KHR_swapchain"]),
+    Command::new(
+        "GetPhysicalDeviceFeatures2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pFeatures", "*mut VkPhysicalDeviceFeatures2KHR"),
+        ],
+    )
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "GetPhysicalDeviceProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pProperties", "*mut VkPhysicalDeviceProperties2KHR"),
+        ],
+    )
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "GetPhysicalDeviceFormatProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("format", "VkFormat"),
+            ("pFormatProperties", "*mut VkFormatProperties2KHR"),
+        ],
+    )
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "GetPhysicalDeviceImageFormatProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pImageFormatInfo", "*const VkPhysicalDeviceImageFormatInfo2KHR"),
+            ("pImageFormatProperties", "*mut VkImageFormatProperties2KHR"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "GetPhysicalDeviceQueueFamilyProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pQueueFamilyPropertyCount", "*mut u32"),
+            ("pQueueFamilyProperties", "*mut VkQueueFamilyProperties2KHR"),
+        ],
+    )
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "GetPhysicalDeviceMemoryProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pMemoryProperties", "*mut VkPhysicalDeviceMemoryProperties2KHR"),
+        ],
+    )
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "GetPhysicalDeviceSparseImageFormatProperties2",
+        &[
+            ("physicalDevice", "VkPhysicalDevice"),
+            ("pFormatInfo", "*const VkPhysicalDeviceSparseImageFormatInfo2KHR"),
+            ("pPropertyCount", "*mut u32"),
+            ("pProperties", "*mut VkSparseImageFormatProperties2KHR"),
+        ],
+    )
+    .extension("KHR", "get_physical_device_properties2")
+    .promoted("1_1"),
+    Command::new(
+        "EnumeratePhysicalDeviceGroup",
+        &[
+            ("instance", "VkInstance"),
+            ("pPhysicalDeviceGroupCount", "*mut u32"),
+            (
+                "pPhysicalDeviceGroupProperties",
+                "*mut VkPhysicalDeviceGroupPropertiesKHR",
+            ),
+        ],
+    )
+    .failable()
+    .extension("KHR", "device_group_creation")
+    .promoted("1_1"),
+    Command::new(
+        "GetImageMemoryRequirements2",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkImageMemoryRequirementsInfo2KHR"),
+            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
+        ],
+    )
+    .extension("KHR", "get_memory_requirements2")
+    .promoted("1_1"),
+    Command::new(
+        "GetBufferMemoryRequirements2",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkBufferMemoryRequirementsInfo2"),
+            ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
+        ],
+    )
+    .extension("KHR", "get_memory_requirements2")
+    .promoted("1_1"),
+    Command::new(
+        "GetImageSparseMemoryRequirements2",
+        &[
+            ("device", "VkDevice"),
+            ("pInfo", "*const VkImageSparseMemoryRequirementsInfo2"),
+            ("pSparseMemoryRequirementCount", "*mut u32"),
+            ("pSparseMemoryRequirements", "*mut VkSparseImageMemoryRequirements2KHR"),
+        ],
+    )
+    .extension("KHR", "get_memory_requirements2")
+    .promoted("1_1"),
+    Command::new(
+        "BindBufferMemory2",
+        &[
+            ("device", "VkDevice"),
+            ("bindInfoCount", "u32"),
+            ("pBindInfos", "*const VkBindBufferMemoryInfoKHR"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "bind_memory2")
+    .promoted("1_1"),
+    Command::new(
+        "BindImageMemory2",
+        &[
+            ("device", "VkDevice"),
+            ("bindInfoCount", "u32"),
+            ("pBindInfos", "*const VkBindImageMemoryInfoKHR"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "bind_memory2")
+    .promoted("1_1"),
+    Command::new(
+        "CreateDescriptorUpdateTemplate",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "*const VkDescriptorUpdateTemplateCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pDescriptorUpdateTemplate", "*mut VkDescriptorUpdateTemplateKHR"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "descriptor_update_template")
+    .promoted("1_1"),
+    Command::new(
+        "DestroyDescriptorUpdateTemplate",
+        &[
+            ("device", "VkDevice"),
+            ("descriptorUpdateTemplate", "VkDescriptorUpdateTemplateKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension("KHR", "descriptor_update_template")
+    .promoted("1_1"),
+    Command::new(
+        "UpdateDescriptorSetWithTemplate",
+        &[
+            ("device", "VkDevice"),
+            ("descriptorSet", "VkDescriptorSet"),
+            ("descriptorUpdateTemplate", "VkDescriptorUpdateTemplateKHR"),
+            ("pData", "*const core::ffi::c_void"),
+        ],
+    )
+    .extension("KHR", "descriptor_update_template")
+    .promoted("1_1"),
+    Command::new(
+        "CreateSamplerYcbcrConversion",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "VkSamplerYcbcrConversionCreateInfoKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+            ("pYcbcrConversion", "*mut VkSamplerYcbcrConversionKHR"),
+        ],
+    )
+    .failable()
+    .extension("KHR", "sampler_ycbcr_conversion")
+    .promoted("1_1"),
+    Command::new(
+        "DestroySamplerYcbcrConversion",
+        &[
+            ("device", "VkDevice"),
+            ("ycbcrConversion", "VkSamplerYcbcrConversionKHR"),
+            ("pAllocator", "*const VkAllocationCallbacks"),
+        ],
+    )
+    .extension("KHR", "sampler_ycbcr_conversion")
+    .promoted("1_1"),
+    Command::new(
+        "TrimCommandPool",
+        &[
+            ("device", "VkDevice"),
+            ("commandPool", "VkCommandPool"),
+            ("flags", "VkCommandPoolTrimFlagsKHR"),
+        ],
+    )
+    .extension("KHR", "maintenance1")
+    .promoted("1_1"),
+    Command::new(
+        "GetDescriptorSetLayoutSupport",
+        &[
+            ("device", "VkDevice"),
+            ("pCreateInfo", "*const VkDescriptorSetLayoutCreateInfo"),
+            ("pSupport", "*mut VkDescriptorSetLayoutSupport"),
+        ],
+    )
+    .extension("KHR", "maintenance3")
+    .promoted("1_1"),
     // command buffer instructions
     Command::inst(
         "BindPipeline",
@@ -5386,6 +6475,22 @@ const COMMANDS: &'static [Command] = &[
         &[("pLabelInfo", "*const VkDebugUtilsLabelEXT")],
     )
     .extension("EXT", "debug_utils"),
+    Command::inst("SetDeviceMask", &[("deviceMask", "u32")])
+        .extension("KHR", "device_group")
+        .promoted("1_1"),
+    Command::inst(
+        "DispatchBase",
+        &[
+            ("baseGroupX", "u32"),
+            ("baseGroupY", "u32"),
+            ("baseGroupZ", "u32"),
+            ("groupCountX", "u32"),
+            ("groupCountY", "u32"),
+            ("groupCountZ", "u32"),
+        ],
+    )
+    .extension("KHR", "device_group")
+    .promoted("1_1"),
 ];
 
 fn emit_result_type(w: &mut impl std::io::Write) -> std::io::Result<()> {
@@ -5431,6 +6536,10 @@ fn emit_result_type(w: &mut impl std::io::Write) -> std::io::Result<()> {
     emit_result_err_const(w, "VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR", 73, 3)?;
     w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_INVALID_EXTERNAL_HANDLE", 73, 3)?;
+    w.write(b"#[cfg(feature = \"VK_KHR_maintenance1\")]\n")?;
+    emit_result_err_const(w, "VK_ERROR_OUT_OF_POOL_MEMORY_KHR", 70, 0)?;
+    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    emit_result_err_const(w, "VK_ERROR_OUT_OF_POOL_MEMORY", 70, 0)?;
 
     Ok(())
 }
@@ -5446,6 +6555,20 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
             "pub const VK_FORMAT_{bit_assign}_{repr}_PACK{size}: VkFormat = {value};"
         )
     }
+    fn packed_s(
+        w: &mut impl Write,
+        bit_assign: &str,
+        r#repr: &str,
+        size: usize,
+        suffix: &str,
+        value: usize,
+    ) -> std::io::Result<()> {
+        writeln!(
+            w,
+            "pub const VK_FORMAT_{bit_assign}_{repr}_PACK{size}_{suffix}: VkFormat = {value};"
+        )
+    }
+
     packed(w, "R4G4", "UNORM", 8, 1)?;
     packed(w, "R4G4B4A4", "UNORM", 16, 2)?;
     packed(w, "B4G4R4A4", "UNORM", 16, 3)?;
@@ -5677,6 +6800,203 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
     astc(w, 12, 10, "SRGB", 182)?;
     astc(w, 12, 12, "UNORM", 183)?;
     astc(w, 12, 12, "SRGB", 184)?;
+
+    // sampler_ycbcr_conversion
+    fn ycbcr(
+        w: &mut impl std::io::Write,
+        bit_assign: &str,
+        dim: &str,
+        r#repr: &str,
+        value: i32,
+    ) -> std::io::Result<()> {
+        w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+        writeln!(
+            w,
+            "pub const VK_FORMAT_{bit_assign}_{dim}_{repr}_KHR: VkFormat = {value};"
+        )?;
+        w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+        writeln!(w, "pub const VK_FORMAT_{bit_assign}_{dim}_{repr}: VkFormat = {value};")?;
+
+        Ok(())
+    }
+    fn ycbcr_planes(
+        w: &mut impl std::io::Write,
+        bit_assign_per_plane: &[&str],
+        dim: &str,
+        r#repr: &str,
+        value: i32,
+    ) -> std::io::Result<()> {
+        let bit_assign = bit_assign_per_plane.join("_");
+        let plane_count = bit_assign_per_plane.len();
+        w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+        writeln!(
+            w,
+            "pub const VK_FORMAT_{bit_assign}_{plane_count}PLANE_{dim}_{repr}_KHR: VkFormat = {value};"
+        )?;
+        w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+        writeln!(
+            w,
+            "pub const VK_FORMAT_{bit_assign}_{plane_count}PLANE_{dim}_{repr}: VkFormat = {value};"
+        )?;
+
+        Ok(())
+    }
+    ycbcr(w, "G8B8G8R8", "422", "UNORM", vk_ext_enum(157, 0))?;
+    ycbcr(w, "B8G8R8G8", "422", "UNORM", vk_ext_enum(157, 1))?;
+    ycbcr_planes(w, &["G8", "B8", "R8"], "420", "UNORM", vk_ext_enum(157, 2))?;
+    ycbcr_planes(w, &["G8", "B8R8"], "420", "UNORM", vk_ext_enum(157, 3))?;
+    ycbcr_planes(w, &["G8", "B8", "R8"], "422", "UNORM", vk_ext_enum(157, 4))?;
+    ycbcr_planes(w, &["G8", "B8R8"], "422", "UNORM", vk_ext_enum(157, 5))?;
+    ycbcr_planes(w, &["G8", "B8", "R8"], "444", "UNORM", vk_ext_enum(157, 6))?;
+    w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+    packed_s(w, "R10X6", "UNORM", 16, "KHR", vk_ext_enum(157, 7) as _)?;
+    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    packed(w, "R10X6", "UNORM", 16, vk_ext_enum(157, 7) as _)?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_R10X6G10X6_UNORM_2PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 8)
+    )?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_R10X6G10X6B10X6A10X6_UNORM_4PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 9)
+    )?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 10)
+    )?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 11)
+    )?;
+    ycbcr_planes(
+        w,
+        &["G10X6", "B10X6", "R10X6"],
+        "420",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 12),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G10X6", "B10X6R10X6"],
+        "420",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 13),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G10X6", "B10X6", "R10X6"],
+        "422",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 14),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G10X6", "B10X6R10X6"],
+        "422",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 15),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G10X6", "B10X6", "R10X6"],
+        "444",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 16),
+    )?;
+    w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+    packed_s(w, "R12X4", "UNORM", 16, "KHR", vk_ext_enum(157, 17) as _)?;
+    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    packed(w, "R12X4", "UNORM", 16, vk_ext_enum(157, 17) as _)?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_R12X4G12X4_UNORM_2PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 18)
+    )?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_R12X4G12X4B12X4A12X4_UNORM_4PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 19)
+    )?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 20)
+    )?;
+    writeln!(
+        w,
+        r#"#[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
+pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16_KHR: VkFormat = {v};
+#[cfg(feature = "Allow1_1APIs")]
+pub const VK_FORMAT_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16: VkFormat = {v};"#,
+        v = vk_ext_enum(157, 21)
+    )?;
+    ycbcr_planes(
+        w,
+        &["G12X4", "B12X4", "R12X4"],
+        "420",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 22),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G12X4", "B12X4R12X4"],
+        "420",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 23),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G12X4", "B12X4", "R12X4"],
+        "422",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 24),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G12X4", "B12X4R12X4"],
+        "422",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 25),
+    )?;
+    ycbcr_planes(
+        w,
+        &["G12X4", "B12X4", "R12X4"],
+        "444",
+        "UNORM_3PACK16",
+        vk_ext_enum(157, 26),
+    )?;
+    ycbcr(w, "G16B16G16R16", "422", "UNORM", vk_ext_enum(157, 27))?;
+    ycbcr(w, "B16G16R16G16", "422", "UNORM", vk_ext_enum(157, 28))?;
+    ycbcr_planes(w, &["G16", "B16", "R16"], "420", "UNORM", vk_ext_enum(157, 29))?;
+    ycbcr_planes(w, &["G16", "B16R16"], "420", "UNORM", vk_ext_enum(157, 30))?;
+    ycbcr_planes(w, &["G16", "B16", "R16"], "422", "UNORM", vk_ext_enum(157, 31))?;
+    ycbcr_planes(w, &["G16", "B16R16"], "422", "UNORM", vk_ext_enum(157, 32))?;
+    ycbcr_planes(w, &["G16", "B16", "R16"], "444", "UNORM", vk_ext_enum(157, 33))?;
 
     Ok(())
 }

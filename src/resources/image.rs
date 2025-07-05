@@ -741,7 +741,7 @@ impl ImageFlags {
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct ImageSparseMemoryRequirementsInfo2<'r>(
     pub(crate) VkImageSparseMemoryRequirementsInfo2KHR,
     core::marker::PhantomData<(Option<&'r dyn VulkanStructure>, &'r dyn VkHandle<Handle = VkImage>)>,

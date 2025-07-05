@@ -188,7 +188,7 @@ impl<'d> MemoryAllocateInfo<'d> {
 /// Specify a dedicated memory allocation resource
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Clone)]
 pub struct MemoryDedicatedAllocateInfo<'d>(
     VkMemoryDedicatedAllocateInfoKHR,
     core::marker::PhantomData<(
