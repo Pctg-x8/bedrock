@@ -549,6 +549,8 @@ pub struct Struct {
     members: &'static [StructMember],
     cloneable: bool,
     copyable: bool,
+    equatable: bool,
+    hashable: bool,
     extensions: &'static [(&'static str, &'static str)],
     promoted: Option<&'static str>,
 }
@@ -560,6 +562,8 @@ impl Struct {
             members,
             cloneable: true,
             copyable: false,
+            equatable: false,
+            hashable: false,
             extensions: &[],
             promoted: None,
         }
@@ -594,6 +598,16 @@ impl Struct {
         self
     }
 
+    pub const fn equatable(mut self) -> Self {
+        self.equatable = true;
+        self
+    }
+
+    pub const fn hashable(mut self) -> Self {
+        self.hashable = true;
+        self
+    }
+
     pub const fn extensions(mut self, extensions: &'static [(&'static str, &'static str)]) -> Self {
         self.extensions = extensions;
         self
@@ -615,6 +629,8 @@ impl Struct {
         usage: Option<StructUsage>,
         cloneable: bool,
         copyable: bool,
+        equatable: bool,
+        hashable: bool,
     ) -> std::io::Result<()> {
         let mut derives = Vec::with_capacity(8);
         if cloneable {
@@ -622,6 +638,12 @@ impl Struct {
         }
         if copyable {
             derives.push("Copy");
+        }
+        if equatable {
+            derives.extend(["Eq", "PartialEq"]);
+        }
+        if hashable {
+            derives.push("Hash");
         }
         if !derives.is_empty() {
             write!(w, "#[derive(")?;
@@ -758,6 +780,8 @@ impl Struct {
                 self.stype.map(|(_, _, u)| u),
                 self.cloneable,
                 self.copyable,
+                self.equatable,
+                self.hashable,
             )?;
             if let Some((up, v, u)) = self.stype {
                 Self::emit_structure_type_const(w, up, v)?;
@@ -800,6 +824,8 @@ impl Struct {
                 self.stype.map(|(_, _, u)| u),
                 self.cloneable,
                 self.copyable,
+                self.equatable,
+                self.hashable,
             )?;
             if let Some((up, v, u)) = self.stype {
                 let structure_type_name = format!("{up}_{tag}");
@@ -857,6 +883,8 @@ impl Struct {
             self.stype.map(|(_, _, u)| u),
             self.cloneable,
             self.copyable,
+            self.equatable,
+            self.hashable,
         )?;
         if let Some((up, v, u)) = self.stype {
             writeln!(w, "#[cfg({cfg})]")?;

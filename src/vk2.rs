@@ -5167,7 +5167,7 @@ pub struct VkExtensionProperties {
     pub specVersion: u32,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkExtent2D {
@@ -5175,7 +5175,7 @@ pub struct VkExtent2D {
     pub height: u32,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkExtent3D {
@@ -6708,7 +6708,7 @@ unsafe impl crate::TypedVulkanStructure for VkMetalSurfaceCreateInfoEXT {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkOffset2D {
@@ -6716,7 +6716,7 @@ pub struct VkOffset2D {
     pub y: i32,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkOffset3D {
@@ -8254,7 +8254,7 @@ pub type VkQueueFamilyProperties2 = VkQueueFamilyProperties2KHR;
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkRect2D {

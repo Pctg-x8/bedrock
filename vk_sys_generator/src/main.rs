@@ -2622,7 +2622,9 @@ const STRUCTS: &'static [Struct] = &[
         "Extent2D",
         &[Struct::member("width", "u32"), Struct::member("height", "u32")],
     )
-    .copyable(),
+    .copyable()
+    .equatable()
+    .hashable(),
     Struct::new(
         "Extent3D",
         &[
@@ -2631,7 +2633,9 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("depth", "u32"),
         ],
     )
-    .copyable(),
+    .copyable()
+    .equatable()
+    .hashable(),
     Struct::new(
         "ExternalBufferProperties",
         &[Struct::member(
@@ -3216,7 +3220,10 @@ const STRUCTS: &'static [Struct] = &[
         StructUsage::Source,
     )
     .extensions(&[("EXT", "metal_surface")]),
-    Struct::new("Offset2D", &[Struct::member("x", "i32"), Struct::member("y", "i32")]).copyable(),
+    Struct::new("Offset2D", &[Struct::member("x", "i32"), Struct::member("y", "i32")])
+        .copyable()
+        .equatable()
+        .hashable(),
     Struct::new(
         "Offset3D",
         &[
@@ -3225,7 +3232,9 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("z", "i32"),
         ],
     )
-    .copyable(),
+    .copyable()
+    .equatable()
+    .hashable(),
     Struct::typed(
         "PhysicalDevice16BitStorageFeatures",
         "PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES",
@@ -3860,7 +3869,9 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("extent", "VkExtent2D"),
         ],
     )
-    .copyable(),
+    .copyable()
+    .equatable()
+    .hashable(),
     Struct::new(
         "RenderPassBeginInfo",
         &[
