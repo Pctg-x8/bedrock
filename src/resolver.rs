@@ -37,7 +37,7 @@ cfg_if::cfg_if! {
         pub struct Resolver(Library);
         impl Resolver {
             fn new() -> Self {
-                cfg_if::fg_if! {
+                cfg_if::cfg_if! {
                     if #[cfg(target_os = "macos")] {
                         fn libname() -> &'static str {
                             // let mut exepath = std::env::current_exe().unwrap();
