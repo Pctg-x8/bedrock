@@ -394,6 +394,19 @@ impl<'d> ApplicationInfo<'d> {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[bitflags_newtype]
+pub struct InstanceCreateFlags(VkInstanceCreateFlags);
+impl InstanceCreateFlags {
+    /// Empty bits.
+    pub const EMPTY: Self = Self(0);
+
+    #[cfg(feature = "VK_KHR_portability_enumeration")]
+    /// The instance will enumerate available Vulkan Portability-compliant physical devices and groups
+    /// in addition to the Vulkan physical devices and groups that are enumerated by default.
+    pub const ENUMERATE_PORTABILITY: Self = Self(VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR);
+}
+
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct InstanceCreateInfo<'d>(
@@ -436,6 +449,11 @@ impl<'d> InstanceCreateInfo<'d> {
     #[inline(always)]
     pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+
+    pub const fn flags(mut self, flags: InstanceCreateFlags) -> Self {
+        self.0.flags = flags.bits();
         self
     }
 }
