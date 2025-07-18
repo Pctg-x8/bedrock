@@ -21,17 +21,17 @@ VK_KHR_surface = []
 VK_KHR_swapchain = ["VK_KHR_surface"]
 VK_KHR_display = ["VK_KHR_surface"]
 VK_KHR_display_swapchain = []
-VK_KHR_xlib_surface = ["x11"]
-VK_KHR_xcb_surface = ["xcb"]
-VK_KHR_wayland_surface = []
-VK_KHR_android_surface = ["android"]
-VK_KHR_win32_surface = ["windows"]
-VK_EXT_metal_surface = []
+VK_KHR_xlib_surface = ["VK_KHR_surface", "dep:x11"]
+VK_KHR_xcb_surface = ["VK_KHR_surface", "dep:xcb"]
+VK_KHR_wayland_surface = ["VK_KHR_surface"]
+VK_KHR_android_surface = ["VK_KHR_surface", "dep:android"]
+VK_KHR_win32_surface = ["VK_KHR_surface", "dep:windows"]
+VK_EXT_metal_surface = ["VK_KHR_surface"]
 VK_KHR_sampler_mirror_clamp_to_edge = []
 VK_KHR_external_memory_win32 = [
-    "windows",
+    "dep:windows",
     "windows/Win32_Security",
-    "widestring",
+    "dep:widestring",
     "VK_KHR_external_memory",
 ]
 VK_KHR_external_memory_fd = ["VK_KHR_external_memory"]
@@ -39,16 +39,16 @@ VK_EXT_external_memory_host = ["VK_KHR_external_memory"]
 VK_EXT_external_memory_dma_buf = ["VK_KHR_external_memory_fd"]
 VK_KHR_win32_keyed_mutex = []
 VK_KHR_external_semaphore_win32 = [
-    "windows",
+    "dep:windows",
     "windows/Win32_Security",
-    "widestring",
+    "dep:widestring",
     "VK_KHR_external_semaphore",
 ]
 VK_KHR_external_semaphore_fd = ["VK_KHR_external_semaphore"]
 VK_KHR_incremental_present = []
 VK_KHR_shared_presentable_image = []
 VK_KHR_external_fence_win32 = [
-    "windows",
+    "dep:windows",
     "windows/Win32_Security",
     "VK_KHR_external_fence",
 ]
@@ -85,7 +85,7 @@ VK_EXT_shader_subgroup_vote = []
 VK_NVX_device_generated_commands = []
 VK_NV_clip_space_w_scaling = []
 VK_EXT_direct_mode_display = ["VK_KHR_display"]
-VK_EXT_acquire_xlib_display = ["x11"]
+VK_EXT_acquire_xlib_display = ["dep:x11"]
 VK_EXT_display_surface_counter = []
 VK_EXT_display_control = []
 VK_GOOGLE_display_timing = []
