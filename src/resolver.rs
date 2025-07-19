@@ -79,6 +79,7 @@ cfg_if::cfg_if! {
             unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F {
                 tracing::trace!(name = ?F::NAME_CSTR, "resolving function symbol");
                 let p = unsafe { self.0.get::<F>(F::NAME_CSTR.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
+                tracing::trace!(name = ?F::NAME_CSTR, ?p, "get pointer");
                 if p.is_null() {
                     tracing::warn!(name = ?F::NAME_CSTR, "could not resolve function symbol");
                 }
