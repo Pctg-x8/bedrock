@@ -37,39 +37,51 @@ cfg_if::cfg_if! {
         pub struct Resolver(Library);
         impl Resolver {
             fn new() -> Self {
-                cfg_if::cfg_if! {
-                    if #[cfg(target_os = "macos")] {
-                        fn libname() -> &'static str {
-                            // let mut exepath = std::env::current_exe().unwrap();
-                            // exepath.pop();
-                            // exepath.push("libvulkan.dylib");
-                            // return exepath;
-                            "libvulkan.dylib"
-                        }
-                    } else if #[cfg(windows)] {
-                        fn libname() -> &'static str {
-                            "vulkan-1.dll"
-                        }
-                    } else {
-                        // assumes unix environment
-                        fn libname() -> &'static str {
-                            "libvulkan.so"
-                        }
-                    }
+                #[cfg(target_os  ="macos")]
+                fn libname() -> &'static str {
+                    // TODO: packed app
+                    // let mut exepath = std::env::current_exe().unwrap();
+                    // exepath.pop();
+                    // exepath.push("libvulkan.dylib");
+                    // return exepath;
+                    "libvulkan.dylib"
+                }
+                #[cfg(windows)]
+                fn libname() -> &'static str {
+                    "vulkan-1.dll"
+                }
+                #[cfg(not(any(target_os = "macos", windows)))]
+                fn libname() -> &'static str {
+                    // assumes unix environment
+                    "libvulkan.so"
                 }
 
-                Library::new(&libname())
-                    .map(Self)
-                    .expect(&format!("Unable to open libvulkan: {:?}", libname()))
+                match Library::new(libname()) {
+                    Ok(x) => Resolver(x),
+                    Err(e) => {
+                        tracing::error!(reason = ?e, libpath = libname(), "Failed to open libvulkan, bedrock could not continue");
+                        std::process::abort();
+                    }
+                }
             }
         }
         impl ResolverInterface for Resolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T {
-                T::from_ptr(self.0.get::<T>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
+                let p = unsafe { self.0.get::<T>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
+                if p.is_null() {
+                    tracing::warn!(?name, "could not resolve symbol");
+                }
+
+                unsafe { T::from_ptr(p as _) }
             }
 
             unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F {
-                F::from_ptr(self.0.get::<F>(F::NAME_CSTR.to_bytes_with_nul()).unwrap().into_raw().into_raw() as _)
+                let p = unsafe { self.0.get::<F>(F::NAME_CSTR.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
+                if p.is_null() {
+                    tracing::warn!(name = ?F::NAME_CSTR, "could not resolve function symbol");
+                }
+
+                unsafe { F::from_ptr(p as _) }
             }
         }
 
