@@ -67,6 +67,7 @@ cfg_if::cfg_if! {
         }
         impl ResolverInterface for Resolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T {
+                tracing::debug!(?name, "resolving symbol");
                 let p = unsafe { self.0.get::<T>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
                 if p.is_null() {
                     tracing::warn!(?name, "could not resolve symbol");
@@ -76,6 +77,7 @@ cfg_if::cfg_if! {
             }
 
             unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F {
+                tracing::debug!(name = ?F::NAME_CSTR, "resolving function symbol");
                 let p = unsafe { self.0.get::<F>(F::NAME_CSTR.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
                 if p.is_null() {
                     tracing::warn!(name = ?F::NAME_CSTR, "could not resolve function symbol");
