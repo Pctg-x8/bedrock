@@ -45,6 +45,19 @@ fn main() -> std::io::Result<()> {
     emit_const(&mut o, "VK_CULL_MODE_NONE", "VkCullModeFlags", "0")?;
     emit_const(&mut o, "VK_CULL_MODE_FRONT_AND_BACK", "VkCullModeFlags", "3")?;
     emit_const(&mut o, "VK_STENCIL_FACE_FRONT_AND_BACK", "VkStencilFaceFlags", "3")?;
+    o.write(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
+    emit_const(
+        &mut o,
+        "VK_PIPELINE_STAGE_2_NONE_KHR",
+        "VkPipelineStageFlagBits2KHR",
+        "0",
+    )?;
+    o.write(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
+    emit_const(&mut o, "VK_PIPELINE_STAGE_2_NONE", "VkPipelineStageFlagBits2", "0")?;
+    o.write(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
+    emit_const(&mut o, "VK_ACCESS_2_NONE_KHR", "VkAccessFlagBits2KHR", "0")?;
+    o.write(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
+    emit_const(&mut o, "VK_ACCESS_2_NONE", "VkAccessFlagBits2", "0")?;
 
     for obj in OBJECTS {
         o.write(b"\n")?;
@@ -225,6 +238,7 @@ const EXTENSION_HEADER_CONSTANTS: &'static [ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_maintenance1", 2),
     ExtensionHeaderConstants::new("VK_KHR_maintenance2", 1),
     ExtensionHeaderConstants::new("VK_KHR_maintenance3", 1),
+    ExtensionHeaderConstants::new("VK_KHR_synchronization2", 1),
 ];
 
 const TYPE_ALIASES: &'static [TypeAlias] = &[
@@ -797,6 +811,76 @@ const FLAGS: &'static [Bitmask] = &[
             Bitmask::entry("COLOR_ATTACHMENT_READ_NONCOHERENT", 19).extension("EXT", "blend_operation_advanced"),
         ],
     ),
+    Bitmask::new(
+        "AccessFlags2",
+        "AccessFlagBits2",
+        "ACCESS_2",
+        &[
+            Bitmask::entry("INDIRECT_COMMAND_READ", 0)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("INDEX_READ", 1)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("VERTEX_ATTRIBUTE_READ", 2)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("UNIFORM_READ", 3)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("INPUT_ATTACHMENT_READ", 4)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("SHADER_READ", 5)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("SHADER_WRITE", 6)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("COLOR_ATTACHMENT_READ", 7)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("COLOR_ATTACHMENT_WRITE", 8)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_READ", 9)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("DEPTH_STENCIL_ATTACHMENT_WRITE", 10)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("TRANSFER_READ", 11)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("TRANSFER_WRITE", 12)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("HOST_READ", 13)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("HOST_WRITE", 14)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("MEMORY_READ", 15)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("MEMORY_WRITE", 16)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("SHADER_SAMPLED_READ", 32)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("SHADER_STORAGE_READ", 33)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("SHADER_STORAGE_WRITE", 34)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+        ],
+    )
+    .long()
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
     Bitmask::new(
         "AndroidSurfaceCreateFlags",
         "AndroidSurfaceCreateFlagBits",
@@ -1496,6 +1580,88 @@ const FLAGS: &'static [Bitmask] = &[
         ],
     ),
     Bitmask::new(
+        "PipelineStageFlags2",
+        "PipelineStageFlagBits2",
+        "PIPELINE_STAGE_2",
+        &[
+            Bitmask::entry("TOP_OF_PIPE", 0)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("DRAW_INDIRECT", 1)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("VERTEX_INPUT", 2)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("VERTEX_SHADER", 3)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("TESSELLATION_CONTROL_SHADER", 4)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("TESSELLATION_EVALUATION_SHADER", 5)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("GEOMETRY_SHADER", 6)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("FRAGMENT_SHADER", 7)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("EARLY_FRAGMENT_TESTS", 8)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("LATE_FRAGMENT_TESTS", 9)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("COLOR_ATTACHMENT_OUTPUT", 10)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("COMPUTE_SHADER", 11)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("ALL_TRANSFER", 12)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("BOTTOM_OF_PIPE", 13)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("HOST", 14)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("ALL_GRAPHICS", 15)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("ALL_COMMANDS", 16)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("COPY", 32)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("RESOLVE", 33)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("BLIT", 34)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("CLEAR", 35)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("INDEX_INPUT", 36)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("VERTEX_ATTRIBUTE_INPUT", 37)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+            Bitmask::entry("PRE_RASTERIZATION_SHADERS", 38)
+                .extension("KHR", "synchronization2")
+                .promoted("1_3"),
+        ],
+    )
+    .long()
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
+    Bitmask::new(
         "QueryControlFlags",
         "QueryControlFlagBits",
         "QUERY_CONTROL",
@@ -1642,6 +1808,16 @@ const FLAGS: &'static [Bitmask] = &[
         ],
     )
     .version_since("1_1"),
+    Bitmask::new(
+        "SubmitFlags",
+        "SubmitFlagBits",
+        "SUBMIT",
+        &[Bitmask::entry("PROTECTED", 0)
+            .extension("KHR", "synchronization2")
+            .promoted("1_3")],
+    )
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
     Bitmask::new(
         "SubpassDescriptionFlags",
         "SubpassDescriptionFlagBits",
@@ -4351,6 +4527,126 @@ const STRUCTS: &'static [Struct] = &[
     )
     .stype("XLIB_SURFACE_CREATE_INFO", vk_ext_enum(5, 0) as _, StructUsage::Source)
     .extensions(&[("KHR", "xlib_surface")]),
+    Struct::typed(
+        "MemoryBarrier2",
+        "MEMORY_BARRIER_2",
+        vk_ext_enum(315, 0) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
+            Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "BufferMemoryBarrier2",
+        "BUFFER_MEMORY_BARRIER_2",
+        vk_ext_enum(315, 1) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
+            Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+            Struct::member("buffer", "VkBuffer"),
+            Struct::member("offset", DEVICE_SIZE_TYPE),
+            Struct::member("size", DEVICE_SIZE_TYPE),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "ImageMemoryBarrier2",
+        "IMAGE_MEMORY_BARRIER_2",
+        vk_ext_enum(315, 2) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("srcStageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
+            Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+            Struct::member("oldLayout", "VkImageLayout"),
+            Struct::member("newLayout", "VkImageLayout"),
+            Struct::member("srcQueueFamilyIndex", "u32"),
+            Struct::member("dstQueueFamilyIndex", "u32"),
+            Struct::member("image", "VkImage"),
+            Struct::member("subresourceRange", "VkImageSubresourceRange"),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "DependencyInfo",
+        "DEPENDENCY_INFO",
+        vk_ext_enum(315, 3) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("dependencyFlags", "VkDependencyFlags"),
+            Struct::member("memoryBarrierCount", "u32"),
+            Struct::member("pMemoryBarriers", "*const VkMemoryBarrier2KHR"),
+            Struct::member("bufferMemoryBarrierCount", "u32"),
+            Struct::member("pBufferMemoryBarriers", "*const VkBufferMemoryBarrier2KHR"),
+            Struct::member("imageMemoryBarrierCount", "u32"),
+            Struct::member("pImageMemoryBarriers", "*const VkImageMemoryBarrier2KHR"),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "SubmitInfo2",
+        "SUBMIT_INFO_2",
+        vk_ext_enum(315, 4) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("flags", "VkSubmitFlagsKHR"),
+            Struct::member("waitSemaphoreInfoCount", "u32"),
+            Struct::member("pWaitSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
+            Struct::member("commandBufferInfoCount", "u32"),
+            Struct::member("pCommandBufferInfos", "*const VkCommandBufferSubmitInfoKHR"),
+            Struct::member("signalSemaphoreInfoCount", "u32"),
+            Struct::member("pSignalSemaphoreInfos", "*const VkSemaphoreSubmitInfoKHR"),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "SemaphoreSubmitInfo",
+        "SEMAPHORE_SUBMIT_INFO",
+        vk_ext_enum(315, 5) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("semaphore", "VkSemaphore"),
+            Struct::member("value", "u64"),
+            Struct::member("stageMask", "VkPipelineStageFlags2KHR"),
+            Struct::member("deviceIndex", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "CommandBufferSubmitInfo",
+        "COMMAND_BUFFER_SUBMIT_INFO",
+        vk_ext_enum(315, 6) as _,
+        StructUsage::Source,
+        &[
+            Struct::member("commandBuffer", "VkCommandBuffer"),
+            Struct::member("deviceMask", "u32"),
+        ],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
+    Struct::typed(
+        "PhysicalDeviceSynchronization2Features",
+        "PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES",
+        vk_ext_enum(315, 7) as _,
+        StructUsage::Both,
+        &[Struct::member("synchronization2", "VkBool32")],
+    )
+    .extensions(&[("KHR", "synchronization2")])
+    .promoted("1_3"),
 ];
 
 const UNIONS: &'static [Union] = &[
@@ -6110,6 +6406,17 @@ const COMMANDS: &'static [Command] = &[
     )
     .extension("KHR", "maintenance3")
     .promoted("1_1"),
+    Command::new(
+        "QueueSubmit2",
+        &[
+            ("queue", "VkQueue"),
+            ("submitCount", "u32"),
+            ("pSubmits", "*const VkSubmitInfo2KHR"),
+            ("fence", "VkFence"),
+        ],
+    )
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
     // command buffer instructions
     Command::inst(
         "BindPipeline",
@@ -6507,6 +6814,41 @@ const COMMANDS: &'static [Command] = &[
     )
     .extension("KHR", "device_group")
     .promoted("1_1"),
+    Command::inst(
+        "SetEvent2",
+        &[("event", "VkEvent"), ("pDependencyInfo", "*const VkDependencyInfoKHR")],
+    )
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
+    Command::inst(
+        "ResetEvent2",
+        &[("event", "VkEvent"), ("stageMask", "VkPipelineStageFlags2KHR")],
+    )
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
+    Command::inst(
+        "WaitEvents2",
+        &[
+            ("eventCount", "u32"),
+            ("pEvents", "*const VkEvent"),
+            ("pDependencyInfos", "*const VkDependencyInfoKHR"),
+        ],
+    )
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
+    Command::inst("PipelineBarrier2", &[("pDependencyInfo", "*const VkDependencyInfoKHR")])
+        .extension("KHR", "synchronization2")
+        .promoted("1_3"),
+    Command::inst(
+        "WriteTimestamp2",
+        &[
+            ("stage", "VkPipelineStageFlags2KHR"),
+            ("queryPool", "VkQueryPool"),
+            ("query", "u32"),
+        ],
+    )
+    .extension("KHR", "synchronization2")
+    .promoted("1_3"),
 ];
 
 fn emit_result_type(w: &mut impl std::io::Write) -> std::io::Result<()> {

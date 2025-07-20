@@ -102,6 +102,139 @@ pub const VK_ACCESS_MEMORY_WRITE_BIT: VkAccessFlagBits = 0x00010000;
 #[rustfmt::skip]
 pub const VK_ACCESS_COLOR_ATTACHMENT_READ_NONCOHERENT_BIT_EXT: VkAccessFlagBits = 0x00080000;
 
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub type VkAccessFlags2KHR = VkFlags64;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkAccessFlags2 = VkAccessFlags2KHR;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub type VkAccessFlagBits2KHR = VkFlags64;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkAccessFlagBits2 = VkAccessFlagBits2KHR;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_INDIRECT_COMMAND_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_INDIRECT_COMMAND_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_INDEX_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_INDEX_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_UNIFORM_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_UNIFORM_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_INPUT_ATTACHMENT_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_INPUT_ATTACHMENT_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000100;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000000000100;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000200;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000200;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000400;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000000000400;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_TRANSFER_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000000800;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_TRANSFER_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000000800;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_TRANSFER_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000001000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_TRANSFER_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000000001000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_HOST_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000002000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_HOST_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000002000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_HOST_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000004000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_HOST_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000000004000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_MEMORY_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000008000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_MEMORY_READ_BIT: VkAccessFlagBits2KHR = 0x0000000000008000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_MEMORY_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000000010000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_MEMORY_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000000010000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_SAMPLED_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000100000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_SAMPLED_READ_BIT: VkAccessFlagBits2KHR = 0x0000000100000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_STORAGE_READ_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000200000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_STORAGE_READ_BIT: VkAccessFlagBits2KHR = 0x0000000200000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT_KHR: VkAccessFlagBits2KHR = 0x0000000400000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT: VkAccessFlagBits2KHR = 0x0000000400000000;
+
 #[cfg(feature = "VK_KHR_android_surface")]
 #[rustfmt::skip]
 pub type VkAndroidSurfaceCreateFlagsKHR = VkFlags;
@@ -1103,6 +1236,163 @@ pub const VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT: VkPipelineStageFlagBits = 0x000080
 #[rustfmt::skip]
 pub const VK_PIPELINE_STAGE_ALL_COMMANDS_BIT: VkPipelineStageFlagBits = 0x00010000;
 
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub type VkPipelineStageFlags2KHR = VkFlags64;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkPipelineStageFlags2 = VkPipelineStageFlags2KHR;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub type VkPipelineStageFlagBits2KHR = VkFlags64;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkPipelineStageFlagBits2 = VkPipelineStageFlagBits2KHR;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000001;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000002;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_VERTEX_INPUT_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_VERTEX_INPUT_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000004;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000008;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_TESSELLATION_CONTROL_SHADER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_TESSELLATION_CONTROL_SHADER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000010;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_TESSELLATION_EVALUATION_SHADER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_TESSELLATION_EVALUATION_SHADER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000020;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_GEOMETRY_SHADER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_GEOMETRY_SHADER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000040;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000080;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000100;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000100;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000200;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000200;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000400;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000400;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000000800;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000000800;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000001000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000001000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000002000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000002000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_HOST_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000004000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_HOST_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000004000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000008000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000008000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000000010000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT: VkPipelineStageFlagBits2KHR = 0x0000000000010000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_COPY_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000100000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_COPY_BIT: VkPipelineStageFlagBits2KHR = 0x0000000100000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_RESOLVE_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000200000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_RESOLVE_BIT: VkPipelineStageFlagBits2KHR = 0x0000000200000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_BLIT_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000400000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_BLIT_BIT: VkPipelineStageFlagBits2KHR = 0x0000000400000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_CLEAR_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000000800000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_CLEAR_BIT: VkPipelineStageFlagBits2KHR = 0x0000000800000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_INDEX_INPUT_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000001000000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_INDEX_INPUT_BIT: VkPipelineStageFlagBits2KHR = 0x0000001000000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000002000000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT: VkPipelineStageFlagBits2KHR = 0x0000002000000000;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_PRE_RASTERIZATION_SHADERS_BIT_KHR: VkPipelineStageFlagBits2KHR = 0x0000004000000000;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_PRE_RASTERIZATION_SHADERS_BIT: VkPipelineStageFlagBits2KHR = 0x0000004000000000;
+
 #[rustfmt::skip]
 pub type VkQueryControlFlags = VkFlags;
 #[rustfmt::skip]
@@ -1303,6 +1593,25 @@ pub const VK_SUBGROUP_FEATURE_CLUSTERED_BIT: VkSubgroupFeatureFlagBits = 0x00000
 #[rustfmt::skip]
 pub const VK_SUBGROUP_FEATURE_QUAD_BIT: VkSubgroupFeatureFlagBits = 0x00000080;
 
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub type VkSubmitFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkSubmitFlags = VkSubmitFlagsKHR;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub type VkSubmitFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkSubmitFlagBits = VkSubmitFlagBitsKHR;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_SUBMIT_PROTECTED_BIT_KHR: VkSubmitFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_SUBMIT_PROTECTED_BIT: VkSubmitFlagBitsKHR = 0x00000001;
+
 #[rustfmt::skip]
 pub type VkSubpassDescriptionFlags = VkFlags;
 #[rustfmt::skip]
@@ -1390,6 +1699,18 @@ pub const VK_CULL_MODE_NONE: VkCullModeFlags = 0;
 pub const VK_CULL_MODE_FRONT_AND_BACK: VkCullModeFlags = 3;
 #[rustfmt::skip]
 pub const VK_STENCIL_FACE_FRONT_AND_BACK: VkStencilFaceFlags = 3;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_NONE_KHR: VkPipelineStageFlagBits2KHR = 0;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_2_NONE: VkPipelineStageFlagBits2 = 0;
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_NONE_KHR: VkAccessFlagBits2KHR = 0;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_ACCESS_2_NONE: VkAccessFlagBits2 = 0;
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -9318,6 +9639,354 @@ unsafe impl crate::VulkanStructure for VkXlibSurfaceCreateInfoKHR {
 unsafe impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR {
     const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
 }
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkMemoryBarrier2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcStageMask: VkPipelineStageFlags2KHR,
+    pub srcAccessMask: VkAccessFlags2KHR,
+    pub dstStageMask: VkPipelineStageFlags2KHR,
+    pub dstAccessMask: VkAccessFlags2KHR,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314000;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkMemoryBarrier2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkMemoryBarrier2 = VkMemoryBarrier2KHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_MEMORY_BARRIER_2: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkBufferMemoryBarrier2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcStageMask: VkPipelineStageFlags2KHR,
+    pub srcAccessMask: VkAccessFlags2KHR,
+    pub dstStageMask: VkPipelineStageFlags2KHR,
+    pub dstAccessMask: VkAccessFlags2KHR,
+    pub buffer: VkBuffer,
+    pub offset: VkDeviceSize,
+    pub size: VkDeviceSize,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314001;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkBufferMemoryBarrier2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkBufferMemoryBarrier2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkBufferMemoryBarrier2 = VkBufferMemoryBarrier2KHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageMemoryBarrier2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub srcStageMask: VkPipelineStageFlags2KHR,
+    pub srcAccessMask: VkAccessFlags2KHR,
+    pub dstStageMask: VkPipelineStageFlags2KHR,
+    pub dstAccessMask: VkAccessFlags2KHR,
+    pub oldLayout: VkImageLayout,
+    pub newLayout: VkImageLayout,
+    pub srcQueueFamilyIndex: u32,
+    pub dstQueueFamilyIndex: u32,
+    pub image: VkImage,
+    pub subresourceRange: VkImageSubresourceRange,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR: VkStructureType = 1000314002;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageMemoryBarrier2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkImageMemoryBarrier2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkImageMemoryBarrier2 = VkImageMemoryBarrier2KHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDependencyInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub dependencyFlags: VkDependencyFlags,
+    pub memoryBarrierCount: u32,
+    pub pMemoryBarriers: *const VkMemoryBarrier2KHR,
+    pub bufferMemoryBarrierCount: u32,
+    pub pBufferMemoryBarriers: *const VkBufferMemoryBarrier2KHR,
+    pub imageMemoryBarrierCount: u32,
+    pub pImageMemoryBarriers: *const VkImageMemoryBarrier2KHR,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR: VkStructureType = 1000314003;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDependencyInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkDependencyInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkDependencyInfo = VkDependencyInfoKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEPENDENCY_INFO: VkStructureType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSubmitInfo2KHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSubmitFlagsKHR,
+    pub waitSemaphoreInfoCount: u32,
+    pub pWaitSemaphoreInfos: *const VkSemaphoreSubmitInfoKHR,
+    pub commandBufferInfoCount: u32,
+    pub pCommandBufferInfos: *const VkCommandBufferSubmitInfoKHR,
+    pub signalSemaphoreInfoCount: u32,
+    pub pSignalSemaphoreInfos: *const VkSemaphoreSubmitInfoKHR,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR: VkStructureType = 1000314004;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSubmitInfo2KHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkSubmitInfo2KHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkSubmitInfo2 = VkSubmitInfo2KHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SUBMIT_INFO_2: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreSubmitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub value: u64,
+    pub stageMask: VkPipelineStageFlags2KHR,
+    pub deviceIndex: u32,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000314005;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreSubmitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreSubmitInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreSubmitInfo = VkSemaphoreSubmitInfoKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkCommandBufferSubmitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub commandBuffer: VkCommandBuffer,
+    pub deviceMask: u32,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR: VkStructureType = 1000314006;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkCommandBufferSubmitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferSubmitInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkCommandBufferSubmitInfo = VkCommandBufferSubmitInfoKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceSynchronization2FeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub synchronization2: VkBool32,
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR: VkStructureType = 1000314007;
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR;
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_synchronization2"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR;
+}
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceSynchronization2Features = VkPhysicalDeviceSynchronization2FeaturesKHR;
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR;
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -14481,6 +15150,56 @@ impl crate::resolver::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
 }
 
 #[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueSubmit2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueSubmit2";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkQueueSubmit2 {
+    const STATIC: Self = Self(vkQueueSubmit2);
+}
+
+#[cfg(feature = "Implements")]
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
@@ -15790,6 +16509,256 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDispatchBase {
     const STATIC: Self = Self(vkCmdDispatchBase);
 }
 
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdSetEvent2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetEvent2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdSetEvent2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetEvent2";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent2 {
+    const STATIC: Self = Self(vkCmdSetEvent2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdResetEvent2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetEvent2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdResetEvent2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetEvent2";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent2 {
+    const STATIC: Self = Self(vkCmdResetEvent2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdWaitEvents2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWaitEvents2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdWaitEvents2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWaitEvents2";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents2 {
+    const STATIC: Self = Self(vkCmdWaitEvents2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPipelineBarrier2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPipelineBarrier2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdPipelineBarrier2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPipelineBarrier2";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier2 {
+    const STATIC: Self = Self(vkCmdPipelineBarrier2);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdWriteTimestamp2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp2KHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteTimestamp2KHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdWriteTimestamp2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp2 {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteTimestamp2";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_3APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp2 {
+    const STATIC: Self = Self(vkCmdWriteTimestamp2);
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
@@ -15992,6 +16961,8 @@ unsafe extern "system" {
     pub fn vkTrimCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR);
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence);
     pub fn vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
     pub fn vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport);
     pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);
@@ -16040,6 +17011,16 @@ unsafe extern "system" {
     pub fn vkCmdSetDeviceMask(commandBuffer: VkCommandBuffer, deviceMask: u32);
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkCmdDispatchBase(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkCmdSetEvent2(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkCmdResetEvent2(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkCmdWaitEvents2(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkCmdPipelineBarrier2(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR);
+    #[cfg(feature = "Allow1_3APIs")]
+    pub fn vkCmdWriteTimestamp2(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32);
 }
 
 #[cfg(feature = "VK_KHR_surface")]
@@ -16328,3 +17309,10 @@ pub const VK_KHR_MAINTENANCE3_EXTENSION_NAME: &'static str = "VK_KHR_maintenance
 #[cfg(feature = "VK_KHR_maintenance3")]
 #[rustfmt::skip]
 pub const VK_KHR_MAINTENANCE3_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME: &'static str = "VK_KHR_synchronization2";
+#[cfg(feature = "VK_KHR_synchronization2")]
+#[rustfmt::skip]
+pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION: usize = 1;
