@@ -4,8 +4,6 @@
 
 use crate::*;
 use derives::implements;
-#[cfg(feature = "DynamicLoaded")]
-use libloading::*;
 
 use core::ffi::*;
 
@@ -34,32 +32,32 @@ cfg_if::cfg_if! {
     } else if #[cfg(feature = "DynamicLoaded")] {
         static GLOBAL_RESOLVER: std::sync::LazyLock<Box<Resolver>> = std::sync::LazyLock::new(|| Box::new(Resolver::new()));
 
-        pub struct Resolver(Library);
+        pub struct Resolver(crate::libdl::OwnedDylib);
         impl Resolver {
             fn new() -> Self {
                 #[cfg(target_os  ="macos")]
-                fn libname() -> &'static str {
+                fn libname() -> &'static core::ffi::CStr {
                     // TODO: packed app
                     // let mut exepath = std::env::current_exe().unwrap();
                     // exepath.pop();
                     // exepath.push("libvulkan.dylib");
                     // return exepath;
-                    "libvulkan.dylib"
+                    c"libvulkan.dylib"
                 }
                 #[cfg(windows)]
-                fn libname() -> &'static str {
-                    "vulkan-1.dll"
+                fn libname() -> &'static core::ffi::CStr {
+                    c"vulkan-1.dll"
                 }
                 #[cfg(not(any(target_os = "macos", windows)))]
-                fn libname() -> &'static str {
+                fn libname() -> &'static core::ffi::CStr {
                     // assumes unix environment
-                    "libvulkan.so"
+                    c"libvulkan.so"
                 }
 
-                match Library::new(libname()) {
+                match crate::libdl::Dylib::open(libname(), crate::libdl::OpenFlags::RTLD_LAZY) {
                     Ok(x) => Resolver(x),
                     Err(e) => {
-                        tracing::error!(reason = ?e, libpath = libname(), "Failed to open libvulkan, bedrock could not continue");
+                        tracing::error!(reason = ?e, libpath = ?libname(), "Failed to open libvulkan, bedrock could not continue");
                         std::process::abort();
                     }
                 }
@@ -67,22 +65,25 @@ cfg_if::cfg_if! {
         }
         impl ResolverInterface for Resolver {
             unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T {
-                tracing::trace!(?name, "resolving symbol");
-                let p = unsafe { self.0.get::<T>(name.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
-                if p.is_null() {
-                    tracing::warn!(?name, "could not resolve symbol");
-                }
+                let p = match self.0.sym(name) {
+                    Ok(x) => x.as_ptr(),
+                    Err(e) => {
+                        tracing::warn!(?name, reason = ?e, "could not resolve symbol");
+                        core::ptr::null_mut()
+                    }
+                };
 
                 unsafe { T::from_ptr(p as _) }
             }
 
             unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F {
-                tracing::trace!(name = ?F::NAME_CSTR, "resolving function symbol");
-                let p = unsafe { self.0.get::<F>(F::NAME_CSTR.to_bytes_with_nul()).unwrap().into_raw().into_raw() };
-                tracing::trace!(name = ?F::NAME_CSTR, ?p, "get pointer");
-                if p.is_null() {
-                    tracing::warn!(name = ?F::NAME_CSTR, "could not resolve function symbol");
-                }
+                let p = match self.0.sym(F::NAME_CSTR) {
+                    Ok(x) => x.as_ptr(),
+                    Err(e) => {
+                        tracing::warn!(name = ?F::NAME_CSTR, reason = ?e, "could not resolve function symbol");
+                        core::ptr::null_mut()
+                    }
+                };
 
                 unsafe { F::from_ptr(p as _) }
             }

@@ -24,6 +24,10 @@ extern crate x11;
 #[cfg(feature = "VK_KHR_xcb_surface")]
 extern crate xcb;
 
+#[cfg(feature = "DynamicLoaded")]
+#[cfg(unix)]
+mod libdl;
+
 use cfg_if::cfg_if;
 use derives::*;
 
