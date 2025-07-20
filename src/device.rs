@@ -83,7 +83,7 @@ struct DeviceExtFunctions {
     cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
     #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
     cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
-    #[cfg(all(feature = "VK_KHR_synchronization2", not(feature = "Allow1_3APIs")))]
+    #[cfg(feature = "VK_KHR_synchronization2")]
     cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
     #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
     cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
@@ -144,7 +144,7 @@ impl DeviceExtFunctions {
             cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
             cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_synchronization2", not(feature = "Allow1_3APIs")))]
+            #[cfg(feature = "VK_KHR_synchronization2")]
             cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
             cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
@@ -342,7 +342,6 @@ impl<Instance: crate::Instance> DeviceExtCommandFunctionProvider for DeviceObjec
     }
 
     #[cfg(feature = "VK_KHR_synchronization2")]
-    #[cfg(not(feature = "Allow1_3APIs"))]
     fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
         *self.ext.cmd_pipeline_barrier_2_khr.resolve()
     }

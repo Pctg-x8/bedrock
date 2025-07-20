@@ -551,7 +551,6 @@ pub trait DeviceExtCommandFunctionProvider {
     fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
 
     #[cfg(feature = "VK_KHR_synchronization2")]
-    #[cfg(not(feature = "Allow1_3APIs"))]
     fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
 
     #[cfg(feature = "VK_KHR_push_descriptor")]
@@ -573,7 +572,6 @@ DerefContainerWithGuardsBracketImpl!(for DeviceExtCommandFunctionProvider {
     ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
 
     #[cfg(feature = "VK_KHR_synchronization2")]
-    #[cfg(not(feature = "Allow1_3APIs"))]
     ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
 
     #[cfg(feature = "VK_KHR_push_descriptor")]
@@ -1591,9 +1589,8 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
 
     /// Insert a memory dependency
     #[cfg(feature = "VK_KHR_synchronization2")]
-    #[cfg(not(feature = "Allow1_3APIs"))]
     #[inline(always)]
-    pub fn pipeline_barrier_2(mut self, dependency_info: &crate::DependencyInfo) -> Self
+    pub fn pipeline_barrier_2_khr(mut self, dependency_info: &crate::DependencyInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
