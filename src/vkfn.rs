@@ -3225,6 +3225,7 @@ unsafe extern "system" fn stub_cmd_pipeline_barrier2(command_buffer: VkCommandBu
     use crate::resolver::PFN;
 
     let fp: PFN_vkCmdPipelineBarrier2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
+    println!("cmdpipelinebarrier2 {fp:?}");
     unsafe { FPTBL.cmd_pipeline_barrier2 = fp; }
     unsafe { (fp.0)(command_buffer, dependency_info) }
 }
