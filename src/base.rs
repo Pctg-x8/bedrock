@@ -112,13 +112,10 @@ impl crate::resolver::ResolverInterface for VkInstance {
 
 #[implements]
 struct InstanceExtFunctions {
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
     get_physical_device_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceProperties2KHR>,
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
     get_physical_device_features2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFeatures2KHR>,
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
     get_physical_device_format_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
     #[cfg(feature = "VK_EXT_debug_report")]
@@ -153,13 +150,10 @@ struct InstanceExtFunctions {
 impl InstanceExtFunctions {
     const fn new(r: VkInstance) -> Self {
         Self {
-            #[cfg(not(feature = "Allow1_1APIs"))]
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
             get_physical_device_properties2_khr: InstanceResolvedFn::new(r),
-            #[cfg(not(feature = "Allow1_1APIs"))]
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
             get_physical_device_features2_khr: InstanceResolvedFn::new(r),
-            #[cfg(not(feature = "Allow1_1APIs"))]
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
             get_physical_device_format_properties2_khr: InstanceResolvedFn::new(r),
             #[cfg(feature = "VK_EXT_debug_report")]
@@ -213,17 +207,14 @@ impl Drop for InstanceObject {
 }
 impl Instance for InstanceObject {}
 impl InstanceExtensions for InstanceObject {
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
         *self.ext.get_physical_device_properties2_khr.resolve()
     }
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR {
         *self.ext.get_physical_device_features2_khr.resolve()
     }
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
         *self.ext.get_physical_device_format_properties2_khr.resolve()
@@ -748,13 +739,10 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
 DerefContainerWithGuardsBracketImpl!(for Instance {});
 /// VkInstance Extension Function Providers
 pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR;
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
 
@@ -919,13 +907,10 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
     }
 }
 DerefContainerWithGuardsBracketImpl!(for InstanceExtensions {
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     ForwardFnPtr!(deref get_physical_device_features2_khr_fn -> PFN_vkGetPhysicalDeviceFeatures2KHR);
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     ForwardFnPtr!(deref get_physical_device_format_properties2_khr_fn -> PFN_vkGetPhysicalDeviceFormatProperties2KHR);
 
@@ -2069,10 +2054,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Reports capabilities of a physical device
     /// # Safety
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
+    unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
     where
         Self::ConcreteInstance: InstanceExtensions,
     {
