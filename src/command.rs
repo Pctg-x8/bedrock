@@ -541,20 +541,16 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
 /// Functions from extension
 pub trait DeviceExtCommandFunctionProvider {
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
 
     #[cfg(feature = "VK_KHR_synchronization2")]
     fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
 
     #[cfg(feature = "VK_KHR_push_descriptor")]
-    #[cfg(not(feature = "Allow1_4APIs"))]
     fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
 
     #[cfg(feature = "VK_EXT_sample_locations")]
@@ -562,20 +558,16 @@ pub trait DeviceExtCommandFunctionProvider {
 }
 DerefContainerWithGuardsBracketImpl!(for DeviceExtCommandFunctionProvider {
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
 
     #[cfg(feature = "VK_KHR_synchronization2")]
     ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
 
     #[cfg(feature = "VK_KHR_push_descriptor")]
-    #[cfg(not(feature = "Allow1_4APIs"))]
     ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
 
     #[cfg(feature = "VK_EXT_sample_locations")]
@@ -663,9 +655,12 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn begin_render_pass2(mut self, begin_info: &RenderPassBeginInfo, subpass_begin_info: &SubpassBeginInfo) -> Self
+    pub fn begin_render_pass2_khr(
+        mut self,
+        begin_info: &RenderPassBeginInfo,
+        subpass_begin_info: &SubpassBeginInfo,
+    ) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -699,9 +694,8 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn next_subpass2(mut self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self
+    pub fn next_subpass2_khr(mut self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
@@ -731,14 +725,13 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     }
 
     #[cfg(feature = "VK_KHR_create_renderpass2")]
-    #[cfg(not(feature = "Allow1_2APIs"))]
     #[inline]
-    pub fn end_render_pass2(mut self, subpass_end_info: &SubpassEndInfo) -> Self
+    pub fn end_render_pass2_khr(mut self, subpass_end_info: &SubpassEndInfo) -> Self
     where
         ExtFnProvider: DeviceExtCommandFunctionProvider,
     {
         unsafe {
-            (self.device.cmd_end_render_pass_2_khr_fn().0)(
+            (self.ext_fn_provider.cmd_end_render_pass_2_khr_fn().0)(
                 self.ptr.native_ptr_mut(),
                 subpass_end_info as *const _ as _,
             );

@@ -155,31 +155,22 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
             }
         }
     }
-
-    cfg_if! {
-        if #[cfg(all(feature = "Implements", feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))] {
-            fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
-                *self.ext.create_render_pass_2_khr.resolve()
-            }
-        }
-    }
 }
 #[implements]
 impl<Instance: crate::Instance> DeviceExtCommandFunctionProvider for DeviceObject<Instance> {
-    cfg_if! {
-        if #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))] {
-            fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
-                *self.ext.cmd_begin_render_pass_2_khr.resolve()
-            }
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
+        *self.ext.cmd_begin_render_pass_2_khr.resolve()
+    }
 
-            fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
-                *self.ext.cmd_end_render_pass_2_khr.resolve()
-            }
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
+        *self.ext.cmd_end_render_pass_2_khr.resolve()
+    }
 
-            fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
-                *self.ext.cmd_next_subpass_2_khr.resolve()
-            }
-        }
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
+        *self.ext.cmd_next_subpass_2_khr.resolve()
     }
 
     #[cfg(feature = "VK_KHR_synchronization2")]
@@ -188,7 +179,6 @@ impl<Instance: crate::Instance> DeviceExtCommandFunctionProvider for DeviceObjec
     }
 
     #[cfg(feature = "VK_KHR_push_descriptor")]
-    #[cfg(not(feature = "Allow1_4APIs"))]
     fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
         *self.ext.cmd_push_descriptor_set_khr.resolve()
     }
@@ -782,7 +772,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements("VK_KHR_create_renderpass2")]
+    #[implements("Allow1_2APIs")]
     #[inline]
     fn new_render_pass2(
         &self,
@@ -791,19 +781,8 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     ) -> crate::Result<VkRenderPass> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        #[cfg(feature = "Allow1_2APIs")]
         unsafe {
             crate::vkfn::create_render_pass2(
-                self.native_ptr(),
-                info as *const _ as _,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-        #[cfg(not(feature = "Allow1_2APIs"))]
-        unsafe {
-            (self.create_render_pass_2_khr_fn().0)(
                 self.native_ptr(),
                 info as *const _ as _,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
@@ -1765,10 +1744,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_memory_requirements2")]
     fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
-
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
 }
 DerefContainerWithGuardsBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_1APIs"))]
@@ -1817,10 +1792,6 @@ DerefContainerWithGuardsBracketImpl!(for Device {
     #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_memory_requirements2")]
     ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
-
-    #[cfg(not(feature = "Allow1_2APIs"))]
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
 });
 
 #[implements]
@@ -1867,21 +1838,21 @@ struct DeviceExtFunctions {
     get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
     #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
     get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     create_render_pass_2_khr: DeviceResolvedFn<PFN_vkCreateRenderPass2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     cmd_begin_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdBeginRenderPass2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    #[cfg(feature = "VK_KHR_create_renderpass2")]
     cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
     #[cfg(feature = "VK_KHR_synchronization2")]
     queue_submit2_khr: DeviceResolvedFn<PFN_vkQueueSubmit2KHR>,
     #[cfg(feature = "VK_KHR_synchronization2")]
     cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
-    #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
+    #[cfg(feature = "VK_KHR_push_descriptor")]
     cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
-    #[cfg(all(feature = "VK_EXT_sample_locations"))]
+    #[cfg(feature = "VK_EXT_sample_locations")]
     cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
 }
 #[implements]
@@ -1930,21 +1901,21 @@ impl DeviceExtFunctions {
             get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
             #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
             get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            #[cfg(feature = "VK_KHR_create_renderpass2")]
             create_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            #[cfg(feature = "VK_KHR_create_renderpass2")]
             cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            #[cfg(feature = "VK_KHR_create_renderpass2")]
             cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            #[cfg(feature = "VK_KHR_create_renderpass2")]
             cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
             #[cfg(feature = "VK_KHR_synchronization2")]
             queue_submit2_khr: DeviceResolvedFn::new(handle),
             #[cfg(feature = "VK_KHR_synchronization2")]
             cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
+            #[cfg(feature = "VK_KHR_push_descriptor")]
             cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_sample_locations"))]
+            #[cfg(feature = "VK_EXT_sample_locations")]
             cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
         }
     }
@@ -2103,6 +2074,49 @@ impl<Instance: crate::Instance> DeviceFullScreenExclusiveExtension for DeviceObj
     #[inline(always)]
     fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
         *self.ext.release_full_screen_exclusive_mode_ext.resolve()
+    }
+}
+
+#[implements("VK_KHR_create_renderpass2")]
+pub trait DeviceCreateRenderPass2Extension: Device {
+    fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
+
+    /// Create a new render pass object
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[inline]
+    fn new_render_pass2_khr(
+        &self,
+        info: &RenderPassCreateInfo2,
+        allocation_callbacks: Option<&VkAllocationCallbacks>,
+    ) -> crate::Result<VkRenderPass> {
+        let mut h = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            (self.create_render_pass_2_khr_fn().0)(
+                self.native_ptr(),
+                info as *const _ as _,
+                crate::ffi_helper::opt_pointer(allocation_callbacks),
+                h.as_mut_ptr(),
+            )
+            .into_result()?;
+        }
+
+        Ok(unsafe { h.assume_init() })
+    }
+}
+#[implements("VK_KHR_create_renderpass2")]
+DerefContainerWithGuardsBracketImpl!(for DeviceCreateRenderPass2Extension {
+    ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
+});
+#[implements("VK_KHR_create_renderpass2")]
+impl<Instance: crate::Instance> DeviceCreateRenderPass2Extension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
+        *self.ext.create_render_pass_2_khr.resolve()
     }
 }
 

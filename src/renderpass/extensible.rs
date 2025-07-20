@@ -283,7 +283,7 @@ impl<'d> RenderPassCreateInfo2<'d> {
         self.0
     }
 }
-#[implements]
+#[implements("Allow1_2APIs")]
 impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {
     fn execute(
         &self,
