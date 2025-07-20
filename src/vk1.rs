@@ -266,7 +266,6 @@ ExportExtensions!("VK_EXT_descriptor_indexing": descriptor_indexing_ext);
 ExportExtensions!("VK_KHR_shader_float_controls": shader_float_controls_khr);
 
 // Promoted Extensions (1.3)
-ExportExtensions!("VK_KHR_synchronization2": synchronization2_khr);
 ExportExtensions!("VK_KHR_maintenance4": maintenance4_khr);
 ExportExtensions!("VK_KHR_dynamic_rendering": dynamic_rendering_khr);
 ExportExtensions!("VK_KHR_copy_commands2": copy_commands2_khr);

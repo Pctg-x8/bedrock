@@ -4551,6 +4551,8 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("srcAccessMask", "VkAccessFlags2KHR"),
             Struct::member("dstStageMask", "VkPipelineStageFlags2KHR"),
             Struct::member("dstAccessMask", "VkAccessFlags2KHR"),
+            Struct::member("srcQueueFamilyIndex", "u32"),
+            Struct::member("dstQueueFamilyIndex", "u32"),
             Struct::member("buffer", "VkBuffer"),
             Struct::member("offset", DEVICE_SIZE_TYPE),
             Struct::member("size", DEVICE_SIZE_TYPE),
@@ -6415,6 +6417,7 @@ const COMMANDS: &'static [Command] = &[
             ("fence", "VkFence"),
         ],
     )
+    .failable()
     .extension("KHR", "synchronization2")
     .promoted("1_3"),
     // command buffer instructions

@@ -4,7 +4,7 @@ use ffi_helper::slice_as_ptr_empty_null;
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct MemoryBarrier2(VkMemoryBarrier2KHR);
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl MemoryBarrier2 {
@@ -46,7 +46,7 @@ impl MemoryBarrier2 {
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct BufferMemoryBarrier2<'b>(
     VkBufferMemoryBarrier2KHR,
     core::marker::PhantomData<&'b dyn VkHandle<Handle = VkBuffer>>,
@@ -184,7 +184,7 @@ impl<'r> ImageMemoryBarrier2<'r> {
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone)]
 pub struct DependencyInfo<'b, 'r>(
     VkDependencyInfoKHR,
     core::marker::PhantomData<(

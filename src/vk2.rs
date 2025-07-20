@@ -9691,6 +9691,8 @@ pub struct VkBufferMemoryBarrier2KHR {
     pub srcAccessMask: VkAccessFlags2KHR,
     pub dstStageMask: VkPipelineStageFlags2KHR,
     pub dstAccessMask: VkAccessFlags2KHR,
+    pub srcQueueFamilyIndex: u32,
+    pub dstQueueFamilyIndex: u32,
     pub buffer: VkBuffer,
     pub offset: VkDeviceSize,
     pub size: VkDeviceSize,
@@ -15154,7 +15156,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence));
+pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
@@ -15175,7 +15177,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2KHR {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence));
+pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
@@ -16962,7 +16964,7 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
     #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence);
+    pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult;
     pub fn vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
     pub fn vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport);
     pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);

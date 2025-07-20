@@ -429,7 +429,7 @@ unsafe impl VulkanSinkStructure for PhysicalDeviceFeatures2<'_> {
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct PhysicalDeviceSynchronization2Features<'r>(
     VkPhysicalDeviceSynchronization2FeaturesKHR,
     core::marker::PhantomData<Option<&'r mut dyn VulkanStructure>>,
@@ -2417,7 +2417,7 @@ impl<'r> PresentInfo<'r> {
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone)]
 pub struct CommandBufferSubmitInfo<'r>(
     VkCommandBufferSubmitInfoKHR,
     core::marker::PhantomData<&'r dyn VkHandle<Handle = VkCommandBuffer>>,
@@ -2453,7 +2453,7 @@ impl<'r> CommandBufferSubmitInfo<'r> {
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone)]
 pub struct SubmitInfo2<'b, 'r>(
     VkSubmitInfo2KHR,
     core::marker::PhantomData<(
