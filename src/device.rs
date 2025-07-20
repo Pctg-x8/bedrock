@@ -31,129 +31,6 @@ impl crate::resolver::ResolverInterface for VkDevice {
     }
 }
 
-#[implements]
-struct DeviceExtFunctions {
-    #[cfg(all(feature = "VK_KHR_maintenance1", not(feature = "Allow1_1APIs")))]
-    trim_command_pool_khr: DeviceResolvedFn<PFN_vkTrimCommandPoolKHR>,
-    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
-    create_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkCreateDescriptorUpdateTemplateKHR>,
-    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
-    destroy_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkDestroyDescriptorUpdateTemplateKHR>,
-    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
-    update_descriptor_set_with_template_khr: DeviceResolvedFn<PFN_vkUpdateDescriptorSetWithTemplateKHR>,
-    #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
-    bind_buffer_memory2_khr: DeviceResolvedFn<PFN_vkBindBufferMemory2KHR>,
-    #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
-    bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
-    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
-    get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
-    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
-    get_fence_fd_khr: DeviceResolvedFn<PFN_vkGetFenceFdKHR>,
-    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
-    import_fence_fd_khr: DeviceResolvedFn<PFN_vkImportFenceFdKHR>,
-    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
-    acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkAcquireFullScreenExclusiveModeEXT>,
-    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
-    release_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkReleaseFullScreenExclusiveModeEXT>,
-    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
-    get_memory_fd_khr: DeviceResolvedFn<PFN_vkGetMemoryFdKHR>,
-    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
-    get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
-    #[cfg(all(feature = "VK_EXT_external_memory_host"))]
-    get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
-    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
-    import_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkImportSemaphoreWin32HandleKHR>,
-    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
-    get_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkGetSemaphoreWin32HandleKHR>,
-    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
-    get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
-    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
-    get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
-    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
-    get_buffer_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetBufferMemoryRequirements2KHR>,
-    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
-    get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
-    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
-    get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-    create_render_pass_2_khr: DeviceResolvedFn<PFN_vkCreateRenderPass2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-    cmd_begin_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdBeginRenderPass2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-    cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
-    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-    cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
-    #[cfg(feature = "VK_KHR_synchronization2")]
-    cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
-    #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
-    cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
-    #[cfg(all(feature = "VK_EXT_sample_locations"))]
-    cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
-}
-#[implements]
-impl DeviceExtFunctions {
-    const fn new(handle: VkDevice) -> Self {
-        Self {
-            #[cfg(all(feature = "VK_KHR_maintenance1", not(feature = "Allow1_1APIs")))]
-            trim_command_pool_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
-            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
-            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
-            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
-            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
-            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
-            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
-            get_fence_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
-            import_fence_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
-            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
-            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
-            get_memory_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
-            get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_external_memory_host"))]
-            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
-            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
-            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
-            get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
-            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
-            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
-            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
-            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-            create_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
-            cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(feature = "VK_KHR_synchronization2")]
-            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
-            cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_sample_locations"))]
-            cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
-        }
-    }
-}
-
 /// Opaque handle to a device object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_DEVICE)]
@@ -285,42 +162,6 @@ impl<Instance: crate::Instance> Device for DeviceObject<Instance> {
                 *self.ext.create_render_pass_2_khr.resolve()
             }
         }
-    }
-}
-#[implements("VK_KHR_external_semaphore_win32")]
-impl<Instance: crate::Instance> DeviceExternalSemaphoreWin32Extension for DeviceObject<Instance> {
-    #[inline(always)]
-    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
-        *self.ext.import_semaphore_win32_handle_khr.resolve()
-    }
-
-    #[inline(always)]
-    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
-        *self.ext.get_semaphore_win32_handle_khr.resolve()
-    }
-}
-#[implements("VK_KHR_external_memory_win32")]
-impl<Instance: crate::Instance> DeviceExternalMemoryWin32Extension for DeviceObject<Instance> {
-    #[inline(always)]
-    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
-        *self.ext.get_memory_win32_handle_khr.resolve()
-    }
-
-    #[inline(always)]
-    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
-        *self.ext.get_memory_win32_handle_properties_khr.resolve()
-    }
-}
-#[implements("VK_EXT_full_screen_exclusive")]
-impl<Instance: crate::Instance> DeviceFullScreenExclusiveExtension for DeviceObject<Instance> {
-    #[inline(always)]
-    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
-        *self.ext.acquire_full_screen_exclusive_mode_ext.resolve()
-    }
-
-    #[inline(always)]
-    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
-        *self.ext.release_full_screen_exclusive_mode_ext.resolve()
     }
 }
 #[implements]
@@ -1982,6 +1823,133 @@ DerefContainerWithGuardsBracketImpl!(for Device {
     ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
 });
 
+#[implements]
+struct DeviceExtFunctions {
+    #[cfg(all(feature = "VK_KHR_maintenance1", not(feature = "Allow1_1APIs")))]
+    trim_command_pool_khr: DeviceResolvedFn<PFN_vkTrimCommandPoolKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+    create_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkCreateDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+    destroy_descriptor_update_template_khr: DeviceResolvedFn<PFN_vkDestroyDescriptorUpdateTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+    update_descriptor_set_with_template_khr: DeviceResolvedFn<PFN_vkUpdateDescriptorSetWithTemplateKHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+    bind_buffer_memory2_khr: DeviceResolvedFn<PFN_vkBindBufferMemory2KHR>,
+    #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+    bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
+    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
+    get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
+    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+    get_fence_fd_khr: DeviceResolvedFn<PFN_vkGetFenceFdKHR>,
+    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+    import_fence_fd_khr: DeviceResolvedFn<PFN_vkImportFenceFdKHR>,
+    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+    acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkAcquireFullScreenExclusiveModeEXT>,
+    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+    release_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkReleaseFullScreenExclusiveModeEXT>,
+    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+    get_memory_fd_khr: DeviceResolvedFn<PFN_vkGetMemoryFdKHR>,
+    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+    get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
+    #[cfg(all(feature = "VK_EXT_external_memory_host"))]
+    get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
+    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+    import_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkImportSemaphoreWin32HandleKHR>,
+    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+    get_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkGetSemaphoreWin32HandleKHR>,
+    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+    get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
+    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+    get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
+    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+    get_buffer_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetBufferMemoryRequirements2KHR>,
+    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+    get_image_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageMemoryRequirements2KHR>,
+    #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+    get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetImageSparseMemoryRequirements2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    create_render_pass_2_khr: DeviceResolvedFn<PFN_vkCreateRenderPass2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    cmd_begin_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdBeginRenderPass2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    cmd_end_render_pass_2_khr: DeviceResolvedFn<PFN_vkCmdEndRenderPass2KHR>,
+    #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+    cmd_next_subpass_2_khr: DeviceResolvedFn<PFN_vkCmdNextSubpass2KHR>,
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    queue_submit2_khr: DeviceResolvedFn<PFN_vkQueueSubmit2KHR>,
+    #[cfg(feature = "VK_KHR_synchronization2")]
+    cmd_pipeline_barrier_2_khr: DeviceResolvedFn<PFN_vkCmdPipelineBarrier2KHR>,
+    #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
+    cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
+    #[cfg(all(feature = "VK_EXT_sample_locations"))]
+    cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
+}
+#[implements]
+impl DeviceExtFunctions {
+    const fn new(handle: VkDevice) -> Self {
+        Self {
+            #[cfg(all(feature = "VK_KHR_maintenance1", not(feature = "Allow1_1APIs")))]
+            trim_command_pool_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+            create_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+            destroy_descriptor_update_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_descriptor_update_template", not(feature = "Allow1_1APIs")))]
+            update_descriptor_set_with_template_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+            bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_bind_memory2", not(feature = "Allow1_1APIs")))]
+            bind_image_memory2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
+            get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+            get_fence_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+            import_fence_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+            acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+            release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+            get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_external_memory_host"))]
+            get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+            import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+            get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+            get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+            get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+            get_image_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_get_memory_requirements2", not(feature = "Allow1_1APIs")))]
+            get_image_sparse_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            create_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            cmd_begin_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            cmd_end_render_pass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_create_renderpass2", not(feature = "Allow1_2APIs")))]
+            cmd_next_subpass_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(feature = "VK_KHR_synchronization2")]
+            queue_submit2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(feature = "VK_KHR_synchronization2")]
+            cmd_pipeline_barrier_2_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_KHR_push_descriptor", not(feature = "Allow1_4APIs")))]
+            cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
+            #[cfg(all(feature = "VK_EXT_sample_locations"))]
+            cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
+        }
+    }
+}
+
 #[implements("VK_KHR_external_semaphore_win32")]
 pub trait DeviceExternalSemaphoreWin32Extension: Device {
     fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
@@ -2030,6 +1998,18 @@ DerefContainerWithGuardsBracketImpl!(for DeviceExternalSemaphoreWin32Extension {
     ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
     ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
 });
+#[implements("VK_KHR_external_semaphore_win32")]
+impl<Instance: crate::Instance> DeviceExternalSemaphoreWin32Extension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
+        *self.ext.import_semaphore_win32_handle_khr.resolve()
+    }
+
+    #[inline(always)]
+    fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
+        *self.ext.get_semaphore_win32_handle_khr.resolve()
+    }
+}
 
 #[implements("VK_KHR_external_memory_win32")]
 pub trait DeviceExternalMemoryWin32Extension: Device {
@@ -2090,6 +2070,18 @@ DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryWin32Extension {
     ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
     ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
 });
+#[implements("VK_KHR_external_memory_win32")]
+impl<Instance: crate::Instance> DeviceExternalMemoryWin32Extension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
+        *self.ext.get_memory_win32_handle_khr.resolve()
+    }
+
+    #[inline(always)]
+    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
+        *self.ext.get_memory_win32_handle_properties_khr.resolve()
+    }
+}
 
 #[implements("VK_EXT_full_screen_exclusive")]
 pub trait DeviceFullScreenExclusiveExtension: Device {
@@ -2101,6 +2093,34 @@ DerefContainerWithGuardsBracketImpl!(for DeviceFullScreenExclusiveExtension {
     ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
     ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
 });
+#[implements("VK_EXT_full_screen_exclusive")]
+impl<Instance: crate::Instance> DeviceFullScreenExclusiveExtension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
+        *self.ext.acquire_full_screen_exclusive_mode_ext.resolve()
+    }
+
+    #[inline(always)]
+    fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
+        *self.ext.release_full_screen_exclusive_mode_ext.resolve()
+    }
+}
+
+#[implements("VK_KHR_synchronization2")]
+pub trait DeviceSynchronization2Extension: Device {
+    fn queue_submit2_khr_fn(&self) -> PFN_vkQueueSubmit2KHR;
+}
+#[implements("VK_KHR_synchronization2")]
+DerefContainerWithGuardsBracketImpl!(for DeviceSynchronization2Extension {
+    ForwardFnPtr!(deref queue_submit2_khr_fn -> PFN_vkQueueSubmit2KHR);
+});
+#[implements("VK_KHR_synchronization2")]
+impl<Instance: crate::Instance> DeviceSynchronization2Extension for DeviceObject<Instance> {
+    #[inline(always)]
+    fn queue_submit2_khr_fn(&self) -> PFN_vkQueueSubmit2KHR {
+        *self.ext.queue_submit2_khr.resolve()
+    }
+}
 
 /// Child of a device object(raw handle)
 pub trait DeviceChildHandle {
@@ -2274,8 +2294,33 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements("VK_KHR_synchronization2")]
+    fn submit2_khr(
+        &mut self,
+        device: &(impl DeviceSynchronization2Extension + ?Sized),
+        batches: &[SubmitInfo2],
+        fence: Option<VkHandleRefMut<VkFence>>,
+    ) -> crate::Result<()> {
+        unsafe {
+            (device.queue_submit2_khr_fn().0)(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                slice_as_ptr_empty_null(batches) as _,
+                fence.map_or(VkFence::NULL, |x| x.0),
+            )
+            .into_result()
+            .map(drop)
+        }
+    }
+
+    /// Submits command buffers to a queue
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    #[implements("Allow1_3APIs")]
     fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
-        #[cfg(feature = "Allow1_3APIs")]
         unsafe {
             crate::vkfn::queue_submit2(
                 self.native_ptr_mut(),
@@ -2286,8 +2331,6 @@ pub trait QueueMut: Queue + VkHandleMut {
             .into_result()
             .map(drop)
         }
-        #[cfg(not(feature = "Allow1_3APIs"))]
-        todo!("cache loaded function in device object")
     }
 
     /// Queue images for presentation
