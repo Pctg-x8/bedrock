@@ -463,6 +463,22 @@ pub unsafe fn device_wait_idle(device: VkDevice) -> crate::Result<()> {
 }
 
 #[inline]
+pub unsafe fn get_instance_proc_addr_pfn<F: crate::PFN>(
+    instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
+) -> Option<F> {
+    unsafe { crate::vkfn::get_instance_proc_addr(instance.native_ptr(), F::NAME_CSTR.as_ptr()) }
+        .map(|x| unsafe { F::from_void_fn(x) })
+}
+
+#[inline]
+pub unsafe fn get_device_proc_addr_pfn<F: crate::PFN>(
+    device: &(impl VkHandle<Handle = VkDevice> + ?Sized),
+) -> Option<F> {
+    unsafe { crate::vkfn::get_device_proc_addr(device.native_ptr(), F::NAME_CSTR.as_ptr()) }
+        .map(|x| unsafe { F::from_void_fn(x) })
+}
+
+#[inline]
 pub unsafe fn queue_submit(
     mut queue: VkHandleRefMut<VkQueue>,
     submit_info: &[SubmitInfo],
