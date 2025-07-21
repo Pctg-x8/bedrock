@@ -101,12 +101,12 @@ impl crate::resolver::ResolverInterface for VkInstance {
         }
     }
 
-    #[inline]
+    #[tracing::instrument(name = "<VkInstance as ResolverInterface>::load_function_unconstrainted", skip(self), fields(name = ?F::NAME_CSTR))]
     unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
         match unsafe { crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _) } {
             Some(x) => unsafe { F::from_void_fn(x) },
             None => {
-                tracing::error!(name = ?F::NAME_CSTR, "instance function not found, bedrock could not continue");
+                tracing::error!("instance function not found, bedrock could not continue");
                 std::process::abort();
             }
         }
