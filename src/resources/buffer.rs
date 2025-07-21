@@ -57,7 +57,7 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
         }
     }
 
-    #[implements("VK_KHR_get_memory_requirements2")]
+    #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b> {
         BufferMemoryRequirementsInfo2::new(self)
     }
