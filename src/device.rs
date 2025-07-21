@@ -1486,10 +1486,13 @@ impl DeviceExtFunctions {
     }
 }
 
-#[implements("VK_KHR_maintenance1")]
+#[cfg(feature = "VK_KHR_maintenance1")]
 pub trait DeviceMaintenance1Extension: Device {
+    #[implements]
     fn trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR;
 
+    /// Trim a command pool.
+    #[implements]
     #[inline]
     unsafe fn trim_command_pool_khr(
         &self,
@@ -1499,22 +1502,27 @@ pub trait DeviceMaintenance1Extension: Device {
         unsafe { self.trim_command_pool_khr_fn().0(self.native_ptr(), command_pool.native_ptr_mut(), flags.bits()) }
     }
 }
-#[implements("VK_KHR_maintenance1")]
+#[cfg(feature = "VK_KHR_maintenance1")]
 DerefContainerWithGuardsBracketImpl!(for DeviceMaintenance1Extension {
+    #[implements]
     ForwardFnPtr!(deref trim_command_pool_khr_fn -> PFN_vkTrimCommandPoolKHR);
 });
-#[implements("VK_KHR_maintenance1")]
+#[cfg(feature = "VK_KHR_maintenance1")]
 impl<Instance: crate::Instance> DeviceMaintenance1Extension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn trim_command_pool_khr_fn(&self) -> PFN_vkTrimCommandPoolKHR {
         *self.ext.trim_command_pool_khr.resolve()
     }
 }
 
-#[implements("VK_KHR_descriptor_update_template")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 pub trait DeviceDescriptorUpdateTemplateExtension: Device {
+    #[implements]
     fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR;
+    #[implements]
     fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR;
+    #[implements]
     fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR;
 
     /// Create a new descriptor update template
@@ -1526,6 +1534,7 @@ pub trait DeviceDescriptorUpdateTemplateExtension: Device {
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls under api)
+    #[implements]
     #[inline]
     unsafe fn new_descriptor_update_template_raw_khr(
         &self,
@@ -1545,35 +1554,45 @@ pub trait DeviceDescriptorUpdateTemplateExtension: Device {
         Ok(unsafe { h.assume_init() })
     }
 }
-#[implements("VK_KHR_descriptor_update_template")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 DerefContainerWithGuardsBracketImpl!(for DeviceDescriptorUpdateTemplateExtension {
+    #[implements]
     ForwardFnPtr!(deref create_descriptor_update_template_khr_fn -> PFN_vkCreateDescriptorUpdateTemplateKHR);
+    #[implements]
     ForwardFnPtr!(deref destroy_descriptor_update_template_khr_fn -> PFN_vkDestroyDescriptorUpdateTemplateKHR);
+    #[implements]
     ForwardFnPtr!(deref update_descriptor_set_with_template_khr_fn -> PFN_vkUpdateDescriptorSetWithTemplateKHR);
 });
-#[implements("VK_KHR_descriptor_update_template")]
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
 impl<Instance: crate::Instance> DeviceDescriptorUpdateTemplateExtension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn create_descriptor_update_template_khr_fn(&self) -> PFN_vkCreateDescriptorUpdateTemplateKHR {
         *self.ext.create_descriptor_update_template_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn destroy_descriptor_update_template_khr_fn(&self) -> PFN_vkDestroyDescriptorUpdateTemplateKHR {
         *self.ext.destroy_descriptor_update_template_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn update_descriptor_set_with_template_khr_fn(&self) -> PFN_vkUpdateDescriptorSetWithTemplateKHR {
         *self.ext.update_descriptor_set_with_template_khr.resolve()
     }
 }
 
-#[implements("VK_KHR_get_memory_requirements2")]
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 pub trait DeviceGetMemoryRequirements2Extension: Device {
+    #[implements]
     fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR;
+    #[implements]
     fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR;
+    #[implements]
     fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR;
 
     /// Returns the memory requirements for specified Vulkan object.
+    #[implements]
     #[inline]
     unsafe fn get_buffer_memory_requirements2_khr(
         &self,
@@ -1590,6 +1609,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
     }
 
     /// Returns the memory requirements for specified Vulkan object.
+    #[implements]
     #[inline]
     unsafe fn get_image_memory_requirements2_khr(
         &self,
@@ -1604,6 +1624,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
     /// Query the memory requirements for a sparse image
     /// # Safety
     /// `sink_head_ptr` must be a valid pointer for read/write operations.
+    #[implements]
     #[inline]
     unsafe fn get_image_sparse_memory_requirements2_count_khr(
         &self,
@@ -1621,34 +1642,43 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
         }
     }
 }
-#[implements("VK_KHR_get_memory_requirements2")]
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 DerefContainerWithGuardsBracketImpl!(for DeviceGetMemoryRequirements2Extension {
+    #[implements]
     ForwardFnPtr!(deref get_buffer_memory_requirements_2_khr_fn -> PFN_vkGetBufferMemoryRequirements2KHR);
+    #[implements]
     ForwardFnPtr!(deref get_image_memory_requirements_2_khr_fn -> PFN_vkGetImageMemoryRequirements2KHR);
+    #[implements]
     ForwardFnPtr!(deref get_image_sparse_memory_requirements_2_khr_fn -> PFN_vkGetImageSparseMemoryRequirements2KHR);
 });
-#[implements("VK_KHR_get_memory_requirements2")]
+#[cfg(feature = "VK_KHR_get_memory_requirements2")]
 impl<Instance: crate::Instance> DeviceGetMemoryRequirements2Extension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn get_buffer_memory_requirements_2_khr_fn(&self) -> PFN_vkGetBufferMemoryRequirements2KHR {
         *self.ext.get_buffer_memory_requirements_2_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn get_image_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageMemoryRequirements2KHR {
         *self.ext.get_image_memory_requirements_2_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn get_image_sparse_memory_requirements_2_khr_fn(&self) -> PFN_vkGetImageSparseMemoryRequirements2KHR {
         *self.ext.get_image_sparse_memory_requirements_2_khr.resolve()
     }
 }
 
-#[implements("VK_KHR_bind_memory2")]
+#[cfg(feature = "VK_KHR_bind_memory2")]
 pub trait DeviceBindMemory2Extension: Device {
+    #[implements]
     fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR;
+    #[implements]
     fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR;
 
     /// Multiple Binding for Buffers
+    #[implements]
     #[inline]
     unsafe fn bind_buffer_memory2_khr(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
         unsafe {
@@ -1663,6 +1693,7 @@ pub trait DeviceBindMemory2Extension: Device {
     }
 
     /// Multiple Binding for Images
+    #[implements]
     #[inline]
     unsafe fn bind_image_memory2_khr(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
         unsafe {
@@ -1676,24 +1707,30 @@ pub trait DeviceBindMemory2Extension: Device {
         }
     }
 }
-#[implements("VK_KHR_bind_memory2")]
+#[cfg(feature = "VK_KHR_bind_memory2")]
 DerefContainerWithGuardsBracketImpl!(for DeviceBindMemory2Extension {
+    #[implements]
     ForwardFnPtr!(deref bind_buffer_memory2_khr_fn -> PFN_vkBindBufferMemory2KHR);
+    #[implements]
     ForwardFnPtr!(deref bind_image_memory2_khr_fn -> PFN_vkBindImageMemory2KHR);
 });
-#[implements("VK_KHR_bind_memory2")]
+#[cfg(feature = "VK_KHR_bind_memory2")]
 impl<Instance: crate::Instance> DeviceBindMemory2Extension for DeviceObject<Instance> {
+    #[implements]
     fn bind_buffer_memory2_khr_fn(&self) -> PFN_vkBindBufferMemory2KHR {
         *self.ext.bind_buffer_memory2_khr.resolve()
     }
+    #[implements]
     fn bind_image_memory2_khr_fn(&self) -> PFN_vkBindImageMemory2KHR {
         *self.ext.bind_image_memory2_khr.resolve()
     }
 }
 
-#[implements("VK_KHR_external_fence_fd")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
 pub trait DeviceExternalFenceFdExtension: Device {
+    #[implements]
     fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR;
+    #[implements]
     fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR;
 
     /// Get a POSIX file descriptor handle for a type
@@ -1702,6 +1739,7 @@ pub trait DeviceExternalFenceFdExtension: Device {
     ///
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements]
     #[inline]
     fn get_fence_fd(&self, info: &crate::FenceFdGetInfo) -> crate::Result<std::os::unix::io::RawFd> {
         let mut fd = core::mem::MaybeUninit::uninit();
@@ -1719,6 +1757,7 @@ pub trait DeviceExternalFenceFdExtension: Device {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
     #[inline]
     fn import_fence_fd(&self, info: &crate::ImportFenceFdInfo) -> crate::Result<()> {
         unsafe {
@@ -1728,26 +1767,32 @@ pub trait DeviceExternalFenceFdExtension: Device {
         }
     }
 }
-#[implements("VK_KHR_external_fence_fd")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
 DerefContainerBracketImpl!(for DeviceExternalFenceFdExtension {
+    #[implements]
     ForwardFnPtr!(deref get_fence_fd_khr_fn -> PFN_vkGetFenceFdKHR);
+    #[implements]
     ForwardFnPtr!(deref import_fence_fd_khr_fn -> PFN_vkImportFenceFdKHR);
 });
-#[implements("VK_KHR_external_fence_fd")]
+#[cfg(feature = "VK_KHR_external_fence_fd")]
 impl<Instance: crate::Instance> DeviceExternalFenceFdExtension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn get_fence_fd_khr_fn(&self) -> PFN_vkGetFenceFdKHR {
         *self.ext.get_fence_fd_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn import_fence_fd_khr_fn(&self) -> PFN_vkImportFenceFdKHR {
         *self.ext.import_fence_fd_khr.resolve()
     }
 }
 
-#[implements("VK_KHR_external_semaphore_win32")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 pub trait DeviceExternalSemaphoreWin32Extension: Device {
+    #[implements]
     fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR;
+    #[implements]
     fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR;
 
     /// Import a semaphore from a Windows HANDLE
@@ -1756,6 +1801,7 @@ pub trait DeviceExternalSemaphoreWin32Extension: Device {
     ///
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
     /// * VK_ERROR_INVALID_EXTERNAL_HANDLE
+    #[implements]
     #[inline]
     fn import_semaphore_win32_handle(&self, info: &crate::ImportSemaphoreWin32HandleInfo) -> crate::Result<()> {
         unsafe {
@@ -1773,6 +1819,7 @@ pub trait DeviceExternalSemaphoreWin32Extension: Device {
     ///
     /// * VK_ERROR_TOO_MANY_OBJECTS
     /// * VK_ERROR_OUT_OF_HOST_MEMORY
+    #[implements]
     #[inline]
     fn get_semaphore_win32_handle(
         &self,
@@ -1788,27 +1835,33 @@ pub trait DeviceExternalSemaphoreWin32Extension: Device {
         }
     }
 }
-#[implements("VK_KHR_external_semaphore_win32")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 DerefContainerWithGuardsBracketImpl!(for DeviceExternalSemaphoreWin32Extension {
+    #[implements]
     ForwardFnPtr!(deref import_semaphore_win32_handle_khr_fn -> PFN_vkImportSemaphoreWin32HandleKHR);
+    #[implements]
     ForwardFnPtr!(deref get_semaphore_win32_handle_khr_fn -> PFN_vkGetSemaphoreWin32HandleKHR);
 });
-#[implements("VK_KHR_external_semaphore_win32")]
+#[cfg(feature = "VK_KHR_external_semaphore_win32")]
 impl<Instance: crate::Instance> DeviceExternalSemaphoreWin32Extension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn import_semaphore_win32_handle_khr_fn(&self) -> PFN_vkImportSemaphoreWin32HandleKHR {
         *self.ext.import_semaphore_win32_handle_khr.resolve()
     }
 
+    #[implements]
     #[inline(always)]
     fn get_semaphore_win32_handle_khr_fn(&self) -> PFN_vkGetSemaphoreWin32HandleKHR {
         *self.ext.get_semaphore_win32_handle_khr.resolve()
     }
 }
 
-#[implements("VK_KHR_external_memory_fd")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
 pub trait DeviceExternalMemoryFdExtension: Device {
+    #[implements]
     fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR;
+    #[implements]
     fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR;
 
     /// Get a POSIX file descriptor for a memory object
@@ -1817,6 +1870,7 @@ pub trait DeviceExternalMemoryFdExtension: Device {
     ///
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements]
     #[inline]
     fn get_memory_fd(&self, info: &crate::MemoryGetFdInfo) -> crate::Result<std::os::unix::io::RawFd> {
         let mut fd = core::mem::MaybeUninit::uninit();
@@ -1836,6 +1890,7 @@ pub trait DeviceExternalMemoryFdExtension: Device {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
     #[inline]
     unsafe fn memory_fd_properties(
         &self,
@@ -1850,26 +1905,31 @@ pub trait DeviceExternalMemoryFdExtension: Device {
         }
     }
 }
-#[implements("VK_KHR_external_memory_fd")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
 DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryFdExtension {
+    #[implements]
     ForwardFnPtr!(deref get_memory_fd_khr_fn -> PFN_vkGetMemoryFdKHR);
+    #[implements]
     ForwardFnPtr!(deref get_memory_fd_properties_khr_fn -> PFN_vkGetMemoryFdPropertiesKHR);
 });
-#[implements("VK_KHR_external_memory_fd")]
+#[cfg(feature = "VK_KHR_external_memory_fd")]
 impl<Instance: crate::Instance> DeviceExternalMemoryFdExtension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn get_memory_fd_khr_fn(&self) -> PFN_vkGetMemoryFdKHR {
         *self.ext.get_memory_fd_khr.resolve()
     }
 
+    #[implements]
     #[inline(always)]
     fn get_memory_fd_properties_khr_fn(&self) -> PFN_vkGetMemoryFdPropertiesKHR {
         *self.ext.get_memory_fd_properties_khr.resolve()
     }
 }
 
-#[implements("VK_EXT_external_memory_host")]
+#[cfg(feature = "VK_EXT_external_memory_host")]
 pub trait DeviceExternalMemoryHostExtension: Device {
+    #[implements]
     fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT;
 
     /// Get Properties of external memory host pointer
@@ -1880,6 +1940,7 @@ pub trait DeviceExternalMemoryHostExtension: Device {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
     #[inline]
     unsafe fn memory_host_pointer_properties(
         &self,
@@ -1899,21 +1960,25 @@ pub trait DeviceExternalMemoryHostExtension: Device {
         }
     }
 }
-#[implements("VK_EXT_external_memory_host")]
+#[cfg(feature = "VK_EXT_external_memory_host")]
 DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryHostExtension {
+    #[implements]
     ForwardFnPtr!(deref get_memory_host_pointer_properties_ext_fn -> PFN_vkGetMemoryHostPointerPropertiesEXT);
 });
-#[implements("VK_EXT_external_memory_host")]
+#[cfg(feature = "VK_EXT_external_memory_host")]
 impl<Instance: crate::Instance> DeviceExternalMemoryHostExtension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn get_memory_host_pointer_properties_ext_fn(&self) -> PFN_vkGetMemoryHostPointerPropertiesEXT {
         *self.ext.get_memory_host_pointer_properties_ext.resolve()
     }
 }
 
-#[implements("VK_KHR_external_memory_win32")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
 pub trait DeviceExternalMemoryWin32Extension: Device {
+    #[implements]
     fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
+    #[implements]
     fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
 
     /// Get Properties of External Memory Win32 Handles
@@ -1924,6 +1989,7 @@ pub trait DeviceExternalMemoryWin32Extension: Device {
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
     #[inline]
     unsafe fn memory_win32_handle_properties(
         &self,
@@ -1951,6 +2017,7 @@ pub trait DeviceExternalMemoryWin32Extension: Device {
     ///
     /// * `VK_ERROR_TOO_MANY_OBJECTS`
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements]
     #[inline]
     fn get_memory_win32_handle(
         &self,
@@ -1965,41 +2032,51 @@ pub trait DeviceExternalMemoryWin32Extension: Device {
         }
     }
 }
-#[implements("VK_KHR_external_memory_win32")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
 DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryWin32Extension {
+    #[implements]
     ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
+    #[implements]
     ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
 });
-#[implements("VK_KHR_external_memory_win32")]
+#[cfg(featire = "VK_KHR_external_memory_win32")]
 impl<Instance: crate::Instance> DeviceExternalMemoryWin32Extension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR {
         *self.ext.get_memory_win32_handle_khr.resolve()
     }
 
+    #[implements]
     #[inline(always)]
     fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR {
         *self.ext.get_memory_win32_handle_properties_khr.resolve()
     }
 }
 
-#[implements("VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 pub trait DeviceFullScreenExclusiveExtension: Device {
+    #[implements]
     fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT;
+    #[implements]
     fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT;
 }
-#[implements("VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 DerefContainerWithGuardsBracketImpl!(for DeviceFullScreenExclusiveExtension {
+    #[implements]
     ForwardFnPtr!(deref acquire_full_screen_exclusive_mode_ext_fn -> PFN_vkAcquireFullScreenExclusiveModeEXT);
+    #[implements]
     ForwardFnPtr!(deref release_full_screen_exclusive_mode_ext_fn -> PFN_vkReleaseFullScreenExclusiveModeEXT);
 });
-#[implements("VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 impl<Instance: crate::Instance> DeviceFullScreenExclusiveExtension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn acquire_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkAcquireFullScreenExclusiveModeEXT {
         *self.ext.acquire_full_screen_exclusive_mode_ext.resolve()
     }
 
+    #[implements]
     #[inline(always)]
     fn release_full_screen_exclusive_mode_ext_fn(&self) -> PFN_vkReleaseFullScreenExclusiveModeEXT {
         *self.ext.release_full_screen_exclusive_mode_ext.resolve()
