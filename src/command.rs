@@ -290,21 +290,34 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
 
     /// Trim a command pool
     #[implements("VK_KHR_maintenance1")]
-    fn trim(&mut self) {
-        #[cfg(feature = "Allow1_1APIs")]
+    fn trim_khr(&mut self, flags: CommandPoolTrimFlags)
+    where
+        Self::ConcreteDevice: DeviceMaintenance1Extension,
+    {
         unsafe {
-            crate::vkfn::trim_command_pool(self.device_handle(), self.native_ptr_mut(), 0);
+            self.device().trim_command_pool_khr_fn().0(self.device_handle(), self.native_ptr_mut(), flags.bits());
         }
-        #[cfg(not(feature = "Allow1_1APIs"))]
-        unsafe {
-            use crate::Device;
+    }
 
-            self.device().get_trim_command_pool_khr_fn().0(self.device_handle(), self.native_ptr_mut(), 0);
+    /// Trim a command pool
+    #[implements("Allow1_1APIs")]
+    fn trim(&mut self, flags: CommandPoolTrimFlags) {
+        unsafe {
+            crate::vkfn::trim_command_pool(self.device_handle(), self.native_ptr_mut(), flags.bits());
         }
     }
 }
 DerefContainerBracketImpl!(for mut CommandPoolMut {});
 GuardsImpl!(for mut CommandPoolMut {});
+
+#[cfg(feature = "VK_KHR_maintenance1")]
+#[derive(Clone, Copy, Debug)]
+#[bitflags_newtype]
+pub struct CommandPoolTrimFlags(VkCommandPoolTrimFlagsKHR);
+#[cfg(feature = "VK_KHR_maintenance1")]
+impl CommandPoolTrimFlags {
+    pub const EMPTY: Self = Self(0);
+}
 
 #[repr(transparent)]
 #[derive(Clone)]

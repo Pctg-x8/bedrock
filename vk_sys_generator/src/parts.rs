@@ -601,13 +601,6 @@ impl Struct {
         self
     }
 
-    pub const fn non_cloneable(mut self) -> Self {
-        self.cloneable = false;
-        // implies non_copyable
-        self.copyable = false;
-        self
-    }
-
     pub const fn copyable(mut self) -> Self {
         // implies cloneable
         self.cloneable = true;
@@ -945,11 +938,6 @@ impl StructMember {
         }
     }
 
-    pub const fn comment(mut self, comment: &'static str) -> Self {
-        self.comment = Some(comment);
-        self
-    }
-
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         if let Some(c) = self.comment {
             writeln!(w, "    /// {c}")?;
@@ -980,15 +968,11 @@ impl Union {
         }
     }
 
-    pub const fn comment(mut self, comment: &'static str) -> Self {
-        self.comment = Some(comment);
-        self
-    }
-
-    pub const fn extension(mut self, name: &'static str, suffix: &'static str) -> Self {
-        self.extension = Some((name, suffix));
-        self
-    }
+    // いまのところない
+    // pub const fn extension(mut self, name: &'static str, suffix: &'static str) -> Self {
+    //     self.extension = Some((name, suffix));
+    //     self
+    // }
 
     pub const fn member(name: &'static str, r#type: &'static str) -> StructMember {
         StructMember::new(name, r#type)
