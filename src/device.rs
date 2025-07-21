@@ -2102,16 +2102,19 @@ impl<Instance: crate::Instance> DeviceSynchronization2Extension for DeviceObject
     }
 }
 
-#[implements("VK_EXT_image_drm_format_modifier")]
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 pub trait DeviceImageDrmFormatModifierExtension: Device {
+    #[implements]
     fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT;
 }
-#[implements("VK_EXT_image_drm_format_modifier")]
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 DerefContainerWithGuardsBracketImpl!(for DeviceImageDrmFormatModifierExtension {
+    #[implements]
     ForwardFnPtr!(deref get_image_drm_format_modifier_properties_ext_fn -> PFN_vkGetImageDrmFormatModifierPropertiesEXT);
 });
-#[implements("VK_EXT_image_drm_format_modifier")]
+#[cfg(feature = "VK_EXT_image_drm_format_modifier")]
 impl<Instance: crate::Instance> DeviceImageDrmFormatModifierExtension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
         *self.ext.get_image_drm_format_modifier_properties_ext.resolve()

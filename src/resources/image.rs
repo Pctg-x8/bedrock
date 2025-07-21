@@ -95,7 +95,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
         sink: &mut core::mem::MaybeUninit<VkImageDrmFormatModifierPropertiesEXT>,
     ) -> crate::Result<()>
     where
-        Self: DeviceChild,
+        Self: DeviceChild<ConcreteDevice: DeviceImageDrmFormatModifierExtension>,
     {
         use crate::Device;
 
@@ -112,7 +112,7 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     #[implements("VK_EXT_image_drm_format_modifier")]
     fn drm_format_modifier_properties(&self) -> crate::Result<VkImageDrmFormatModifierPropertiesEXT>
     where
-        Self: DeviceChild,
+        Self: DeviceChild<ConcreteDevice: DeviceImageDrmFormatModifierExtension>,
     {
         let mut properties = core::mem::MaybeUninit::<VkImageDrmFormatModifierPropertiesEXT>::uninit();
         unsafe {
@@ -479,43 +479,8 @@ impl<'d> ImageCreateInfo<'d> {
         self
     }
 
-    /// Sets the created image will be sampled.
-    pub const fn sampled(self) -> Self {
-        self.usage_with(ImageUsageFlags::SAMPLED)
-    }
-
-    /// Sets the created resource will be the destination of transferring operation.
-    pub const fn transfer_dest(self) -> Self {
-        self.usage_with(ImageUsageFlags::TRANSFER_DEST)
-    }
-
-    /// Sets the created image can be used as a Storage Image.
-    pub const fn use_as_storage(self) -> Self {
-        self.usage_with(ImageUsageFlags::STORAGE)
-    }
-
-    /// Sets the created image can be used as a color attachment.
-    pub const fn as_color_attachment(self) -> Self {
-        self.usage_with(ImageUsageFlags::COLOR_ATTACHMENT)
-    }
-
-    /// Sets the created image can be used as an input attachment.
-    pub const fn as_input_attachment(self) -> Self {
-        self.usage_with(ImageUsageFlags::INPUT_ATTACHMENT)
-    }
-
-    /// Sets the created image can be used as a depth stencil attachment.
-    pub const fn as_depth_stencil_attachment(self) -> Self {
-        self.usage_with(ImageUsageFlags::DEPTH_STENCIL_ATTACHMENT)
-    }
-
-    /// Sets the created image as transient-used attachment.
-    pub const fn as_transient_attachment(self) -> Self {
-        self.usage_with(ImageUsageFlags::TRANSIENT_ATTACHMENT)
-    }
-
     /// Merges some custom usage flag bits.
-    pub const fn usage_with(mut self, bits: ImageUsageFlags) -> Self {
+    pub const fn with_usage(mut self, bits: ImageUsageFlags) -> Self {
         self.0.usage |= bits.0;
         self
     }
@@ -551,25 +516,13 @@ impl<'b, Image: VkHandle<Handle = VkImage> + 'b> ImageMemoryRequirementsInfo2<'b
         )
     }
 
-    #[implements]
+    #[implements("Allow1_1APIs")]
     pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
     where
         Image: crate::DeviceChild,
     {
-        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
             crate::vkfn::get_image_memory_requirements2(self.1.device().native_ptr(), &self.0, sink.as_mut_ptr());
-        }
-
-        #[cfg(not(feature = "Allow1_1APIs"))]
-        unsafe {
-            use crate::Device;
-
-            self.1.device().get_image_memory_requirements_2_khr_fn().0(
-                self.1.device().native_ptr(),
-                &self.0,
-                sink.as_mut_ptr(),
-            );
         }
     }
 }

@@ -256,8 +256,15 @@ impl<'s> BufferCreateInfo<'s> {
         self
     }
 
-    pub const fn and_usage(mut self, usage: BufferUsage) -> Self {
+    /// Merges usage flags
+    pub const fn with_usage(mut self, usage: BufferUsage) -> Self {
         self.0.usage |= usage.0;
+        self
+    }
+
+    /// Overwrites usage flags
+    pub const fn set_usage(mut self, usage: BufferUsage) -> Self {
+        self.0.usage = usage.0;
         self
     }
 
@@ -332,25 +339,13 @@ impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2
         )
     }
 
-    #[implements]
+    #[implements("Allow1_1APIs")]
     pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
     where
         Buffer: crate::DeviceChild,
     {
-        #[cfg(feature = "Allow1_1APIs")]
         unsafe {
             crate::vkfn::get_buffer_memory_requirements2(self.1.device().native_ptr(), &self.0, sink.as_mut_ptr());
-        }
-
-        #[cfg(not(feature = "Allow1_1APIs"))]
-        unsafe {
-            use crate::Device;
-
-            self.1.device().get_buffer_memory_requirements_2_khr_fn().0(
-                self.1.device().native_ptr(),
-                &self.0,
-                sink.as_mut_ptr(),
-            );
         }
     }
 }
