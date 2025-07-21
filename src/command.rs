@@ -553,37 +553,37 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
 
 /// Functions from extension
 pub trait DeviceExtCommandFunctionProvider {
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[implements("VK_KHR_create_renderpass2")]
     fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[implements("VK_KHR_create_renderpass2")]
     fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[implements("VK_KHR_create_renderpass2")]
     fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
 
-    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[implements("VK_KHR_synchronization2")]
     fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
 
-    #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[implements("VK_KHR_push_descriptor")]
     fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
 
-    #[cfg(feature = "VK_EXT_sample_locations")]
+    #[implements("VK_EXT_sample_locations")]
     fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
 }
 DerefContainerWithGuardsBracketImpl!(for DeviceExtCommandFunctionProvider {
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[implements("VK_KHR_create_renderpass2")]
     ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[implements("VK_KHR_create_renderpass2")]
     ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
-    #[cfg(feature = "VK_KHR_create_renderpass2")]
+    #[implements("VK_KHR_create_renderpass2")]
     ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
 
-    #[cfg(feature = "VK_KHR_synchronization2")]
+    #[implements("VK_KHR_synchronization2")]
     ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
 
-    #[cfg(feature = "VK_KHR_push_descriptor")]
+    #[implements("VK_KHR_push_descriptor")]
     ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
 
-    #[cfg(feature = "VK_EXT_sample_locations")]
+    #[implements("VK_EXT_sample_locations")]
     ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
 });
 
