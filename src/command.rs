@@ -551,42 +551,6 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
     }
 }
 
-/// Functions from extension
-pub trait DeviceExtCommandFunctionProvider {
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
-    #[implements("VK_KHR_create_renderpass2")]
-    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
-
-    #[implements("VK_KHR_synchronization2")]
-    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
-
-    #[implements("VK_KHR_push_descriptor")]
-    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
-
-    #[implements("VK_EXT_sample_locations")]
-    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
-}
-DerefContainerWithGuardsBracketImpl!(for DeviceExtCommandFunctionProvider {
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
-    #[implements("VK_KHR_create_renderpass2")]
-    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
-
-    #[implements("VK_KHR_synchronization2")]
-    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
-
-    #[implements("VK_KHR_push_descriptor")]
-    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
-
-    #[implements("VK_EXT_sample_locations")]
-    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
-});
-
 /// The recording state of command buffers
 #[implements]
 #[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
@@ -675,7 +639,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
         subpass_begin_info: &SubpassBeginInfo,
     ) -> Self
     where
-        ExtFnProvider: DeviceExtCommandFunctionProvider,
+        ExtFnProvider: DeviceCreateRenderPass2Extension,
     {
         unsafe {
             (self.ext_fn_provider.cmd_begin_render_pass_2_khr_fn().0)(
@@ -710,7 +674,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     #[inline]
     pub fn next_subpass2_khr(mut self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self
     where
-        ExtFnProvider: DeviceExtCommandFunctionProvider,
+        ExtFnProvider: DeviceCreateRenderPass2Extension,
     {
         unsafe {
             (self.ext_fn_provider.cmd_next_subpass_2_khr_fn().0)(
@@ -741,7 +705,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     #[inline]
     pub fn end_render_pass2_khr(mut self, subpass_end_info: &SubpassEndInfo) -> Self
     where
-        ExtFnProvider: DeviceExtCommandFunctionProvider,
+        ExtFnProvider: DeviceCreateRenderPass2Extension,
     {
         unsafe {
             (self.ext_fn_provider.cmd_end_render_pass_2_khr_fn().0)(
@@ -1598,7 +1562,7 @@ impl<'d, ExtFnProvider: 'd + ?Sized> CmdRecord<'d, ExtFnProvider> {
     #[inline(always)]
     pub fn pipeline_barrier_2_khr(mut self, dependency_info: &crate::DependencyInfo) -> Self
     where
-        ExtFnProvider: DeviceExtCommandFunctionProvider,
+        ExtFnProvider: DeviceSynchronization2Extension,
     {
         unsafe {
             (self.ext_fn_provider.cmd_pipeline_barrier_2_khr_fn().0)(

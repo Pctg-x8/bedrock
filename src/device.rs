@@ -1485,43 +1485,6 @@ impl DeviceExtFunctions {
         }
     }
 }
-impl<Instance: crate::Instance> DeviceExtCommandFunctionProvider for DeviceObject<Instance> {
-    #[implements("VK_KHR_create_renderpass2")]
-    #[inline(always)]
-    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
-        *self.ext.cmd_begin_render_pass_2_khr.resolve()
-    }
-
-    #[implements("VK_KHR_create_renderpass2")]
-    #[inline(always)]
-    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
-        *self.ext.cmd_end_render_pass_2_khr.resolve()
-    }
-
-    #[implements("VK_KHR_create_renderpass2")]
-    #[inline(always)]
-    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
-        *self.ext.cmd_next_subpass_2_khr.resolve()
-    }
-
-    #[implements("VK_KHR_synchronization2")]
-    #[inline(always)]
-    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
-        *self.ext.cmd_pipeline_barrier_2_khr.resolve()
-    }
-
-    #[implements("VK_KHR_push_descriptor")]
-    #[inline(always)]
-    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
-        *self.ext.cmd_push_descriptor_set_khr.resolve()
-    }
-
-    #[implements("VK_EXT_sample_locations")]
-    #[inline(always)]
-    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
-        *self.ext.cmd_set_sample_locations_ext.resolve()
-    }
-}
 
 #[implements("VK_KHR_maintenance1")]
 pub trait DeviceMaintenance1Extension: Device {
@@ -2043,9 +2006,16 @@ impl<Instance: crate::Instance> DeviceFullScreenExclusiveExtension for DeviceObj
     }
 }
 
-#[implements("VK_KHR_create_renderpass2")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
 pub trait DeviceCreateRenderPass2Extension: Device {
+    #[implements]
     fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR;
+    #[implements]
+    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR;
+    #[implements]
+    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR;
+    #[implements]
+    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR;
 
     /// Create a new render pass object
     /// # Failures
@@ -2053,6 +2023,7 @@ pub trait DeviceCreateRenderPass2Extension: Device {
     ///
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
     #[inline]
     fn new_render_pass2_khr(
         &self,
@@ -2074,31 +2045,66 @@ pub trait DeviceCreateRenderPass2Extension: Device {
         Ok(unsafe { h.assume_init() })
     }
 }
-#[implements("VK_KHR_create_renderpass2")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
 DerefContainerWithGuardsBracketImpl!(for DeviceCreateRenderPass2Extension {
+    #[implements]
     ForwardFnPtr!(deref create_render_pass_2_khr_fn -> PFN_vkCreateRenderPass2KHR);
+    #[implements]
+    ForwardFnPtr!(deref cmd_begin_render_pass_2_khr_fn -> PFN_vkCmdBeginRenderPass2KHR);
+    #[implements]
+    ForwardFnPtr!(deref cmd_end_render_pass_2_khr_fn -> PFN_vkCmdEndRenderPass2KHR);
+    #[implements]
+    ForwardFnPtr!(deref cmd_next_subpass_2_khr_fn -> PFN_vkCmdNextSubpass2KHR);
 });
-#[implements("VK_KHR_create_renderpass2")]
+#[cfg(feature = "VK_KHR_create_renderpass2")]
 impl<Instance: crate::Instance> DeviceCreateRenderPass2Extension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn create_render_pass_2_khr_fn(&self) -> PFN_vkCreateRenderPass2KHR {
         *self.ext.create_render_pass_2_khr.resolve()
     }
+    #[implements]
+    #[inline(always)]
+    fn cmd_begin_render_pass_2_khr_fn(&self) -> PFN_vkCmdBeginRenderPass2KHR {
+        *self.ext.cmd_begin_render_pass_2_khr.resolve()
+    }
+    #[implements]
+    #[inline(always)]
+    fn cmd_end_render_pass_2_khr_fn(&self) -> PFN_vkCmdEndRenderPass2KHR {
+        *self.ext.cmd_end_render_pass_2_khr.resolve()
+    }
+    #[implements]
+    #[inline(always)]
+    fn cmd_next_subpass_2_khr_fn(&self) -> PFN_vkCmdNextSubpass2KHR {
+        *self.ext.cmd_next_subpass_2_khr.resolve()
+    }
 }
 
-#[implements("VK_KHR_synchronization2")]
+#[cfg(feature = "VK_KHR_synchronization2")]
 pub trait DeviceSynchronization2Extension: Device {
+    #[implements]
     fn queue_submit2_khr_fn(&self) -> PFN_vkQueueSubmit2KHR;
+    #[implements]
+    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR;
 }
-#[implements("VK_KHR_synchronization2")]
+#[cfg(feature = "VK_KHR_synchronization2")]
 DerefContainerWithGuardsBracketImpl!(for DeviceSynchronization2Extension {
+    #[implements]
     ForwardFnPtr!(deref queue_submit2_khr_fn -> PFN_vkQueueSubmit2KHR);
+    #[implements]
+    ForwardFnPtr!(deref cmd_pipeline_barrier_2_khr_fn -> PFN_vkCmdPipelineBarrier2KHR);
 });
-#[implements("VK_KHR_synchronization2")]
+#[cfg(feature = "VK_KHR_synchronization2")]
 impl<Instance: crate::Instance> DeviceSynchronization2Extension for DeviceObject<Instance> {
+    #[implements]
     #[inline(always)]
     fn queue_submit2_khr_fn(&self) -> PFN_vkQueueSubmit2KHR {
         *self.ext.queue_submit2_khr.resolve()
+    }
+    #[implements]
+    #[inline(always)]
+    fn cmd_pipeline_barrier_2_khr_fn(&self) -> PFN_vkCmdPipelineBarrier2KHR {
+        *self.ext.cmd_pipeline_barrier_2_khr.resolve()
     }
 }
 
@@ -2118,6 +2124,44 @@ impl<Instance: crate::Instance> DeviceImageDrmFormatModifierExtension for Device
     #[inline(always)]
     fn get_image_drm_format_modifier_properties_ext_fn(&self) -> PFN_vkGetImageDrmFormatModifierPropertiesEXT {
         *self.ext.get_image_drm_format_modifier_properties_ext.resolve()
+    }
+}
+
+#[cfg(feature = "VK_KHR_push_descriptor")]
+pub trait DevicePushDescriptorExtension: Device {
+    #[implements]
+    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR;
+}
+#[cfg(feature = "VK_KHR_push_descriptor")]
+DerefContainerWithGuardsBracketImpl!(for DevicePushDescriptorExtension {
+    #[implements("VK_KHR_push_descriptor")]
+    ForwardFnPtr!(deref cmd_push_descriptor_set_khr_fn -> PFN_vkCmdPushDescriptorSetKHR);
+});
+#[cfg(feature = "VK_KHR_push_descriptor")]
+impl<Instance: crate::Instance> DevicePushDescriptorExtension for DeviceObject<Instance> {
+    #[implements]
+    #[inline(always)]
+    fn cmd_push_descriptor_set_khr_fn(&self) -> PFN_vkCmdPushDescriptorSetKHR {
+        *self.ext.cmd_push_descriptor_set_khr.resolve()
+    }
+}
+
+#[cfg(feature = "VK_EXT_sample_locations")]
+pub trait DeviceSampleLocationsExtension: Device {
+    #[implements]
+    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT;
+}
+#[cfg(feature = "VK_EXT_sample_locations")]
+DerefContainerWithGuardsBracketImpl!(for DeviceSampleLocationsExtension {
+    #[implements]
+    ForwardFnPtr!(deref cmd_set_sample_locations_ext_fn -> PFN_vkCmdSetSampleLocationsEXT);
+});
+#[cfg(feature = "VK_EXT_sample_locations")]
+impl<Instance: crate::Instance> DeviceSampleLocationsExtension for DeviceObject<Instance> {
+    #[implements]
+    #[inline(always)]
+    fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
+        *self.ext.cmd_set_sample_locations_ext.resolve()
     }
 }
 
