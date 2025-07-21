@@ -102,7 +102,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     #[implements("VK_EXT_acquire_xlib_display")]
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()>
     where
-        PhysicalDevice::ConcreteInstance: InstanceExtensions,
+        PhysicalDevice::ConcreteInstance: InstanceAcquireXlibDisplayExtension,
     {
         unsafe {
             self.1.instance().acquire_xlib_display_ext_fn().0(self.1.native_ptr(), dpy, self.native_ptr())
