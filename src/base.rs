@@ -689,10 +689,13 @@ impl InstanceGetPhysicalDeviceProperties2Extension for InstanceObject {
     }
 }
 
-#[implements("VK_EXT_debug_report")]
+#[cfg(feature = "VK_EXT_debug_report")]
 pub trait InstanceDebugReportExtension: Instance {
+    #[implements]
     fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT;
+    #[implements]
     fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT;
+    #[implements]
     fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT;
 
     /// Register a debug report callback
@@ -703,6 +706,7 @@ pub trait InstanceDebugReportExtension: Instance {
     ///
     /// # Safety
     /// must not execute in parallel with any Vulkan commands
+    #[implements]
     #[inline]
     unsafe fn new_debug_report_callback_raw(
         &self,
@@ -724,6 +728,7 @@ pub trait InstanceDebugReportExtension: Instance {
     }
 
     /// Inject its own messages into the debug stream
+    #[implements]
     #[inline]
     fn debug_message(
         &self,
@@ -768,32 +773,41 @@ pub trait InstanceDebugReportExtension: Instance {
         }
     }
 }
-#[implements("VK_EXT_debug_report")]
+#[cfg(feature = "VK_EXT_debug_report")]
 DerefContainerWithGuardsBracketImpl!(for InstanceDebugReportExtension {
+    #[implements]
     ForwardFnPtr!(deref create_debug_report_callback_ext_fn -> PFN_vkCreateDebugReportCallbackEXT);
+    #[implements]
     ForwardFnPtr!(deref destroy_debug_report_callback_ext_fn -> PFN_vkDestroyDebugReportCallbackEXT);
+    #[implements]
     ForwardFnPtr!(deref debug_report_message_ext_fn -> PFN_vkDebugReportMessageEXT);
 });
-#[implements("VK_EXT_debug_report")]
+#[cfg(feature = "VK_EXT_debug_report")]
 impl InstanceDebugReportExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
         *self.ext.create_debug_report_callback_ext.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
         *self.ext.destroy_debug_report_callback_ext.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
         *self.ext.debug_report_message_ext.resolve()
     }
 }
 
-#[implements("VK_EXT_debug_utils")]
+#[cfg(feature = "VK_EXT_debug_utils")]
 pub trait InstanceDebugUtilsExtension: Instance {
+    #[implements]
     fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT;
+    #[implements]
     fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT;
+    #[implements]
     fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT;
 
     /// Create a debug messenger object
@@ -804,6 +818,7 @@ pub trait InstanceDebugUtilsExtension: Instance {
     ///
     /// # Safety
     /// must not be executed in parallel with any Vulkan commands
+    #[implements]
     #[inline]
     unsafe fn new_debug_utils_messenger_raw(
         &self,
@@ -828,6 +843,7 @@ pub trait InstanceDebugUtilsExtension: Instance {
     /// # Safety
     /// * must be created from this Instance object
     /// * must not execute in parallel with any Vulkan commands
+    #[implements]
     #[inline]
     unsafe fn destroy_debug_utils_messenger_raw(
         &self,
@@ -843,22 +859,28 @@ pub trait InstanceDebugUtilsExtension: Instance {
         }
     }
 }
-#[implements("VK_EXT_debug_utils")]
+#[cfg(feature = "VK_EXT_debug_utils")]
 DerefContainerWithGuardsBracketImpl!(for InstanceDebugUtilsExtension {
+    #[implements]
     ForwardFnPtr!(deref create_debug_utils_messenger_ext_fn -> PFN_vkCreateDebugUtilsMessengerEXT);
+    #[implements]
     ForwardFnPtr!(deref destroy_debug_utils_messenger_ext_fn -> PFN_vkDestroyDebugUtilsMessengerEXT);
+    #[implements]
     ForwardFnPtr!(deref set_debug_utils_object_name_ext_fn -> PFN_vkSetDebugUtilsObjectNameEXT);
 });
-#[implements("VK_EXT_debug_utils")]
+#[cfg(feature = "VK_EXT_debug_utils")]
 impl InstanceDebugUtilsExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
         *self.ext.create_debug_utils_messenger_ext.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
         *self.ext.destroy_debug_utils_messenger_ext.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
         *self.ext.set_debug_utils_object_name_ext.resolve()

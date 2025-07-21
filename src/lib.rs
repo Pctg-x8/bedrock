@@ -485,8 +485,9 @@ impl Viewport {
     }
 }
 
-mod base;
 pub(crate) mod ffi_helper;
+
+mod base;
 pub use base::*;
 mod device;
 pub use device::*;
