@@ -661,28 +661,37 @@ impl InstanceExtFunctions {
     }
 }
 
-#[implements("VK_KHR_get_physical_device_properties2")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 pub trait InstanceGetPhysicalDeviceProperties2Extension: Instance {
+    #[implements]
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
+    #[implements]
     fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR;
+    #[implements]
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
 }
-#[implements("VK_KHR_get_physical_device_properties2")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 DerefContainerWithGuardsBracketImpl!(for InstanceGetPhysicalDeviceProperties2Extension {
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_features2_khr_fn -> PFN_vkGetPhysicalDeviceFeatures2KHR);
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_format_properties2_khr_fn -> PFN_vkGetPhysicalDeviceFormatProperties2KHR);
 });
-#[implements("VK_KHR_get_physical_device_properties2")]
+#[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 impl InstanceGetPhysicalDeviceProperties2Extension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
         *self.ext.get_physical_device_properties2_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR {
         *self.ext.get_physical_device_features2_khr.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
         *self.ext.get_physical_device_format_properties2_khr.resolve()
@@ -888,17 +897,20 @@ impl InstanceDebugUtilsExtension for InstanceObject {
     }
 }
 
-#[implements("VK_KHR_external_fence_capabilities")]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
 pub trait InstanceExternalFenceCapabilitiesExtension: Instance {
+    #[implements]
     fn get_physical_device_external_fence_properties_khr_fn(&self)
     -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
 }
-#[implements("VK_KHR_external_fence_capabilities")]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
 DerefContainerWithGuardsBracketImpl!(for InstanceExternalFenceCapabilitiesExtension {
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_external_fence_properties_khr_fn -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR);
 });
-#[implements("VK_KHR_external_fence_capabilities")]
+#[cfg(feature = "VK_KHR_external_fence_capabilities")]
 impl InstanceExternalFenceCapabilitiesExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn get_physical_device_external_fence_properties_khr_fn(
         &self,
@@ -907,86 +919,104 @@ impl InstanceExternalFenceCapabilitiesExtension for InstanceObject {
     }
 }
 
-#[implements("VK_EXT_acquire_xlib_display")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
 pub trait InstanceAcquireXlibDisplayExtension: Instance {
+    #[implements]
     fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
+    #[implements]
     fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT;
 }
-#[implements("VK_EXT_acquire_xlib_display")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
 DerefContainerWithGuardsBracketImpl!(for InstanceAcquireXlibDisplayExtension {
+    #[implements]
     ForwardFnPtr!(deref get_randr_output_display_ext_fn -> PFN_vkGetRandROutputDisplayEXT);
+    #[implements]
     ForwardFnPtr!(deref acquire_xlib_display_ext_fn -> PFN_vkAcquireXlibDisplayEXT);
 });
-#[implements("VK_EXT_acquire_xlib_display")]
+#[cfg(feature = "VK_EXT_acquire_xlib_display")]
 impl InstanceAcquireXlibDisplayExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
         *self.ext.get_randr_output_display_ext.resolve()
     }
+    #[implements]
     #[inline(always)]
     fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
         *self.ext.acquire_xlib_display_ext.resolve()
     }
 }
 
-#[implements("VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 pub trait InstanceFullScreenExclusiveExtension: Instance {
+    #[implements]
     fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
 }
-#[implements("VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 DerefContainerWithGuardsBracketImpl!(for InstanceFullScreenExclusiveExtension {
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_surface_present_modes_2_ext_fn -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
 });
-#[implements("VK_EXT_full_screen_exclusive")]
+#[cfg(feature = "VK_EXT_full_screen_exclusive")]
 impl InstanceFullScreenExclusiveExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
         *self.ext.get_physical_device_surface_present_modes_2_ext.resolve()
     }
 }
 
-#[implements("VK_KHR_get_surface_capabilities2")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 pub trait InstanceGetSurfaceCapabilities2Extension: Instance {
+    #[implements]
     fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
 }
-#[implements("VK_KHR_get_surface_capabilities2")]
-DerefContainerWithGuardBracketImpl!(for InstanceGetSurfaceCapabilities2Extension {
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+DerefContainerWithGuardsBracketImpl!(for InstanceGetSurfaceCapabilities2Extension {
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_surface_capabilities_2_khr_fn -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR);
 });
-#[implements("VK_KHR_get_surface_capabilities2")]
+#[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 impl InstanceGetSurfaceCapabilities2Extension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
         *self.ext.get_physical_device_surface_capabilities_2_khr.resolve()
     }
 }
 
-#[implements("VK_EXT_direct_mode_display")]
+#[cfg(feature = "VK_EXT_direct_mode_display")]
 pub trait InstanceDirectModeDisplayExtension: Instance {
+    #[implements]
     fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT;
 }
-#[implements("VK_EXT_direct_mode_display")]
+#[cfg(feature = "VK_EXT_direct_mode_display")]
 DerefContainerWithGuardsBracketImpl!(for InstanceDirectModeDisplayExtension {
+    #[implements]
     ForwardFnPtr!(deref release_display_ext_fn -> PFN_vkReleaseDisplayEXT);
 });
-#[implements("VK_EXT_direct_mode_display")]
+#[cfg(feature = "VK_EXT_direct_mode_display")]
 impl InstanceDirectModeDisplayExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
         *self.ext.release_display_ext.resolve()
     }
 }
 
-#[implements("VK_EXT_sample_locations")]
+#[cfg(feature = "VK_EXT_sample_locations")]
 pub trait InstanceSampleLocationsExtension: Instance {
+    #[implements]
     fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
 }
-#[implements("VK_EXT_sample_locations")]
+#[cfg(feature = "VK_EXT_sample_locations")]
 DerefContainerWithGuardsBracketImpl!(for InstanceSampleLocationsExtension {
+    #[implements]
     ForwardFnPtr!(deref get_physical_device_multisample_properties_ext_fn -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT);
 });
-#[implements("VK_EXT_sample_locations")]
+#[cfg(feature = "VK_EXT_sample_locations")]
 impl InstanceSampleLocationsExtension for InstanceObject {
+    #[implements]
     #[inline(always)]
     fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
         *self.ext.get_physical_device_multisample_properties_ext.resolve()
@@ -2124,7 +2154,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     fn surface_present_mode2_count(&self, surface_info: &VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<u32>
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
         let mut n = 0;
         unsafe {
@@ -2155,7 +2185,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         sink: &mut [VkPresentModeKHR],
     ) -> crate::Result<u32>
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
         let mut n = sink.len() as _;
         unsafe {
@@ -2185,7 +2215,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<Vec<VkPresentModeKHR>>
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
         let n = self.surface_present_mode2_count(surface_info)?;
         if n == 0 {
