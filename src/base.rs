@@ -1131,6 +1131,68 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
     }
 
+    /// Reports capabilities of a physical device
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[implements("Allow1_1APIs")]
+    #[inline]
+    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
+        unsafe {
+            crate::vkfn::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
+        }
+    }
+
+    /// Reports capabilities of a physical device
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[inline]
+    unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
+    where
+        Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
+    {
+        unsafe {
+            self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+        }
+    }
+
+    /// Returns properties of a physical device
+    #[implements]
+    #[inline]
+    fn properties(&self) -> VkPhysicalDeviceProperties {
+        let mut p = std::mem::MaybeUninit::uninit();
+        unsafe {
+            crate::vkfn::get_physical_device_properties(self.native_ptr(), p.as_mut_ptr());
+
+            p.assume_init()
+        }
+    }
+
+    /// Returns properties of a physical device
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[implements("Allow1_1APIs")]
+    #[inline]
+    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>) {
+        unsafe {
+            crate::vkfn::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
+        }
+    }
+
+    /// Returns properties of a physical device
+    /// # Safety
+    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
+    #[implements("VK_KHR_get_physical_device_properties2")]
+    #[inline]
+    unsafe fn properties2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>)
+    where
+        Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
+    {
+        unsafe {
+            self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
+        }
+    }
+
     /// Lists physical device's format capabilities
     #[implements]
     #[inline]
@@ -1148,24 +1210,27 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `out` are safe.
     #[implements("Allow1_1APIs")]
     #[inline]
-    unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR) {
+    unsafe fn format_properties2(&self, format: VkFormat, out: &mut core::mem::MaybeUninit<VkFormatProperties2KHR>) {
         unsafe {
-            crate::vkfn::get_physical_device_format_properties2(self.native_ptr(), format, out);
+            crate::vkfn::get_physical_device_format_properties2(self.native_ptr(), format, out.as_mut_ptr());
         }
     }
 
     /// Lists physical device's format capabilities
     /// # Safety
     /// Caller must guarantee that all write operations to `out` are safe.
-    #[cfg(not(feature = "Allow1_1APIs"))]
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn format_properties2(&self, format: VkFormat, out: &mut VkFormatProperties2KHR)
+    unsafe fn format_properties2_khr(&self, format: VkFormat, out: &mut core::mem::MaybeUninit<VkFormatProperties2KHR>)
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
         unsafe {
-            self.instance().get_physical_device_format_properties2_khr_fn().0(self.native_ptr(), format, out);
+            self.instance().get_physical_device_format_properties2_khr_fn().0(
+                self.native_ptr(),
+                format,
+                out.as_mut_ptr(),
+            );
         }
     }
 
@@ -1201,18 +1266,6 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         }
 
         Ok(unsafe { p.assume_init() })
-    }
-
-    /// Returns properties of a physical device
-    #[implements]
-    #[inline]
-    fn properties(&self) -> VkPhysicalDeviceProperties {
-        let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_physical_device_properties(self.native_ptr(), p.as_mut_ptr());
-
-            p.assume_init()
-        }
     }
 
     /// Reports a count of properties of the queues of the specified physical device
@@ -1354,7 +1407,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         &self,
         samples: VkSampleCountFlags,
         sink: &mut core::mem::MaybeUninit<VkMultisamplePropertiesEXT>,
-    ) {
+    ) where
+        Self::ConcreteInstance: InstanceSampleLocationsExtension,
+    {
         self.instance().get_physical_device_multisample_properties_ext_fn().0(
             self.native_ptr(),
             samples,
@@ -1993,7 +2048,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     ) -> crate::Result<Display<Self>>
     where
         Self: Sized,
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceAcquireXlibDisplayExtension,
     {
         let mut d = core::mem::MaybeUninit::uninit();
 
@@ -2022,7 +2077,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         sink: &mut core::mem::MaybeUninit<VkSurfaceCapabilities2KHR>,
     ) -> crate::Result<()>
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceGetSurfaceCapabilities2Extension,
     {
         unsafe {
             self.instance().get_physical_device_surface_capabilities_2_khr_fn().0(
@@ -2032,57 +2087,6 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             )
             .into_result()
             .map(drop)
-        }
-    }
-
-    /// Returns properties of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>) {
-        unsafe {
-            crate::vkfn::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
-        }
-    }
-
-    /// Returns properties of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[cfg(not(feature = "Allow1_1APIs"))]
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    #[inline]
-    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>)
-    where
-        Self::ConcreteInstance: InstanceExtensions,
-    {
-        unsafe {
-            self.instance().get_physical_device_properties2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
-        }
-    }
-
-    /// Reports capabilities of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
-        unsafe {
-            crate::vkfn::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
-        }
-    }
-
-    /// Reports capabilities of a physical device
-    /// # Safety
-    /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    #[inline]
-    unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
-    where
-        Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
-    {
-        unsafe {
-            self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());
         }
     }
 
