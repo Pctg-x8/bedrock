@@ -758,6 +758,7 @@ pub trait InstanceDebugReportExtension: Instance {
     /// # Safety
     /// * must be created from this Instance object
     /// * must not execute in parallel with any Vulkan commands
+    #[implements]
     #[inline]
     unsafe fn destroy_debug_report_callback_raw(
         &self,
