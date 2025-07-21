@@ -91,6 +91,7 @@ pub fn instance_version() -> crate::Result<Version> {
 type InstanceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, VkInstance>;
 #[implements]
 impl crate::resolver::ResolverInterface for VkInstance {
+    #[inline(always)]
     unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
         unsafe {
             T::from_ptr(core::mem::transmute(crate::vkfn::get_instance_proc_addr(
@@ -100,12 +101,14 @@ impl crate::resolver::ResolverInterface for VkInstance {
         }
     }
 
+    #[inline]
     unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
-        unsafe {
-            F::from_void_fn(
-                crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _)
-                    .unwrap_or_else(|| panic!("function {:?} not found", F::NAME_CSTR)),
-            )
+        match unsafe { crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _) } {
+            Some(x) => unsafe { F::from_void_fn(x) },
+            None => {
+                tracing::error!(name = ?F::NAME_CSTR, "instance function not found, bedrock could not continue");
+                std::process::abort();
+            }
         }
     }
 }
