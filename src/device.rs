@@ -1317,7 +1317,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[implements("VK_EXT_debug_utils")]
     fn set_object_name(&self, info: &crate::DebugUtilsObjectNameInfo) -> crate::Result<()>
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceDebugUtilsExtension,
     {
         unsafe {
             self.instance().set_debug_utils_object_name_ext_fn().0(self.native_ptr(), &info.0)

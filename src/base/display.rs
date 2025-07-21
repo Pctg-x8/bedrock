@@ -86,7 +86,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     #[implements("VK_EXT_direct_mode_display")]
     pub fn release(&self)
     where
-        PhysicalDevice::ConcreteInstance: InstanceExtensions,
+        PhysicalDevice::ConcreteInstance: InstanceDirectModeDisplayExtension,
     {
         unsafe {
             self.1.instance().release_display_ext_fn().0(self.1.native_ptr(), self.native_ptr());

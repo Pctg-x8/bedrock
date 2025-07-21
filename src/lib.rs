@@ -132,7 +132,7 @@ pub trait VkObject: VkHandle {
     #[implements("VK_EXT_debug_utils")]
     fn set_name(&self, name: Option<&core::ffi::CStr>) -> crate::Result<()>
     where
-        Self: DeviceChild<ConcreteDevice: InstanceChild<ConcreteInstance: InstanceExtensions>>,
+        Self: DeviceChild<ConcreteDevice: InstanceChild<ConcreteInstance: InstanceDebugUtilsExtension>>,
         Self::Handle: VkRawHandle,
     {
         self.device()

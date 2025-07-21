@@ -110,179 +110,6 @@ impl crate::resolver::ResolverInterface for VkInstance {
     }
 }
 
-#[implements]
-struct InstanceExtFunctions {
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceProperties2KHR>,
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_features2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFeatures2KHR>,
-    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_format_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
-    #[cfg(feature = "VK_EXT_debug_report")]
-    create_debug_report_callback_ext: InstanceResolvedFn<PFN_vkCreateDebugReportCallbackEXT>,
-    #[cfg(feature = "VK_EXT_debug_report")]
-    destroy_debug_report_callback_ext: InstanceResolvedFn<PFN_vkDestroyDebugReportCallbackEXT>,
-    #[cfg(feature = "VK_EXT_debug_report")]
-    debug_report_message_ext: InstanceResolvedFn<PFN_vkDebugReportMessageEXT>,
-    #[cfg(feature = "VK_EXT_debug_utils")]
-    create_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkCreateDebugUtilsMessengerEXT>,
-    #[cfg(feature = "VK_EXT_debug_utils")]
-    destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkDestroyDebugUtilsMessengerEXT>,
-    #[cfg(feature = "VK_EXT_debug_utils")]
-    set_debug_utils_object_name_ext: InstanceResolvedFn<PFN_vkSetDebugUtilsObjectNameEXT>,
-    #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-    get_physical_device_external_fence_properties_khr:
-        InstanceResolvedFn<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
-    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-    get_randr_output_display_ext: InstanceResolvedFn<PFN_vkGetRandROutputDisplayEXT>,
-    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-    acquire_xlib_display_ext: InstanceResolvedFn<PFN_vkAcquireXlibDisplayEXT>,
-    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-    get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
-    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-    get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
-    #[cfg(feature = "VK_EXT_direct_mode_display")]
-    release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
-    #[cfg(feature = "VK_EXT_sample_locations")]
-    get_physical_device_multisample_properties_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
-}
-#[implements]
-impl InstanceExtFunctions {
-    const fn new(r: VkInstance) -> Self {
-        Self {
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_properties2_khr: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_features2_khr: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_debug_report")]
-            create_debug_report_callback_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_debug_report")]
-            destroy_debug_report_callback_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_debug_report")]
-            debug_report_message_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_debug_utils")]
-            create_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_debug_utils")]
-            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_debug_utils")]
-            set_debug_utils_object_name_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_KHR_external_fence_capabilities")]
-            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-            get_randr_output_display_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-            acquire_xlib_display_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_direct_mode_display")]
-            release_display_ext: InstanceResolvedFn::new(r),
-            #[cfg(feature = "VK_EXT_sample_locations")]
-            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(r),
-        }
-    }
-}
-
-/// Opaque handle to a instance object
-#[derive(VkHandle, VkObject)]
-#[VkObject(type = VK_OBJECT_TYPE_INSTANCE)]
-pub struct InstanceObject {
-    #[handle]
-    handle: VkInstance,
-    #[cfg(feature = "Implements")]
-    ext: InstanceExtFunctions,
-}
-unsafe impl Sync for InstanceObject {}
-unsafe impl Send for InstanceObject {}
-#[implements]
-impl Drop for InstanceObject {
-    fn drop(&mut self) {
-        unsafe {
-            crate::vkfn::destroy_instance(self.handle, core::ptr::null());
-        }
-    }
-}
-impl Instance for InstanceObject {}
-impl InstanceExtensions for InstanceObject {
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
-        *self.ext.get_physical_device_properties2_khr.resolve()
-    }
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR {
-        *self.ext.get_physical_device_features2_khr.resolve()
-    }
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
-        *self.ext.get_physical_device_format_properties2_khr.resolve()
-    }
-
-    #[implements("VK_EXT_debug_report")]
-    fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
-        *self.ext.create_debug_report_callback_ext.resolve()
-    }
-    #[implements("VK_EXT_debug_report")]
-    fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
-        *self.ext.destroy_debug_report_callback_ext.resolve()
-    }
-    #[implements("VK_EXT_debug_report")]
-    fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
-        *self.ext.debug_report_message_ext.resolve()
-    }
-
-    #[implements("VK_EXT_debug_utils")]
-    fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
-        *self.ext.create_debug_utils_messenger_ext.resolve()
-    }
-    #[implements("VK_EXT_debug_utils")]
-    fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
-        *self.ext.destroy_debug_utils_messenger_ext.resolve()
-    }
-    #[implements("VK_EXT_debug_utils")]
-    fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
-        *self.ext.set_debug_utils_object_name_ext.resolve()
-    }
-
-    #[implements("VK_KHR_external_fence_capabilities")]
-    fn get_physical_device_external_fence_properties_khr_fn(
-        &self,
-    ) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
-        *self.ext.get_physical_device_external_fence_properties_khr.resolve()
-    }
-
-    #[implements("VK_EXT_acquire_xlib_display")]
-    fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
-        *self.ext.get_randr_output_display_ext.resolve()
-    }
-    #[implements("VK_EXT_acquire_xlib_display")]
-    fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
-        *self.ext.acquire_xlib_display_ext.resolve()
-    }
-
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
-        *self.ext.get_physical_device_surface_present_modes_2_ext.resolve()
-    }
-
-    #[implements("VK_KHR_get_surface_capabilities2")]
-    fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
-        *self.ext.get_physical_device_surface_capabilities_2_khr.resolve()
-    }
-
-    #[implements("VK_EXT_direct_mode_display")]
-    fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
-        *self.ext.release_display_ext.resolve()
-    }
-
-    #[implements("VK_EXT_sample_locations")]
-    fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
-        *self.ext.get_physical_device_multisample_properties_ext.resolve()
-    }
-}
-
 /// Opaque handle to a physical device object
 ///
 /// ## Platform Dependent Methods: Presentation Support checking functions
@@ -446,43 +273,6 @@ impl<'d> InstanceCreateInfo<'d> {
     pub const fn flags(mut self, flags: InstanceCreateFlags) -> Self {
         self.0.flags = flags.bits();
         self
-    }
-}
-
-impl InstanceObject {
-    /// Create a new Vulkan instance
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
-    /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
-    #[implements]
-    #[inline]
-    pub fn new(info: &InstanceCreateInfo) -> crate::Result<Self> {
-        unsafe { Ok(Self::manage(new_instance_raw(info, None)?)) }
-    }
-
-    /// Constructs from raw handle
-    /// # Safety
-    /// the handle must be valid and not freed
-    pub const unsafe fn manage(handle: VkInstance) -> Self {
-        Self {
-            handle,
-            #[cfg(feature = "Implements")]
-            ext: InstanceExtFunctions::new(handle),
-        }
-    }
-
-    /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> VkInstance {
-        let v = self.handle;
-        core::mem::forget(self);
-
-        v
     }
 }
 
@@ -654,6 +444,62 @@ pub fn instance_extension_properties_cstr_alloc(
 pub fn instance_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
     instance_extension_properties_cstr_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
 }
+/// Opaque handle to a instance object
+#[derive(VkHandle, VkObject)]
+#[VkObject(type = VK_OBJECT_TYPE_INSTANCE)]
+pub struct InstanceObject {
+    #[handle]
+    handle: VkInstance,
+    #[cfg(feature = "Implements")]
+    ext: InstanceExtFunctions,
+}
+unsafe impl Sync for InstanceObject {}
+unsafe impl Send for InstanceObject {}
+#[implements]
+impl Drop for InstanceObject {
+    fn drop(&mut self) {
+        unsafe {
+            crate::vkfn::destroy_instance(self.handle, core::ptr::null());
+        }
+    }
+}
+impl Instance for InstanceObject {}
+impl InstanceObject {
+    /// Create a new Vulkan instance
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `VK_ERROR_LAYER_NOT_PRESENT`
+    /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
+    /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
+    #[implements]
+    #[inline]
+    pub fn new(info: &InstanceCreateInfo) -> crate::Result<Self> {
+        unsafe { Ok(Self::manage(new_instance_raw(info, None)?)) }
+    }
+
+    /// Constructs from raw handle
+    /// # Safety
+    /// the handle must be valid and not freed
+    pub const unsafe fn manage(handle: VkInstance) -> Self {
+        Self {
+            handle,
+            #[cfg(feature = "Implements")]
+            ext: InstanceExtFunctions::new(handle),
+        }
+    }
+
+    /// Purges internal values (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> VkInstance {
+        let v = self.handle;
+        core::mem::forget(self);
+
+        v
+    }
+}
 
 /// A Vulkan Instance interface
 pub trait Instance: VkHandle<Handle = VkInstance> {
@@ -737,49 +583,117 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     }
 }
 DerefContainerWithGuardsBracketImpl!(for Instance {});
-/// VkInstance Extension Function Providers
-pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
-    #[implements("VK_KHR_get_physical_device_properties2")]
+
+/// Extension function caches
+#[implements]
+struct InstanceExtFunctions {
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceProperties2KHR>,
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_features2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFeatures2KHR>,
+    #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+    get_physical_device_format_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
+    #[cfg(feature = "VK_EXT_debug_report")]
+    create_debug_report_callback_ext: InstanceResolvedFn<PFN_vkCreateDebugReportCallbackEXT>,
+    #[cfg(feature = "VK_EXT_debug_report")]
+    destroy_debug_report_callback_ext: InstanceResolvedFn<PFN_vkDestroyDebugReportCallbackEXT>,
+    #[cfg(feature = "VK_EXT_debug_report")]
+    debug_report_message_ext: InstanceResolvedFn<PFN_vkDebugReportMessageEXT>,
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    create_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkCreateDebugUtilsMessengerEXT>,
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkDestroyDebugUtilsMessengerEXT>,
+    #[cfg(feature = "VK_EXT_debug_utils")]
+    set_debug_utils_object_name_ext: InstanceResolvedFn<PFN_vkSetDebugUtilsObjectNameEXT>,
+    #[cfg(feature = "VK_KHR_external_fence_capabilities")]
+    get_physical_device_external_fence_properties_khr:
+        InstanceResolvedFn<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
+    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+    get_randr_output_display_ext: InstanceResolvedFn<PFN_vkGetRandROutputDisplayEXT>,
+    #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+    acquire_xlib_display_ext: InstanceResolvedFn<PFN_vkAcquireXlibDisplayEXT>,
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+    get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
+    #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+    get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
+    #[cfg(feature = "VK_EXT_direct_mode_display")]
+    release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
+    #[cfg(feature = "VK_EXT_sample_locations")]
+    get_physical_device_multisample_properties_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
+}
+#[implements]
+impl InstanceExtFunctions {
+    const fn new(r: VkInstance) -> Self {
+        Self {
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_properties2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_features2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
+            get_physical_device_format_properties2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_report")]
+            create_debug_report_callback_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_report")]
+            destroy_debug_report_callback_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_report")]
+            debug_report_message_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_utils")]
+            create_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_utils")]
+            destroy_debug_utils_messenger_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_debug_utils")]
+            set_debug_utils_object_name_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_external_fence_capabilities")]
+            get_physical_device_external_fence_properties_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+            get_randr_output_display_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_acquire_xlib_display")]
+            acquire_xlib_display_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_full_screen_exclusive")]
+            get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
+            get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_direct_mode_display")]
+            release_display_ext: InstanceResolvedFn::new(r),
+            #[cfg(feature = "VK_EXT_sample_locations")]
+            get_physical_device_multisample_properties_ext: InstanceResolvedFn::new(r),
+        }
+    }
+}
+
+#[implements("VK_KHR_get_physical_device_properties2")]
+pub trait InstanceGetPhysicalDeviceProperties2Extension: Instance {
     fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
-    #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR;
-    #[implements("VK_KHR_get_physical_device_properties2")]
     fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
+}
+#[implements("VK_KHR_get_physical_device_properties2")]
+DerefContainerWithGuardsBracketImpl!(for InstanceGetPhysicalDeviceProperties2Extension {
+    ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
+    ForwardFnPtr!(deref get_physical_device_features2_khr_fn -> PFN_vkGetPhysicalDeviceFeatures2KHR);
+    ForwardFnPtr!(deref get_physical_device_format_properties2_khr_fn -> PFN_vkGetPhysicalDeviceFormatProperties2KHR);
+});
+#[implements("VK_KHR_get_physical_device_properties2")]
+impl InstanceGetPhysicalDeviceProperties2Extension for InstanceObject {
+    #[inline(always)]
+    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+        *self.ext.get_physical_device_properties2_khr.resolve()
+    }
+    #[inline(always)]
+    fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR {
+        *self.ext.get_physical_device_features2_khr.resolve()
+    }
+    #[inline(always)]
+    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+        *self.ext.get_physical_device_format_properties2_khr.resolve()
+    }
+}
 
-    #[implements("VK_EXT_debug_report")]
+#[implements("VK_EXT_debug_report")]
+pub trait InstanceDebugReportExtension: Instance {
     fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT;
-    #[implements("VK_EXT_debug_report")]
     fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT;
-    #[implements("VK_EXT_debug_report")]
     fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT;
-
-    #[implements("VK_EXT_debug_utils")]
-    fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT;
-    #[implements("VK_EXT_debug_utils")]
-    fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT;
-    #[implements("VK_EXT_debug_utils")]
-    fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT;
-
-    #[implements("VK_KHR_external_fence_capabilities")]
-    fn get_physical_device_external_fence_properties_khr_fn(&self)
-    -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
-
-    #[implements("VK_EXT_acquire_xlib_display")]
-    fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
-    #[implements("VK_EXT_acquire_xlib_display")]
-    fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT;
-
-    #[implements("VK_EXT_full_screen_exclusive")]
-    fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
-
-    #[implements("VK_KHR_get_surface_capabilities2")]
-    fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
-
-    #[implements("VK_EXT_direct_mode_display")]
-    fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT;
-
-    #[implements("VK_EXT_sample_locations")]
-    fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
 
     /// Register a debug report callback
     /// # Failures
@@ -789,7 +703,6 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
     ///
     /// # Safety
     /// must not execute in parallel with any Vulkan commands
-    #[implements("VK_EXT_debug_report")]
     #[inline]
     unsafe fn new_debug_report_callback_raw(
         &self,
@@ -811,7 +724,6 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
     }
 
     /// Inject its own messages into the debug stream
-    #[implements("VK_EXT_debug_report")]
     #[inline]
     fn debug_message(
         &self,
@@ -841,7 +753,6 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
     /// # Safety
     /// * must be created from this Instance object
     /// * must not execute in parallel with any Vulkan commands
-    #[implements("VK_EXT_debug_report")]
     #[inline]
     unsafe fn destroy_debug_report_callback_raw(
         &self,
@@ -856,6 +767,34 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
             );
         }
     }
+}
+#[implements("VK_EXT_debug_report")]
+DerefContainerWithGuardsBracketImpl!(for InstanceDebugReportExtension {
+    ForwardFnPtr!(deref create_debug_report_callback_ext_fn -> PFN_vkCreateDebugReportCallbackEXT);
+    ForwardFnPtr!(deref destroy_debug_report_callback_ext_fn -> PFN_vkDestroyDebugReportCallbackEXT);
+    ForwardFnPtr!(deref debug_report_message_ext_fn -> PFN_vkDebugReportMessageEXT);
+});
+#[implements("VK_EXT_debug_report")]
+impl InstanceDebugReportExtension for InstanceObject {
+    #[inline(always)]
+    fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
+        *self.ext.create_debug_report_callback_ext.resolve()
+    }
+    #[inline(always)]
+    fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
+        *self.ext.destroy_debug_report_callback_ext.resolve()
+    }
+    #[inline(always)]
+    fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
+        *self.ext.debug_report_message_ext.resolve()
+    }
+}
+
+#[implements("VK_EXT_debug_utils")]
+pub trait InstanceDebugUtilsExtension: Instance {
+    fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT;
+    fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT;
+    fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT;
 
     /// Create a debug messenger object
     /// # Failures
@@ -865,7 +804,6 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
     ///
     /// # Safety
     /// must not be executed in parallel with any Vulkan commands
-    #[implements("VK_EXT_debug_utils")]
     #[inline]
     unsafe fn new_debug_utils_messenger_raw(
         &self,
@@ -890,7 +828,6 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
     /// # Safety
     /// * must be created from this Instance object
     /// * must not execute in parallel with any Vulkan commands
-    #[implements("VK_EXT_debug_utils")]
     #[inline]
     unsafe fn destroy_debug_utils_messenger_raw(
         &self,
@@ -906,48 +843,132 @@ pub trait InstanceExtensions: VkHandle<Handle = VkInstance> {
         }
     }
 }
-DerefContainerWithGuardsBracketImpl!(for InstanceExtensions {
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    ForwardFnPtr!(deref get_physical_device_features2_khr_fn -> PFN_vkGetPhysicalDeviceFeatures2KHR);
-    #[implements("VK_KHR_get_physical_device_properties2")]
-    ForwardFnPtr!(deref get_physical_device_format_properties2_khr_fn -> PFN_vkGetPhysicalDeviceFormatProperties2KHR);
-
-    #[implements("VK_EXT_debug_report")]
-    ForwardFnPtr!(deref create_debug_report_callback_ext_fn -> PFN_vkCreateDebugReportCallbackEXT);
-    #[implements("VK_EXT_debug_report")]
-    ForwardFnPtr!(deref destroy_debug_report_callback_ext_fn -> PFN_vkDestroyDebugReportCallbackEXT);
-    #[implements("VK_EXT_debug_report")]
-    ForwardFnPtr!(deref debug_report_message_ext_fn -> PFN_vkDebugReportMessageEXT);
-
-    #[implements("VK_EXT_debug_utils")]
+#[implements("VK_EXT_debug_utils")]
+DerefContainerWithGuardsBracketImpl!(for InstanceDebugUtilsExtension {
     ForwardFnPtr!(deref create_debug_utils_messenger_ext_fn -> PFN_vkCreateDebugUtilsMessengerEXT);
-    #[implements("VK_EXT_debug_utils")]
     ForwardFnPtr!(deref destroy_debug_utils_messenger_ext_fn -> PFN_vkDestroyDebugUtilsMessengerEXT);
-    #[implements("VK_EXT_debug_utils")]
     ForwardFnPtr!(deref set_debug_utils_object_name_ext_fn -> PFN_vkSetDebugUtilsObjectNameEXT);
+});
+#[implements("VK_EXT_debug_utils")]
+impl InstanceDebugUtilsExtension for InstanceObject {
+    #[inline(always)]
+    fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
+        *self.ext.create_debug_utils_messenger_ext.resolve()
+    }
+    #[inline(always)]
+    fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
+        *self.ext.destroy_debug_utils_messenger_ext.resolve()
+    }
+    #[inline(always)]
+    fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
+        *self.ext.set_debug_utils_object_name_ext.resolve()
+    }
+}
 
-    #[implements("VK_KHR_external_fence_capabilities")]
+#[implements("VK_KHR_external_fence_capabilities")]
+pub trait InstanceExternalFenceCapabilitiesExtension: Instance {
+    fn get_physical_device_external_fence_properties_khr_fn(&self)
+    -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
+}
+#[implements("VK_KHR_external_fence_capabilities")]
+DerefContainerWithGuardsBracketImpl!(for InstanceExternalFenceCapabilitiesExtension {
     ForwardFnPtr!(deref get_physical_device_external_fence_properties_khr_fn -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR);
+});
+#[implements("VK_KHR_external_fence_capabilities")]
+impl InstanceExternalFenceCapabilitiesExtension for InstanceObject {
+    #[inline(always)]
+    fn get_physical_device_external_fence_properties_khr_fn(
+        &self,
+    ) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+        *self.ext.get_physical_device_external_fence_properties_khr.resolve()
+    }
+}
 
-    #[implements("VK_EXT_acquire_xlib_display")]
+#[implements("VK_EXT_acquire_xlib_display")]
+pub trait InstanceAcquireXlibDisplayExtension: Instance {
+    fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
+    fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT;
+}
+#[implements("VK_EXT_acquire_xlib_display")]
+DerefContainerWithGuardsBracketImpl!(for InstanceAcquireXlibDisplayExtension {
     ForwardFnPtr!(deref get_randr_output_display_ext_fn -> PFN_vkGetRandROutputDisplayEXT);
-    #[implements("VK_EXT_acquire_xlib_display")]
     ForwardFnPtr!(deref acquire_xlib_display_ext_fn -> PFN_vkAcquireXlibDisplayEXT);
+});
+#[implements("VK_EXT_acquire_xlib_display")]
+impl InstanceAcquireXlibDisplayExtension for InstanceObject {
+    #[inline(always)]
+    fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
+        *self.ext.get_randr_output_display_ext.resolve()
+    }
+    #[inline(always)]
+    fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
+        *self.ext.acquire_xlib_display_ext.resolve()
+    }
+}
 
-    #[implements("VK_EXT_full_screen_exclusive")]
+#[implements("VK_EXT_full_screen_exclusive")]
+pub trait InstanceFullScreenExclusiveExtension: Instance {
+    fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
+}
+#[implements("VK_EXT_full_screen_exclusive")]
+DerefContainerWithGuardsBracketImpl!(for InstanceFullScreenExclusiveExtension {
     ForwardFnPtr!(deref get_physical_device_surface_present_modes_2_ext_fn -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
+});
+#[implements("VK_EXT_full_screen_exclusive")]
+impl InstanceFullScreenExclusiveExtension for InstanceObject {
+    #[inline(always)]
+    fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
+        *self.ext.get_physical_device_surface_present_modes_2_ext.resolve()
+    }
+}
 
-    #[implements("VK_KHR_get_surface_capabilities2")]
+#[implements("VK_KHR_get_surface_capabilities2")]
+pub trait InstanceGetSurfaceCapabilities2Extension: Instance {
+    fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
+}
+#[implements("VK_KHR_get_surface_capabilities2")]
+DerefContainerWithGuardBracketImpl!(for InstanceGetSurfaceCapabilities2Extension {
     ForwardFnPtr!(deref get_physical_device_surface_capabilities_2_khr_fn -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR);
+});
+#[implements("VK_KHR_get_surface_capabilities2")]
+impl InstanceGetSurfaceCapabilities2Extension for InstanceObject {
+    #[inline(always)]
+    fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+        *self.ext.get_physical_device_surface_capabilities_2_khr.resolve()
+    }
+}
 
-    #[implements("VK_EXT_direct_mode_display")]
+#[implements("VK_EXT_direct_mode_display")]
+pub trait InstanceDirectModeDisplayExtension: Instance {
+    fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT;
+}
+#[implements("VK_EXT_direct_mode_display")]
+DerefContainerWithGuardsBracketImpl!(for InstanceDirectModeDisplayExtension {
     ForwardFnPtr!(deref release_display_ext_fn -> PFN_vkReleaseDisplayEXT);
+});
+#[implements("VK_EXT_direct_mode_display")]
+impl InstanceDirectModeDisplayExtension for InstanceObject {
+    #[inline(always)]
+    fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
+        *self.ext.release_display_ext.resolve()
+    }
+}
 
-    #[implements("VK_EXT_sample_locations")]
+#[implements("VK_EXT_sample_locations")]
+pub trait InstanceSampleLocationsExtension: Instance {
+    fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
+}
+#[implements("VK_EXT_sample_locations")]
+DerefContainerWithGuardsBracketImpl!(for InstanceSampleLocationsExtension {
     ForwardFnPtr!(deref get_physical_device_multisample_properties_ext_fn -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT);
 });
+#[implements("VK_EXT_sample_locations")]
+impl InstanceSampleLocationsExtension for InstanceObject {
+    #[inline(always)]
+    fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+        *self.ext.get_physical_device_multisample_properties_ext.resolve()
+    }
+}
 
 /// A PhysicalDevice interface
 pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
@@ -1351,7 +1372,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         info: &VkPhysicalDeviceExternalFenceInfoKHR,
         sink: &mut core::mem::MaybeUninit<VkExternalFencePropertiesKHR>,
     ) where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceExternalFenceCapabilitiesExtension,
     {
         unsafe {
             self.instance().get_physical_device_external_fence_properties_khr_fn().0(
@@ -2058,7 +2079,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
     where
-        Self::ConcreteInstance: InstanceExtensions,
+        Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
         unsafe {
             self.instance().get_physical_device_features2_khr_fn().0(self.native_ptr(), sink.as_mut_ptr());

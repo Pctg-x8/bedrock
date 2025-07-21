@@ -8,12 +8,12 @@ GuardsImpl!(for DebugReportCallback {});
 /// Opaque object to a debug report callback object
 #[derive(VkHandle, VkObject, InstanceChild)]
 #[VkObject(type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
-pub struct DebugReportCallbackObject<Instance: crate::Instance + InstanceExtensions>(
+pub struct DebugReportCallbackObject<Instance: crate::Instance + InstanceDebugReportExtension>(
     pub(crate) VkDebugReportCallbackEXT,
     #[parent] pub(crate) Instance,
 );
 #[implements]
-impl<Instance: crate::Instance + InstanceExtensions> Drop for DebugReportCallbackObject<Instance> {
+impl<Instance: crate::Instance + InstanceDebugReportExtension> Drop for DebugReportCallbackObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
@@ -21,10 +21,19 @@ impl<Instance: crate::Instance + InstanceExtensions> Drop for DebugReportCallbac
         }
     }
 }
-unsafe impl<Instance: crate::Instance + InstanceExtensions + Sync> Sync for DebugReportCallbackObject<Instance> {}
-unsafe impl<Instance: crate::Instance + InstanceExtensions + Send> Send for DebugReportCallbackObject<Instance> {}
-impl<Instance: crate::Instance + InstanceExtensions> DebugReportCallback for DebugReportCallbackObject<Instance> {}
-impl<Instance: crate::Instance + InstanceExtensions> DebugReportCallbackObject<Instance> {
+unsafe impl<Instance: crate::Instance + InstanceDebugReportExtension + Sync> Sync
+    for DebugReportCallbackObject<Instance>
+{
+}
+unsafe impl<Instance: crate::Instance + InstanceDebugReportExtension + Send> Send
+    for DebugReportCallbackObject<Instance>
+{
+}
+impl<Instance: crate::Instance + InstanceDebugReportExtension> DebugReportCallback
+    for DebugReportCallbackObject<Instance>
+{
+}
+impl<Instance: crate::Instance + InstanceDebugReportExtension> DebugReportCallbackObject<Instance> {
     /// Register a debug report callback
     /// # Failures
     /// On failure, this command returns
@@ -38,7 +47,7 @@ impl<Instance: crate::Instance + InstanceExtensions> DebugReportCallbackObject<I
         Ok(Self(h, instance))
     }
 }
-impl<Instance: crate::Instance + InstanceExtensions + Clone> DebugReportCallbackObject<&'_ Instance> {
+impl<Instance: crate::Instance + InstanceDebugReportExtension + Clone> DebugReportCallbackObject<&'_ Instance> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DebugReportCallbackObject<Instance> {
