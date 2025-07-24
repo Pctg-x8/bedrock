@@ -92,12 +92,15 @@ macro_rules! GuardsImpl {
         impl<T> $t for std::sync::RwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for std::sync::MutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for parking_lot::MutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::MappedMutexGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for parking_lot::RwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::MappedRwLockWriteGuard<'_, T> where T: $t + ?Sized { $($required)* }
     };
     (for $t: path { $($required: item)* }) => {
         impl<T> $t for std::cell::Ref<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for std::sync::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
         impl<T> $t for parking_lot::RwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
+        impl<T> $t for parking_lot::MappedRwLockReadGuard<'_, T> where T: $t + ?Sized { $($required)* }
 
         GuardsImpl!(for mut $t { $($required)* });
     };
