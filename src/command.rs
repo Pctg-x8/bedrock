@@ -1300,9 +1300,26 @@ impl<'d> CmdRecord<'d> {
     }
 
     /// Update a buffer's contents from host memory
+    /// # Safety
+    /// This wrapper does not provide any checks(simply calls underlying api)
+    #[inline(always)]
+    pub unsafe fn update_buffer_raw(
+        mut self,
+        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
+        dst_offset: DeviceSize,
+        size: DeviceSize,
+        data: *const core::ffi::c_void,
+    ) -> Self {
+        unsafe {
+            crate::vkfn::cmd_update_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
+        }
+        self
+    }
+
+    /// Update a buffer's contents from host memory
     #[inline(always)]
     pub fn update_buffer<T>(
-        mut self,
+        self,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: DeviceSize,
         size: DeviceSize,
@@ -1313,36 +1330,36 @@ impl<'d> CmdRecord<'d> {
             "Updated size exceeds size of datatype"
         );
 
-        unsafe {
-            crate::vkfn::cmd_update_buffer(
-                self.ptr.native_ptr_mut(),
-                dst.native_ptr(),
-                dst_offset,
-                size,
-                data as *const T as *const _,
-            );
-        }
-        self
+        unsafe { self.update_buffer_raw(dst, dst_offset, size, data as *const _ as _) }
     }
 
     /// Update a buffer's contents from host memory(updated entire memory that is length of data size)
     #[inline(always)]
     pub fn update_buffer_exact<T>(
-        mut self,
+        self,
         dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
         dst_offset: DeviceSize,
         data: &T,
     ) -> Self {
+        unsafe { self.update_buffer_raw(dst, dst_offset, core::mem::size_of::<T>() as _, data as *const _ as _) }
+    }
+
+    /// Update a buffer's contents from a slice of host memory
+    #[inline(always)]
+    pub fn update_buffer_slice<T>(
+        self,
+        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
+        dst_offset: DeviceSize,
+        data: &[T],
+    ) -> Self {
         unsafe {
-            crate::vkfn::cmd_update_buffer(
-                self.ptr.native_ptr_mut(),
-                dst.native_ptr(),
+            self.update_buffer_raw(
+                dst,
                 dst_offset,
-                core::mem::size_of::<T>() as _,
-                data as *const T as *const _,
-            );
+                (core::mem::size_of::<T>() * data.len()) as _,
+                data.as_ptr() as _,
+            )
         }
-        self
     }
 }
 
