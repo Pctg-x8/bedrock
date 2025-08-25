@@ -6294,7 +6294,7 @@ const COMMANDS: &'static [Command] = &[
         "GetBufferMemoryRequirements2",
         &[
             ("device", "VkDevice"),
-            ("pInfo", "*const VkBufferMemoryRequirementsInfo2"),
+            ("pInfo", "*const VkBufferMemoryRequirementsInfo2KHR"),
             ("pMemoryRequirements", "*mut VkMemoryRequirements2KHR"),
         ],
     )
@@ -6304,7 +6304,7 @@ const COMMANDS: &'static [Command] = &[
         "GetImageSparseMemoryRequirements2",
         &[
             ("device", "VkDevice"),
-            ("pInfo", "*const VkImageSparseMemoryRequirementsInfo2"),
+            ("pInfo", "*const VkImageSparseMemoryRequirementsInfo2KHR"),
             ("pSparseMemoryRequirementCount", "*mut u32"),
             ("pSparseMemoryRequirements", "*mut VkSparseImageMemoryRequirements2KHR"),
         ],

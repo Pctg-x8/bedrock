@@ -14606,7 +14606,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements2 {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkGetBufferMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
+pub struct PFN_vkGetBufferMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
@@ -14627,7 +14627,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements2KHR {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkGetBufferMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
+pub struct PFN_vkGetBufferMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
@@ -14656,7 +14656,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements2 {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkGetImageSparseMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
+pub struct PFN_vkGetImageSparseMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
@@ -14677,7 +14677,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements2KHR 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkGetImageSparseMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
+pub struct PFN_vkGetImageSparseMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
@@ -16942,9 +16942,9 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkGetImageMemoryRequirements2(device: VkDevice, pInfo: *const VkImageMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
     #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetBufferMemoryRequirements2(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
+    pub fn vkGetBufferMemoryRequirements2(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR);
     #[cfg(feature = "Allow1_1APIs")]
-    pub fn vkGetImageSparseMemoryRequirements2(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
+    pub fn vkGetImageSparseMemoryRequirements2(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR);
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkBindBufferMemory2(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult;
     #[cfg(feature = "Allow1_1APIs")]
