@@ -27,6 +27,9 @@ extern crate xcb;
 #[cfg(feature = "DynamicLoaded")]
 #[cfg(unix)]
 mod libdl;
+#[cfg(feature = "DynamicLoaded")]
+#[cfg(windows)]
+mod libloaderapi;
 
 use cfg_if::cfg_if;
 use derives::*;

@@ -188,7 +188,6 @@ unsafe extern "system" fn {}({})"#,
         sink.write_str(" {\n")?;
 
         writeln!(sink, "    use crate::resolver::ResolverInterface;")?;
-        writeln!(sink, "    use crate::resolver::PFN;\n")?;
         writeln!(
             sink,
             r#"    let fp: {pfn} = unsafe {{ crate::resolver::get_resolver().load_function_unconstrainted() }};"#,
