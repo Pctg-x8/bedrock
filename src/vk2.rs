@@ -415,13 +415,13 @@ pub type VkDebugUtilsMessageSeverityFlagBitsEXT = VkFlags;
 pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000001;
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000002;
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000010;
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000004;
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000100;
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00000008;
+pub const VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: VkDebugUtilsMessageSeverityFlagBitsEXT = 0x00001000;
 
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]

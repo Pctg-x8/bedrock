@@ -1015,9 +1015,9 @@ const FLAGS: &'static [Bitmask] = &[
         "DEBUG_UTILS_MESSAGE_SEVERITY",
         &[
             Bitmask::entry("VERBOSE", 0).extension("EXT", "debug_utils"),
-            Bitmask::entry("INFO", 1).extension("EXT", "debug_utils"),
-            Bitmask::entry("WARNING", 2).extension("EXT", "debug_utils"),
-            Bitmask::entry("ERROR", 3).extension("EXT", "debug_utils"),
+            Bitmask::entry("INFO", 4).extension("EXT", "debug_utils"),
+            Bitmask::entry("WARNING", 8).extension("EXT", "debug_utils"),
+            Bitmask::entry("ERROR", 12).extension("EXT", "debug_utils"),
         ],
     )
     .extension("EXT", "debug_utils"),
