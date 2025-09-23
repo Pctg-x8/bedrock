@@ -32,6 +32,9 @@ cfg_if::cfg_if! {
     } else if #[cfg(feature = "DynamicLoaded")] {
         static GLOBAL_RESOLVER: std::sync::LazyLock<Box<Resolver>> = std::sync::LazyLock::new(|| Box::new(Resolver::new()));
 
+        #[cfg(windows)]
+        pub struct Resolver(crate::libloaderapi::OwnedLibrary);
+        #[cfg(not(windows))]
         pub struct Resolver(crate::libdl::OwnedDylib);
         impl Resolver {
             fn new() -> Self {
@@ -45,8 +48,22 @@ cfg_if::cfg_if! {
                     c"libvulkan.dylib"
                 }
                 #[cfg(windows)]
-                fn libname() -> &'static core::ffi::CStr {
-                    c"vulkan-1.dll"
+                fn libname() -> &'static [u16] {
+                    &[
+                        b'v' as _,
+                        b'u' as _,
+                        b'l' as _,
+                        b'k' as _,
+                        b'a' as _,
+                        b'n' as _,
+                        b'-' as _,
+                        b'1' as _,
+                        b'.' as _,
+                        b'd' as _,
+                        b'l' as _,
+                        b'l' as _,
+                        0
+                    ]
                 }
                 #[cfg(not(any(target_os = "macos", windows)))]
                 fn libname() -> &'static core::ffi::CStr {
@@ -54,10 +71,27 @@ cfg_if::cfg_if! {
                     c"libvulkan.so"
                 }
 
+                #[cfg(windows)]
+                match crate::libloaderapi::OwnedLibrary::open(libname()) {
+                    Ok(x) => Resolver(x),
+                    Err(e) => {
+                        tracing::error!(
+                            reason = ?e,
+                            libpath = ?libname(),
+                            "Failed to open libvulkan, bedrock could not continue"
+                        );
+                        std::process::abort();
+                    }
+                }
+                #[cfg(not(windows))]
                 match crate::libdl::Dylib::open(libname(), crate::libdl::OpenFlags::RTLD_LAZY) {
                     Ok(x) => Resolver(x),
                     Err(e) => {
-                        tracing::error!(reason = ?e, libpath = ?libname(), "Failed to open libvulkan, bedrock could not continue");
+                        tracing::error!(
+                            reason = ?e,
+                            libpath = ?libname(),
+                            "Failed to open libvulkan, bedrock could not continue"
+                        );
                         std::process::abort();
                     }
                 }
@@ -80,7 +114,11 @@ cfg_if::cfg_if! {
                 let p = match self.0.sym(F::NAME_CSTR) {
                     Ok(x) => x.as_ptr(),
                     Err(e) => {
-                        tracing::warn!(name = ?F::NAME_CSTR, reason = ?e, "could not resolve function symbol");
+                        tracing::warn!(
+                            name = ?F::NAME_CSTR,
+                            reason = ?e,
+                            "could not resolve function symbol"
+                        );
                         core::ptr::null_mut()
                     }
                 };

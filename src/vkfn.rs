@@ -1498,8 +1498,6 @@ impl FunctionPointerTable {
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_instance(create_info: *const VkInstanceCreateInfo, allocator: *const VkAllocationCallbacks, instance_out: *mut VkInstance) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateInstance = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_instance = fp; }
     unsafe { (fp.0)(create_info, allocator, instance_out) }
@@ -1507,8 +1505,6 @@ unsafe extern "system" fn stub_create_instance(create_info: *const VkInstanceCre
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_instance(instance: VkInstance, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyInstance = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_instance = fp; }
     unsafe { (fp.0)(instance, allocator) }
@@ -1516,8 +1512,6 @@ unsafe extern "system" fn stub_destroy_instance(instance: VkInstance, allocator:
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_enumerate_physical_devices(instance: VkInstance, physical_devices_count_out: *mut u32, physical_devices_out: *mut VkPhysicalDevice) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEnumeratePhysicalDevices = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.enumerate_physical_devices = fp; }
     unsafe { (fp.0)(instance, physical_devices_count_out, physical_devices_out) }
@@ -1525,8 +1519,6 @@ unsafe extern "system" fn stub_enumerate_physical_devices(instance: VkInstance, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_features(physical_device: VkPhysicalDevice, features_out: *mut VkPhysicalDeviceFeatures) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceFeatures = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_features = fp; }
     unsafe { (fp.0)(physical_device, features_out) }
@@ -1534,8 +1526,6 @@ unsafe extern "system" fn stub_get_physical_device_features(physical_device: VkP
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_format_properties(physical_device: VkPhysicalDevice, format: VkFormat, format_properties_out: *mut VkFormatProperties) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceFormatProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_format_properties = fp; }
     unsafe { (fp.0)(physical_device, format, format_properties_out) }
@@ -1543,8 +1533,6 @@ unsafe extern "system" fn stub_get_physical_device_format_properties(physical_de
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_image_format_properties(physical_device: VkPhysicalDevice, format: VkFormat, image_type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, image_format_properties_out: *mut VkImageFormatProperties) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceImageFormatProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_image_format_properties = fp; }
     unsafe { (fp.0)(physical_device, format, image_type, tiling, usage, flags, image_format_properties_out) }
@@ -1552,8 +1540,6 @@ unsafe extern "system" fn stub_get_physical_device_image_format_properties(physi
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_properties(physical_device: VkPhysicalDevice, properties_out: *mut VkPhysicalDeviceProperties) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_properties = fp; }
     unsafe { (fp.0)(physical_device, properties_out) }
@@ -1561,8 +1547,6 @@ unsafe extern "system" fn stub_get_physical_device_properties(physical_device: V
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_queue_family_properties(physical_device: VkPhysicalDevice, queue_family_properties_count_out: *mut u32, queue_family_properties_out: *mut VkQueueFamilyProperties) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_queue_family_properties = fp; }
     unsafe { (fp.0)(physical_device, queue_family_properties_count_out, queue_family_properties_out) }
@@ -1570,8 +1554,6 @@ unsafe extern "system" fn stub_get_physical_device_queue_family_properties(physi
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_memory_properties(physical_device: VkPhysicalDevice, memory_properties_out: *mut VkPhysicalDeviceMemoryProperties) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceMemoryProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_memory_properties = fp; }
     unsafe { (fp.0)(physical_device, memory_properties_out) }
@@ -1579,8 +1561,6 @@ unsafe extern "system" fn stub_get_physical_device_memory_properties(physical_de
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_instance_proc_addr(instance: VkInstance, name: *const c_char) -> Option<PFN_vkVoidFunction> {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetInstanceProcAddr = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_instance_proc_addr = fp; }
     unsafe { (fp.0)(instance, name) }
@@ -1588,8 +1568,6 @@ unsafe extern "system" fn stub_get_instance_proc_addr(instance: VkInstance, name
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_device_proc_addr(device: VkDevice, name: *const c_char) -> Option<PFN_vkVoidFunction> {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetDeviceProcAddr = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_device_proc_addr = fp; }
     unsafe { (fp.0)(device, name) }
@@ -1597,8 +1575,6 @@ unsafe extern "system" fn stub_get_device_proc_addr(device: VkDevice, name: *con
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_device(physical_device: VkPhysicalDevice, create_info: *const VkDeviceCreateInfo, allocator: *const VkAllocationCallbacks, device_out: *mut VkDevice) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateDevice = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_device = fp; }
     unsafe { (fp.0)(physical_device, create_info, allocator, device_out) }
@@ -1606,8 +1582,6 @@ unsafe extern "system" fn stub_create_device(physical_device: VkPhysicalDevice, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_device(device: VkDevice, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyDevice = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_device = fp; }
     unsafe { (fp.0)(device, allocator) }
@@ -1615,8 +1589,6 @@ unsafe extern "system" fn stub_destroy_device(device: VkDevice, allocator: *cons
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_enumerate_instance_extension_properties(layer_name: *const c_char, property_count_out: *mut u32, properties_out: *mut VkExtensionProperties) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEnumerateInstanceExtensionProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.enumerate_instance_extension_properties = fp; }
     unsafe { (fp.0)(layer_name, property_count_out, properties_out) }
@@ -1624,8 +1596,6 @@ unsafe extern "system" fn stub_enumerate_instance_extension_properties(layer_nam
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_enumerate_device_extension_properties(physical_device: VkPhysicalDevice, layer_name: *const c_char, property_count_out: *mut u32, properties_out: *mut VkExtensionProperties) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEnumerateDeviceExtensionProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.enumerate_device_extension_properties = fp; }
     unsafe { (fp.0)(physical_device, layer_name, property_count_out, properties_out) }
@@ -1633,8 +1603,6 @@ unsafe extern "system" fn stub_enumerate_device_extension_properties(physical_de
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_enumerate_instance_layer_properties(property_count_out: *mut u32, properties_out: *mut VkLayerProperties) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEnumerateInstanceLayerProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.enumerate_instance_layer_properties = fp; }
     unsafe { (fp.0)(property_count_out, properties_out) }
@@ -1642,8 +1610,6 @@ unsafe extern "system" fn stub_enumerate_instance_layer_properties(property_coun
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_enumerate_device_layer_properties(physical_device: VkPhysicalDevice, property_count_out: *mut u32, properties_out: *mut VkLayerProperties) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEnumerateDeviceLayerProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.enumerate_device_layer_properties = fp; }
     unsafe { (fp.0)(physical_device, property_count_out, properties_out) }
@@ -1651,8 +1617,6 @@ unsafe extern "system" fn stub_enumerate_device_layer_properties(physical_device
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_device_queue(device: VkDevice, queue_family_index: u32, queue_index: u32, queue_out: *mut VkQueue) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetDeviceQueue = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_device_queue = fp; }
     unsafe { (fp.0)(device, queue_family_index, queue_index, queue_out) }
@@ -1660,8 +1624,6 @@ unsafe extern "system" fn stub_get_device_queue(device: VkDevice, queue_family_i
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_queue_submit(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo, fence: VkFence) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkQueueSubmit = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_submit = fp; }
     unsafe { (fp.0)(queue, submit_count, submits, fence) }
@@ -1669,8 +1631,6 @@ unsafe extern "system" fn stub_queue_submit(queue: VkQueue, submit_count: u32, s
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_queue_wait_idle(queue: VkQueue) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkQueueWaitIdle = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_wait_idle = fp; }
     unsafe { (fp.0)(queue) }
@@ -1678,8 +1638,6 @@ unsafe extern "system" fn stub_queue_wait_idle(queue: VkQueue) -> VkResult {
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_device_wait_idle(device: VkDevice) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDeviceWaitIdle = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.device_wait_idle = fp; }
     unsafe { (fp.0)(device) }
@@ -1687,8 +1645,6 @@ unsafe extern "system" fn stub_device_wait_idle(device: VkDevice) -> VkResult {
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_allocate_memory(device: VkDevice, allocate_info: *const VkMemoryAllocateInfo, allocator: *const VkAllocationCallbacks, memory_out: *mut VkDeviceMemory) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkAllocateMemory = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.allocate_memory = fp; }
     unsafe { (fp.0)(device, allocate_info, allocator, memory_out) }
@@ -1696,8 +1652,6 @@ unsafe extern "system" fn stub_allocate_memory(device: VkDevice, allocate_info: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_free_memory(device: VkDevice, memory: VkDeviceMemory, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkFreeMemory = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.free_memory = fp; }
     unsafe { (fp.0)(device, memory, allocator) }
@@ -1705,8 +1659,6 @@ unsafe extern "system" fn stub_free_memory(device: VkDevice, memory: VkDeviceMem
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_map_memory(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, data_ptr_out: *mut *mut c_void) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkMapMemory = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.map_memory = fp; }
     unsafe { (fp.0)(device, memory, offset, size, flags, data_ptr_out) }
@@ -1714,8 +1666,6 @@ unsafe extern "system" fn stub_map_memory(device: VkDevice, memory: VkDeviceMemo
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_unmap_memory(device: VkDevice, memory: VkDeviceMemory) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkUnmapMemory = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.unmap_memory = fp; }
     unsafe { (fp.0)(device, memory) }
@@ -1723,8 +1673,6 @@ unsafe extern "system" fn stub_unmap_memory(device: VkDevice, memory: VkDeviceMe
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_flush_mapped_memory_ranges(device: VkDevice, memory_range_count: u32, memory_ranges: *const VkMappedMemoryRange) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkFlushMappedMemoryRanges = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.flush_mapped_memory_ranges = fp; }
     unsafe { (fp.0)(device, memory_range_count, memory_ranges) }
@@ -1732,8 +1680,6 @@ unsafe extern "system" fn stub_flush_mapped_memory_ranges(device: VkDevice, memo
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_invalidate_mapped_memory_ranges(device: VkDevice, memory_range_count: u32, memory_ranges: *const VkMappedMemoryRange) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkInvalidateMappedMemoryRanges = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.invalidate_mapped_memory_ranges = fp; }
     unsafe { (fp.0)(device, memory_range_count, memory_ranges) }
@@ -1741,8 +1687,6 @@ unsafe extern "system" fn stub_invalidate_mapped_memory_ranges(device: VkDevice,
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_device_memory_commitment(device: VkDevice, memory: VkDeviceMemory, committed_memory_bytes_out: *mut VkDeviceSize) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetDeviceMemoryCommitment = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_device_memory_commitment = fp; }
     unsafe { (fp.0)(device, memory, committed_memory_bytes_out) }
@@ -1750,8 +1694,6 @@ unsafe extern "system" fn stub_get_device_memory_commitment(device: VkDevice, me
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_bind_buffer_memory(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memory_offset: VkDeviceSize) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkBindBufferMemory = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.bind_buffer_memory = fp; }
     unsafe { (fp.0)(device, buffer, memory, memory_offset) }
@@ -1759,8 +1701,6 @@ unsafe extern "system" fn stub_bind_buffer_memory(device: VkDevice, buffer: VkBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_bind_image_memory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memory_offset: VkDeviceSize) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkBindImageMemory = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.bind_image_memory = fp; }
     unsafe { (fp.0)(device, image, memory, memory_offset) }
@@ -1768,8 +1708,6 @@ unsafe extern "system" fn stub_bind_image_memory(device: VkDevice, image: VkImag
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_buffer_memory_requirements(device: VkDevice, buffer: VkBuffer, memory_requirements_out: *mut VkMemoryRequirements) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetBufferMemoryRequirements = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_buffer_memory_requirements = fp; }
     unsafe { (fp.0)(device, buffer, memory_requirements_out) }
@@ -1777,8 +1715,6 @@ unsafe extern "system" fn stub_get_buffer_memory_requirements(device: VkDevice, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_image_memory_requirements(device: VkDevice, image: VkImage, memory_requirements_out: *mut VkMemoryRequirements) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetImageMemoryRequirements = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_image_memory_requirements = fp; }
     unsafe { (fp.0)(device, image, memory_requirements_out) }
@@ -1786,8 +1722,6 @@ unsafe extern "system" fn stub_get_image_memory_requirements(device: VkDevice, i
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_image_sparse_memory_requirements(device: VkDevice, image: VkImage, sparse_memory_requirement_count_out: *mut u32, sparse_memory_requirements_out: *mut VkSparseImageMemoryRequirements) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetImageSparseMemoryRequirements = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_image_sparse_memory_requirements = fp; }
     unsafe { (fp.0)(device, image, sparse_memory_requirement_count_out, sparse_memory_requirements_out) }
@@ -1795,8 +1729,6 @@ unsafe extern "system" fn stub_get_image_sparse_memory_requirements(device: VkDe
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_sparse_image_format_properties(physical_device: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, property_count_out: *mut u32, properties_out: *mut VkSparseImageFormatProperties) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_sparse_image_format_properties = fp; }
     unsafe { (fp.0)(physical_device, format, r#type, samples, usage, tiling, property_count_out, properties_out) }
@@ -1804,8 +1736,6 @@ unsafe extern "system" fn stub_get_physical_device_sparse_image_format_propertie
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_queue_bind_sparse(queue: VkQueue, bind_info_count: u32, bind_info: *const VkBindSparseInfo, fence: VkFence) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkQueueBindSparse = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_bind_sparse = fp; }
     unsafe { (fp.0)(queue, bind_info_count, bind_info, fence) }
@@ -1813,8 +1743,6 @@ unsafe extern "system" fn stub_queue_bind_sparse(queue: VkQueue, bind_info_count
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_fence(device: VkDevice, create_info: *const VkFenceCreateInfo, allocator: *const VkAllocationCallbacks, fence_out: *mut VkFence) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateFence = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_fence = fp; }
     unsafe { (fp.0)(device, create_info, allocator, fence_out) }
@@ -1822,8 +1750,6 @@ unsafe extern "system" fn stub_create_fence(device: VkDevice, create_info: *cons
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_fence(device: VkDevice, fence: VkFence, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyFence = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_fence = fp; }
     unsafe { (fp.0)(device, fence, allocator) }
@@ -1831,8 +1757,6 @@ unsafe extern "system" fn stub_destroy_fence(device: VkDevice, fence: VkFence, a
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_reset_fences(device: VkDevice, fence_count: u32, fences: *const VkFence) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkResetFences = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.reset_fences = fp; }
     unsafe { (fp.0)(device, fence_count, fences) }
@@ -1840,8 +1764,6 @@ unsafe extern "system" fn stub_reset_fences(device: VkDevice, fence_count: u32, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_fence_status(device: VkDevice, fence: VkFence) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetFenceStatus = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_fence_status = fp; }
     unsafe { (fp.0)(device, fence) }
@@ -1849,8 +1771,6 @@ unsafe extern "system" fn stub_get_fence_status(device: VkDevice, fence: VkFence
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_wait_for_fences(device: VkDevice, fence_count: u32, fences: *const VkFence, wait_all: VkBool32, timeout: u64) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkWaitForFences = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.wait_for_fences = fp; }
     unsafe { (fp.0)(device, fence_count, fences, wait_all, timeout) }
@@ -1858,8 +1778,6 @@ unsafe extern "system" fn stub_wait_for_fences(device: VkDevice, fence_count: u3
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_semaphore(device: VkDevice, create_info: *const VkSemaphoreCreateInfo, allocator: *const VkAllocationCallbacks, semaphore_out: *mut VkSemaphore) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateSemaphore = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_semaphore = fp; }
     unsafe { (fp.0)(device, create_info, allocator, semaphore_out) }
@@ -1867,8 +1785,6 @@ unsafe extern "system" fn stub_create_semaphore(device: VkDevice, create_info: *
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_semaphore(device: VkDevice, semaphore: VkSemaphore, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroySemaphore = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_semaphore = fp; }
     unsafe { (fp.0)(device, semaphore, allocator) }
@@ -1876,8 +1792,6 @@ unsafe extern "system" fn stub_destroy_semaphore(device: VkDevice, semaphore: Vk
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_event(device: VkDevice, create_info: *const VkEventCreateInfo, allocator: *const VkAllocationCallbacks, event_out: *mut VkEvent) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateEvent = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_event = fp; }
     unsafe { (fp.0)(device, create_info, allocator, event_out) }
@@ -1885,8 +1799,6 @@ unsafe extern "system" fn stub_create_event(device: VkDevice, create_info: *cons
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_event(device: VkDevice, event: VkEvent, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyEvent = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_event = fp; }
     unsafe { (fp.0)(device, event, allocator) }
@@ -1894,8 +1806,6 @@ unsafe extern "system" fn stub_destroy_event(device: VkDevice, event: VkEvent, a
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_event_status(device: VkDevice, event: VkEvent) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetEventStatus = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_event_status = fp; }
     unsafe { (fp.0)(device, event) }
@@ -1903,8 +1813,6 @@ unsafe extern "system" fn stub_get_event_status(device: VkDevice, event: VkEvent
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_set_event(device: VkDevice, event: VkEvent) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkSetEvent = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.set_event = fp; }
     unsafe { (fp.0)(device, event) }
@@ -1912,8 +1820,6 @@ unsafe extern "system" fn stub_set_event(device: VkDevice, event: VkEvent) -> Vk
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_reset_event(device: VkDevice, event: VkEvent) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkResetEvent = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.reset_event = fp; }
     unsafe { (fp.0)(device, event) }
@@ -1921,8 +1827,6 @@ unsafe extern "system" fn stub_reset_event(device: VkDevice, event: VkEvent) -> 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_query_pool(device: VkDevice, create_info: *const VkQueryPoolCreateInfo, allocator: *const VkAllocationCallbacks, query_pool_out: *mut VkQueryPool) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateQueryPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_query_pool = fp; }
     unsafe { (fp.0)(device, create_info, allocator, query_pool_out) }
@@ -1930,8 +1834,6 @@ unsafe extern "system" fn stub_create_query_pool(device: VkDevice, create_info: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_query_pool(device: VkDevice, query_pool: VkQueryPool, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyQueryPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_query_pool = fp; }
     unsafe { (fp.0)(device, query_pool, allocator) }
@@ -1939,8 +1841,6 @@ unsafe extern "system" fn stub_destroy_query_pool(device: VkDevice, query_pool: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_query_pool_results(device: VkDevice, query_pool: VkQueryPool, first_query: u32, query_count: u32, data_size: usize, data_out: *mut c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetQueryPoolResults = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_query_pool_results = fp; }
     unsafe { (fp.0)(device, query_pool, first_query, query_count, data_size, data_out, stride, flags) }
@@ -1948,8 +1848,6 @@ unsafe extern "system" fn stub_get_query_pool_results(device: VkDevice, query_po
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_buffer(device: VkDevice, create_info: *const VkBufferCreateInfo, allocator: *const VkAllocationCallbacks, buffer_out: *mut VkBuffer) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_buffer = fp; }
     unsafe { (fp.0)(device, create_info, allocator, buffer_out) }
@@ -1957,8 +1855,6 @@ unsafe extern "system" fn stub_create_buffer(device: VkDevice, create_info: *con
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_buffer(device: VkDevice, buffer: VkBuffer, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_buffer = fp; }
     unsafe { (fp.0)(device, buffer, allocator) }
@@ -1966,8 +1862,6 @@ unsafe extern "system" fn stub_destroy_buffer(device: VkDevice, buffer: VkBuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_buffer_view(device: VkDevice, create_info: *const VkBufferViewCreateInfo, allocator: *const VkAllocationCallbacks, view_out: *mut VkBufferView) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateBufferView = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_buffer_view = fp; }
     unsafe { (fp.0)(device, create_info, allocator, view_out) }
@@ -1975,8 +1869,6 @@ unsafe extern "system" fn stub_create_buffer_view(device: VkDevice, create_info:
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_buffer_view(device: VkDevice, buffer_view: VkBufferView, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyBufferView = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_buffer_view = fp; }
     unsafe { (fp.0)(device, buffer_view, allocator) }
@@ -1984,8 +1876,6 @@ unsafe extern "system" fn stub_destroy_buffer_view(device: VkDevice, buffer_view
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_image(device: VkDevice, create_info: *const VkImageCreateInfo, allocator: *const VkAllocationCallbacks, image_out: *mut VkImage) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_image = fp; }
     unsafe { (fp.0)(device, create_info, allocator, image_out) }
@@ -1993,8 +1883,6 @@ unsafe extern "system" fn stub_create_image(device: VkDevice, create_info: *cons
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_image(device: VkDevice, image: VkImage, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_image = fp; }
     unsafe { (fp.0)(device, image, allocator) }
@@ -2002,8 +1890,6 @@ unsafe extern "system" fn stub_destroy_image(device: VkDevice, image: VkImage, a
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_image_subresource_layout(device: VkDevice, image: VkImage, subresource: *const VkImageSubresource, layout_out: *mut VkSubresourceLayout) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetImageSubresourceLayout = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_image_subresource_layout = fp; }
     unsafe { (fp.0)(device, image, subresource, layout_out) }
@@ -2011,8 +1897,6 @@ unsafe extern "system" fn stub_get_image_subresource_layout(device: VkDevice, im
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_image_view(device: VkDevice, create_info: *const VkImageViewCreateInfo, allocator: *const VkAllocationCallbacks, view_out: *mut VkImageView) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateImageView = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_image_view = fp; }
     unsafe { (fp.0)(device, create_info, allocator, view_out) }
@@ -2020,8 +1904,6 @@ unsafe extern "system" fn stub_create_image_view(device: VkDevice, create_info: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_image_view(device: VkDevice, image_view: VkImageView, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyImageView = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_image_view = fp; }
     unsafe { (fp.0)(device, image_view, allocator) }
@@ -2029,8 +1911,6 @@ unsafe extern "system" fn stub_destroy_image_view(device: VkDevice, image_view: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_shader_module(device: VkDevice, create_info: *const VkShaderModuleCreateInfo, allocator: *const VkAllocationCallbacks, shader_module_out: *mut VkShaderModule) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateShaderModule = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_shader_module = fp; }
     unsafe { (fp.0)(device, create_info, allocator, shader_module_out) }
@@ -2038,8 +1918,6 @@ unsafe extern "system" fn stub_create_shader_module(device: VkDevice, create_inf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_shader_module(device: VkDevice, shader_module: VkShaderModule, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyShaderModule = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_shader_module = fp; }
     unsafe { (fp.0)(device, shader_module, allocator) }
@@ -2047,8 +1925,6 @@ unsafe extern "system" fn stub_destroy_shader_module(device: VkDevice, shader_mo
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_pipeline_cache(device: VkDevice, create_info: *const VkPipelineCacheCreateInfo, allocator: *const VkAllocationCallbacks, pipeline_cache_out: *mut VkPipelineCache) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreatePipelineCache = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_pipeline_cache = fp; }
     unsafe { (fp.0)(device, create_info, allocator, pipeline_cache_out) }
@@ -2056,8 +1932,6 @@ unsafe extern "system" fn stub_create_pipeline_cache(device: VkDevice, create_in
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_pipeline_cache(device: VkDevice, pipeline_cache: VkPipelineCache, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyPipelineCache = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_pipeline_cache = fp; }
     unsafe { (fp.0)(device, pipeline_cache, allocator) }
@@ -2065,8 +1939,6 @@ unsafe extern "system" fn stub_destroy_pipeline_cache(device: VkDevice, pipeline
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_pipeline_cache_data(device: VkDevice, pipeline_cache: VkPipelineCache, data_size_out: *mut usize, data_out: *mut c_void) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPipelineCacheData = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_pipeline_cache_data = fp; }
     unsafe { (fp.0)(device, pipeline_cache, data_size_out, data_out) }
@@ -2074,8 +1946,6 @@ unsafe extern "system" fn stub_get_pipeline_cache_data(device: VkDevice, pipelin
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_merge_pipeline_caches(device: VkDevice, dst_cache: VkPipelineCache, src_cache_count: u32, src_caches: *const VkPipelineCache) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkMergePipelineCaches = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.merge_pipeline_caches = fp; }
     unsafe { (fp.0)(device, dst_cache, src_cache_count, src_caches) }
@@ -2083,8 +1953,6 @@ unsafe extern "system" fn stub_merge_pipeline_caches(device: VkDevice, dst_cache
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_graphics_pipelines(device: VkDevice, pipeline_cache: VkPipelineCache, create_info_count: u32, create_infos: *const VkGraphicsPipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateGraphicsPipelines = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_graphics_pipelines = fp; }
     unsafe { (fp.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
@@ -2092,8 +1960,6 @@ unsafe extern "system" fn stub_create_graphics_pipelines(device: VkDevice, pipel
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_compute_pipelines(device: VkDevice, pipeline_cache: VkPipelineCache, create_info_count: u32, create_infos: *const VkComputePipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateComputePipelines = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_compute_pipelines = fp; }
     unsafe { (fp.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
@@ -2101,8 +1967,6 @@ unsafe extern "system" fn stub_create_compute_pipelines(device: VkDevice, pipeli
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_pipeline(device: VkDevice, pipeline: VkPipeline, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyPipeline = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_pipeline = fp; }
     unsafe { (fp.0)(device, pipeline, allocator) }
@@ -2110,8 +1974,6 @@ unsafe extern "system" fn stub_destroy_pipeline(device: VkDevice, pipeline: VkPi
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_pipeline_layout(device: VkDevice, create_info: *const VkPipelineLayoutCreateInfo, allocator: *const VkAllocationCallbacks, pipeline_layout_out: *mut VkPipelineLayout) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreatePipelineLayout = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_pipeline_layout = fp; }
     unsafe { (fp.0)(device, create_info, allocator, pipeline_layout_out) }
@@ -2119,8 +1981,6 @@ unsafe extern "system" fn stub_create_pipeline_layout(device: VkDevice, create_i
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_pipeline_layout(device: VkDevice, pipeline_layout: VkPipelineLayout, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyPipelineLayout = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_pipeline_layout = fp; }
     unsafe { (fp.0)(device, pipeline_layout, allocator) }
@@ -2128,8 +1988,6 @@ unsafe extern "system" fn stub_destroy_pipeline_layout(device: VkDevice, pipelin
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_sampler(device: VkDevice, create_info: *const VkSamplerCreateInfo, allocator: *const VkAllocationCallbacks, sampler_out: *mut VkSampler) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateSampler = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_sampler = fp; }
     unsafe { (fp.0)(device, create_info, allocator, sampler_out) }
@@ -2137,8 +1995,6 @@ unsafe extern "system" fn stub_create_sampler(device: VkDevice, create_info: *co
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_sampler(device: VkDevice, sampler: VkSampler, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroySampler = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_sampler = fp; }
     unsafe { (fp.0)(device, sampler, allocator) }
@@ -2146,8 +2002,6 @@ unsafe extern "system" fn stub_destroy_sampler(device: VkDevice, sampler: VkSamp
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_descriptor_set_layout(device: VkDevice, create_info: *const VkDescriptorSetLayoutCreateInfo, allocator: *const VkAllocationCallbacks, set_layout_out: *mut VkDescriptorSetLayout) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateDescriptorSetLayout = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_descriptor_set_layout = fp; }
     unsafe { (fp.0)(device, create_info, allocator, set_layout_out) }
@@ -2155,8 +2009,6 @@ unsafe extern "system" fn stub_create_descriptor_set_layout(device: VkDevice, cr
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_descriptor_set_layout(device: VkDevice, descriptor_set_layout: VkDescriptorSetLayout, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyDescriptorSetLayout = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_descriptor_set_layout = fp; }
     unsafe { (fp.0)(device, descriptor_set_layout, allocator) }
@@ -2164,8 +2016,6 @@ unsafe extern "system" fn stub_destroy_descriptor_set_layout(device: VkDevice, d
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_descriptor_pool(device: VkDevice, create_info: *const VkDescriptorPoolCreateInfo, allocator: *const VkAllocationCallbacks, descriptor_pool_out: *mut VkDescriptorPool) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateDescriptorPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_descriptor_pool = fp; }
     unsafe { (fp.0)(device, create_info, allocator, descriptor_pool_out) }
@@ -2173,8 +2023,6 @@ unsafe extern "system" fn stub_create_descriptor_pool(device: VkDevice, create_i
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_descriptor_pool(device: VkDevice, descriptor_pool: VkDescriptorPool, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyDescriptorPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_descriptor_pool = fp; }
     unsafe { (fp.0)(device, descriptor_pool, allocator) }
@@ -2182,8 +2030,6 @@ unsafe extern "system" fn stub_destroy_descriptor_pool(device: VkDevice, descrip
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_reset_descriptor_pool(device: VkDevice, descriptor_pool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkResetDescriptorPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.reset_descriptor_pool = fp; }
     unsafe { (fp.0)(device, descriptor_pool, flags) }
@@ -2191,8 +2037,6 @@ unsafe extern "system" fn stub_reset_descriptor_pool(device: VkDevice, descripto
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_allocate_descriptor_sets(device: VkDevice, allocate_info: *const VkDescriptorSetAllocateInfo, descriptor_sets_out: *mut VkDescriptorSet) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkAllocateDescriptorSets = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.allocate_descriptor_sets = fp; }
     unsafe { (fp.0)(device, allocate_info, descriptor_sets_out) }
@@ -2200,8 +2044,6 @@ unsafe extern "system" fn stub_allocate_descriptor_sets(device: VkDevice, alloca
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_free_descriptor_sets(device: VkDevice, descriptor_pool: VkDescriptorPool, descriptor_set_count: u32, descriptor_sets: *const VkDescriptorSet) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkFreeDescriptorSets = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.free_descriptor_sets = fp; }
     unsafe { (fp.0)(device, descriptor_pool, descriptor_set_count, descriptor_sets) }
@@ -2209,8 +2051,6 @@ unsafe extern "system" fn stub_free_descriptor_sets(device: VkDevice, descriptor
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_update_descriptor_sets(device: VkDevice, descriptor_write_count: u32, descriptor_writes: *const VkWriteDescriptorSet, descriptor_copy_count: u32, descriptor_copies: *const VkCopyDescriptorSet) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkUpdateDescriptorSets = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.update_descriptor_sets = fp; }
     unsafe { (fp.0)(device, descriptor_write_count, descriptor_writes, descriptor_copy_count, descriptor_copies) }
@@ -2218,8 +2058,6 @@ unsafe extern "system" fn stub_update_descriptor_sets(device: VkDevice, descript
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_framebuffer(device: VkDevice, create_info: *const VkFramebufferCreateInfo, allocator: *const VkAllocationCallbacks, framebuffer_out: *mut VkFramebuffer) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateFramebuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_framebuffer = fp; }
     unsafe { (fp.0)(device, create_info, allocator, framebuffer_out) }
@@ -2227,8 +2065,6 @@ unsafe extern "system" fn stub_create_framebuffer(device: VkDevice, create_info:
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_framebuffer(device: VkDevice, framebuffer: VkFramebuffer, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyFramebuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_framebuffer = fp; }
     unsafe { (fp.0)(device, framebuffer, allocator) }
@@ -2236,8 +2072,6 @@ unsafe extern "system" fn stub_destroy_framebuffer(device: VkDevice, framebuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_render_pass(device: VkDevice, create_info: *const VkRenderPassCreateInfo, allocator: *const VkAllocationCallbacks, render_pass_out: *mut VkRenderPass) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateRenderPass = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_render_pass = fp; }
     unsafe { (fp.0)(device, create_info, allocator, render_pass_out) }
@@ -2245,8 +2079,6 @@ unsafe extern "system" fn stub_create_render_pass(device: VkDevice, create_info:
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_render_pass(device: VkDevice, render_pass: VkRenderPass, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyRenderPass = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_render_pass = fp; }
     unsafe { (fp.0)(device, render_pass, allocator) }
@@ -2254,8 +2086,6 @@ unsafe extern "system" fn stub_destroy_render_pass(device: VkDevice, render_pass
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_render_area_granularity(device: VkDevice, render_pass: VkRenderPass, granularity_out: *mut VkExtent2D) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetRenderAreaGranularity = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_render_area_granularity = fp; }
     unsafe { (fp.0)(device, render_pass, granularity_out) }
@@ -2263,8 +2093,6 @@ unsafe extern "system" fn stub_get_render_area_granularity(device: VkDevice, ren
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_command_pool(device: VkDevice, create_info: *const VkCommandPoolCreateInfo, allocator: *const VkAllocationCallbacks, command_pool_out: *mut VkCommandPool) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateCommandPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_command_pool = fp; }
     unsafe { (fp.0)(device, create_info, allocator, command_pool_out) }
@@ -2272,8 +2100,6 @@ unsafe extern "system" fn stub_create_command_pool(device: VkDevice, create_info
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_command_pool(device: VkDevice, command_pool: VkCommandPool, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyCommandPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_command_pool = fp; }
     unsafe { (fp.0)(device, command_pool, allocator) }
@@ -2281,8 +2107,6 @@ unsafe extern "system" fn stub_destroy_command_pool(device: VkDevice, command_po
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_reset_command_pool(device: VkDevice, command_pool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkResetCommandPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.reset_command_pool = fp; }
     unsafe { (fp.0)(device, command_pool, flags) }
@@ -2290,8 +2114,6 @@ unsafe extern "system" fn stub_reset_command_pool(device: VkDevice, command_pool
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_allocate_command_buffers(device: VkDevice, allocate_info: *const VkCommandBufferAllocateInfo, command_buffers_out: *mut VkCommandBuffer) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkAllocateCommandBuffers = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.allocate_command_buffers = fp; }
     unsafe { (fp.0)(device, allocate_info, command_buffers_out) }
@@ -2299,8 +2121,6 @@ unsafe extern "system" fn stub_allocate_command_buffers(device: VkDevice, alloca
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_free_command_buffers(device: VkDevice, command_pool: VkCommandPool, command_buffer_count: u32, command_buffers: *const VkCommandBuffer) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkFreeCommandBuffers = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.free_command_buffers = fp; }
     unsafe { (fp.0)(device, command_pool, command_buffer_count, command_buffers) }
@@ -2308,8 +2128,6 @@ unsafe extern "system" fn stub_free_command_buffers(device: VkDevice, command_po
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_begin_command_buffer(command_buffer: VkCommandBuffer, begin_info: *const VkCommandBufferBeginInfo) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkBeginCommandBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.begin_command_buffer = fp; }
     unsafe { (fp.0)(command_buffer, begin_info) }
@@ -2317,8 +2135,6 @@ unsafe extern "system" fn stub_begin_command_buffer(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_end_command_buffer(command_buffer: VkCommandBuffer) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEndCommandBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.end_command_buffer = fp; }
     unsafe { (fp.0)(command_buffer) }
@@ -2326,8 +2142,6 @@ unsafe extern "system" fn stub_end_command_buffer(command_buffer: VkCommandBuffe
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_reset_command_buffer(command_buffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkResetCommandBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.reset_command_buffer = fp; }
     unsafe { (fp.0)(command_buffer, flags) }
@@ -2335,8 +2149,6 @@ unsafe extern "system" fn stub_reset_command_buffer(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_bind_pipeline(command_buffer: VkCommandBuffer, pipeline_bind_point: VkPipelineBindPoint, pipeline: VkPipeline) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBindPipeline = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_bind_pipeline = fp; }
     unsafe { (fp.0)(command_buffer, pipeline_bind_point, pipeline) }
@@ -2344,8 +2156,6 @@ unsafe extern "system" fn stub_cmd_bind_pipeline(command_buffer: VkCommandBuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_viewport(command_buffer: VkCommandBuffer, first_viewport: u32, viewport_count: u32, viewports: *const VkViewport) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetViewport = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_viewport = fp; }
     unsafe { (fp.0)(command_buffer, first_viewport, viewport_count, viewports) }
@@ -2353,8 +2163,6 @@ unsafe extern "system" fn stub_cmd_set_viewport(command_buffer: VkCommandBuffer,
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_scissor(command_buffer: VkCommandBuffer, first_scissor: u32, scissor_count: u32, scissors: *const VkRect2D) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetScissor = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_scissor = fp; }
     unsafe { (fp.0)(command_buffer, first_scissor, scissor_count, scissors) }
@@ -2362,8 +2170,6 @@ unsafe extern "system" fn stub_cmd_set_scissor(command_buffer: VkCommandBuffer, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_line_width(command_buffer: VkCommandBuffer, line_width: c_float) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetLineWidth = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_line_width = fp; }
     unsafe { (fp.0)(command_buffer, line_width) }
@@ -2371,8 +2177,6 @@ unsafe extern "system" fn stub_cmd_set_line_width(command_buffer: VkCommandBuffe
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_depth_bias(command_buffer: VkCommandBuffer, depth_bias_constant_factor: c_float, depth_bias_clamp: c_float, depth_bias_slope_factor: c_float) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetDepthBias = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_depth_bias = fp; }
     unsafe { (fp.0)(command_buffer, depth_bias_constant_factor, depth_bias_clamp, depth_bias_slope_factor) }
@@ -2380,8 +2184,6 @@ unsafe extern "system" fn stub_cmd_set_depth_bias(command_buffer: VkCommandBuffe
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_blend_constants(command_buffer: VkCommandBuffer, blend_constants: *const c_float) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetBlendConstants = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_blend_constants = fp; }
     unsafe { (fp.0)(command_buffer, blend_constants) }
@@ -2389,8 +2191,6 @@ unsafe extern "system" fn stub_cmd_set_blend_constants(command_buffer: VkCommand
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_depth_bounds(command_buffer: VkCommandBuffer, min_depth_bounds: c_float, max_depth_bounds: c_float) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetDepthBounds = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_depth_bounds = fp; }
     unsafe { (fp.0)(command_buffer, min_depth_bounds, max_depth_bounds) }
@@ -2398,8 +2198,6 @@ unsafe extern "system" fn stub_cmd_set_depth_bounds(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_stencil_compare_mask(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, compare_mask: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetStencilCompareMask = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_stencil_compare_mask = fp; }
     unsafe { (fp.0)(command_buffer, face_mask, compare_mask) }
@@ -2407,8 +2205,6 @@ unsafe extern "system" fn stub_cmd_set_stencil_compare_mask(command_buffer: VkCo
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_stencil_write_mask(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, write_mask: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetStencilWriteMask = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_stencil_write_mask = fp; }
     unsafe { (fp.0)(command_buffer, face_mask, write_mask) }
@@ -2416,8 +2212,6 @@ unsafe extern "system" fn stub_cmd_set_stencil_write_mask(command_buffer: VkComm
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_stencil_reference(command_buffer: VkCommandBuffer, face_mask: VkStencilFaceFlags, reference: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetStencilReference = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_stencil_reference = fp; }
     unsafe { (fp.0)(command_buffer, face_mask, reference) }
@@ -2425,8 +2219,6 @@ unsafe extern "system" fn stub_cmd_set_stencil_reference(command_buffer: VkComma
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_bind_descriptor_sets(command_buffer: VkCommandBuffer, pipeline_bind_point: VkPipelineBindPoint, layout: VkPipelineLayout, first_set: u32, descriptor_set_count: u32, descriptor_sets: *const VkDescriptorSet, dynamic_offset_count: u32, dynamic_offsets: *const u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBindDescriptorSets = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_bind_descriptor_sets = fp; }
     unsafe { (fp.0)(command_buffer, pipeline_bind_point, layout, first_set, descriptor_set_count, descriptor_sets, dynamic_offset_count, dynamic_offsets) }
@@ -2434,8 +2226,6 @@ unsafe extern "system" fn stub_cmd_bind_descriptor_sets(command_buffer: VkComman
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_bind_index_buffer(command_buffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, index_type: VkIndexType) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBindIndexBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_bind_index_buffer = fp; }
     unsafe { (fp.0)(command_buffer, buffer, offset, index_type) }
@@ -2443,8 +2233,6 @@ unsafe extern "system" fn stub_cmd_bind_index_buffer(command_buffer: VkCommandBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_bind_vertex_buffers(command_buffer: VkCommandBuffer, first_binding: u32, binding_count: u32, buffers: *const VkBuffer, offsets: *const VkDeviceSize) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBindVertexBuffers = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_bind_vertex_buffers = fp; }
     unsafe { (fp.0)(command_buffer, first_binding, binding_count, buffers, offsets) }
@@ -2452,8 +2240,6 @@ unsafe extern "system" fn stub_cmd_bind_vertex_buffers(command_buffer: VkCommand
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_draw(command_buffer: VkCommandBuffer, vertex_count: u32, instance_count: u32, first_vertex: u32, first_index: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdDraw = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_draw = fp; }
     unsafe { (fp.0)(command_buffer, vertex_count, instance_count, first_vertex, first_index) }
@@ -2461,8 +2247,6 @@ unsafe extern "system" fn stub_cmd_draw(command_buffer: VkCommandBuffer, vertex_
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_draw_indexed(command_buffer: VkCommandBuffer, index_count: u32, instance_count: u32, first_index: u32, vertex_offset: i32, first_instance: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdDrawIndexed = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_draw_indexed = fp; }
     unsafe { (fp.0)(command_buffer, index_count, instance_count, first_index, vertex_offset, first_instance) }
@@ -2470,8 +2254,6 @@ unsafe extern "system" fn stub_cmd_draw_indexed(command_buffer: VkCommandBuffer,
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_draw_indirect(command_buffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, draw_count: u32, stride: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdDrawIndirect = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_draw_indirect = fp; }
     unsafe { (fp.0)(command_buffer, buffer, offset, draw_count, stride) }
@@ -2479,8 +2261,6 @@ unsafe extern "system" fn stub_cmd_draw_indirect(command_buffer: VkCommandBuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_draw_indexed_indirect(command_buffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, draw_count: u32, stride: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdDrawIndexedIndirect = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_draw_indexed_indirect = fp; }
     unsafe { (fp.0)(command_buffer, buffer, offset, draw_count, stride) }
@@ -2488,8 +2268,6 @@ unsafe extern "system" fn stub_cmd_draw_indexed_indirect(command_buffer: VkComma
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_dispatch(command_buffer: VkCommandBuffer, group_count_x: u32, group_count_y: u32, group_count_z: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdDispatch = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_dispatch = fp; }
     unsafe { (fp.0)(command_buffer, group_count_x, group_count_y, group_count_z) }
@@ -2497,8 +2275,6 @@ unsafe extern "system" fn stub_cmd_dispatch(command_buffer: VkCommandBuffer, gro
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_dispatch_indirect(command_buffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdDispatchIndirect = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_dispatch_indirect = fp; }
     unsafe { (fp.0)(command_buffer, buffer, offset) }
@@ -2506,8 +2282,6 @@ unsafe extern "system" fn stub_cmd_dispatch_indirect(command_buffer: VkCommandBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_copy_buffer(command_buffer: VkCommandBuffer, src_buffer: VkBuffer, dst_buffer: VkBuffer, region_count: u32, regions: *const VkBufferCopy) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdCopyBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_copy_buffer = fp; }
     unsafe { (fp.0)(command_buffer, src_buffer, dst_buffer, region_count, regions) }
@@ -2515,8 +2289,6 @@ unsafe extern "system" fn stub_cmd_copy_buffer(command_buffer: VkCommandBuffer, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_copy_image(command_buffer: VkCommandBuffer, src_image: VkImage, src_image_layout: VkImageLayout, dst_image: VkImage, dst_image_layout: VkImageLayout, region_count: u32, regions: *const VkImageCopy) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdCopyImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_copy_image = fp; }
     unsafe { (fp.0)(command_buffer, src_image, src_image_layout, dst_image, dst_image_layout, region_count, regions) }
@@ -2524,8 +2296,6 @@ unsafe extern "system" fn stub_cmd_copy_image(command_buffer: VkCommandBuffer, s
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_blit_image(command_buffer: VkCommandBuffer, src_image: VkImage, src_image_layout: VkImageLayout, dst_image: VkImage, dst_image_layout: VkImageLayout, region_count: u32, regions: *const VkImageBlit, filter: VkFilter) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBlitImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_blit_image = fp; }
     unsafe { (fp.0)(command_buffer, src_image, src_image_layout, dst_image, dst_image_layout, region_count, regions, filter) }
@@ -2533,8 +2303,6 @@ unsafe extern "system" fn stub_cmd_blit_image(command_buffer: VkCommandBuffer, s
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_copy_buffer_to_image(command_buffer: VkCommandBuffer, src_buffer: VkBuffer, dst_image: VkImage, dst_image_layout: VkImageLayout, region_count: u32, regions: *const VkBufferImageCopy) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdCopyBufferToImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_copy_buffer_to_image = fp; }
     unsafe { (fp.0)(command_buffer, src_buffer, dst_image, dst_image_layout, region_count, regions) }
@@ -2542,8 +2310,6 @@ unsafe extern "system" fn stub_cmd_copy_buffer_to_image(command_buffer: VkComman
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_copy_image_to_buffer(command_buffer: VkCommandBuffer, src_image: VkImage, src_image_layout: VkImageLayout, dst_buffer: VkBuffer, region_count: u32, regions: *const VkBufferImageCopy) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdCopyImageToBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_copy_image_to_buffer = fp; }
     unsafe { (fp.0)(command_buffer, src_image, src_image_layout, dst_buffer, region_count, regions) }
@@ -2551,8 +2317,6 @@ unsafe extern "system" fn stub_cmd_copy_image_to_buffer(command_buffer: VkComman
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_update_buffer(command_buffer: VkCommandBuffer, dst_buffer: VkBuffer, dst_offset: VkDeviceSize, data_size: VkDeviceSize, data: *const c_void) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdUpdateBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_update_buffer = fp; }
     unsafe { (fp.0)(command_buffer, dst_buffer, dst_offset, data_size, data) }
@@ -2560,8 +2324,6 @@ unsafe extern "system" fn stub_cmd_update_buffer(command_buffer: VkCommandBuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_fill_buffer(command_buffer: VkCommandBuffer, dst_buffer: VkBuffer, dst_offset: VkDeviceSize, size: VkDeviceSize, data: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdFillBuffer = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_fill_buffer = fp; }
     unsafe { (fp.0)(command_buffer, dst_buffer, dst_offset, size, data) }
@@ -2569,8 +2331,6 @@ unsafe extern "system" fn stub_cmd_fill_buffer(command_buffer: VkCommandBuffer, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_clear_color_image(command_buffer: VkCommandBuffer, image: VkImage, image_layout: VkImageLayout, color: *const VkClearColorValue, range_count: u32, ranges: *const VkImageSubresourceRange) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdClearColorImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_clear_color_image = fp; }
     unsafe { (fp.0)(command_buffer, image, image_layout, color, range_count, ranges) }
@@ -2578,8 +2338,6 @@ unsafe extern "system" fn stub_cmd_clear_color_image(command_buffer: VkCommandBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_clear_depth_stencil_image(command_buffer: VkCommandBuffer, image: VkImage, image_layout: VkImageLayout, depth_stencil: *const VkClearDepthStencilValue, range_count: u32, ranges: *const VkImageSubresourceRange) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdClearDepthStencilImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_clear_depth_stencil_image = fp; }
     unsafe { (fp.0)(command_buffer, image, image_layout, depth_stencil, range_count, ranges) }
@@ -2587,8 +2345,6 @@ unsafe extern "system" fn stub_cmd_clear_depth_stencil_image(command_buffer: VkC
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_clear_attachments(command_buffer: VkCommandBuffer, attachment_count: u32, attachments: *const VkClearAttachment, rect_count: u32, rects: *const VkClearRect) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdClearAttachments = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_clear_attachments = fp; }
     unsafe { (fp.0)(command_buffer, attachment_count, attachments, rect_count, rects) }
@@ -2596,8 +2352,6 @@ unsafe extern "system" fn stub_cmd_clear_attachments(command_buffer: VkCommandBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_resolve_image(command_buffer: VkCommandBuffer, src_image: VkImage, src_image_layout: VkImageLayout, dst_image: VkImage, dst_image_layout: VkImageLayout, region_count: u32, regions: *const VkImageResolve) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdResolveImage = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_resolve_image = fp; }
     unsafe { (fp.0)(command_buffer, src_image, src_image_layout, dst_image, dst_image_layout, region_count, regions) }
@@ -2605,8 +2359,6 @@ unsafe extern "system" fn stub_cmd_resolve_image(command_buffer: VkCommandBuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_set_event(command_buffer: VkCommandBuffer, event: VkEvent, stage_mask: VkPipelineStageFlags) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdSetEvent = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_set_event = fp; }
     unsafe { (fp.0)(command_buffer, event, stage_mask) }
@@ -2614,8 +2366,6 @@ unsafe extern "system" fn stub_cmd_set_event(command_buffer: VkCommandBuffer, ev
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_reset_event(command_buffer: VkCommandBuffer, event: VkEvent, stage_mask: VkPipelineStageFlags) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdResetEvent = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_reset_event = fp; }
     unsafe { (fp.0)(command_buffer, event, stage_mask) }
@@ -2623,8 +2373,6 @@ unsafe extern "system" fn stub_cmd_reset_event(command_buffer: VkCommandBuffer, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_wait_events(command_buffer: VkCommandBuffer, event_count: u32, events: *const VkEvent, src_stage_mask: VkPipelineStageFlags, dst_stage_mask: VkPipelineStageFlags, memory_barrier_count: u32, memory_barriers: *const VkMemoryBarrier, buffer_memory_barrier_count: u32, buffer_memory_barriers: *const VkBufferMemoryBarrier, image_memory_barrier_count: u32, image_memory_barriers: *const VkImageMemoryBarrier) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdWaitEvents = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_wait_events = fp; }
     unsafe { (fp.0)(command_buffer, event_count, events, src_stage_mask, dst_stage_mask, memory_barrier_count, memory_barriers, buffer_memory_barrier_count, buffer_memory_barriers, image_memory_barrier_count, image_memory_barriers) }
@@ -2632,8 +2380,6 @@ unsafe extern "system" fn stub_cmd_wait_events(command_buffer: VkCommandBuffer, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_pipeline_barrier(command_buffer: VkCommandBuffer, src_stage_mask: VkPipelineStageFlags, dst_stage_mask: VkPipelineStageFlags, dependency_flags: VkDependencyFlags, memory_barrier_count: u32, memory_barriers: *const VkMemoryBarrier, buffer_memory_barrier_count: u32, buffer_memory_barriers: *const VkBufferMemoryBarrier, image_memory_barrier_count: u32, image_memory_barriers: *const VkImageMemoryBarrier) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdPipelineBarrier = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_pipeline_barrier = fp; }
     unsafe { (fp.0)(command_buffer, src_stage_mask, dst_stage_mask, dependency_flags, memory_barrier_count, memory_barriers, buffer_memory_barrier_count, buffer_memory_barriers, image_memory_barrier_count, image_memory_barriers) }
@@ -2641,8 +2387,6 @@ unsafe extern "system" fn stub_cmd_pipeline_barrier(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_begin_query(command_buffer: VkCommandBuffer, query_pool: VkQueryPool, query: u32, flags: VkQueryControlFlags) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBeginQuery = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_begin_query = fp; }
     unsafe { (fp.0)(command_buffer, query_pool, query, flags) }
@@ -2650,8 +2394,6 @@ unsafe extern "system" fn stub_cmd_begin_query(command_buffer: VkCommandBuffer, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_end_query(command_buffer: VkCommandBuffer, query_pool: VkQueryPool, query: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdEndQuery = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_end_query = fp; }
     unsafe { (fp.0)(command_buffer, query_pool, query) }
@@ -2659,8 +2401,6 @@ unsafe extern "system" fn stub_cmd_end_query(command_buffer: VkCommandBuffer, qu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_reset_query_pool(command_buffer: VkCommandBuffer, query_pool: VkQueryPool, first_query: u32, query_count: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdResetQueryPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_reset_query_pool = fp; }
     unsafe { (fp.0)(command_buffer, query_pool, first_query, query_count) }
@@ -2668,8 +2408,6 @@ unsafe extern "system" fn stub_cmd_reset_query_pool(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_write_timestamp(command_buffer: VkCommandBuffer, pipeline_stage: VkPipelineStageFlags, query_pool: VkQueryPool, query: u32) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdWriteTimestamp = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_write_timestamp = fp; }
     unsafe { (fp.0)(command_buffer, pipeline_stage, query_pool, query) }
@@ -2677,8 +2415,6 @@ unsafe extern "system" fn stub_cmd_write_timestamp(command_buffer: VkCommandBuff
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_copy_query_pool_results(command_buffer: VkCommandBuffer, query_pool: VkQueryPool, first_query: u32, query_count: u32, dst_buffer: VkBuffer, dst_offset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdCopyQueryPoolResults = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_copy_query_pool_results = fp; }
     unsafe { (fp.0)(command_buffer, query_pool, first_query, query_count, dst_buffer, dst_offset, stride, flags) }
@@ -2686,8 +2422,6 @@ unsafe extern "system" fn stub_cmd_copy_query_pool_results(command_buffer: VkCom
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_push_constants(command_buffer: VkCommandBuffer, layout: VkPipelineLayout, stage_flags: VkShaderStageFlags, offset: u32, size: u32, values: *const c_void) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdPushConstants = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_push_constants = fp; }
     unsafe { (fp.0)(command_buffer, layout, stage_flags, offset, size, values) }
@@ -2695,8 +2429,6 @@ unsafe extern "system" fn stub_cmd_push_constants(command_buffer: VkCommandBuffe
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_begin_render_pass(command_buffer: VkCommandBuffer, render_pass_begin_info: *const VkRenderPassBeginInfo, contents: VkSubpassContents) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBeginRenderPass = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_begin_render_pass = fp; }
     unsafe { (fp.0)(command_buffer, render_pass_begin_info, contents) }
@@ -2704,8 +2436,6 @@ unsafe extern "system" fn stub_cmd_begin_render_pass(command_buffer: VkCommandBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_next_subpass(command_buffer: VkCommandBuffer, contents: VkSubpassContents) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdNextSubpass = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_next_subpass = fp; }
     unsafe { (fp.0)(command_buffer, contents) }
@@ -2713,8 +2443,6 @@ unsafe extern "system" fn stub_cmd_next_subpass(command_buffer: VkCommandBuffer,
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_end_render_pass(command_buffer: VkCommandBuffer) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdEndRenderPass = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_end_render_pass = fp; }
     unsafe { (fp.0)(command_buffer) }
@@ -2722,8 +2450,6 @@ unsafe extern "system" fn stub_cmd_end_render_pass(command_buffer: VkCommandBuff
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_execute_commands(command_buffer: VkCommandBuffer, command_buffer_count: u32, command_buffers: *const VkCommandBuffer) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdExecuteCommands = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_execute_commands = fp; }
     unsafe { (fp.0)(command_buffer, command_buffer_count, command_buffers) }
@@ -2732,8 +2458,6 @@ unsafe extern "system" fn stub_cmd_execute_commands(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_enumerate_instance_version(api_version: *mut u32) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkEnumerateInstanceVersion = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.enumerate_instance_version = fp; }
     unsafe { (fp.0)(api_version) }
@@ -2742,8 +2466,6 @@ unsafe extern "system" fn stub_enumerate_instance_version(api_version: *mut u32)
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_trim_command_pool(device: VkDevice, command_pool: VkCommandPool, flags: VkCommandPoolTrimFlags) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkTrimCommandPool = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.trim_command_pool = fp; }
     unsafe { (fp.0)(device, command_pool, flags) }
@@ -2752,8 +2474,6 @@ unsafe extern "system" fn stub_trim_command_pool(device: VkDevice, command_pool:
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_surface_khr(instance: VkInstance, surface: VkSurfaceKHR, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroySurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_surface_khr = fp; }
     unsafe { (fp.0)(instance, surface, allocator) }
@@ -2762,8 +2482,6 @@ unsafe extern "system" fn stub_destroy_surface_khr(instance: VkInstance, surface
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_surface_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, surface: VkSurfaceKHR, supported_out: *mut VkBool32) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceSurfaceSupportKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_surface_support_khr = fp; }
     unsafe { (fp.0)(physical_device, queue_family_index, surface, supported_out) }
@@ -2772,8 +2490,6 @@ unsafe extern "system" fn stub_get_physical_device_surface_support_khr(physical_
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_surface_capabilities_khr(physical_device: VkPhysicalDevice, surface: VkSurfaceKHR, surface_capabilities_out: *mut VkSurfaceCapabilitiesKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_surface_capabilities_khr = fp; }
     unsafe { (fp.0)(physical_device, surface, surface_capabilities_out) }
@@ -2782,8 +2498,6 @@ unsafe extern "system" fn stub_get_physical_device_surface_capabilities_khr(phys
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_surface_formats_khr(physical_device: VkPhysicalDevice, surface: VkSurfaceKHR, surface_format_count_out: *mut u32, surface_formats_out: *mut VkSurfaceFormatKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceSurfaceFormatsKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_surface_formats_khr = fp; }
     unsafe { (fp.0)(physical_device, surface, surface_format_count_out, surface_formats_out) }
@@ -2792,8 +2506,6 @@ unsafe extern "system" fn stub_get_physical_device_surface_formats_khr(physical_
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_surface_present_modes_khr(physical_device: VkPhysicalDevice, surface: VkSurfaceKHR, present_mode_count_out: *mut u32, present_modes_out: *mut VkPresentModeKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceSurfacePresentModesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_surface_present_modes_khr = fp; }
     unsafe { (fp.0)(physical_device, surface, present_mode_count_out, present_modes_out) }
@@ -2802,8 +2514,6 @@ unsafe extern "system" fn stub_get_physical_device_surface_present_modes_khr(phy
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_swapchain_khr(device: VkDevice, create_info: *const VkSwapchainCreateInfoKHR, allocator: *const VkAllocationCallbacks, swapchain_out: *mut VkSwapchainKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateSwapchainKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_swapchain_khr = fp; }
     unsafe { (fp.0)(device, create_info, allocator, swapchain_out) }
@@ -2812,8 +2522,6 @@ unsafe extern "system" fn stub_create_swapchain_khr(device: VkDevice, create_inf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_swapchain_khr(device: VkDevice, swapchain: VkSwapchainKHR, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroySwapchainKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_swapchain_khr = fp; }
     unsafe { (fp.0)(device, swapchain, allocator) }
@@ -2822,8 +2530,6 @@ unsafe extern "system" fn stub_destroy_swapchain_khr(device: VkDevice, swapchain
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_swapchain_images_khr(device: VkDevice, swapchain: VkSwapchainKHR, swapchain_image_count_out: *mut u32, swapchain_images_out: *mut VkImage) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetSwapchainImagesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_swapchain_images_khr = fp; }
     unsafe { (fp.0)(device, swapchain, swapchain_image_count_out, swapchain_images_out) }
@@ -2832,8 +2538,6 @@ unsafe extern "system" fn stub_get_swapchain_images_khr(device: VkDevice, swapch
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_acquire_next_image_khr(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, image_index_out: *mut u32) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkAcquireNextImageKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.acquire_next_image_khr = fp; }
     unsafe { (fp.0)(device, swapchain, timeout, semaphore, fence, image_index_out) }
@@ -2842,8 +2546,6 @@ unsafe extern "system" fn stub_acquire_next_image_khr(device: VkDevice, swapchai
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_queue_present_khr(queue: VkQueue, present_info: *const VkPresentInfoKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkQueuePresentKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_present_khr = fp; }
     unsafe { (fp.0)(queue, present_info) }
@@ -2852,8 +2554,6 @@ unsafe extern "system" fn stub_queue_present_khr(queue: VkQueue, present_info: *
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_xlib_surface_khr(instance: VkInstance, create_info: *const VkXlibSurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateXlibSurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_xlib_surface_khr = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2862,8 +2562,6 @@ unsafe extern "system" fn stub_create_xlib_surface_khr(instance: VkInstance, cre
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_xlib_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, dpy: *mut x11::xlib::Display, visual_id: x11::xlib::VisualID) -> VkBool32 {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_xlib_presentation_support_khr = fp; }
     unsafe { (fp.0)(physical_device, queue_family_index, dpy, visual_id) }
@@ -2872,8 +2570,6 @@ unsafe extern "system" fn stub_get_physical_device_xlib_presentation_support_khr
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_xcb_surface_khr(instance: VkInstance, create_info: *const VkXcbSurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateXcbSurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_xcb_surface_khr = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2882,8 +2578,6 @@ unsafe extern "system" fn stub_create_xcb_surface_khr(instance: VkInstance, crea
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_xcb_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32 {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_xcb_presentation_support_khr = fp; }
     unsafe { (fp.0)(physical_device, queue_family_index, connection, visual_id) }
@@ -2892,8 +2586,6 @@ unsafe extern "system" fn stub_get_physical_device_xcb_presentation_support_khr(
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_wayland_surface_khr(instance: VkInstance, create_info: *const VkWaylandSurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateWaylandSurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_wayland_surface_khr = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2902,8 +2594,6 @@ unsafe extern "system" fn stub_create_wayland_surface_khr(instance: VkInstance, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_wayland_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32, display: *mut c_void) -> VkBool32 {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_wayland_presentation_support_khr = fp; }
     unsafe { (fp.0)(physical_device, queue_family_index, display) }
@@ -2912,8 +2602,6 @@ unsafe extern "system" fn stub_get_physical_device_wayland_presentation_support_
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_android_surface_khr(instance: VkInstance, create_info: *const VkAndroidSurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateAndroidSurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_android_surface_khr = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2922,8 +2610,6 @@ unsafe extern "system" fn stub_create_android_surface_khr(instance: VkInstance, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_win32_surface_khr(instance: VkInstance, create_info: *const VkWin32SurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateWin32SurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_win32_surface_khr = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2932,8 +2618,6 @@ unsafe extern "system" fn stub_create_win32_surface_khr(instance: VkInstance, cr
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_win32_presentation_support_khr(physical_device: VkPhysicalDevice, queue_family_index: u32) -> VkBool32 {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_win32_presentation_support_khr = fp; }
     unsafe { (fp.0)(physical_device, queue_family_index) }
@@ -2942,8 +2626,6 @@ unsafe extern "system" fn stub_get_physical_device_win32_presentation_support_kh
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_macos_surface_mvk(instance: VkInstance, create_info: *const VkMacOSSurfaceCreateInfoMVK, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateMacOSSurfaceMVK = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_macos_surface_mvk = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2952,8 +2634,6 @@ unsafe extern "system" fn stub_create_macos_surface_mvk(instance: VkInstance, cr
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_metal_surface_ext(instance: VkInstance, create_info: *const VkMetalSurfaceCreateInfoEXT, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateMetalSurfaceEXT = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_metal_surface_ext = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -2962,8 +2642,6 @@ unsafe extern "system" fn stub_create_metal_surface_ext(instance: VkInstance, cr
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_display_properties_khr(physical_device: VkPhysicalDevice, property_count_out: *mut u32, properties_out: *mut VkDisplayPropertiesKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceDisplayPropertiesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_display_properties_khr = fp; }
     unsafe { (fp.0)(physical_device, property_count_out, properties_out) }
@@ -2972,8 +2650,6 @@ unsafe extern "system" fn stub_get_physical_device_display_properties_khr(physic
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_display_plane_properties_khr(physical_device: VkPhysicalDevice, property_count_out: *mut u32, properties_out: *mut VkDisplayPlanePropertiesKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_display_plane_properties_khr = fp; }
     unsafe { (fp.0)(physical_device, property_count_out, properties_out) }
@@ -2982,8 +2658,6 @@ unsafe extern "system" fn stub_get_physical_device_display_plane_properties_khr(
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_display_plane_supported_displays_khr(physical_device: VkPhysicalDevice, plane_index: u32, display_count_out: *mut u32, displays_out: *mut VkDisplayKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetDisplayPlaneSupportedDisplaysKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_display_plane_supported_displays_khr = fp; }
     unsafe { (fp.0)(physical_device, plane_index, display_count_out, displays_out) }
@@ -2992,8 +2666,6 @@ unsafe extern "system" fn stub_get_display_plane_supported_displays_khr(physical
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_display_mode_properties_khr(physical_device: VkPhysicalDevice, display: VkDisplayKHR, property_count_out: *mut u32, properties_out: *mut VkDisplayModePropertiesKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetDisplayModePropertiesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_display_mode_properties_khr = fp; }
     unsafe { (fp.0)(physical_device, display, property_count_out, properties_out) }
@@ -3002,8 +2674,6 @@ unsafe extern "system" fn stub_get_display_mode_properties_khr(physical_device: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_display_mode_khr(physical_device: VkPhysicalDevice, display: VkDisplayKHR, create_info: *const VkDisplayModeCreateInfoKHR, allocator: *const VkAllocationCallbacks, mode_out: *mut VkDisplayModeKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateDisplayModeKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_display_mode_khr = fp; }
     unsafe { (fp.0)(physical_device, display, create_info, allocator, mode_out) }
@@ -3012,8 +2682,6 @@ unsafe extern "system" fn stub_create_display_mode_khr(physical_device: VkPhysic
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_display_plane_capabilities_khr(physcial_device: VkPhysicalDevice, mode: VkDisplayModeKHR, plane_index: u32, capabilities_out: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetDisplayPlaneCapabilitiesKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_display_plane_capabilities_khr = fp; }
     unsafe { (fp.0)(physcial_device, mode, plane_index, capabilities_out) }
@@ -3022,8 +2690,6 @@ unsafe extern "system" fn stub_get_display_plane_capabilities_khr(physcial_devic
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_display_plane_surface_khr(instance: VkInstance, create_info: *const VkDisplaySurfaceCreateInfoKHR, allocator: *const VkAllocationCallbacks, surface_out: *mut VkSurfaceKHR) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateDisplayPlaneSurfaceKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_display_plane_surface_khr = fp; }
     unsafe { (fp.0)(instance, create_info, allocator, surface_out) }
@@ -3032,8 +2698,6 @@ unsafe extern "system" fn stub_create_display_plane_surface_khr(instance: VkInst
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_features2(physical_device: VkPhysicalDevice, features_out: *mut VkPhysicalDeviceFeatures2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceFeatures2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_features2 = fp; }
     unsafe { (fp.0)(physical_device, features_out) }
@@ -3042,8 +2706,6 @@ unsafe extern "system" fn stub_get_physical_device_features2(physical_device: Vk
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_format_properties2(physical_device: VkPhysicalDevice, format: VkFormat, format_properties_out: *mut VkFormatProperties2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceFormatProperties2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_format_properties2 = fp; }
     unsafe { (fp.0)(physical_device, format, format_properties_out) }
@@ -3052,8 +2714,6 @@ unsafe extern "system" fn stub_get_physical_device_format_properties2(physical_d
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_image_format_properties2(physical_device: VkPhysicalDevice, image_format_info: *const VkPhysicalDeviceImageFormatInfo2, image_format_properties_out: *mut VkImageFormatProperties2) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceImageFormatProperties2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_image_format_properties2 = fp; }
     unsafe { (fp.0)(physical_device, image_format_info, image_format_properties_out) }
@@ -3062,8 +2722,6 @@ unsafe extern "system" fn stub_get_physical_device_image_format_properties2(phys
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_memory_properties2(physical_device: VkPhysicalDevice, memory_properties_out: *mut VkPhysicalDeviceMemoryProperties2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceMemoryProperties2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_memory_properties2 = fp; }
     unsafe { (fp.0)(physical_device, memory_properties_out) }
@@ -3072,8 +2730,6 @@ unsafe extern "system" fn stub_get_physical_device_memory_properties2(physical_d
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_properties2(physical_device: VkPhysicalDevice, properties_out: *mut VkPhysicalDeviceProperties2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceProperties2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_properties2 = fp; }
     unsafe { (fp.0)(physical_device, properties_out) }
@@ -3082,8 +2738,6 @@ unsafe extern "system" fn stub_get_physical_device_properties2(physical_device: 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_queue_family_properties2(physical_device: VkPhysicalDevice, queue_family_property_count: *mut u32, queue_family_properties_out: *mut VkQueueFamilyProperties2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceQueueFamilyProperties2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_queue_family_properties2 = fp; }
     unsafe { (fp.0)(physical_device, queue_family_property_count, queue_family_properties_out) }
@@ -3092,8 +2746,6 @@ unsafe extern "system" fn stub_get_physical_device_queue_family_properties2(phys
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_physical_device_sparse_image_format_properties2(physical_device: VkPhysicalDevice, format_info: *const VkPhysicalDeviceSparseImageFormatInfo2, property_count: *mut u32, properties_out: *mut VkSparseImageFormatProperties2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_physical_device_sparse_image_format_properties2 = fp; }
     unsafe { (fp.0)(physical_device, format_info, property_count, properties_out) }
@@ -3102,8 +2754,6 @@ unsafe extern "system" fn stub_get_physical_device_sparse_image_format_propertie
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_descriptor_update_template(device: VkDevice, create_info: *const VkDescriptorUpdateTemplateCreateInfo, allocator: *const VkAllocationCallbacks, descriptor_update_template_out: *mut VkDescriptorUpdateTemplate) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateDescriptorUpdateTemplate = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_descriptor_update_template = fp; }
     unsafe { (fp.0)(device, create_info, allocator, descriptor_update_template_out) }
@@ -3112,8 +2762,6 @@ unsafe extern "system" fn stub_create_descriptor_update_template(device: VkDevic
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_destroy_descriptor_update_template(device: VkDevice, descriptor_update_template: VkDescriptorUpdateTemplate, allocator: *const VkAllocationCallbacks) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkDestroyDescriptorUpdateTemplate = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.destroy_descriptor_update_template = fp; }
     unsafe { (fp.0)(device, descriptor_update_template, allocator) }
@@ -3122,8 +2770,6 @@ unsafe extern "system" fn stub_destroy_descriptor_update_template(device: VkDevi
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_update_descriptor_set_with_template(device: VkDevice, descriptor_set: VkDescriptorSet, descriptor_update_template: VkDescriptorUpdateTemplate, data: *const core::ffi::c_void) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkUpdateDescriptorSetWithTemplate = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.update_descriptor_set_with_template = fp; }
     unsafe { (fp.0)(device, descriptor_set, descriptor_update_template, data) }
@@ -3132,8 +2778,6 @@ unsafe extern "system" fn stub_update_descriptor_set_with_template(device: VkDev
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_buffer_memory_requirements2(device: VkDevice, info: *const VkBufferMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetBufferMemoryRequirements2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_buffer_memory_requirements2 = fp; }
     unsafe { (fp.0)(device, info, memory_requirements) }
@@ -3142,8 +2786,6 @@ unsafe extern "system" fn stub_get_buffer_memory_requirements2(device: VkDevice,
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_image_memory_requirements2(device: VkDevice, info: *const VkImageMemoryRequirementsInfo2, memory_requirements: *mut VkMemoryRequirements2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetImageMemoryRequirements2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_image_memory_requirements2 = fp; }
     unsafe { (fp.0)(device, info, memory_requirements) }
@@ -3152,8 +2794,6 @@ unsafe extern "system" fn stub_get_image_memory_requirements2(device: VkDevice, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_get_image_sparse_memory_requirements2(device: VkDevice, info: *const VkImageSparseMemoryRequirementsInfo2, sparse_memory_requirements_count: *mut u32, sparse_memory_requirements: *mut VkSparseImageMemoryRequirements2) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkGetImageSparseMemoryRequirements2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.get_image_sparse_memory_requirements2 = fp; }
     unsafe { (fp.0)(device, info, sparse_memory_requirements_count, sparse_memory_requirements) }
@@ -3162,8 +2802,6 @@ unsafe extern "system" fn stub_get_image_sparse_memory_requirements2(device: VkD
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_bind_buffer_memory2(device: VkDevice, bind_info_count: u32, bind_infos: *const VkBindBufferMemoryInfo) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkBindBufferMemory2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.bind_buffer_memory2 = fp; }
     unsafe { (fp.0)(device, bind_info_count, bind_infos) }
@@ -3172,8 +2810,6 @@ unsafe extern "system" fn stub_bind_buffer_memory2(device: VkDevice, bind_info_c
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_bind_image_memory2(device: VkDevice, bind_info_count: u32, bind_infos: *const VkBindImageMemoryInfo) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkBindImageMemory2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.bind_image_memory2 = fp; }
     unsafe { (fp.0)(device, bind_info_count, bind_infos) }
@@ -3182,8 +2818,6 @@ unsafe extern "system" fn stub_bind_image_memory2(device: VkDevice, bind_info_co
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_create_render_pass2(device: VkDevice, create_info: *const VkRenderPassCreateInfo2, allocator: *const VkAllocationCallbacks, out: *mut VkRenderPass) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCreateRenderPass2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_render_pass2 = fp; }
     unsafe { (fp.0)(device, create_info, allocator, out) }
@@ -3192,8 +2826,6 @@ unsafe extern "system" fn stub_create_render_pass2(device: VkDevice, create_info
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_begin_render_pass2(command_buffer: VkCommandBuffer, begin_info: *const VkRenderPassBeginInfo, begin_subpass_info: *const VkSubpassBeginInfo) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdBeginRenderPass2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_begin_render_pass2 = fp; }
     unsafe { (fp.0)(command_buffer, begin_info, begin_subpass_info) }
@@ -3202,8 +2834,6 @@ unsafe extern "system" fn stub_cmd_begin_render_pass2(command_buffer: VkCommandB
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_next_subpass2(command_buffer: VkCommandBuffer, begin_subpass_info: *const VkSubpassBeginInfo, end_subpass_info: *const VkSubpassEndInfo) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdNextSubpass2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_next_subpass2 = fp; }
     unsafe { (fp.0)(command_buffer, begin_subpass_info, end_subpass_info) }
@@ -3212,8 +2842,6 @@ unsafe extern "system" fn stub_cmd_next_subpass2(command_buffer: VkCommandBuffer
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_end_render_pass2(command_buffer: VkCommandBuffer, end_subpass_info: *const VkSubpassEndInfo) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdEndRenderPass2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_end_render_pass2 = fp; }
     unsafe { (fp.0)(command_buffer, end_subpass_info) }
@@ -3222,8 +2850,6 @@ unsafe extern "system" fn stub_cmd_end_render_pass2(command_buffer: VkCommandBuf
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_pipeline_barrier2(command_buffer: VkCommandBuffer, dependency_info: *const VkDependencyInfo) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdPipelineBarrier2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_pipeline_barrier2 = fp; }
     unsafe { (fp.0)(command_buffer, dependency_info) }
@@ -3232,8 +2858,6 @@ unsafe extern "system" fn stub_cmd_pipeline_barrier2(command_buffer: VkCommandBu
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_queue_submit2(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo2, fence: VkFence) -> VkResult {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkQueueSubmit2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_submit2 = fp; }
     unsafe { (fp.0)(queue, submit_count, submits, fence) }
@@ -3242,8 +2866,6 @@ unsafe extern "system" fn stub_queue_submit2(queue: VkQueue, submit_count: u32, 
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
 unsafe extern "system" fn stub_cmd_push_descriptor_set(command_buffer: VkCommandBuffer, pipeline_bind_point: VkPipelineBindPoint, layout: VkPipelineLayout, set: u32, descriptor_write_count: u32, descriptor_writes: *const VkWriteDescriptorSet) {
     use crate::resolver::ResolverInterface;
-    use crate::resolver::PFN;
-
     let fp: PFN_vkCmdPushDescriptorSet = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.cmd_push_descriptor_set = fp; }
     unsafe { (fp.0)(command_buffer, pipeline_bind_point, layout, set, descriptor_write_count, descriptor_writes) }
