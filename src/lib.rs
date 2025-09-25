@@ -125,6 +125,15 @@ pub(crate) mod alloc;
 mod handle;
 pub use self::handle::*;
 
+/// An result type of querying an array of objects
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ArrayQueryResult {
+    /// Objects are queried successfully
+    Complete,
+    /// There are some objects left(i.e. buffer was too small)
+    Incomplete,
+}
+
 /// An object in Vulkan
 pub trait VkObject: VkHandle {
     const TYPE: VkObjectType;
