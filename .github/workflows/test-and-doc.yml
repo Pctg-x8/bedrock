@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: "actions/checkout@v4"
-      - run: "rustup set profile minimal && rustup install stable && rustup override set stable"
-      - run: "curl -o ./cargo-json-gha-translator -L https://github.com/Pctg-x8/cargo-json-gha-translator/releases/download/v0.1.4/cargo-json-gha-translator-linux && chmod +x ./cargo-json-gha-translator"
+      - name: setup rust
+        run: "rustup set profile minimal && rustup install stable && rustup component add rustfmt && rustup override set stable"
       - name: check fmt
         run: cargo fmt -- --check
       - if: "failure()"

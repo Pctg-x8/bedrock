@@ -1,21 +1,24 @@
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE ImportQualifiedPost #-}
+
 module Main (main) where
 
 import Cargo (Cargo, cargo)
-import qualified Cargo
-import qualified Data.ByteString.Lazy.Char8 as LBS8
+import Cargo qualified
+import Data.ByteString.Lazy.Char8 qualified as LBS8
 import Data.Function ((&))
 import Data.Map (Map)
-import qualified Data.Map as M
+import Data.Map qualified as M
 import Data.Maybe (fromMaybe)
-import qualified DocumentDeployment
-import qualified Features
-import qualified SlackNotification
+import DocumentDeployment qualified
+import Features qualified
+import SlackNotification qualified
 import System.Environment (getArgs)
 import System.FilePath ((</>))
-import qualified Workflow.GitHub.Actions as GHA
+import Workflow.GitHub.Actions qualified as GHA
 import Workflow.GitHub.Actions.JobGroupComposer ((~=>))
-import qualified Workflow.GitHub.Actions.Predefined.Checkout as Checkout
-import qualified Workflow.GitHub.Actions.Predefined.Google.Auth as GoogleAuth
+import Workflow.GitHub.Actions.Predefined.Checkout qualified as Checkout
+import Workflow.GitHub.Actions.Predefined.Google.Auth qualified as GoogleAuth
 
 faultableJob :: GHA.Job -> GHA.Job
 faultableJob job = GHA.jobModifySteps (<> steps) job
@@ -50,7 +53,7 @@ preconditions = GHA.jobForwardingStepOutput "begintime" "begintime" $ GHA.job [r
           GHA.runStep "echo \"begintime=$(date +%s)\" >> $GITHUB_OUTPUT"
 
 checkFormat :: GHA.Job
-checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRepositoryContent $ useRust "stable" Unix $ GHA.job [GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
+checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRepositoryContent $ GHA.job [GHA.namedAs "setup rust" $ GHA.runStep "rustup set profile minimal && rustup install stable && rustup component add rustfmt && rustup override set stable", GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
 
 platformIndependentTest :: GHA.Job
 platformIndependentTest =
