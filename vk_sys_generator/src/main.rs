@@ -171,7 +171,7 @@ fn main() -> std::io::Result<()> {
     o.write(b"\n")?;
     o.write(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
     o.write(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
-    o.write(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\")), link(name = \"vulkan-1\"))]\n")?;
+    o.write(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
     o.write(b"#[rustfmt::skip]\n")?;
     o.write(b"unsafe extern \"system\" {\n")?;
     for c in COMMANDS {

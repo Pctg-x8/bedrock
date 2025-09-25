@@ -16763,7 +16763,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp2 {
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
-#[cfg_attr(all(windows, not(feature = "DynamicLoaded")), link(name = "vulkan-1"))]
+#[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
 #[rustfmt::skip]
 unsafe extern "system" {
     pub fn vkCreateInstance(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult;
