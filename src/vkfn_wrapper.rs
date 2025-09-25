@@ -145,11 +145,11 @@ pub unsafe fn get_physical_device_surface_format_count(
 pub unsafe fn get_physical_device_surface_formats(
     physical_device: VkPhysicalDevice,
     surface: VkSurfaceKHR,
-    sink: &mut [SurfaceFormat],
+    sink: &mut [MaybeUninit<SurfaceFormat>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
     let r = unsafe {
-        crate::vkfn::get_physical_device_surface_formats_khr(physical_device, surface, &mut v, sink.as_mut_ptr())
+        crate::vkfn::get_physical_device_surface_formats_khr(physical_device, surface, &mut v, sink.as_mut_ptr() as _)
             .into_result()?
     };
 
@@ -181,7 +181,7 @@ pub unsafe fn get_physical_device_surface_present_mode_count(
 pub unsafe fn get_physical_device_surface_present_modes(
     physical_device: VkPhysicalDevice,
     surface: VkSurfaceKHR,
-    sink: &mut [PresentMode],
+    sink: &mut [MaybeUninit<PresentMode>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
     let r = unsafe {
@@ -217,11 +217,11 @@ pub unsafe fn get_physical_device_display_property_count(physical_device: VkPhys
 #[inline]
 pub unsafe fn get_physical_device_display_properties(
     physical_device: VkPhysicalDevice,
-    sink: &mut [DisplayProperties],
+    sink: &mut [MaybeUninit<DisplayProperties>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
     let r = unsafe {
-        crate::vkfn::get_physical_device_display_properties_khr(physical_device, &mut v, sink.as_mut_ptr())
+        crate::vkfn::get_physical_device_display_properties_khr(physical_device, &mut v, sink.as_mut_ptr() as _)
             .into_result()?
     };
 
@@ -250,11 +250,11 @@ pub unsafe fn get_physical_device_display_plane_property_count(
 #[inline]
 pub unsafe fn get_physical_device_display_plane_properties(
     physical_device: VkPhysicalDevice,
-    sink: &mut [DisplayPlaneProperties],
+    sink: &mut [MaybeUninit<DisplayPlaneProperties>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
     let r = unsafe {
-        crate::vkfn::get_physical_device_display_plane_properties_khr(physical_device, &mut v, sink.as_mut_ptr())
+        crate::vkfn::get_physical_device_display_plane_properties_khr(physical_device, &mut v, sink.as_mut_ptr() as _)
             .into_result()?
     };
 
@@ -286,7 +286,7 @@ pub unsafe fn get_display_mode_property_count(
 pub unsafe fn get_display_mode_properties(
     physical_device: VkPhysicalDevice,
     display: VkDisplayKHR,
-    sink: &mut [DisplayModeProperties],
+    sink: &mut [MaybeUninit<DisplayModeProperties>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
     let r = unsafe {
@@ -337,12 +337,17 @@ pub unsafe fn get_display_plane_supported_display_count(
 pub unsafe fn get_display_plane_supported_displays(
     physical_device: VkPhysicalDevice,
     plane_index: u32,
-    sink: &mut [VkDisplayKHR],
+    sink: &mut [MaybeUninit<VkDisplayKHR>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
     let r = unsafe {
-        crate::vkfn::get_display_plane_supported_displays_khr(physical_device, plane_index, &mut v, sink.as_mut_ptr())
-            .into_result()?
+        crate::vkfn::get_display_plane_supported_displays_khr(
+            physical_device,
+            plane_index,
+            &mut v,
+            sink.as_mut_ptr() as _,
+        )
+        .into_result()?
     };
 
     Ok((v, r))
@@ -406,11 +411,12 @@ pub unsafe fn get_swapchain_image_count(device: VkDevice, swapchain: VkSwapchain
 pub unsafe fn get_swapchain_images(
     device: VkDevice,
     swapchain: VkSwapchainKHR,
-    sink: &mut [VkImage],
+    sink: &mut [MaybeUninit<VkImage>],
 ) -> crate::Result<(u32, VkResult)> {
     let mut v = sink.len() as _;
-    let r =
-        unsafe { crate::vkfn::get_swapchain_images_khr(device, swapchain, &mut v, sink.as_mut_ptr()).into_result()? };
+    let r = unsafe {
+        crate::vkfn::get_swapchain_images_khr(device, swapchain, &mut v, sink.as_mut_ptr() as _).into_result()?
+    };
 
     Ok((v, r))
 }
@@ -572,10 +578,10 @@ pub unsafe fn destroy_command_pool(
 pub unsafe fn allocate_command_buffers(
     device: VkDevice,
     allocation_info: &CommandBufferAllocateInfo,
-    sink: &mut [VkCommandBuffer],
+    sink: &mut [MaybeUninit<VkCommandBuffer>],
 ) -> crate::Result<()> {
     unsafe {
-        crate::vkfn::allocate_command_buffers(device, allocation_info as *const _ as _, sink.as_mut_ptr())
+        crate::vkfn::allocate_command_buffers(device, allocation_info as *const _ as _, sink.as_mut_ptr() as _)
             .into_result()
             .map(drop)
     }
@@ -1036,8 +1042,10 @@ pub unsafe fn create_graphics_pipelines_unchecked(
     pipeline_cache: Option<VkPipelineCache>,
     create_infos: &[GraphicsPipelineCreateInfo],
     allocation_callbacks: Option<&VkAllocationCallbacks>,
-    results: &mut [VkPipeline],
+    results: &mut [MaybeUninit<VkPipeline>],
 ) -> crate::Result<()> {
+    debug_assert!(results.len() >= create_infos.len());
+
     unsafe {
         crate::vkfn::create_graphics_pipelines(
             device,
@@ -1045,7 +1053,7 @@ pub unsafe fn create_graphics_pipelines_unchecked(
             create_infos.len() as _,
             create_infos.as_ptr() as _,
             opt_pointer(allocation_callbacks),
-            results.as_mut_ptr(),
+            results.as_mut_ptr() as _,
         )
         .into_result()
         .map(drop)
@@ -1059,9 +1067,15 @@ pub unsafe fn create_graphics_pipeline_array<const N: usize>(
     create_infos: &[GraphicsPipelineCreateInfo; N],
     allocation_callbacks: Option<&VkAllocationCallbacks>,
 ) -> crate::Result<[VkPipeline; N]> {
-    let mut results = [VkPipeline::NULL; N];
+    let mut results = [const { unsafe { MaybeUninit::zeroed().assume_init() } }; N];
     unsafe {
-        create_graphics_pipelines_unchecked(device, pipeline_cache, create_infos, allocation_callbacks, &mut results)?;
+        create_graphics_pipelines_unchecked(
+            device,
+            pipeline_cache,
+            create_infos,
+            allocation_callbacks,
+            core::mem::transmute(&mut results[..]),
+        )?;
     }
 
     Ok(results)
@@ -1125,7 +1139,7 @@ pub unsafe fn get_pipeline_cache_data_byte_length(
 pub unsafe fn get_pipeline_cache_data(
     device: VkDevice,
     pipeline_cache: VkPipelineCache,
-    sink: &mut [u8],
+    sink: &mut [MaybeUninit<u8>],
 ) -> crate::Result<(usize, VkResult)> {
     let mut len = sink.len();
     let r = unsafe {
