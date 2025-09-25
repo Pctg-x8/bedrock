@@ -53,7 +53,7 @@ preconditions = GHA.jobForwardingStepOutput "begintime" "begintime" $ GHA.job [r
           GHA.runStep "echo \"begintime=$(date +%s)\" >> $GITHUB_OUTPUT"
 
 checkFormat :: GHA.Job
-checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRepositoryContent $ GHA.job [GHA.namedAs "setup rust" $ GHA.runStep "rustup set profile minimal && rustup install stable && rustup component add rustfmt && rustup override set stable", GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
+checkFormat = faultableJob $ GHA.namedAs "Check Format" $ useRepositoryContent $ GHA.job [GHA.namedAs "setup rust" $ GHA.runStep "rustup set profile minimal && rustup install stable && rustup component add --toolchain stable rustfmt && rustup override set stable", GHA.namedAs "check fmt" $ GHA.runStep "cargo fmt -- --check"]
 
 platformIndependentTest :: GHA.Job
 platformIndependentTest =

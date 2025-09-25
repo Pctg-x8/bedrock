@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: "actions/checkout@v4"
       - name: setup rust
-        run: "rustup set profile minimal && rustup install stable && rustup component add rustfmt && rustup override set stable"
+        run: "rustup set profile minimal && rustup install stable && rustup component add --toolchain stable rustfmt && rustup override set stable"
       - name: check fmt
         run: cargo fmt -- --check
       - if: "failure()"
