@@ -6,14 +6,6 @@ pub(crate) const fn empty_sink_buffer<T>() -> Vec<T> {
 }
 
 #[inline(always)]
-pub(crate) unsafe fn alloc_sink_buffer<T>(count: usize) -> Vec<T> {
-    let mut xs = Vec::with_capacity(count);
-    unsafe { xs.set_len(count) };
-
-    xs
-}
-
-#[inline(always)]
 pub(crate) fn collect_vec<T>(iter: impl IntoIterator<Item = T>) -> Vec<T> {
     Vec::from_iter(iter)
 }

@@ -31,14 +31,14 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     /// Query the memory requirements for a sparse image
     #[implements]
     #[inline]
-    fn sparse_requirements(&self, sink: &mut [VkSparseImageMemoryRequirements]) -> u32 {
+    fn sparse_requirements(&self, sink: &mut [core::mem::MaybeUninit<VkSparseImageMemoryRequirements>]) -> u32 {
         let mut n = sink.len() as _;
         unsafe {
             crate::vkfn::get_image_sparse_memory_requirements(
                 self.device_handle(),
                 self.native_ptr(),
                 &mut n,
-                sink.as_mut_ptr(),
+                sink.as_mut_ptr() as _,
             );
         }
 
@@ -48,14 +48,17 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     /// Query the memory requirements for a sparse image
     #[implements("alloc")]
     fn sparse_requirements_alloc(&self) -> Vec<VkSparseImageMemoryRequirements> {
-        let n = self.sparse_requirement_count();
+        let n = self.sparse_requirement_count() as usize;
         if n == 0 {
             // no items
             return crate::alloc::empty_sink_buffer();
         }
 
-        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.sparse_requirements(&mut xs);
+        let mut xs = Vec::with_capacity(n);
+        let n = self.sparse_requirements(xs.spare_capacity_mut()) as usize;
+        unsafe {
+            xs.set_len(n);
+        }
 
         xs
     }

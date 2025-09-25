@@ -52,7 +52,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    pub fn mode_properties(&self, sink: &mut [DisplayModeProperties]) -> crate::Result<u32> {
+    pub fn mode_properties(&self, sink: &mut [core::mem::MaybeUninit<DisplayModeProperties>]) -> crate::Result<u32> {
         let mut n = sink.len() as _;
         unsafe {
             crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, sink.as_mut_ptr() as _)
@@ -70,14 +70,17 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements("alloc")]
     pub fn mode_properties_alloc(&self) -> crate::Result<Vec<DisplayModeProperties>> {
-        let n = self.mode_property_count()?;
+        let n = self.mode_property_count()? as usize;
         if n == 0 {
             // no items
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.mode_properties(&mut xs)?;
+        let mut xs = Vec::with_capacity(n);
+        self.mode_properties(&mut xs.spare_capacity_mut()[..n])?;
+        unsafe {
+            xs.set_len(n);
+        }
 
         Ok(xs)
     }

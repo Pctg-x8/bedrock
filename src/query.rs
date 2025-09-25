@@ -148,7 +148,12 @@ pub trait QueryPool: VkHandle<Handle = VkQueryPool> + DeviceChildHandle {
     /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements]
     #[inline]
-    fn results<T>(&self, offset: u32, sink: &mut [T], flags: QueryResultFlags) -> QueryResult<()> {
+    fn results<T>(
+        &self,
+        offset: u32,
+        sink: &mut [core::mem::MaybeUninit<T>],
+        flags: QueryResultFlags,
+    ) -> QueryResult<()> {
         unsafe {
             QueryResult::from_vk(crate::vkfn::get_query_pool_results(
                 self.device_handle(),
@@ -173,7 +178,12 @@ pub trait QueryPool: VkHandle<Handle = VkQueryPool> + DeviceChildHandle {
     #[implements]
     fn result_array<const N: usize, T>(&self, offset: u32, flags: QueryResultFlags) -> QueryResult<[T; N]> {
         let mut sink = [const { unsafe { core::mem::MaybeUninit::<T>::uninit().assume_init() } }; N];
-        self.results(offset, &mut sink, flags).map(move |_| sink)
+        self.results(
+            offset,
+            unsafe { core::mem::transmute::<&mut [T], &mut [core::mem::MaybeUninit<T>]>(&mut sink[..]) },
+            flags,
+        )
+        .map(move |_| sink)
     }
 
     /// Copy results of queries in a query pool to a host memory region
@@ -185,9 +195,18 @@ pub trait QueryPool: VkHandle<Handle = VkQueryPool> + DeviceChildHandle {
     /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements("alloc")]
     fn results64_alloc(&self, query_range: core::ops::Range<u32>, flags: QueryResultFlags) -> QueryResult<Vec<u64>> {
-        let mut v = unsafe { crate::alloc::alloc_sink_buffer(query_range.len()) };
-        self.results(query_range.start, &mut v, flags | QueryResultFlags::WIDE)
-            .map(move |_| v)
+        let mut v = Vec::with_capacity(query_range.len());
+        self.results(
+            query_range.start,
+            &mut v.spare_capacity_mut()[..query_range.len()],
+            flags | QueryResultFlags::WIDE,
+        )
+        .map(|_| {
+            unsafe {
+                v.set_len(query_range.len());
+            }
+            v
+        })
     }
 
     /// Copy results of queries in a query pool to a host memory region
@@ -199,8 +218,18 @@ pub trait QueryPool: VkHandle<Handle = VkQueryPool> + DeviceChildHandle {
     /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements("alloc")]
     fn results32_alloc(&self, query_range: core::ops::Range<u32>, flags: QueryResultFlags) -> QueryResult<Vec<u32>> {
-        let mut v = unsafe { crate::alloc::alloc_sink_buffer(query_range.len()) };
-        self.results(query_range.start, &mut v, flags).map(move |_| v)
+        let mut v = Vec::with_capacity(query_range.len());
+        self.results(
+            query_range.start,
+            &mut v.spare_capacity_mut()[..query_range.len()],
+            flags,
+        )
+        .map(move |_| {
+            unsafe {
+                v.set_len(query_range.len());
+            }
+            v
+        })
     }
 }
 

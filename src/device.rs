@@ -1011,7 +1011,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     unsafe fn allocate_command_buffers<'s>(
         &'s self,
         info: &CommandBufferAllocateInfo,
-        sink: &mut [CommandBufferObject<&'s Self>],
+        sink: &mut [core::mem::MaybeUninit<CommandBufferObject<&'s Self>>],
     ) -> crate::Result<()> {
         assert_eq!(info.0.commandBufferCount as usize, sink.len());
 
@@ -1036,9 +1036,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         &'s self,
         info: &CommandBufferAllocateInfo,
     ) -> crate::Result<Vec<CommandBufferObject<&'s Self>>> {
-        let mut sink = unsafe { crate::alloc::alloc_sink_buffer(info.0.commandBufferCount as _) };
+        let mut sink = Vec::with_capacity(info.0.commandBufferCount as _);
         unsafe {
-            self.allocate_command_buffers(info, &mut sink)?;
+            self.allocate_command_buffers(info, sink.spare_capacity_mut())?;
+            sink.set_len(info.0.commandBufferCount as _);
         }
 
         Ok(sink)

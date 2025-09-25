@@ -102,11 +102,16 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    fn images(&self, sink: &mut [VkImage]) -> crate::Result<u32> {
+    fn images(&self, sink: &mut [core::mem::MaybeUninit<VkImage>]) -> crate::Result<u32> {
         let mut n = sink.len() as _;
         unsafe {
-            crate::vkfn::get_swapchain_images_khr(self.device_handle(), self.native_ptr(), &mut n, sink.as_mut_ptr())
-                .into_result()?;
+            crate::vkfn::get_swapchain_images_khr(
+                self.device_handle(),
+                self.native_ptr(),
+                &mut n,
+                sink.as_mut_ptr() as _,
+            )
+            .into_result()?;
         }
 
         Ok(n)
@@ -123,14 +128,17 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     where
         Self: Sized,
     {
-        let n = self.image_count()?;
+        let n = self.image_count()? as usize;
         if n == 0 {
             // no items
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = unsafe { crate::alloc::alloc_sink_buffer(n as _) };
-        self.images(&mut xs)?;
+        let mut xs = Vec::with_capacity(n);
+        let n = self.images(xs.spare_capacity_mut())? as usize;
+        unsafe {
+            xs.set_len(n);
+        }
 
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
             crate::SwapchainImage(r, self, self.size().with_depth(1))
