@@ -17318,3 +17318,449 @@ pub const VK_KHR_SYNCHRONIZATION2_EXTENSION_NAME: &'static str = "VK_KHR_synchro
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
 pub const VK_KHR_SYNCHRONIZATION2_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME: &'static str = "VK_KHR_timeline_semaphore";
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_KHR_TIMELINE_SEMAPHORE_SPEC_VERSION: usize = 2;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub type VkSemaphoreTypeKHR = i32;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+#[rustfmt::skip]
+pub type VkSemaphoreType = i32;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_BINARY_KHR: VkSemaphoreTypeKHR = 0;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_BINARY: VkSemaphoreTypeKHR = 0;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_TIMELINE_KHR: VkSemaphoreTypeKHR = 1;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_TYPE_TIMELINE: VkSemaphoreTypeKHR = 1;
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlagsKHR = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlags = VkSemaphoreWaitFlagsKHR;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlagBitsKHR = VkFlags;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitFlagBits = VkSemaphoreWaitFlagBitsKHR;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_WAIT_ANY_BIT_KHR: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_SEMAPHORE_WAIT_ANY_BIT: VkSemaphoreWaitFlagBitsKHR = 0x00000001;
+
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub timelineSemaphore: VkBool32,
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR: VkStructureType = 1000207000;
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceTimelineSemaphoreFeatures = VkPhysicalDeviceTimelineSemaphoreFeaturesKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
+
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub maxTimelineSemaphoreValueDifference: u64,
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR: VkStructureType = 1000207001;
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkPhysicalDeviceTimelineSemaphoreProperties = VkPhysicalDeviceTimelineSemaphorePropertiesKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;
+
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreSignalInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphore: VkSemaphore,
+    pub value: u64,
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR: VkStructureType = 1000207005;
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreSignalInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreSignalInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreSignalInfo = VkSemaphoreSignalInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreTypeCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub semaphoreType: VkSemaphoreTypeKHR,
+    pub initialValue: u64,
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR: VkStructureType = 1000207002;
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreTypeCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreTypeCreateInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreTypeCreateInfo = VkSemaphoreTypeCreateInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSemaphoreWaitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkSemaphoreWaitFlagsKHR,
+    pub semaphoreCount: u32,
+    pub pSemaphores: *const VkSemaphore,
+    pub pValues: *const u64,
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR: VkStructureType = 1000207004;
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkSemaphoreWaitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreWaitInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkSemaphoreWaitInfo = VkSemaphoreWaitInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
+
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkTimelineSemaphoreSubmitInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub waitSemaphoreValueCount: u32,
+    pub pWaitSemaphoreValues: *const u64,
+    pub signalSemaphoreValueCount: u32,
+    pub pSignalSemaphoreValues: *const u64,
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR: VkStructureType = 1000207003;
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
+#[rustfmt::skip]
+unsafe impl crate::TypedVulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
+    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkTimelineSemaphoreSubmitInfo = VkTimelineSemaphoreSubmitInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkGetSemaphoreCounterValueKHR(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pValue: *mut u64) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreCounterValueKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreCounterValueKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkGetSemaphoreCounterValue(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pValue: *mut u64) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreCounterValue {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreCounterValue";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkGetSemaphoreCounterValue {
+    const STATIC: Self = Self(vkGetSemaphoreCounterValue);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkSignalSemaphoreKHR(pub unsafe extern "system" fn(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkSignalSemaphoreKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkSignalSemaphoreKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkSignalSemaphore(pub unsafe extern "system" fn(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkSignalSemaphore {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkSignalSemaphore";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkSignalSemaphore {
+    const STATIC: Self = Self(vkSignalSemaphore);
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkWaitSemaphoresKHR(pub unsafe extern "system" fn(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkWaitSemaphoresKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkWaitSemaphoresKHR";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[rustfmt::skip]
+pub struct PFN_vkWaitSemaphores(pub unsafe extern "system" fn(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+unsafe impl crate::resolver::PFN for PFN_vkWaitSemaphores {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkWaitSemaphores";
+
+    #[inline(always)]
+    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute(p) }
+    }
+}
+#[cfg(feature = "Implements")]
+#[cfg(not(feature = "DynamicLoaded"))]
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+impl crate::resolver::StaticCallable for PFN_vkWaitSemaphores {
+    const STATIC: Self = Self(vkWaitSemaphores);
+}

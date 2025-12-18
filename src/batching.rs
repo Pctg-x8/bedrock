@@ -194,6 +194,55 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
     }
 }
 
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(transparent)]
+pub struct TimelineSemaphoreSubmitInfo<'d, 'xs>(
+    VkTimelineSemaphoreSubmitInfoKHR,
+    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, &'xs [u64])>,
+);
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+impl<'d, 'xs> TimelineSemaphoreSubmitInfo<'d, 'xs> {
+    pub const fn new(wait_semaphore_values: &'xs [u64], signal_semaphore_values: &'xs [u64]) -> Self {
+        Self(
+            VkTimelineSemaphoreSubmitInfoKHR {
+                sType: VkTimelineSemaphoreSubmitInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                waitSemaphoreValueCount: wait_semaphore_values.len() as _,
+                pWaitSemaphoreValues: slice_as_ptr_empty_null(wait_semaphore_values) as _,
+                signalSemaphoreValueCount: signal_semaphore_values.len() as _,
+                pSignalSemaphoreValues: slice_as_ptr_empty_null(signal_semaphore_values) as _,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkTimelineSemaphoreSubmitInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkTimelineSemaphoreSubmitInfoKHR {
+        self.0
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+unsafe impl VulkanStructure for TimelineSemaphoreSubmitInfo<'_, '_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        self.0.as_generic()
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        self.0.as_generic_mut()
+    }
+}
+
 #[deprecated = "old batching library"]
 pub struct EmptySubmissionBatch;
 #[allow(deprecated)]

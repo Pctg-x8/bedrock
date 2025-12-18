@@ -964,6 +964,24 @@ pub unsafe fn create_render_pass2(device: VkDevice, create_info: *const VkRender
 }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip] #[inline(always)]
+pub unsafe fn get_semaphore_counter_value(device: VkDevice, semaphore: VkSemaphore, value: *mut u64) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.get_semaphore_counter_value.0)(device, semaphore, value) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkGetSemaphoreCounterValue(device, semaphore, value) }
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn signal_semaphore(device: VkDevice, signal_info: *const VkSemaphoreSignalInfo) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.signal_semaphore.0)(device, signal_info) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkSignalSemaphore(device, signal_info) }
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip] #[inline(always)]
+pub unsafe fn wait_semaphores(device: VkDevice, wait_info: *const VkSemaphoreWaitInfo, timeout: u64) -> VkResult {
+    #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.wait_semaphores.0)(device, wait_info, timeout) }
+    #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkWaitSemaphores(device, wait_info, timeout) }
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip] #[inline(always)]
 pub unsafe fn cmd_begin_render_pass2(command_buffer: VkCommandBuffer, begin_info: *const VkRenderPassBeginInfo, begin_subpass_info: *const VkSubpassBeginInfo) {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.cmd_begin_render_pass2.0)(command_buffer, begin_info, begin_subpass_info) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkCmdBeginRenderPass2(command_buffer, begin_info, begin_subpass_info) }
@@ -1231,6 +1249,12 @@ struct FunctionPointerTable {
     #[cfg(feature = "Allow1_2APIs")]
     create_render_pass2: PFN_vkCreateRenderPass2,
     #[cfg(feature = "Allow1_2APIs")]
+    get_semaphore_counter_value: PFN_vkGetSemaphoreCounterValue,
+    #[cfg(feature = "Allow1_2APIs")]
+    signal_semaphore: PFN_vkSignalSemaphore,
+    #[cfg(feature = "Allow1_2APIs")]
+    wait_semaphores: PFN_vkWaitSemaphores,
+    #[cfg(feature = "Allow1_2APIs")]
     cmd_begin_render_pass2: PFN_vkCmdBeginRenderPass2,
     #[cfg(feature = "Allow1_2APIs")]
     cmd_next_subpass2: PFN_vkCmdNextSubpass2,
@@ -1479,6 +1503,12 @@ impl FunctionPointerTable {
         bind_image_memory2: PFN_vkBindImageMemory2(stub_bind_image_memory2),
         #[cfg(feature = "Allow1_2APIs")]
         create_render_pass2: PFN_vkCreateRenderPass2(stub_create_render_pass2),
+        #[cfg(feature = "Allow1_2APIs")]
+        get_semaphore_counter_value: PFN_vkGetSemaphoreCounterValue(stub_get_semaphore_counter_value),
+        #[cfg(feature = "Allow1_2APIs")]
+        signal_semaphore: PFN_vkSignalSemaphore(stub_signal_semaphore),
+        #[cfg(feature = "Allow1_2APIs")]
+        wait_semaphores: PFN_vkWaitSemaphores(stub_wait_semaphores),
         #[cfg(feature = "Allow1_2APIs")]
         cmd_begin_render_pass2: PFN_vkCmdBeginRenderPass2(stub_cmd_begin_render_pass2),
         #[cfg(feature = "Allow1_2APIs")]
@@ -2821,6 +2851,30 @@ unsafe extern "system" fn stub_create_render_pass2(device: VkDevice, create_info
     let fp: PFN_vkCreateRenderPass2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_render_pass2 = fp; }
     unsafe { (fp.0)(device, create_info, allocator, out) }
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_get_semaphore_counter_value(device: VkDevice, semaphore: VkSemaphore, value: *mut u64) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    let fp: PFN_vkGetSemaphoreCounterValue = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
+    unsafe { FPTBL.get_semaphore_counter_value = fp; }
+    unsafe { (fp.0)(device, semaphore, value) }
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_signal_semaphore(device: VkDevice, signal_info: *const VkSemaphoreSignalInfo) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    let fp: PFN_vkSignalSemaphore = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
+    unsafe { FPTBL.signal_semaphore = fp; }
+    unsafe { (fp.0)(device, signal_info) }
+}
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
+unsafe extern "system" fn stub_wait_semaphores(device: VkDevice, wait_info: *const VkSemaphoreWaitInfo, timeout: u64) -> VkResult {
+    use crate::resolver::ResolverInterface;
+    let fp: PFN_vkWaitSemaphores = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
+    unsafe { FPTBL.wait_semaphores = fp; }
+    unsafe { (fp.0)(device, wait_info, timeout) }
 }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]

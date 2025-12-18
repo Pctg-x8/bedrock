@@ -69,6 +69,20 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     fn submit_info(&self) -> SemaphoreSubmitInfo {
         SemaphoreSubmitInfo::new(self)
     }
+
+    /// Query the current state of a timeline semaphore
+    #[cfg(feature = "Allow1_2APIs")]
+    #[inline(always)]
+    fn counter_value(&self) -> crate::Result<u64> {
+        let mut sink = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::get_semaphore_counter_value(self.device().native_ptr(), self.native_ptr(), sink.as_mut_ptr())
+                .into_result()?;
+        }
+
+        Ok(unsafe { sink.assume_init() })
+    }
 }
 DerefContainerBracketImpl!(for Semaphore {});
 GuardsImpl!(for Semaphore {});
@@ -281,9 +295,67 @@ impl<'d> SemaphoreCreateInfo<'d> {
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl TypedVulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
+    }
+}
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+pub struct SemaphoreTypeCreateInfo<'d>(
+    VkSemaphoreTypeCreateInfoKHR,
+    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
+);
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+impl<'d> SemaphoreTypeCreateInfo<'d> {
+    pub const fn binary() -> Self {
+        Self(
+            VkSemaphoreTypeCreateInfoKHR {
+                sType: VkSemaphoreTypeCreateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                semaphoreType: VK_SEMAPHORE_TYPE_BINARY_KHR,
+                initialValue: 0,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const fn timeline(init: u64) -> Self {
+        Self(
+            VkSemaphoreTypeCreateInfoKHR {
+                sType: VkSemaphoreTypeCreateInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                semaphoreType: VK_SEMAPHORE_TYPE_TIMELINE_KHR,
+                initialValue: init,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn from_raw(raw: VkSemaphoreTypeCreateInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkSemaphoreTypeCreateInfoKHR {
+        self.0
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+unsafe impl VulkanStructure for SemaphoreTypeCreateInfo<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        self.0.as_generic()
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        self.0.as_generic_mut()
     }
 }
 
@@ -352,6 +424,163 @@ impl<Device: crate::Device> SemaphoreObject<Device> {
     #[inline]
     pub fn new(device: Device, info: &SemaphoreCreateInfo) -> crate::Result<Self> {
         Ok(unsafe { Self::manage(device.new_semaphore_raw(info, None)?, device) })
+    }
+}
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(C)]
+pub enum SemaphoreType {
+    Binary = VK_SEMAPHORE_TYPE_BINARY_KHR as _,
+    Timeline = VK_SEMAPHORE_TYPE_TIMELINE_KHR as _,
+}
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(transparent)]
+pub struct SemaphoreSignalInfo<'s, 'n>(
+    VkSemaphoreSignalInfoKHR,
+    core::marker::PhantomData<(&'s dyn VkHandle<Handle = VkSemaphore>, Option<&'n dyn VulkanStructure>)>,
+);
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+impl<'s, 'n> SemaphoreSignalInfo<'s, 'n> {
+    #[inline(always)]
+    pub fn new(semaphore: &'s (impl VkHandle<Handle = VkSemaphore> + ?Sized), value: u64) -> Self {
+        Self(
+            VkSemaphoreSignalInfoKHR {
+                sType: VkSemaphoreSignalInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                semaphore: semaphore.native_ptr(),
+                value,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    pub const unsafe fn new_raw(semaphore: VkSemaphore, value: u64) -> Self {
+        Self(
+            VkSemaphoreSignalInfoKHR {
+                sType: VkSemaphoreSignalInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                semaphore,
+                value,
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn from_raw(raw: VkSemaphoreSignalInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkSemaphoreSignalInfoKHR {
+        self.0
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+unsafe impl VulkanStructure for SemaphoreSignalInfo<'_, '_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        self.0.as_generic()
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        self.0.as_generic_mut()
+    }
+}
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+#[repr(transparent)]
+pub struct SemaphoreWaitInfo<'s, 'n, 'xs>(
+    VkSemaphoreWaitInfoKHR,
+    core::marker::PhantomData<(
+        &'xs [&'s dyn VkHandle<Handle = VkSemaphore>],
+        &'xs [u64],
+        Option<&'n dyn VulkanStructure>,
+    )>,
+);
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+impl<'s, 'n, 'xs> SemaphoreWaitInfo<'s, 'n, 'xs> {
+    #[inline(always)]
+    pub fn new(semaphores: &'xs [VkHandleRef<'s, VkSemaphore>], values: &'xs [u64]) -> Self {
+        use crate::ffi_helper::slice_as_ptr_empty_null;
+
+        debug_assert_eq!(semaphores.len(), values.len());
+
+        Self(
+            VkSemaphoreWaitInfoKHR {
+                sType: VkSemaphoreWaitInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                semaphoreCount: semaphores.len() as _,
+                pSemaphores: slice_as_ptr_empty_null(semaphores) as _,
+                pValues: slice_as_ptr_empty_null(values),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    #[inline(always)]
+    pub fn new_array<const N: usize>(
+        semaphores: &'xs [VkHandleRef<'s, VkSemaphore>; N],
+        values: &'xs [u64; N],
+    ) -> Self {
+        use crate::ffi_helper::slice_as_ptr_empty_null;
+
+        Self(
+            VkSemaphoreWaitInfoKHR {
+                sType: VkSemaphoreWaitInfoKHR::TYPE,
+                pNext: core::ptr::null(),
+                flags: 0,
+                semaphoreCount: N as _,
+                pSemaphores: slice_as_ptr_empty_null(semaphores) as _,
+                pValues: slice_as_ptr_empty_null(values),
+            },
+            core::marker::PhantomData,
+        )
+    }
+
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn from_raw(raw: VkSemaphoreWaitInfoKHR) -> Self {
+        Self(raw, core::marker::PhantomData)
+    }
+
+    pub const fn into_raw(self) -> VkSemaphoreWaitInfoKHR {
+        self.0
+    }
+
+    #[inline(always)]
+    pub const fn for_any(mut self) -> Self {
+        self.0.flags |= VK_SEMAPHORE_WAIT_ANY_BIT_KHR;
+        self
+    }
+
+    #[inline(always)]
+    pub fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+        self.0.pNext = next.as_generic() as *const _ as _;
+        self
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+unsafe impl VulkanStructure for SemaphoreWaitInfo<'_, '_, '_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        self.0.as_generic()
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        self.0.as_generic_mut()
     }
 }
 

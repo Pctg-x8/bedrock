@@ -187,7 +187,7 @@ fn main() -> std::io::Result<()> {
 
     for x in v1_2::ELEMENTS {
         o.write(b"\n")?;
-        o.emit(&mut o)?;
+        x.emit(&mut o)?;
     }
 
     Ok(())

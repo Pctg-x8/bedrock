@@ -1364,7 +1364,7 @@ pub enum Element {
     Command(Command),
 }
 impl Element {
-    pub fn emit(w: &mut impl std::io::Write) -> std::io::Result<()> {
+    pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
         match self {
             Self::ExtensionHeaderConstants(x) => x.emit(w),
             Self::Bitmask(x) => x.emit(w),

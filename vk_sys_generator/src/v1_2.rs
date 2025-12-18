@@ -1,6 +1,9 @@
 //! v1.2 promoted elements
 
-use crate::parts::Element;
+use crate::{
+    parts::{Bitmask, Command, Element, Enum, ExtensionHeaderConstants, Struct, StructUsage},
+    vk_ext_enum,
+};
 
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_timeline_semaphore", 2)),
@@ -29,7 +32,7 @@ pub const ELEMENTS: &[Element] = &[
                 .extension("KHR", "timeline_semaphore")
                 .promoted("1_2")],
         )
-        .extension("KHR", "timline_semaphore")
+        .extension("KHR", "timeline_semaphore")
         .promoted("1_2"),
     ),
     Element::Struct(
@@ -40,7 +43,7 @@ pub const ELEMENTS: &[Element] = &[
         .stype(
             "PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES",
             vk_ext_enum(208, 0) as _,
-            StructUsage::SourceSink,
+            StructUsage::Both,
         )
         .extensions(&[("KHR", "timeline_semaphore")])
         .promoted("1_2"),
@@ -116,6 +119,44 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
         )
         .extensions(&[("KHR", "timeline_semaphore")])
+        .promoted("1_2"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetSemaphoreCounterValue",
+            &[
+                ("device", "VkDevice"),
+                ("semaphore", "VkSemaphore"),
+                ("pValue", "*mut u64"),
+            ],
+        )
+        .failable()
+        .extension("KHR", "timeline_semaphore")
+        .promoted("1_2"),
+    ),
+    Element::Command(
+        Command::new(
+            "SignalSemaphore",
+            &[
+                ("device", "VkDevice"),
+                ("pSignalInfo", "*const VkSemaphoreSignalInfoKHR"),
+            ],
+        )
+        .failable()
+        .extension("KHR", "timeline_semaphore")
+        .promoted("1_2"),
+    ),
+    Element::Command(
+        Command::new(
+            "WaitSemaphores",
+            &[
+                ("device", "VkDevice"),
+                ("pWaitInfo", "*const VkSemaphoreWaitInfoKHR"),
+                ("timeout", "u64"),
+            ],
+        )
+        .failable()
+        .extension("KHR", "timeline_semaphore")
         .promoted("1_2"),
     ),
 ];

@@ -1968,6 +1968,32 @@ const CATALOG: &'static [Entrypoint] = &[
     .with_result()
     .promoted_at(1, 2),
     Entrypoint::new(
+        "get_semaphore_counter_value",
+        &[
+            ("device", "VkDevice"),
+            ("semaphore", "VkSemaphore"),
+            ("value", "*mut u64"),
+        ],
+    )
+    .with_result()
+    .promoted_at(1, 2),
+    Entrypoint::new(
+        "signal_semaphore",
+        &[("device", "VkDevice"), ("signal_info", "*const VkSemaphoreSignalInfo")],
+    )
+    .with_result()
+    .promoted_at(1, 2),
+    Entrypoint::new(
+        "wait_semaphores",
+        &[
+            ("device", "VkDevice"),
+            ("wait_info", "*const VkSemaphoreWaitInfo"),
+            ("timeout", "u64"),
+        ],
+    )
+    .with_result()
+    .promoted_at(1, 2),
+    Entrypoint::new(
         "cmd_begin_render_pass2",
         &[
             ("command_buffer", "VkCommandBuffer"),

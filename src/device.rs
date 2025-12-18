@@ -1355,7 +1355,63 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Ok(unsafe { h.assume_init() })
     }
 
-    // Extension Function Providers
+    /// Query the current state of a timeline semaphore
+    /// # Failure
+    ///
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_UNKNOWN`]
+    /// * [`VK_ERROR_VALIDATION_FAILED`]
+    #[implements("Allow1_2APIs")]
+    fn get_semaphore_counter_value(
+        &self,
+        semaphore: &(impl VkHandle<Handle = VkSemaphore> + ?Sized),
+    ) -> crate::Result<u64> {
+        let mut sink = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            crate::vkfn::get_semaphore_counter_value(self.native_ptr(), semaphore.native_ptr(), sink.as_mut_ptr())
+                .into_result()?;
+        }
+
+        Ok(unsafe { sink.assume_init() })
+    }
+
+    /// Signal a timeline semaphore on the host
+    /// # Failure
+    ///
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_UNKNOWN`]
+    /// * [`VK_ERROR_VALIDATION_FAILED`]
+    #[implements("Allow1_2APIs")]
+    fn signal_semaphore(&self, info: &SemaphoreSignalInfo) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::signal_semaphore(self.native_ptr(), info as *const _ as _)
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Wait for timeline semaphores on the host
+    ///
+    /// Returns `false` if timed out
+    /// # Failure
+    ///
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_UNKNOWN`]
+    /// * [`VK_ERROR_VALIDATION_FAILED`]
+    #[implements("Allow1_2APIs")]
+    fn wait_semaphores(&self, info: &SemaphoreWaitInfo, timeout: u64) -> crate::Result<bool> {
+        match unsafe { crate::vkfn::wait_semaphores(self.native_ptr(), info as *const _ as _, timeout) } {
+            r if r == VK_SUCCESS => Ok(true),
+            r if r == VK_TIMEOUT => Ok(false),
+            r => Err(r),
+        }
+    }
 }
 DerefContainerWithGuardsBracketImpl!(for Device {});
 
@@ -1420,6 +1476,12 @@ struct DeviceExtFunctions {
     cmd_push_descriptor_set_khr: DeviceResolvedFn<PFN_vkCmdPushDescriptorSetKHR>,
     #[cfg(feature = "VK_EXT_sample_locations")]
     cmd_set_sample_locations_ext: DeviceResolvedFn<PFN_vkCmdSetSampleLocationsEXT>,
+    #[cfg(feature = "VK_KHR_timeline_semaphore")]
+    get_semaphore_counter_value_ext: DeviceResolvedFn<PFN_vkGetSemaphoreCounterValueKHR>,
+    #[cfg(feature = "VK_KHR_timeline_semaphore")]
+    signal_semaphore_ext: DeviceResolvedFn<PFN_vkSignalSemaphoreKHR>,
+    #[cfg(feature = "VK_KHR_timeline_semaphore")]
+    wait_semaphores_ext: DeviceResolvedFn<PFN_vkWaitSemaphoresKHR>,
 }
 #[implements]
 impl DeviceExtFunctions {
@@ -1483,6 +1545,12 @@ impl DeviceExtFunctions {
             cmd_push_descriptor_set_khr: DeviceResolvedFn::new(handle),
             #[cfg(feature = "VK_EXT_sample_locations")]
             cmd_set_sample_locations_ext: DeviceResolvedFn::new(handle),
+            #[cfg(feature = "VK_KHR_timeline_semaphore")]
+            get_semaphore_counter_value_ext: DeviceResolvedFn::new(handle),
+            #[cfg(feature = "VK_KHR_timeline_semaphore")]
+            signal_semaphore_ext: DeviceResolvedFn::new(handle),
+            #[cfg(feature = "VK_KHR_timeline_semaphore")]
+            wait_semaphores_ext: DeviceResolvedFn::new(handle),
         }
     }
 }
@@ -2040,7 +2108,7 @@ DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryWin32Extension {
     #[implements]
     ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
 });
-#[cfg(featire = "VK_KHR_external_memory_win32")]
+#[cfg(feature = "VK_KHR_external_memory_win32")]
 impl<Instance: crate::Instance> DeviceExternalMemoryWin32Extension for DeviceObject<Instance> {
     #[implements]
     #[inline(always)]
@@ -2240,6 +2308,103 @@ impl<Instance: crate::Instance> DeviceSampleLocationsExtension for DeviceObject<
     #[inline(always)]
     fn cmd_set_sample_locations_ext_fn(&self) -> PFN_vkCmdSetSampleLocationsEXT {
         *self.ext.cmd_set_sample_locations_ext.resolve()
+    }
+}
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+pub trait DeviceTimelineSemaphoreExtension: Device {
+    #[implements]
+    fn get_semaphore_counter_value_ext_fn(&self) -> PFN_vkGetSemaphoreCounterValueKHR;
+    #[implements]
+    fn signal_semaphore_ext_fn(&self) -> PFN_vkSignalSemaphoreKHR;
+    #[implements]
+    fn wait_semaphores_ext_fn(&self) -> PFN_vkWaitSemaphoresKHR;
+
+    /// Query the current state of a timeline semaphore
+    /// # Failure
+    ///
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_UNKNOWN`]
+    /// * [`VK_ERROR_VALIDATION_FAILED`]
+    #[implements]
+    fn get_semaphore_counter_value_khr(
+        &self,
+        semaphore: &(impl VkHandle<Handle = VkSemaphore> + ?Sized),
+    ) -> crate::Result<u64> {
+        let mut sink = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            (self.get_semaphore_counter_value_ext_fn().0)(self.native_ptr(), semaphore.native_ptr(), sink.as_mut_ptr())
+                .into_result()?;
+        }
+
+        Ok(unsafe { sink.assume_init() })
+    }
+
+    /// Signal a timeline semaphore on the host
+    /// # Failure
+    ///
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_UNKNOWN`]
+    /// * [`VK_ERROR_VALIDATION_FAILED`]
+    #[implements]
+    fn signal_semaphore_khr(&self, info: &SemaphoreSignalInfo) -> crate::Result<()> {
+        unsafe {
+            (self.signal_semaphore_ext_fn().0)(self.native_ptr(), info as *const _ as _)
+                .into_result()
+                .map(drop)
+        }
+    }
+
+    /// Wait for timeline semaphores on the host
+    ///
+    /// Returns `false` if timed out
+    /// # Failure
+    ///
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_UNKNOWN`]
+    /// * [`VK_ERROR_VALIDATION_FAILED`]
+    #[implements]
+    fn wait_semaphores_khr(&self, info: &SemaphoreWaitInfo, timeout: u64) -> crate::Result<bool> {
+        match unsafe { (self.wait_semaphores_ext_fn().0)(self.native_ptr(), info as *const _ as _, timeout) } {
+            r if r == VK_SUCCESS => Ok(true),
+            r if r == VK_TIMEOUT => Ok(false),
+            r => Err(r),
+        }
+    }
+}
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+DerefContainerWithGuardsBracketImpl!(for DeviceTimelineSemaphoreExtension {
+    #[implements]
+    ForwardFnPtr!(deref get_semaphore_counter_value_ext_fn -> PFN_vkGetSemaphoreCounterValueKHR);
+    #[implements]
+    ForwardFnPtr!(deref signal_semaphore_ext_fn -> PFN_vkSignalSemaphoreKHR);
+    #[implements]
+    ForwardFnPtr!(deref wait_semaphores_ext_fn -> PFN_vkWaitSemaphoresKHR);
+});
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+impl<Instance: crate::Instance> DeviceTimelineSemaphoreExtension for DeviceObject<Instance> {
+    #[implements]
+    #[inline(always)]
+    fn get_semaphore_counter_value_ext_fn(&self) -> PFN_vkGetSemaphoreCounterValueKHR {
+        *self.ext.get_semaphore_counter_value_ext.resolve()
+    }
+
+    #[implements]
+    #[inline(always)]
+    fn signal_semaphore_ext_fn(&self) -> PFN_vkSignalSemaphoreKHR {
+        *self.ext.signal_semaphore_ext.resolve()
+    }
+
+    #[implements]
+    #[inline(always)]
+    fn wait_semaphores_ext_fn(&self) -> PFN_vkWaitSemaphoresKHR {
+        *self.ext.wait_semaphores_ext.resolve()
     }
 }
 
