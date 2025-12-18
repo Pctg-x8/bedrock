@@ -1352,3 +1352,28 @@ impl ExtensionHeaderConstants {
         Ok(())
     }
 }
+
+pub enum Element {
+    ExtensionHeaderConstants(ExtensionHeaderConstants),
+    Bitmask(Bitmask),
+    Enum(Enum),
+    FuncPointer(FuncPointer),
+    Object(Object),
+    Struct(Struct),
+    Union(Union),
+    Command(Command),
+}
+impl Element {
+    pub fn emit(w: &mut impl std::io::Write) -> std::io::Result<()> {
+        match self {
+            Self::ExtensionHeaderConstants(x) => x.emit(w),
+            Self::Bitmask(x) => x.emit(w),
+            Self::Enum(x) => x.emit(w),
+            Self::FuncPointer(x) => x.emit(w),
+            Self::Object(x) => x.emit(w),
+            Self::Struct(x) => x.emit(w),
+            Self::Union(x) => x.emit(w),
+            Self::Command(x) => x.emit(w),
+        }
+    }
+}

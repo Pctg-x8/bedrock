@@ -6,6 +6,7 @@ use parts::{
 };
 
 mod parts;
+mod v1_2;
 
 fn main() -> std::io::Result<()> {
     let mut o = std::io::stdout().lock();
@@ -182,6 +183,11 @@ fn main() -> std::io::Result<()> {
     for c in EXTENSION_HEADER_CONSTANTS {
         o.write(b"\n")?;
         c.emit(&mut o)?;
+    }
+
+    for x in v1_2::ELEMENTS {
+        o.write(b"\n")?;
+        o.emit(&mut o)?;
     }
 
     Ok(())
