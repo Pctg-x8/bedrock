@@ -1,8 +1,8 @@
 use std::io::Write;
 
 use parts::{
-    Bitmask, Command, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias, Union,
-    emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
+    Bitmask, Command, Element, Enum, ExtensionHeaderConstants, FuncPointer, Object, Struct, StructUsage, TypeAlias,
+    Union, emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
 };
 
 mod parts;
@@ -169,17 +169,6 @@ fn main() -> std::io::Result<()> {
         c.emit(&mut o)?;
     }
 
-    o.write(b"\n")?;
-    o.write(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
-    o.write(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
-    o.write(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
-    o.write(b"#[rustfmt::skip]\n")?;
-    o.write(b"unsafe extern \"system\" {\n")?;
-    for c in COMMANDS {
-        c.emit_static_symbol(&mut o)?;
-    }
-    o.write(b"}\n")?;
-
     for c in EXTENSION_HEADER_CONSTANTS {
         o.write(b"\n")?;
         c.emit(&mut o)?;
@@ -189,6 +178,22 @@ fn main() -> std::io::Result<()> {
         o.write(b"\n")?;
         x.emit(&mut o)?;
     }
+
+    o.write(b"\n")?;
+    o.write(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
+    o.write(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
+    o.write(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
+    o.write(b"#[rustfmt::skip]\n")?;
+    o.write(b"unsafe extern \"system\" {\n")?;
+    for c in COMMANDS {
+        c.emit_static_symbol(&mut o)?;
+    }
+    for x in v1_2::ELEMENTS {
+        if let Element::Command(x) = x {
+            x.emit_static_symbol(&mut o)?;
+        }
+    }
+    o.write(b"}\n")?;
 
     Ok(())
 }
