@@ -1148,3 +1148,34 @@ pub unsafe fn get_pipeline_cache_data(
 
     Ok((len, r))
 }
+
+#[cfg(feature = "Allow1_2APIs")]
+#[inline]
+pub unsafe fn get_semaphore_counter_value(device: VkDevice, semaphore: VkSemaphore) -> crate::Result<u64> {
+    let mut value = MaybeUninit::uninit();
+    unsafe {
+        crate::vkfn::get_semaphore_counter_value(device, semaphore, value.as_mut_ptr()).into_result()?;
+    }
+
+    Ok(unsafe { value.assume_init() })
+}
+
+#[cfg(feature = "Allow1_2APIs")]
+#[inline]
+pub unsafe fn signal_semaphore(device: VkDevice, signal_info: &SemaphoreSignalInfo) -> crate::Result<()> {
+    unsafe {
+        crate::vkfn::signal_semaphore(device, signal_info as *const _ as _)
+            .into_result()
+            .map(drop)
+    }
+}
+
+#[cfg(feature = "Allow1_2APIs")]
+#[inline]
+pub unsafe fn wait_semaphores(
+    device: VkDevice,
+    wait_info: &SemaphoreWaitInfo,
+    timeout: u64,
+) -> crate::Result<VkResult> {
+    unsafe { crate::vkfn::wait_semaphores(device, wait_info as *const _ as _, timeout).into_result() }
+}
