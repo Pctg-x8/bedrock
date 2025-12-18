@@ -71,7 +71,7 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     }
 
     /// Query the current state of a timeline semaphore
-    #[cfg(feature = "Allow1_2APIs")]
+    #[implements("Allow1_2APIs")]
     #[inline(always)]
     fn counter_value(&self) -> crate::Result<u64> {
         let mut sink = core::mem::MaybeUninit::uninit();
