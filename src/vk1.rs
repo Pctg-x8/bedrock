@@ -85,7 +85,6 @@ pub const VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHX: crate::vk2::Vk
 pub const VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHX: crate::vk2::VkStructureType = 100_0060_010;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHX: crate::vk2::VkStructureType = 100_0060_011;
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX: crate::vk2::VkStructureType = 100_0060_012;
-pub const VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR: crate::vk2::VkStructureType = 100_0075_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: crate::vk2::VkStructureType = 100_0080_000;
 pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: crate::vk2::VkStructureType = 100_0084_000;
 pub const VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX: crate::vk2::VkStructureType = 100_0086_000;
@@ -115,9 +114,6 @@ pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INF
     100_0101_001;
 pub const VK_STRUCTURE_TYPE_HDR_METADATA_EXT: crate::vk2::VkStructureType = 100_0105_000;
 pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: crate::vk2::VkStructureType = 100_0111_000;
-pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR: crate::vk2::VkStructureType = 100_0119_000;
-pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR: crate::vk2::VkStructureType = 100_0119_001;
-pub const VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR: crate::vk2::VkStructureType = 100_0119_002;
 pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0122_000;
 pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0123_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_FILTER_MINMAX_PROPERTIES_EXT: crate::vk2::VkStructureType =
@@ -215,7 +211,6 @@ ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
 ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_nvx);
 ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
-ExportExtensions!("VK_EXT_acquire_xlib_display": acquire_xlib_display_ext);
 ExportExtensions!("VK_EXT_display_surface_counter": display_surface_counter_ext);
 ExportExtensions!("VK_EXT_display_control": display_control_ext);
 ExportExtensions!("VK_GOOGLE_display_timing": display_timing_google);
@@ -237,7 +232,6 @@ ExportExtensions!("VK_AMD_gpu_shader_int16": gpu_shader_int16_amd);
 ExportExtensions!("VK_AMD_mixed_attachment_samples": mixed_attachment_samples_amd);
 ExportExtensions!("VK_AMD_shader_fragment_mask": shader_fragment_mask_amd);
 ExportExtensions!("VK_EXT_sample_locations": sample_locations_ext);
-ExportExtensions!("VK_EXT_blend_operation_advanced": blend_operation_advanced_ext);
 ExportExtensions!("VK_NV_fragment_coverage_to_color": fragment_coverage_to_color_nv);
 ExportExtensions!("VK_NV_framebuffer_mixed_samples": framebuffer_mixed_samples_nv);
 ExportExtensions!("VK_NV_fill_rectangle": fill_rectangle_nv);
@@ -246,7 +240,6 @@ ExportExtensions!("VK_EXT_validation_cache": validation_cache_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
 ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);
-ExportExtensions!("VK_AMD_buffer_marker": buffer_marker_amd);
 ExportExtensions!("VK_EXT_vertex_attribute_divisor": vertex_attribute_divisor_ext);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
 ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
@@ -255,13 +248,10 @@ ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
 ExportExtensions!("VK_EXT_descriptor_buffer": descriptor_buffer_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);
 ExportExtensions!("VK_KHR_maintenance8": maintenance8_khr);
-ExportExtensions!("VK_EXT_acquire_drm_display": acquire_drm_display_ext);
-ExportExtensions!("VK_NV_acquire_winrt_display": acquire_winrt_display_nv);
 
 // Promoted Extensions (1.2)
 ExportExtensions!("VK_KHR_create_renderpass2": create_renderpass2_khr);
 ExportExtensions!("VK_KHR_depth_stencil_resolve": depth_stencil_resolve_khr);
-ExportExtensions!("VK_KHR_buffer_device_address": buffer_device_address_khr);
 ExportExtensions!("VK_EXT_descriptor_indexing": descriptor_indexing_ext);
 ExportExtensions!("VK_KHR_shader_float_controls": shader_float_controls_khr);
 

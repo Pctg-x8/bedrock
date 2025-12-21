@@ -127,6 +127,7 @@ impl EnumMember {
 
 pub struct Enum {
     name: &'static str,
+    extending: bool,
     prefix: &'static str,
     members: &'static [EnumMember],
     extension: Option<(&'static str, &'static str)>,
@@ -137,10 +138,26 @@ impl Enum {
         Self {
             name,
             prefix,
+            extending: false,
             members,
             extension: None,
             promoted: None,
         }
+    }
+
+    pub const fn extending(name: &'static str, prefix: &'static str, members: &'static [EnumMember]) -> Self {
+        Self {
+            name,
+            prefix,
+            extending: true,
+            members,
+            extension: None,
+            promoted: None,
+        }
+    }
+
+    pub const fn extending_error(members: &'static [EnumMember]) -> Self {
+        Self::extending("Result", "ERROR", members)
     }
 
     pub const fn extension(mut self, name: &'static str, suffix: &'static str) -> Self {
@@ -168,14 +185,18 @@ impl Enum {
         } else {
             format!("Vk{}", self.name)
         };
-        if let Some((x, _)) = self.extension {
-            writeln!(w, "#[cfg(feature = {x:?})]")?;
-        }
-        emit_c_enum_type(w, &type_name)?;
-        if let Some(v) = self.promoted {
-            writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
-            writeln!(w, "#[rustfmt::skip]")?;
-            emit_c_enum_type(w, &format!("Vk{}", self.name))?;
+        let is_newtyped = type_name == "VkResult";
+
+        if !self.extending {
+            if let Some((x, _)) = self.extension {
+                writeln!(w, "#[cfg(feature = {x:?})]")?;
+            }
+            emit_c_enum_type(w, &type_name)?;
+            if let Some(v) = self.promoted {
+                writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
+                writeln!(w, "#[rustfmt::skip]")?;
+                emit_c_enum_type(w, &format!("Vk{}", self.name))?;
+            }
         }
 
         for member in self.members {
@@ -191,41 +212,73 @@ impl Enum {
                 (Some((x, s)), None) | (None, Some((x, s))) => {
                     writeln!(w, "#[cfg(feature = {x:?})]")?;
                     writeln!(w, "#[rustfmt::skip]")?;
-                    writeln!(
-                        w,
-                        "pub const VK_{}_{}_{s}: {type_name} = {};",
-                        self.prefix, member.name, member.value
-                    )?;
+                    if is_newtyped {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{s}: {type_name} = {type_name}({});",
+                            self.prefix, member.name, member.value
+                        )?;
+                    } else {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{s}: {type_name} = {};",
+                            self.prefix, member.name, member.value
+                        )?;
+                    }
                 }
                 (Some(a), Some(b)) if a.0 == b.0 => {
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
                     writeln!(w, "#[rustfmt::skip]")?;
-                    writeln!(
-                        w,
-                        "pub const VK_{}_{}_{}: {type_name} = {};",
-                        self.prefix, member.name, a.1, member.value
-                    )?;
+                    if is_newtyped {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
+                            self.prefix, member.name, a.1, member.value
+                        )?;
+                    } else {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{}: {type_name} = {};",
+                            self.prefix, member.name, a.1, member.value
+                        )?;
+                    }
                 }
                 (Some(a), Some(b)) if a.1 == b.1 => {
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
                     writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
                     writeln!(w, "#[rustfmt::skip]")?;
-                    writeln!(
-                        w,
-                        "pub const VK_{}_{}_{}: {type_name} = {};",
-                        self.prefix, member.name, a.1, member.value
-                    )?;
+                    if is_newtyped {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
+                            self.prefix, member.name, a.1, member.value
+                        )?;
+                    } else {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{}: {type_name} = {};",
+                            self.prefix, member.name, a.1, member.value
+                        )?;
+                    }
                 }
                 (Some(a), Some(b)) => {
                     // both extension required, using member extension's suffix
                     writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
                     writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
                     writeln!(w, "#[rustfmt::skip]")?;
-                    writeln!(
-                        w,
-                        "pub const VK_{}_{}_{}: {type_name} = {};",
-                        self.prefix, member.name, b.1, member.value
-                    )?;
+                    if is_newtyped {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{}: {type_name} = {type_name}({});",
+                            self.prefix, member.name, b.1, member.value
+                        )?;
+                    } else {
+                        writeln!(
+                            w,
+                            "pub const VK_{}_{}_{}: {type_name} = {};",
+                            self.prefix, member.name, b.1, member.value
+                        )?;
+                    }
                 }
             }
 
@@ -235,11 +288,19 @@ impl Enum {
                 }
                 writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
                 writeln!(w, "#[rustfmt::skip]")?;
-                writeln!(
-                    w,
-                    "pub const VK_{}_{}: {type_name} = {};",
-                    self.prefix, member.name, member.value
-                )?;
+                if is_newtyped {
+                    writeln!(
+                        w,
+                        "pub const VK_{}_{}: {type_name} = {type_name}({});",
+                        self.prefix, member.name, member.value
+                    )?;
+                } else {
+                    writeln!(
+                        w,
+                        "pub const VK_{}_{}: {type_name} = {};",
+                        self.prefix, member.name, member.value
+                    )?;
+                }
             }
         }
 
@@ -281,6 +342,7 @@ pub struct Bitmask {
     name: &'static str,
     bits_name: &'static str,
     prefix: &'static str,
+    extending: bool,
     entries: &'static [BitmaskEntry],
     version_since: Option<&'static str>,
     extension: Option<(&'static str, &'static str)>,
@@ -299,6 +361,22 @@ impl Bitmask {
             name,
             bits_name,
             prefix,
+            extending: false,
+            entries,
+            version_since: None,
+            extension: None,
+            extra_requirements: &[],
+            promoted: None,
+            long: false,
+        }
+    }
+
+    pub const fn extending(bits_name: &'static str, prefix: &'static str, entries: &'static [BitmaskEntry]) -> Self {
+        Self {
+            name: "",
+            bits_name,
+            prefix,
+            extending: true,
             entries,
             version_since: None,
             extension: None,
@@ -354,34 +432,39 @@ impl Bitmask {
             bits_name = format!("Vk{}", self.bits_name);
         }
 
-        if let Some(x) = self.version_since {
-            writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
+        if !self.extending {
+            if let Some(x) = self.version_since {
+                writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
+            }
+            if let Some((tag, name)) = self.extension {
+                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+            }
+            for x in self.extra_requirements {
+                writeln!(w, "#[cfg(feature = \"{x}\")]")?;
+            }
+            emit_type_alias(w, &type_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
+
+            if let Some(p) = self.promoted {
+                writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+                emit_type_alias(w, &format!("Vk{}", self.name), &type_name)?;
+            }
+            if let Some(x) = self.version_since {
+                writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
+            }
+            if let Some((tag, name)) = self.extension {
+                writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
+            }
+            for x in self.extra_requirements {
+                writeln!(w, "#[cfg(feature = \"{x}\")]")?;
+            }
+            emit_type_alias(w, &bits_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
+
+            if let Some(p) = self.promoted {
+                writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
+                emit_type_alias(w, &format!("Vk{}", self.bits_name), &bits_name)?;
+            }
         }
-        if let Some((tag, name)) = self.extension {
-            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-        }
-        for x in self.extra_requirements {
-            writeln!(w, "#[cfg(feature = \"{x}\")]")?;
-        }
-        emit_type_alias(w, &type_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
-        if let Some(p) = self.promoted {
-            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-            emit_type_alias(w, &format!("Vk{}", self.name), &type_name)?;
-        }
-        if let Some(x) = self.version_since {
-            writeln!(w, "#[cfg(feature = \"Allow{x}APIs\")]")?;
-        }
-        if let Some((tag, name)) = self.extension {
-            writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
-        }
-        for x in self.extra_requirements {
-            writeln!(w, "#[cfg(feature = \"{x}\")]")?;
-        }
-        emit_type_alias(w, &bits_name, if self.long { "VkFlags64" } else { "VkFlags" })?;
-        if let Some(p) = self.promoted {
-            writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
-            emit_type_alias(w, &format!("Vk{}", self.bits_name), &bits_name)?;
-        }
+
         for e in self.entries {
             let mut feature_requirements = HashSet::<String>::new();
             feature_requirements.extend(self.version_since.map(|v| format!("Allow{v}APIs")));

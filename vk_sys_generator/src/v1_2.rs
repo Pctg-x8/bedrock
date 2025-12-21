@@ -1,12 +1,16 @@
 //! v1.2 promoted elements
 
-use crate::{
-    parts::{Bitmask, Command, Element, Enum, ExtensionHeaderConstants, Struct, StructUsage},
-    vk_ext_enum,
-};
+use crate::{parts::*, vk_ext_enum};
 
 pub const ELEMENTS: &[Element] = &[
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_buffer_device_address", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_timeline_semaphore", 2)),
+    Element::Enum(Enum::extending_error(&[Enum::member(
+        "INVALID_OPAQUE_CAPTURE_ADDRESS",
+        -vk_ext_enum(258, 0) as _,
+    )
+    .extension("VK_KHR_buffer_device_address", "KHR")
+    .promoted("1_2")])),
     Element::Enum(
         Enum::new(
             "SemaphoreType",
@@ -23,6 +27,32 @@ pub const ELEMENTS: &[Element] = &[
         .extension("VK_KHR_timeline_semaphore", "KHR")
         .promoted("1_2"),
     ),
+    Element::Bitmask(Bitmask::extending(
+        "BufferCreateFlagBits",
+        "BUFFER_CREATE",
+        &[Bitmask::entry("DEVICE_ADDRESS_CAPTURE_REPLAY", 4)
+            .extension("KHR", "buffer_device_address")
+            .promoted("1_2")],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "BufferUsageFlagBits",
+        "BUFFER_USAGE",
+        &[Bitmask::entry("SHADER_DEVICE_ADDRESS", 17)
+            .extension("KHR", "buffer_device_address")
+            .promoted("1_2")],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "MemoryAllocateFlagBits",
+        "MEMORY_ALLOCATE",
+        &[
+            Bitmask::entry("DEVICE_ADDRESS", 1)
+                .extension("KHR", "buffer_device_address")
+                .promoted("1_2"),
+            Bitmask::entry("DEVICE_ADDRESS_CAPTURE_REPLAY", 2)
+                .extension("KHR", "buffer_device_address")
+                .promoted("1_2"),
+        ],
+    )),
     Element::Bitmask(
         Bitmask::new(
             "SemaphoreWaitFlags",
@@ -33,6 +63,72 @@ pub const ELEMENTS: &[Element] = &[
                 .promoted("1_2")],
         )
         .extension("KHR", "timeline_semaphore")
+        .promoted("1_2"),
+    ),
+    Element::Struct(
+        Struct::new("BufferDeviceAddressInfo", &[Struct::member("buffer", "VkBuffer")])
+            .stype(
+                "BUFFER_DEVICE_ADDRESS_INFO",
+                vk_ext_enum(245, 1) as _,
+                StructUsage::Source,
+            )
+            .extensions(&[("KHR", "buffer_device_address")])
+            .promoted("1_2"),
+    ),
+    Element::Struct(
+        Struct::new(
+            "BufferOpaqueCaptureAddressCreateInfo",
+            &[Struct::member("opaqueCaptureAddress", "u64")],
+        )
+        .stype(
+            "BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO",
+            vk_ext_enum(258, 2) as _,
+            StructUsage::Source,
+        )
+        .extensions(&[("KHR", "buffer_device_address")])
+        .promoted("1_2"),
+    ),
+    Element::Struct(
+        Struct::new(
+            "DeviceMemoryOpaqueCaptureAddressInfo",
+            &[Struct::member("memory", "VkDeviceMemory")],
+        )
+        .stype(
+            "DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO",
+            vk_ext_enum(258, 4) as _,
+            StructUsage::Source,
+        )
+        .extensions(&[("KHR", "buffer_device_address")])
+        .promoted("1_2"),
+    ),
+    Element::Struct(
+        Struct::new(
+            "MemoryOpaqueCaptureAddressAllocateInfo",
+            &[Struct::member("opaqueCaptureAddress", "u64")],
+        )
+        .stype(
+            "MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO",
+            vk_ext_enum(258, 3) as _,
+            StructUsage::Source,
+        )
+        .extensions(&[("KHR", "buffer_device_address")])
+        .promoted("1_2"),
+    ),
+    Element::Struct(
+        Struct::new(
+            "PhysicalDeviceBufferDeviceAddressFeatures",
+            &[
+                Struct::member("bufferDeviceAddress", "VkBool32"),
+                Struct::member("bufferDeviceAddressCaptureReplay", "VkBool32"),
+                Struct::member("bufferDeviceAddressMultiDevice", "VkBool32"),
+            ],
+        )
+        .stype(
+            "PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES",
+            vk_ext_enum(258, 0) as _,
+            StructUsage::Both,
+        )
+        .extensions(&[("KHR", "buffer_device_address")])
         .promoted("1_2"),
     ),
     Element::Struct(
@@ -119,6 +215,36 @@ pub const ELEMENTS: &[Element] = &[
             StructUsage::Source,
         )
         .extensions(&[("KHR", "timeline_semaphore")])
+        .promoted("1_2"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetBufferDeviceAddress",
+            &[("device", "VkDevice"), ("pInfo", "*const VkBufferDeviceAddressInfoKHR")],
+        )
+        .returns("VkDeviceAddress")
+        .extension("KHR", "buffer_device_address")
+        .promoted("1_2"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetBufferOpaqueCaptureAddress",
+            &[("device", "VkDevice"), ("pInfo", "*const VkBufferDeviceAddressInfoKHR")],
+        )
+        .returns("u64")
+        .extension("KHR", "buffer_device_address")
+        .promoted("1_2"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetDeviceMemoryOpaqueCaptureAddress",
+            &[
+                ("device", "VkDevice"),
+                ("pInfo", "*const VkDeviceMemoryOpaqueCaptureAddressInfoKHR"),
+            ],
+        )
+        .returns("u64")
+        .extension("KHR", "buffer_device_address")
         .promoted("1_2"),
     ),
     Element::Command(

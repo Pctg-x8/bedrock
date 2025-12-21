@@ -5,6 +5,7 @@ use parts::{
     Union, emit_c_enum_type, emit_const, emit_result_const, emit_result_err_const,
 };
 
+mod extensions;
 mod parts;
 mod v1_2;
 
@@ -179,6 +180,11 @@ fn main() -> std::io::Result<()> {
         x.emit(&mut o)?;
     }
 
+    for x in extensions::ELEMENTS {
+        o.write(b"\n")?;
+        x.emit(&mut o)?;
+    }
+
     o.write(b"\n")?;
     o.write(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
     o.write(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
@@ -189,6 +195,11 @@ fn main() -> std::io::Result<()> {
         c.emit_static_symbol(&mut o)?;
     }
     for x in v1_2::ELEMENTS {
+        if let Element::Command(x) = x {
+            x.emit_static_symbol(&mut o)?;
+        }
+    }
+    for x in extensions::ELEMENTS {
         if let Element::Command(x) = x {
             x.emit_static_symbol(&mut o)?;
         }
