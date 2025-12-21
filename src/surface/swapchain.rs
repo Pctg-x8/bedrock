@@ -162,15 +162,16 @@ DerefContainerBracketImpl!(for Swapchain {
 
 #[repr(transparent)]
 #[derive(Clone)]
-pub struct SwapchainCreateInfo<'r, 'n>(
+pub struct SwapchainCreateInfo<'r, 'n, 'sw>(
     VkSwapchainCreateInfoKHR,
     core::marker::PhantomData<(
         &'r dyn VkHandle<Handle = VkSurfaceKHR>,
         Option<&'n dyn VulkanStructure>,
         Option<&'r [u32]>,
+        Option<&'sw dyn VkHandle<Handle = VkSwapchainKHR>>,
     )>,
 );
-impl<'r, 'n> SwapchainCreateInfo<'r, 'n> {
+impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
     #[inline]
     pub fn new(
         surface: &'r (impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
@@ -261,6 +262,12 @@ impl<'r, 'n> SwapchainCreateInfo<'r, 'n> {
     /// that affect regions of the surface which aren't visible
     pub const fn enable_clip(mut self) -> Self {
         self.0.clipped = true as _;
+        self
+    }
+
+    #[inline(always)]
+    pub fn old_swapchain(mut self, old_swapchain: &'sw (impl VkHandle<Handle = VkSwapchainKHR> + ?Sized)) -> Self {
+        self.0.oldSwapchain = old_swapchain.native_ptr();
         self
     }
 }

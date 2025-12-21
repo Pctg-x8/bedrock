@@ -857,7 +857,7 @@ impl<'d> CmdRecord<'d> {
     #[cfg(feature = "alloc")]
     #[inline(always)]
     pub fn push_descriptor_set_alloc_khr(
-        mut self,
+        self,
         fn_provider: &(impl DevicePushDescriptorExtension + ?Sized),
         bind_point: PipelineBindPoint,
         pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
