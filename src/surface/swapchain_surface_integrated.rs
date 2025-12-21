@@ -97,7 +97,7 @@ where
         (d, s)
     }
 }
-impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<'_, Surface> {
+impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<'_, '_, Surface> {
     type ConcreteSurface = Surface;
 
     #[inline(always)]
@@ -107,12 +107,15 @@ impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<
 }
 
 /// Builder object to construct a `Swapchain`, backed with a surface
-pub struct SwapchainBuilder<'n, Surface: crate::Surface>(
+pub struct SwapchainBuilder<'n, 'sw, Surface: crate::Surface>(
     VkSwapchainCreateInfoKHR,
     Surface,
-    core::marker::PhantomData<Option<&'n dyn VulkanStructure>>,
+    core::marker::PhantomData<(
+        Option<&'n dyn VulkanStructure>,
+        Option<&'sw dyn VkHandle<Handle = VkSwapchainKHR>>,
+    )>,
 );
-impl<'n, Surface: crate::Surface> SwapchainBuilder<'n, Surface> {
+impl<'n, 'sw, Surface: crate::Surface> SwapchainBuilder<'n, 'sw, Surface> {
     pub fn new(
         surface: Surface,
         min_image_count: u32,
@@ -202,6 +205,12 @@ impl<'n, Surface: crate::Surface> SwapchainBuilder<'n, Surface> {
         self
     }
 
+    #[inline(always)]
+    pub fn old_swapchain(mut self, sw: &'sw (impl VkHandle<Handle = VkSwapchainKHR> + ?Sized)) -> Self {
+        self.0.oldSwapchain = sw.native_ptr();
+        self
+    }
+
     /// Create a swapchain
     /// # Failures
     /// On failure, this command returns
@@ -234,7 +243,7 @@ impl<'n, Surface: crate::Surface> SwapchainBuilder<'n, Surface> {
         }
     }
 }
-impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<'_, Surface> {
+impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<'_, '_, Surface> {
     type RootStructure = VkSwapchainCreateInfoKHR;
 
     #[inline(always)]
