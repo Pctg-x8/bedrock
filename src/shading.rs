@@ -114,6 +114,44 @@ pub enum StencilFaceMask {
     Both = VK_STENCIL_FACE_FRONT_AND_BACK,
 }
 
+pub type StencilOpState = VkStencilOpState;
+impl StencilOpState {
+    pub const NOP: Self = Self::always_forall(StencilOp::Keep);
+
+    pub const fn always(pass: StencilOp, fail: StencilOp, depth_fail: StencilOp) -> Self {
+        Self {
+            passOp: pass as _,
+            failOp: fail as _,
+            depthFailOp: depth_fail as _,
+            compareOp: CompareOp::Always as _,
+            compareMask: 0,
+            writeMask: 0,
+            reference: 0,
+        }
+    }
+
+    pub const fn always_forall(op: StencilOp) -> Self {
+        Self::always(op, op, op)
+    }
+
+    pub const fn write_mask(mut self, mask: u32) -> Self {
+        self.writeMask = mask;
+        self
+    }
+
+    pub const fn set_compare(mut self, op: CompareOp, reference: u32, mask: u32) -> Self {
+        self.compareOp = op as _;
+        self.reference = reference;
+        self.compareMask = mask;
+        self
+    }
+
+    pub const fn always_pass(mut self) -> Self {
+        self.compareOp = CompareOp::Always as _;
+        self
+    }
+}
+
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct ShaderModuleCreateInfo<'d>(VkShaderModuleCreateInfo, core::marker::PhantomData<&'d [u32]>);
