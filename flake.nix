@@ -2,7 +2,7 @@
   description = "bedrock devenv";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
   };
   outputs =
     { nixpkgs, ... }:
@@ -16,7 +16,20 @@
         pkgs.stack
         # debugging
         pkgs.vulkan-validation-layers
+        # git hook
+        rusty-hook
       ];
+      rusty-hook = pkgs.rustPlatform.buildRustPackage rec {
+        pname = "rusty-hook";
+        version = "0.11.2";
+        cargoHash = "sha256-HC+1Cs2BeIPHuuGxcFEB8GqcyrrUEYcSM+KgE/INxIw=";
+        src = pkgs.fetchFromGitHub {
+          owner = "swellaby";
+          repo = pname;
+          rev = "30162426ec354d70ffdb91d1fe93549a58770c3d"; # master at 2025/12/31
+          hash = "sha256-enqEsI0TSazVpIP9Awt/ZWjbxE6j1zzccggLF4SF358=";
+        };
+      };
     in
     {
       devShells."${system}" = {
