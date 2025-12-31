@@ -46,3 +46,14 @@ impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
         r
     }
 }
+impl<Swapchain> SwapchainImage<Swapchain> {
+    /// Purges the construct
+    pub const fn unmanage(self) -> (VkImage, Swapchain, VkExtent3D) {
+        let image = unsafe { core::ptr::read(&self.0) };
+        let swapchain = unsafe { core::ptr::read(&self.1) };
+        let extent = unsafe { core::ptr::read(&self.2) };
+        core::mem::forget(self);
+
+        (image, swapchain, extent)
+    }
+}
