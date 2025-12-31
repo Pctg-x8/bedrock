@@ -647,7 +647,7 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
     #[inline(always)]
     pub fn new(
         stage: ShaderStage,
-        shader: &'d (impl ShaderModule + ?Sized),
+        shader: &'d (impl VkHandle<Handle = VkShaderModule> + ?Sized),
         entrypoint_name: &'d core::ffi::CStr,
     ) -> Self {
         Self(
