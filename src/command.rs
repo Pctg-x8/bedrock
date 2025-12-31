@@ -542,15 +542,18 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
 }
 
 /// The recording state of command buffers
-#[implements]
 #[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
 pub struct CmdRecord<'d> {
     ptr: VkHandleRefMut<'d, VkCommandBuffer>,
 }
-#[implements]
 impl<'d> CmdRecord<'d> {
     pub const fn new(ptr: VkHandleRefMut<'d, VkCommandBuffer>) -> Self {
         Self { ptr }
+    }
+
+    #[inline(always)]
+    pub const fn raw_command_buffer_handle_mut(&mut self) -> &mut VkHandleRefMut<'d, VkCommandBuffer> {
+        &mut self.ptr
     }
 }
 

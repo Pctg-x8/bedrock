@@ -197,7 +197,7 @@ pub trait VkDeviceChildNonExtDestroyable {
 /// A smart handle to a Vulkan object that holds a source lifetime
 /// (bitpattern as same as native handle type)
 #[repr(transparent)]
-#[derive(Clone, Hash, PartialEq, Eq, Debug)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 pub struct VkHandleRef<'r, H>(pub(crate) H, core::marker::PhantomData<&'r dyn VkHandle<Handle = H>>);
 impl<'r, H> VkHandleRef<'r, H> {
     pub fn new(r: &'r (impl VkHandle<Handle = H> + ?Sized)) -> Self {
