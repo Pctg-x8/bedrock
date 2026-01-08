@@ -160,9 +160,19 @@ pub trait MemoryBound: VkHandle {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()>
+    fn bind(&mut self, memory: &(impl VkHandle<Handle = VkDeviceMemory> + ?Sized), offset: usize) -> crate::Result<()>
     where
         Self: VkHandleMut;
+}
+
+#[inline(always)]
+#[implements]
+pub fn bind_memory(
+    resource: &mut (impl MemoryBound + VkHandleMut + ?Sized),
+    memory: &(impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+    offset: usize,
+) -> crate::Result<()> {
+    resource.bind(memory, offset)
 }
 
 impl VkComponentMapping {

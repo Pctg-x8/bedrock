@@ -302,8 +302,9 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for ImageObject<Device> {
         ImageMemoryRequirementsInfo2::new(self)
     }
 
+    #[inline(always)]
     #[implements]
-    fn bind(&mut self, memory: &(impl DeviceMemory + ?Sized), offset: usize) -> crate::Result<()>
+    fn bind(&mut self, memory: &(impl VkHandle<Handle = VkDeviceMemory> + ?Sized), offset: usize) -> crate::Result<()>
     where
         Self: VkHandleMut,
     {
