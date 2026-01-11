@@ -7084,6 +7084,13 @@ pub struct VkPhysicalDeviceFeatures {
     pub variableMultisampleRate: VkBool32,
     pub inheritedQueries: VkBool32,
 }
+#[rustfmt::skip]
+impl Default for VkPhysicalDeviceFeatures {
+    #[inline(always)]
+    fn default() -> Self {
+        unsafe { core::mem::MaybeUninit::zeroed().assume_init() }
+    }
+}
 
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[derive(Debug, Clone)]

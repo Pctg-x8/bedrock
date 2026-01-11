@@ -3553,7 +3553,8 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("variableMultisampleRate", "VkBool32"),
             Struct::member("inheritedQueries", "VkBool32"),
         ],
-    ),
+    )
+    .default_zero(),
     Struct::typed(
         "PhysicalDeviceFeatures2",
         "PHYSICAL_DEVICE_FEATURES_2",
