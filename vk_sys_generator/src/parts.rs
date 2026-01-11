@@ -635,6 +635,17 @@ pub enum StructUsage {
     Sink,
     Both,
 }
+impl StructUsage {
+    #[inline(always)]
+    const fn is_source(&self) -> bool {
+        matches!(self, StructUsage::Source | StructUsage::Both)
+    }
+
+    #[inline(always)]
+    const fn is_sink(&self) -> bool {
+        matches!(self, StructUsage::Sink | StructUsage::Both)
+    }
+}
 
 pub struct Struct {
     name: &'static str,
@@ -645,8 +656,10 @@ pub struct Struct {
     copyable: bool,
     equatable: bool,
     hashable: bool,
+    default_zero: bool,
     extensions: &'static [(&'static str, &'static str)],
     promoted: Option<&'static str>,
+    available_condition: Option<&'static str>,
 }
 impl Struct {
     pub const fn new(name: &'static str, members: &'static [StructMember]) -> Self {
@@ -659,8 +672,10 @@ impl Struct {
             copyable: false,
             equatable: false,
             hashable: false,
+            default_zero: false,
             extensions: &[],
             promoted: None,
+            available_condition: None,
         }
     }
 
@@ -701,6 +716,16 @@ impl Struct {
         self
     }
 
+    pub const fn available_condition(mut self, condition: &'static str) -> Self {
+        self.available_condition = Some(condition);
+        self
+    }
+
+    pub const fn default_zero(mut self) -> Self {
+        self.default_zero = true;
+        self
+    }
+
     pub const fn extensions(mut self, extensions: &'static [(&'static str, &'static str)]) -> Self {
         self.extensions = extensions;
         self
@@ -725,6 +750,7 @@ impl Struct {
         copyable: bool,
         equatable: bool,
         hashable: bool,
+        available_condition: Option<&'static str>,
     ) -> std::io::Result<()> {
         let mut derives = Vec::with_capacity(8);
         if debuggable {
@@ -757,6 +783,9 @@ impl Struct {
 
         writeln!(w, "#[repr(C)]")?;
         writeln!(w, "#[rustfmt::skip]")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
         writeln!(w, "pub struct {type_name} {{")?;
         if let Some(u) = usage {
             // common headers
@@ -780,8 +809,15 @@ impl Struct {
         Ok(())
     }
 
-    fn emit_vulkan_structure_impl(w: &mut impl std::io::Write, type_name: &str) -> std::io::Result<()> {
+    fn emit_vulkan_structure_impl(
+        w: &mut impl std::io::Write,
+        type_name: &str,
+        available_condition: Option<&'static str>,
+    ) -> std::io::Result<()> {
         writeln!(w, "#[rustfmt::skip]")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
         writeln!(w, "unsafe impl crate::VulkanStructure for {type_name} {{")?;
         writeln!(w, "    #[inline(always)]")?;
         writeln!(w, "    fn as_generic(&self) -> &crate::GenericVulkanStructure {{")?;
@@ -800,21 +836,27 @@ impl Struct {
         Ok(())
     }
 
-    fn emit_vulkan_sink_structure_impl(w: &mut impl std::io::Write, type_name: &str) -> std::io::Result<()> {
+    fn emit_vulkan_sink_structure_impl(
+        w: &mut impl std::io::Write,
+        type_name: &str,
+        available_condition: Option<&'static str>,
+    ) -> std::io::Result<()> {
         writeln!(w, "#[rustfmt::skip]")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
         writeln!(w, "unsafe impl crate::VulkanSinkStructure for {type_name} {{")?;
         writeln!(w, "    #[inline(always)]")?;
-        writeln!(w, "    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {{")?;
-        writeln!(w, "        unsafe {{ core::mem::transmute(self) }}")?;
-        writeln!(w, "    }}")?;
+        writeln!(
+            w,
+            "    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {{ unsafe {{ core::mem::transmute(self) }} }}"
+        )?;
         writeln!(w)?;
         writeln!(w, "    #[inline(always)]")?;
         writeln!(
             w,
-            "    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {{"
+            "    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {{ unsafe {{ core::mem::transmute(self) }} }}"
         )?;
-        writeln!(w, "        unsafe {{ core::mem::transmute(self) }}")?;
-        writeln!(w, "    }}")?;
         writeln!(w, "}}")?;
 
         Ok(())
@@ -824,44 +866,77 @@ impl Struct {
         w: &mut impl std::io::Write,
         type_name: &str,
         structure_type_name: &str,
+        available_condition: Option<&'static str>,
     ) -> std::io::Result<()> {
         writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "unsafe impl crate::TypedVulkanStructure for {type_name} {{")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
         writeln!(
             w,
-            "    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name};"
-        )?;
-        writeln!(w, "}}")?;
-
-        Ok(())
+            "unsafe impl crate::TypedVulkanStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
+        )
     }
 
     fn emit_typed_vulkan_sink_structure_impl(
         w: &mut impl std::io::Write,
         type_name: &str,
         structure_type_name: &str,
+        available_condition: Option<&'static str>,
     ) -> std::io::Result<()> {
         writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "unsafe impl crate::TypedVulkanSinkStructure for {type_name} {{")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
         writeln!(
             w,
-            "    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name};"
-        )?;
-        writeln!(w, "}}")?;
-
-        Ok(())
+            "unsafe impl crate::TypedVulkanSinkStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
+        )
     }
 
     fn emit_structure_type_const(
         w: &mut impl std::io::Write,
         structure_type_name: &str,
         value: u32,
+        available_condition: Option<&'static str>,
     ) -> std::io::Result<()> {
         writeln!(w, "#[rustfmt::skip]")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
         writeln!(
             w,
             "pub const VK_STRUCTURE_TYPE_{structure_type_name}: VkStructureType = {value};"
         )
+    }
+
+    fn emit_default_zero(
+        w: &mut impl std::io::Write,
+        type_name: &str,
+        structure_type_name: Option<&str>,
+        available_condition: Option<&'static str>,
+    ) -> std::io::Result<()> {
+        writeln!(w, "#[rustfmt::skip]")?;
+        if let Some(a) = available_condition {
+            writeln!(w, "#[cfg({a})]")?;
+        }
+        writeln!(w, "impl Default for {type_name} {{")?;
+        writeln!(w, "    #[inline(always)]")?;
+        writeln!(w, "    fn default() -> Self {{")?;
+        if let Some(structure_type_name) = structure_type_name {
+            // typed
+            writeln!(w, "        let mut p = core::mem::MaybeUninit::zeroed();")?;
+            writeln!(
+                w,
+                "        unsafe {{ core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_{structure_type_name}); }}"
+            )?;
+            writeln!(w, "        unsafe {{ p.assume_init() }}")?;
+        } else {
+            // untyped
+            writeln!(w, "        unsafe {{ core::mem::MaybeUninit::zeroed().assume_init() }}")?;
+        }
+        writeln!(w, "    }}")?;
+        writeln!(w, "}}")
     }
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
@@ -880,17 +955,21 @@ impl Struct {
                 self.copyable,
                 self.equatable,
                 self.hashable,
+                self.available_condition,
             )?;
             if let Some((up, v, u)) = self.stype {
-                Self::emit_structure_type_const(w, up, v)?;
-                if u == StructUsage::Source || u == StructUsage::Both {
-                    Self::emit_vulkan_structure_impl(w, &type_name)?;
-                    Self::emit_typed_vulkan_structure_impl(w, &type_name, up)?;
+                Self::emit_structure_type_const(w, up, v, self.available_condition)?;
+                if u.is_source() {
+                    Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
+                    Self::emit_typed_vulkan_structure_impl(w, &type_name, up, self.available_condition)?;
                 }
-                if u == StructUsage::Sink || u == StructUsage::Both {
-                    Self::emit_vulkan_sink_structure_impl(w, &type_name)?;
-                    Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up)?;
+                if u.is_sink() {
+                    Self::emit_vulkan_sink_structure_impl(w, &type_name, self.available_condition)?;
+                    Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up, self.available_condition)?;
                 }
+            }
+            if self.default_zero {
+                Self::emit_default_zero(w, &type_name, self.stype.map(|t| t.0), self.available_condition)?;
             }
 
             return Ok(());
@@ -925,24 +1004,43 @@ impl Struct {
                 self.copyable,
                 self.equatable,
                 self.hashable,
+                self.available_condition,
             )?;
             if let Some((up, v, u)) = self.stype {
                 let structure_type_name = format!("{up}_{tag}");
 
                 writeln!(w, "{feature_gate}")?;
-                Self::emit_structure_type_const(w, &structure_type_name, v)?;
-                if u == StructUsage::Source || u == StructUsage::Both {
+                Self::emit_structure_type_const(w, &structure_type_name, v, self.available_condition)?;
+                if u.is_source() {
                     writeln!(w, "{feature_gate}")?;
-                    Self::emit_vulkan_structure_impl(w, &type_name)?;
+                    Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
                     writeln!(w, "{feature_gate}")?;
-                    Self::emit_typed_vulkan_structure_impl(w, &type_name, &structure_type_name)?;
+                    Self::emit_typed_vulkan_structure_impl(
+                        w,
+                        &type_name,
+                        &structure_type_name,
+                        self.available_condition,
+                    )?;
                 }
-                if u == StructUsage::Sink || u == StructUsage::Both {
+                if u.is_sink() {
                     writeln!(w, "{feature_gate}")?;
-                    Self::emit_vulkan_sink_structure_impl(w, &type_name)?;
+                    Self::emit_vulkan_sink_structure_impl(w, &type_name, self.available_condition)?;
                     writeln!(w, "{feature_gate}")?;
-                    Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, &structure_type_name)?;
+                    Self::emit_typed_vulkan_sink_structure_impl(
+                        w,
+                        &type_name,
+                        &structure_type_name,
+                        self.available_condition,
+                    )?;
                 }
+            }
+            if self.default_zero {
+                Self::emit_default_zero(
+                    w,
+                    &type_name,
+                    self.stype.map(|t| format!("{}_{tag}", t.0)).as_deref(),
+                    self.available_condition,
+                )?;
             }
 
             if let Some(pv) = self.promoted {
@@ -950,11 +1048,17 @@ impl Struct {
 
                 writeln!(w, "#[cfg(feature = \"Allow{pv}APIs\")]")?;
                 writeln!(w, "#[rustfmt::skip]")?;
+                if let Some(a) = self.available_condition {
+                    writeln!(w, "#[cfg({a})]")?;
+                }
                 writeln!(w, "pub type {promoted_type_name} = {type_name};")?;
 
                 if let Some((up, _, _)) = self.stype {
                     writeln!(w, "#[cfg(feature = \"Allow{pv}APIs\")]")?;
                     writeln!(w, "#[rustfmt::skip]")?;
+                    if let Some(a) = self.available_condition {
+                        writeln!(w, "#[cfg({a})]")?;
+                    }
                     writeln!(
                         w,
                         "pub const VK_STRUCTURE_TYPE_{up}: VkStructureType = VK_STRUCTURE_TYPE_{up}_{tag};"
@@ -985,21 +1089,22 @@ impl Struct {
             self.copyable,
             self.equatable,
             self.hashable,
+            self.available_condition,
         )?;
         if let Some((up, v, u)) = self.stype {
             writeln!(w, "#[cfg({cfg})]")?;
-            Self::emit_structure_type_const(w, up, v)?;
-            if u == StructUsage::Source || u == StructUsage::Both {
+            Self::emit_structure_type_const(w, up, v, self.available_condition)?;
+            if u.is_source() {
                 writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_vulkan_structure_impl(w, &type_name)?;
+                Self::emit_vulkan_structure_impl(w, &type_name, self.available_condition)?;
                 writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_typed_vulkan_structure_impl(w, &type_name, up)?;
+                Self::emit_typed_vulkan_structure_impl(w, &type_name, up, self.available_condition)?;
             }
-            if u == StructUsage::Sink || u == StructUsage::Both {
+            if u.is_sink() {
                 writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_vulkan_sink_structure_impl(w, &type_name)?;
+                Self::emit_vulkan_sink_structure_impl(w, &type_name, self.available_condition)?;
                 writeln!(w, "#[cfg({cfg})]")?;
-                Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up)?;
+                Self::emit_typed_vulkan_sink_structure_impl(w, &type_name, up, self.available_condition)?;
             }
         }
 

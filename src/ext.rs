@@ -60,6 +60,18 @@ unsafe impl<S: TypedVulkanStructure + ?Sized> TypedVulkanStructure for Box<S> {
     const TYPE: crate::vk::VkStructureType = S::TYPE;
 }
 
+#[inline(always)]
+pub const fn uninit_sink<T: TypedVulkanSinkStructure>() -> core::mem::MaybeUninit<T> {
+    let mut p = core::mem::MaybeUninit::<T>::uninit();
+    unsafe {
+        core::ptr::addr_of_mut!((*p.as_mut_ptr().cast::<GenericVulkanSinkStructure>()).sType).write(T::TYPE);
+        core::ptr::addr_of_mut!((*p.as_mut_ptr().cast::<GenericVulkanSinkStructure>()).pNext)
+            .write(core::ptr::null_mut());
+    }
+
+    p
+}
+
 #[repr(C)]
 #[allow(non_snake_case)]
 pub struct GenericVulkanSinkStructure {

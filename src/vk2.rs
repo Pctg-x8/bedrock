@@ -3543,9 +3543,7 @@ unsafe impl crate::VulkanStructure for VkAcquireNextImageInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkAcquireNextImageInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkAcquireNextImageInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -3587,9 +3585,7 @@ unsafe impl crate::VulkanStructure for VkAndroidSurfaceCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_android_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkAndroidSurfaceCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkAndroidSurfaceCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -3618,9 +3614,7 @@ unsafe impl crate::VulkanStructure for VkApplicationInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkApplicationInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkApplicationInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_APPLICATION_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -3673,9 +3667,7 @@ unsafe impl crate::VulkanStructure for VkBindBufferMemoryDeviceGroupInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindBufferMemoryDeviceGroupInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindBufferMemoryDeviceGroupInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_DEVICE_GROUP_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkBindBufferMemoryDeviceGroupInfo = VkBindBufferMemoryDeviceGroupInfoKHR;
@@ -3712,9 +3704,7 @@ unsafe impl crate::VulkanStructure for VkBindBufferMemoryInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_bind_memory2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindBufferMemoryInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindBufferMemoryInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_BUFFER_MEMORY_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkBindBufferMemoryInfo = VkBindBufferMemoryInfoKHR;
@@ -3752,9 +3742,7 @@ unsafe impl crate::VulkanStructure for VkBindImageMemoryDeviceGroupInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_bind_memory2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindImageMemoryDeviceGroupInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindImageMemoryDeviceGroupInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_DEVICE_GROUP_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkBindImageMemoryDeviceGroupInfo = VkBindImageMemoryDeviceGroupInfoKHR;
@@ -3791,9 +3779,7 @@ unsafe impl crate::VulkanStructure for VkBindImageMemoryInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_bind_memory2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindImageMemoryInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindImageMemoryInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkBindImageMemoryInfo = VkBindImageMemoryInfoKHR;
@@ -3829,9 +3815,7 @@ unsafe impl crate::VulkanStructure for VkBindImageMemorySwapchainInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindImageMemorySwapchainInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindImageMemorySwapchainInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[derive(Debug, Clone)]
@@ -3860,9 +3844,7 @@ unsafe impl crate::VulkanStructure for VkBindImagePlaneMemoryInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindImagePlaneMemoryInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindImagePlaneMemoryInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_IMAGE_PLANE_MEMORY_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkBindImagePlaneMemoryInfo = VkBindImagePlaneMemoryInfoKHR;
@@ -3902,9 +3884,7 @@ unsafe impl crate::VulkanStructure for VkBindSparseInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBindSparseInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkBindSparseInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BIND_SPARSE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -3943,9 +3923,7 @@ unsafe impl crate::VulkanStructure for VkBufferCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -3988,9 +3966,7 @@ unsafe impl crate::VulkanStructure for VkBufferMemoryBarrier {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferMemoryBarrier {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferMemoryBarrier { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER; }
 
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[derive(Debug, Clone)]
@@ -4019,9 +3995,7 @@ unsafe impl crate::VulkanStructure for VkBufferMemoryRequirementsInfo2KHR {
 }
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferMemoryRequirementsInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferMemoryRequirementsInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_REQUIREMENTS_INFO_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkBufferMemoryRequirementsInfo2 = VkBufferMemoryRequirementsInfo2KHR;
@@ -4056,9 +4030,7 @@ unsafe impl crate::VulkanStructure for VkBufferViewCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferViewCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferViewCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO; }
 
 #[derive(Clone)]
 #[repr(C)]
@@ -4111,9 +4083,7 @@ unsafe impl crate::VulkanStructure for VkCommandBufferAllocateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkCommandBufferAllocateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferAllocateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4139,9 +4109,7 @@ unsafe impl crate::VulkanStructure for VkCommandBufferBeginInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkCommandBufferBeginInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferBeginInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4171,9 +4139,7 @@ unsafe impl crate::VulkanStructure for VkCommandBufferInheritanceInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkCommandBufferInheritanceInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferInheritanceInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4199,9 +4165,7 @@ unsafe impl crate::VulkanStructure for VkCommandPoolCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkCommandPoolCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkCommandPoolCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO; }
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C)]
@@ -4240,9 +4204,7 @@ unsafe impl crate::VulkanStructure for VkComputePipelineCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkComputePipelineCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkComputePipelineCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4273,9 +4235,7 @@ unsafe impl crate::VulkanStructure for VkCopyDescriptorSet {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkCopyDescriptorSet {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET;
-}
+unsafe impl crate::TypedVulkanStructure for VkCopyDescriptorSet { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET; }
 
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[derive(Debug, Clone)]
@@ -4307,9 +4267,7 @@ unsafe impl crate::VulkanStructure for VkD3D12FenceSubmitInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkD3D12FenceSubmitInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkD3D12FenceSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_D3D12_FENCE_SUBMIT_INFO_KHR; }
 
 #[cfg(all(feature = "VK_EXT_debug_report"))]
 #[derive(Debug, Clone)]
@@ -4340,9 +4298,7 @@ unsafe impl crate::VulkanStructure for VkDebugReportCallbackCreateInfoEXT {
 }
 #[cfg(all(feature = "VK_EXT_debug_report"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDebugReportCallbackCreateInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkDebugReportCallbackCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT; }
 
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[derive(Debug, Clone)]
@@ -4372,9 +4328,7 @@ unsafe impl crate::VulkanStructure for VkDebugUtilsLabelEXT {
 }
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDebugUtilsLabelEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsLabelEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT; }
 
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[derive(Debug, Clone)]
@@ -4412,9 +4366,7 @@ unsafe impl crate::VulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
 }
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDebugUtilsMessengerCallbackDataEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsMessengerCallbackDataEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT; }
 
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[derive(Debug, Clone)]
@@ -4447,9 +4399,7 @@ unsafe impl crate::VulkanStructure for VkDebugUtilsMessengerCreateInfoEXT {
 }
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDebugUtilsMessengerCreateInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsMessengerCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT; }
 
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[derive(Debug, Clone)]
@@ -4480,9 +4430,7 @@ unsafe impl crate::VulkanStructure for VkDebugUtilsObjectNameInfoEXT {
 }
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDebugUtilsObjectNameInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsObjectNameInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT; }
 
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[derive(Debug, Clone)]
@@ -4515,9 +4463,7 @@ unsafe impl crate::VulkanStructure for VkDebugUtilsObjectTagInfoEXT {
 }
 #[cfg(all(feature = "VK_EXT_debug_utils"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDebugUtilsObjectTagInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkDebugUtilsObjectTagInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_TAG_INFO_EXT; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4563,9 +4509,7 @@ unsafe impl crate::VulkanStructure for VkDescriptorPoolCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDescriptorPoolCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorPoolCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4600,9 +4544,7 @@ unsafe impl crate::VulkanStructure for VkDescriptorSetAllocateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDescriptorSetAllocateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorSetAllocateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -4640,9 +4582,7 @@ unsafe impl crate::VulkanStructure for VkDescriptorSetLayoutCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDescriptorSetLayoutCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorSetLayoutCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_maintenance3"))]
 #[derive(Debug, Clone)]
@@ -4660,20 +4600,14 @@ pub const VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR: VkStructureType =
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDescriptorSetLayoutSupportKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_maintenance3"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkDescriptorSetLayoutSupportKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkDescriptorSetLayoutSupportKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_SUPPORT_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDescriptorSetLayoutSupport = VkDescriptorSetLayoutSupportKHR;
@@ -4715,9 +4649,7 @@ unsafe impl crate::VulkanStructure for VkDescriptorUpdateTemplateCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_descriptor_update_template"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDescriptorUpdateTemplateCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDescriptorUpdateTemplateCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDescriptorUpdateTemplateCreateInfo = VkDescriptorUpdateTemplateCreateInfoKHR;
@@ -4771,9 +4703,7 @@ unsafe impl crate::VulkanStructure for VkDeviceCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[derive(Debug, Clone)]
@@ -4803,9 +4733,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupBindSparseInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupBindSparseInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupBindSparseInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_BIND_SPARSE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDeviceGroupBindSparseInfo = VkDeviceGroupBindSparseInfoKHR;
@@ -4840,9 +4768,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupCommandBufferBeginInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupCommandBufferBeginInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupCommandBufferBeginInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_COMMAND_BUFFER_BEGIN_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDeviceGroupCommandBufferBeginInfo = VkDeviceGroupCommandBufferBeginInfoKHR;
@@ -4878,9 +4804,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group_creation"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDeviceGroupCreateInfo = VkDeviceGroupCreateInfoKHR;
@@ -4905,20 +4829,14 @@ pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR: VkStructureTy
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkDeviceGroupPresentCapabilitiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkDeviceGroupPresentCapabilitiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkDeviceGroupPresentCapabilitiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR; }
 
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[derive(Debug, Clone)]
@@ -4949,9 +4867,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupPresentInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupPresentInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupPresentInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[derive(Debug, Clone)]
@@ -4982,9 +4898,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupRenderPassBeginInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupRenderPassBeginInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupRenderPassBeginInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_RENDER_PASS_BEGIN_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDeviceGroupRenderPassBeginInfo = VkDeviceGroupRenderPassBeginInfoKHR;
@@ -5024,9 +4938,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupSubmitInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupSubmitInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SUBMIT_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkDeviceGroupSubmitInfo = VkDeviceGroupSubmitInfoKHR;
@@ -5061,9 +4973,7 @@ unsafe impl crate::VulkanStructure for VkDeviceGroupSwapchainCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceGroupSwapchainCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceGroupSwapchainCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5091,9 +5001,7 @@ unsafe impl crate::VulkanStructure for VkDeviceQueueCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceQueueCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceQueueCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5132,9 +5040,7 @@ unsafe impl crate::VulkanStructure for VkDisplayModeCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_display"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDisplayModeCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDisplayModeCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_MODE_CREATE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_display"))]
 #[derive(Debug, Clone)]
@@ -5208,9 +5114,7 @@ unsafe impl crate::VulkanStructure for VkDisplayPresentInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_display_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDisplayPresentInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDisplayPresentInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_PRESENT_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_display"))]
 #[derive(Debug, Clone)]
@@ -5260,9 +5164,7 @@ unsafe impl crate::VulkanStructure for VkDisplaySurfaceCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_display"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDisplaySurfaceCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDisplaySurfaceCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_CREATE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5308,9 +5210,7 @@ unsafe impl crate::VulkanStructure for VkEventCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkEventCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkEventCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_external_fence"))]
 #[derive(Debug, Clone)]
@@ -5352,9 +5252,7 @@ unsafe impl crate::VulkanStructure for VkExportFenceWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_fence_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExportFenceWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkExportFenceWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_FENCE_WIN32_HANDLE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_memory"))]
 #[derive(Debug, Clone)]
@@ -5383,9 +5281,7 @@ unsafe impl crate::VulkanStructure for VkVkExportMemoryAllocateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkVkExportMemoryAllocateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkVkExportMemoryAllocateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_ALLOCATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkVkExportMemoryAllocateInfo = VkVkExportMemoryAllocateInfoKHR;
@@ -5422,9 +5318,7 @@ unsafe impl crate::VulkanStructure for VkExportMemoryWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkExportMemoryWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_semaphore"))]
 #[derive(Debug, Clone)]
@@ -5453,9 +5347,7 @@ unsafe impl crate::VulkanStructure for VkExportSemaphoreCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExportSemaphoreCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkExportSemaphoreCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExportSemaphoreCreateInfo = VkExportSemaphoreCreateInfoKHR;
@@ -5492,9 +5384,7 @@ unsafe impl crate::VulkanStructure for VkExportSemaphoreWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExportSemaphoreWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkExportSemaphoreWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5537,20 +5427,14 @@ pub const VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR: VkStructureType = 10
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalBufferPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkExternalBufferPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalBufferPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_BUFFER_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExternalBufferProperties = VkExternalBufferPropertiesKHR;
@@ -5576,20 +5460,14 @@ pub const VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR: VkStructureType = 100
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalFencePropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkExternalFencePropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalFencePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_FENCE_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExternalFenceProperties = VkExternalFencePropertiesKHR;
@@ -5613,20 +5491,14 @@ pub const VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR: VkStructureTyp
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalImageFormatPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkExternalImageFormatPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalImageFormatPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERANL_IMAGE_FORMAT_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExternalImageFormatProperties = VkExternalImageFormatPropertiesKHR;
@@ -5661,9 +5533,7 @@ unsafe impl crate::VulkanStructure for VkExternalMemoryBufferCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExternalMemoryBufferCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkExternalMemoryBufferCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_BUFFER_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExternalMemoryBufferCreateInfo = VkExternalMemoryBufferCreateInfoKHR;
@@ -5698,9 +5568,7 @@ unsafe impl crate::VulkanStructure for VkExternalMemoryImageCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkExternalMemoryImageCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkExternalMemoryImageCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_MEMORY_IMAGE_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExternalMemoryImageCreateInfo = VkExternalMemoryImageCreateInfoKHR;
@@ -5739,20 +5607,14 @@ pub const VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR: VkStructureType =
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkExternalSemaphorePropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkExternalSemaphorePropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkExternalSemaphorePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_EXTERNAL_SEMAPHORE_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkExternalSemaphoreProperties = VkExternalSemaphorePropertiesKHR;
@@ -5783,9 +5645,7 @@ unsafe impl crate::VulkanStructure for VkFenceCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkFenceCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkFenceCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
 #[derive(Debug, Clone)]
@@ -5815,9 +5675,7 @@ unsafe impl crate::VulkanStructure for VkFenceGetFdInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkFenceGetFdInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkFenceGetFdInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_GET_FD_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_fence_win32"))]
 #[derive(Debug, Clone)]
@@ -5847,9 +5705,7 @@ unsafe impl crate::VulkanStructure for VkFenceGetWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_fence_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkFenceGetWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkFenceGetWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FENCE_GET_WIN32_HANDLE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5876,20 +5732,14 @@ pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 100005900
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkFormatProperties2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkFormatProperties2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkFormatProperties2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkFormatProperties2 = VkFormatProperties2KHR;
@@ -5926,9 +5776,7 @@ unsafe impl crate::VulkanStructure for VkFramebufferCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkFramebufferCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkFramebufferCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -5969,9 +5817,7 @@ unsafe impl crate::VulkanStructure for VkGraphicsPipelineCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkGraphicsPipelineCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkGraphicsPipelineCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -6029,9 +5875,7 @@ unsafe impl crate::VulkanStructure for VkImageCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -6060,20 +5904,14 @@ pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureType = 100
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkImageFormatProperties2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkImageFormatProperties2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkImageFormatProperties2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_PROPERTIES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkImageFormatProperties2 = VkImageFormatProperties2KHR;
@@ -6111,9 +5949,7 @@ unsafe impl crate::VulkanStructure for VkImageMemoryBarrier {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageMemoryBarrier {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageMemoryBarrier { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER; }
 
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[derive(Debug, Clone)]
@@ -6142,9 +5978,7 @@ unsafe impl crate::VulkanStructure for VkImageMemoryRequirementsInfo2KHR {
 }
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageMemoryRequirementsInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageMemoryRequirementsInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_REQUIREMENTS_INFO_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkImageMemoryRequirementsInfo2 = VkImageMemoryRequirementsInfo2KHR;
@@ -6179,9 +6013,7 @@ unsafe impl crate::VulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImagePlaneMemoryRequirementsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_PLANE_MEMORY_REQUIREMENTS_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkImagePlaneMemoryRequirementsInfo = VkImagePlaneMemoryRequirementsInfoKHR;
@@ -6227,9 +6059,7 @@ unsafe impl crate::VulkanStructure for VkImageSparseMemoryRequirementsInfo2KHR {
 }
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageSparseMemoryRequirementsInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageSparseMemoryRequirementsInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SPARSE_MEMORY_REQUIREMENTS_INFO_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkImageSparseMemoryRequirementsInfo2 = VkImageSparseMemoryRequirementsInfo2KHR;
@@ -6294,9 +6124,7 @@ unsafe impl crate::VulkanStructure for VkImageSwapchainCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group", feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageSwapchainCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageSwapchainCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -6326,9 +6154,7 @@ unsafe impl crate::VulkanStructure for VkImageViewCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageViewCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageViewCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[derive(Debug, Clone)]
@@ -6358,9 +6184,7 @@ unsafe impl crate::VulkanStructure for VkImageViewUsageCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageViewUsageCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageViewUsageCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_VIEW_USAGE_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkImageViewUsageCreateInfo = VkImageViewUsageCreateInfoKHR;
@@ -6398,9 +6222,7 @@ unsafe impl crate::VulkanStructure for VkImportFenceFdInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportFenceFdInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImportFenceFdInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_FENCE_FD_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_fence_win32"))]
 #[derive(Debug, Clone)]
@@ -6433,9 +6255,7 @@ unsafe impl crate::VulkanStructure for VkImportFenceWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_fence_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportFenceWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImportFenceWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_FENCE_WIN32_HANDLE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
 #[derive(Debug, Clone)]
@@ -6465,9 +6285,7 @@ unsafe impl crate::VulkanStructure for VkImportMemoryFdInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportMemoryFdInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImportMemoryFdInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_FD_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[derive(Debug, Clone)]
@@ -6498,9 +6316,7 @@ unsafe impl crate::VulkanStructure for VkImportMemoryWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportMemoryWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImportMemoryWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
 #[derive(Debug, Clone)]
@@ -6532,9 +6348,7 @@ unsafe impl crate::VulkanStructure for VkImportSemaphoreFdInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportSemaphoreFdInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImportSemaphoreFdInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[derive(Debug, Clone)]
@@ -6567,9 +6381,7 @@ unsafe impl crate::VulkanStructure for VkImportSemaphoreWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImportSemaphoreWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImportSemaphoreWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_WIN32_HANDLE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[derive(Debug, Clone)]
@@ -6612,9 +6424,7 @@ unsafe impl crate::VulkanStructure for VkInstanceCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkInstanceCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkInstanceCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -6651,9 +6461,7 @@ unsafe impl crate::VulkanStructure for VkMappedMemoryRange {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMappedMemoryRange {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-}
+unsafe impl crate::TypedVulkanStructure for VkMappedMemoryRange { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE; }
 
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[derive(Debug, Clone)]
@@ -6683,9 +6491,7 @@ unsafe impl crate::VulkanStructure for VkMemoryAllocateFlagsInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_device_group"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryAllocateFlagsInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryAllocateFlagsInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_FLAGS_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkMemoryAllocateFlagsInfo = VkMemoryAllocateFlagsInfoKHR;
@@ -6717,9 +6523,7 @@ unsafe impl crate::VulkanStructure for VkMemoryAllocateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryAllocateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryAllocateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -6745,9 +6549,7 @@ unsafe impl crate::VulkanStructure for VkMemoryBarrier {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER; }
 
 #[cfg(all(feature = "VK_KHR_dedicated_allocation"))]
 #[derive(Debug, Clone)]
@@ -6777,9 +6579,7 @@ unsafe impl crate::VulkanStructure for VkMemoryDedicatedAllocateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_dedicated_allocation"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryDedicatedAllocateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryDedicatedAllocateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_ALLOCATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkMemoryDedicatedAllocateInfo = VkMemoryDedicatedAllocateInfoKHR;
@@ -6804,20 +6604,14 @@ pub const VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR: VkStructureType =
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryDedicatedRequirementsKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_dedicated_allocation"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkMemoryDedicatedRequirementsKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkMemoryDedicatedRequirementsKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_DEDICATED_REQUIREMENTS_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkMemoryDedicatedRequirements = VkMemoryDedicatedRequirementsKHR;
@@ -6841,20 +6635,14 @@ pub const VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR: VkStructureType = 10000740
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryFdPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkMemoryFdPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkMemoryFdPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_FD_PROPERTIES_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
 #[derive(Debug, Clone)]
@@ -6884,9 +6672,7 @@ unsafe impl crate::VulkanStructure for VkMemoryGetFdInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryGetFdInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryGetFdInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_GET_FD_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[derive(Debug, Clone)]
@@ -6916,9 +6702,7 @@ unsafe impl crate::VulkanStructure for VkMemoryGetWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryGetWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryGetWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_GET_WIN32_HANDLE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -6945,20 +6729,14 @@ pub const VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR: VkStructureType = 1000146
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryRequirements2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkMemoryRequirements2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkMemoryRequirements2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_REQUIREMENTS_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkMemoryRequirements2 = VkMemoryRequirements2KHR;
@@ -6998,20 +6776,14 @@ pub const VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR: VkStructureType 
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkMemoryWin32HandlePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_WIN32_HANDLE_PROPERTIES_KHR; }
 
 #[cfg(all(feature = "VK_EXT_metal_surface"))]
 #[derive(Debug, Clone)]
@@ -7041,9 +6813,7 @@ unsafe impl crate::VulkanStructure for VkMetalSurfaceCreateInfoEXT {
 }
 #[cfg(all(feature = "VK_EXT_metal_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMetalSurfaceCreateInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkMetalSurfaceCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_METAL_SURFACE_CREATE_INFO_EXT; }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash)]
 #[repr(C)]
@@ -7092,27 +6862,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDevice16BitStorageFeaturesKHR {
 }
 #[cfg(all(feature = "VK_KHR_16bit_storage"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDevice16BitStorageFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDevice16BitStorageFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_16bit_storage"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDevice16BitStorageFeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_16bit_storage"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDevice16BitStorageFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDevice16BitStorageFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDevice16BitStorageFeatures = VkPhysicalDevice16BitStorageFeaturesKHR;
@@ -7149,9 +6911,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalBufferInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalBufferInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalBufferInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceExternalBufferInfo = VkPhysicalDeviceExternalBufferInfoKHR;
@@ -7186,9 +6946,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalFenceInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_fence_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalFenceInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalFenceInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FENCE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceExternalFenceInfo = VkPhysicalDeviceExternalFenceInfoKHR;
@@ -7223,9 +6981,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalImageFormatInfoKH
 }
 #[cfg(all(feature = "VK_KHR_external_memory_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalImageFormatInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalImageFormatInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceExternalImageFormatInfo = VkPhysicalDeviceExternalImageFormatInfoKHR;
@@ -7260,9 +7016,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceExternalSemaphoreInfoKHR 
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalSemaphoreInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceExternalSemaphoreInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_SEMAPHORE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceExternalSemaphoreInfo = VkPhysicalDeviceExternalSemaphoreInfoKHR;
@@ -7358,27 +7112,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceFeatures2KHR {
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceFeatures2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceFeatures2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR; }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceFeatures2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceFeatures2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceFeatures2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceFeatures2 = VkPhysicalDeviceFeatures2KHR;
@@ -7404,20 +7150,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHR: VkStructureTyp
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceGroupPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_device_group_creation"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceGroupPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceGroupPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GROUP_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceGroupProperties = VkPhysicalDeviceGroupPropertiesKHR;
@@ -7456,9 +7196,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceImageFormatInfo2KHR {
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceImageFormatInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceImageFormatInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_FORMAT_INFO_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceImageFormatInfo2 = VkPhysicalDeviceImageFormatInfo2KHR;
@@ -7595,20 +7333,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR: VkStru
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMaintenance3PropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_maintenance3"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance3PropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMaintenance3PropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceMaintenance3Properties = VkPhysicalDeviceMaintenance3PropertiesKHR;
@@ -7642,20 +7374,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR: VkStructure
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMemoryProperties2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMemoryProperties2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMemoryProperties2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceMemoryProperties2 = VkPhysicalDeviceMemoryProperties2KHR;
@@ -7692,27 +7418,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceMultiviewFeaturesKHR {
 }
 #[cfg(all(feature = "VK_KHR_multiview"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceMultiviewFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceMultiviewFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_multiview"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewFeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_multiview"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_FEATURES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceMultiviewFeatures = VkPhysicalDeviceMultiviewFeaturesKHR;
@@ -7737,20 +7455,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR: VkStructur
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_multiview"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceMultiviewProperties = VkPhysicalDeviceMultiviewPropertiesKHR;
@@ -7774,20 +7486,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR: VkStr
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDevicePointClippingPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDevicePointClippingPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDevicePointClippingPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_POINT_CLIPPING_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDevicePointClippingProperties = VkPhysicalDevicePointClippingPropertiesKHR;
@@ -7826,20 +7532,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR: VkStructureType = 
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceProperties2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceProperties2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceProperties2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceProperties2 = VkPhysicalDeviceProperties2KHR;
@@ -7874,27 +7574,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFea
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SAMPLER_YCBCR_CONVERSION_FEATURES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceSamplerYcbcrConversionFeatures = VkPhysicalDeviceSamplerYcbcrConversionFeaturesKHR;
@@ -7933,9 +7625,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceSparseImageFormatInfo2KHR
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSparseImageFormatInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSparseImageFormatInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SPARSE_IMAGE_FORMAT_INFO_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceSparseImageFormatInfo2 = VkPhysicalDeviceSparseImageFormatInfo2KHR;
@@ -7981,9 +7671,7 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
 }
 #[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSurfaceInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SURFACE_INFO_2_KHR; }
 
 #[cfg(all(feature = "VK_KHR_variable_pointers"))]
 #[derive(Debug, Clone)]
@@ -8013,27 +7701,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceVariablePointersFeaturesK
 }
 #[cfg(all(feature = "VK_KHR_variable_pointers"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceVariablePointersFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceVariablePointersFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_variable_pointers"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVariablePointersFeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_variable_pointers"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVariablePointersFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVariablePointersFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceVariablePointersFeatures = VkPhysicalDeviceVariablePointersFeaturesKHR;
@@ -8066,9 +7746,7 @@ unsafe impl crate::VulkanStructure for VkPipelineCacheCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineCacheCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineCacheCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8112,9 +7790,7 @@ unsafe impl crate::VulkanStructure for VkPipelineColorBlendStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineColorBlendStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineColorBlendStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8148,9 +7824,7 @@ unsafe impl crate::VulkanStructure for VkPipelineDepthStencilStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineDepthStencilStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineDepthStencilStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8177,9 +7851,7 @@ unsafe impl crate::VulkanStructure for VkPipelineDynamicStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineDynamicStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineDynamicStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8206,9 +7878,7 @@ unsafe impl crate::VulkanStructure for VkPipelineInputAssemblyStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineInputAssemblyStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineInputAssemblyStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8237,9 +7907,7 @@ unsafe impl crate::VulkanStructure for VkPipelineLayoutCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineLayoutCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineLayoutCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8270,9 +7938,7 @@ unsafe impl crate::VulkanStructure for VkPipelineMultisampleStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineMultisampleStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineMultisampleStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8307,9 +7973,7 @@ unsafe impl crate::VulkanStructure for VkPipelineRasterizationStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineRasterizationStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineRasterizationStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8338,9 +8002,7 @@ unsafe impl crate::VulkanStructure for VkPipelineShaderStageCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineShaderStageCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineShaderStageCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[derive(Debug, Clone)]
@@ -8369,9 +8031,7 @@ unsafe impl crate::VulkanStructure for VkPipelineTessellationDomainOriginStateCr
 }
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineTessellationDomainOriginStateCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineTessellationDomainOriginStateCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_DOMAIN_ORIGIN_STATE_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPipelineTessellationDomainOriginStateCreateInfo = VkPipelineTessellationDomainOriginStateCreateInfoKHR;
@@ -8403,9 +8063,7 @@ unsafe impl crate::VulkanStructure for VkPipelineTessellationStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineTessellationStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineTessellationStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8434,9 +8092,7 @@ unsafe impl crate::VulkanStructure for VkPipelineVertexInputStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineVertexInputStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineVertexInputStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8465,9 +8121,7 @@ unsafe impl crate::VulkanStructure for VkPipelineViewportStateCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineViewportStateCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineViewportStateCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_swapchain"))]
 #[derive(Debug, Clone)]
@@ -8501,9 +8155,7 @@ unsafe impl crate::VulkanStructure for VkPresentInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPresentInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPresentInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8540,9 +8192,7 @@ unsafe impl crate::VulkanStructure for VkQueryPoolCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkQueryPoolCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkQueryPoolCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8570,20 +8220,14 @@ pub const VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR: VkStructureType = 100
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkQueueFamilyProperties2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkQueueFamilyProperties2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkQueueFamilyProperties2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_QUEUE_FAMILY_PROPERTIES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkQueueFamilyProperties2 = VkQueueFamilyProperties2KHR;
@@ -8626,9 +8270,7 @@ unsafe impl crate::VulkanStructure for VkRenderPassBeginInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkRenderPassBeginInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkRenderPassBeginInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -8659,9 +8301,7 @@ unsafe impl crate::VulkanStructure for VkRenderPassCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkRenderPassCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkRenderPassCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[derive(Debug, Clone)]
@@ -8691,9 +8331,7 @@ unsafe impl crate::VulkanStructure for VkRenderPassInputAttachmentAspectCreateIn
 }
 #[cfg(all(feature = "VK_KHR_maintenance2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkRenderPassInputAttachmentAspectCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkRenderPassInputAttachmentAspectCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_INPUT_ATTACHMENT_ASPECT_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkRenderPassInputAttachmentAspectCreateInfo = VkRenderPassInputAttachmentAspectCreateInfoKHR;
@@ -8733,9 +8371,7 @@ unsafe impl crate::VulkanStructure for VkRenderPassMultiviewCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_multiview"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkRenderPassMultiviewCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkRenderPassMultiviewCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_RENDER_PASS_MULTIVIEW_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkRenderPassMultiviewCreateInfo = VkRenderPassMultiviewCreateInfoKHR;
@@ -8781,9 +8417,7 @@ unsafe impl crate::VulkanStructure for VkSamplerCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSamplerCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkSamplerCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[derive(Debug, Clone)]
@@ -8819,9 +8453,7 @@ unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkSamplerYcbcrConversionCreateInfo = VkSamplerYcbcrConversionCreateInfoKHR;
@@ -8845,20 +8477,14 @@ pub const VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkSamplerYcbcrConversionImageFormatPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_IMAGE_FORMAT_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkSamplerYcbcrConversionImageFormatProperties = VkSamplerYcbcrConversionImageFormatPropertiesKHR;
@@ -8893,9 +8519,7 @@ unsafe impl crate::VulkanStructure for VkSamplerYcbcrConversionInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_sampler_ycbcr_conversion"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSamplerYcbcrConversionInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_INFO_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkSamplerYcbcrConversionInfo = VkSamplerYcbcrConversionInfoKHR;
@@ -8926,9 +8550,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO; }
 
 #[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
 #[derive(Debug, Clone)]
@@ -8958,9 +8580,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreGetFdInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_fd"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreGetFdInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreGetFdInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[derive(Debug, Clone)]
@@ -8990,9 +8610,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreGetWin32HandleInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreGetWin32HandleInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreGetWin32HandleInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_GET_WIN32_HANDLE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -9019,9 +8637,7 @@ unsafe impl crate::VulkanStructure for VkShaderModuleCreateInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkShaderModuleCreateInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkShaderModuleCreateInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -9057,20 +8673,14 @@ pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR: VkStructureTyp
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSparseImageFormatProperties2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_physical_device_properties2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkSparseImageFormatProperties2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkSparseImageFormatProperties2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_FORMAT_PROPERTIES_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkSparseImageFormatProperties2 = VkSparseImageFormatProperties2KHR;
@@ -9126,20 +8736,14 @@ pub const VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR: VkStructureT
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSparseImageMemoryRequirements2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_memory_requirements2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkSparseImageMemoryRequirements2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkSparseImageMemoryRequirements2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SPARSE_IMAGE_MEMORY_REQUIREMENTS_2_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkSparseImageMemoryRequirements2 = VkSparseImageMemoryRequirements2KHR;
@@ -9228,9 +8832,7 @@ unsafe impl crate::VulkanStructure for VkSubmitInfo {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSubmitInfo {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-}
+unsafe impl crate::TypedVulkanStructure for VkSubmitInfo { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -9305,20 +8907,14 @@ pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR: VkStructureType = 100011
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSurfaceCapabilities2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceCapabilities2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceCapabilities2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES_2_KHR; }
 
 #[cfg(all(feature = "VK_KHR_surface"))]
 #[derive(Debug, Clone, Copy)]
@@ -9345,20 +8941,14 @@ pub const VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR: VkStructureType = 1000119002;
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkSurfaceFormat2KHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_get_surface_capabilities2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceFormat2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkSurfaceFormat2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SURFACE_FORMAT_2_KHR; }
 
 #[cfg(all(feature = "VK_KHR_swapchain"))]
 #[derive(Debug, Clone)]
@@ -9402,9 +8992,7 @@ unsafe impl crate::VulkanStructure for VkSwapchainCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSwapchainCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSwapchainCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR; }
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C)]
@@ -9466,9 +9054,7 @@ unsafe impl crate::VulkanStructure for VkWaylandSurfaceCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_wayland_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkWaylandSurfaceCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkWaylandSurfaceCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_win32_keyed_mutex"))]
 #[derive(Debug, Clone)]
@@ -9503,9 +9089,7 @@ unsafe impl crate::VulkanStructure for VkWin32KeyedMutexAcquireReleaseInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_win32_keyed_mutex"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkWin32KeyedMutexAcquireReleaseInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkWin32KeyedMutexAcquireReleaseInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WIN32_KEYED_MUTEX_ACQUIRE_RELEASE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_win32_surface"))]
 #[derive(Debug, Clone)]
@@ -9536,9 +9120,7 @@ unsafe impl crate::VulkanStructure for VkWin32SurfaceCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_win32_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkWin32SurfaceCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkWin32SurfaceCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR; }
 
 #[derive(Debug, Clone)]
 #[repr(C)]
@@ -9570,9 +9152,7 @@ unsafe impl crate::VulkanStructure for VkWriteDescriptorSet {
     }
 }
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkWriteDescriptorSet {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-}
+unsafe impl crate::TypedVulkanStructure for VkWriteDescriptorSet { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET; }
 
 #[cfg(all(feature = "VK_KHR_xcb_surface"))]
 #[derive(Debug, Clone)]
@@ -9603,9 +9183,7 @@ unsafe impl crate::VulkanStructure for VkXcbSurfaceCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_xcb_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkXcbSurfaceCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkXcbSurfaceCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_xlib_surface"))]
 #[derive(Debug, Clone)]
@@ -9636,9 +9214,7 @@ unsafe impl crate::VulkanStructure for VkXlibSurfaceCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_xlib_surface"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkXlibSurfaceCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR; }
 
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[derive(Debug, Clone)]
@@ -9670,9 +9246,7 @@ unsafe impl crate::VulkanStructure for VkMemoryBarrier2KHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_BARRIER_2_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkMemoryBarrier2 = VkMemoryBarrier2KHR;
@@ -9715,9 +9289,7 @@ unsafe impl crate::VulkanStructure for VkBufferMemoryBarrier2KHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferMemoryBarrier2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferMemoryBarrier2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER_2_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkBufferMemoryBarrier2 = VkBufferMemoryBarrier2KHR;
@@ -9761,9 +9333,7 @@ unsafe impl crate::VulkanStructure for VkImageMemoryBarrier2KHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkImageMemoryBarrier2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkImageMemoryBarrier2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER_2_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkImageMemoryBarrier2 = VkImageMemoryBarrier2KHR;
@@ -9804,9 +9374,7 @@ unsafe impl crate::VulkanStructure for VkDependencyInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDependencyInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDependencyInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEPENDENCY_INFO_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkDependencyInfo = VkDependencyInfoKHR;
@@ -9847,9 +9415,7 @@ unsafe impl crate::VulkanStructure for VkSubmitInfo2KHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSubmitInfo2KHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSubmitInfo2KHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SUBMIT_INFO_2_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkSubmitInfo2 = VkSubmitInfo2KHR;
@@ -9887,9 +9453,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreSubmitInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreSubmitInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SUBMIT_INFO_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkSemaphoreSubmitInfo = VkSemaphoreSubmitInfoKHR;
@@ -9925,9 +9489,7 @@ unsafe impl crate::VulkanStructure for VkCommandBufferSubmitInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkCommandBufferSubmitInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkCommandBufferSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_SUBMIT_INFO_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkCommandBufferSubmitInfo = VkCommandBufferSubmitInfoKHR;
@@ -9962,27 +9524,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceSynchronization2FeaturesK
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceSynchronization2FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_synchronization2"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSynchronization2FeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceSynchronization2FeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SYNCHRONIZATION_2_FEATURES_KHR; }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceSynchronization2Features = VkPhysicalDeviceSynchronization2FeaturesKHR;
@@ -10009,20 +9563,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR: VkStructureType =
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(any(feature = "VK_KHR_external_fence_capabilities", feature = "VK_KHR_external_memory_capabilities", feature = "VK_KHR_external_semaphore_capabilities"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceIDPropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;
@@ -17171,9 +16719,7 @@ unsafe impl crate::VulkanStructure for VkBufferDeviceAddressInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferDeviceAddressInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferDeviceAddressInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkBufferDeviceAddressInfo = VkBufferDeviceAddressInfoKHR;
@@ -17208,9 +16754,7 @@ unsafe impl crate::VulkanStructure for VkBufferOpaqueCaptureAddressCreateInfoKHR
 }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkBufferOpaqueCaptureAddressCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkBufferOpaqueCaptureAddressCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_BUFFER_OPAQUE_CAPTURE_ADDRESS_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkBufferOpaqueCaptureAddressCreateInfo = VkBufferOpaqueCaptureAddressCreateInfoKHR;
@@ -17245,9 +16789,7 @@ unsafe impl crate::VulkanStructure for VkDeviceMemoryOpaqueCaptureAddressInfoKHR
 }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkDeviceMemoryOpaqueCaptureAddressInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkDeviceMemoryOpaqueCaptureAddressInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OPAQUE_CAPTURE_ADDRESS_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkDeviceMemoryOpaqueCaptureAddressInfo = VkDeviceMemoryOpaqueCaptureAddressInfoKHR;
@@ -17282,9 +16824,7 @@ unsafe impl crate::VulkanStructure for VkMemoryOpaqueCaptureAddressAllocateInfoK
 }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkMemoryOpaqueCaptureAddressAllocateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkMemoryOpaqueCaptureAddressAllocateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_MEMORY_OPAQUE_CAPTURE_ADDRESS_ALLOCATE_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkMemoryOpaqueCaptureAddressAllocateInfo = VkMemoryOpaqueCaptureAddressAllocateInfoKHR;
@@ -17321,27 +16861,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceBufferDeviceAddressFeatur
 }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceBufferDeviceAddressFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceBufferDeviceAddressFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceBufferDeviceAddressFeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_buffer_device_address"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceBufferDeviceAddressFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceBufferDeviceAddressFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceBufferDeviceAddressFeatures = VkPhysicalDeviceBufferDeviceAddressFeaturesKHR;
@@ -17376,27 +16908,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeatures
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR; }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphoreFeaturesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_FEATURES_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceTimelineSemaphoreFeatures = VkPhysicalDeviceTimelineSemaphoreFeaturesKHR;
@@ -17420,26 +16944,121 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR: V
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceTimelineSemaphorePropertiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkPhysicalDeviceTimelineSemaphoreProperties = VkPhysicalDeviceTimelineSemaphorePropertiesKHR;
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES_KHR;
+
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+pub struct VkPhysicalDeviceVulkan11Features {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub storageBuffer16BitAccess: VkBool32,
+    pub uniformAndStorageBuffer16BitAccess: VkBool32,
+    pub storagePushConstant16: VkBool32,
+    pub storageInputOutput16: VkBool32,
+    pub multiview: VkBool32,
+    pub multiviewGeometryShader: VkBool32,
+    pub multiviewTessellationShader: VkBool32,
+    pub variablePointersStorageBuffer: VkBool32,
+    pub variablePointers: VkBool32,
+    pub protectedMemory: VkBool32,
+    pub samplerYcbcrConversion: VkBool32,
+    pub shaderDrawParameters: VkBool32,
+}
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES: VkStructureType = 49;
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+unsafe impl crate::VulkanStructure for VkPhysicalDeviceVulkan11Features {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Features {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+impl Default for VkPhysicalDeviceVulkan11Features {
+    #[inline(always)]
+    fn default() -> Self {
+        let mut p = core::mem::MaybeUninit::zeroed();
+        unsafe { core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES); }
+        unsafe { p.assume_init() }
+    }
+}
+
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+pub struct VkPhysicalDeviceVulkan11Properties {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub deviceUUID: [u8; VK_UUID_SIZE],
+    pub driverUUID: [u8; VK_UUID_SIZE],
+    pub deviceLUID: [u8; VK_LUID_SIZE],
+    pub deviceNodeMask: u32,
+    pub deviceLUIDValid: VkBool32,
+    pub subgroupSize: u32,
+    pub subgroupSupportedStages: VkShaderStageFlags,
+    pub subgroupSupportedOperations: VkSubgroupFeatureFlags,
+    pub subgroupQuadOperationsInAllStages: VkBool32,
+    pub pointClippingBehavior: VkPointClippingBehavior,
+    pub maxMultiviewViewCount: u32,
+    pub maxMultiviewInstanceIndex: u32,
+    pub protectedNoFault: VkBool32,
+    pub maxPerSetDescriptors: u32,
+    pub maxMemoryAllocationSize: VkDeviceSize,
+}
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES: VkStructureType = 50;
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Properties {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[rustfmt::skip]
+#[cfg(Allow1_2APIs)]
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Properties { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES; }
 
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[derive(Debug, Clone)]
@@ -17469,9 +17088,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreSignalInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreSignalInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreSignalInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_SIGNAL_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkSemaphoreSignalInfo = VkSemaphoreSignalInfoKHR;
@@ -17507,9 +17124,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreTypeCreateInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreTypeCreateInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreTypeCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkSemaphoreTypeCreateInfo = VkSemaphoreTypeCreateInfoKHR;
@@ -17547,9 +17162,7 @@ unsafe impl crate::VulkanStructure for VkSemaphoreWaitInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkSemaphoreWaitInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkSemaphoreWaitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SEMAPHORE_WAIT_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkSemaphoreWaitInfo = VkSemaphoreWaitInfoKHR;
@@ -17587,9 +17200,7 @@ unsafe impl crate::VulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
 }
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkTimelineSemaphoreSubmitInfoKHR {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR;
-}
+unsafe impl crate::TypedVulkanStructure for VkTimelineSemaphoreSubmitInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO_KHR; }
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
 pub type VkTimelineSemaphoreSubmitInfo = VkTimelineSemaphoreSubmitInfoKHR;
@@ -18111,27 +17722,19 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceBlendOperationAdvanccedFe
 }
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT; }
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvanccedFeaturesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT; }
 
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[derive(Debug, Clone)]
@@ -18154,20 +17757,14 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_
 #[rustfmt::skip]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
     #[inline(always)]
-    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure {
-        unsafe { core::mem::transmute(self) }
-    }
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT;
-}
+unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceBlendOperationAdvancedPropertiesEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_PROPERTIES_EXT; }
 
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[derive(Debug, Clone)]
@@ -18198,9 +17795,7 @@ unsafe impl crate::VulkanStructure for VkPipelineColorBlendAdvancedStateCreateIn
 }
 #[cfg(all(feature = "VK_EXT_blend_operation_advanced"))]
 #[rustfmt::skip]
-unsafe impl crate::TypedVulkanStructure for VkPipelineColorBlendAdvancedStateCreateInfoEXT {
-    const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT;
-}
+unsafe impl crate::TypedVulkanStructure for VkPipelineColorBlendAdvancedStateCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_ADVANCED_STATE_CREATE_INFO_EXT; }
 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
