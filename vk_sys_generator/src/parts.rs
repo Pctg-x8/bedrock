@@ -925,7 +925,7 @@ impl Struct {
         writeln!(w, "    fn default() -> Self {{")?;
         if let Some(structure_type_name) = structure_type_name {
             // typed
-            writeln!(w, "        let mut p = core::mem::MaybeUninit::zeroed();")?;
+            writeln!(w, "        let mut p = core::mem::MaybeUninit::<Self>::zeroed();")?;
             writeln!(
                 w,
                 "        unsafe {{ core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_{structure_type_name}); }}"

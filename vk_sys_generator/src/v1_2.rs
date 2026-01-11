@@ -178,7 +178,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("shaderDrawParameters", "VkBool32"),
             ],
         )
-        .available_condition("Allow1_2APIs")
+        .available_condition("feature = \"Allow1_2APIs\"")
         .default_zero(),
     ),
     Element::Struct(
@@ -205,7 +205,7 @@ pub const ELEMENTS: &[Element] = &[
                 Struct::member("maxMemoryAllocationSize", "VkDeviceSize"),
             ],
         )
-        .available_condition("Allow1_2APIs"),
+        .available_condition("feature = \"Allow1_2APIs\""),
     ),
     Element::Struct(
         Struct::new(

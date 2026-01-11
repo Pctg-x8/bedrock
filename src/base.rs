@@ -2332,7 +2332,13 @@ impl VkExternalFencePropertiesKHR {
 }
 
 pub type PhysicalDeviceFeatures = VkPhysicalDeviceFeatures;
+#[cfg(feature = "Allow1_2APIs")]
+pub type PhysicalDeviceVulkan11Features = VkPhysicalDeviceVulkan11Features;
+
 pub type PhysicalDeviceProperties = VkPhysicalDeviceProperties;
+#[cfg(feature = "Allow1_2APIs")]
+pub type PhysicalDeviceVulkan11Properties = VkPhysicalDeviceVulkan11Properties;
+
 pub type PhysicalDeviceMemoryProperties = VkPhysicalDeviceMemoryProperties;
 impl PhysicalDeviceMemoryProperties {
     #[inline(always)]

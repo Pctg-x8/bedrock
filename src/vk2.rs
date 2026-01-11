@@ -16962,7 +16962,7 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TIMELINE_SEMAPHORE_PROPERTIES: VkStr
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 pub struct VkPhysicalDeviceVulkan11Features {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -16980,10 +16980,10 @@ pub struct VkPhysicalDeviceVulkan11Features {
     pub shaderDrawParameters: VkBool32,
 }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES: VkStructureType = 49;
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::VulkanStructure for VkPhysicalDeviceVulkan11Features {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanStructure {
@@ -16996,10 +16996,10 @@ unsafe impl crate::VulkanStructure for VkPhysicalDeviceVulkan11Features {
     }
 }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::TypedVulkanStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Features {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
@@ -17008,14 +17008,14 @@ unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Features {
     fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Features { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES; }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 impl Default for VkPhysicalDeviceVulkan11Features {
     #[inline(always)]
     fn default() -> Self {
-        let mut p = core::mem::MaybeUninit::zeroed();
+        let mut p = core::mem::MaybeUninit::<Self>::zeroed();
         unsafe { core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType).write(VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES); }
         unsafe { p.assume_init() }
     }
@@ -17024,7 +17024,7 @@ impl Default for VkPhysicalDeviceVulkan11Features {
 #[derive(Debug, Clone)]
 #[repr(C)]
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 pub struct VkPhysicalDeviceVulkan11Properties {
     pub sType: VkStructureType,
     pub pNext: *mut core::ffi::c_void,
@@ -17045,10 +17045,10 @@ pub struct VkPhysicalDeviceVulkan11Properties {
     pub maxMemoryAllocationSize: VkDeviceSize,
 }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES: VkStructureType = 50;
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Properties {
     #[inline(always)]
     fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
@@ -17057,7 +17057,7 @@ unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceVulkan11Properties {
     fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
 }
 #[rustfmt::skip]
-#[cfg(Allow1_2APIs)]
+#[cfg(feature = "Allow1_2APIs")]
 unsafe impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceVulkan11Properties { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES; }
 
 #[cfg(all(feature = "VK_KHR_timeline_semaphore"))]
