@@ -302,6 +302,32 @@ impl<'d> SemaphoreCreateInfo<'d> {
 }
 
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
+pub type PhysicalDeviceTimelineSemaphoreFeatures = VkPhysicalDeviceTimelineSemaphoreFeaturesKHR;
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
+impl PhysicalDeviceTimelineSemaphoreFeatures {
+    #[inline(always)]
+    pub const fn new(active: bool) -> Self {
+        Self {
+            sType: <VkPhysicalDeviceTimelineSemaphoreFeaturesKHR as TypedVulkanStructure>::TYPE,
+            pNext: core::ptr::null_mut(),
+            timelineSemaphore: active as _,
+        }
+    }
+
+    #[inline(always)]
+    pub const fn uninit_sink() -> core::mem::MaybeUninit<Self> {
+        let mut p = core::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType)
+                .write(<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR as TypedVulkanSinkStructure>::TYPE);
+            core::ptr::addr_of_mut!((*p.as_mut_ptr()).pNext).write(core::ptr::null_mut());
+        }
+
+        p
+    }
+}
+
+#[cfg(feature = "VK_KHR_timeline_semaphore")]
 pub struct SemaphoreTypeCreateInfo<'d>(
     VkSemaphoreTypeCreateInfoKHR,
     core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
