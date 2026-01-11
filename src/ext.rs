@@ -232,7 +232,7 @@ pub trait Chainable<'d, T> {
 
 pub trait StructureChainQuery {
     /// Iterate pNext chain
-    fn iter_chain(&self) -> StructureChainIterator;
+    fn iter_chain<'a>(&'a self) -> StructureChainIterator<'a>;
 
     fn query_structure_type(&self, ty: crate::vk::VkStructureType) -> Option<&GenericVulkanStructure> {
         self.iter_chain().find(|s| s.sType == ty)
@@ -244,7 +244,7 @@ pub trait StructureChainQuery {
 }
 impl<S: TypedVulkanStructure> StructureChainQuery for S {
     #[inline(always)]
-    fn iter_chain(&self) -> StructureChainIterator {
+    fn iter_chain<'a>(&'a self) -> StructureChainIterator<'a> {
         StructureChainIterator {
             current: self.as_generic() as _,
             marker: std::marker::PhantomData,
@@ -254,7 +254,7 @@ impl<S: TypedVulkanStructure> StructureChainQuery for S {
 
 pub trait SinkStructureChainQuery {
     /// Iterate pNext chain
-    fn iter_chain(&self) -> SinkStructureChainIterator;
+    fn iter_chain<'a>(&'a self) -> SinkStructureChainIterator<'a>;
 
     #[inline(always)]
     fn query_structure_type(&self, ty: crate::vk::VkStructureType) -> Option<&GenericVulkanSinkStructure> {
@@ -269,10 +269,23 @@ pub trait SinkStructureChainQuery {
 }
 impl<S: TypedVulkanSinkStructure> SinkStructureChainQuery for S {
     #[inline(always)]
-    fn iter_chain(&self) -> SinkStructureChainIterator {
+    fn iter_chain<'a>(&'a self) -> SinkStructureChainIterator<'a> {
         SinkStructureChainIterator {
             current: self.as_generic() as _,
             marker: core::marker::PhantomData,
         }
+    }
+}
+
+/// chains a list of vulkan structures
+pub fn chain_structures<'x>(mut xs: impl Iterator<Item = &'x mut GenericVulkanStructure>) {
+    let Some(mut p) = xs.next() else {
+        // nothing to be chained
+        return;
+    };
+
+    while let Some(q) = xs.next() {
+        p.pNext = q as *mut _ as _;
+        p = q;
     }
 }
