@@ -1,8 +1,6 @@
 use crate::{ffi_helper::slice_as_ptr_empty_null, *};
 use derives::implements;
 
-use super::CompletionHandlerMut;
-
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     fn format(&self) -> VkFormat;
     fn size(&self) -> &VkExtent2D;

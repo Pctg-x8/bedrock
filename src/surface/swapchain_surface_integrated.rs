@@ -107,7 +107,7 @@ where
         (d, s)
     }
 }
-impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<'_, '_, Surface> {
+impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainWithSurfaceBuilder<'_, '_, Surface> {
     type ConcreteSurface = Surface;
 
     #[inline(always)]
@@ -117,7 +117,7 @@ impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainBuilder<
 }
 
 /// Builder object to construct a `Swapchain`, backed with a surface
-pub struct SwapchainBuilder<'n, 'sw, Surface: crate::Surface>(
+pub struct SwapchainWithSurfaceBuilder<'n, 'sw, Surface: crate::Surface>(
     VkSwapchainCreateInfoKHR,
     Surface,
     core::marker::PhantomData<(
@@ -125,7 +125,7 @@ pub struct SwapchainBuilder<'n, 'sw, Surface: crate::Surface>(
         Option<&'sw dyn VkHandle<Handle = VkSwapchainKHR>>,
     )>,
 );
-impl<'n, 'sw, Surface: crate::Surface> SwapchainBuilder<'n, 'sw, Surface> {
+impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surface> {
     pub fn new(
         surface: Surface,
         min_image_count: u32,
@@ -191,14 +191,14 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainBuilder<'n, 'sw, Surface> {
     }
 
     /// Default: Inherit
-    pub const fn pre_transform(mut self, tf: VkSurfaceTransformFlagsKHR) -> Self {
-        self.0.preTransform = tf as _;
+    pub const fn pre_transform(mut self, tf: SurfaceTransformFlags) -> Self {
+        self.0.preTransform = tf.bits();
         self
     }
 
     /// Default: Inherit
-    pub const fn composite_alpha(mut self, a: VkCompositeAlphaFlagsKHR) -> Self {
-        self.0.compositeAlpha = a as _;
+    pub const fn composite_alpha(mut self, a: CompositeAlphaFlags) -> Self {
+        self.0.compositeAlpha = a.bits();
         self
     }
 
@@ -253,7 +253,7 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainBuilder<'n, 'sw, Surface> {
         }
     }
 }
-impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainBuilder<'_, '_, Surface> {
+impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainWithSurfaceBuilder<'_, '_, Surface> {
     type RootStructure = VkSwapchainCreateInfoKHR;
 
     #[inline(always)]

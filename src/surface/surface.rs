@@ -1,7 +1,5 @@
-use crate::*;
+use crate::{ffi_helper::opt_pointer, *};
 use derives::{bitflags_newtype, implements};
-
-use super::ffi_helper::opt_pointer;
 
 /// Opaque handle to a surface object
 #[derive(VkHandle, VkObject, InstanceChild)]
