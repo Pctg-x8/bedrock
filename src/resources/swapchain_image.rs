@@ -3,7 +3,12 @@ use crate::*;
 /// Opaque handle to a image object, backed by Swapchain.
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VkImage::OBJECT_TYPE)]
-pub struct SwapchainImage<Swapchain>(pub(crate) VkImage, pub(crate) Swapchain, pub(crate) VkExtent3D);
+pub struct SwapchainImage<Swapchain>(
+    pub(crate) VkImage,
+    pub(crate) Swapchain,
+    pub(crate) VkFormat,
+    pub(crate) VkExtent3D,
+);
 unsafe impl<Swapchain: Sync> Sync for SwapchainImage<Swapchain> {}
 unsafe impl<Swapchain: Send> Send for SwapchainImage<Swapchain> {}
 impl<Swapchain: DeviceChildHandle> DeviceChildHandle for SwapchainImage<Swapchain> {
@@ -23,12 +28,12 @@ impl<Swapchain: DeviceChild> DeviceChild for SwapchainImage<Swapchain> {
 impl<Swapchain: crate::Swapchain> Image for SwapchainImage<Swapchain> {
     #[inline(always)]
     fn format(&self) -> VkFormat {
-        self.1.format()
+        self.2
     }
 
     #[inline(always)]
     fn size(&self) -> &VkExtent3D {
-        &self.2
+        &self.3
     }
 
     #[inline(always)]
@@ -40,7 +45,7 @@ impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
     /// Clones parent reference
     #[inline(always)]
     pub fn clone_parent(self) -> SwapchainImage<Swapchain> {
-        let r = SwapchainImage(self.0, self.1.clone(), self.2.clone());
+        let r = SwapchainImage(self.0, self.1.clone(), self.2, self.3.clone());
         // disable dropping self.0
         std::mem::forget(self);
         r
@@ -48,12 +53,13 @@ impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
 }
 impl<Swapchain> SwapchainImage<Swapchain> {
     /// Purges the construct
-    pub const fn unmanage(self) -> (VkImage, Swapchain, VkExtent3D) {
+    pub const fn unmanage(self) -> (VkImage, Swapchain, VkFormat, VkExtent3D) {
         let image = unsafe { core::ptr::read(&self.0) };
         let swapchain = unsafe { core::ptr::read(&self.1) };
-        let extent = unsafe { core::ptr::read(&self.2) };
+        let format = unsafe { core::ptr::read(&self.2) };
+        let extent = unsafe { core::ptr::read(&self.3) };
         core::mem::forget(self);
 
-        (image, swapchain, extent)
+        (image, swapchain, format, extent)
     }
 }

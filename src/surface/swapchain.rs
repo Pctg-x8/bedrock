@@ -2,9 +2,6 @@ use crate::{ffi_helper::slice_as_ptr_empty_null, *};
 use derives::implements;
 
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
-    fn format(&self) -> VkFormat;
-    fn size(&self) -> &VkExtent2D;
-
     /// Retrieve the index of the next available presentation image
     /// # Failures
     /// On failure, this command returns
@@ -117,6 +114,12 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             e => Err(e),
         }
     }
+}
+DerefContainerBracketImpl!(for Swapchain {});
+
+pub trait SwapchainImageExt {
+    fn format(&self) -> VkFormat;
+    fn size(&self) -> VkExtent2D;
 
     /// Obtain the array of presentable images associated with a swapchain
     /// # Failures
@@ -142,18 +145,18 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
         }
 
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
-            crate::SwapchainImage(r, self, self.size().with_depth(1))
+            crate::SwapchainImage(r, self, self.format, self.extent.with_depth(1))
         })))
     }
 }
-DerefContainerBracketImpl!(for Swapchain {
+DerefContainerBracketImpl!(for SwapchainImageExt {
     #[inline(always)]
     fn format(&self) -> VkFormat {
         T::format(self)
     }
 
     #[inline(always)]
-    fn size(&self) -> &VkExtent2D {
+    fn size(&self) -> VkExtent2D {
         T::size(self)
     }
 });

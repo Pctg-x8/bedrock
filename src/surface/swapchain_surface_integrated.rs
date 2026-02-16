@@ -67,14 +67,20 @@ where
     Device: crate::Device,
     Surface: VkHandle<Handle = VkSurfaceKHR>,
 {
+}
+impl<Device, Surface> SwapchainImageExt for SurfaceSwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: VkHandle<Handle = VkSurfaceKHR>,
+{
     #[inline(always)]
     fn format(&self) -> VkFormat {
         self.format
     }
 
     #[inline(always)]
-    fn size(&self) -> &VkExtent2D {
-        &self.extent
+    fn size(&self) -> VkExtent2D {
+        self.extent
     }
 }
 impl<Device, Surface> SurfaceSwapchainObject<Device, Surface>
