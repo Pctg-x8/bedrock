@@ -82,6 +82,16 @@ where
     Device: VkHandle<Handle = VkDevice>,
     Surface: VkHandle<Handle = VkSurfaceKHR>,
 {
+    /// Deconstructs this and take ownership of managed objects(no drop occured)
+    pub const fn unmanage(self) -> (Device, Surface, VkSwapchainKHR) {
+        let device = unsafe { core::ptr::read(&self.device) };
+        let surface = unsafe { core::ptr::read(&self.surface) };
+        let swapchain = self.handle;
+        core::mem::forget(self);
+
+        (device, surface, swapchain)
+    }
+
     /// Deconstructs the swapchain and retrieves its parents
     #[implements]
     pub fn deconstruct(self) -> (Device, Surface) {

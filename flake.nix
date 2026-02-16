@@ -34,7 +34,7 @@
     {
       devShells."${system}" = {
         default = pkgs.mkShell {
-          buildInputs = deps;
+          nativeBuildInputs = deps;
         };
         fish =
           let
@@ -51,7 +51,7 @@
             '';
           in
           pkgs.mkShell {
-            buildInputs = deps ++ [ pkgs.fish ];
+            nativeBuildInputs = deps ++ [ pkgs.fish ];
             shellHook = ''
               exec ${pkgs.fish.outPath}/bin/fish -C "source ${fishPrehook}/bin/startup"
             '';
