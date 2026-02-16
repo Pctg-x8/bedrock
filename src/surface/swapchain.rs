@@ -117,9 +117,9 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
 }
 DerefContainerBracketImpl!(for Swapchain {});
 
-pub trait SwapchainImageExt {
+pub trait SwapchainImageExt: Swapchain {
     fn format(&self) -> VkFormat;
-    fn size(&self) -> VkExtent2D;
+    fn extent(&self) -> VkExtent2D;
 
     /// Obtain the array of presentable images associated with a swapchain
     /// # Failures
@@ -145,7 +145,7 @@ pub trait SwapchainImageExt {
         }
 
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
-            crate::SwapchainImage(r, self, self.format, self.extent.with_depth(1))
+            crate::SwapchainImage(r, self, self.format(), self.extent().with_depth(1))
         })))
     }
 }
@@ -156,8 +156,8 @@ DerefContainerBracketImpl!(for SwapchainImageExt {
     }
 
     #[inline(always)]
-    fn size(&self) -> VkExtent2D {
-        T::size(self)
+    fn extent(&self) -> VkExtent2D {
+        T::extent(self)
     }
 });
 

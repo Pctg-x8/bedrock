@@ -79,7 +79,7 @@ where
     }
 
     #[inline(always)]
-    fn size(&self) -> VkExtent2D {
+    fn extent(&self) -> VkExtent2D {
         self.extent
     }
 }
