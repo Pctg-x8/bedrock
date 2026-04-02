@@ -1,4 +1,5 @@
 use widestring::WideCStr;
+use windows::Win32::Foundation::HANDLE;
 
 use crate::ffi_helper::opt_pointer;
 use crate::*;
@@ -169,3 +170,64 @@ impl<'d> MemoryGetWin32HandleInfo<'d> {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
+
+pub trait DeviceExternalMemoryWin32Extension: Device {
+    #[implements]
+    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
+    #[implements]
+    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
+
+    /// Get Properties of External Memory Win32 Handles
+    /// # Safety
+    /// sink must be constructed correctly
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    #[implements]
+    #[inline]
+    unsafe fn memory_win32_handle_properties(
+        &self,
+        handle_type: ExternalMemoryHandleTypeWin32,
+        handle: HANDLE,
+        sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
+    ) -> crate::Result<()> {
+        unsafe {
+            self.get_memory_win32_handle_properties_khr_fn().0(
+                self.native_ptr(),
+                handle_type as _,
+                handle,
+                sink.as_mut_ptr(),
+            )
+            .into_result()
+            .map(drop)
+        }
+    }
+
+    /// Get a Windows HANDLE for a memory object
+    ///
+    /// A returned handle needs to be closed by caller
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    #[implements]
+    #[inline]
+    fn get_memory_win32_handle(&self, info: &MemoryGetWin32HandleInfo) -> crate::Result<HANDLE> {
+        let mut handle = core::mem::MaybeUninit::uninit();
+
+        unsafe {
+            self.get_memory_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr()).into_result()?;
+
+            Ok(handle.assume_init())
+        }
+    }
+}
+DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryWin32Extension {
+    #[implements]
+    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
+    #[implements]
+    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
+});

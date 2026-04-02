@@ -3,12 +3,15 @@
 use crate::*;
 
 #[cfg(feature = "VK_KHR_external_memory")]
-impl VkExternalMemoryImageCreateInfoKHR {
-    pub const fn new(types: VkExternalMemoryHandleTypeFlagsKHR) -> Self {
+pub type ExternalMemoryImageCreateInfo = VkExternalMemoryImageCreateInfoKHR;
+#[cfg(feature = "VK_KHR_external_memory")]
+impl ExternalMemoryImageCreateInfo {
+    #[inline(always)]
+    pub const fn new(handle_types: VkExternalMemoryHandleTypeFlagBitsKHR) -> Self {
         Self {
-            sType: Self::TYPE,
+            sType: VkExternalMemoryImageCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
-            handleTypes: types,
+            handleTypes: handle_types,
         }
     }
 }
