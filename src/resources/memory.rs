@@ -184,6 +184,17 @@ impl<'d> MemoryAllocateInfo<'d> {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
+unsafe impl VulkanStructure for MemoryAllocateInfo<'_> {
+    #[inline(always)]
+    fn as_generic(&self) -> &GenericVulkanStructure {
+        self.0.as_generic()
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+        self.0.as_generic_mut()
+    }
+}
 
 /// Specify a dedicated memory allocation resource
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
