@@ -408,11 +408,10 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             descriptorSetCount: layouts.len() as _,
             pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
-        let mut hs = vec![VkDescriptorSet::NULL; layouts.len()];
 
         unsafe {
+            let mut hs = vec![core::mem::MaybeUninit::uninit().assume_init(); layouts.len()];
             self.alloc_raw(&ainfo, &mut hs)?;
-
             Ok(core::mem::transmute(hs))
         }
     }
@@ -435,11 +434,10 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             descriptorSetCount: N as _,
             pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
-        let mut hs = [VkDescriptorSet::NULL; N];
 
         unsafe {
+            let mut hs = [core::mem::MaybeUninit::uninit().assume_init(); N];
             self.alloc_raw(&ainfo, &mut hs)?;
-
             // Note: transmuteだと変換できない（要素数がジェネリックだとダメっぽい？）
             Ok(*(&hs as *const _ as *const [DescriptorSet; N]))
         }
@@ -582,7 +580,7 @@ impl<'r> DescriptorImageInfo<'r> {
             VkDescriptorImageInfo {
                 imageView: r.native_ptr(),
                 imageLayout: layout as _,
-                sampler: VkSampler::NULL,
+                sampler: None,
             },
             core::marker::PhantomData,
         )
@@ -594,7 +592,7 @@ impl<'r> DescriptorImageInfo<'r> {
             VkDescriptorImageInfo {
                 imageView: h,
                 imageLayout: layout as _,
-                sampler: VkSampler::NULL,
+                sampler: None,
             },
             core::marker::PhantomData,
         )
@@ -602,13 +600,13 @@ impl<'r> DescriptorImageInfo<'r> {
 
     #[inline(always)]
     pub fn with_sampler(mut self, sampler: &'r (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
-        self.0.sampler = sampler.native_ptr();
+        self.0.sampler = Some(sampler.native_ptr());
         self
     }
 
     #[inline(always)]
     pub const fn with_unbounded_sampler(mut self, sampler: VkSampler) -> Self {
-        self.0.sampler = sampler;
+        self.0.sampler = Some(sampler);
         self
     }
 }

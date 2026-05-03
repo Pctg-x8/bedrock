@@ -495,7 +495,7 @@ pub unsafe fn queue_submit(
             queue.native_ptr_mut(),
             submit_info.len() as _,
             submit_info.as_ptr() as _,
-            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
+            fence.as_mut().map(VkHandleRefMut::native_ptr_mut),
         )
         .into_result()
         .map(drop)
@@ -514,7 +514,7 @@ pub unsafe fn queue_submit2(
             queue.native_ptr_mut(),
             submit_info.len() as _,
             submit_info.as_ptr() as _,
-            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
+            fence.as_mut().map(VkHandleRefMut::native_ptr_mut),
         )
         .into_result()
         .map(drop)
@@ -538,7 +538,7 @@ pub unsafe fn queue_bind_sparse(
             queue.native_ptr_mut(),
             infos.len() as _,
             infos.as_ptr(),
-            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
+            fence.as_mut().map(VkHandleRefMut::native_ptr_mut),
         )
         .into_result()
         .map(drop)
@@ -1049,7 +1049,7 @@ pub unsafe fn create_graphics_pipelines_unchecked(
     unsafe {
         crate::vkfn::create_graphics_pipelines(
             device,
-            pipeline_cache.unwrap_or(VkPipelineCache::NULL),
+            pipeline_cache,
             create_infos.len() as _,
             create_infos.as_ptr() as _,
             opt_pointer(allocation_callbacks),

@@ -2245,9 +2245,9 @@ const STRUCTS: &'static [Struct] = &[
     Struct::new(
         "CommandBufferInheritanceInfo",
         &[
-            Struct::member("renderPass", "VkRenderPass"),
+            Struct::member("renderPass", "Option<VkRenderPass>"),
             Struct::member("subpass", "u32"),
-            Struct::member("framebuffer", "VkFramebuffer"),
+            Struct::member("framebuffer", "Option<VkFramebuffer>"),
             Struct::member("occlusionQueryEnable", "VkBool32"),
             Struct::member("queryFlags", "VkQueryControlFlags"),
             Struct::member("pipelineStatistics", "VkQueryPipelineStatisticFlags"),
@@ -2277,8 +2277,8 @@ const STRUCTS: &'static [Struct] = &[
         &[
             Struct::member("flags", "VkPipelineCreateFlags"),
             Struct::member("stage", "VkPipelineShaderStageCreateInfo"),
-            Struct::member("layout", "VkPipelineLayout"),
-            Struct::member("basePipelineHandle", "VkPipeline"),
+            Struct::member("layout", "Option<VkPipelineLayout>"),
+            Struct::member("basePipelineHandle", "Option<VkPipeline>"),
             Struct::member("basePipelineIndex", "i32"),
         ],
     )
@@ -2408,7 +2408,7 @@ const STRUCTS: &'static [Struct] = &[
     Struct::new(
         "DescriptorImageInfo",
         &[
-            Struct::member("sampler", "VkSampler"),
+            Struct::member("sampler", "Option<VkSampler>"),
             Struct::member("imageView", "VkImageView"),
             Struct::member("imageLayout", "VkImageLayout"),
         ],
@@ -2989,10 +2989,10 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("pDepthStencilState", "*const VkPipelineDepthStencilStateCreateInfo"),
             Struct::member("pColorBlendState", "*const VkPipelineColorBlendStateCreateInfo"),
             Struct::member("pDynamicState", "*const VkPipelineDynamicStateCreateInfo"),
-            Struct::member("layout", "VkPipelineLayout"),
-            Struct::member("renderPass", "VkRenderPass"),
+            Struct::member("layout", "Option<VkPipelineLayout>"),
+            Struct::member("renderPass", "Option<VkRenderPass>"),
             Struct::member("subpass", "u32"),
-            Struct::member("basePipelineHandle", "VkPipeline"),
+            Struct::member("basePipelineHandle", "Option<VkPipeline>"),
             Struct::member("basePipelineIndex", "i32"),
         ],
     )
@@ -3324,7 +3324,10 @@ const STRUCTS: &'static [Struct] = &[
         "MEMORY_DEDICATED_ALLOCATE_INFO",
         vk_ext_enum(128, 1) as _,
         StructUsage::Source,
-        &[Struct::member("image", "VkImage"), Struct::member("buffer", "VkBuffer")],
+        &[
+            Struct::member("image", "Option<VkImage>"),
+            Struct::member("buffer", "Option<VkBuffer>"),
+        ],
     )
     .extensions(&[("KHR", "dedicated_allocation")])
     .promoted("1_1"),
@@ -3963,7 +3966,7 @@ const STRUCTS: &'static [Struct] = &[
         &[
             Struct::member("flags", "VkPipelineShaderStageCreateFlags"),
             Struct::member("stage", "VkShaderStageFlagBits"),
-            Struct::member("module", "VkShaderModule"),
+            Struct::member("module", "Option<VkShaderModule>"),
             Struct::member("pName", "*const core::ffi::c_char"),
             Struct::member("pSpecializationInfo", "*const VkSpecializationInfo"),
         ],
@@ -4861,7 +4864,7 @@ const COMMANDS: &'static [Command] = &[
             ("queue", "VkQueue"),
             ("submitCount", "u32"),
             ("pSubmits", "*const VkSubmitInfo"),
-            ("fence", "VkFence"),
+            ("fence", "Option<VkFence>"),
         ],
     )
     .failable()
@@ -5005,7 +5008,7 @@ const COMMANDS: &'static [Command] = &[
             ("queue", "VkQueue"),
             ("bindInfoCount", "u32"),
             ("pBindInfos", "*const VkBindSparseInfo"),
-            ("fence", "VkFence"),
+            ("fence", "Option<VkFence>"),
         ],
     )
     .failable()
@@ -5295,7 +5298,7 @@ const COMMANDS: &'static [Command] = &[
         "CreateGraphicsPipelines",
         &[
             ("device", "VkDevice"),
-            ("pipelineCache", "VkPipelineCache"),
+            ("pipelineCache", "Option<VkPipelineCache>"),
             ("createInfoCount", "u32"),
             ("pCreateInfos", "*const VkGraphicsPipelineCreateInfo"),
             ("pAllocator", "*const VkAllocationCallbacks"),
@@ -5308,7 +5311,7 @@ const COMMANDS: &'static [Command] = &[
         "CreateComputePipelines",
         &[
             ("device", "VkDevice"),
-            ("pipelineCache", "VkPipelineCache"),
+            ("pipelineCache", "Option<VkPipelineCache>"),
             ("createInfoCount", "u32"),
             ("pCreateInfos", "*const VkComputePipelineCreateInfo"),
             ("pAllocator", "*const VkAllocationCallbacks"),
@@ -6437,7 +6440,7 @@ const COMMANDS: &'static [Command] = &[
             ("queue", "VkQueue"),
             ("submitCount", "u32"),
             ("pSubmits", "*const VkSubmitInfo2KHR"),
-            ("fence", "VkFence"),
+            ("fence", "Option<VkFence>"),
         ],
     )
     .failable()

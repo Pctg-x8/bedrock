@@ -454,7 +454,7 @@ const CATALOG: &'static [Entrypoint] = &[
             ("queue", "VkQueue"),
             ("submit_count", "u32"),
             ("submits", "*const VkSubmitInfo"),
-            ("fence", "VkFence"),
+            ("fence", "Option<VkFence>"),
         ],
     )
     .with_result(),
@@ -581,7 +581,7 @@ const CATALOG: &'static [Entrypoint] = &[
             ("queue", "VkQueue"),
             ("bind_info_count", "u32"),
             ("bind_info", "*const VkBindSparseInfo"),
-            ("fence", "VkFence"),
+            ("fence", "Option<VkFence>"),
         ],
     )
     .with_result(),
@@ -836,7 +836,7 @@ const CATALOG: &'static [Entrypoint] = &[
         "create_graphics_pipelines",
         &[
             ("device", "VkDevice"),
-            ("pipeline_cache", "VkPipelineCache"),
+            ("pipeline_cache", "Option<VkPipelineCache>"),
             ("create_info_count", "u32"),
             ("create_infos", "*const VkGraphicsPipelineCreateInfo"),
             ("allocator", "*const VkAllocationCallbacks"),
@@ -848,7 +848,7 @@ const CATALOG: &'static [Entrypoint] = &[
         "create_compute_pipelines",
         &[
             ("device", "VkDevice"),
-            ("pipeline_cache", "VkPipelineCache"),
+            ("pipeline_cache", "Option<VkPipelineCache>"),
             ("create_info_count", "u32"),
             ("create_infos", "*const VkComputePipelineCreateInfo"),
             ("allocator", "*const VkAllocationCallbacks"),
@@ -2034,7 +2034,7 @@ const CATALOG: &'static [Entrypoint] = &[
             ("queue", "VkQueue"),
             ("submit_count", "u32"),
             ("submits", "*const VkSubmitInfo2"),
-            ("fence", "VkFence"),
+            ("fence", "Option<VkFence>"),
         ],
     )
     .with_result()

@@ -656,7 +656,7 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 stage: stage as _,
-                module: shader.native_ptr(),
+                module: Some(shader.native_ptr()),
                 pName: entrypoint_name.as_ptr(),
                 pSpecializationInfo: core::ptr::null(),
             },
@@ -1611,10 +1611,10 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
                 pDepthStencilState: core::ptr::null(),
                 pColorBlendState: color_blend_state as *const _ as _,
                 pDynamicState: core::ptr::null(),
-                layout: layout.native_ptr(),
-                renderPass: pass.0.native_ptr(),
+                layout: Some(layout.native_ptr()),
+                renderPass: Some(pass.0.native_ptr()),
                 subpass: pass.1,
-                basePipelineHandle: VkPipeline::NULL,
+                basePipelineHandle: None,
                 basePipelineIndex: -1,
             },
             core::marker::PhantomData,
@@ -1639,10 +1639,10 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
                 pDepthStencilState: core::ptr::null(),
                 pColorBlendState: core::ptr::null(),
                 pDynamicState: core::ptr::null(),
-                layout: VkPipelineLayout::NULL,
-                renderPass: VkRenderPass::NULL,
+                layout: None,
+                renderPass: None,
                 subpass: 0,
-                basePipelineHandle: parent.native_ptr(),
+                basePipelineHandle: Some(parent.native_ptr()),
                 basePipelineIndex: -1,
             },
             core::marker::PhantomData,
@@ -1666,10 +1666,10 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
                 pDepthStencilState: core::ptr::null(),
                 pColorBlendState: core::ptr::null(),
                 pDynamicState: core::ptr::null(),
-                layout: VkPipelineLayout::NULL,
-                renderPass: VkRenderPass::NULL,
+                layout: None,
+                renderPass: None,
                 subpass: 0,
-                basePipelineHandle: VkPipeline::NULL,
+                basePipelineHandle: None,
                 basePipelineIndex: parent,
             },
             core::marker::PhantomData,
@@ -1691,13 +1691,13 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
 
     #[inline(always)]
     pub fn set_layout(mut self, layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized)) -> Self {
-        self.0.layout = layout.native_ptr();
+        self.0.layout = Some(layout.native_ptr());
         self
     }
 
     #[inline(always)]
     pub fn set_pass(mut self, pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>) -> Self {
-        self.0.renderPass = pass.0.native_ptr();
+        self.0.renderPass = Some(pass.0.native_ptr());
         self.0.subpass = pass.1;
         self
     }
@@ -1776,8 +1776,8 @@ impl<'d> ComputePipelineCreateInfo<'d> {
                 pNext: core::ptr::null(),
                 flags: 0,
                 stage: stage.0,
-                layout: layout.native_ptr(),
-                basePipelineHandle: VkPipeline::NULL,
+                layout: Some(layout.native_ptr()),
+                basePipelineHandle: None,
                 basePipelineIndex: -1,
             },
             core::marker::PhantomData,
@@ -1796,12 +1796,12 @@ impl<'d> ComputePipelineCreateInfo<'d> {
                     pNext: core::ptr::null(),
                     flags: 0,
                     stage: 0,
-                    module: VkShaderModule::NULL,
+                    module: None,
                     pName: core::ptr::null(),
                     pSpecializationInfo: core::ptr::null(),
                 },
-                layout: VkPipelineLayout::NULL,
-                basePipelineHandle: parent.native_ptr(),
+                layout: None,
+                basePipelineHandle: Some(parent.native_ptr()),
                 basePipelineIndex: -1,
             },
             core::marker::PhantomData,
@@ -1820,12 +1820,12 @@ impl<'d> ComputePipelineCreateInfo<'d> {
                     pNext: core::ptr::null(),
                     flags: 0,
                     stage: 0,
-                    module: VkShaderModule::NULL,
+                    module: None,
                     pName: core::ptr::null(),
                     pSpecializationInfo: core::ptr::null(),
                 },
-                layout: VkPipelineLayout::NULL,
-                basePipelineHandle: VkPipeline::NULL,
+                layout: None,
+                basePipelineHandle: None,
                 basePipelineIndex: parent,
             },
             core::marker::PhantomData,
@@ -1852,7 +1852,7 @@ impl<'d> ComputePipelineCreateInfo<'d> {
 
     #[inline]
     pub fn set_layout(mut self, layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized)) -> Self {
-        self.0.layout = layout.native_ptr();
+        self.0.layout = Some(layout.native_ptr());
         self
     }
 }

@@ -557,15 +557,13 @@ impl Object {
     }
 
     pub fn emit(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        let (value_type, null_expr, raw_expr);
+        let (value_type, raw_expr);
         if self.dispatchable {
-            value_type = "*mut core::ffi::c_void";
-            null_expr = "core::ptr::null_mut()";
-            raw_expr = "self.0 as usize as _";
+            value_type = "core::ptr::NonNull<core::ffi::c_void>";
+            raw_expr = "self.0.as_ptr().addr() as _";
         } else {
-            value_type = "u64";
-            null_expr = "0";
-            raw_expr = "self.0";
+            value_type = "core::num::NonZeroU64";
+            raw_expr = "self.0.get()";
         }
 
         if let Some(x) = self.extension {
@@ -590,10 +588,6 @@ impl Object {
             w,
             "    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_{};",
             self.object_type_const_name
-        )?;
-        writeln!(
-            w,
-            "    const NULL: Self = Self({null_expr}, core::marker::PhantomData);"
         )?;
         w.write(b"\n")?;
         writeln!(w, "    #[inline(always)]")?;

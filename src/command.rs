@@ -102,7 +102,7 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
     #[implements("alloc")]
     #[inline]
     pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
-        let mut hs = vec![VkCommandBuffer::NULL; info.0.commandBufferCount as _];
+        let mut hs = vec![unsafe { core::mem::MaybeUninit::zeroed().assume_init() }; info.0.commandBufferCount as _];
 
         unsafe {
             crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr()).into_result()?;
@@ -123,7 +123,7 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
         device: Device,
         info: &CommandBufferFixedCountAllocateInfo<'_, N>,
     ) -> crate::Result<[Self; N]> {
-        let mut hs = [Self(VkCommandBuffer::NULL, core::marker::PhantomData); N];
+        let mut hs = [unsafe { core::mem::MaybeUninit::zeroed().assume_init() }; N];
 
         unsafe {
             crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr() as _).into_result()?;
@@ -386,9 +386,9 @@ impl<'d> CommandBufferInheritanceInfo<'d> {
             VkCommandBufferInheritanceInfo {
                 sType: VkCommandBufferInheritanceInfo::TYPE,
                 pNext: core::ptr::null(),
-                renderPass: VkRenderPass::NULL,
+                renderPass: None,
                 subpass: 0,
-                framebuffer: VkFramebuffer::NULL,
+                framebuffer: None,
                 occlusionQueryEnable: false as _,
                 queryFlags: 0,
                 pipelineStatistics: 0,
@@ -411,9 +411,9 @@ impl<'d> CommandBufferInheritanceInfo<'d> {
         render_pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>,
         framebuffer: Option<&'d (impl VkHandle<Handle = VkFramebuffer> + ?Sized)>,
     ) -> Self {
-        self.0.renderPass = render_pass.0.native_ptr();
+        self.0.renderPass = Some(render_pass.0.native_ptr());
         self.0.subpass = render_pass.1;
-        self.0.framebuffer = framebuffer.map_or(VkFramebuffer::NULL, VkHandle::native_ptr);
+        self.0.framebuffer = framebuffer.map(VkHandle::native_ptr);
         self
     }
 

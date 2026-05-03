@@ -172,9 +172,19 @@ impl<T: VkHandleMut + ?Sized> VkHandleMut for parking_lot::MappedMutexGuard<'_, 
 
 pub trait VkRawHandle {
     const OBJECT_TYPE: VkObjectType;
-    const NULL: Self;
 
     fn raw_handle_value(&self) -> u64;
+}
+impl<T: VkRawHandle> VkRawHandle for Option<T> {
+    const OBJECT_TYPE: VkObjectType = T::OBJECT_TYPE;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        match self {
+            None => 0,
+            Some(x) => x.raw_handle_value(),
+        }
+    }
 }
 
 /// Extension methods(not dyn compatible) for `VkHandle`

@@ -1715,15 +1715,14 @@ pub const VK_ACCESS_2_NONE: VkAccessFlagBits2 = 0;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkInstance(pub *mut core::ffi::c_void, pub core::marker::PhantomData<*mut u8>);
+pub struct VkInstance(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkInstance {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_INSTANCE;
-    const NULL: Self = Self(core::ptr::null_mut(), core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0 as usize as _
+        self.0.as_ptr().addr() as _
     }
 }
 #[rustfmt::skip]
@@ -1732,15 +1731,14 @@ pub const VK_OBJECT_TYPE_INSTANCE: VkObjectType = 1;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkPhysicalDevice(pub *mut core::ffi::c_void, pub core::marker::PhantomData<*mut u8>);
+pub struct VkPhysicalDevice(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPhysicalDevice {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PHYSICAL_DEVICE;
-    const NULL: Self = Self(core::ptr::null_mut(), core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0 as usize as _
+        self.0.as_ptr().addr() as _
     }
 }
 #[rustfmt::skip]
@@ -1749,15 +1747,14 @@ pub const VK_OBJECT_TYPE_PHYSICAL_DEVICE: VkObjectType = 2;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDevice(pub *mut core::ffi::c_void, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDevice(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDevice {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE;
-    const NULL: Self = Self(core::ptr::null_mut(), core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0 as usize as _
+        self.0.as_ptr().addr() as _
     }
 }
 #[rustfmt::skip]
@@ -1766,15 +1763,14 @@ pub const VK_OBJECT_TYPE_DEVICE: VkObjectType = 3;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkQueue(pub *mut core::ffi::c_void, pub core::marker::PhantomData<*mut u8>);
+pub struct VkQueue(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkQueue {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_QUEUE;
-    const NULL: Self = Self(core::ptr::null_mut(), core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0 as usize as _
+        self.0.as_ptr().addr() as _
     }
 }
 #[rustfmt::skip]
@@ -1783,15 +1779,14 @@ pub const VK_OBJECT_TYPE_QUEUE: VkObjectType = 4;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkCommandBuffer(pub *mut core::ffi::c_void, pub core::marker::PhantomData<*mut u8>);
+pub struct VkCommandBuffer(pub core::ptr::NonNull<core::ffi::c_void>, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkCommandBuffer {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_COMMAND_BUFFER;
-    const NULL: Self = Self(core::ptr::null_mut(), core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0 as usize as _
+        self.0.as_ptr().addr() as _
     }
 }
 #[rustfmt::skip]
@@ -1800,15 +1795,14 @@ pub const VK_OBJECT_TYPE_COMMAND_BUFFER: VkObjectType = 6;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDeviceMemory(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDeviceMemory(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDeviceMemory {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEVICE_MEMORY;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1817,15 +1811,14 @@ pub const VK_OBJECT_TYPE_DEVICE_MEMORY: VkObjectType = 8;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkCommandPool(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkCommandPool(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkCommandPool {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_COMMAND_POOL;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1834,15 +1827,14 @@ pub const VK_OBJECT_TYPE_COMMAND_POOL: VkObjectType = 25;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkBuffer(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkBuffer(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkBuffer {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1851,15 +1843,14 @@ pub const VK_OBJECT_TYPE_BUFFER: VkObjectType = 9;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkBufferView(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkBufferView(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkBufferView {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_BUFFER_VIEW;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1868,15 +1859,14 @@ pub const VK_OBJECT_TYPE_BUFFER_VIEW: VkObjectType = 13;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkImage(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkImage(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkImage {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1885,15 +1875,14 @@ pub const VK_OBJECT_TYPE_IMAGE: VkObjectType = 10;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkImageView(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkImageView(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkImageView {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_IMAGE_VIEW;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1902,15 +1891,14 @@ pub const VK_OBJECT_TYPE_IMAGE_VIEW: VkObjectType = 14;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkShaderModule(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkShaderModule(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkShaderModule {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SHADER_MODULE;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1919,15 +1907,14 @@ pub const VK_OBJECT_TYPE_SHADER_MODULE: VkObjectType = 15;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkPipeline(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkPipeline(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPipeline {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PIPELINE;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1936,15 +1923,14 @@ pub const VK_OBJECT_TYPE_PIPELINE: VkObjectType = 19;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkPipelineLayout(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkPipelineLayout(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPipelineLayout {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PIPELINE_LAYOUT;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1953,15 +1939,14 @@ pub const VK_OBJECT_TYPE_PIPELINE_LAYOUT: VkObjectType = 17;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkSampler(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkSampler(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSampler {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SAMPLER;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -1971,16 +1956,15 @@ pub const VK_OBJECT_TYPE_SAMPLER: VkObjectType = 21;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkSamplerYcbcrConversionKHR(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkSamplerYcbcrConversionKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSamplerYcbcrConversionKHR {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION_KHR;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
@@ -1996,15 +1980,14 @@ pub const VK_OBJECT_TYPE_SAMPLER_YCBCR_CONVERSION: VkObjectType = 1000156000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDescriptorSet(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDescriptorSet(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorSet {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_SET;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2013,15 +1996,14 @@ pub const VK_OBJECT_TYPE_DESCRIPTOR_SET: VkObjectType = 23;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDescriptorSetLayout(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDescriptorSetLayout(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorSetLayout {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2030,15 +2012,14 @@ pub const VK_OBJECT_TYPE_DESCRIPTOR_SET_LAYOUT: VkObjectType = 20;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDescriptorPool(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDescriptorPool(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorPool {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_POOL;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2048,16 +2029,15 @@ pub const VK_OBJECT_TYPE_DESCRIPTOR_POOL: VkObjectType = 22;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDescriptorUpdateTemplateKHR(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDescriptorUpdateTemplateKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDescriptorUpdateTemplateKHR {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
@@ -2073,15 +2053,14 @@ pub const VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE: VkObjectType = 1000085000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkFence(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkFence(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkFence {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_FENCE;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2090,15 +2069,14 @@ pub const VK_OBJECT_TYPE_FENCE: VkObjectType = 7;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkSemaphore(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkSemaphore(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSemaphore {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SEMAPHORE;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2107,15 +2085,14 @@ pub const VK_OBJECT_TYPE_SEMAPHORE: VkObjectType = 5;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkEvent(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkEvent(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkEvent {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_EVENT;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2124,15 +2101,14 @@ pub const VK_OBJECT_TYPE_EVENT: VkObjectType = 11;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkQueryPool(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkQueryPool(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkQueryPool {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_QUERY_POOL;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2141,15 +2117,14 @@ pub const VK_OBJECT_TYPE_QUERY_POOL: VkObjectType = 12;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkFramebuffer(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkFramebuffer(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkFramebuffer {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_FRAMEBUFFER;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2158,15 +2133,14 @@ pub const VK_OBJECT_TYPE_FRAMEBUFFER: VkObjectType = 24;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkRenderPass(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkRenderPass(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkRenderPass {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_RENDER_PASS;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2175,15 +2149,14 @@ pub const VK_OBJECT_TYPE_RENDER_PASS: VkObjectType = 18;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkPipelineCache(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkPipelineCache(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkPipelineCache {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_PIPELINE_CACHE;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[rustfmt::skip]
@@ -2193,16 +2166,15 @@ pub const VK_OBJECT_TYPE_PIPELINE_CACHE: VkObjectType = 16;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDisplayKHR(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDisplayKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDisplayKHR {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_KHR;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_KHR_display")]
@@ -2213,16 +2185,15 @@ pub const VK_OBJECT_TYPE_DISPLAY_KHR: VkObjectType = 1000002000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDisplayModeKHR(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDisplayModeKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDisplayModeKHR {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DISPLAY_MODE_KHR;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_KHR_display")]
@@ -2233,16 +2204,15 @@ pub const VK_OBJECT_TYPE_DISPLAY_MODE_KHR: VkObjectType = 1000002001;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkSurfaceKHR(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkSurfaceKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSurfaceKHR {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SURFACE_KHR;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_KHR_surface")]
@@ -2253,16 +2223,15 @@ pub const VK_OBJECT_TYPE_SURFACE_KHR: VkObjectType = 1000000000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkSwapchainKHR(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkSwapchainKHR(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkSwapchainKHR {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_SWAPCHAIN_KHR;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -2273,16 +2242,15 @@ pub const VK_OBJECT_TYPE_SWAPCHAIN_KHR: VkObjectType = 1000001000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDebugReportCallbackEXT(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDebugReportCallbackEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDebugReportCallbackEXT {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_EXT_debug_report")]
@@ -2293,16 +2261,15 @@ pub const VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT: VkObjectType = 1000011000;
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[rustfmt::skip]
-pub struct VkDebugUtilsMessengerEXT(pub u64, pub core::marker::PhantomData<*mut u8>);
+pub struct VkDebugUtilsMessengerEXT(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
 impl crate::VkRawHandle for VkDebugUtilsMessengerEXT {
     const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_DEBUG_UTILS_MESSENGER_EXT;
-    const NULL: Self = Self(0, core::marker::PhantomData);
 
     #[inline(always)]
     fn raw_handle_value(&self) -> u64 {
-        self.0
+        self.0.get()
     }
 }
 #[cfg(feature = "VK_EXT_debug_utils")]
@@ -4117,9 +4084,9 @@ unsafe impl crate::TypedVulkanStructure for VkCommandBufferBeginInfo { const TYP
 pub struct VkCommandBufferInheritanceInfo {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub renderPass: VkRenderPass,
+    pub renderPass: Option<VkRenderPass>,
     pub subpass: u32,
-    pub framebuffer: VkFramebuffer,
+    pub framebuffer: Option<VkFramebuffer>,
     pub occlusionQueryEnable: VkBool32,
     pub queryFlags: VkQueryControlFlags,
     pub pipelineStatistics: VkQueryPipelineStatisticFlags,
@@ -4185,8 +4152,8 @@ pub struct VkComputePipelineCreateInfo {
     pub pNext: *const core::ffi::c_void,
     pub flags: VkPipelineCreateFlags,
     pub stage: VkPipelineShaderStageCreateInfo,
-    pub layout: VkPipelineLayout,
-    pub basePipelineHandle: VkPipeline,
+    pub layout: Option<VkPipelineLayout>,
+    pub basePipelineHandle: Option<VkPipeline>,
     pub basePipelineIndex: i32,
 }
 #[rustfmt::skip]
@@ -4478,7 +4445,7 @@ pub struct VkDescriptorBufferInfo {
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkDescriptorImageInfo {
-    pub sampler: VkSampler,
+    pub sampler: Option<VkSampler>,
     pub imageView: VkImageView,
     pub imageLayout: VkImageLayout,
 }
@@ -5796,10 +5763,10 @@ pub struct VkGraphicsPipelineCreateInfo {
     pub pDepthStencilState: *const VkPipelineDepthStencilStateCreateInfo,
     pub pColorBlendState: *const VkPipelineColorBlendStateCreateInfo,
     pub pDynamicState: *const VkPipelineDynamicStateCreateInfo,
-    pub layout: VkPipelineLayout,
-    pub renderPass: VkRenderPass,
+    pub layout: Option<VkPipelineLayout>,
+    pub renderPass: Option<VkRenderPass>,
     pub subpass: u32,
-    pub basePipelineHandle: VkPipeline,
+    pub basePipelineHandle: Option<VkPipeline>,
     pub basePipelineIndex: i32,
 }
 #[rustfmt::skip]
@@ -6558,8 +6525,8 @@ unsafe impl crate::TypedVulkanStructure for VkMemoryBarrier { const TYPE: VkStru
 pub struct VkMemoryDedicatedAllocateInfoKHR {
     pub sType: VkStructureType,
     pub pNext: *const core::ffi::c_void,
-    pub image: VkImage,
-    pub buffer: VkBuffer,
+    pub image: Option<VkImage>,
+    pub buffer: Option<VkBuffer>,
 }
 #[cfg(all(feature = "VK_KHR_dedicated_allocation"))]
 #[rustfmt::skip]
@@ -7990,7 +7957,7 @@ pub struct VkPipelineShaderStageCreateInfo {
     pub pNext: *const core::ffi::c_void,
     pub flags: VkPipelineShaderStageCreateFlags,
     pub stage: VkShaderStageFlagBits,
-    pub module: VkShaderModule,
+    pub module: Option<VkShaderModule>,
     pub pName: *const core::ffi::c_char,
     pub pSpecializationInfo: *const VkSpecializationInfo,
 }
@@ -10080,7 +10047,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceQueue {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkQueueSubmit(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: VkFence) -> VkResult);
+pub struct PFN_vkQueueSubmit(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
 unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit {
@@ -10496,7 +10463,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageForma
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkQueueBindSparse(pub unsafe extern "system" fn(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: VkFence) -> VkResult);
+pub struct PFN_vkQueueBindSparse(pub unsafe extern "system" fn(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
 unsafe impl crate::resolver::PFN for PFN_vkQueueBindSparse {
@@ -11302,7 +11269,7 @@ impl crate::resolver::StaticCallable for PFN_vkMergePipelineCaches {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkCreateGraphicsPipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
+pub struct PFN_vkCreateGraphicsPipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
 unsafe impl crate::resolver::PFN for PFN_vkCreateGraphicsPipelines {
@@ -11328,7 +11295,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateGraphicsPipelines {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkCreateComputePipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
+pub struct PFN_vkCreateComputePipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
 unsafe impl crate::resolver::PFN for PFN_vkCreateComputePipelines {
@@ -14711,7 +14678,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult);
+pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
@@ -14732,7 +14699,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2KHR {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult);
+pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
@@ -17981,7 +17948,7 @@ unsafe extern "system" {
     pub fn vkEnumerateInstanceLayerProperties(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
     pub fn vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult;
     pub fn vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue);
-    pub fn vkQueueSubmit(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: VkFence) -> VkResult;
+    pub fn vkQueueSubmit(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult;
     pub fn vkQueueWaitIdle(queue: VkQueue) -> VkResult;
     pub fn vkDeviceWaitIdle(device: VkDevice) -> VkResult;
     pub fn vkAllocateMemory(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult;
@@ -17997,7 +17964,7 @@ unsafe extern "system" {
     pub fn vkGetImageMemoryRequirements(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements);
     pub fn vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements);
     pub fn vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties);
-    pub fn vkQueueBindSparse(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: VkFence) -> VkResult;
+    pub fn vkQueueBindSparse(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult;
     pub fn vkCreateFence(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult;
     pub fn vkDestroyFence(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks);
     pub fn vkResetFences(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult;
@@ -18028,8 +17995,8 @@ unsafe extern "system" {
     pub fn vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks);
     pub fn vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult;
     pub fn vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult;
-    pub fn vkCreateGraphicsPipelines(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
-    pub fn vkCreateComputePipelines(device: VkDevice, pipelineCache: VkPipelineCache, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
+    pub fn vkCreateGraphicsPipelines(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
+    pub fn vkCreateComputePipelines(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult;
     pub fn vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks);
     pub fn vkCreatePipelineLayout(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult;
     pub fn vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks);
@@ -18161,7 +18128,7 @@ unsafe extern "system" {
     #[cfg(feature = "Allow1_1APIs")]
     pub fn vkGetDescriptorSetLayoutSupport(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport);
     #[cfg(feature = "Allow1_3APIs")]
-    pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: VkFence) -> VkResult;
+    pub fn vkQueueSubmit2(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult;
     pub fn vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline);
     pub fn vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport);
     pub fn vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D);

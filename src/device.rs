@@ -806,7 +806,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         unsafe {
             crate::vkfn::create_graphics_pipelines(
                 self.native_ptr(),
-                cache.unwrap_or(VkPipelineCache::NULL),
+                cache,
                 infos.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
@@ -829,7 +829,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[GraphicsPipelineCreateInfo],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
-        let mut hs = vec![VkPipeline::NULL; infos.len()];
+        let mut hs = vec![unsafe { core::mem::MaybeUninit::uninit().assume_init() }; infos.len()];
 
         unsafe {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
@@ -853,7 +853,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[GraphicsPipelineCreateInfo; N],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
-        let mut hs = [VkPipeline::NULL; N];
+        let mut hs = [unsafe { core::mem::MaybeUninit::uninit().assume_init() }; N];
 
         unsafe {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
@@ -884,7 +884,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         unsafe {
             crate::vkfn::create_compute_pipelines(
                 self.native_ptr(),
-                cache.unwrap_or(VkPipelineCache::NULL),
+                cache,
                 infos.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
@@ -907,7 +907,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[ComputePipelineCreateInfo],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
-        let mut pipelines = vec![VkPipeline::NULL; infos.len()];
+        let mut pipelines = vec![unsafe { core::mem::MaybeUninit::uninit().assume_init() }; infos.len()];
 
         unsafe {
             self.new_compute_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
@@ -932,7 +932,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[ComputePipelineCreateInfo; N],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
-        let mut pipelines = [VkPipeline::NULL; N];
+        let mut pipelines = [unsafe { core::mem::MaybeUninit::uninit().assume_init() }; N];
 
         unsafe {
             self.new_compute_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
@@ -2442,7 +2442,7 @@ pub trait QueueMut: Queue + VkHandleMut {
                 self.native_ptr_mut(),
                 batches.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(batches).cast(),
-                fence.map_or(VkFence::NULL, |x| x.0),
+                fence.map(|x| x.0),
             )
             .into_result()
             .map(drop)
@@ -2470,7 +2470,7 @@ pub trait QueueMut: Queue + VkHandleMut {
                 self.native_ptr_mut(),
                 batches.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(batches),
-                fence.map_or(VkFence::NULL, |x| x.0),
+                fence.map(|x| x.0),
             )
             .into_result()
             .map(drop)
@@ -2526,7 +2526,7 @@ pub trait QueueMut: Queue + VkHandleMut {
                 self.native_ptr_mut(),
                 batches.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
+                fence.map(|x| x.0),
             )
             .into_result()
             .map(drop)
@@ -2552,7 +2552,7 @@ pub trait QueueMut: Queue + VkHandleMut {
                 self.native_ptr_mut(),
                 batches.len() as _,
                 slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
+                fence.map(|x| x.0),
             )
             .into_result()
             .map(drop)
@@ -2573,7 +2573,7 @@ pub trait QueueMut: Queue + VkHandleMut {
                 self.native_ptr_mut(),
                 batches.len() as _,
                 slice_as_ptr_empty_null(batches) as _,
-                fence.map_or(VkFence::NULL, |x| x.0),
+                fence.map(|x| x.0),
             )
             .into_result()
             .map(drop)

@@ -228,8 +228,8 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
             VkMemoryDedicatedAllocateInfoKHR {
                 sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
-                image: VkImage::NULL,
-                buffer: buffer.native_ptr(),
+                image: None,
+                buffer: Some(buffer.native_ptr()),
             },
             core::marker::PhantomData,
         )
@@ -241,8 +241,8 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
             VkMemoryDedicatedAllocateInfoKHR {
                 sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
-                image: VkImage::NULL,
-                buffer,
+                image: None,
+                buffer: Some(buffer),
             },
             core::marker::PhantomData,
         )
@@ -254,8 +254,8 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
             VkMemoryDedicatedAllocateInfoKHR {
                 sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
-                image: image.native_ptr(),
-                buffer: VkBuffer::NULL,
+                image: Some(image.native_ptr()),
+                buffer: None,
             },
             core::marker::PhantomData,
         )
@@ -267,8 +267,8 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
             VkMemoryDedicatedAllocateInfoKHR {
                 sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
-                image,
-                buffer: VkBuffer::NULL,
+                image: Some(image),
+                buffer: None,
             },
             core::marker::PhantomData,
         )

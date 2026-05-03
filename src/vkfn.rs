@@ -92,7 +92,7 @@ pub unsafe fn get_device_queue(device: VkDevice, queue_family_index: u32, queue_
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkGetDeviceQueue(device, queue_family_index, queue_index, queue_out) }
 }
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn queue_submit(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo, fence: VkFence) -> VkResult {
+pub unsafe fn queue_submit(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.queue_submit.0)(queue, submit_count, submits, fence) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkQueueSubmit(queue, submit_count, submits, fence) }
 }
@@ -172,7 +172,7 @@ pub unsafe fn get_physical_device_sparse_image_format_properties(physical_device
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkGetPhysicalDeviceSparseImageFormatProperties(physical_device, format, r#type, samples, usage, tiling, property_count_out, properties_out) }
 }
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn queue_bind_sparse(queue: VkQueue, bind_info_count: u32, bind_info: *const VkBindSparseInfo, fence: VkFence) -> VkResult {
+pub unsafe fn queue_bind_sparse(queue: VkQueue, bind_info_count: u32, bind_info: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.queue_bind_sparse.0)(queue, bind_info_count, bind_info, fence) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkQueueBindSparse(queue, bind_info_count, bind_info, fence) }
 }
@@ -327,12 +327,12 @@ pub unsafe fn merge_pipeline_caches(device: VkDevice, dst_cache: VkPipelineCache
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkMergePipelineCaches(device, dst_cache, src_cache_count, src_caches) }
 }
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn create_graphics_pipelines(device: VkDevice, pipeline_cache: VkPipelineCache, create_info_count: u32, create_infos: *const VkGraphicsPipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
+pub unsafe fn create_graphics_pipelines(device: VkDevice, pipeline_cache: Option<VkPipelineCache>, create_info_count: u32, create_infos: *const VkGraphicsPipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.create_graphics_pipelines.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkCreateGraphicsPipelines(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
 }
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn create_compute_pipelines(device: VkDevice, pipeline_cache: VkPipelineCache, create_info_count: u32, create_infos: *const VkComputePipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
+pub unsafe fn create_compute_pipelines(device: VkDevice, pipeline_cache: Option<VkPipelineCache>, create_info_count: u32, create_infos: *const VkComputePipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.create_compute_pipelines.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkCreateComputePipelines(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
 }
@@ -1006,7 +1006,7 @@ pub unsafe fn cmd_pipeline_barrier2(command_buffer: VkCommandBuffer, dependency_
 }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn queue_submit2(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo2, fence: VkFence) -> VkResult {
+pub unsafe fn queue_submit2(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo2, fence: Option<VkFence>) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.queue_submit2.0)(queue, submit_count, submits, fence) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkQueueSubmit2(queue, submit_count, submits, fence) }
 }
@@ -1652,7 +1652,7 @@ unsafe extern "system" fn stub_get_device_queue(device: VkDevice, queue_family_i
     unsafe { (fp.0)(device, queue_family_index, queue_index, queue_out) }
 }
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_queue_submit(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo, fence: VkFence) -> VkResult {
+unsafe extern "system" fn stub_queue_submit(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult {
     use crate::resolver::ResolverInterface;
     let fp: PFN_vkQueueSubmit = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_submit = fp; }
@@ -1764,7 +1764,7 @@ unsafe extern "system" fn stub_get_physical_device_sparse_image_format_propertie
     unsafe { (fp.0)(physical_device, format, r#type, samples, usage, tiling, property_count_out, properties_out) }
 }
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_queue_bind_sparse(queue: VkQueue, bind_info_count: u32, bind_info: *const VkBindSparseInfo, fence: VkFence) -> VkResult {
+unsafe extern "system" fn stub_queue_bind_sparse(queue: VkQueue, bind_info_count: u32, bind_info: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult {
     use crate::resolver::ResolverInterface;
     let fp: PFN_vkQueueBindSparse = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_bind_sparse = fp; }
@@ -1981,14 +1981,14 @@ unsafe extern "system" fn stub_merge_pipeline_caches(device: VkDevice, dst_cache
     unsafe { (fp.0)(device, dst_cache, src_cache_count, src_caches) }
 }
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_create_graphics_pipelines(device: VkDevice, pipeline_cache: VkPipelineCache, create_info_count: u32, create_infos: *const VkGraphicsPipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
+unsafe extern "system" fn stub_create_graphics_pipelines(device: VkDevice, pipeline_cache: Option<VkPipelineCache>, create_info_count: u32, create_infos: *const VkGraphicsPipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
     use crate::resolver::ResolverInterface;
     let fp: PFN_vkCreateGraphicsPipelines = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_graphics_pipelines = fp; }
     unsafe { (fp.0)(device, pipeline_cache, create_info_count, create_infos, allocator, pipelines_out) }
 }
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_create_compute_pipelines(device: VkDevice, pipeline_cache: VkPipelineCache, create_info_count: u32, create_infos: *const VkComputePipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
+unsafe extern "system" fn stub_create_compute_pipelines(device: VkDevice, pipeline_cache: Option<VkPipelineCache>, create_info_count: u32, create_infos: *const VkComputePipelineCreateInfo, allocator: *const VkAllocationCallbacks, pipelines_out: *mut VkPipeline) -> VkResult {
     use crate::resolver::ResolverInterface;
     let fp: PFN_vkCreateComputePipelines = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.create_compute_pipelines = fp; }
@@ -2910,7 +2910,7 @@ unsafe extern "system" fn stub_cmd_pipeline_barrier2(command_buffer: VkCommandBu
 }
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_queue_submit2(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo2, fence: VkFence) -> VkResult {
+unsafe extern "system" fn stub_queue_submit2(queue: VkQueue, submit_count: u32, submits: *const VkSubmitInfo2, fence: Option<VkFence>) -> VkResult {
     use crate::resolver::ResolverInterface;
     let fp: PFN_vkQueueSubmit2 = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.queue_submit2 = fp; }
