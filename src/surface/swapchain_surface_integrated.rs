@@ -158,7 +158,7 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
                 clipped: false as _,
-                oldSwapchain: VkSwapchainKHR::NULL,
+                oldSwapchain: None,
             },
             surface,
             core::marker::PhantomData,
@@ -223,7 +223,7 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
 
     #[inline(always)]
     pub fn old_swapchain(mut self, sw: &'sw (impl VkHandle<Handle = VkSwapchainKHR> + ?Sized)) -> Self {
-        self.0.oldSwapchain = sw.native_ptr();
+        self.0.oldSwapchain = Some(sw.native_ptr());
         self
     }
 

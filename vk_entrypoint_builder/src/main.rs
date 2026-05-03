@@ -1601,8 +1601,8 @@ const CATALOG: &'static [Entrypoint] = &[
             ("device", "VkDevice"),
             ("swapchain", "VkSwapchainKHR"),
             ("timeout", "u64"),
-            ("semaphore", "VkSemaphore"),
-            ("fence", "VkFence"),
+            ("semaphore", "Option<VkSemaphore>"),
+            ("fence", "Option<VkFence>"),
             ("image_index_out", "*mut u32"),
         ],
     )

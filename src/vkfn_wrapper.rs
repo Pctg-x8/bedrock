@@ -436,10 +436,8 @@ pub unsafe fn acquire_next_image(
             device,
             swapchain.native_ptr_mut(),
             timeout,
-            semaphore
-                .as_mut()
-                .map_or(VkSemaphore::NULL, VkHandleRefMut::native_ptr_mut),
-            fence.as_mut().map_or(VkFence::NULL, VkHandleRefMut::native_ptr_mut),
+            semaphore.as_mut().map(VkHandleRefMut::native_ptr_mut),
+            fence.as_mut().map(VkHandleRefMut::native_ptr_mut),
             v.as_mut_ptr(),
         )
         .into_result()?;

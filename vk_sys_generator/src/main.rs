@@ -4438,7 +4438,7 @@ const STRUCTS: &'static [Struct] = &[
             Struct::member("compositeAlpha", "VkCompositeAlphaFlagBitsKHR"),
             Struct::member("presentMode", "VkPresentModeKHR"),
             Struct::member("clipped", "VkBool32"),
-            Struct::member("oldSwapchain", "VkSwapchainKHR"),
+            Struct::member("oldSwapchain", "Option<VkSwapchainKHR>"),
         ],
     )
     .stype("SWAPCHAIN_CREATE_INFO", vk_ext_enum(2, 0) as _, StructUsage::Source)
@@ -5672,8 +5672,8 @@ const COMMANDS: &'static [Command] = &[
             ("device", "VkDevice"),
             ("swapchain", "VkSwapchainKHR"),
             ("timeout", "u64"),
-            ("semaphore", "VkSemaphore"),
-            ("fence", "VkFence"),
+            ("semaphore", "Option<VkSemaphore>"),
+            ("fence", "Option<VkFence>"),
             ("pImageIndex", "*mut u32"),
         ],
     )

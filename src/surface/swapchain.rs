@@ -14,8 +14,8 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     #[implements]
     fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandlerMut) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
-            CompletionHandlerMut::Host(f) => (VkSemaphore::NULL, f.0),
-            CompletionHandlerMut::Queue(s) => (s.0, VkFence::NULL),
+            CompletionHandlerMut::Host(f) => (None, Some(f.0)),
+            CompletionHandlerMut::Queue(s) => (Some(s.0), None),
         };
 
         let mut n = 0;
@@ -200,7 +200,7 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
                 compositeAlpha: VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
                 presentMode: VK_PRESENT_MODE_IMMEDIATE_KHR,
                 clipped: false as _,
-                oldSwapchain: VkSwapchainKHR::NULL,
+                oldSwapchain: None,
             },
             core::marker::PhantomData,
         )
@@ -268,7 +268,7 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
 
     #[inline(always)]
     pub fn old_swapchain(mut self, old_swapchain: &'sw (impl VkHandle<Handle = VkSwapchainKHR> + ?Sized)) -> Self {
-        self.0.oldSwapchain = old_swapchain.native_ptr();
+        self.0.oldSwapchain = Some(old_swapchain.native_ptr());
         self
     }
 }

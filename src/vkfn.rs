@@ -748,7 +748,7 @@ pub unsafe fn get_swapchain_images_khr(device: VkDevice, swapchain: VkSwapchainK
 }
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip] #[inline(always)]
-pub unsafe fn acquire_next_image_khr(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, image_index_out: *mut u32) -> VkResult {
+pub unsafe fn acquire_next_image_khr(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, image_index_out: *mut u32) -> VkResult {
     #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))] unsafe { (FPTBL.acquire_next_image_khr.0)(device, swapchain, timeout, semaphore, fence, image_index_out) }
     #[cfg(not(any(feature = "DynamicLoaded", feature = "CustomResolver")))] unsafe { vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, image_index_out) }
 }
@@ -2566,7 +2566,7 @@ unsafe extern "system" fn stub_get_swapchain_images_khr(device: VkDevice, swapch
 }
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip] #[cfg(any(feature = "DynamicLoaded", feature = "CustomResolver"))]
-unsafe extern "system" fn stub_acquire_next_image_khr(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, image_index_out: *mut u32) -> VkResult {
+unsafe extern "system" fn stub_acquire_next_image_khr(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, image_index_out: *mut u32) -> VkResult {
     use crate::resolver::ResolverInterface;
     let fp: PFN_vkAcquireNextImageKHR = unsafe { crate::resolver::get_resolver().load_function_unconstrainted() };
     unsafe { FPTBL.acquire_next_image_khr = fp; }

@@ -8946,7 +8946,7 @@ pub struct VkSwapchainCreateInfoKHR {
     pub compositeAlpha: VkCompositeAlphaFlagBitsKHR,
     pub presentMode: VkPresentModeKHR,
     pub clipped: VkBool32,
-    pub oldSwapchain: VkSwapchainKHR,
+    pub oldSwapchain: Option<VkSwapchainKHR>,
 }
 #[cfg(all(feature = "VK_KHR_swapchain"))]
 #[rustfmt::skip]
@@ -12259,7 +12259,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetSwapchainImagesKHR {
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[rustfmt::skip]
-pub struct PFN_vkAcquireNextImageKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult);
+pub struct PFN_vkAcquireNextImageKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, pImageIndex: *mut u32) -> VkResult);
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
@@ -18042,7 +18042,7 @@ unsafe extern "system" {
     #[cfg(feature = "VK_KHR_swapchain")]
     pub fn vkGetSwapchainImagesKHR(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult;
     #[cfg(feature = "VK_KHR_swapchain")]
-    pub fn vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: VkSemaphore, fence: VkFence, pImageIndex: *mut u32) -> VkResult;
+    pub fn vkAcquireNextImageKHR(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, pImageIndex: *mut u32) -> VkResult;
     #[cfg(feature = "VK_KHR_swapchain")]
     pub fn vkQueuePresentKHR(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult;
     #[cfg(feature = "VK_KHR_display")]
