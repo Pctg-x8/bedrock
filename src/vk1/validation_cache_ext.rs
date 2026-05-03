@@ -5,7 +5,7 @@ pub const VK_EXT_VALIDATION_CACHE_EXTENSION_NAME: &str = "VK_EXT_validation_cach
 pub const VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT: VkDebugReportObjectTypeEXT =
     VK_DEBUG_REPORT_OBJECT_TYPE_VALIDATION_CACHE_EXT_EXT;
 
-use derives::vk_ext_command;
+use derives::{vk_ext_command, vk_raw_handle};
 
 use super::*;
 use crate::vk2::*;

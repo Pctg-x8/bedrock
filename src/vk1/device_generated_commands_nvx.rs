@@ -5,7 +5,7 @@ pub static VK_NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME: &'static str = "VK_N
 
 use super::*;
 use crate::vk2::*;
-use derives::vk_ext_command;
+use derives::{vk_ext_command, vk_raw_handle};
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
