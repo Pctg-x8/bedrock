@@ -10,9 +10,8 @@
 ** SPDX-License-Identifier: Apache-2.0
 */
 
-use crate::{PFN, StaticCallable, TypedVulkanSinkStructure, TypedVulkanStructure, ffi_helper::FixedCStrBuffer};
+use crate::{TypedVulkanSinkStructure, TypedVulkanStructure};
 use core::ffi::*;
-use derives::{implements, promote_1_1, vk_raw_handle};
 
 // define macros
 

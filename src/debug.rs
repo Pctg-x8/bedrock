@@ -1,5 +1,6 @@
 //! Vulkan Debug Layer Extensions
 
+#[allow(unused_imports)]
 use crate::*;
 
 #[cfg(feature = "VK_EXT_debug_report")]

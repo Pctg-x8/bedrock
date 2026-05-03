@@ -55,7 +55,7 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
-    fn map(&mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemory<Self>> {
+    fn map<'a>(&'a mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemory<'a, Self>> {
         let p = unsafe { self.map_raw(range.start as _..range.end as _)? };
 
         Ok(MappedMemory(p, self))

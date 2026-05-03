@@ -22,7 +22,7 @@ impl TemporalSubmissionBatchResources {
         }
     }
 
-    pub fn make_info_struct(&self) -> SubmitInfo {
+    pub fn make_info_struct<'a>(&'a self) -> SubmitInfo<'a, 'a, 'a> {
         unsafe {
             SubmitInfo::from_raw(VkSubmitInfo {
                 sType: VkSubmitInfo::TYPE,

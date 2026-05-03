@@ -8,7 +8,7 @@ pub trait VkHandle {
     fn native_ptr(&self) -> Self::Handle;
 
     #[inline(always)]
-    fn as_transparent_ref(&self) -> VkHandleRef<Self::Handle> {
+    fn as_transparent_ref<'a>(&'a self) -> VkHandleRef<'a, Self::Handle> {
         VkHandleRef::new(self)
     }
 }
@@ -18,7 +18,7 @@ pub trait VkHandleMut: VkHandle {
     fn native_ptr_mut(&mut self) -> Self::Handle;
 
     #[inline(always)]
-    fn as_transparent_ref_mut(&mut self) -> VkHandleRefMut<Self::Handle> {
+    fn as_transparent_ref_mut<'a>(&'a mut self) -> VkHandleRefMut<'a, Self::Handle> {
         VkHandleRefMut::new(self)
     }
 }

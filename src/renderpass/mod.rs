@@ -23,7 +23,7 @@ pub trait RenderPass: VkHandle<Handle = VkRenderPass> + DeviceChildHandle {
     }
 
     #[inline(always)]
-    fn subpass(&self, index: u32) -> SubpassRef<Self> {
+    fn subpass<'a>(&'a self, index: u32) -> SubpassRef<'a, Self> {
         SubpassRef(self, index)
     }
 }

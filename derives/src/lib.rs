@@ -708,7 +708,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         Some(quote! {
             #[cfg(feature = #promote_feature_name)]
             #[repr(transparent)]
-            #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+            #[derive(Clone, Copy, Debug)]
             #base_vis struct #pfn_name(pub #pfn_ty);
             #[cfg(feature = #promote_feature_name)]
             unsafe impl crate::resolver::PFN for #pfn_name {
@@ -740,7 +740,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
 
     quote! {
         #[repr(transparent)]
-        #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+        #[derive(Clone, Copy, Debug)]
         #base_vis struct #pfn_name(pub #pfn_ty);
         unsafe impl crate::resolver::PFN for #pfn_name {
             const NAME_CSTR: &'static core::ffi::CStr = #fname_cstr;

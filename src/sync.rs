@@ -66,7 +66,7 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     /// Creates a submit info structure for this semaphore.
     #[cfg(feature = "VK_KHR_synchronization2")]
     #[inline(always)]
-    fn submit_info(&self) -> SemaphoreSubmitInfo {
+    fn submit_info<'a>(&'a self) -> SemaphoreSubmitInfo<'a> {
         SemaphoreSubmitInfo::new(self)
     }
 

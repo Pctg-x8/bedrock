@@ -1065,18 +1065,12 @@ pub unsafe fn create_graphics_pipeline_array<const N: usize>(
     create_infos: &[GraphicsPipelineCreateInfo; N],
     allocation_callbacks: Option<&VkAllocationCallbacks>,
 ) -> crate::Result<[VkPipeline; N]> {
-    let mut results = [const { unsafe { MaybeUninit::zeroed().assume_init() } }; N];
+    let mut results = [MaybeUninit::uninit(); N];
     unsafe {
-        create_graphics_pipelines_unchecked(
-            device,
-            pipeline_cache,
-            create_infos,
-            allocation_callbacks,
-            core::mem::transmute(&mut results[..]),
-        )?;
+        create_graphics_pipelines_unchecked(device, pipeline_cache, create_infos, allocation_callbacks, &mut results)?;
     }
 
-    Ok(results)
+    Ok(core::array::from_fn(|n| unsafe { results[n].assume_init() }))
 }
 
 #[inline]

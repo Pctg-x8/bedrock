@@ -9577,7 +9577,7 @@ pub union VkClearValue {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateInstance(pub unsafe extern "system" fn(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9603,7 +9603,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateInstance {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyInstance(pub unsafe extern "system" fn(instance: VkInstance, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -9629,7 +9629,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyInstance {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumeratePhysicalDevices(pub unsafe extern "system" fn(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9655,7 +9655,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumeratePhysicalDevices {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceFeatures(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures));
 #[cfg(feature = "Implements")]
@@ -9681,7 +9681,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFeatures {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties));
 #[cfg(feature = "Implements")]
@@ -9707,7 +9707,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceImageFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, pImageFormatProperties: *mut VkImageFormatProperties) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9733,7 +9733,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatPrope
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties));
 #[cfg(feature = "Implements")]
@@ -9759,7 +9759,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceProperties {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties));
 #[cfg(feature = "Implements")]
@@ -9785,7 +9785,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyPrope
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceMemoryProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties));
 #[cfg(feature = "Implements")]
@@ -9811,7 +9811,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetInstanceProcAddr(pub unsafe extern "system" fn(instance: VkInstance, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>);
 #[cfg(feature = "Implements")]
@@ -9837,7 +9837,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetInstanceProcAddr {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceProcAddr(pub unsafe extern "system" fn(device: VkDevice, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>);
 #[cfg(feature = "Implements")]
@@ -9863,7 +9863,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceProcAddr {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDevice(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9889,7 +9889,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDevice {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDevice(pub unsafe extern "system" fn(device: VkDevice, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -9915,7 +9915,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDevice {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumerateInstanceExtensionProperties(pub unsafe extern "system" fn(pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9941,7 +9941,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceExtensionPropert
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumerateDeviceExtensionProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9967,7 +9967,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceExtensionPropertie
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumerateInstanceLayerProperties(pub unsafe extern "system" fn(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -9993,7 +9993,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceLayerProperties 
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumerateDeviceLayerProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10019,7 +10019,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceLayerProperties {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceQueue(pub unsafe extern "system" fn(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue));
 #[cfg(feature = "Implements")]
@@ -10045,7 +10045,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceQueue {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueSubmit(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10071,7 +10071,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueSubmit {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueWaitIdle(pub unsafe extern "system" fn(queue: VkQueue) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10097,7 +10097,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueWaitIdle {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDeviceWaitIdle(pub unsafe extern "system" fn(device: VkDevice) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10123,7 +10123,7 @@ impl crate::resolver::StaticCallable for PFN_vkDeviceWaitIdle {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAllocateMemory(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10149,7 +10149,7 @@ impl crate::resolver::StaticCallable for PFN_vkAllocateMemory {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkFreeMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10175,7 +10175,7 @@ impl crate::resolver::StaticCallable for PFN_vkFreeMemory {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkMapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: *mut *mut core::ffi::c_void) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10201,7 +10201,7 @@ impl crate::resolver::StaticCallable for PFN_vkMapMemory {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkUnmapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory));
 #[cfg(feature = "Implements")]
@@ -10227,7 +10227,7 @@ impl crate::resolver::StaticCallable for PFN_vkUnmapMemory {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkFlushMappedMemoryRanges(pub unsafe extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10253,7 +10253,7 @@ impl crate::resolver::StaticCallable for PFN_vkFlushMappedMemoryRanges {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkInvalidateMappedMemoryRanges(pub unsafe extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10279,7 +10279,7 @@ impl crate::resolver::StaticCallable for PFN_vkInvalidateMappedMemoryRanges {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceMemoryCommitment(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pCommitmentMemoryInBytes: *mut VkDeviceSize));
 #[cfg(feature = "Implements")]
@@ -10305,7 +10305,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceMemoryCommitment {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBindBufferMemory(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10331,7 +10331,7 @@ impl crate::resolver::StaticCallable for PFN_vkBindBufferMemory {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBindImageMemory(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10357,7 +10357,7 @@ impl crate::resolver::StaticCallable for PFN_vkBindImageMemory {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements));
 #[cfg(feature = "Implements")]
@@ -10383,7 +10383,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements));
 #[cfg(feature = "Implements")]
@@ -10409,7 +10409,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageSparseMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements));
 #[cfg(feature = "Implements")]
@@ -10435,7 +10435,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageSparseMemoryRequirements 
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties));
 #[cfg(feature = "Implements")]
@@ -10461,7 +10461,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageForma
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueBindSparse(pub unsafe extern "system" fn(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10487,7 +10487,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueBindSparse {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateFence(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10513,7 +10513,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateFence {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyFence(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10539,7 +10539,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyFence {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkResetFences(pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10565,7 +10565,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetFences {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetFenceStatus(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10591,7 +10591,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetFenceStatus {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkWaitForFences(pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence, waitAll: VkBool32, timeout: u64) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10617,7 +10617,7 @@ impl crate::resolver::StaticCallable for PFN_vkWaitForFences {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateSemaphore(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSemaphoreCreateInfo, pAllocator: *const VkAllocationCallbacks, pSemaphore: *mut VkSemaphore) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10643,7 +10643,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateSemaphore {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroySemaphore(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10669,7 +10669,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySemaphore {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateEvent(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkEventCreateInfo, pAllocator: *const VkAllocationCallbacks, pEvent: *mut VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10695,7 +10695,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateEvent {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10721,7 +10721,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyEvent {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetEventStatus(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10747,7 +10747,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetEventStatus {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkSetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10773,7 +10773,7 @@ impl crate::resolver::StaticCallable for PFN_vkSetEvent {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkResetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10799,7 +10799,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetEvent {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateQueryPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkQueryPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pQueryPool: *mut VkQueryPool) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10825,7 +10825,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateQueryPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyQueryPool(pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10851,7 +10851,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyQueryPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetQueryPoolResults(pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: *mut core::ffi::c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10877,7 +10877,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetQueryPoolResults {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateBuffer(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkBufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pBuffer: *mut VkBuffer) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10903,7 +10903,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyBuffer(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10929,7 +10929,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateBufferView(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkBufferViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkBufferView) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -10955,7 +10955,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateBufferView {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyBufferView(pub unsafe extern "system" fn(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -10981,7 +10981,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyBufferView {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateImage(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkImageCreateInfo, pAllocator: *const VkAllocationCallbacks, pImage: *mut VkImage) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11007,7 +11007,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyImage(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11033,7 +11033,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageSubresourceLayout(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource, pLayout: *mut VkSubresourceLayout));
 #[cfg(feature = "Implements")]
@@ -11059,7 +11059,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageSubresourceLayout {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateImageView(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkImageViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkImageView) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11085,7 +11085,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateImageView {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyImageView(pub unsafe extern "system" fn(device: VkDevice, view: VkImageView, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11111,7 +11111,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyImageView {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateShaderModule(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkShaderModuleCreateInfo, pAllocator: *const VkAllocationCallbacks, pModule: *mut VkShaderModule) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11137,7 +11137,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateShaderModule {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyShaderModule(pub unsafe extern "system" fn(device: VkDevice, module: VkShaderModule, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11163,7 +11163,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyShaderModule {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreatePipelineCache(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkPipelineCacheCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineCache: *mut VkPipelineCache) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11189,7 +11189,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreatePipelineCache {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyPipelineCache(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11215,7 +11215,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineCache {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPipelineCacheData(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11241,7 +11241,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPipelineCacheData {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkMergePipelineCaches(pub unsafe extern "system" fn(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11267,7 +11267,7 @@ impl crate::resolver::StaticCallable for PFN_vkMergePipelineCaches {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateGraphicsPipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11293,7 +11293,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateGraphicsPipelines {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateComputePipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11319,7 +11319,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateComputePipelines {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyPipeline(pub unsafe extern "system" fn(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11345,7 +11345,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyPipeline {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreatePipelineLayout(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11371,7 +11371,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreatePipelineLayout {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyPipelineLayout(pub unsafe extern "system" fn(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11397,7 +11397,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineLayout {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateSampler(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSamplerCreateInfo, pAllocator: *const VkAllocationCallbacks, pSampler: *mut VkSampler) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11423,7 +11423,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateSampler {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroySampler(pub unsafe extern "system" fn(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11449,7 +11449,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySampler {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDescriptorSetLayout(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pSetLayout: *mut VkDescriptorSetLayout) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11475,7 +11475,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorSetLayout {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDescriptorSetLayout(pub unsafe extern "system" fn(device: VkDevice, descriptorSetLayout: VkDescriptorSetLayout, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11501,7 +11501,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorSetLayout {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pPool: *mut VkDescriptorPool) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11527,7 +11527,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11553,7 +11553,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkResetDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11579,7 +11579,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetDescriptorPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAllocateDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkDescriptorSetAllocateInfo, pDescriptorSets: *mut VkDescriptorSet) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11605,7 +11605,7 @@ impl crate::resolver::StaticCallable for PFN_vkAllocateDescriptorSets {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkFreeDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11631,7 +11631,7 @@ impl crate::resolver::StaticCallable for PFN_vkFreeDescriptorSets {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkUpdateDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet, descriptorCopyCount: u32, pDescriptorCopies: *const VkCopyDescriptorSet));
 #[cfg(feature = "Implements")]
@@ -11657,7 +11657,7 @@ impl crate::resolver::StaticCallable for PFN_vkUpdateDescriptorSets {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateFramebuffer(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkFramebufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pFramebuffer: *mut VkFramebuffer) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11683,7 +11683,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateFramebuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyFramebuffer(pub unsafe extern "system" fn(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11709,7 +11709,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyFramebuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateRenderPass(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11735,7 +11735,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateRenderPass {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyRenderPass(pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11761,7 +11761,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyRenderPass {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetRenderAreaGranularity(pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D));
 #[cfg(feature = "Implements")]
@@ -11787,7 +11787,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetRenderAreaGranularity {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateCommandPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkCommandPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pCommandPool: *mut VkCommandPool) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11813,7 +11813,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateCommandPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -11839,7 +11839,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyCommandPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkResetCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11865,7 +11865,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetCommandPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAllocateCommandBuffers(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkCommandBufferAllocateInfo, pCommandBuffers: *mut VkCommandBuffer) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11891,7 +11891,7 @@ impl crate::resolver::StaticCallable for PFN_vkAllocateCommandBuffers {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkFreeCommandBuffers(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer));
 #[cfg(feature = "Implements")]
@@ -11917,7 +11917,7 @@ impl crate::resolver::StaticCallable for PFN_vkFreeCommandBuffers {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBeginCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pBeginInfo: *const VkCommandBufferBeginInfo) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11943,7 +11943,7 @@ impl crate::resolver::StaticCallable for PFN_vkBeginCommandBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEndCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11969,7 +11969,7 @@ impl crate::resolver::StaticCallable for PFN_vkEndCommandBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkResetCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -11996,7 +11996,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetCommandBuffer {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumerateInstanceVersion(pub unsafe extern "system" fn(pApiVersion: *mut u32) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12025,7 +12025,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceVersion {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroySurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, surface: VkSurfaceKHR, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -12054,7 +12054,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, surface: VkSurfaceKHR, pSupported: *mut VkBool32) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12083,7 +12083,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceSupportKH
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceCapabilities: *mut VkSurfaceCapabilitiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12112,7 +12112,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceCapabilit
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormatKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12141,7 +12141,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceFormatsKH
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pPresentModeCount: *mut u32, pPresentModes: *mut VkPresentModeKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12170,7 +12170,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfacePresentMo
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateSwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchain: *mut VkSwapchainKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12199,7 +12199,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateSwapchainKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroySwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -12228,7 +12228,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySwapchainKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetSwapchainImagesKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pSwapchainImageCount: *mut u32, pSwapchainImages: *mut VkImage) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12257,7 +12257,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetSwapchainImagesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAcquireNextImageKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, timeout: u64, semaphore: Option<VkSemaphore>, fence: Option<VkFence>, pImageIndex: *mut u32) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12286,7 +12286,7 @@ impl crate::resolver::StaticCallable for PFN_vkAcquireNextImageKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueuePresentKHR(pub unsafe extern "system" fn(queue: VkQueue, pPresentInfo: *const VkPresentInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12315,7 +12315,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueuePresentKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12344,7 +12344,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPropertie
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkDisplayPlanePropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12373,7 +12373,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPlaneProp
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, planeIndex: u32, pDisplayCount: *mut u32, pDisplays: *mut VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12402,7 +12402,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDisplayPlaneSupportedDisplaysK
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDisplayModePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pPropertyCount: *mut u32, pProperties: *mut VkDisplayModePropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12431,7 +12431,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDisplayModePropertiesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDisplayModeKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR, pCreateInfo: *const VkDisplayModeCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pMode: *mut VkDisplayModeKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12460,7 +12460,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDisplayModeKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, mode: VkDisplayModeKHR, planeIndex: u32, pCapabilities: *mut VkDisplayPlaneCapabilitiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12489,7 +12489,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDisplayPlaneCapabilitiesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDisplayPlaneSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDisplaySurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12518,7 +12518,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateSharedSwapchainKHR(pub unsafe extern "system" fn(device: VkDevice, swapchainCount: u32, pCreateInfos: *const VkSwapchainCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSwapchains: *mut VkSwapchainKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12540,7 +12540,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateSharedSwapchainKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateXlibSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkXlibSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12569,7 +12569,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateXlibSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, dpy: *mut x11::xlib::Display, visualID: x11::xlib::VisualID) -> VkBool32);
 #[cfg(feature = "Implements")]
@@ -12598,7 +12598,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceXlibPresentation
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateXcbSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkXcbSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12627,7 +12627,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateXcbSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, connection: *mut xcb::ffi::xcb_connection_t, visual_id: xcb::x::Visualid) -> VkBool32);
 #[cfg(feature = "Implements")]
@@ -12656,7 +12656,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceXcbPresentationS
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateWaylandSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkWaylandSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12685,7 +12685,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateWaylandSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32, display: *mut core::ffi::c_void) -> VkBool32);
 #[cfg(feature = "Implements")]
@@ -12714,7 +12714,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceWaylandPresentat
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_android_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateAndroidSurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkAndroidSurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12743,7 +12743,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateAndroidSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateWin32SurfaceKHR(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkWin32SurfaceCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12772,7 +12772,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateWin32SurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, queueFamilyIndex: u32) -> VkBool32);
 #[cfg(feature = "Implements")]
@@ -12801,7 +12801,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceWin32Presentatio
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_metal_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateMetalSurfaceEXT(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkMetalSurfaceCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pSurface: *mut VkSurfaceKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12830,7 +12830,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateMetalSurfaceEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetMemoryWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkMemoryGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12852,7 +12852,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetMemoryWin32HandleKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetMemoryWin32HandlePropertiesKHR(pub unsafe extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, handle: windows::Win32::Foundation::HANDLE, pMemoryWin32HandleProperties: *mut VkMemoryWin32HandlePropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12874,7 +12874,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetMemoryWin32HandlePropertiesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetMemoryFdKHR(pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkMemoryGetFdInfoKHR, pFd: *mut core::ffi::c_int) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12896,7 +12896,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetMemoryFdKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetMemoryFdPropertiesKHR(pub unsafe extern "system" fn(device: VkDevice, handleType: VkExternalMemoryHandleTypeFlagsKHR, fd: core::ffi::c_int, pMemoryFdProperties: *mut VkMemoryFdPropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12918,7 +12918,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetMemoryFdPropertiesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkImportSemaphoreWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pImportSemaphoreWin32HandleInfo: *const VkImportSemaphoreWin32HandleInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12940,7 +12940,7 @@ unsafe impl crate::resolver::PFN for PFN_vkImportSemaphoreWin32HandleKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetSemaphoreWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkSemaphoreGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12962,7 +12962,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreWin32HandleKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkImportSemaphoreFdKHR(pub unsafe extern "system" fn(device: VkDevice, pImportSemaphoreFdInfo: *const VkImportSemaphoreFdInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -12984,7 +12984,7 @@ unsafe impl crate::resolver::PFN for PFN_vkImportSemaphoreFdKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetSemaphoreFdKHR(pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkSemaphoreGetFdInfoKHR, pFd: *mut core::ffi::c_int) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13006,7 +13006,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreFdKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_win32")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkImportFenceWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pImportFenceWin32HandleInfo: *const VkImportFenceWin32HandleInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13028,7 +13028,7 @@ unsafe impl crate::resolver::PFN for PFN_vkImportFenceWin32HandleKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_win32")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetFenceWin32HandleKHR(pub unsafe extern "system" fn(device: VkDevice, pGetWin32HandleInfo: *const VkFenceGetWin32HandleInfoKHR, pHandle: *mut windows::Win32::Foundation::HANDLE) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13050,7 +13050,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetFenceWin32HandleKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkImportFenceFdKHR(pub unsafe extern "system" fn(device: VkDevice, pImportFenceFdInfo: *const VkImportFenceFdInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13072,7 +13072,7 @@ unsafe impl crate::resolver::PFN for PFN_vkImportFenceFdKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetFenceFdKHR(pub unsafe extern "system" fn(device: VkDevice, pGetFdInfo: *const VkFenceGetFdInfoKHR, pFd: *mut core::ffi::c_int) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13094,7 +13094,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetFenceFdKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pSurfaceCapabilities: *mut VkSurfaceCapabilities2KHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13116,7 +13116,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSurfaceFormats2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pSurfaceInfo: *const VkPhysicalDeviceSurfaceInfo2KHR, pSurfaceFormatsCount: *mut u32, pSurfaceFormats: *mut VkSurfaceFormat2KHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13138,7 +13138,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceFormats2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDebugReportCallbackEXT(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDebugReportCallbackCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pCallback: *mut VkDebugReportCallbackEXT) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13160,7 +13160,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDebugReportCallbackEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDebugReportCallbackEXT(pub unsafe extern "system" fn(instance: VkInstance, callback: VkDebugReportCallbackEXT, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -13182,7 +13182,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDebugReportCallbackEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDebugReportMessageEXT(pub unsafe extern "system" fn(instance: VkInstance, flags: VkDebugReportFlagsEXT, objectType: VkDebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: *const core::ffi::c_char, pMessage: *const core::ffi::c_char));
 #[cfg(feature = "Implements")]
@@ -13204,7 +13204,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDebugReportMessageEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkSetDebugUtilsObjectNameEXT(pub unsafe extern "system" fn(device: VkDevice, pNameInfo: *const VkDebugUtilsObjectNameInfoEXT) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13226,7 +13226,7 @@ unsafe impl crate::resolver::PFN for PFN_vkSetDebugUtilsObjectNameEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkSetDebugUtilsObjectTagEXT(pub unsafe extern "system" fn(device: VkDevice, pTagInfo: *const VkDebugUtilsObjectTagInfoEXT) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13248,7 +13248,7 @@ unsafe impl crate::resolver::PFN for PFN_vkSetDebugUtilsObjectTagEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueBeginDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT));
 #[cfg(feature = "Implements")]
@@ -13270,7 +13270,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueBeginDebugUtilsLabelEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue));
 #[cfg(feature = "Implements")]
@@ -13292,7 +13292,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueEndDebugUtilsLabelEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueInsertDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue: VkQueue, pLabelInfo: *const VkDebugUtilsLabelEXT));
 #[cfg(feature = "Implements")]
@@ -13314,7 +13314,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueInsertDebugUtilsLabelEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDebugUtilsMessengerEXT(pub unsafe extern "system" fn(instance: VkInstance, pCreateInfo: *const VkDebugUtilsMessengerCreateInfoEXT, pAllocator: *const VkAllocationCallbacks, pDebugUtilsMessenger: *mut VkDebugUtilsMessengerEXT) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13336,7 +13336,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDebugUtilsMessengerEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDebugUtilsMessengerEXT(pub unsafe extern "system" fn(instance: VkInstance, debugUtilsMessenger: VkDebugUtilsMessengerEXT, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -13358,7 +13358,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDebugUtilsMessengerEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkSubmitDebugUtilsMessageEXT(pub unsafe extern "system" fn(instance: VkInstance, messageSeverity: VkDebugUtilsMessageSeverityFlagBitsEXT, messageTypes: VkDebugUtilsMessageTypeFlagsEXT, pCallbackData: *const VkDebugUtilsMessengerCallbackDataEXT));
 #[cfg(feature = "Implements")]
@@ -13380,7 +13380,7 @@ unsafe impl crate::resolver::PFN for PFN_vkSubmitDebugUtilsMessageEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR));
 #[cfg(feature = "Implements")]
@@ -13401,7 +13401,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalBufferProper
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceExternalBufferProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalBufferInfo: *const VkPhysicalDeviceExternalBufferInfoKHR, pExternalBufferProperties: *mut VkExternalBufferPropertiesKHR));
 #[cfg(feature = "Implements")]
@@ -13430,7 +13430,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalBufferPr
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR));
 #[cfg(feature = "Implements")]
@@ -13451,7 +13451,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalSemaphorePro
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceExternalSemaphoreProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalSemaphoreInfo: *const VkPhysicalDeviceExternalSemaphoreInfoKHR, pExternalSemaphoreProperties: *mut VkExternalSemaphorePropertiesKHR));
 #[cfg(feature = "Implements")]
@@ -13480,7 +13480,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalSemaphor
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR));
 #[cfg(feature = "Implements")]
@@ -13501,7 +13501,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalFencePropert
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceExternalFenceProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pExternalFenceInfo: *const VkPhysicalDeviceExternalFenceInfoKHR, pExternalFenceProperties: *mut VkExternalFencePropertiesKHR));
 #[cfg(feature = "Implements")]
@@ -13530,7 +13530,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalFencePro
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR(pub unsafe extern "system" fn(device: VkDevice, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32, pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlags));
 #[cfg(feature = "Implements")]
@@ -13551,7 +13551,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceGroupPeerMemoryFeatures(pub unsafe extern "system" fn(device: VkDevice, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32, pPeerMemoryFeatures: *mut VkPeerMemoryFeatureFlags));
 #[cfg(feature = "Implements")]
@@ -13581,7 +13581,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceGroupPeerMemoryFeatures 
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceGroupPresentCapabilitiesKHR(pub unsafe extern "system" fn(device: VkDevice, pDeviceGroupPresentCapabilities: *mut VkDeviceGroupPresentCapabilitiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13605,7 +13605,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupPresentCapabilitiesKHR 
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceGroupSurfacePresentModesKHR(pub unsafe extern "system" fn(device: VkDevice, surface: VkSurfaceKHR, pModes: *mut VkDeviceGroupPresentModeFlagsKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13629,7 +13629,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupSurfacePresentModesKHR 
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDevicePresentRectanglesKHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, surface: VkSurfaceKHR, pRectCount: *mut u32, pRects: *mut VkRect2D) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13653,7 +13653,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDevicePresentRectanglesKHR
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAcquireNextImage2KHR(pub unsafe extern "system" fn(device: VkDevice, pAcquireInfo: *const VkAcquireNextImageInfoKHR, pImageIndex: *mut u32) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13676,7 +13676,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAcquireNextImage2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceFeatures2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR));
 #[cfg(feature = "Implements")]
@@ -13697,7 +13697,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceFeatures2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures2KHR));
 #[cfg(feature = "Implements")]
@@ -13726,7 +13726,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFeatures2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceProperties2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13747,7 +13747,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceProperties2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13776,7 +13776,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceProperties2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13797,7 +13797,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties2KHR
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceFormatProperties2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13826,7 +13826,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR, pImageFormatProperties: *mut VkImageFormatProperties2KHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13847,7 +13847,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatPropertie
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pImageFormatInfo: *const VkPhysicalDeviceImageFormatInfo2KHR, pImageFormatProperties: *mut VkImageFormatProperties2KHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -13876,7 +13876,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatPrope
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13897,7 +13897,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyPropertie
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13926,7 +13926,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyPrope
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13947,7 +13947,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2KHR
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceMemoryProperties2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13976,7 +13976,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -13997,7 +13997,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatPro
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFormatInfo: *const VkPhysicalDeviceSparseImageFormatInfo2KHR, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties2KHR));
 #[cfg(feature = "Implements")]
@@ -14026,7 +14026,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageForma
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group_creation")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumeratePhysicalDeviceGroupKHR(pub unsafe extern "system" fn(instance: VkInstance, pPhysicalDeviceGroupCount: *mut u32, pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14047,7 +14047,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDeviceGroupKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkEnumeratePhysicalDeviceGroup(pub unsafe extern "system" fn(instance: VkInstance, pPhysicalDeviceGroupCount: *mut u32, pPhysicalDeviceGroupProperties: *mut VkPhysicalDeviceGroupPropertiesKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14076,7 +14076,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumeratePhysicalDeviceGroup {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
@@ -14097,7 +14097,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
@@ -14126,7 +14126,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
@@ -14147,7 +14147,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferMemoryRequirementsInfo2KHR, pMemoryRequirements: *mut VkMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
@@ -14176,7 +14176,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageSparseMemoryRequirements2KHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
@@ -14197,7 +14197,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements2KHR 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetImageSparseMemoryRequirements2(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkImageSparseMemoryRequirementsInfo2KHR, pSparseMemoryRequirementCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements2KHR));
 #[cfg(feature = "Implements")]
@@ -14226,7 +14226,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageSparseMemoryRequirements2
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBindBufferMemory2KHR(pub unsafe extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14247,7 +14247,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBindBufferMemory2(pub unsafe extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindBufferMemoryInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14276,7 +14276,7 @@ impl crate::resolver::StaticCallable for PFN_vkBindBufferMemory2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBindImageMemory2KHR(pub unsafe extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14297,7 +14297,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkBindImageMemory2(pub unsafe extern "system" fn(device: VkDevice, bindInfoCount: u32, pBindInfos: *const VkBindImageMemoryInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14326,7 +14326,7 @@ impl crate::resolver::StaticCallable for PFN_vkBindImageMemory2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14347,7 +14347,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorUpdateTemplateKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateDescriptorUpdateTemplate(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorUpdateTemplateCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pDescriptorUpdateTemplate: *mut VkDescriptorUpdateTemplateKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14376,7 +14376,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorUpdateTemplate {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(pub unsafe extern "system" fn(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -14397,7 +14397,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorUpdateTemplateKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroyDescriptorUpdateTemplate(pub unsafe extern "system" fn(device: VkDevice, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -14426,7 +14426,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorUpdateTemplate {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkUpdateDescriptorSetWithTemplateKHR(pub unsafe extern "system" fn(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pData: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
@@ -14447,7 +14447,7 @@ unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSetWithTemplateKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkUpdateDescriptorSetWithTemplate(pub unsafe extern "system" fn(device: VkDevice, descriptorSet: VkDescriptorSet, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, pData: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
@@ -14476,7 +14476,7 @@ impl crate::resolver::StaticCallable for PFN_vkUpdateDescriptorSetWithTemplate {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateSamplerYcbcrConversionKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14497,7 +14497,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateSamplerYcbcrConversionKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCreateSamplerYcbcrConversion(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: VkSamplerYcbcrConversionCreateInfoKHR, pAllocator: *const VkAllocationCallbacks, pYcbcrConversion: *mut VkSamplerYcbcrConversionKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14526,7 +14526,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateSamplerYcbcrConversion {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroySamplerYcbcrConversionKHR(pub unsafe extern "system" fn(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -14547,7 +14547,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroySamplerYcbcrConversionKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkDestroySamplerYcbcrConversion(pub unsafe extern "system" fn(device: VkDevice, ycbcrConversion: VkSamplerYcbcrConversionKHR, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
@@ -14576,7 +14576,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySamplerYcbcrConversion {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance1")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkTrimCommandPoolKHR(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR));
 #[cfg(feature = "Implements")]
@@ -14597,7 +14597,7 @@ unsafe impl crate::resolver::PFN for PFN_vkTrimCommandPoolKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkTrimCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolTrimFlagsKHR));
 #[cfg(feature = "Implements")]
@@ -14626,7 +14626,7 @@ impl crate::resolver::StaticCallable for PFN_vkTrimCommandPool {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance3")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDescriptorSetLayoutSupportKHR(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport));
 #[cfg(feature = "Implements")]
@@ -14647,7 +14647,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDescriptorSetLayoutSupportKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDescriptorSetLayoutSupport(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pSupport: *mut VkDescriptorSetLayoutSupport));
 #[cfg(feature = "Implements")]
@@ -14676,7 +14676,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14697,7 +14697,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo2KHR, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -14725,7 +14725,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueSubmit2 {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBindPipeline(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline));
 #[cfg(feature = "Implements")]
@@ -14751,7 +14751,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindPipeline {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetViewport(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport));
 #[cfg(feature = "Implements")]
@@ -14777,7 +14777,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetViewport {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetScissor(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D));
 #[cfg(feature = "Implements")]
@@ -14803,7 +14803,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetScissor {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetLineWidth(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, lineWidth: core::ffi::c_float));
 #[cfg(feature = "Implements")]
@@ -14829,7 +14829,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetLineWidth {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetDepthBias(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: core::ffi::c_float, depthBiasClamp: core::ffi::c_float, depthBiasSlopeFactor: core::ffi::c_float));
 #[cfg(feature = "Implements")]
@@ -14855,7 +14855,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBias {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetBlendConstants(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, blendConstants: *const core::ffi::c_float));
 #[cfg(feature = "Implements")]
@@ -14881,7 +14881,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetBlendConstants {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetDepthBounds(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, minDepthBounds: core::ffi::c_float, maxDepthBounds: core::ffi::c_float));
 #[cfg(feature = "Implements")]
@@ -14907,7 +14907,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBounds {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetStencilCompareMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32));
 #[cfg(feature = "Implements")]
@@ -14933,7 +14933,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilCompareMask {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetStencilWriteMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32));
 #[cfg(feature = "Implements")]
@@ -14959,7 +14959,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilWriteMask {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetStencilReference(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32));
 #[cfg(feature = "Implements")]
@@ -14985,7 +14985,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilReference {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBindDescriptorSets(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet, dynamicOffsetCount: u32, pDynamicOffsets: *const u32));
 #[cfg(feature = "Implements")]
@@ -15011,7 +15011,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindDescriptorSets {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBindIndexBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, indexType: VkIndexType));
 #[cfg(feature = "Implements")]
@@ -15037,7 +15037,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindIndexBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBindVertexBuffers(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstBinding: u32, bindingCount: u32, pBuffers: *const VkBuffer, pOffsets: *const VkDeviceSize));
 #[cfg(feature = "Implements")]
@@ -15063,7 +15063,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindVertexBuffers {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDraw(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32));
 #[cfg(feature = "Implements")]
@@ -15089,7 +15089,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDraw {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDrawIndexed(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32));
 #[cfg(feature = "Implements")]
@@ -15115,7 +15115,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexed {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDrawIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32));
 #[cfg(feature = "Implements")]
@@ -15141,7 +15141,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndirect {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDrawIndexedIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32));
 #[cfg(feature = "Implements")]
@@ -15167,7 +15167,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexedIndirect {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDispatch(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32));
 #[cfg(feature = "Implements")]
@@ -15193,7 +15193,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDispatch {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDispatchIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize));
 #[cfg(feature = "Implements")]
@@ -15219,7 +15219,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDispatchIndirect {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdCopyBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferCopy));
 #[cfg(feature = "Implements")]
@@ -15245,7 +15245,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdCopyImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageCopy));
 #[cfg(feature = "Implements")]
@@ -15271,7 +15271,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBlitImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageBlit, filters: VkFilter));
 #[cfg(feature = "Implements")]
@@ -15297,7 +15297,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBlitImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdCopyBufferToImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkBufferImageCopy));
 #[cfg(feature = "Implements")]
@@ -15323,7 +15323,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyBufferToImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdCopyImageToBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferImageCopy));
 #[cfg(feature = "Implements")]
@@ -15349,7 +15349,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyImageToBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdUpdateBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
@@ -15375,7 +15375,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdUpdateBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdFillBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, data: u32));
 #[cfg(feature = "Implements")]
@@ -15401,7 +15401,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdFillBuffer {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdClearColorImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pColor: *const VkClearColorValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange));
 #[cfg(feature = "Implements")]
@@ -15427,7 +15427,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdClearColorImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdClearDepthStencilImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pDepthStencil: *const VkClearDepthStencilValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange));
 #[cfg(feature = "Implements")]
@@ -15453,7 +15453,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdClearDepthStencilImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdClearAttachments(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, attachmentCount: u32, pAttachments: *const VkClearAttachment, rectCount: u32, pRects: *const VkClearRect));
 #[cfg(feature = "Implements")]
@@ -15479,7 +15479,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdClearAttachments {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdResolveImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageResolve));
 #[cfg(feature = "Implements")]
@@ -15505,7 +15505,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResolveImage {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetEvent(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags));
 #[cfg(feature = "Implements")]
@@ -15531,7 +15531,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdResetEvent(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags));
 #[cfg(feature = "Implements")]
@@ -15557,7 +15557,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWaitEvents(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier));
 #[cfg(feature = "Implements")]
@@ -15583,7 +15583,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPipelineBarrier(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, dependencyFlags: VkDependencyFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier));
 #[cfg(feature = "Implements")]
@@ -15609,7 +15609,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBeginQuery(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags));
 #[cfg(feature = "Implements")]
@@ -15635,7 +15635,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBeginQuery {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdEndQuery(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32));
 #[cfg(feature = "Implements")]
@@ -15661,7 +15661,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdEndQuery {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdResetQueryPool(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32));
 #[cfg(feature = "Implements")]
@@ -15687,7 +15687,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResetQueryPool {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWriteTimestamp(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, queryPool: VkQueryPool, query: u32));
 #[cfg(feature = "Implements")]
@@ -15713,7 +15713,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdCopyQueryPoolResults(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags));
 #[cfg(feature = "Implements")]
@@ -15739,7 +15739,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyQueryPoolResults {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPushConstants(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineLayout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
@@ -15765,7 +15765,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdPushConstants {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBeginRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents));
 #[cfg(feature = "Implements")]
@@ -15791,7 +15791,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBeginRenderPass {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdNextSubpass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, contents: VkSubpassContents));
 #[cfg(feature = "Implements")]
@@ -15817,7 +15817,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdNextSubpass {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdEndRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
 #[cfg(feature = "Implements")]
@@ -15843,7 +15843,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdEndRenderPass {
 
 #[cfg(feature = "Implements")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdExecuteCommands(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer));
 #[cfg(feature = "Implements")]
@@ -15870,7 +15870,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdExecuteCommands {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdBeginDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT));
 #[cfg(feature = "Implements")]
@@ -15892,7 +15892,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBeginDebugUtilsLabelEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
 #[cfg(feature = "Implements")]
@@ -15914,7 +15914,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdEndDebugUtilsLabelEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdInsertDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pLabelInfo: *const VkDebugUtilsLabelEXT));
 #[cfg(feature = "Implements")]
@@ -15936,7 +15936,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdInsertDebugUtilsLabelEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetDeviceMaskKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, deviceMask: u32));
 #[cfg(feature = "Implements")]
@@ -15957,7 +15957,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetDeviceMaskKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetDeviceMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, deviceMask: u32));
 #[cfg(feature = "Implements")]
@@ -15986,7 +15986,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetDeviceMask {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDispatchBaseKHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32));
 #[cfg(feature = "Implements")]
@@ -16007,7 +16007,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchBaseKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdDispatchBase(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32));
 #[cfg(feature = "Implements")]
@@ -16036,7 +16036,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDispatchBase {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetEvent2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR));
 #[cfg(feature = "Implements")]
@@ -16057,7 +16057,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdSetEvent2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, pDependencyInfo: *const VkDependencyInfoKHR));
 #[cfg(feature = "Implements")]
@@ -16086,7 +16086,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdResetEvent2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR));
 #[cfg(feature = "Implements")]
@@ -16107,7 +16107,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdResetEvent2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags2KHR));
 #[cfg(feature = "Implements")]
@@ -16136,7 +16136,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWaitEvents2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR));
 #[cfg(feature = "Implements")]
@@ -16157,7 +16157,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWaitEvents2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, pDependencyInfos: *const VkDependencyInfoKHR));
 #[cfg(feature = "Implements")]
@@ -16186,7 +16186,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPipelineBarrier2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR));
 #[cfg(feature = "Implements")]
@@ -16207,7 +16207,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdPipelineBarrier2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pDependencyInfo: *const VkDependencyInfoKHR));
 #[cfg(feature = "Implements")]
@@ -16236,7 +16236,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier2 {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWriteTimestamp2KHR(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32));
 #[cfg(feature = "Implements")]
@@ -16257,7 +16257,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp2KHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWriteTimestamp2(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, stage: VkPipelineStageFlags2KHR, queryPool: VkQueryPool, query: u32));
 #[cfg(feature = "Implements")]
@@ -17185,7 +17185,7 @@ pub const VK_STRUCTURE_TYPE_TIMELINE_SEMAPHORE_SUBMIT_INFO: VkStructureType = VK
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferDeviceAddressKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> VkDeviceAddress);
 #[cfg(feature = "Implements")]
@@ -17206,7 +17206,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferDeviceAddressKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferDeviceAddress(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> VkDeviceAddress);
 #[cfg(feature = "Implements")]
@@ -17235,7 +17235,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetBufferDeviceAddress {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferOpaqueCaptureAddressKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> u64);
 #[cfg(feature = "Implements")]
@@ -17256,7 +17256,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferOpaqueCaptureAddressKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetBufferOpaqueCaptureAddress(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkBufferDeviceAddressInfoKHR) -> u64);
 #[cfg(feature = "Implements")]
@@ -17285,7 +17285,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetBufferOpaqueCaptureAddress {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceMemoryOpaqueCaptureAddressInfoKHR) -> u64);
 #[cfg(feature = "Implements")]
@@ -17306,7 +17306,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddressKH
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDeviceMemoryOpaqueCaptureAddress(pub unsafe extern "system" fn(device: VkDevice, pInfo: *const VkDeviceMemoryOpaqueCaptureAddressInfoKHR) -> u64);
 #[cfg(feature = "Implements")]
@@ -17335,7 +17335,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceMemoryOpaqueCaptureAddre
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetSemaphoreCounterValueKHR(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pValue: *mut u64) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17356,7 +17356,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreCounterValueKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetSemaphoreCounterValue(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pValue: *mut u64) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17385,7 +17385,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetSemaphoreCounterValue {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkSignalSemaphoreKHR(pub unsafe extern "system" fn(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17406,7 +17406,7 @@ unsafe impl crate::resolver::PFN for PFN_vkSignalSemaphoreKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkSignalSemaphore(pub unsafe extern "system" fn(device: VkDevice, pSignalInfo: *const VkSemaphoreSignalInfoKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17435,7 +17435,7 @@ impl crate::resolver::StaticCallable for PFN_vkSignalSemaphore {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkWaitSemaphoresKHR(pub unsafe extern "system" fn(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17456,7 +17456,7 @@ unsafe impl crate::resolver::PFN for PFN_vkWaitSemaphoresKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkWaitSemaphores(pub unsafe extern "system" fn(device: VkDevice, pWaitInfo: *const VkSemaphoreWaitInfoKHR, timeout: u64) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17774,7 +17774,7 @@ unsafe impl crate::TypedVulkanStructure for VkPipelineColorBlendAdvancedStateCre
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAcquireDrmDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, drmFd: i32, display: VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17796,7 +17796,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAcquireDrmDisplayEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAcquireWinrtDisplayNV(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, display: VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17818,7 +17818,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAcquireWinrtDisplayNV {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkAcquireXlibDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, dpy: *mut x11::xlib::Display, display: VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17840,7 +17840,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAcquireXlibDisplayEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetDrmDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, drmFd: i32, connectorId: u32, pDisplay: *mut VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17862,7 +17862,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDrmDisplayEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetRandROutputDisplayEXT(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, dpy: *mut x11::xlib::Display, rrOutput: x11::xrandr::RROutput, pDisplay: *mut VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17884,7 +17884,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetRandROutputDisplayEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkGetWinrtDisplayNV(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, deviceRelativeId: u32, pDisplay: *mut VkDisplayKHR) -> VkResult);
 #[cfg(feature = "Implements")]
@@ -17906,7 +17906,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetWinrtDisplayNV {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_AMD_buffer_marker")]
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy)]
 #[rustfmt::skip]
 pub struct PFN_vkCmdWriteBufferMarkerAMD(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, marker: u32));
 #[cfg(feature = "Implements")]

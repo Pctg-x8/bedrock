@@ -6,6 +6,11 @@ pub(crate) const fn empty_sink_buffer<T>() -> Vec<T> {
 }
 
 #[inline(always)]
+pub(crate) fn empty_reserved_buffer<T>(capacity: usize) -> Vec<T> {
+    Vec::with_capacity(capacity)
+}
+
+#[inline(always)]
 pub(crate) fn collect_vec<T>(iter: impl IntoIterator<Item = T>) -> Vec<T> {
     Vec::from_iter(iter)
 }

@@ -160,32 +160,13 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorPoolObject<&'_ Devic
     }
 }
 
-#[repr(transparent)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-pub struct DescriptorSet(pub VkDescriptorSet);
-impl From<DescriptorSet> for VkDescriptorSet {
-    fn from(v: DescriptorSet) -> Self {
-        v.0
-    }
-}
-impl AsRef<VkDescriptorSet> for DescriptorSet {
-    fn as_ref(&self) -> &VkDescriptorSet {
-        &self.0
-    }
-}
-impl core::ops::Deref for DescriptorSet {
-    type Target = VkDescriptorSet;
-
-    fn deref(&self) -> &VkDescriptorSet {
-        &self.0
-    }
-}
+pub type DescriptorSet = VkDescriptorSet;
 unsafe impl Sync for DescriptorSet {}
 unsafe impl Send for DescriptorSet {}
 impl DescriptorSet {
     #[inline]
     pub const fn binding_at(&self, b: u32) -> DescriptorPointer {
-        DescriptorPointer::new(self.0, b)
+        DescriptorPointer::new(*self, b)
     }
 }
 
@@ -384,10 +365,10 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     unsafe fn alloc_raw(
         &mut self,
         info: &VkDescriptorSetAllocateInfo,
-        objects: &mut [VkDescriptorSet],
+        objects: &mut [core::mem::MaybeUninit<VkDescriptorSet>],
     ) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr())
+            crate::vkfn::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr().cast())
                 .into_result()
                 .map(drop)
         }
@@ -400,6 +381,7 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
     /// - VK_ERROR_FRAGMENTED_POOL
     #[implements]
+    #[cfg(feature = "alloc")]
     fn alloc(&mut self, layouts: &[VkHandleRef<VkDescriptorSetLayout>]) -> crate::Result<Vec<DescriptorSet>> {
         let ainfo = VkDescriptorSetAllocateInfo {
             sType: VkDescriptorSetAllocateInfo::TYPE,
@@ -408,12 +390,14 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
             descriptorSetCount: layouts.len() as _,
             pSetLayouts: layouts.as_ptr_empty_null() as _,
         };
+        let mut hs = crate::alloc::empty_reserved_buffer(layouts.len());
 
         unsafe {
-            let mut hs = vec![core::mem::MaybeUninit::uninit().assume_init(); layouts.len()];
-            self.alloc_raw(&ainfo, &mut hs)?;
-            Ok(core::mem::transmute(hs))
+            self.alloc_raw(&ainfo, hs.spare_capacity_mut())?;
+            hs.set_len(layouts.len())
         }
+
+        Ok(hs)
     }
 
     /// Allocate one or more descriptor sets

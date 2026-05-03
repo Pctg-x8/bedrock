@@ -1349,7 +1349,7 @@ impl Command {
 
         self.emit_feature_gate(w)?;
         writeln!(w, "#[repr(transparent)]")?;
-        writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq)]")?;
+        writeln!(w, "#[derive(Debug, Clone, Copy)]")?;
         writeln!(w, "#[rustfmt::skip]")?;
         write!(w, "pub struct {type_name}(pub unsafe extern \"system\" fn(")?;
         let mut cont = false;
@@ -1399,7 +1399,7 @@ impl Command {
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             writeln!(w, "#[repr(transparent)]")?;
-            writeln!(w, "#[derive(Debug, Clone, Copy, PartialEq, Eq)]")?;
+            writeln!(w, "#[derive(Debug, Clone, Copy)]")?;
             writeln!(w, "#[rustfmt::skip]")?;
             write!(w, "pub struct {type_name}(pub unsafe extern \"system\" fn(")?;
             let mut cont = false;

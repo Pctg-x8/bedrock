@@ -102,13 +102,19 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
     #[implements("alloc")]
     #[inline]
     pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
-        let mut hs = vec![unsafe { core::mem::MaybeUninit::zeroed().assume_init() }; info.0.commandBufferCount as _];
+        let mut hs = crate::alloc::empty_reserved_buffer(info.0.commandBufferCount as _);
 
         unsafe {
-            crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr()).into_result()?;
-
-            Ok(core::mem::transmute(hs))
+            crate::vkfn::allocate_command_buffers(
+                device.native_ptr(),
+                &info.0,
+                hs.spare_capacity_mut().as_mut_ptr() as _,
+            )
+            .into_result()?;
+            hs.set_len(info.0.commandBufferCount as _);
         }
+
+        Ok(hs)
     }
 
     /// Allocate a static amount of command buffers from an existing command pool
@@ -123,13 +129,13 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
         device: Device,
         info: &CommandBufferFixedCountAllocateInfo<'_, N>,
     ) -> crate::Result<[Self; N]> {
-        let mut hs = [unsafe { core::mem::MaybeUninit::zeroed().assume_init() }; N];
+        let mut hs = [core::mem::MaybeUninit::uninit(); N];
 
         unsafe {
             crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr() as _).into_result()?;
-
-            Ok(hs)
         }
+
+        Ok(core::array::from_fn(|n| unsafe { hs[n].assume_init() }))
     }
 }
 impl<Device: Clone> CommandBufferObject<&'_ Device> {

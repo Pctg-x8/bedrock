@@ -801,7 +801,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[GraphicsPipelineCreateInfo],
         cache: Option<VkPipelineCache>,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-        objects: &mut [VkPipeline],
+        objects: &mut [core::mem::MaybeUninit<VkPipeline>],
     ) -> crate::Result<()> {
         unsafe {
             crate::vkfn::create_graphics_pipelines(
@@ -810,7 +810,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 infos.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
-                objects.as_mut_ptr(),
+                objects.as_mut_ptr() as _,
             )
             .into_result()
             .map(drop)
@@ -829,16 +829,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[GraphicsPipelineCreateInfo],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
-        let mut hs = vec![unsafe { core::mem::MaybeUninit::uninit().assume_init() }; infos.len()];
+        let mut hs = vec![core::mem::MaybeUninit::uninit(); infos.len()];
 
         unsafe {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
         }
 
-        Ok(crate::alloc::collect_vec(
-            hs.into_iter()
-                .map(move |h| unsafe { crate::PipelineObject::manage(h, self) }),
-        ))
+        Ok(crate::alloc::collect_vec(hs.into_iter().map(move |h| unsafe {
+            crate::PipelineObject::manage(h.assume_init(), self)
+        })))
     }
 
     /// Create graphics pipelines
@@ -853,14 +852,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[GraphicsPipelineCreateInfo; N],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
-        let mut hs = [unsafe { core::mem::MaybeUninit::uninit().assume_init() }; N];
+        let mut hs = [core::mem::MaybeUninit::<VkPipeline>::uninit(); N];
 
         unsafe {
             self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
         }
 
         Ok(core::array::from_fn(move |n| unsafe {
-            crate::PipelineObject::manage(hs[n], self)
+            crate::PipelineObject::manage(hs[n].assume_init(), self)
         }))
     }
 
@@ -879,7 +878,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[ComputePipelineCreateInfo],
         cache: Option<VkPipelineCache>,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
-        objects: &mut [VkPipeline],
+        objects: &mut [core::mem::MaybeUninit<VkPipeline>],
     ) -> crate::Result<()> {
         unsafe {
             crate::vkfn::create_compute_pipelines(
@@ -888,7 +887,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 infos.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
-                objects.as_mut_ptr(),
+                objects.as_mut_ptr() as _,
             )
             .into_result()
             .map(drop)
@@ -907,17 +906,15 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[ComputePipelineCreateInfo],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<Vec<crate::PipelineObject<&'s Self>>> {
-        let mut pipelines = vec![unsafe { core::mem::MaybeUninit::uninit().assume_init() }; infos.len()];
+        let mut pipelines = vec![core::mem::MaybeUninit::uninit(); infos.len()];
 
         unsafe {
             self.new_compute_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
 
-        Ok(crate::alloc::collect_vec(
-            pipelines
-                .into_iter()
-                .map(move |h| unsafe { crate::PipelineObject::manage(h, self) }),
-        ))
+        Ok(crate::alloc::collect_vec(pipelines.into_iter().map(move |h| unsafe {
+            crate::PipelineObject::manage(h.assume_init(), self)
+        })))
     }
 
     /// Create compute pipelines
@@ -932,14 +929,14 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         infos: &[ComputePipelineCreateInfo; N],
         cache: Option<&(impl crate::VkHandle<Handle = VkPipelineCache> + ?Sized)>,
     ) -> crate::Result<[crate::PipelineObject<&'s Self>; N]> {
-        let mut pipelines = [unsafe { core::mem::MaybeUninit::uninit().assume_init() }; N];
+        let mut pipelines = [core::mem::MaybeUninit::uninit(); N];
 
         unsafe {
             self.new_compute_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut pipelines)?;
         }
 
         Ok(core::array::from_fn(move |n| unsafe {
-            crate::PipelineObject::manage(pipelines[n], self)
+            crate::PipelineObject::manage(pipelines[n].assume_init(), self)
         }))
     }
 
@@ -1060,14 +1057,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         &'s self,
         info: &CommandBufferFixedCountAllocateInfo<N>,
     ) -> crate::Result<[CommandBufferObject<&'s Self>; N]> {
-        let mut sink =
-            [const { unsafe { core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::zeroed().assume_init() } }; N];
+        let mut sink = [core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::uninit(); N];
         unsafe {
             crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
                 .into_result()?;
         }
 
-        Ok(sink)
+        Ok(core::array::from_fn(|n| unsafe { sink[n].assume_init() }))
     }
 
     /// Invalidate `MappedMemoryRange`s

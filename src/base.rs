@@ -566,7 +566,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_INITIALIZATION_FAILED`
     #[implements("alloc")]
-    fn iter_physical_devices(&self) -> crate::Result<IterPhysicalDevices<Self>> {
+    fn iter_physical_devices<'a>(&'a self) -> crate::Result<IterPhysicalDevices<'a, Self>> {
         let n = self.physical_device_count()? as usize;
         if n == 0 {
             // no items
