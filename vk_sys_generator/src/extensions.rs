@@ -4,8 +4,23 @@ pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_drm_display", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_acquire_xlib_display", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_blend_operation_advanced", 2)),
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_validation_cache", 1)),
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_validation_flags", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_AMD_buffer_marker", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_acquire_winrt_display", 1)),
+    Element::Bitmask(
+        Bitmask::new(
+            "ValidationCacheCreateFlags",
+            "ValidationCacheCreateFlagBits",
+            "VALIDATION_CACHE_CREATE_FLAGS",
+            &[],
+        )
+        .extension("EXT", "validation_cache"),
+    ),
+    Element::Object(
+        Object::new("VkValidationCacheEXT", "VALIDATION_CACHE_EXT", vk_ext_enum(161, 0) as _)
+            .extension("VK_EXT_validation_cache"),
+    ),
     Element::Enum(Enum::extending(
         "BlendOp",
         "BLEND_OP",
@@ -74,6 +89,25 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("VK_EXT_blend_operation_advanced", "EXT"),
     ),
+    Element::Enum(
+        Enum::new(
+            "ValidationCacheHeaderVersion",
+            "VALIDATION_CACHE_HEADER_VERSION",
+            &[Enum::member("ONE", 1).extension("VK_EXT_validation_cache", "EXT")],
+        )
+        .extension("VK_EXT_validation_cache", "EXT"),
+    ),
+    Element::Enum(
+        Enum::new(
+            "ValidationCheck",
+            "VALIDATION_CHECK",
+            &[
+                Enum::member("ALL", 0).extension("VK_EXT_validation_flags", "EXT"),
+                Enum::member("SHADERS", 1).extension("VK_EXT_validation_flags", "EXT"),
+            ],
+        )
+        .extension("VK_EXT_validation_flags", "EXT"),
+    ),
     Element::Struct(
         Struct::new(
             "PhysicalDeviceBlendOperationAdvanccedFeatures",
@@ -121,6 +155,43 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extensions(&[("EXT", "blend_operation_advanced")]),
     ),
+    Element::Struct(
+        Struct::typed(
+            "ShaderModuleValidationcacheCreateInfo",
+            "SHADER_MODULE_VALIDATION_CACHE_CREATE_INFO",
+            vk_ext_enum(161, 1) as _,
+            StructUsage::Source,
+            &[Struct::member("validationCache", "VkValidationCacheEXT")],
+        )
+        .extensions(&[("EXT", "validation_cache")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ValidationCacheCreateInfo",
+            "VALIDATION_CACHE_CREATE_INFO",
+            vk_ext_enum(161, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkValidationCacheCreateFlagsEXT"),
+                Struct::member("initialDataSize", "usize"),
+                Struct::member("pInitialData", "*const core::ffi::c_void"),
+            ],
+        )
+        .extensions(&[("EXT", "validation_cache")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ValidationFlags",
+            "VALIDATION_FLAGS",
+            vk_ext_enum(62, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("disabledValidationCheckCount", "u32"),
+                Struct::member("pDisabledValidationChecks", "*mut VkValidationCheckEXT"),
+            ],
+        )
+        .extensions(&[("EXT", "validation_flags")]),
+    ),
     Element::Command(
         Command::new(
             "AcquireDrmDisplay",
@@ -155,6 +226,30 @@ pub const ELEMENTS: &[Element] = &[
     ),
     Element::Command(
         Command::new(
+            "CreateValidationCache",
+            &[
+                ("device", "VkDevice"),
+                ("pCreateInfo", "*const VkValidationCacheCreateInfoEXT"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pValidationCache", "*mut VkValidationCacheEXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "validation_cache"),
+    ),
+    Element::Command(
+        Command::new(
+            "DestroyValidationCache",
+            &[
+                ("device", "VkDevice"),
+                ("validationCache", "VkValidationCacheEXT"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+            ],
+        )
+        .extension("EXT", "validation_cache"),
+    ),
+    Element::Command(
+        Command::new(
             "GetDrmDisplay",
             &[
                 ("physicalDevice", "VkPhysicalDevice"),
@@ -181,6 +276,19 @@ pub const ELEMENTS: &[Element] = &[
     ),
     Element::Command(
         Command::new(
+            "GetValidationCacheData",
+            &[
+                ("device", "VkDevice"),
+                ("validationCache", "VkValidationCacheEXT"),
+                ("pDataSize", "*mut usize"),
+                ("pData", "*mut core::ffi::c_void"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "validation_cache"),
+    ),
+    Element::Command(
+        Command::new(
             "GetWinrtDisplay",
             &[
                 ("physicalDevice", "VkPhysicalDevice"),
@@ -190,6 +298,19 @@ pub const ELEMENTS: &[Element] = &[
         )
         .failable()
         .extension("NV", "acquire_winrt_display"),
+    ),
+    Element::Command(
+        Command::new(
+            "MergeValidationCaches",
+            &[
+                ("device", "VkDevice"),
+                ("dstCache", "VkValidationCacheEXT"),
+                ("srcCacheCount", "u32"),
+                ("pSrcCaches", "*const VkValidationCacheEXT"),
+            ],
+        )
+        .failable()
+        .extension("EXT", "validation_cache"),
     ),
     Element::Command(
         Command::inst(
@@ -202,5 +323,50 @@ pub const ELEMENTS: &[Element] = &[
             ],
         )
         .extension("AMD", "buffer_marker"),
+    ),
+    // VK_EXT_layer_settings: 497
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_EXT_layer_settings", 2)),
+    Element::Enum(
+        Enum::new(
+            "LayerSettingType",
+            "LAYER_SETTING_TYPE",
+            &[
+                Enum::member("BOOL32", 0).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("INT32", 1).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("INT64", 2).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("UINT32", 3).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("UINT64", 4).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("FLOAT32", 5).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("FLOAT64", 6).extension("VK_EXT_layer_settings", "EXT"),
+                Enum::member("STRING", 7).extension("VK_EXT_layer_settings", "EXT"),
+            ],
+        )
+        .extension("VK_EXT_layer_settings", "EXT"),
+    ),
+    Element::Struct(
+        Struct::new(
+            "LayerSetting",
+            &[
+                Struct::member("pLayerName", "*const core::ffi::c_char"),
+                Struct::member("pSettingName", "*const core::ffi::c_char"),
+                Struct::member("r#type", "VkLayerSettingTypeEXT"),
+                Struct::member("valueCount", "u32"),
+                Struct::member("pValues", "*const core::ffi::c_void"),
+            ],
+        )
+        .extensions(&[("EXT", "layer_settings")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "LayerSettingsCreateInfo",
+            "LAYER_SETTINGS_CREATE_INFO",
+            vk_ext_enum(497, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("settingCount", "u32"),
+                Struct::member("pSettings", "*const VkLayerSettingEXT"),
+            ],
+        )
+        .extensions(&[("EXT", "layer_settings")]),
     ),
 ];
