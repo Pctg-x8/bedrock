@@ -2430,6 +2430,32 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
+    #[implements]
+    #[inline(always)]
+    fn bind_sparse2(
+        &mut self,
+        batches: &[BindSparseInfo],
+        fence: Option<VkHandleRefMut<VkFence>>,
+    ) -> crate::Result<()> {
+        unsafe {
+            crate::vkfn::queue_bind_sparse(
+                self.native_ptr_mut(),
+                batches.len() as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(batches).cast(),
+                fence.map_or(VkFence::NULL, |x| x.0),
+            )
+            .into_result()
+            .map(drop)
+        }
+    }
+
+    /// Bind device memory to a sparse resource object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls under api)

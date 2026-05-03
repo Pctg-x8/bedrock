@@ -497,14 +497,6 @@ pub struct BindSparseInfo<'a> {
     _image_binds: core::marker::PhantomData<&'a [SparseImageMemoryBindInfo<'a>]>,
     _image_opaque_binds: core::marker::PhantomData<&'a [SparseImageOpaqueMemoryBindInfo<'a>]>,
 }
-impl core::ops::Deref for BindSparseInfo<'_> {
-    type Target = VkBindSparseInfo;
-
-    #[inline(always)]
-    fn deref(&self) -> &Self::Target {
-        &self.vk
-    }
-}
 impl<'a> BindSparseInfo<'a> {
     #[inline(always)]
     pub const fn new() -> Self {
