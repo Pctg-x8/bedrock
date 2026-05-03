@@ -88,7 +88,8 @@ platformIndependent =
     "VK_KHR_buffer_device_address",
     "VK_KHR_dynamic_rendering",
     "VK_KHR_get_memory_requirements2",
-    "Allow1_4APIs"
+    "Allow1_4APIs",
+    "VK_EXT_layer_settings"
   ]
 
 win32Specific :: [String]

@@ -203,7 +203,6 @@ ExportExtensions!("VK_AMD_texture_gather_bias_lod": texture_gather_bias_lod_amd)
 ExportExtensions!("VK_AMD_shader_info": shader_info_amd);
 ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_lod_amd);
 ExportExtensions!("VK_IMG_format_pvrtc": format_pvrtc_img);
-ExportExtensions!("VK_EXT_validation_flags": validation_flags_ext);
 ExportExtensions!("VK_NN_vi_surface": vi_surface_nn);
 ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
 ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
@@ -235,7 +234,6 @@ ExportExtensions!("VK_NV_fragment_coverage_to_color": fragment_coverage_to_color
 ExportExtensions!("VK_NV_framebuffer_mixed_samples": framebuffer_mixed_samples_nv);
 ExportExtensions!("VK_NV_fill_rectangle": fill_rectangle_nv);
 ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
-ExportExtensions!("VK_EXT_validation_cache": validation_cache_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
 ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_external_memory_host": external_memory_host_ext);

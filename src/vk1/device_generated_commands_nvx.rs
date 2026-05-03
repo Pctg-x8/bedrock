@@ -10,12 +10,12 @@ use derives::{vk_ext_command, vk_raw_handle};
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_OBJECT_TABLE_NVX)]
-pub struct VkObjectTableNVX(pub u64);
+pub struct VkObjectTableNVX(pub core::num::NonZeroU64);
 
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[vk_raw_handle(object_type = VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX)]
-pub struct VkIndirectCommandsLayoutNVX(pub u64);
+pub struct VkIndirectCommandsLayoutNVX(pub core::num::NonZeroU64);
 
 pub const VK_OBJECT_TYPE_OBJECT_TABLE_NVX: VkObjectType = ext_enum_value(87, 0) as _;
 pub const VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX: VkObjectType = ext_enum_value(87, 1) as _;

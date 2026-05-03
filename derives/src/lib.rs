@@ -356,20 +356,17 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
     parse_macro_input!(args with parser);
 
     let dispatchable = matches!(try_compile_error!(newtype_struct_org_type(s)), syn::Type::Ptr(_));
-    let (null_def, raw_handle_conversion);
+    let raw_handle_conversion;
     if dispatchable {
-        null_def = quote! { Self(std::ptr::null_mut()) };
-        raw_handle_conversion = quote! { self.0 as usize as _ };
+        raw_handle_conversion = quote! { self.0.as_ptr().addr() as _ };
     } else {
-        null_def = quote! { Self(0) };
-        raw_handle_conversion = quote! { self.0 };
+        raw_handle_conversion = quote! { self.0.get() };
     }
 
     quote! {
         #input
         impl #impl_generics crate::handle::VkRawHandle for #name #ty_generics #where_clause {
             const OBJECT_TYPE: VkObjectType = #object_type;
-            const NULL: Self = #null_def;
 
             #[inline]
             fn raw_handle_value(&self) -> u64 {
