@@ -528,14 +528,14 @@ pub unsafe fn queue_present(queue: VkQueue, present_info: &PresentInfo) -> crate
 #[inline]
 pub unsafe fn queue_bind_sparse(
     mut queue: VkHandleRefMut<VkQueue>,
-    infos: &[VkBindSparseInfo],
+    infos: &[BindSparseInfo],
     mut fence: Option<VkHandleRefMut<VkFence>>,
 ) -> crate::Result<()> {
     unsafe {
         crate::vkfn::queue_bind_sparse(
             queue.native_ptr_mut(),
             infos.len() as _,
-            infos.as_ptr(),
+            infos.as_ptr() as _,
             fence.as_mut().map(VkHandleRefMut::native_ptr_mut),
         )
         .into_result()
