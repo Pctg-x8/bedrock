@@ -4290,7 +4290,7 @@ const STRUCTS: &'static [Struct] = &[
     Struct::new(
         "SparseMemoryBind",
         &[
-            Struct::member("reosurceOffset", DEVICE_SIZE_TYPE),
+            Struct::member("resourceOffset", DEVICE_SIZE_TYPE),
             Struct::member("size", DEVICE_SIZE_TYPE),
             Struct::member("memory", "VkDeviceMemory"),
             Struct::member("memoryOffset", DEVICE_SIZE_TYPE),

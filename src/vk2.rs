@@ -8771,7 +8771,7 @@ pub struct VkSparseImageOpaqueMemoryBindInfo {
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkSparseMemoryBind {
-    pub reosurceOffset: VkDeviceSize,
+    pub resourceOffset: VkDeviceSize,
     pub size: VkDeviceSize,
     pub memory: VkDeviceMemory,
     pub memoryOffset: VkDeviceSize,
