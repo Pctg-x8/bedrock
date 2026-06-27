@@ -1,7 +1,7 @@
 //! https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_global_priority.html
 
 pub const VK_KHR_GLOBAL_PRIORITY_SPEC_VERISON: usize = 1;
-pub const VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME: &'static str = "VK_KHR_global_priority";
+pub const VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_KHR_global_priority";
 
 use super::*;
 use crate::vk2::*;

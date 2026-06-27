@@ -1,7 +1,7 @@
 //! VK_KHR_push_descriptor extensions
 
 pub const VK_KHR_PUSH_DESCRIPTOR_SPEC_VERSION: usize = 1;
-pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &'static str = "VK_KHR_push_descriptor";
+pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &str = "VK_KHR_push_descriptor";
 
 use super::*;
 use crate::vk2::*;

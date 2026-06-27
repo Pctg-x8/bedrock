@@ -109,6 +109,9 @@ impl SamplerCreateInfo {
         })
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSamplerCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkSamplerCreateInfo) -> Self {
         Self(raw)
     }

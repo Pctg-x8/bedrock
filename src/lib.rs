@@ -10,7 +10,6 @@
 //! - `Presentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
 //! - `alloc`(default): Enable extra functionalities that may allocate some memory inside
 //! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
-#![warn(clippy::all)]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![doc(html_root_url = "https://docs.ct2.io/bedrock/mod-peridot/")]
 

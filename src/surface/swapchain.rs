@@ -23,7 +23,7 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
             crate::vkfn::acquire_next_image_khr(
                 self.device().native_ptr(),
                 self.native_ptr(),
-                timeout.unwrap_or(std::u64::MAX),
+                timeout.unwrap_or(u64::MAX),
                 semaphore,
                 fence,
                 &mut n,
@@ -165,6 +165,7 @@ DerefContainerBracketImpl!(for SwapchainImageExt {
 #[derive(Clone)]
 pub struct SwapchainCreateInfo<'r, 'n, 'sw>(
     VkSwapchainCreateInfoKHR,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'r dyn VkHandle<Handle = VkSurfaceKHR>,
         Option<&'n dyn VulkanStructure>,
@@ -206,6 +207,9 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid `VkSwapchainCreateInfoKHR` struct.
     pub const unsafe fn from_raw(raw: VkSwapchainCreateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -225,7 +229,7 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
     }
 
     pub const fn shared(mut self, queue_families: &'r [u32]) -> Self {
-        assert!(queue_families.len() > 0, "empty families not allowed");
+        assert!(!queue_families.is_empty(), "empty families not allowed");
 
         self.0.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         self.0.queueFamilyIndexCount = queue_families.len() as _;

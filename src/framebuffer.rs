@@ -93,6 +93,7 @@ impl<'r, Device: crate::Device> FramebufferObject<'r, Device> {
 #[derive(Clone)]
 pub struct FramebufferCreateInfo<'r, 'rs>(
     VkFramebufferCreateInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'r dyn VkHandle<Handle = VkRenderPass>,
         &'rs [&'r dyn VkHandle<Handle = VkImageView>],
@@ -122,6 +123,9 @@ impl<'r, 'rs> FramebufferCreateInfo<'r, 'rs> {
         )
     }
 
+    /// # Safety
+    ///
+    /// raw must be a valid VkFramebufferCreateInfo struct.
     pub const unsafe fn from_raw(raw: VkFramebufferCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }

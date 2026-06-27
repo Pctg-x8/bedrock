@@ -225,6 +225,9 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
         unsafe { self.with_immutable_samplers_unchecked(samplers) }
     }
 
+    /// # Safety
+    ///
+    /// The caller must ensure that a number of `samplers` is equal to the descriptor's count.
     pub const unsafe fn with_immutable_samplers_unchecked(mut self, samplers: &'s [VkHandleRef<VkSampler>]) -> Self {
         self.raw.pImmutableSamplers = slice_as_ptr_empty_null(samplers) as _;
         self
@@ -332,6 +335,9 @@ impl<'d> DescriptorPoolCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid `VkDescriptorPoolCreateInfo` value.
     pub const unsafe fn from_raw(raw: VkDescriptorPoolCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -552,6 +558,7 @@ impl<'r> DescriptorBufferInfo<'r> {
 #[derive(Clone)]
 pub struct DescriptorImageInfo<'r>(
     VkDescriptorImageInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'r dyn VkHandle<Handle = VkImageView>,
         Option<&'r dyn VkHandle<Handle = VkSampler>>,

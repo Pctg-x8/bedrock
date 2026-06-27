@@ -84,7 +84,7 @@ pub struct CommandBufferObject<Device>(VkCommandBuffer, core::marker::PhantomDat
 impl<Device> Clone for CommandBufferObject<Device> {
     #[inline(always)]
     fn clone(&self) -> Self {
-        Self(self.0, core::marker::PhantomData)
+        *self
     }
 }
 impl<Device> Copy for CommandBufferObject<Device> {}
@@ -158,6 +158,9 @@ impl CommandPoolCreateInfo {
         })
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkCommandPoolCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkCommandPoolCreateInfo) -> Self {
         Self(raw)
     }
@@ -221,6 +224,9 @@ impl<'r> CommandBufferAllocateInfo<'r> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkCommandBufferAllocateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkCommandBufferAllocateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -344,6 +350,9 @@ impl<'d> CommandBufferBeginInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkCommandBufferBeginInfo`] struct.
     pub const unsafe fn from_raw(raw: VkCommandBufferBeginInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -381,6 +390,7 @@ impl<'d> CommandBufferBeginInfo<'d> {
 #[derive(Clone)]
 pub struct CommandBufferInheritanceInfo<'d>(
     VkCommandBufferInheritanceInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         Option<&'d dyn VkHandle<Handle = VkRenderPass>>,
         Option<&'d dyn VkHandle<Handle = VkFramebuffer>>,
@@ -508,6 +518,10 @@ pub struct SynchronizedCommandBuffer<'p, 'b: 'p> {
 #[implements]
 impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
     /// Constructs the synchronized binding.
+    ///
+    /// # Safety
+    ///
+    /// `buffer` must be created from `pool`.
     pub const unsafe fn new_unchecked(
         pool: VkHandleRefMut<'p, VkCommandPool>,
         buffer: VkHandleRefMut<'b, VkCommandBuffer>,
@@ -805,7 +819,7 @@ impl<'d> CmdRecord<'d> {
                 pipeline_layout.native_ptr(),
                 stage,
                 offset,
-                (core::mem::size_of::<T>() * values.len()) as _,
+                size_of_val(values) as _,
                 values.as_ptr() as *const _,
             );
         }
@@ -813,6 +827,10 @@ impl<'d> CmdRecord<'d> {
     }
 
     /// Push descriptor updates into a command buffer
+    ///
+    /// # Safety
+    ///
+    /// passed `writes` must have valid [`VkWriteDescriptorSet`] structs.
     #[cfg(feature = "VK_KHR_push_descriptor")]
     #[inline(always)]
     pub unsafe fn push_descriptor_set_raw_khr(
@@ -838,6 +856,10 @@ impl<'d> CmdRecord<'d> {
     }
 
     /// Push descriptor updates into a command buffer
+    ///
+    /// # Safety
+    ///
+    /// passed `writes` must have valid [`VkWriteDescriptorSet`] structs.
     #[cfg(feature = "Allow1_4APIs")]
     #[inline(always)]
     pub unsafe fn push_descriptor_set_raw(
@@ -1350,7 +1372,14 @@ impl<'d> CmdRecord<'d> {
         dst_offset: DeviceSize,
         data: &T,
     ) -> Self {
-        unsafe { self.update_buffer_raw(dst, dst_offset, core::mem::size_of::<T>() as _, data as *const _ as _) }
+        unsafe {
+            self.update_buffer_raw(
+                dst,
+                dst_offset,
+                size_of_val(data) as _,
+                core::ptr::from_ref(data).cast(),
+            )
+        }
     }
 
     /// Update a buffer's contents from a slice of host memory
@@ -1361,14 +1390,7 @@ impl<'d> CmdRecord<'d> {
         dst_offset: DeviceSize,
         data: &[T],
     ) -> Self {
-        unsafe {
-            self.update_buffer_raw(
-                dst,
-                dst_offset,
-                (core::mem::size_of::<T>() * data.len()) as _,
-                data.as_ptr() as _,
-            )
-        }
+        unsafe { self.update_buffer_raw(dst, dst_offset, size_of_val(data) as _, data.as_ptr().cast()) }
     }
 }
 

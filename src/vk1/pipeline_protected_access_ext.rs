@@ -1,7 +1,7 @@
 //! Device Extention - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_EXT_pipeline_protected_access.html
 
 pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_SPEC_VERSION: usize = 1;
-pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME: &'static str = "VK_EXT_pipeline_protected_access";
+pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_protected_access";
 
 use super::*;
 use crate::vk2::*;

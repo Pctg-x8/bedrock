@@ -20,8 +20,8 @@ pub enum CompletionHandlerMut<'d> {
 
 cfg_if! {
     if #[cfg(feature = "VK_KHR_surface")] {
-        mod surface;
-        pub use self::surface::*;
+        mod core;
+        pub use self::core::*;
     }
 }
 

@@ -1,7 +1,7 @@
 //! https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_depth_stencil_resolve.html
 
 pub const VK_KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION: usize = 1;
-pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME: &'static str = "VK_KHR_depth_stencil_resolve";
+pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME: &str = "VK_KHR_depth_stencil_resolve";
 
 use crate::vk2::*;
 use derives::promote_1_2;

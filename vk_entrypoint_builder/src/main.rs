@@ -54,13 +54,13 @@ impl core::fmt::Display for EntrypointFunctionInputForwardingFormatter<'_> {
 pub struct AllFeatureGatePrinter<'x>(&'x [&'x str]);
 impl core::fmt::Display for AllFeatureGatePrinter<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self.0.len() {
-            0 => unreachable!("no feature gated"),
-            1 => write!(f, r#"#[cfg(feature = "{}")]"#, self.0[0]),
-            _ => {
+        match self.0 {
+            &[] => unreachable!("no feature gated"),
+            &[name] => write!(f, r#"#[cfg(feature = "{name}")]"#),
+            xs => {
                 f.write_str("#[cfg(all(")?;
                 let mut has_prev = false;
-                for n in self.0 {
+                for n in xs {
                     if has_prev {
                         f.write_str(", ")?;
                     }
@@ -214,7 +214,10 @@ unsafe extern "system" fn {}({})"#,
 
         write!(
             sink,
-            r#"#[rustfmt::skip] #[inline(always)]
+            r#"#[rustfmt::skip] #[inline(always)] #[allow(clippy::too_many_arguments)]
+/// # Safety
+///
+/// direct calling ffi functions.
 pub unsafe fn {}({})"#,
             ExportNameWriter(self),
             EntrypointFunctionInputFormatter(self.inputs)
@@ -303,7 +306,7 @@ impl core::fmt::Display for ExportNameWriter<'_> {
     }
 }
 
-const CATALOG: &'static [Entrypoint] = &[
+const CATALOG: &[Entrypoint] = &[
     Entrypoint::new(
         "create_instance",
         &[

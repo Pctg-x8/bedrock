@@ -11,12 +11,12 @@ mod v1_2;
 
 fn main() -> std::io::Result<()> {
     let mut o = std::io::stdout().lock();
-    o.write(HEADER.replace("**VER**", "1.4.305").as_bytes())?;
+    o.write_all(HEADER.replace("**VER**", "1.4.305").as_bytes())?;
 
-    o.write(b"\n")?;
+    o.write_all(b"\n")?;
     writeln!(o, "/// Vulkan 1.0 version number")?;
     writeln!(o, "pub const VK_API_VERSION_1_0: u32 = VK_MAKE_VERSION(0, 1, 0, 0);")?;
-    o.write(b"\n")?;
+    o.write_all(b"\n")?;
     writeln!(o, "/// Version of this file")?;
     writeln!(o, "pub const VK_HEADER_VERSION: u16 = {};", 305)?;
     writeln!(
@@ -25,14 +25,14 @@ fn main() -> std::io::Result<()> {
         4
     )?;
 
-    o.write(b"\n")?;
+    o.write_all(b"\n")?;
 
     for ta in TYPE_ALIASES {
         ta.emit(&mut o)?;
     }
 
     for f in FLAGS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         f.emit(&mut o)?;
     }
 
@@ -47,22 +47,22 @@ fn main() -> std::io::Result<()> {
     emit_const(&mut o, "VK_CULL_MODE_NONE", "VkCullModeFlags", "0")?;
     emit_const(&mut o, "VK_CULL_MODE_FRONT_AND_BACK", "VkCullModeFlags", "3")?;
     emit_const(&mut o, "VK_STENCIL_FACE_FRONT_AND_BACK", "VkStencilFaceFlags", "3")?;
-    o.write(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
     emit_const(
         &mut o,
         "VK_PIPELINE_STAGE_2_NONE_KHR",
         "VkPipelineStageFlagBits2KHR",
         "0",
     )?;
-    o.write(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
     emit_const(&mut o, "VK_PIPELINE_STAGE_2_NONE", "VkPipelineStageFlagBits2", "0")?;
-    o.write(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_synchronization2\")]\n")?;
     emit_const(&mut o, "VK_ACCESS_2_NONE_KHR", "VkAccessFlagBits2KHR", "0")?;
-    o.write(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_3APIs\")]\n")?;
     emit_const(&mut o, "VK_ACCESS_2_NONE", "VkAccessFlagBits2", "0")?;
 
     for obj in OBJECTS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         obj.emit(&mut o)?;
     }
 
@@ -90,39 +90,39 @@ fn main() -> std::io::Result<()> {
     writeln!(o, r#"#[cfg(feature = "Allow1_1APIs")]"#)?;
     emit_const(&mut o, "VK_LUID_SIZE", "usize", "8")?;
 
-    o.write(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
     emit_const(&mut o, "VK_QUEUE_FAMILY_EXTERNAL_KHR", "u32", "!1")?;
-    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]")?;
     emit_const(&mut o, "VK_QUEUE_FAMILY_EXTERNAL", "u32", "!1")?;
 
-    o.write(b"#[cfg(feature = \"VK_KHR_device_group_creation\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_device_group_creation\")]\n")?;
     emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE_KHR", "usize", "32")?;
-    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     emit_const(&mut o, "VK_MAX_DEVICE_GROUP_SIZE", "usize", "32")?;
 
-    o.write(b"\n")?;
+    o.write_all(b"\n")?;
 
     emit_result_type(&mut o)?;
 
-    o.write(b"\n")?;
+    o.write_all(b"\n")?;
     emit_c_enum_type(&mut o, "VkStructureType")?;
     emit_c_enum_type(&mut o, "VkObjectType")?;
 
     for e in ENUMS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         e.emit(&mut o)?;
     }
 
-    o.write(b"\n")?;
+    o.write_all(b"\n")?;
     emit_format_enum(&mut o)?;
 
     for f in FUNC_POINTERS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         f.emit(&mut o)?;
     }
 
     for s in STRUCTS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         s.emit(&mut o)?;
     }
 
@@ -145,52 +145,54 @@ fn main() -> std::io::Result<()> {
         StructUsage::Sink,
     )
     .emit_extra_cfg(&mut o, "any(feature = \"VK_KHR_external_fence_capabilities\", feature = \"VK_KHR_external_memory_capabilities\", feature = \"VK_KHR_external_semaphore_capabilities\")")?;
-    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    o.write(b"#[rustfmt::skip]\n")?;
-    o.write(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
-    o.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
-    o.write(b"#[rustfmt::skip]\n")?;
-    o.write(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write_all(b"#[rustfmt::skip]\n")?;
+    o.write_all(b"pub type VkPhysicalDeviceIDProperties = VkPhysicalDeviceIDPropertiesKHR;\n")?;
+    o.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    o.write_all(b"#[rustfmt::skip]\n")?;
+    o.write_all(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ID_PROPERTIES_KHR;\n")?;
 
     // struct aliasing
-    o.write(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
-    o.write(b"#[rustfmt::skip]\n")?;
-    o.write(b"pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;\n")?;
-    o.write(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
-    o.write(b"#[rustfmt::skip]\n")?;
-    o.write(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;\n")?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
+    o.write_all(b"#[rustfmt::skip]\n")?;
+    o.write_all(
+        b"pub type VkPhysicalDeviceVariablePointerFeaturesKHR = VkPhysicalDeviceVariablePointersFeaturesKHR;\n",
+    )?;
+    o.write_all(b"#[cfg(feature = \"VK_KHR_variable_pointers\")]\n")?;
+    o.write_all(b"#[rustfmt::skip]\n")?;
+    o.write_all(b"pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR;\n")?;
 
     for s in UNIONS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         s.emit(&mut o)?;
     }
 
     for c in COMMANDS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         c.emit(&mut o)?;
     }
 
     for c in EXTENSION_HEADER_CONSTANTS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         c.emit(&mut o)?;
     }
 
     for x in v1_2::ELEMENTS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         x.emit(&mut o)?;
     }
 
     for x in extensions::ELEMENTS {
-        o.write(b"\n")?;
+        o.write_all(b"\n")?;
         x.emit(&mut o)?;
     }
 
-    o.write(b"\n")?;
-    o.write(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
-    o.write(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
-    o.write(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
-    o.write(b"#[rustfmt::skip]\n")?;
-    o.write(b"unsafe extern \"system\" {\n")?;
+    o.write_all(b"\n")?;
+    o.write_all(b"#[cfg(all(feature = \"Implements\", not(feature = \"DynamicLoaded\")))]\n")?;
+    o.write_all(b"#[cfg_attr(all(not(windows), not(target_os = \"macos\"), not(feature = \"DynamicLoaded\")), link(name = \"vulkan\"))]\n")?;
+    o.write_all(b"#[cfg_attr(all(windows, not(feature = \"DynamicLoaded\"), feature = \"Implements\"), link(name = \"vulkan-1\"))]\n")?;
+    o.write_all(b"#[rustfmt::skip]\n")?;
+    o.write_all(b"unsafe extern \"system\" {\n")?;
     for c in COMMANDS {
         c.emit_static_symbol(&mut o)?;
     }
@@ -204,21 +206,22 @@ fn main() -> std::io::Result<()> {
             x.emit_static_symbol(&mut o)?;
         }
     }
-    o.write(b"}\n")?;
+    o.write_all(b"}\n")?;
 
     Ok(())
 }
 
+#[allow(clippy::inconsistent_digit_grouping)]
 const fn vk_ext_enum(extnumber: i32, offset: i32) -> i32 {
     100_0000_000 + (extnumber - 1) * 1000 + offset
 }
 
-const HEADER: &'static str = include_str!("../res/common_header.rs");
+const HEADER: &str = include_str!("../res/common_header.rs");
 
-const DEVICE_SIZE_TYPE: &'static str = "VkDeviceSize";
-const DEVICE_ADDR_TYPE: &'static str = "VkDeviceAddress";
+const DEVICE_SIZE_TYPE: &str = "VkDeviceSize";
+const DEVICE_ADDR_TYPE: &str = "VkDeviceAddress";
 
-const EXTENSION_HEADER_CONSTANTS: &'static [ExtensionHeaderConstants] = &[
+const EXTENSION_HEADER_CONSTANTS: &[ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_surface", 25),
     ExtensionHeaderConstants::new("VK_KHR_swapchain", 68),
     ExtensionHeaderConstants::new("VK_KHR_display", 21),
@@ -263,7 +266,7 @@ const EXTENSION_HEADER_CONSTANTS: &'static [ExtensionHeaderConstants] = &[
     ExtensionHeaderConstants::new("VK_KHR_synchronization2", 1),
 ];
 
-const TYPE_ALIASES: &'static [TypeAlias] = &[
+const TYPE_ALIASES: &[TypeAlias] = &[
     TypeAlias::new("VkSampleMask", "u32"),
     TypeAlias::new("VkBool32", "u32"),
     TypeAlias::new("VkFlags", "u32"),
@@ -272,7 +275,7 @@ const TYPE_ALIASES: &'static [TypeAlias] = &[
     TypeAlias::new(DEVICE_ADDR_TYPE, "u64"),
 ];
 
-const OBJECTS: &'static [Object] = &[
+const OBJECTS: &[Object] = &[
     Object::new("VkInstance", "INSTANCE", 1).dispatchable(),
     Object::new("VkPhysicalDevice", "PHYSICAL_DEVICE", 2).dispatchable(),
     Object::new("VkDevice", "DEVICE", 3).dispatchable(),
@@ -332,7 +335,7 @@ const OBJECTS: &'static [Object] = &[
     .extension("VK_EXT_debug_utils"),
 ];
 
-const ENUMS: &'static [Enum] = &[
+const ENUMS: &[Enum] = &[
     Enum::new(
         "AttachmentLoadOp",
         "ATTACHMENT_LOAD_OP",
@@ -807,7 +810,7 @@ const ENUMS: &'static [Enum] = &[
     ),
 ];
 
-const FLAGS: &'static [Bitmask] = &[
+const FLAGS: &[Bitmask] = &[
     Bitmask::new(
         "AccessFlags",
         "AccessFlagBits",
@@ -1900,7 +1903,7 @@ const FLAGS: &'static [Bitmask] = &[
     .extension("KHR", "xlib_surface"),
 ];
 
-const FUNC_POINTERS: &'static [FuncPointer] = &[
+const FUNC_POINTERS: &[FuncPointer] = &[
     FuncPointer::new(
         "InternalAllocationNotification",
         &[
@@ -1976,7 +1979,7 @@ const FUNC_POINTERS: &'static [FuncPointer] = &[
     .extension("EXT", "debug_utils"),
 ];
 
-const STRUCTS: &'static [Struct] = &[
+const STRUCTS: &[Struct] = &[
     Struct::typed(
         "AcquireNextImageInfo",
         "ACQUIRE_NEXT_IMAGE_INFO",
@@ -4677,7 +4680,7 @@ const STRUCTS: &'static [Struct] = &[
     .promoted("1_3"),
 ];
 
-const UNIONS: &'static [Union] = &[
+const UNIONS: &[Union] = &[
     Union::new(
         "ClearColorValue",
         &[
@@ -4695,7 +4698,7 @@ const UNIONS: &'static [Union] = &[
     ),
 ];
 
-const COMMANDS: &'static [Command] = &[
+const COMMANDS: &[Command] = &[
     Command::new(
         "CreateInstance",
         &[
@@ -6907,25 +6910,25 @@ fn emit_result_type(w: &mut impl std::io::Write) -> std::io::Result<()> {
     emit_result_err_const(w, "VK_ERROR_UNKNOWN", 0, 13)?;
 
     // from extensions
-    w.write(b"#[cfg(feature = \"VK_KHR_surface\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_surface\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_SURFACE_LOST_KHR", 1, 0)?;
-    w.write(b"#[cfg(feature = \"VK_KHR_surface\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_surface\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_NATIVE_WINDOW_IN_USE_KHR", 1, 1)?;
-    w.write(b"#[cfg(feature = \"VK_KHR_swapchain\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_swapchain\")]\n")?;
     emit_result_const(w, "VK_SUBOPTIMAL_KHR", 2, 3)?;
-    w.write(b"#[cfg(feature = \"VK_KHR_swapchain\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_swapchain\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_OUT_OF_DATE_KHR", 2, 4)?;
-    w.write(b"#[cfg(feature = \"VK_KHR_display_swapchain\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_display_swapchain\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_INCOMPATIBLE_DISPLAY_KHR", 4, 1)?;
 
     // from promoted extensions
-    w.write(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_external_memory\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_INVALID_EXTERNAL_HANDLE_KHR", 73, 3)?;
-    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_INVALID_EXTERNAL_HANDLE", 73, 3)?;
-    w.write(b"#[cfg(feature = \"VK_KHR_maintenance1\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_maintenance1\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_OUT_OF_POOL_MEMORY_KHR", 70, 0)?;
-    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     emit_result_err_const(w, "VK_ERROR_OUT_OF_POOL_MEMORY", 70, 0)?;
 
     Ok(())
@@ -7124,8 +7127,8 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
     bc(w, 4, "SNORM", 140)?;
     bc(w, 5, "UNORM", 141)?;
     bc(w, 5, "SNORM", 142)?;
-    w.write(b"pub const VK_FORMAT_BC6H_UFLOAT_BLOCK: VkFormat = 143;\n")?;
-    w.write(b"pub const VK_FORMAT_BC6H_SFLOAT_BLOCK: VkFormat = 144;\n")?;
+    w.write_all(b"pub const VK_FORMAT_BC6H_UFLOAT_BLOCK: VkFormat = 143;\n")?;
+    w.write_all(b"pub const VK_FORMAT_BC6H_SFLOAT_BLOCK: VkFormat = 144;\n")?;
     bc(w, 7, "UNORM", 145)?;
     bc(w, 7, "SRGB", 146)?;
 
@@ -7196,12 +7199,12 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
         r#repr: &str,
         value: i32,
     ) -> std::io::Result<()> {
-        w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+        w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
         writeln!(
             w,
             "pub const VK_FORMAT_{bit_assign}_{dim}_{repr}_KHR: VkFormat = {value};"
         )?;
-        w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+        w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
         writeln!(w, "pub const VK_FORMAT_{bit_assign}_{dim}_{repr}: VkFormat = {value};")?;
 
         Ok(())
@@ -7215,12 +7218,12 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
     ) -> std::io::Result<()> {
         let bit_assign = bit_assign_per_plane.join("_");
         let plane_count = bit_assign_per_plane.len();
-        w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+        w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
         writeln!(
             w,
             "pub const VK_FORMAT_{bit_assign}_{plane_count}PLANE_{dim}_{repr}_KHR: VkFormat = {value};"
         )?;
-        w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+        w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
         writeln!(
             w,
             "pub const VK_FORMAT_{bit_assign}_{plane_count}PLANE_{dim}_{repr}: VkFormat = {value};"
@@ -7235,9 +7238,9 @@ fn emit_format_enum(w: &mut impl Write) -> std::io::Result<()> {
     ycbcr_planes(w, &["G8", "B8", "R8"], "422", "UNORM", vk_ext_enum(157, 4))?;
     ycbcr_planes(w, &["G8", "B8R8"], "422", "UNORM", vk_ext_enum(157, 5))?;
     ycbcr_planes(w, &["G8", "B8", "R8"], "444", "UNORM", vk_ext_enum(157, 6))?;
-    w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
     packed_s(w, "R10X6", "UNORM", 16, "KHR", vk_ext_enum(157, 7) as _)?;
-    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     packed(w, "R10X6", "UNORM", 16, vk_ext_enum(157, 7) as _)?;
     writeln!(
         w,
@@ -7306,9 +7309,9 @@ pub const VK_FORMAT_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16: VkFormat = {v};"#,
         "UNORM_3PACK16",
         vk_ext_enum(157, 16),
     )?;
-    w.write(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"VK_KHR_sampler_ycbcr_conversion\")]\n")?;
     packed_s(w, "R12X4", "UNORM", 16, "KHR", vk_ext_enum(157, 17) as _)?;
-    w.write(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
+    w.write_all(b"#[cfg(feature = \"Allow1_1APIs\")]\n")?;
     packed(w, "R12X4", "UNORM", 16, vk_ext_enum(157, 17) as _)?;
     writeln!(
         w,

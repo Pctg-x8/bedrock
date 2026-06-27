@@ -1,7 +1,7 @@
 //! https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_maintenance6.html
 
 pub const VK_KHR_MAINTENANCE_6_SPEC_VERSION: usize = 1;
-pub const VK_KHR_MAINTENANCE_6_EXTENSION_NAME: &'static str = "VK_KHR_maintenance6";
+pub const VK_KHR_MAINTENANCE_6_EXTENSION_NAME: &str = "VK_KHR_maintenance6";
 
 use derives::{promote_1_4, vk_ext_command};
 

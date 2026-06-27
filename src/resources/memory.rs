@@ -167,6 +167,9 @@ impl<'d> MemoryAllocateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkMemoryAllocateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkMemoryAllocateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -180,6 +183,9 @@ impl<'d> MemoryAllocateInfo<'d> {
         self
     }
 
+    /// # Safety
+    ///
+    /// next data must be a value for type of T.
     pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
@@ -202,6 +208,7 @@ unsafe impl VulkanStructure for MemoryAllocateInfo<'_> {
 #[derive(Clone)]
 pub struct MemoryDedicatedAllocateInfo<'d>(
     VkMemoryDedicatedAllocateInfoKHR,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         Option<&'d dyn VulkanStructure>,
         Option<&'d dyn VkHandle<Handle = VkImage>>,
@@ -235,6 +242,9 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `buffer` must be a valid object.
     #[inline]
     pub const unsafe fn for_buffer_raw(buffer: VkBuffer) -> Self {
         Self(
@@ -261,6 +271,9 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `image` must be a valid object.
     #[inline]
     pub const unsafe fn for_image_raw(image: VkImage) -> Self {
         Self(
@@ -274,6 +287,9 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkMemoryDedicatedAllocateInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkMemoryDedicatedAllocateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -287,6 +303,9 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
         self
     }
 
+    /// # Safety
+    ///
+    /// `next` must be a value for type of T.
     pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
@@ -314,6 +333,9 @@ impl<'a> MappedMemoryRange<'a> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `memory` must be a valid object.
     pub const unsafe fn new_raw(memory: VkDeviceMemory, offset: DeviceSize, size: DeviceSize) -> Self {
         Self(
             VkMappedMemoryRange {
@@ -327,6 +349,9 @@ impl<'a> MappedMemoryRange<'a> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkMappedMemoryRange`] struct.
     pub const unsafe fn from_raw(raw: VkMappedMemoryRange) -> Self {
         Self(raw, core::marker::PhantomData)
     }

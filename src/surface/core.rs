@@ -20,16 +20,11 @@ impl<Instance: crate::Instance> Surface for SurfaceObject<Instance> {}
 impl<Instance: crate::Instance> SurfaceObject<Instance> {
     #[implements]
     #[inline(always)]
-    pub unsafe fn new<
-        PhysicalDevice: crate::PhysicalDevice + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
-    >(
-        pd: PhysicalDevice,
+    pub fn new(
+        pd: impl crate::PhysicalDevice + crate::InstanceChildTransferrable<ConcreteInstance = Instance>,
         create_info: &(impl SurfaceCreateInfo + ?Sized),
     ) -> crate::Result<Self> {
-        Ok(Self(
-            unsafe { create_info.execute(pd.instance(), None)? },
-            pd.transfer_instance(),
-        ))
+        Ok(Self(create_info.execute(pd.instance(), None)?, pd.transfer_instance()))
     }
 }
 impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
@@ -155,7 +150,7 @@ pub type SurfaceFormat = VkSurfaceFormatKHR;
 
 pub trait SurfaceCreateInfo {
     #[implements]
-    unsafe fn execute(
+    fn execute(
         &self,
         instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
         allocation_callbacks: Option<&VkAllocationCallbacks>,

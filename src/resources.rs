@@ -25,7 +25,7 @@
 //!
 //! ```rust,ignore
 //! let image = ImageDesc::new(&Extent2D(128, 128), VK_FORMAT_R8G8B8A8_UNORM, ImageUsage::SAMPLED.color_attachment(), ImageLayout::General)
-//! 	.create(&device)?;
+//!     .create(&device)?;
 //! ```
 //!
 //! [`ImageDesc::new`](struct.ImageDesc.html#method.new)の第一引数に

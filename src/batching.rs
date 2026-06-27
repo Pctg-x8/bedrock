@@ -109,6 +109,7 @@ impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
 #[repr(transparent)]
 pub struct SubmitInfo<'r, 'rs, 'n>(
     VkSubmitInfo,
+    #[allow(clippy::type_complexity)]
     PhantomData<(
         Option<&'n dyn VulkanStructure>,
         &'rs [VkHandleRef<'r, VkSemaphore>],
@@ -118,6 +119,9 @@ pub struct SubmitInfo<'r, 'rs, 'n>(
     )>,
 );
 impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
+    /// # Safety
+    ///
+    /// `wait_semaphores`, `wait_semaphore_dst_stages`, `command_buffers`, and `signal_semaphores` must have same length.
     pub unsafe fn new_unchecked(
         wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
         wait_semaphore_dst_stages: &'rs [PipelineStageFlags],
@@ -180,6 +184,9 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSubmitInfo`] struct.
     pub const unsafe fn from_raw(raw: VkSubmitInfo) -> Self {
         Self(raw, PhantomData)
     }
@@ -216,6 +223,9 @@ impl<'d, 'xs> TimelineSemaphoreSubmitInfo<'d, 'xs> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkTimelineSemaphoreSubmitInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkTimelineSemaphoreSubmitInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -523,7 +533,9 @@ impl<'a> BindSparseInfo<'a> {
         self.vk
     }
 
-    #[inline(always)]
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkBindSparseInfo`] struct.
     pub const unsafe fn from_raw(vk: VkBindSparseInfo) -> Self {
         Self {
             vk,
@@ -535,12 +547,10 @@ impl<'a> BindSparseInfo<'a> {
         }
     }
 
-    #[inline(always)]
     pub const fn as_raw_ref(&self) -> &VkBindSparseInfo {
         &self.vk
     }
 
-    #[inline(always)]
     pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkBindSparseInfo {
         &mut self.vk
     }
@@ -609,6 +619,9 @@ impl<'a> SparseBufferMemoryBindInfo<'a> {
         self.vk
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSparseBufferMemoryBindInfo`] struct.
     #[inline(always)]
     pub const unsafe fn from_raw(vk: VkSparseBufferMemoryBindInfo) -> Self {
         Self {
@@ -652,6 +665,9 @@ impl<'a> SparseImageMemoryBindInfo<'a> {
         self.vk
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSparseImageMemoryBindInfo`] struct.
     #[inline(always)]
     pub const unsafe fn from_raw(vk: VkSparseImageMemoryBindInfo) -> Self {
         Self {
@@ -695,6 +711,9 @@ impl<'a> SparseImageOpaqueMemoryBindInfo<'a> {
         self.vk
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSparseImageOpaqueMemoryBindInfo`] struct.
     #[inline(always)]
     pub const unsafe fn from_raw(vk: VkSparseImageOpaqueMemoryBindInfo) -> Self {
         Self {
@@ -742,6 +761,9 @@ impl<'a> SparseMemoryBind<'a> {
         self.vk
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSparseMemoryBind`] struct.
     #[inline(always)]
     pub const unsafe fn from_raw(vk: VkSparseMemoryBind) -> Self {
         Self {
@@ -791,6 +813,9 @@ impl<'a> SparseImageMemoryBind<'a> {
         self.vk
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSparseImageMemoryBind`] struct.
     #[inline(always)]
     pub const unsafe fn from_raw(vk: VkSparseImageMemoryBind) -> Self {
         Self {

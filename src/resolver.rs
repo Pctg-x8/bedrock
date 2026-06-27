@@ -9,7 +9,18 @@ use core::ffi::*;
 
 #[implements]
 pub trait ResolverInterface {
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &core::ffi::CStr) -> T;
+    /// Loads a symbol using the resolver, without any constraints on the symbol's type.
+    ///
+    /// # Safety
+    ///
+    /// retrieved symbol must be valid value of type T.
+    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &CStr) -> T;
+
+    /// Loads a function using the resolver, without any constraints on the function's type.
+    ///
+    /// # Safety
+    ///
+    /// retrieved function must be valid function pointer of type F.
     unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F;
 }
 
@@ -134,13 +145,22 @@ cfg_if::cfg_if! {
     }
 }
 
+/// # Safety
+///
+/// provides a safe wrapper around a raw function pointer, ensuring it is valid.
 pub unsafe trait FromPtr {
     unsafe fn from_ptr(p: *const c_void) -> Self;
 }
-pub unsafe trait PFN {
-    const NAME_CSTR: &'static core::ffi::CStr;
 
-    unsafe fn from_ptr(p: *const c_void) -> Self;
+/// # Safety
+///
+/// provides a safe wrapper around a raw function pointer, ensuring it is valid and callable.
+pub unsafe trait PFN {
+    const NAME_CSTR: &CStr;
+
+    /// # Safety
+    ///
+    /// p must be a valid function pointer of type F.
     unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self;
 }
 pub trait StaticCallable: PFN {

@@ -101,10 +101,9 @@ impl crate::resolver::ResolverInterface for VkInstance {
     #[inline(always)]
     unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
         unsafe {
-            T::from_ptr(core::mem::transmute(crate::vkfn::get_instance_proc_addr(
-                *self,
-                name.as_ptr() as _,
-            )))
+            T::from_ptr(core::mem::transmute::<Option<PFN_vkVoidFunction>, *const _>(
+                crate::vkfn::get_instance_proc_addr(*self, name.as_ptr() as _),
+            ))
         }
     }
 
@@ -136,6 +135,9 @@ unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDeviceObject<Owner> {
+    /// # Safety
+    ///
+    /// passed handles must be valid, and owned by the same instance as `owner`.
     pub const unsafe fn manage(handle: VkPhysicalDevice, owner: Owner) -> Self {
         Self(handle, owner)
     }
@@ -320,6 +322,9 @@ impl<'d> InstanceCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// raw must be a valid VkInstanceCreateInfo struct.
     pub const unsafe fn from_raw(raw: VkInstanceCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -2180,7 +2185,7 @@ GuardsImpl!(for InstanceChild {
     type ConcreteInstance = T::ConcreteInstance;
 
     #[inline(always)]
-    fn instance(&self) -> &Self::ConcreteInstance { T::instance(&self) }
+    fn instance(&self) -> &Self::ConcreteInstance { T::instance(self) }
 });
 
 pub trait InstanceChildTransferrable: InstanceChild {

@@ -170,6 +170,9 @@ impl<'d> ShaderModuleCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkShaderModuleCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkShaderModuleCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -264,6 +267,9 @@ impl<'d> PipelineCacheCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineCacheCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineCacheCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -439,6 +445,9 @@ impl<'d> PipelineLayoutCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineLayoutCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineLayoutCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -623,6 +632,9 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineDynamicStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineDynamicStateCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -636,6 +648,7 @@ impl<'d> PipelineDynamicStateCreateInfo<'d> {
 #[derive(Clone)]
 pub struct PipelineShaderStage<'d, 's>(
     pub(crate) VkPipelineShaderStageCreateInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         Option<&'d dyn VulkanStructure>,
         &'d dyn VkHandle<Handle = VkShaderModule>,
@@ -664,6 +677,9 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineShaderStageCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineShaderStageCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -684,6 +700,11 @@ impl<'d, 's> PipelineShaderStage<'d, 's> {
     }
 }
 
+/// A trait for types that can be used as specialization constants.
+///
+/// # Safety
+///
+/// `ENTRIES` must be represent an content of this structs.
 pub unsafe trait SpecializationConstants {
     const ENTRIES: &'static [SpecializationMapEntry];
 
@@ -694,7 +715,7 @@ DerefContainerBracketImpl!(unsafe for SpecializationConstants {
 
     #[inline(always)]
     fn as_ptr(&self) -> *const c_void {
-        T::as_ptr(&**self)
+        T::as_ptr(self)
     }
 });
 
@@ -764,6 +785,9 @@ impl<'d> SpecializationInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkSpecializationInfo`] struct.
     pub const unsafe fn from_raw(raw: VkSpecializationInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -835,6 +859,9 @@ impl<'d> PipelineVertexInputStateCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineVertexInputStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineVertexInputStateCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -892,6 +919,9 @@ impl PipelineInputAssemblyStateCreateInfo {
         })
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineInputAssemblyStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineInputAssemblyStateCreateInfo) -> Self {
         Self(raw)
     }
@@ -920,6 +950,9 @@ impl PipelineTessellationStateCreateInfo {
         })
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineTessellationStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineTessellationStateCreateInfo) -> Self {
         Self(raw)
     }
@@ -937,6 +970,9 @@ pub struct PipelineViewportStateCreateInfo<'d>(
     core::marker::PhantomData<(&'d [VkViewport], &'d [VkRect2D])>,
 );
 impl<'d> PipelineViewportStateCreateInfo<'d> {
+    /// # Safety
+    ///
+    /// `viewports` and `scissors` must have same length.
     pub const unsafe fn new_unchecked(viewports: &'d [VkViewport], scissors: &'d [VkRect2D]) -> Self {
         Self(
             VkPipelineViewportStateCreateInfo {
@@ -983,6 +1019,9 @@ impl<'d> PipelineViewportStateCreateInfo<'d> {
         Self::new_dynamic(0)
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineViewportStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineViewportStateCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -1046,6 +1085,9 @@ impl<'d> PipelineRasterizationStateCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineRasterizationStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineRasterizationStateCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -1202,6 +1244,9 @@ impl<'d> PipelineRasterizationLineStateCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineRasterizationLineStateCreateInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineRasterizationLineStateCreateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -1232,7 +1277,6 @@ pub struct PipelineMultisampleStateCreateInfo<'d> {
     samplemask_lifetime_binder: PhantomData<&'d [VkSampleMask]>,
 }
 impl<'d> PipelineMultisampleStateCreateInfo<'d> {
-    #[allow(clippy::new_without_default)]
     pub const fn new() -> Self {
         Self {
             data: VkPipelineMultisampleStateCreateInfo {
@@ -1250,6 +1294,9 @@ impl<'d> PipelineMultisampleStateCreateInfo<'d> {
         }
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineMultisampleStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineMultisampleStateCreateInfo) -> Self {
         Self {
             data: raw,
@@ -1275,7 +1322,7 @@ impl<'d> PipelineMultisampleStateCreateInfo<'d> {
             return self;
         }
 
-        assert_eq!(mask.len(), (self.data.rasterizationSamples as usize + 31) / 32);
+        assert_eq!(mask.len(), self.data.rasterizationSamples.div_ceil(32) as _);
         self.data.pSampleMask = mask.as_ptr();
         self
     }
@@ -1346,6 +1393,9 @@ impl PipelineDepthStencilStateCreateInfo {
         })
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineDepthStencilStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineDepthStencilStateCreateInfo) -> Self {
         Self(raw)
     }
@@ -1439,6 +1489,9 @@ impl<'d> PipelineColorBlendStateCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkPipelineColorBlendStateCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkPipelineColorBlendStateCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -1567,6 +1620,7 @@ impl VkPipelineColorBlendAttachmentState {
 #[derive(Clone)]
 pub struct GraphicsPipelineCreateInfo<'d>(
     VkGraphicsPipelineCreateInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'d dyn VkHandle<Handle = VkPipelineLayout>,
         &'d dyn VkHandle<Handle = VkRenderPass>,
@@ -1585,6 +1639,7 @@ pub struct GraphicsPipelineCreateInfo<'d>(
 );
 impl<'d> GraphicsPipelineCreateInfo<'d> {
     #[inline]
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         layout: &'d (impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
         pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>,
@@ -1676,6 +1731,9 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkGraphicsPipelineCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkGraphicsPipelineCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -1758,6 +1816,7 @@ impl<'d> GraphicsPipelineCreateInfo<'d> {
 #[derive(Clone)]
 pub struct ComputePipelineCreateInfo<'d>(
     VkComputePipelineCreateInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'d dyn VkHandle<Handle = VkPipelineLayout>,
         PipelineShaderStage<'d, 'd>,
@@ -1832,6 +1891,9 @@ impl<'d> ComputePipelineCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must have a valid [`VkComputePipelineCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkComputePipelineCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }

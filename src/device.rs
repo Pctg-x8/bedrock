@@ -12,10 +12,9 @@ impl crate::resolver::ResolverInterface for VkDevice {
     #[inline(always)]
     unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
         unsafe {
-            T::from_ptr(core::mem::transmute(crate::vkfn::get_device_proc_addr(
-                *self,
-                name.as_ptr() as _,
-            )))
+            T::from_ptr(core::mem::transmute::<Option<PFN_vkVoidFunction>, *const _>(
+                crate::vkfn::get_device_proc_addr(*self, name.as_ptr() as _),
+            ))
         }
     }
 
@@ -137,52 +136,23 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
     }
 }
 
-/// Opaque handle to a queue object
-#[derive(Clone, VkHandle, VkObject)]
-#[VkObject(type = VK_OBJECT_TYPE_QUEUE)]
-pub struct QueueObject<Device>(VkQueue, Device);
-unsafe impl<Device: Sync> Sync for QueueObject<Device> {}
-unsafe impl<Device: Send> Send for QueueObject<Device> {}
-impl<Device: crate::Device> Queue for QueueObject<Device> {}
-impl<Device: crate::Device> QueueMut for QueueObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueueObject<Device> {
-    #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
-        self.1.native_ptr()
-    }
-}
-impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
-    type ConcreteDevice = Device;
-
-    #[inline(always)]
-    fn device(&self) -> &Self::ConcreteDevice {
-        &self.1
-    }
-}
-impl<Device: Clone> QueueObject<&'_ Device> {
-    #[inline(always)]
-    pub fn clone_parent(self) -> QueueObject<Device> {
-        let r = QueueObject(self.0, self.1.clone());
-        core::mem::forget(self);
-
-        r
-    }
-}
-impl<Device> QueueObject<Device> {
-    /// Constructs from raw values
+/// Valid handle of a [`VkDevice`].
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, VkHandle)]
+pub struct DeviceHandle(VkDevice);
+impl DeviceHandle {
+    /// Constructs a [`DeviceHandle`] from a raw [`VkDevice`] handle.
+    ///
     /// # Safety
-    /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkQueue, parent: Device) -> Self {
-        Self(handle, parent)
+    ///
+    /// `raw` must be a valid device handle.
+    pub const unsafe fn from_raw(raw: VkDevice) -> Self {
+        Self(raw)
     }
 
-    /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkQueue, Device) {
-        let h = self.0;
-        let p = unsafe { core::ptr::read(&self.1) };
-        core::mem::forget(self);
-
-        (h, p)
+    /// Converts this [`DeviceHandle`] back into a raw [`VkDevice`] handle.
+    pub const fn into_raw(self) -> VkDevice {
+        self.0
     }
 }
 
@@ -209,6 +179,7 @@ impl<'d> DeviceQueueCreateInfo<'d> {
 #[derive(Clone)]
 pub struct DeviceCreateInfo<'d>(
     VkDeviceCreateInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         Option<&'d dyn VulkanStructure>,
         &'d [DeviceQueueCreateInfo<'d>],
@@ -240,6 +211,9 @@ impl<'d> DeviceCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkDeviceCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkDeviceCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -364,7 +338,7 @@ unsafe impl VulkanSinkStructure for PhysicalDeviceSynchronization2Features<'_> {
 pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// Get a queue handle from a device
     #[implements]
-    fn queue<'s>(&'s self, family_index: u32, queue_index: u32) -> QueueObject<&'s Self> {
+    fn queue(&self, family_index: u32, queue_index: u32) -> QueueObject<&Self> {
         let mut h = std::mem::MaybeUninit::uninit();
         unsafe {
             crate::vkfn::get_device_queue(self.native_ptr(), family_index, queue_index, h.as_mut_ptr());
@@ -1106,6 +1080,10 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     }
 
     /// Update the contents of descriptor set objects
+    ///
+    /// # Safety
+    ///
+    /// `writes` and `copies` must be a valid array of [`VkWriteDescriptorSet`] and [`VkCopyDescriptorSet`] structs, respectively.
     #[implements]
     #[inline]
     unsafe fn update_descriptor_sets_raw(&self, writes: &[VkWriteDescriptorSet], copies: &[VkCopyDescriptorSet]) {
@@ -1165,61 +1143,37 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// # Safety
     /// `VkBuffer` and `VkDeviceMemory` must be valid and created from this device object
     #[implements]
-    #[inline]
+    #[inline(always)]
     unsafe fn bind_buffer_raw(
         &self,
         buffer: VkBuffer,
         memory: VkDeviceMemory,
         offset: VkDeviceSize,
     ) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::bind_buffer_memory(self.native_ptr(), buffer, memory, offset)
-                .into_result()
-                .map(drop)
-        }
+        unsafe { crate::vkfn_wrapper::bind_buffer_memory(self.native_ptr(), buffer, memory, offset) }
     }
 
     /// Multiple Binding for Buffers
     #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn bind_buffers_raw(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::bind_buffer_memory2(
-                self.native_ptr(),
-                bounds.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
-            )
-            .into_result()
-            .map(drop)
-        }
+    #[inline(always)]
+    fn bind_buffers(&self, bounds: &[BindBufferMemoryInfo]) -> crate::Result<()> {
+        unsafe { crate::vkfn_wrapper::bind_buffer_memory2(self.native_ptr(), bounds) }
     }
 
     /// Single binding for an image
     /// # Safety
     /// `VkImage` and `VkDeviceMemory` must be valid and created from this device object
     #[implements]
-    #[inline]
+    #[inline(always)]
     unsafe fn bind_image_raw(&self, image: VkImage, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::bind_image_memory(self.native_ptr(), image, memory, offset)
-                .into_result()
-                .map(drop)
-        }
+        unsafe { crate::vkfn_wrapper::bind_image_memory(self.native_ptr(), image, memory, offset) }
     }
 
     /// Multiple Binding for Images
     #[implements("Allow1_1APIs")]
-    #[inline]
-    unsafe fn bind_images_raw(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::bind_image_memory2(
-                self.native_ptr(),
-                bounds.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
-            )
-            .into_result()
-            .map(drop)
-        }
+    #[inline(always)]
+    fn bind_images(&self, bounds: &[BindImageMemoryInfo]) -> crate::Result<()> {
+        unsafe { crate::vkfn_wrapper::bind_image_memory2(self.native_ptr(), bounds) }
     }
 
     /// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
@@ -1242,7 +1196,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
                 objects.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(objects) as _,
                 wait_all as _,
-                timeout.unwrap_or(std::u64::MAX),
+                timeout.unwrap_or(u64::MAX),
             )
         };
 
@@ -1426,29 +1380,29 @@ struct DeviceExtFunctions {
     bind_buffer_memory2_khr: DeviceResolvedFn<PFN_vkBindBufferMemory2KHR>,
     #[cfg(feature = "VK_KHR_bind_memory2")]
     bind_image_memory2_khr: DeviceResolvedFn<PFN_vkBindImageMemory2KHR>,
-    #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
+    #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
     get_image_drm_format_modifier_properties_ext: DeviceResolvedFn<PFN_vkGetImageDrmFormatModifierPropertiesEXT>,
-    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
     get_fence_fd_khr: DeviceResolvedFn<PFN_vkGetFenceFdKHR>,
-    #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+    #[cfg(feature = "VK_KHR_external_fence_fd")]
     import_fence_fd_khr: DeviceResolvedFn<PFN_vkImportFenceFdKHR>,
-    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
     acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkAcquireFullScreenExclusiveModeEXT>,
-    #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+    #[cfg(feature = "VK_EXT_full_screen_exclusive")]
     release_full_screen_exclusive_mode_ext: DeviceResolvedFn<PFN_vkReleaseFullScreenExclusiveModeEXT>,
-    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+    #[cfg(feature = "VK_KHR_external_memory_fd")]
     get_memory_fd_khr: DeviceResolvedFn<PFN_vkGetMemoryFdKHR>,
-    #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+    #[cfg(feature = "VK_KHR_external_memory_fd")]
     get_memory_fd_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryFdPropertiesKHR>,
-    #[cfg(all(feature = "VK_EXT_external_memory_host"))]
+    #[cfg(feature = "VK_EXT_external_memory_host")]
     get_memory_host_pointer_properties_ext: DeviceResolvedFn<PFN_vkGetMemoryHostPointerPropertiesEXT>,
-    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     import_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkImportSemaphoreWin32HandleKHR>,
-    #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+    #[cfg(feature = "VK_KHR_external_semaphore_win32")]
     get_semaphore_win32_handle_khr: DeviceResolvedFn<PFN_vkGetSemaphoreWin32HandleKHR>,
-    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+    #[cfg(feature = "VK_KHR_external_memory_win32")]
     get_memory_win32_handle_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandleKHR>,
-    #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+    #[cfg(feature = "VK_KHR_external_memory_win32")]
     get_memory_win32_handle_properties_khr: DeviceResolvedFn<PFN_vkGetMemoryWin32HandlePropertiesKHR>,
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     get_buffer_memory_requirements_2_khr: DeviceResolvedFn<PFN_vkGetBufferMemoryRequirements2KHR>,
@@ -1495,29 +1449,29 @@ impl DeviceExtFunctions {
             bind_buffer_memory2_khr: DeviceResolvedFn::new(handle),
             #[cfg(feature = "VK_KHR_bind_memory2")]
             bind_image_memory2_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_image_drm_format_modifier"))]
+            #[cfg(feature = "VK_EXT_image_drm_format_modifier")]
             get_image_drm_format_modifier_properties_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+            #[cfg(feature = "VK_KHR_external_fence_fd")]
             get_fence_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_fence_fd"))]
+            #[cfg(feature = "VK_KHR_external_fence_fd")]
             import_fence_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+            #[cfg(feature = "VK_EXT_full_screen_exclusive")]
             acquire_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_full_screen_exclusive"))]
+            #[cfg(feature = "VK_EXT_full_screen_exclusive")]
             release_full_screen_exclusive_mode_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+            #[cfg(feature = "VK_KHR_external_memory_fd")]
             get_memory_fd_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_fd"))]
+            #[cfg(feature = "VK_KHR_external_memory_fd")]
             get_memory_fd_properties_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_EXT_external_memory_host"))]
+            #[cfg(feature = "VK_EXT_external_memory_host")]
             get_memory_host_pointer_properties_ext: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+            #[cfg(feature = "VK_KHR_external_semaphore_win32")]
             import_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_semaphore_win32"))]
+            #[cfg(feature = "VK_KHR_external_semaphore_win32")]
             get_semaphore_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+            #[cfg(feature = "VK_KHR_external_memory_win32")]
             get_memory_win32_handle_khr: DeviceResolvedFn::new(handle),
-            #[cfg(all(feature = "VK_KHR_external_memory_win32"))]
+            #[cfg(feature = "VK_KHR_external_memory_win32")]
             get_memory_win32_handle_properties_khr: DeviceResolvedFn::new(handle),
             #[cfg(feature = "VK_KHR_get_memory_requirements2")]
             get_buffer_memory_requirements_2_khr: DeviceResolvedFn::new(handle),
@@ -1558,8 +1512,8 @@ pub trait DeviceMaintenance1Extension: Device {
 
     /// Trim a command pool.
     #[implements]
-    #[inline]
-    unsafe fn trim_command_pool_khr(
+    #[inline(always)]
+    fn trim_command_pool_khr(
         &self,
         command_pool: &mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
         flags: CommandPoolTrimFlags,
@@ -1659,7 +1613,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
     /// Returns the memory requirements for specified Vulkan object.
     #[implements]
     #[inline]
-    unsafe fn get_buffer_memory_requirements2_khr(
+    fn get_buffer_memory_requirements2_khr(
         &self,
         info: &crate::BufferMemoryRequirementsInfo2<'_, impl crate::VkHandle<Handle = VkBuffer>>,
         sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>,
@@ -1667,7 +1621,7 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
         unsafe {
             self.get_buffer_memory_requirements_2_khr_fn().0(
                 self.native_ptr(),
-                info as *const _ as _,
+                core::ptr::from_ref(info).cast(),
                 sink.as_mut_ptr(),
             )
         }
@@ -1676,35 +1630,77 @@ pub trait DeviceGetMemoryRequirements2Extension: Device {
     /// Returns the memory requirements for specified Vulkan object.
     #[implements]
     #[inline]
-    unsafe fn get_image_memory_requirements2_khr(
+    fn get_image_memory_requirements2_khr(
         &self,
         info: &crate::ImageMemoryRequirementsInfo2<'_, impl crate::VkHandle<Handle = VkImage>>,
         sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>,
     ) {
         unsafe {
-            self.get_image_memory_requirements_2_khr_fn().0(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr())
+            self.get_image_memory_requirements_2_khr_fn().0(
+                self.native_ptr(),
+                core::ptr::from_ref(info).cast(),
+                sink.as_mut_ptr(),
+            )
         }
     }
 
-    /// Query the memory requirements for a sparse image
-    /// # Safety
-    /// `sink_head_ptr` must be a valid pointer for read/write operations.
+    /// Query a number of memory requirements for a sparse image.
     #[implements]
-    #[inline]
-    unsafe fn get_image_sparse_memory_requirements2_count_khr(
-        &self,
-        info: &ImageSparseMemoryRequirementsInfo2,
-        count_sink: &mut core::mem::MaybeUninit<u32>,
-        sink_head_ptr: *mut VkSparseImageMemoryRequirements2KHR,
-    ) {
+    fn get_image_sparse_memory_requirements2_count_khr(&self, info: &ImageSparseMemoryRequirementsInfo2) -> u32 {
+        let mut sink = core::mem::MaybeUninit::uninit();
         unsafe {
             self.get_image_sparse_memory_requirements_2_khr_fn().0(
                 self.native_ptr(),
-                &info.0,
-                count_sink.as_mut_ptr(),
-                sink_head_ptr,
-            )
+                core::ptr::from_ref(info).cast(),
+                sink.as_mut_ptr(),
+                core::ptr::null_mut(),
+            );
+
+            sink.assume_init()
         }
+    }
+
+    /// Query the memory requirements for a sparse image.
+    ///
+    /// # Returns
+    ///
+    /// The number of sparse image memory requirements queried.
+    #[implements]
+    fn get_image_sparse_memory_requirements2_khr(
+        &self,
+        info: &ImageSparseMemoryRequirementsInfo2,
+        sink: &mut [core::mem::MaybeUninit<VkSparseImageMemoryRequirements2KHR>],
+    ) -> u32 {
+        let mut count = sink.len() as u32;
+        unsafe {
+            self.get_image_sparse_memory_requirements_2_khr_fn().0(
+                self.native_ptr(),
+                core::ptr::from_ref(info).cast(),
+                &mut count,
+                sink.as_mut_ptr().cast(),
+            );
+
+            count
+        }
+    }
+
+    /// Query the memory requirements for a sparse image.
+    #[implements("alloc")]
+    fn get_image_sparse_memory_requirements2_khr_alloc(
+        &self,
+        info: &ImageSparseMemoryRequirementsInfo2,
+    ) -> Vec<VkSparseImageMemoryRequirements2KHR> {
+        let n = self.get_image_sparse_memory_requirements2_count_khr(info);
+        if n == 0 {
+            return crate::alloc::empty_sink_buffer();
+        }
+
+        let mut buf = crate::alloc::empty_reserved_buffer(n as _);
+        let written = self.get_image_sparse_memory_requirements2_khr(info, buf.spare_capacity_mut());
+        unsafe {
+            buf.set_len(written as _);
+        }
+        buf
     }
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
@@ -1745,12 +1741,12 @@ pub trait DeviceBindMemory2Extension: Device {
     /// Multiple Binding for Buffers
     #[implements]
     #[inline]
-    unsafe fn bind_buffer_memory2_khr(&self, bounds: &[VkBindBufferMemoryInfoKHR]) -> crate::Result<()> {
+    fn bind_buffer_memory2_khr(&self, bounds: &[BindBufferMemoryInfo]) -> crate::Result<()> {
         unsafe {
             self.bind_buffer_memory2_khr_fn().0(
                 self.native_ptr(),
                 bounds.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
+                crate::ffi_helper::slice_as_ptr_empty_null(bounds).cast(),
             )
             .into_result()
             .map(drop)
@@ -1760,12 +1756,12 @@ pub trait DeviceBindMemory2Extension: Device {
     /// Multiple Binding for Images
     #[implements]
     #[inline]
-    unsafe fn bind_image_memory2_khr(&self, bounds: &[VkBindImageMemoryInfoKHR]) -> crate::Result<()> {
+    fn bind_image_memory2_khr(&self, bounds: &[BindImageMemoryInfo]) -> crate::Result<()> {
         unsafe {
             self.bind_image_memory2_khr_fn().0(
                 self.native_ptr(),
                 bounds.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(bounds),
+                crate::ffi_helper::slice_as_ptr_empty_null(bounds).cast(),
             )
             .into_result()
             .map(drop)
@@ -2350,7 +2346,7 @@ DerefContainerBracketImpl!(for DeviceChildHandle {
 });
 GuardsImpl!(for DeviceChildHandle {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice { T::device_handle(&self) }
+    fn device_handle(&self) -> VkDevice { T::device_handle(self) }
 });
 
 /// Child of a device object
@@ -2369,7 +2365,7 @@ DerefContainerBracketImpl!(for DeviceChild {
 GuardsImpl!(for DeviceChild {
     type ConcreteDevice = T::ConcreteDevice;
 
-    fn device(&self) -> &Self::ConcreteDevice { T::device(&self) }
+    fn device(&self) -> &Self::ConcreteDevice { T::device(self) }
 });
 
 pub trait DeviceChildTransferrable: DeviceChild {
@@ -2382,6 +2378,52 @@ where
 {
     fn transfer_device(self) -> Self::ConcreteDevice {
         self.device().clone()
+    }
+}
+
+/// Opaque handle to a queue object
+#[derive(Clone, VkHandle, VkObject)]
+#[VkObject(type = VK_OBJECT_TYPE_QUEUE)]
+pub struct QueueObject<Device>(VkQueue, Device);
+unsafe impl<Device: Sync> Sync for QueueObject<Device> {}
+unsafe impl<Device: Send> Send for QueueObject<Device> {}
+impl<Device: crate::Device> Queue for QueueObject<Device> {}
+impl<Device: crate::Device> QueueMut for QueueObject<Device> {}
+impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for QueueObject<Device> {
+    #[inline(always)]
+    fn device_handle(&self) -> VkDevice {
+        self.1.native_ptr()
+    }
+}
+impl<Device: crate::Device> DeviceChild for QueueObject<Device> {
+    type ConcreteDevice = Device;
+
+    #[inline(always)]
+    fn device(&self) -> &Self::ConcreteDevice {
+        &self.1
+    }
+}
+impl<Device: Clone> QueueObject<&'_ Device> {
+    #[inline(always)]
+    pub fn clone_parent(self) -> QueueObject<Device> {
+        QueueObject(self.0, self.1.clone())
+    }
+}
+impl<Device> QueueObject<Device> {
+    /// Constructs from raw values
+    /// # Safety
+    /// the resource must be created from the device and not freed anywhere
+    pub const unsafe fn manage(handle: VkQueue, parent: Device) -> Self {
+        Self(handle, parent)
+    }
+
+    /// Purges the construct (Drop will not be called for this resource)
+    pub const fn unmanage(self) -> (VkQueue, Device) {
+        let h = self.0;
+        let p = unsafe { core::ptr::read(&self.1) };
+        core::mem::forget(self);
+
+        (h, p)
     }
 }
 
@@ -2601,6 +2643,7 @@ GuardsImpl!(for mut QueueMut {});
 #[repr(transparent)]
 pub struct PresentInfo<'r>(
     VkPresentInfoKHR,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(&'r [VkSwapchainKHR], &'r [VkSemaphore], &'r [u32], &'r mut [VkResult])>,
 );
 #[cfg(feature = "VK_KHR_swapchain")]
@@ -2630,6 +2673,9 @@ impl<'r> PresentInfo<'r> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkPresentInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkPresentInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -2666,6 +2712,9 @@ impl<'r> CommandBufferSubmitInfo<'r> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkCommandBufferSubmitInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkCommandBufferSubmitInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -2714,6 +2763,9 @@ impl<'b, 'r> SubmitInfo2<'b, 'r> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSubmitInfo2KHR`] struct.
     pub const unsafe fn from_raw(raw: VkSubmitInfo2KHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }

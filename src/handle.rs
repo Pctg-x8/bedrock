@@ -201,6 +201,9 @@ pub trait VkHandleExt: VkHandle {
 impl<T: VkHandle> VkHandleExt for T {}
 
 pub trait VkDeviceChildNonExtDestroyable {
+    /// # Safety
+    ///
+    /// device must be a valid Vulkan device handle and must own this resource.
     unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks);
 }
 

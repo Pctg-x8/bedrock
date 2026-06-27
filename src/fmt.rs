@@ -589,9 +589,9 @@ impl FormatQueryPred {
     }
 
     pub fn satisfy(&self, f: VkFormat) -> bool {
-        self.bit_width.map_or(true, |b| f.bit_width() == b)
-            && self.req_components.map_or(true, |c| c.satisfy(f))
-            && self.req_elements_of.map_or(true, |e| f.element_type() == e)
+        self.bit_width.is_none_or(|b| f.bit_width() == b)
+            && self.req_components.is_none_or(|c| c.satisfy(f))
+            && self.req_elements_of.is_none_or(|e| f.element_type() == e)
     }
 }
 

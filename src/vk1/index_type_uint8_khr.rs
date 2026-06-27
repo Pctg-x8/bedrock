@@ -1,7 +1,7 @@
 //! https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_index_type_uint8.html
 
 pub const VK_KHR_INDEX_TYPE_UINT8_SPEC_VERSION: usize = 1;
-pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME: &'static str = "VK_KHR_index_type_uint8";
+pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME: &str = "VK_KHR_index_type_uint8";
 
 use super::*;
 use crate::vk2::*;

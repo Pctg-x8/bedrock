@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_shader_subgroup_rotate.html
 
 pub const VK_KHR_SHADER_SUBGROUP_ROTATE_SPEC_VERSION: usize = 2;
-pub const VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME: &'static str = "VK_KHR_shader_subgroup_rotate";
+pub const VK_KHR_SHADER_SUBGROUP_ROTATE_EXTENSION_NAME: &str = "VK_KHR_shader_subgroup_rotate";
 
 use super::*;
 use crate::vk2::*;

@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_format_feature_flags2.html
 
 pub const VK_KHR_FORMAT_FEATURE_FLAGS_2_SPEC_VERSION: usize = 2;
-pub const VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME: &'static str = "VK_KHR_format_feature_flags2";
+pub const VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
 
 use super::*;
 use crate::vk2::*;

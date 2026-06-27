@@ -130,29 +130,35 @@ pub trait Image: VkHandle<Handle = VkImage> + DeviceChildHandle {
     }
 }
 DerefContainerBracketImpl!(for Image {
+    #[inline(always)]
     fn format(&self) -> VkFormat {
         T::format(self)
     }
 
+    #[inline(always)]
     fn size(&self) -> &VkExtent3D {
         T::size(self)
     }
 
+    #[inline(always)]
     fn dimension(&self) -> VkImageViewType {
         T::dimension(self)
     }
 });
 GuardsImpl!(for Image {
+    #[inline(always)]
     fn format(&self) -> VkFormat {
-        T::format(&self)
+        T::format(self)
     }
 
+    #[inline(always)]
     fn size(&self) -> &VkExtent3D {
-        T::size(&self)
+        T::size(self)
     }
 
+    #[inline(always)]
     fn dimension(&self) -> VkImageViewType {
-        T::dimension(&self)
+        T::dimension(self)
     }
 });
 
@@ -174,7 +180,7 @@ GuardsImpl!(for ImageChild {
     type ConcreteImage = T::ConcreteImage;
 
     #[inline(always)]
-    fn image(&self) -> &Self::ConcreteImage { T::image(&self) }
+    fn image(&self) -> &Self::ConcreteImage { T::image(self) }
 });
 
 pub trait ImageChildMut: ImageChild {
@@ -377,7 +383,7 @@ impl<Device: crate::Device> ImageObject<Device> {
 #[derive(Clone)]
 pub struct ImageCreateInfo<'d>(
     VkImageCreateInfo,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d [u32]>)>,
+    #[allow(clippy::type_complexity)] core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d [u32]>)>,
 );
 impl<'d> ImageCreateInfo<'d> {
     #[inline(always)]
@@ -404,6 +410,9 @@ impl<'d> ImageCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkImageCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkImageCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -564,6 +573,9 @@ impl<'b> BindImageMemoryInfo<'b> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkBindImageMemoryInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkBindImageMemoryInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -717,6 +729,9 @@ impl<'r> ImageSparseMemoryRequirementsInfo2<'r> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkImageSparseMemoryRequirementsInfo2KHR`] struct.
     pub const unsafe fn from_raw(raw: VkImageSparseMemoryRequirementsInfo2KHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -920,6 +935,9 @@ impl<'r> ImageViewCreateInfo<'r> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkImageViewCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkImageViewCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }

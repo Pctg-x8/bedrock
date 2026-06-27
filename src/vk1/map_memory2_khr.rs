@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_map_memory2.html
 
 pub const VK_KHR_MAP_MEMORY_2_SPEC_VERSION: usize = 1;
-pub const VK_KHR_MAP_MEMORY_2_EXTENSION_NAME: &'static str = "VK_KHR_map_memory2";
+pub const VK_KHR_MAP_MEMORY_2_EXTENSION_NAME: &str = "VK_KHR_map_memory2";
 
 use super::*;
 use crate::vk2::*;

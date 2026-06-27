@@ -33,7 +33,7 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     #[implements]
     #[inline(always)]
     fn wait(&self) -> crate::Result<()> {
-        self.wait_timeout(std::u64::MAX).map(drop)
+        self.wait_timeout(u64::MAX).map(drop)
     }
 }
 DerefContainerBracketImpl!(for Fence {});
@@ -153,7 +153,7 @@ GuardsImpl!(for Status {
     #[implements]
     #[inline(always)]
     fn status(&self) -> crate::Result<bool> {
-        T::status(&self)
+        T::status(self)
     }
 });
 
@@ -175,6 +175,9 @@ impl<'d> FenceCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkFenceCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkFenceCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -286,6 +289,9 @@ impl<'d> SemaphoreCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSemaphoreCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkSemaphoreCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -358,6 +364,9 @@ impl<'d> SemaphoreTypeCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSemaphoreTypeCreateInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkSemaphoreTypeCreateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -481,6 +490,9 @@ impl<'s, 'n> SemaphoreSignalInfo<'s, 'n> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `semaphore` must be a valid [`VkSemaphore`] handle.
     pub const unsafe fn new_raw(semaphore: VkSemaphore, value: u64) -> Self {
         Self(
             VkSemaphoreSignalInfoKHR {
@@ -527,6 +539,7 @@ unsafe impl VulkanStructure for SemaphoreSignalInfo<'_, '_> {
 #[repr(transparent)]
 pub struct SemaphoreWaitInfo<'s, 'n, 'xs>(
     VkSemaphoreWaitInfoKHR,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'xs [&'s dyn VkHandle<Handle = VkSemaphore>],
         &'xs [u64],

@@ -275,6 +275,9 @@ impl<'d> RenderPassCreateInfo2<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkRenderPassCreateInfo2KHR`] struct.
     pub const unsafe fn from_raw(raw: VkRenderPassCreateInfo2KHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -290,6 +293,6 @@ impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {
         device: &(impl crate::Device + ?Sized),
         allocation_callbacks: Option<&super::VkAllocationCallbacks>,
     ) -> crate::Result<super::VkRenderPass> {
-        device.new_render_pass2(&self, allocation_callbacks)
+        device.new_render_pass2(self, allocation_callbacks)
     }
 }

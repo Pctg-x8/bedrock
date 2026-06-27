@@ -313,6 +313,9 @@ impl<'d> BufferViewCreateInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkBufferViewCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkBufferViewCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -384,6 +387,9 @@ impl<'b> BindBufferMemoryInfo<'b> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkBindBufferMemoryInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkBindBufferMemoryInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }

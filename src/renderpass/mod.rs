@@ -111,6 +111,7 @@ pub trait AnyRenderPassCreateInfo {
 #[repr(transparent)]
 pub struct RenderPassBeginInfo<'d>(
     VkRenderPassBeginInfo,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         &'d dyn VkHandle<Handle = VkRenderPass>,
         &'d dyn VkHandle<Handle = VkFramebuffer>,
@@ -176,7 +177,7 @@ pub struct SubpassRef<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPa
 impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Clone for SubpassRef<'r, RenderPass> {
     #[inline(always)]
     fn clone(&self) -> Self {
-        Self(self.0, self.1)
+        *self
     }
 }
 impl<'r, RenderPass: 'r + ?Sized + VkHandle<Handle = VkRenderPass>> Copy for SubpassRef<'r, RenderPass> {}

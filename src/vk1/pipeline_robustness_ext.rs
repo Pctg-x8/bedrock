@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_EXT_pipeline_robustness.html
 
 pub const VK_EXT_PIPELINE_ROBUSTNESS_SPEC_VERISON: usize = 1;
-pub const VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME: &'static str = "VK_EXT_pipeline_robustness";
+pub const VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_robustness";
 
 use super::*;
 use crate::vk2::*;

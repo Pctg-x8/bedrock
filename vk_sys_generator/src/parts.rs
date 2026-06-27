@@ -14,6 +14,7 @@ pub fn emit_const(w: &mut impl std::io::Write, name: &str, r#type: &str, value: 
     writeln!(w, "pub const {name}: {type} = {value};")
 }
 
+#[allow(clippy::inconsistent_digit_grouping)]
 pub fn emit_result_const(w: &mut impl std::io::Write, name: &str, ext_number: u32, value: u32) -> std::io::Result<()> {
     let value = if ext_number == 0 {
         value
@@ -25,6 +26,7 @@ pub fn emit_result_const(w: &mut impl std::io::Write, name: &str, ext_number: u3
     writeln!(w, "pub const {name}: VkResult = VkResult({value});")
 }
 
+#[allow(clippy::inconsistent_digit_grouping)]
 pub fn emit_result_err_const(
     w: &mut impl std::io::Write,
     name: &str,
@@ -94,7 +96,7 @@ impl FuncPointer {
         let mut cont = false;
         for (n, t) in self.args {
             if cont {
-                w.write(b", ")?;
+                w.write_all(b", ")?;
             }
             write!(w, "{n}: {t}")?;
             cont = true;
@@ -194,7 +196,6 @@ impl Enum {
             emit_c_enum_type(w, &type_name)?;
             if let Some(v) = self.promoted {
                 writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
-                writeln!(w, "#[rustfmt::skip]")?;
                 emit_c_enum_type(w, &format!("Vk{}", self.name))?;
             }
         }
@@ -589,7 +590,7 @@ impl Object {
             "    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_{};",
             self.object_type_const_name
         )?;
-        w.write(b"\n")?;
+        w.write_all(b"\n")?;
         writeln!(w, "    #[inline(always)]")?;
         writeln!(w, "    fn raw_handle_value(&self) -> u64 {{")?;
         writeln!(w, "        {raw_expr}")?;
@@ -767,12 +768,12 @@ impl Struct {
             let mut cont = false;
             for d in derives {
                 if cont {
-                    w.write(b", ")?;
+                    w.write_all(b", ")?;
                 }
-                w.write(d.as_bytes())?;
+                w.write_all(d.as_bytes())?;
                 cont = true;
             }
-            w.write(b")]\n")?;
+            w.write_all(b")]\n")?;
         }
 
         writeln!(w, "#[repr(C)]")?;
@@ -868,7 +869,7 @@ impl Struct {
         }
         writeln!(
             w,
-            "unsafe impl crate::TypedVulkanStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
+            "impl crate::TypedVulkanStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
         )
     }
 
@@ -884,7 +885,7 @@ impl Struct {
         }
         writeln!(
             w,
-            "unsafe impl crate::TypedVulkanSinkStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
+            "impl crate::TypedVulkanSinkStructure for {type_name} {{ const TYPE: VkStructureType = VK_STRUCTURE_TYPE_{structure_type_name}; }}"
         )
     }
 
@@ -942,7 +943,7 @@ impl Struct {
             Self::emit_core(
                 w,
                 &type_name,
-                &self.members,
+                self.members,
                 self.stype.map(|(_, _, u)| u),
                 self.debuggable,
                 self.cloneable,
@@ -978,20 +979,22 @@ impl Struct {
             // single extension with probably promoted
             let (tag, names) = unsafe { extensions_suffixes.drain().next().unwrap_unchecked() };
             let type_name = format!("Vk{}{tag}", self.name);
-            let feature_gate = format!(
-                "#[cfg(all({}))]",
-                names
-                    .iter()
-                    .map(|name| format!("feature = \"VK_{tag}_{name}\""))
-                    .collect::<Vec<_>>()
-                    .join(", ")
-            );
+            let feature_gate = match &names[..] {
+                &[name] => format!("#[cfg(feature = \"VK_{tag}_{name}\")]"),
+                xs => format!(
+                    "#[cfg(all({}))]",
+                    xs.iter()
+                        .map(|name| format!("feature = \"VK_{tag}_{name}\""))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ),
+            };
 
             writeln!(w, "{feature_gate}")?;
             Self::emit_core(
                 w,
                 &type_name,
-                &self.members,
+                self.members,
                 self.stype.map(|(_, _, u)| u),
                 self.debuggable,
                 self.cloneable,
@@ -1076,7 +1079,7 @@ impl Struct {
         Self::emit_core(
             w,
             &type_name,
-            &self.members,
+            self.members,
             self.stype.map(|(_, _, u)| u),
             self.debuggable,
             self.cloneable,
@@ -1161,10 +1164,10 @@ impl Union {
     }
 
     fn emit_ident(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        w.write(b"Vk")?;
-        w.write(self.name.as_bytes())?;
+        w.write_all(b"Vk")?;
+        w.write_all(self.name.as_bytes())?;
         if let Some((_, suffix)) = self.extension {
-            w.write(suffix.as_bytes())?;
+            w.write_all(suffix.as_bytes())?;
         }
 
         Ok(())
@@ -1196,19 +1199,19 @@ impl Union {
             let mut cont = false;
             for d in derives {
                 if cont {
-                    w.write(b", ")?;
+                    w.write_all(b", ")?;
                 }
-                w.write(d.as_bytes())?;
+                w.write_all(d.as_bytes())?;
                 cont = true;
             }
-            w.write(b")]\n")?;
+            w.write_all(b")]\n")?;
         }
 
         writeln!(w, "#[repr(C)]")?;
         writeln!(w, "#[rustfmt::skip]")?;
-        w.write(b"pub union ")?;
+        w.write_all(b"pub union ")?;
         self.emit_ident(w)?;
-        w.write(b" {\n")?;
+        w.write_all(b" {\n")?;
         for m in self.members {
             m.emit(w)?;
         }
@@ -1298,12 +1301,11 @@ impl Command {
         writeln!(w, "    const NAME_CSTR: &'static core::ffi::CStr = c\"{org_fn_name}\";")?;
         writeln!(w)?;
         writeln!(w, "    #[inline(always)]")?;
-        writeln!(w, "    unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {{")?;
-        writeln!(w, "        unsafe {{ core::mem::transmute(p) }}")?;
-        writeln!(w, "    }}")?;
-        writeln!(w, "    #[inline(always)]")?;
         writeln!(w, "    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {{")?;
-        writeln!(w, "        unsafe {{ core::mem::transmute(p) }}")?;
+        writeln!(
+            w,
+            "        unsafe {{ core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }}"
+        )?;
         writeln!(w, "    }}")?;
         writeln!(w, "}}")?;
 
@@ -1311,7 +1313,7 @@ impl Command {
     }
 
     fn emit_feature_gate(&self, w: &mut impl std::io::Write) -> std::io::Result<()> {
-        w.write(b"#[cfg(feature = \"Implements\")]\n")?;
+        w.write_all(b"#[cfg(feature = \"Implements\")]\n")?;
         if let Some((tag, name)) = self.extension {
             writeln!(w, "#[cfg(feature = \"VK_{tag}_{name}\")]")?;
         }
@@ -1360,22 +1362,22 @@ impl Command {
         }
         for (n, t) in self.args {
             if cont {
-                w.write(b", ")?;
+                w.write_all(b", ")?;
             }
             write!(w, "{n}: {t}")?;
             cont = true;
         }
-        w.write(b")")?;
+        w.write_all(b")")?;
         if let Some(return_type) = self.return_type {
             write!(w, " -> {return_type}")?;
         }
-        w.write(b");\n")?;
+        w.write_all(b");\n")?;
 
         self.emit_feature_gate(w)?;
         Self::emit_pfn(w, &type_name, &org_fn_name)?;
 
         if self.static_callable {
-            w.write(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
+            w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             self.emit_feature_gate(w)?;
             writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "impl crate::resolver::StaticCallable for {type_name} {{")?;
@@ -1410,16 +1412,16 @@ impl Command {
             }
             for (n, t) in self.args {
                 if cont {
-                    w.write(b", ")?;
+                    w.write_all(b", ")?;
                 }
                 write!(w, "{n}: {t}")?;
                 cont = true;
             }
-            w.write(b")")?;
+            w.write_all(b")")?;
             if let Some(return_type) = self.return_type {
                 write!(w, " -> {return_type}")?;
             }
-            w.write(b");\n")?;
+            w.write_all(b");\n")?;
 
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
@@ -1427,7 +1429,7 @@ impl Command {
 
             // promoted symbols always static callable
             writeln!(w, "#[cfg(feature = \"Implements\")]")?;
-            w.write(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
+            w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             writeln!(w, "#[rustfmt::skip]")?;
             writeln!(w, "impl crate::resolver::StaticCallable for {type_name} {{")?;
@@ -1462,16 +1464,16 @@ impl Command {
             }
             for (n, t) in self.args {
                 if cont {
-                    w.write(b", ")?;
+                    w.write_all(b", ")?;
                 }
                 write!(w, "{n}: {t}")?;
                 cont = true;
             }
-            w.write(b")")?;
+            w.write_all(b")")?;
             if let Some(return_type) = self.return_type {
                 write!(w, " -> {return_type}")?;
             }
-            w.write(b";\n")?;
+            w.write_all(b";\n")?;
         }
 
         if let Some(p) = self.promoted {
@@ -1489,16 +1491,16 @@ impl Command {
             }
             for (n, t) in self.args {
                 if cont {
-                    w.write(b", ")?;
+                    w.write_all(b", ")?;
                 }
                 write!(w, "{n}: {t}")?;
                 cont = true;
             }
-            w.write(b")")?;
+            w.write_all(b")")?;
             if let Some(return_type) = self.return_type {
                 write!(w, " -> {return_type}")?;
             }
-            w.write(b";\n")?;
+            w.write_all(b";\n")?;
         }
 
         Ok(())
@@ -1519,7 +1521,7 @@ impl ExtensionHeaderConstants {
         writeln!(w, "#[rustfmt::skip]")?;
         writeln!(
             w,
-            "pub const {}_EXTENSION_NAME: &'static str = \"{}\";",
+            "pub const {}_EXTENSION_NAME: &str = \"{}\";",
             self.name.to_uppercase(),
             self.name
         )?;

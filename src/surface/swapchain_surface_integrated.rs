@@ -126,6 +126,7 @@ impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainWithSurf
 pub struct SwapchainWithSurfaceBuilder<'n, 'sw, Surface: crate::Surface>(
     VkSwapchainCreateInfoKHR,
     Surface,
+    #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
         Option<&'n dyn VulkanStructure>,
         Option<&'sw dyn VkHandle<Handle = VkSwapchainKHR>>,
@@ -176,13 +177,9 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
     }
 
     pub const fn shared(mut self, queue_families: &[u32]) -> Self {
-        assert!(queue_families.len() > 0, "empty families not allowed");
+        assert!(!queue_families.is_empty(), "empty families not allowed");
 
-        self.0.imageSharingMode = if queue_families.is_empty() {
-            VK_SHARING_MODE_EXCLUSIVE
-        } else {
-            VK_SHARING_MODE_CONCURRENT
-        };
+        self.0.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         self.0.queueFamilyIndexCount = queue_families.len() as _;
         self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(queue_families);
         self

@@ -356,12 +356,11 @@ pub fn vk_raw_handle(args: TokenStream, input: TokenStream) -> TokenStream {
     parse_macro_input!(args with parser);
 
     let dispatchable = matches!(try_compile_error!(newtype_struct_org_type(s)), syn::Type::Ptr(_));
-    let raw_handle_conversion;
-    if dispatchable {
-        raw_handle_conversion = quote! { self.0.as_ptr().addr() as _ };
+    let raw_handle_conversion = if dispatchable {
+        quote! { self.0.as_ptr().addr() as _ }
     } else {
-        raw_handle_conversion = quote! { self.0.get() };
-    }
+        quote! { self.0.get() }
+    };
 
     quote! {
         #input
@@ -589,7 +588,7 @@ impl syn::parse::Parse for VkExtCommandInput {
 
                     static_callable = true;
                 }
-                unknown => return Err(syn::Error::new(input.span(), &format!("unknown extra: {unknown}"))),
+                unknown => return Err(syn::Error::new(input.span(), format!("unknown extra: {unknown}"))),
             }
         }
 
@@ -609,7 +608,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
 
     let base_vis = &input.base_define.vis;
     let pfn_name = syn::Ident::new(
-        &format!("PFN_{}", input.base_define.sig.ident.to_string()),
+        &format!("PFN_{}", input.base_define.sig.ident),
         input.base_define.sig.ident.span(),
     );
     let pfn_ty = syn::TypeBareFn {
@@ -619,8 +618,8 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             extern_token: syn::Token![extern](Span::call_site()),
             name: Some(syn::LitStr::new("system", Span::call_site())),
         }),
-        fn_token: input.base_define.sig.fn_token.clone(),
-        paren_token: input.base_define.sig.paren_token.clone(),
+        fn_token: input.base_define.sig.fn_token,
+        paren_token: input.base_define.sig.paren_token,
         inputs: input
             .base_define
             .sig
@@ -631,7 +630,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
                 syn::FnArg::Typed(t) => syn::BareFnArg {
                     attrs: t.attrs.clone(),
                     name: match *t.pat {
-                        syn::Pat::Ident(ref x) => Some((x.ident.clone(), t.colon_token.clone())),
+                        syn::Pat::Ident(ref x) => Some((x.ident.clone(), t.colon_token)),
                         _ => None,
                     },
                     ty: *t.ty.clone(),
@@ -642,13 +641,13 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             attrs: v.attrs.clone(),
             name: match v.pat {
                 Some((ref p, c)) => match &**p {
-                    &syn::Pat::Ident(ref x) => Some((x.ident.clone(), c.clone())),
+                    syn::Pat::Ident(x) => Some((x.ident.clone(), c)),
                     _ => None,
                 },
                 _ => None,
             },
-            dots: v.dots.clone(),
-            comma: v.comma.clone(),
+            dots: v.dots,
+            comma: v.comma,
         }),
         output: input.base_define.sig.output.clone(),
     };
@@ -708,13 +707,16 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             #[derive(Clone, Copy, Debug)]
             #base_vis struct #pfn_name(pub #pfn_ty);
             #[cfg(feature = #promote_feature_name)]
-            unsafe impl crate::resolver::PFN for #pfn_name {
-                const NAME_CSTR: &'static core::ffi::CStr = #promoted_fn_cstr;
-
+            unsafe impl crate::resolver::FromPtr for #pfn_name {
                 #[inline(always)]
                 unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                     core::mem::transmute(p)
                 }
+            }
+            #[cfg(feature = #promote_feature_name)]
+            unsafe impl crate::resolver::PFN for #pfn_name {
+                const NAME_CSTR: &core::ffi::CStr = #promoted_fn_cstr;
+
                 #[inline(always)]
                 unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
                     core::mem::transmute(p)
@@ -739,13 +741,15 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         #[repr(transparent)]
         #[derive(Clone, Copy, Debug)]
         #base_vis struct #pfn_name(pub #pfn_ty);
-        unsafe impl crate::resolver::PFN for #pfn_name {
-            const NAME_CSTR: &'static core::ffi::CStr = #fname_cstr;
-
+        unsafe impl crate::resolver::FromPtr for #pfn_name {
             #[inline(always)]
             unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                 core::mem::transmute(p)
             }
+        }
+        unsafe impl crate::resolver::PFN for #pfn_name {
+            const NAME_CSTR: &core::ffi::CStr = #fname_cstr;
+
             #[inline(always)]
             unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
                 core::mem::transmute(p)

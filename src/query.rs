@@ -34,6 +34,9 @@ impl QueryPoolCreateInfo {
         })
     }
 
+    /// # Safety
+    ///
+    /// raw must be a valid VkQueryPoolCreateInfo struct.
     pub const unsafe fn from_raw(raw: VkQueryPoolCreateInfo) -> Self {
         Self(raw)
     }
@@ -176,14 +179,13 @@ pub trait QueryPool: VkHandle<Handle = VkQueryPool> + DeviceChildHandle {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_DEVICE_LOST`]
     #[implements]
-    fn result_array<const N: usize, T>(&self, offset: u32, flags: QueryResultFlags) -> QueryResult<[T; N]> {
-        let mut sink = [const { unsafe { core::mem::MaybeUninit::<T>::uninit().assume_init() } }; N];
-        self.results(
-            offset,
-            unsafe { core::mem::transmute::<&mut [T], &mut [core::mem::MaybeUninit<T>]>(&mut sink[..]) },
-            flags,
-        )
-        .map(move |_| sink)
+    fn result_array<const N: usize, T>(&self, offset: u32, flags: QueryResultFlags) -> QueryResult<[T; N]>
+    where
+        T: Copy,
+    {
+        let mut sink = [const { core::mem::MaybeUninit::<T>::uninit() }; N];
+        self.results(offset, &mut sink, flags)
+            .map(move |_| core::array::from_fn(|n| unsafe { sink[n].assume_init() }))
     }
 
     /// Copy results of queries in a query pool to a host memory region

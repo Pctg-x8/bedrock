@@ -7,7 +7,7 @@ use super::*;
 use crate::TypedVulkanStructure;
 
 pub const VK_KHR_LINE_RASTERIZATION_SPEC_VERSION: usize = 1;
-pub const VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME: &'static str = "VK_KHR_line_rasterization";
+pub const VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME: &str = "VK_KHR_line_rasterization";
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR: VkStructureType =

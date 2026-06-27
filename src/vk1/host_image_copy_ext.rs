@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_EXT_host_image_copy.html
 
 pub const VK_EXT_HOST_IMAGE_COPY_SPEC_VERISON: usize = 1;
-pub const VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME: &'static str = "VK_EXT_host_image_copy";
+pub const VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME: &str = "VK_EXT_host_image_copy";
 
 use super::*;
 

@@ -1,7 +1,7 @@
 //! https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_dynamic_rendering.html
 
 pub const VK_KHR_DYNAMIC_RENDERING_SPEC_VERSION: usize = 1;
-pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME: &'static str = "VK_KHR_dynamic_rendering";
+pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering";
 
 use super::*;
 use crate::vk2::*;

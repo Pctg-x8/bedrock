@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_shader_expect_assume.html
 
 pub const VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION: usize = 1;
-pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME: &'static str = "VK_KHR_shader_expect_assume";
+pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME: &str = "VK_KHR_shader_expect_assume";
 
 use super::*;
 use crate::vk2::*;

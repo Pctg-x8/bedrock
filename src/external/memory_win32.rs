@@ -53,6 +53,9 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkImportMemoryWin32HandleInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkImportMemoryWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -66,6 +69,9 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
         self
     }
 
+    /// # Safety
+    ///
+    /// `self` must be a valid value for type of T.
     pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
@@ -106,6 +112,9 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkExportMemoryWin32HandleInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkExportMemoryWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -119,6 +128,9 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
         self
     }
 
+    /// # Safety
+    ///
+    /// `self` must be a valid value for type of T.
     pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
@@ -158,6 +170,9 @@ impl<'d> MemoryGetWin32HandleInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkMemoryGetWin32HandleInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkMemoryGetWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -166,6 +181,9 @@ impl<'d> MemoryGetWin32HandleInfo<'d> {
         self.0
     }
 
+    /// # Safety
+    ///
+    /// `self` must be a valid value for type of T.
     pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }

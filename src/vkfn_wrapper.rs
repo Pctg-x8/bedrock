@@ -1,13 +1,13 @@
 use ffi_helper::opt_pointer;
 
 use crate::*;
-use core::mem::MaybeUninit;
+use core::{ffi::CStr, mem::MaybeUninit, ptr::null_mut};
 
 #[inline]
 pub fn instance_layer_property_count() -> crate::Result<u32> {
     let mut n = 0;
     unsafe {
-        crate::vkfn::enumerate_instance_layer_properties(&mut n, core::ptr::null_mut()).into_result()?;
+        crate::vkfn::enumerate_instance_layer_properties(&mut n, null_mut()).into_result()?;
     }
 
     Ok(n)
@@ -24,13 +24,13 @@ pub fn instance_layer_properties(sink: &mut [core::mem::MaybeUninit<VkLayerPrope
 }
 
 #[inline]
-pub fn instance_extension_property_count(layer_name: Option<&core::ffi::CStr>) -> crate::Result<u32> {
+pub fn instance_extension_property_count(layer_name: Option<&CStr>) -> crate::Result<u32> {
     let mut n = 0;
     unsafe {
         crate::vkfn::enumerate_instance_extension_properties(
             crate::ffi_helper::opt_cstr_ptr(layer_name),
             &mut n,
-            core::ptr::null_mut(),
+            null_mut(),
         )
         .into_result()?;
     }
@@ -40,7 +40,7 @@ pub fn instance_extension_property_count(layer_name: Option<&core::ffi::CStr>) -
 
 #[inline]
 pub fn instance_extension_properties(
-    layer_name: Option<&core::ffi::CStr>,
+    layer_name: Option<&CStr>,
     sink: &mut [core::mem::MaybeUninit<VkExtensionProperties>],
 ) -> crate::Result<u32> {
     let mut n = sink.len() as _;
@@ -57,6 +57,9 @@ pub fn instance_extension_properties(
 }
 
 #[inline]
+/// # Safety
+///
+/// allocation_callbacks must be valid for the lifetime of the instance.
 pub unsafe fn create_instance(
     info: &InstanceCreateInfo,
     allocation_callbacks: Option<&VkAllocationCallbacks>,
@@ -75,6 +78,9 @@ pub unsafe fn create_instance(
 }
 
 #[inline]
+/// # Safety
+///
+/// instance must be valid.
 pub unsafe fn physical_device_count(instance: VkInstance) -> crate::Result<u32> {
     let mut n = 0;
     unsafe {
@@ -85,6 +91,9 @@ pub unsafe fn physical_device_count(instance: VkInstance) -> crate::Result<u32> 
 }
 
 #[inline]
+/// # Safety
+///
+/// instance must be valid for the lifetime of the returned physical devices.
 pub unsafe fn enumerate_physical_devices(
     instance: VkInstance,
     sink: &mut [core::mem::MaybeUninit<VkPhysicalDevice>],
@@ -98,6 +107,9 @@ pub unsafe fn enumerate_physical_devices(
 }
 
 #[inline]
+/// # Safety
+///
+/// physical_device must be valid.
 pub unsafe fn get_physical_device_features(
     physical_device: VkPhysicalDevice,
     sink: &mut MaybeUninit<PhysicalDeviceFeatures>,
@@ -106,6 +118,9 @@ pub unsafe fn get_physical_device_features(
 }
 
 #[inline]
+/// # Safety
+///
+/// physical_device must be valid.
 pub unsafe fn get_physical_device_properties(
     physical_device: VkPhysicalDevice,
     sink: &mut MaybeUninit<PhysicalDeviceProperties>,
@@ -114,6 +129,9 @@ pub unsafe fn get_physical_device_properties(
 }
 
 #[inline]
+/// # Safety
+///
+/// physical_device must be valid.
 pub unsafe fn get_physical_device_memory_properties(
     physical_device: VkPhysicalDevice,
     sink: &mut MaybeUninit<PhysicalDeviceMemoryProperties>,
@@ -785,6 +803,10 @@ pub unsafe fn create_semaphore(
     Ok(unsafe { h.assume_init() })
 }
 
+/// # Safety
+///
+/// * `device` and `semaphore` must be a valid device handle and semaphore handle, respectively.
+/// * `semaphore` must be created from the `device`.
 #[inline]
 pub unsafe fn destroy_semaphore(
     device: VkDevice,
@@ -794,6 +816,9 @@ pub unsafe fn destroy_semaphore(
     unsafe { crate::vkfn::destroy_semaphore(device, semaphore, opt_pointer(allocation_callbacks)) }
 }
 
+/// # Safety
+///
+/// * `device` must be a valid device handle.
 #[inline]
 pub unsafe fn create_buffer(
     device: VkDevice,
@@ -814,6 +839,10 @@ pub unsafe fn create_buffer(
     Ok(unsafe { h.assume_init() })
 }
 
+/// # Safety
+///
+/// * `device` and `buffer` must be a valid device handle and buffer handle, respectively.
+/// * `buffer` must be created from the `device`.
 #[inline]
 pub unsafe fn destroy_buffer(device: VkDevice, buffer: VkBuffer, allocation_callbacks: Option<&VkAllocationCallbacks>) {
     unsafe { crate::vkfn::destroy_buffer(device, buffer, opt_pointer(allocation_callbacks)) }
@@ -839,6 +868,9 @@ pub unsafe fn get_buffer_memory_requirements2(
     unsafe { crate::vkfn::get_buffer_memory_requirements2(device, info.as_ref() as *const _, sink.as_mut_ptr()) }
 }
 
+/// # Safety
+///
+/// `device` and `buffer` must be a valid device handle.
 #[inline]
 pub unsafe fn bind_buffer_memory(
     device: VkDevice,
@@ -853,6 +885,9 @@ pub unsafe fn bind_buffer_memory(
     }
 }
 
+/// # Safety
+///
+/// `device` must be a valid device handle.
 #[cfg(feature = "Allow1_1APIs")]
 #[inline]
 pub unsafe fn bind_buffer_memory2(device: VkDevice, bind_infos: &[BindBufferMemoryInfo]) -> crate::Result<()> {
@@ -864,15 +899,15 @@ pub unsafe fn bind_buffer_memory2(device: VkDevice, bind_infos: &[BindBufferMemo
 }
 
 #[inline]
-pub unsafe fn create_image(
-    device: VkDevice,
+pub fn create_image(
+    device: DeviceHandle,
     create_info: &ImageCreateInfo,
     allocation_callbacks: Option<&VkAllocationCallbacks>,
 ) -> crate::Result<VkImage> {
     let mut h = MaybeUninit::uninit();
     unsafe {
         crate::vkfn::create_image(
-            device,
+            device.into_raw(),
             create_info as *const _ as _,
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
@@ -883,6 +918,10 @@ pub unsafe fn create_image(
     Ok(unsafe { h.assume_init() })
 }
 
+/// # Safety
+///
+/// * `device` and `image` must be a valid device handle and image handle, respectively.
+/// * `image` must be created from the `device`.
 #[inline]
 pub unsafe fn destroy_image(device: VkDevice, image: VkImage, allocation_callbacks: Option<&VkAllocationCallbacks>) {
     unsafe { crate::vkfn::destroy_image(device, image, opt_pointer(allocation_callbacks)) }
@@ -908,6 +947,9 @@ pub unsafe fn get_image_memory_requirements2(
     unsafe { crate::vkfn::get_image_memory_requirements2(device, info.as_ref() as *const _, sink.as_mut_ptr()) }
 }
 
+/// # Safety
+///
+/// `device` and `image` must be a valid device handle and image handle, respectively.
 #[inline]
 pub unsafe fn bind_image_memory(
     device: VkDevice,
@@ -922,6 +964,9 @@ pub unsafe fn bind_image_memory(
     }
 }
 
+/// # Safety
+///
+/// `device` must be a valid device handle.
 #[cfg(feature = "Allow1_1APIs")]
 #[inline]
 pub unsafe fn bind_image_memory2(device: VkDevice, bind_infos: &[BindImageMemoryInfo]) -> crate::Result<()> {

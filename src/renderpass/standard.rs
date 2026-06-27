@@ -219,6 +219,9 @@ impl<'r> RenderPassCreateInfo<'r> {
         }
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkRenderPassCreateInfo`] struct.
     pub const unsafe fn from_raw(raw: VkRenderPassCreateInfo) -> Self {
         Self {
             base: raw,

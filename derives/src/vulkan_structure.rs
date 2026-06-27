@@ -66,14 +66,14 @@ pub fn extract_required_head_fields(input: &FieldsNamed) -> syn::Result<(&Field,
         ));
     };
 
-    if !first_field.ident.as_ref().is_some_and(|x| x == "sType") {
+    if first_field.ident.as_ref().is_none_or(|x| x != "sType") {
         return Err(syn::Error::new(
             first_field.span(),
             "VulkanStructure requires `sType` field at first position",
         ));
     }
 
-    if !second_field.ident.as_ref().is_some_and(|x| x == "pNext") {
+    if second_field.ident.as_ref().is_none_or(|x| x != "pNext") {
         return Err(syn::Error::new(
             second_field.span(),
             "VulkanStructure requires `pNext` field at second position",
@@ -104,7 +104,7 @@ pub fn derive(tok: TokenStream) -> TokenStream {
     };
 
     let fields = try_compile_error!(require_named_field_struct(&input));
-    try_compile_error!(extract_required_head_fields(&fields));
+    try_compile_error!(extract_required_head_fields(fields));
 
     quote! {
         unsafe impl #impl_generics crate::VulkanStructure for #name #ty_generics #where_clause {
@@ -118,7 +118,7 @@ pub fn derive(tok: TokenStream) -> TokenStream {
                 unsafe { core::mem::transmute(self) }
             }
         }
-        unsafe impl #impl_generics crate::TypedVulkanStructure for #name #ty_generics #where_clause {
+        impl #impl_generics crate::TypedVulkanStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
     }
@@ -146,7 +146,7 @@ pub fn derive_sink(tok: TokenStream) -> TokenStream {
     };
 
     let fields = try_compile_error!(require_named_field_struct(&input));
-    let (_, next_ptr_field) = try_compile_error!(extract_required_head_fields(&fields));
+    let (_, next_ptr_field) = try_compile_error!(extract_required_head_fields(fields));
     if !matches!(
         next_ptr_field.ty,
         syn::Type::Ptr(syn::TypePtr {
@@ -172,7 +172,7 @@ pub fn derive_sink(tok: TokenStream) -> TokenStream {
                 unsafe { core::mem::transmute(self) }
             }
         }
-        unsafe impl #impl_generics crate::TypedVulkanSinkStructure for #name #ty_generics #where_clause {
+        impl #impl_generics crate::TypedVulkanSinkStructure for #name #ty_generics #where_clause {
             const TYPE: VkStructureType = #ty;
         }
     }

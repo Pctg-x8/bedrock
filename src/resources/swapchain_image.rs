@@ -45,10 +45,7 @@ impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
     /// Clones parent reference
     #[inline(always)]
     pub fn clone_parent(self) -> SwapchainImage<Swapchain> {
-        let r = SwapchainImage(self.0, self.1.clone(), self.2, self.3.clone());
-        // disable dropping self.0
-        std::mem::forget(self);
-        r
+        SwapchainImage(self.0, self.1.clone(), self.2, self.3)
     }
 }
 impl<Swapchain> SwapchainImage<Swapchain> {

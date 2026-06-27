@@ -1,7 +1,7 @@
 //! Device Extension - https://registry.khronos.org/vulkan/specs/latest/man/html/VK_KHR_shader_float_controls.html
 
 pub const VK_KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION: usize = 4;
-pub const VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME: &'static str = "VK_KHR_shader_float_controls";
+pub const VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls";
 
 use super::*;
 use crate::vk2::*;

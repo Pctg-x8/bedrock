@@ -64,6 +64,9 @@ impl<'d> ImportSemaphoreWin32HandleInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkImportSemaphoreWin32HandleInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkImportSemaphoreWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -96,6 +99,9 @@ impl<'d> SemaphoreGetWin32HandleInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkSemaphoreGetWin32HandleInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkSemaphoreGetWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -126,6 +132,9 @@ impl<'t> D3D12FenceSubmitInfo<'t> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkD3D12FenceSubmitInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkD3D12FenceSubmitInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
@@ -179,6 +188,9 @@ impl<'d> ExportSemaphoreWin32HandleInfo<'d> {
         )
     }
 
+    /// # Safety
+    ///
+    /// `raw` must be a valid [`VkExportSemaphoreWin32HandleInfoKHR`] struct.
     pub const unsafe fn from_raw(raw: VkExportSemaphoreWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
