@@ -350,20 +350,14 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle 
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn data_len(&self) -> crate::Result<usize> {
-        let mut n = 0;
         unsafe {
-            crate::vkfn::get_pipeline_cache_data(
-                self.device_handle(),
-                self.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
+            crate::vkfn_wrapper::get_pipeline_cache_data_byte_length(
+                self.device_transparent_ref(),
+                self.as_transparent_ref(),
             )
-            .into_result()?;
         }
-
-        Ok(n)
     }
 
     /// Get the content of the data store from a pipeline cache
@@ -373,20 +367,15 @@ pub trait PipelineCache: VkHandle<Handle = VkPipelineCache> + DeviceChildHandle 
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
-    fn data_into(&self, store: &mut [u8]) -> crate::Result<usize> {
-        let mut dl = store.len();
+    #[inline(always)]
+    fn data_into(&self, store: &mut [core::mem::MaybeUninit<u8>]) -> crate::Result<ArrayQueryResult<usize>> {
         unsafe {
-            crate::vkfn::get_pipeline_cache_data(
-                self.device_handle(),
-                self.native_ptr(),
-                &mut dl,
-                store.as_mut_ptr() as _,
+            crate::vkfn_wrapper::get_pipeline_cache_data(
+                self.device_transparent_ref(),
+                self.as_transparent_ref(),
+                store,
             )
-            .into_result()?;
         }
-
-        Ok(dl)
     }
 }
 DerefContainerBracketImpl!(for PipelineCache {});
@@ -466,7 +455,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineLayoutObject<Device> 
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_pipeline_layout(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_pipeline_layout(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -559,7 +552,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for PipelineObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_pipeline(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_pipeline(self.1.as_transparent_ref(), VkHandleRefMut::dangling(self.0), None);
         }
     }
 }

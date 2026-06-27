@@ -28,23 +28,16 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
-    #[inline]
+    #[inline(always)]
     unsafe fn map_raw(&mut self, range: core::ops::Range<VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
-        let mut p = core::mem::MaybeUninit::uninit();
-
         unsafe {
-            crate::vkfn::map_memory(
-                self.device_handle(),
-                self.native_ptr_mut(),
-                range.start,
-                range.end - range.start,
+            crate::vkfn_wrapper::map_memory(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                range,
                 0,
-                p.as_mut_ptr(),
             )
-            .into_result()?;
         }
-
-        Ok(unsafe { p.assume_init() })
     }
 
     /// Map a memory object into application address space
@@ -55,10 +48,12 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
+    #[inline]
     fn map<'a>(&'a mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemory<'a, Self>> {
-        let p = unsafe { self.map_raw(range.start as _..range.end as _)? };
-
-        Ok(MappedMemory(p, self))
+        Ok(MappedMemory(
+            unsafe { self.map_raw(range.start as _..range.end as _)? },
+            self,
+        ))
     }
 
     /// Unmap a previously mapped memory object
@@ -66,9 +61,14 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// Caller must guarantee that there is no `MappedMemoryRange` alives.
     /// Accessing the mapped memory after this call has undefined behavior
     #[implements]
-    #[inline]
+    #[inline(always)]
     unsafe fn unmap(&mut self) {
-        unsafe { crate::vkfn::unmap_memory(self.device_handle(), self.native_ptr_mut()) }
+        unsafe {
+            crate::vkfn_wrapper::unmap_memory(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+            )
+        }
     }
 }
 DerefContainerBracketImpl!(for mut DeviceMemoryMut {});
@@ -82,7 +82,7 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for DeviceMemoryObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::free_memory(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::free_memory(self.device_transparent_ref(), VkHandleRefMut::dangling(self.0), None);
         }
     }
 }

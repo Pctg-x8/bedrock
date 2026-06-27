@@ -43,7 +43,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for RenderPassObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_render_pass(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_render_pass(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }

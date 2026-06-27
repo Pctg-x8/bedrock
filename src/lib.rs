@@ -125,12 +125,64 @@ mod handle;
 pub use self::handle::*;
 
 /// An result type of querying an array of objects
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ArrayQueryResult {
-    /// Objects are queried successfully
-    Complete,
-    /// There are some objects left(i.e. buffer was too small)
-    Incomplete,
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct ArrayQueryResult<T> {
+    /// The result value of the query.
+    pub result: T,
+    /// * false: Objects are queried successfully.
+    /// * true: There are some objects left(i.e. buffer was too small).
+    pub is_incomplete: bool,
+}
+impl ArrayQueryResult<()> {
+    #[inline(always)]
+    pub(crate) fn from_vk_result(r: VkResult) -> Result<Self> {
+        match r {
+            VK_SUCCESS => Ok(Self {
+                result: (),
+                is_incomplete: false,
+            }),
+            VK_INCOMPLETE => Ok(Self {
+                result: (),
+                is_incomplete: true,
+            }),
+            e if e.is_err() => Err(e),
+            e => unreachable!("unexpected result: {e:?}"),
+        }
+    }
+}
+impl<T> ArrayQueryResult<T> {
+    #[inline(always)]
+    pub(crate) const fn completed(result: T) -> Self {
+        Self {
+            result,
+            is_incomplete: false,
+        }
+    }
+
+    #[inline(always)]
+    pub fn with_result<U>(self, v: U) -> ArrayQueryResult<U> {
+        ArrayQueryResult {
+            result: v,
+            is_incomplete: self.is_incomplete,
+        }
+    }
+
+    #[inline(always)]
+    pub fn map_result<U>(self, f: impl FnOnce(T) -> U) -> ArrayQueryResult<U> {
+        ArrayQueryResult {
+            result: f(self.result),
+            is_incomplete: self.is_incomplete,
+        }
+    }
+}
+
+#[cfg(feature = "VK_KHR_swapchain")]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub enum PresentResult {
+    /// All requests presented successfully.
+    Success,
+    /// The presentation was suboptimal, but the swapchain can still be used.
+    Suboptimal,
 }
 
 /// An object in Vulkan

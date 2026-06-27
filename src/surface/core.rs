@@ -12,7 +12,7 @@ impl<Instance: crate::Instance> Drop for SurfaceObject<Instance> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_surface_khr(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_surface(self.1.as_transparent_ref(), VkHandleRefMut::dangling(self.0), None);
         }
     }
 }

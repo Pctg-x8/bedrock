@@ -136,26 +136,6 @@ impl<Instance: crate::Instance> DeviceObject<Instance> {
     }
 }
 
-/// Valid handle of a [`VkDevice`].
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, VkHandle)]
-pub struct DeviceHandle(VkDevice);
-impl DeviceHandle {
-    /// Constructs a [`DeviceHandle`] from a raw [`VkDevice`] handle.
-    ///
-    /// # Safety
-    ///
-    /// `raw` must be a valid device handle.
-    pub const unsafe fn from_raw(raw: VkDevice) -> Self {
-        Self(raw)
-    }
-
-    /// Converts this [`DeviceHandle`] back into a raw [`VkDevice`] handle.
-    pub const fn into_raw(self) -> VkDevice {
-        self.0
-    }
-}
-
 /// Family Index, Queue Priorities
 #[repr(transparent)]
 pub struct DeviceQueueCreateInfo<'d>(VkDeviceQueueCreateInfo, core::marker::PhantomData<&'d [f32]>);
@@ -436,24 +416,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_INVALID_EXTERNAL_HANDLE`]
     /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn allocate_memory(
         &self,
         info: &MemoryAllocateInfo,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkDeviceMemory> {
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::allocate_memory(
-                self.native_ptr(),
-                info as *const _ as _,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-
-        Ok(unsafe { h.assume_init() })
+        crate::vkfn_wrapper::allocate_memory(self.as_transparent_ref(), info, allocation_callbacks)
     }
 
     /// Create a new buffer object
@@ -658,24 +627,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn new_framebuffer_raw(
         &self,
         info: &FramebufferCreateInfo,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkFramebuffer> {
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_framebuffer(
-                self.native_ptr(),
-                info as *const _ as _,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-
-        Ok(unsafe { h.assume_init() })
+        unsafe { crate::vkfn_wrapper::create_framebuffer(self.as_transparent_ref(), info, allocation_callbacks) }
     }
 
     /// Creates a new shader module object
@@ -740,24 +698,13 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn new_pipeline_layout_raw(
         &self,
         info: &PipelineLayoutCreateInfo,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
     ) -> crate::Result<VkPipelineLayout> {
-        let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::create_pipeline_layout(
-                self.native_ptr(),
-                info as *const _ as _,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                h.as_mut_ptr(),
-            )
-            .into_result()?;
-        }
-
-        Ok(unsafe { h.assume_init() })
+        crate::vkfn_wrapper::create_pipeline_layout(self.as_transparent_ref(), info, allocation_callbacks)
     }
 
     /// Create graphics pipelines
@@ -770,24 +717,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// # Safety
     /// no guarantees will be provided (simply calls under api)
     #[implements]
+    #[inline(always)]
     unsafe fn new_graphics_pipelines_raw(
         &self,
         infos: &[GraphicsPipelineCreateInfo],
-        cache: Option<VkPipelineCache>,
+        cache: Option<VkHandleRef<VkPipelineCache>>,
         allocation_callbacks: Option<&VkAllocationCallbacks>,
         objects: &mut [core::mem::MaybeUninit<VkPipeline>],
     ) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::create_graphics_pipelines(
-                self.native_ptr(),
+            crate::vkfn_wrapper::create_graphics_pipelines(
+                self.as_transparent_ref(),
                 cache,
-                infos.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(infos) as _,
-                crate::ffi_helper::opt_pointer(allocation_callbacks),
-                objects.as_mut_ptr() as _,
+                infos,
+                allocation_callbacks,
+                objects,
             )
-            .into_result()
-            .map(drop)
         }
     }
 
@@ -806,7 +751,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut hs = vec![core::mem::MaybeUninit::uninit(); infos.len()];
 
         unsafe {
-            self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
+            self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::as_transparent_ref), None, &mut hs)?;
         }
 
         Ok(crate::alloc::collect_vec(hs.into_iter().map(move |h| unsafe {
@@ -829,7 +774,7 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         let mut hs = [core::mem::MaybeUninit::<VkPipeline>::uninit(); N];
 
         unsafe {
-            self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::native_ptr), None, &mut hs)?;
+            self.new_graphics_pipelines_raw(infos, cache.map(VkHandle::as_transparent_ref), None, &mut hs)?;
         }
 
         Ok(core::array::from_fn(move |n| unsafe {
@@ -968,78 +913,6 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
         Ok(unsafe { h.assume_init() })
     }
 
-    /// Allocate command buffers from an existing command pool
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    ///
-    /// # Safety
-    /// A `VkCommandPool` specified in the `info` argument must be created from this device
-    #[implements]
-    #[inline]
-    unsafe fn allocate_command_buffers<'s>(
-        &'s self,
-        info: &CommandBufferAllocateInfo,
-        sink: &mut [core::mem::MaybeUninit<CommandBufferObject<&'s Self>>],
-    ) -> crate::Result<()> {
-        assert_eq!(info.0.commandBufferCount as usize, sink.len());
-
-        unsafe {
-            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
-                .into_result()
-                .map(drop)
-        }
-    }
-
-    /// Allocate command buffers from an existing command pool
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    ///
-    /// # Safety
-    /// A `VkCommandPool` specified in the `info` argument must be created from this device
-    #[implements("alloc")]
-    unsafe fn allocate_command_buffers_alloc<'s>(
-        &'s self,
-        info: &CommandBufferAllocateInfo,
-    ) -> crate::Result<Vec<CommandBufferObject<&'s Self>>> {
-        let mut sink = Vec::with_capacity(info.0.commandBufferCount as _);
-        unsafe {
-            self.allocate_command_buffers(info, sink.spare_capacity_mut())?;
-            sink.set_len(info.0.commandBufferCount as _);
-        }
-
-        Ok(sink)
-    }
-
-    /// Allocate command buffers from an existing command pool
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    ///
-    /// # Safety
-    /// A `VkCommandPool` specified in the `info` argument must be created from this device
-    #[implements]
-    #[inline]
-    unsafe fn allocate_command_buffer_array<'s, const N: usize>(
-        &'s self,
-        info: &CommandBufferFixedCountAllocateInfo<N>,
-    ) -> crate::Result<[CommandBufferObject<&'s Self>; N]> {
-        let mut sink = [core::mem::MaybeUninit::<CommandBufferObject<&'s Self>>::uninit(); N];
-        unsafe {
-            crate::vkfn::allocate_command_buffers(self.native_ptr(), info as *const _ as _, sink.as_mut_ptr() as _)
-                .into_result()?;
-        }
-
-        Ok(core::array::from_fn(|n| unsafe { sink[n].assume_init() }))
-    }
-
     /// Invalidate `MappedMemoryRange`s
     /// Invalidating the memory range allows that device writes to the memory ranges
     /// which have been made visible to the `VK_ACCESS_HOST_WRITE_BIT` and `VK_ACCESS_HOST_READ_BIT`
@@ -1146,18 +1019,22 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     #[inline(always)]
     unsafe fn bind_buffer_raw(
         &self,
-        buffer: VkBuffer,
-        memory: VkDeviceMemory,
+        buffer: VkHandleRef<VkBuffer>,
+        memory: VkHandleRef<VkDeviceMemory>,
         offset: VkDeviceSize,
     ) -> crate::Result<()> {
-        unsafe { crate::vkfn_wrapper::bind_buffer_memory(self.native_ptr(), buffer, memory, offset) }
+        unsafe { crate::vkfn_wrapper::bind_buffer_memory(self.as_transparent_ref(), buffer, memory, offset) }
     }
 
     /// Multiple Binding for Buffers
+    ///
+    /// # Safety
+    ///
+    /// buffers in `bounds` must be created from this device.
     #[implements("Allow1_1APIs")]
     #[inline(always)]
-    fn bind_buffers(&self, bounds: &[BindBufferMemoryInfo]) -> crate::Result<()> {
-        unsafe { crate::vkfn_wrapper::bind_buffer_memory2(self.native_ptr(), bounds) }
+    unsafe fn bind_buffers(&self, bounds: &[BindBufferMemoryInfo]) -> crate::Result<()> {
+        unsafe { crate::vkfn_wrapper::bind_buffer_memory2(self.as_transparent_ref(), bounds) }
     }
 
     /// Single binding for an image
@@ -1165,15 +1042,24 @@ pub trait Device: VkHandle<Handle = VkDevice> + InstanceChild {
     /// `VkImage` and `VkDeviceMemory` must be valid and created from this device object
     #[implements]
     #[inline(always)]
-    unsafe fn bind_image_raw(&self, image: VkImage, memory: VkDeviceMemory, offset: VkDeviceSize) -> crate::Result<()> {
-        unsafe { crate::vkfn_wrapper::bind_image_memory(self.native_ptr(), image, memory, offset) }
+    unsafe fn bind_image_raw(
+        &self,
+        image: VkHandleRef<VkImage>,
+        memory: VkHandleRef<VkDeviceMemory>,
+        offset: VkDeviceSize,
+    ) -> crate::Result<()> {
+        unsafe { crate::vkfn_wrapper::bind_image_memory(self.as_transparent_ref(), image, memory, offset) }
     }
 
     /// Multiple Binding for Images
+    ///
+    /// # Safety
+    ///
+    /// images in `bounds` must be created from this device.
     #[implements("Allow1_1APIs")]
     #[inline(always)]
-    fn bind_images(&self, bounds: &[BindImageMemoryInfo]) -> crate::Result<()> {
-        unsafe { crate::vkfn_wrapper::bind_image_memory2(self.native_ptr(), bounds) }
+    unsafe fn bind_images(&self, bounds: &[BindImageMemoryInfo]) -> crate::Result<()> {
+        unsafe { crate::vkfn_wrapper::bind_image_memory2(self.as_transparent_ref(), bounds) }
     }
 
     /// Wait for one or more fences to become signaled, returns `Ok(true)` if operation is timed out
@@ -2339,6 +2225,11 @@ impl<Instance: crate::Instance> DeviceTimelineSemaphoreExtension for DeviceObjec
 pub trait DeviceChildHandle {
     /// Retrieve a reference to a device handle that creates this objecs
     fn device_handle(&self) -> VkDevice;
+
+    #[inline(always)]
+    fn device_transparent_ref<'a>(&'a self) -> VkHandleRef<'a, VkDevice> {
+        unsafe { VkHandleRef::dangling(self.device_handle()) }
+    }
 }
 DerefContainerBracketImpl!(for DeviceChildHandle {
     #[inline(always)]
@@ -2436,29 +2327,20 @@ pub trait QueueMut: Queue + VkHandleMut {
     #[implements]
     #[inline(always)]
     fn wait(&mut self) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_wait_idle(self.native_ptr_mut())
-                .into_result()
-                .map(drop)
-        }
+        crate::vkfn_wrapper::queue_wait_idle(self.as_transparent_ref_mut())
     }
 
-    /// Bind device memory to a sparse resource object
+    /// Submits a sequence of semaphores or command buffers to a queue
     /// # Failure
     /// On failure, this command returns
     ///
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[implements("alloc")]
-    fn bind_sparse(
-        &mut self,
-        batches: &[impl SparseBindingOpBatch],
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        let batches: Vec<_> = crate::alloc::collect_vec(batches.iter().map(SparseBindingOpBatch::make_info_struct));
-
-        unsafe { self.bind_sparse_raw(&batches, fence) }
+    #[implements]
+    #[inline(always)]
+    fn submit(&mut self, batches: &[SubmitInfo], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
+        crate::vkfn_wrapper::queue_submit(self.as_transparent_ref_mut(), batches, fence)
     }
 
     /// Bind device memory to a sparse resource object
@@ -2470,21 +2352,82 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_DEVICE_LOST`
     #[implements]
     #[inline(always)]
-    fn bind_sparse2(
+    fn bind_sparse(&mut self, batches: &[BindSparseInfo], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
+        crate::vkfn_wrapper::queue_bind_sparse(self.as_transparent_ref_mut(), batches, fence)
+    }
+
+    /// Queue images for presentation
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`VK_ERROR_OUT_OF_DATE_KHR`]
+    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    #[implements("VK_KHR_swapchain")]
+    #[inline(always)]
+    fn present<'r>(&mut self, info: &PresentInfo<'r>) -> crate::Result<PresentResult> {
+        crate::vkfn_wrapper::queue_present(self.as_transparent_ref_mut(), info)
+    }
+
+    /// Submits command buffers to a queue
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    #[implements("VK_KHR_synchronization2")]
+    fn submit2_khr(
         &mut self,
-        batches: &[BindSparseInfo],
+        device: &(impl DeviceSynchronization2Extension + ?Sized),
+        batches: &[SubmitInfo2],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::queue_bind_sparse(
+            (device.queue_submit2_khr_fn().0)(
                 self.native_ptr_mut(),
                 batches.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(batches).cast(),
+                slice_as_ptr_empty_null(batches).cast(),
                 fence.map(|x| x.0),
             )
             .into_result()
             .map(drop)
         }
+    }
+
+    /// Submits command buffers to a queue
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`VK_ERROR_DEVICE_LOST`]
+    #[implements("Allow1_3APIs")]
+    fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
+        crate::vkfn_wrapper::queue_submit2(self.as_transparent_ref_mut(), batches, fence)
+    }
+
+    // --- DEPRECATED APIS ---
+
+    /// Bind device memory to a sparse resource object
+    /// # Failure
+    /// On failure, this command returns
+    ///
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
+    #[deprecated = "use `bind_sparse` with creating `BindSparseInfo`"]
+    #[implements("alloc")]
+    fn bind_sparse_ops(
+        &mut self,
+        batches: &[impl SparseBindingOpBatch],
+        fence: Option<VkHandleRefMut<VkFence>>,
+    ) -> crate::Result<()> {
+        let batches: Vec<_> = crate::alloc::collect_vec(batches.iter().map(SparseBindingOpBatch::make_info_struct));
+
+        unsafe { self.bind_sparse_raw(&batches, fence) }
     }
 
     /// Bind device memory to a sparse resource object
@@ -2522,9 +2465,10 @@ pub trait QueueMut: Queue + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_DEVICE_LOST`
-    #[implements("alloc")]
+    #[deprecated = "use `submit` with creating `SubmitInfo"]
     #[allow(deprecated)]
-    fn submit(
+    #[implements("alloc")]
+    fn submit_ops(
         &mut self,
         batches: &[impl SubmissionBatch],
         fence: Option<VkHandleRefMut<VkFence>>,
@@ -2540,7 +2484,7 @@ pub trait QueueMut: Queue + VkHandleMut {
                 .map(TemporalSubmissionBatchResources::make_info_struct),
         );
 
-        unsafe { self.submit_raw(&batches, fence) }
+        unsafe { self.submit_raw(core::mem::transmute::<&[SubmitInfo], &[VkSubmitInfo]>(&batches), fence) }
     }
 
     /// Submits a sequence of semaphores or command buffers to a queue
@@ -2556,7 +2500,7 @@ pub trait QueueMut: Queue + VkHandleMut {
     #[implements]
     unsafe fn submit_raw(
         &mut self,
-        batches: &[SubmitInfo],
+        batches: &[VkSubmitInfo],
         fence: Option<VkHandleRefMut<VkFence>>,
     ) -> crate::Result<()> {
         unsafe {
@@ -2568,71 +2512,6 @@ pub trait QueueMut: Queue + VkHandleMut {
             )
             .into_result()
             .map(drop)
-        }
-    }
-
-    /// Submits command buffers to a queue
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_DEVICE_LOST`]
-    #[implements("VK_KHR_synchronization2")]
-    fn submit2_khr(
-        &mut self,
-        device: &(impl DeviceSynchronization2Extension + ?Sized),
-        batches: &[SubmitInfo2],
-        fence: Option<VkHandleRefMut<VkFence>>,
-    ) -> crate::Result<()> {
-        unsafe {
-            (device.queue_submit2_khr_fn().0)(
-                self.native_ptr_mut(),
-                batches.len() as _,
-                slice_as_ptr_empty_null(batches) as _,
-                fence.map(|x| x.0),
-            )
-            .into_result()
-            .map(drop)
-        }
-    }
-
-    /// Submits command buffers to a queue
-    /// # Failure
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_DEVICE_LOST`]
-    #[implements("Allow1_3APIs")]
-    fn submit2(&mut self, batches: &[SubmitInfo2], fence: Option<VkHandleRefMut<VkFence>>) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_submit2(
-                self.native_ptr_mut(),
-                batches.len() as _,
-                slice_as_ptr_empty_null(batches) as _,
-                fence.map(|x| x.0),
-            )
-            .into_result()
-            .map(drop)
-        }
-    }
-
-    /// Queue images for presentation
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_DEVICE_LOST`]
-    /// * [`VK_ERROR_OUT_OF_DATE_KHR`]
-    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
-    #[implements("VK_KHR_swapchain")]
-    fn present<'r>(&mut self, info: &PresentInfo<'r>) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::queue_present_khr(self.native_ptr_mut(), info as *const _ as _)
-                .into_result()
-                .map(drop)
         }
     }
 }
@@ -2685,7 +2564,8 @@ impl<'r> PresentInfo<'r> {
     }
 
     #[implements]
-    pub fn submit(&self, queue: &mut (impl QueueMut + ?Sized)) -> crate::Result<()> {
+    #[inline(always)]
+    pub fn submit(&self, queue: &mut (impl QueueMut + ?Sized)) -> crate::Result<PresentResult> {
         queue.present(self)
     }
 }

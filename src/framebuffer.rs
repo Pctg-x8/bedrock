@@ -19,7 +19,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for FramebufferObject<'_, Device>
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_framebuffer(self.parent.native_ptr(), self.handle, std::ptr::null());
+            crate::vkfn_wrapper::destroy_framebuffer(
+                self.parent.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.handle),
+                None,
+            );
         }
     }
 }

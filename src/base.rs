@@ -422,7 +422,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     #[implements]
     #[inline(always)]
     fn physical_device_count(&self) -> crate::Result<u32> {
-        unsafe { crate::vkfn_wrapper::physical_device_count(self.native_ptr()) }
+        crate::vkfn_wrapper::physical_device_count(self.as_transparent_ref())
     }
 
     /// Enumerates the physical devices accessible to a Vulkan instance
@@ -435,7 +435,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     #[implements]
     #[inline(always)]
     fn enumerate_physical_devices(&self, sink: &mut [core::mem::MaybeUninit<VkPhysicalDevice>]) -> crate::Result<u32> {
-        unsafe { crate::vkfn_wrapper::enumerate_physical_devices(self.native_ptr(), sink) }
+        unsafe { crate::vkfn_wrapper::enumerate_physical_devices(self.as_transparent_ref(), sink) }
     }
 
     /// Lazyly enumerates the physical devices accessible to a Vulkan instance
@@ -1380,7 +1380,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Safety
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("VK_KHR_external_fence_capabilities")]
-    #[inline]
+    #[inline(always)]
     unsafe fn external_fence_properties(
         &self,
         info: &VkPhysicalDeviceExternalFenceInfoKHR,
@@ -1405,20 +1405,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
-    #[inline]
+    #[inline(always)]
     fn surface_support(&self, queue_family: u32, surface: &(impl Surface + ?Sized)) -> crate::Result<bool> {
-        let mut f = 0;
-
         unsafe {
-            crate::vkfn::get_physical_device_surface_support_khr(
-                self.native_ptr(),
+            crate::vkfn_wrapper::get_physical_device_surface_support(
+                self.as_transparent_ref(),
                 queue_family,
-                surface.native_ptr(),
-                &mut f,
+                surface.as_transparent_ref(),
             )
-            .into_result()?;
-
-            Ok(f != 0)
         }
     }
 
@@ -1435,13 +1429,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         let mut s = std::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::get_physical_device_surface_capabilities_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                s.as_mut_ptr(),
-            )
-            .into_result()?;
-
+            crate::vkfn_wrapper::get_physical_device_surface_capabilities(
+                self.as_transparent_ref(),
+                surface.as_transparent_ref(),
+                &mut s,
+            )?;
             Ok(s.assume_init())
         }
     }
@@ -1454,20 +1446,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
-    #[inline]
+    #[inline(always)]
     fn surface_format_count(&self, surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized)) -> crate::Result<u32> {
-        let mut n = 0;
         unsafe {
-            crate::vkfn::get_physical_device_surface_formats_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
+            crate::vkfn_wrapper::get_physical_device_surface_format_count(
+                self.as_transparent_ref(),
+                surface.as_transparent_ref(),
             )
-            .into_result()?;
         }
-
-        Ok(n)
     }
 
     /// Query a count of color formats supported by surface
@@ -1478,24 +1464,19 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
-    #[inline]
+    #[inline(always)]
     fn surface_formats(
         &self,
         surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
         sink: &mut [core::mem::MaybeUninit<VkSurfaceFormatKHR>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
+    ) -> crate::Result<ArrayQueryResult<u32>> {
         unsafe {
-            crate::vkfn::get_physical_device_surface_formats_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                sink.as_mut_ptr() as _,
+            crate::vkfn_wrapper::get_physical_device_surface_formats(
+                self.as_transparent_ref(),
+                surface.as_transparent_ref(),
+                sink,
             )
-            .into_result()?;
         }
-
-        Ok(n)
     }
 
     /// Query color formats supported by surface
@@ -1506,20 +1487,23 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface", "alloc")]
-    fn surface_formats_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<VkSurfaceFormatKHR>> {
+    fn surface_formats_alloc(
+        &self,
+        surface: &(impl Surface + ?Sized),
+    ) -> crate::Result<ArrayQueryResult<Vec<VkSurfaceFormatKHR>>> {
         let n = self.surface_format_count(surface)?;
         if n == 0 {
             // no items
-            return Ok(crate::alloc::empty_sink_buffer());
+            return Ok(ArrayQueryResult::completed(crate::alloc::empty_sink_buffer()));
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.surface_formats(surface, xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let filled = self.surface_formats(surface, xs.spare_capacity_mut())?;
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(filled.result as _);
         }
 
-        Ok(xs)
+        Ok(filled.with_result(xs))
     }
 
     /// Query a count of supported presentation modes

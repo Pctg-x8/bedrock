@@ -2,34 +2,31 @@ use crate::{ffi_helper::slice_as_ptr_empty_null, *};
 use derives::implements;
 
 pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
-    /// Retrieve the index of the next available presentation image
+    /// Obtain a count of the array of presentable images associated with a swapchain
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
-    fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandlerMut) -> crate::Result<u32> {
-        let (semaphore, fence) = match completion {
-            CompletionHandlerMut::Host(f) => (None, Some(f.0)),
-            CompletionHandlerMut::Queue(s) => (Some(s.0), None),
-        };
-
-        let mut n = 0;
+    #[inline]
+    fn image_count(&self) -> crate::Result<u32> {
         unsafe {
-            crate::vkfn::acquire_next_image_khr(
-                self.device().native_ptr(),
-                self.native_ptr(),
-                timeout.unwrap_or(u64::MAX),
-                semaphore,
-                fence,
-                &mut n,
-            )
-            .into_result()
-            .map(|_| n)
+            crate::vkfn_wrapper::get_swapchain_image_count(self.device_transparent_ref(), self.as_transparent_ref())
+        }
+    }
+
+    /// Obtain the array of presentable images associated with a swapchain
+    /// # Failures
+    /// On failure, this command returns
+    ///
+    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    #[implements]
+    #[inline(always)]
+    fn images(&self, sink: &mut [core::mem::MaybeUninit<VkImage>]) -> crate::Result<ArrayQueryResult<u32>> {
+        unsafe {
+            crate::vkfn_wrapper::get_swapchain_images(self.device_transparent_ref(), self.as_transparent_ref(), sink)
         }
     }
 
@@ -65,57 +62,38 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
                 .map(drop)
         }
     }
+}
+DerefContainerBracketImpl!(for Swapchain {});
 
-    /// Obtain a count of the array of presentable images associated with a swapchain
+pub trait SwapchainMut: Swapchain + VkHandleMut {
+    /// Retrieve the index of the next available presentation image
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `VK_ERROR_DEVICE_LOST`
+    /// * `VK_ERROR_OUT_OF_DATE_KHR`
+    /// * `VK_ERROR_SURFACE_LOST_KHR`
     #[implements]
-    #[inline]
-    fn image_count(&self) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_swapchain_images_khr(
-                self.device_handle(),
-                self.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
-    }
-
-    /// Obtain the array of presentable images associated with a swapchain
-    /// # Failures
-    /// On failure, this command returns
-    ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    #[implements]
-    #[inline]
-    fn images(&self, sink: &mut [core::mem::MaybeUninit<VkImage>]) -> crate::Result<(u32, crate::ArrayQueryResult)> {
-        let mut n = sink.len() as _;
-        let r = unsafe {
-            crate::vkfn::get_swapchain_images_khr(
-                self.device_handle(),
-                self.native_ptr(),
-                &mut n,
-                sink.as_mut_ptr() as _,
-            )
+    fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandlerMut) -> crate::Result<u32> {
+        let (semaphore, fence) = match completion {
+            CompletionHandlerMut::Host(f) => (None, Some(f)),
+            CompletionHandlerMut::Queue(s) => (Some(s), None),
         };
 
-        match r {
-            VK_SUCCESS => Ok((n, crate::ArrayQueryResult::Complete)),
-            VK_INCOMPLETE => Ok((n, crate::ArrayQueryResult::Incomplete)),
-            e => Err(e),
+        unsafe {
+            crate::vkfn_wrapper::acquire_next_image(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                timeout.unwrap_or(u64::MAX),
+                semaphore,
+                fence,
+            )
         }
     }
 }
-DerefContainerBracketImpl!(for Swapchain {});
+DerefContainerBracketImpl!(for mut SwapchainMut {});
 
 pub trait SwapchainImageExt: Swapchain {
     fn format(&self) -> VkFormat;
@@ -128,25 +106,25 @@ pub trait SwapchainImageExt: Swapchain {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("alloc")]
-    fn images_alloc(&self) -> crate::Result<Vec<crate::SwapchainImage<&Self>>>
+    fn images_alloc(&self) -> crate::Result<ArrayQueryResult<Vec<crate::SwapchainImage<&Self>>>>
     where
         Self: Sized,
     {
         let n = self.image_count()? as usize;
         if n == 0 {
             // no items
-            return Ok(crate::alloc::empty_sink_buffer());
+            return Ok(ArrayQueryResult::completed(crate::alloc::empty_sink_buffer()));
         }
 
-        let mut xs = Vec::with_capacity(n);
-        let (n, _) = self.images(xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::empty_reserved_buffer(n);
+        let res = self.images(xs.spare_capacity_mut())?;
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(res.result as _);
         }
 
-        Ok(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
+        Ok(res.with_result(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
             crate::SwapchainImage(r, self, self.format(), self.extent().with_depth(1))
-        })))
+        }))))
     }
 }
 DerefContainerBracketImpl!(for SwapchainImageExt {

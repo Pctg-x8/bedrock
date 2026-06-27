@@ -68,6 +68,12 @@ where
     Surface: VkHandle<Handle = VkSurfaceKHR>,
 {
 }
+impl<Device, Surface> SwapchainMut for SurfaceSwapchainObject<Device, Surface>
+where
+    Device: crate::Device,
+    Surface: VkHandle<Handle = VkSurfaceKHR>,
+{
+}
 impl<Device, Surface> SwapchainImageExt for SurfaceSwapchainObject<Device, Surface>
 where
     Device: crate::Device,

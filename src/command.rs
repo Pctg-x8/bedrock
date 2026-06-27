@@ -11,7 +11,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for CommandPoolObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_command_pool(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_command_pool(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -103,14 +107,15 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
     #[inline]
     pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
         let mut hs = crate::alloc::empty_reserved_buffer(info.0.commandBufferCount as _);
-
         unsafe {
-            crate::vkfn::allocate_command_buffers(
-                device.native_ptr(),
-                &info.0,
-                hs.spare_capacity_mut().as_mut_ptr() as _,
-            )
-            .into_result()?;
+            crate::vkfn_wrapper::allocate_command_buffers(
+                device.as_transparent_ref(),
+                info,
+                core::mem::transmute::<
+                    &mut [core::mem::MaybeUninit<Self>],
+                    &mut [core::mem::MaybeUninit<VkCommandBuffer>],
+                >(hs.spare_capacity_mut()),
+            )?;
             hs.set_len(info.0.commandBufferCount as _);
         }
 
@@ -130,9 +135,15 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
         info: &CommandBufferFixedCountAllocateInfo<'_, N>,
     ) -> crate::Result<[Self; N]> {
         let mut hs = [core::mem::MaybeUninit::uninit(); N];
-
         unsafe {
-            crate::vkfn::allocate_command_buffers(device.native_ptr(), &info.0, hs.as_mut_ptr() as _).into_result()?;
+            crate::vkfn_wrapper::allocate_command_buffers(
+                device.as_transparent_ref(),
+                core::mem::transmute::<&CommandBufferFixedCountAllocateInfo<N>, &CommandBufferAllocateInfo>(info),
+                core::mem::transmute::<
+                    &mut [core::mem::MaybeUninit<Self>],
+                    &mut [core::mem::MaybeUninit<VkCommandBuffer>],
+                >(&mut hs),
+            )?;
         }
 
         Ok(core::array::from_fn(|n| unsafe { hs[n].assume_init() }))
@@ -277,11 +288,14 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
     /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
+    #[inline(always)]
     unsafe fn reset(&mut self, flags: CommandPoolResetFlags) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::reset_command_pool(self.device_handle(), self.native_ptr_mut(), flags.bits())
-                .into_result()
-                .map(drop)
+            crate::vkfn_wrapper::reset_command_pool(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                flags,
+            )
         }
     }
 
@@ -289,13 +303,13 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// # Safety
     /// Application cannot use passed command buffers after this call
     #[implements]
+    #[inline(always)]
     unsafe fn free(&mut self, buffers: &[VkHandleRefMut<VkCommandBuffer>]) {
         unsafe {
-            crate::vkfn::free_command_buffers(
-                self.device().native_ptr(),
-                self.native_ptr_mut(),
-                buffers.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as *const _,
+            crate::vkfn_wrapper::free_command_buffers(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                buffers,
             )
         }
     }
@@ -313,9 +327,14 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
 
     /// Trim a command pool
     #[implements("Allow1_1APIs")]
+    #[inline(always)]
     fn trim(&mut self, flags: CommandPoolTrimFlags) {
         unsafe {
-            crate::vkfn::trim_command_pool(self.device_handle(), self.native_ptr_mut(), flags.bits());
+            crate::vkfn_wrapper::trim_command_pool(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.native_ptr()),
+                flags,
+            );
         }
     }
 }
@@ -468,7 +487,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     #[implements]
     unsafe fn begin<'d>(&'d mut self, info: &CommandBufferBeginInfo) -> crate::Result<CmdRecord<'d>> {
         unsafe {
-            crate::vkfn::begin_command_buffer(self.native_ptr_mut(), info.as_raw_ref()).into_result()?;
+            crate::vkfn_wrapper::begin_command_buffer(self.as_transparent_ref_mut(), info)?;
         }
 
         Ok(CmdRecord {
@@ -538,7 +557,7 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
     #[inline(always)]
     pub fn begin(&'b mut self, info: &CommandBufferBeginInfo) -> crate::Result<CmdRecord<'b>> {
         unsafe {
-            crate::vkfn::begin_command_buffer(self.buffer.native_ptr_mut(), info.as_raw_ref()).into_result()?;
+            crate::vkfn_wrapper::begin_command_buffer(self.buffer.as_transparent_ref_mut(), info)?;
         }
 
         Ok(CmdRecord {
@@ -581,13 +600,9 @@ impl<'d> CmdRecord<'d> {
 #[implements]
 impl<'d> CmdRecord<'d> {
     /// Finish recording a command buffer
-    #[inline]
+    #[inline(always)]
     pub fn end(self) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::end_command_buffer(self.ptr.native_ptr())
-                .into_result()
-                .map(drop)
-        }
+        unsafe { crate::vkfn_wrapper::end_command_buffer(self.ptr) }
     }
 }
 
