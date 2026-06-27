@@ -4,6 +4,100 @@ use crate::*;
 use core::mem::MaybeUninit;
 
 #[inline]
+pub fn instance_layer_property_count() -> crate::Result<u32> {
+    let mut n = 0;
+    unsafe {
+        crate::vkfn::enumerate_instance_layer_properties(&mut n, core::ptr::null_mut()).into_result()?;
+    }
+
+    Ok(n)
+}
+
+#[inline]
+pub fn instance_layer_properties(sink: &mut [core::mem::MaybeUninit<VkLayerProperties>]) -> crate::Result<u32> {
+    let mut n = sink.len() as _;
+    unsafe {
+        crate::vkfn::enumerate_instance_layer_properties(&mut n, sink.as_mut_ptr() as _).into_result()?;
+    }
+
+    Ok(n)
+}
+
+#[inline]
+pub fn instance_extension_property_count(layer_name: Option<&core::ffi::CStr>) -> crate::Result<u32> {
+    let mut n = 0;
+    unsafe {
+        crate::vkfn::enumerate_instance_extension_properties(
+            crate::ffi_helper::opt_cstr_ptr(layer_name),
+            &mut n,
+            core::ptr::null_mut(),
+        )
+        .into_result()?;
+    }
+
+    Ok(n)
+}
+
+#[inline]
+pub fn instance_extension_properties(
+    layer_name: Option<&core::ffi::CStr>,
+    sink: &mut [core::mem::MaybeUninit<VkExtensionProperties>],
+) -> crate::Result<u32> {
+    let mut n = sink.len() as _;
+    unsafe {
+        crate::vkfn::enumerate_instance_extension_properties(
+            crate::ffi_helper::opt_cstr_ptr(layer_name),
+            &mut n,
+            sink.as_mut_ptr() as _,
+        )
+        .into_result()?;
+    }
+
+    Ok(n)
+}
+
+#[inline]
+pub unsafe fn create_instance(
+    info: &InstanceCreateInfo,
+    allocation_callbacks: Option<&VkAllocationCallbacks>,
+) -> crate::Result<VkInstance> {
+    let mut h = core::mem::MaybeUninit::uninit();
+
+    unsafe {
+        crate::vkfn::create_instance(
+            core::ptr::from_ref(info).cast(),
+            crate::ffi_helper::opt_pointer(allocation_callbacks),
+            h.as_mut_ptr(),
+        )
+        .into_result()?;
+    }
+    Ok(unsafe { h.assume_init() })
+}
+
+#[inline]
+pub unsafe fn physical_device_count(instance: VkInstance) -> crate::Result<u32> {
+    let mut n = 0;
+    unsafe {
+        crate::vkfn::enumerate_physical_devices(instance, &mut n, core::ptr::null_mut()).into_result()?;
+    }
+
+    Ok(n)
+}
+
+#[inline]
+pub unsafe fn enumerate_physical_devices(
+    instance: VkInstance,
+    sink: &mut [core::mem::MaybeUninit<VkPhysicalDevice>],
+) -> crate::Result<u32> {
+    let mut n = sink.len() as _;
+    unsafe {
+        crate::vkfn::enumerate_physical_devices(instance, &mut n, sink.as_mut_ptr() as _).into_result()?;
+    }
+
+    Ok(n)
+}
+
+#[inline]
 pub unsafe fn get_physical_device_features(
     physical_device: VkPhysicalDevice,
     sink: &mut MaybeUninit<PhysicalDeviceFeatures>,

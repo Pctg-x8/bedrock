@@ -2,6 +2,7 @@
 
 use crate::ffi_helper::{CStrFFIRef, slice_as_ptr_empty_null};
 use crate::*;
+use core::ffi::CStr;
 use derives::implements;
 
 #[cfg(feature = "Multithreaded")]
@@ -21,10 +22,16 @@ impl<'d, T> ::std::ops::Deref for LazyCellReadRef<'d, T> {
 pub struct Version(u32);
 impl Version {
     /// Version 1.0.0
-    pub const V1: Self = Self::new(0, 1, 0, 0);
+    pub const V1: Self = Self::new(1, 0, 0);
 
     /// Construct an object from discrete values
-    pub const fn new(variant: u8, major: u16, minor: u16, patch: u16) -> Self {
+    #[inline(always)]
+    pub const fn new(major: u16, minor: u16, patch: u16) -> Self {
+        Self::with_variant(0, major, minor, patch)
+    }
+
+    /// Construct an object from discrete values
+    pub const fn with_variant(variant: u8, major: u16, minor: u16, patch: u16) -> Self {
         Self(crate::vk::VK_MAKE_VERSION(variant, major, minor, patch))
     }
 
@@ -184,16 +191,70 @@ impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDev
     }
 }
 
+/// Returns up to all of global layer properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+#[implements("alloc")]
+pub fn instance_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties>> {
+    let n = crate::vkfn_wrapper::instance_layer_property_count()?;
+    if n == 0 {
+        // no items
+        return Ok(crate::alloc::empty_sink_buffer());
+    }
+
+    let mut xs = Vec::with_capacity(n as _);
+    crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?;
+    unsafe {
+        xs.set_len(n as _);
+    }
+
+    Ok(xs)
+}
+
+/// Returns up to all of global extension properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `VK_ERROR_LAYER_NOT_PRESENT`
+#[implements("alloc")]
+pub fn instance_extension_properties_alloc(layer_name: Option<&CStr>) -> crate::Result<Vec<VkExtensionProperties>> {
+    let n = crate::vkfn_wrapper::instance_extension_property_count(layer_name)? as usize;
+    if n == 0 {
+        // no items
+        return Ok(crate::alloc::empty_sink_buffer());
+    }
+
+    let mut xs = Vec::with_capacity(n);
+    crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?;
+    unsafe {
+        xs.set_len(n);
+    }
+
+    Ok(xs)
+}
+
+/// Returns up to all of global extension properties
+/// # Failures
+/// On failure, this command returns
+///
+/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `VK_ERROR_LAYER_NOT_PRESENT`
+#[implements("alloc")]
+pub fn instance_extension_properties_str_alloc(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
+    instance_extension_properties_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
+}
+
 #[repr(transparent)]
-pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d core::ffi::CStr>);
+pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
 impl<'d> ApplicationInfo<'d> {
     #[inline(always)]
-    pub const fn new(
-        app_name: &'d core::ffi::CStr,
-        app_version: Version,
-        engine_name: &'d core::ffi::CStr,
-        engine_version: Version,
-    ) -> Self {
+    pub const fn new(app_name: &'d CStr, app_version: Version, engine_name: &'d CStr, engine_version: Version) -> Self {
         Self(
             VkApplicationInfo {
                 sType: VkApplicationInfo::TYPE,
@@ -249,7 +310,7 @@ impl<'d> InstanceCreateInfo<'d> {
                 sType: VkInstanceCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
-                pApplicationInfo: &application_info.0 as *const _,
+                pApplicationInfo: core::ptr::from_ref(application_info).cast(),
                 enabledLayerCount: layers.len() as _,
                 ppEnabledLayerNames: slice_as_ptr_empty_null(layers) as _,
                 enabledExtensionCount: extensions.len() as _,
@@ -279,180 +340,6 @@ impl<'d> InstanceCreateInfo<'d> {
     }
 }
 
-/// Create a new Vulkan instance
-/// # Failures
-/// On failure, this command returns
-///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `VK_ERROR_INITIALIZATION_FAILED`
-/// * `VK_ERROR_LAYER_NOT_PRESENT`
-/// * `VK_ERROR_EXTENSION_NOT_PRESENT`
-/// * `VK_ERROR_INCOMPATIBLE_DRIVER`
-///
-/// # Safety
-/// no guarantees will be provided (simply calls under api)
-#[implements]
-pub unsafe fn new_instance_raw(
-    info: &InstanceCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkInstance> {
-    let mut h = core::mem::MaybeUninit::uninit();
-
-    unsafe {
-        crate::vkfn::create_instance(
-            &info.0,
-            crate::ffi_helper::opt_pointer(allocation_callbacks),
-            h.as_mut_ptr(),
-        )
-        .into_result()?;
-    }
-    Ok(unsafe { h.assume_init() })
-}
-
-/// Returns a count of all of global layer properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-/// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-#[implements]
-#[inline]
-pub fn instance_layer_property_count() -> crate::Result<u32> {
-    let mut n = 0;
-    unsafe {
-        crate::vkfn::enumerate_instance_layer_properties(&mut n, core::ptr::null_mut()).into_result()?;
-    }
-
-    Ok(n)
-}
-
-/// Returns up to all of global layer properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-/// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-#[implements]
-#[inline]
-pub fn instance_layer_properties(sink: &mut [core::mem::MaybeUninit<VkLayerProperties>]) -> crate::Result<u32> {
-    let mut n = sink.len() as _;
-    unsafe {
-        crate::vkfn::enumerate_instance_layer_properties(&mut n, sink.as_mut_ptr() as _).into_result()?;
-    }
-
-    Ok(n)
-}
-
-/// Returns up to all of global layer properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-#[implements("alloc")]
-pub fn enumerate_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties>> {
-    let n = instance_layer_property_count()?;
-    if n == 0 {
-        // no items
-        return Ok(crate::alloc::empty_sink_buffer());
-    }
-
-    let mut xs = Vec::with_capacity(n as _);
-    instance_layer_properties(xs.spare_capacity_mut())?;
-    unsafe {
-        xs.set_len(n as _);
-    }
-
-    Ok(xs)
-}
-
-/// Returns a count up to all of global extension properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-/// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-/// * [`VK_ERROR_LAYER_NOT_PRESENT`]
-#[implements]
-#[inline]
-pub fn instance_extension_property_count_cstr(layer_name: Option<&core::ffi::CStr>) -> crate::Result<u32> {
-    let mut n = 0;
-    unsafe {
-        crate::vkfn::enumerate_instance_extension_properties(
-            crate::ffi_helper::opt_cstr_ptr(layer_name),
-            &mut n,
-            core::ptr::null_mut(),
-        )
-        .into_result()?;
-    }
-
-    Ok(n)
-}
-
-/// Returns up to all of global extension properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-/// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-/// * [`VK_ERROR_LAYER_NOT_PRESENT`]
-#[implements]
-#[inline]
-pub fn instance_extension_properties_cstr(
-    layer_name: Option<&core::ffi::CStr>,
-    sink: &mut [core::mem::MaybeUninit<VkExtensionProperties>],
-) -> crate::Result<u32> {
-    let mut n = sink.len() as _;
-    unsafe {
-        crate::vkfn::enumerate_instance_extension_properties(
-            crate::ffi_helper::opt_cstr_ptr(layer_name),
-            &mut n,
-            sink.as_mut_ptr() as _,
-        )
-        .into_result()?;
-    }
-
-    Ok(n)
-}
-
-/// Returns up to all of global extension properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `VK_ERROR_LAYER_NOT_PRESENT`
-#[implements("alloc")]
-pub fn instance_extension_properties_cstr_alloc(
-    layer_name: Option<&core::ffi::CStr>,
-) -> crate::Result<Vec<VkExtensionProperties>> {
-    let n = instance_extension_property_count_cstr(layer_name)? as usize;
-    if n == 0 {
-        // no items
-        return Ok(crate::alloc::empty_sink_buffer());
-    }
-
-    let mut xs = Vec::with_capacity(n);
-    instance_extension_properties_cstr(layer_name, xs.spare_capacity_mut())?;
-    unsafe {
-        xs.set_len(n);
-    }
-
-    Ok(xs)
-}
-
-/// Returns up to all of global extension properties
-/// # Failures
-/// On failure, this command returns
-///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `VK_ERROR_LAYER_NOT_PRESENT`
-#[implements("alloc")]
-pub fn instance_extension_properties(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
-    instance_extension_properties_cstr_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
-}
 /// Opaque handle to a instance object
 #[derive(VkHandle, VkObject)]
 #[VkObject(type = VK_OBJECT_TYPE_INSTANCE)]
@@ -487,7 +374,7 @@ impl InstanceObject {
     #[implements]
     #[inline]
     pub fn new(info: &InstanceCreateInfo) -> crate::Result<Self> {
-        unsafe { Ok(Self::manage(new_instance_raw(info, None)?)) }
+        Ok(unsafe { Self::manage(crate::vkfn_wrapper::create_instance(info, None)?) })
     }
 
     /// Constructs from raw handle
@@ -516,7 +403,7 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     #[deprecated = "do not use this directly(this does not provide caching!)"]
     #[implements]
     #[inline]
-    fn extra_procedure(&self, name: &core::ffi::CStr) -> Option<PFN_vkVoidFunction> {
+    fn extra_procedure(&self, name: &CStr) -> Option<PFN_vkVoidFunction> {
         unsafe { crate::vkfn::get_instance_proc_addr(self.native_ptr(), name.as_ptr()) }
     }
 
@@ -528,14 +415,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_INITIALIZATION_FAILED`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn physical_device_count(&self) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::enumerate_physical_devices(self.native_ptr(), &mut n, core::ptr::null_mut()).into_result()?;
-        }
-
-        Ok(n)
+        unsafe { crate::vkfn_wrapper::physical_device_count(self.native_ptr()) }
     }
 
     /// Enumerates the physical devices accessible to a Vulkan instance
@@ -546,14 +428,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     /// * [`VK_ERROR_INITIALIZATION_FAILED`]
     #[implements]
-    #[inline]
+    #[inline(always)]
     fn enumerate_physical_devices(&self, sink: &mut [core::mem::MaybeUninit<VkPhysicalDevice>]) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::enumerate_physical_devices(self.native_ptr(), &mut n, sink.as_mut_ptr() as _).into_result()?;
-        }
-
-        Ok(n)
+        unsafe { crate::vkfn_wrapper::enumerate_physical_devices(self.native_ptr(), sink) }
     }
 
     /// Lazyly enumerates the physical devices accessible to a Vulkan instance
