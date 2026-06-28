@@ -19198,6 +19198,60 @@ unsafe impl crate::PFN for PFN_vkGetPastPresentationTimingGOOGLE {
     }
 }
 
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+pub const VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME: &str = "VK_KHR_shared_presentable_image";
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+pub const VK_KHR_SHARED_PRESENTABLE_IMAGE_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+pub const VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR: VkImageLayout = 1000111000;
+
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkSharedPresentSurfaceCapabilitiesKHR {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub sharedPresentSupportedUsageFlags: VkImageUsageFlags,
+}
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: VkStructureType = 1000111000;
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkSharedPresentSurfaceCapabilitiesKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkSharedPresentSurfaceCapabilitiesKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetSwapchainStatusKHR(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_KHR_shared_presentable_image")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetSwapchainStatusKHR {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSwapchainStatusKHR";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

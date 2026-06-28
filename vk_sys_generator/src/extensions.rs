@@ -1279,4 +1279,29 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("GOOGLE", "display_timing"),
     ),
+    // VK_KHR_shared_presentable_image
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_shared_presentable_image", 1)),
+    Element::Enum(Enum::extending(
+        "ImageLayout",
+        "IMAGE_LAYOUT",
+        &[Enum::member("SHARED_PRESENT", vk_ext_enum(112, 0) as _).extension("KHR", "shared_presentable_image")],
+    )),
+    Element::Struct(
+        Struct::typed(
+            "SharedPresentSurfaceCapabilities",
+            "SHARED_PRESENT_SURFACE_CAPABILITIES",
+            vk_ext_enum(112, 0) as _,
+            StructUsage::Sink,
+            &[Struct::member("sharedPresentSupportedUsageFlags", "VkImageUsageFlags")],
+        )
+        .extensions(&[ex_khr("shared_presentable_image")]),
+    ),
+    Element::Command(
+        Command::new(
+            "GetSwapchainStatus",
+            &[("device", "VkDevice"), ("swapchain", "VkSwapchainKHR")],
+        )
+        .failable()
+        .extension("KHR", "shared_presentable_image"),
+    ),
 ];

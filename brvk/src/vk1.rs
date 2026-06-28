@@ -97,7 +97,6 @@ pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIE
     100_0101_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT: crate::vk2::VkStructureType =
     100_0101_001;
-pub const VK_STRUCTURE_TYPE_SHARED_PRESENT_SURFACE_CAPABILITIES_KHR: crate::vk2::VkStructureType = 100_0111_000;
 pub const VK_STRUCTURE_TYPE_IOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0122_000;
 pub const VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK: crate::vk2::VkStructureType = 100_0123_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT: crate::vk2::VkStructureType =
@@ -161,7 +160,6 @@ macro_rules! ExportExtensions {
 }
 
 ExportExtensions!("VK_KHR_incremental_present": incremental_present_khr);
-ExportExtensions!("VK_KHR_shared_presentable_image": shared_presentable_image_khr);
 ExportExtensions!("VK_NV_glsl_shader": glsl_shader_nv);
 ExportExtensions!("VK_EXT_depth_range_unrestricted": depth_range_unrestricted_ext);
 ExportExtensions!("VK_IMG_filter_cubic": filter_cubic_img);
