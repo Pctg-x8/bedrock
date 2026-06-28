@@ -901,4 +901,29 @@ pub const ELEMENTS: &[Element] = &[
         )
         .extension("EXT", "sample_locations"),
     ),
+    // VK_NV_fragment_coverage_to_color
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NV_fragment_coverage_to_color", 1)),
+    Element::Bitmask(
+        Bitmask::new(
+            "PipelineCoverageToColorStateCreateFlags",
+            "PipelineCoverageToColorStateCreateFlagBits",
+            "PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE",
+            &[],
+        )
+        .extension("NV", "fragment_coverage_to_color"),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PipelineCoverageToColorStateCreateInfo",
+            "PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO",
+            vk_ext_enum(150, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("flags", "VkPipelineCoverageToColorStateCreateFlagsNV"),
+                Struct::member("coverageToColorEnable", TY_VK_BOOL),
+                Struct::member("coverageToColorLocation", "u32"),
+            ],
+        )
+        .extensions(&[("NV", "fragment_coverage_to_color")]),
+    ),
 ];

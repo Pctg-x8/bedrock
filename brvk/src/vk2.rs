@@ -18258,6 +18258,51 @@ unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
     }
 }
 
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+pub const VK_NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME: &str = "VK_NV_fragment_coverage_to_color";
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+pub const VK_NV_FRAGMENT_COVERAGE_TO_COLOR_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+pub type VkPipelineCoverageToColorStateCreateFlagsNV = VkFlags;
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+pub type VkPipelineCoverageToColorStateCreateFlagBitsNV = VkFlags;
+
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPipelineCoverageToColorStateCreateInfoNV {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub flags: VkPipelineCoverageToColorStateCreateFlagsNV,
+    pub coverageToColorEnable: VkBool32,
+    pub coverageToColorLocation: u32,
+}
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV: VkStructureType = 1000149000;
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPipelineCoverageToColorStateCreateInfoNV {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NV_fragment_coverage_to_color")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPipelineCoverageToColorStateCreateInfoNV { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV; }
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]
