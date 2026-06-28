@@ -1,3 +1,5 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
+
 use derives::implements;
 
 use crate::ffi_helper::slice_as_ptr_empty_null;
@@ -15,7 +17,7 @@ impl SubpassIndex {
     #[inline(always)]
     pub(crate) const fn as_vk(self) -> u32 {
         match self {
-            Self::External => VK_SUBPASS_EXTERNAL,
+            Self::External => brvk::VK_SUBPASS_EXTERNAL,
             Self::Internal(x) => x,
         }
     }
@@ -23,15 +25,15 @@ impl SubpassIndex {
 
 #[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Hash)]
-pub struct AttachmentDescription2(VkAttachmentDescription2KHR);
+pub struct AttachmentDescription2(brvk::VkAttachmentDescription2KHR);
 impl AttachmentDescription2 {
-    pub const fn new(format: VkFormat) -> Self {
-        Self(VkAttachmentDescription2KHR {
-            sType: VkAttachmentDescription2KHR::TYPE,
+    pub const fn new(format: brvk::VkFormat) -> Self {
+        Self(brvk::VkAttachmentDescription2KHR {
+            sType: brvk::VkAttachmentDescription2KHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             format,
-            samples: VK_SAMPLE_COUNT_1_BIT,
+            samples: brvk::VK_SAMPLE_COUNT_1_BIT,
             loadOp: LoadOp::DontCare as _,
             storeOp: StoreOp::DontCare as _,
             stencilLoadOp: LoadOp::DontCare as _,
@@ -41,7 +43,7 @@ impl AttachmentDescription2 {
         })
     }
 
-    pub const fn samples(mut self, samples: VkSampleCountFlagBits) -> Self {
+    pub const fn samples(mut self, samples: brvk::VkSampleCountFlagBits) -> Self {
         self.0.samples = samples;
         self
     }
@@ -77,18 +79,18 @@ impl AttachmentDescription2 {
     }
 
     pub const fn may_alias(mut self) -> Self {
-        self.0.flags |= VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
+        self.0.flags |= brvk::VK_ATTACHMENT_DESCRIPTION_MAY_ALIAS_BIT;
         self
     }
 }
 
 #[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Hash)]
-pub struct AttachmentReference2(VkAttachmentReference2KHR);
+pub struct AttachmentReference2(brvk::VkAttachmentReference2KHR);
 impl AttachmentReference2 {
     pub const fn new(index: u32, aspect_mask: AspectMask, layout: ImageLayout) -> Self {
-        Self(VkAttachmentReference2KHR {
-            sType: VkAttachmentReference2KHR::TYPE,
+        Self(brvk::VkAttachmentReference2KHR {
+            sType: brvk::VkAttachmentReference2KHR::TYPE,
             pNext: core::ptr::null(),
             attachment: index,
             layout: layout as _,
@@ -97,7 +99,7 @@ impl AttachmentReference2 {
     }
 
     /// An unused attachment
-    pub const UNUSED: Self = Self::new(VK_ATTACHMENT_UNUSED, AspectMask::EMPTY, ImageLayout::Undefined);
+    pub const UNUSED: Self = Self::new(brvk::VK_ATTACHMENT_UNUSED, AspectMask::EMPTY, ImageLayout::Undefined);
 
     /// Represents an attachment reference that references color aspect of the attachment.
     pub const fn color(index: u32, layout: ImageLayout) -> Self {
@@ -133,17 +135,17 @@ impl AttachmentReference2 {
 #[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct SubpassDescription2<'d>(
-    VkSubpassDescription2KHR,
+    brvk::VkSubpassDescription2KHR,
     core::marker::PhantomData<&'d [AttachmentReference2]>,
 );
 impl<'d> SubpassDescription2<'d> {
     pub const fn new() -> Self {
         Self(
-            VkSubpassDescription2KHR {
-                sType: VkSubpassDescription2KHR::TYPE,
+            brvk::VkSubpassDescription2KHR {
+                sType: brvk::VkSubpassDescription2KHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
-                pipelineBindPoint: VK_PIPELINE_BIND_POINT_GRAPHICS,
+                pipelineBindPoint: brvk::VK_PIPELINE_BIND_POINT_GRAPHICS,
                 viewMask: 0,
                 inputAttachmentCount: 0,
                 pInputAttachments: core::ptr::null(),
@@ -202,11 +204,11 @@ impl<'d> SubpassDescription2<'d> {
 
 #[repr(transparent)]
 #[derive(Clone, PartialEq, Eq, Hash)]
-pub struct SubpassDependency2(VkSubpassDependency2KHR);
+pub struct SubpassDependency2(brvk::VkSubpassDependency2KHR);
 impl SubpassDependency2 {
     pub const fn new(src: SubpassIndex, dst: SubpassIndex) -> Self {
-        Self(VkSubpassDependency2KHR {
-            sType: VkSubpassDependency2KHR::TYPE,
+        Self(brvk::VkSubpassDependency2KHR {
+            sType: brvk::VkSubpassDependency2KHR::TYPE,
             pNext: core::ptr::null(),
             srcSubpass: src.as_vk(),
             dstSubpass: dst.as_vk(),
@@ -225,14 +227,14 @@ impl SubpassDependency2 {
         self
     }
 
-    pub const fn of_memory(mut self, src: VkAccessFlags, dst: VkAccessFlags) -> Self {
+    pub const fn of_memory(mut self, src: brvk::VkAccessFlags, dst: brvk::VkAccessFlags) -> Self {
         self.0.srcAccessMask = src;
         self.0.dstAccessMask = dst;
         self
     }
 
     pub const fn by_region(mut self) -> Self {
-        self.0.dependencyFlags |= VK_DEPENDENCY_BY_REGION_BIT;
+        self.0.dependencyFlags |= brvk::VK_DEPENDENCY_BY_REGION_BIT;
         self
     }
 
@@ -244,7 +246,7 @@ impl SubpassDependency2 {
 
 #[repr(transparent)]
 pub struct RenderPassCreateInfo2<'d>(
-    VkRenderPassCreateInfo2KHR,
+    brvk::VkRenderPassCreateInfo2KHR,
     core::marker::PhantomData<(
         &'d [AttachmentDescription2],
         &'d [SubpassDescription2<'d>],
@@ -258,8 +260,8 @@ impl<'d> RenderPassCreateInfo2<'d> {
         dependencies: &'d [SubpassDependency2],
     ) -> Self {
         Self(
-            VkRenderPassCreateInfo2KHR {
-                sType: VkRenderPassCreateInfo2KHR::TYPE,
+            brvk::VkRenderPassCreateInfo2KHR {
+                sType: brvk::VkRenderPassCreateInfo2KHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 attachmentCount: attachments.len() as _,
@@ -278,11 +280,11 @@ impl<'d> RenderPassCreateInfo2<'d> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkRenderPassCreateInfo2KHR`] struct.
-    pub const unsafe fn from_raw(raw: VkRenderPassCreateInfo2KHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkRenderPassCreateInfo2KHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkRenderPassCreateInfo2KHR {
+    pub const fn into_raw(self) -> brvk::VkRenderPassCreateInfo2KHR {
         self.0
     }
 }
@@ -291,8 +293,8 @@ impl super::AnyRenderPassCreateInfo for RenderPassCreateInfo2<'_> {
     fn execute(
         &self,
         device: &(impl crate::Device + ?Sized),
-        allocation_callbacks: Option<&super::VkAllocationCallbacks>,
-    ) -> crate::Result<super::VkRenderPass> {
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkRenderPass> {
         device.new_render_pass2(self, allocation_callbacks)
     }
 }

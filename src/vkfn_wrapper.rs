@@ -1,24 +1,21 @@
-use ffi_helper::{opt_cstr_ptr, opt_pointer};
+use bedrock_vk as brvk;
 
-use crate::*;
+use crate::{error::translate_vk_result, *};
 use core::{ffi::CStr, mem::MaybeUninit, ptr::null_mut};
+use ffi_helper::{opt_cstr_ptr, opt_pointer};
 
 #[inline]
 pub fn instance_layer_property_count() -> crate::Result<u32> {
     let mut n = 0;
-    unsafe {
-        crate::vkfn::enumerate_instance_layer_properties(&mut n, null_mut()).into_result()?;
-    }
+    translate_vk_result(unsafe { brvk::fns::enumerate_instance_layer_properties(&mut n, null_mut()) })?;
 
     Ok(n)
 }
 
 #[inline]
-pub fn instance_layer_properties(sink: &mut [MaybeUninit<VkLayerProperties>]) -> crate::Result<u32> {
+pub fn instance_layer_properties(sink: &mut [MaybeUninit<brvk::VkLayerProperties>]) -> crate::Result<u32> {
     let mut n = sink.len() as _;
-    unsafe {
-        crate::vkfn::enumerate_instance_layer_properties(&mut n, sink.as_mut_ptr() as _).into_result()?;
-    }
+    translate_vk_result(unsafe { brvk::fns::enumerate_instance_layer_properties(&mut n, sink.as_mut_ptr() as _) })?;
 
     Ok(n)
 }
@@ -26,10 +23,9 @@ pub fn instance_layer_properties(sink: &mut [MaybeUninit<VkLayerProperties>]) ->
 #[inline]
 pub fn instance_extension_property_count(layer_name: Option<&CStr>) -> crate::Result<u32> {
     let mut n = 0;
-    unsafe {
-        crate::vkfn::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, null_mut())
-            .into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, null_mut())
+    })?;
 
     Ok(n)
 }
@@ -37,13 +33,12 @@ pub fn instance_extension_property_count(layer_name: Option<&CStr>) -> crate::Re
 #[inline]
 pub fn instance_extension_properties(
     layer_name: Option<&CStr>,
-    sink: &mut [MaybeUninit<VkExtensionProperties>],
+    sink: &mut [MaybeUninit<brvk::VkExtensionProperties>],
 ) -> crate::Result<u32> {
     let mut n = sink.len() as _;
-    unsafe {
-        crate::vkfn::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, sink.as_mut_ptr() as _)
-            .into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::enumerate_instance_extension_properties(opt_cstr_ptr(layer_name), &mut n, sink.as_mut_ptr() as _)
+    })?;
 
     Ok(n)
 }
@@ -54,27 +49,24 @@ pub fn instance_extension_properties(
 #[inline]
 pub unsafe fn create_instance(
     info: &InstanceCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkInstance> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkInstance> {
     let mut h = core::mem::MaybeUninit::uninit();
-
-    unsafe {
-        crate::vkfn::create_instance(
+    translate_vk_result(unsafe {
+        brvk::fns::create_instance(
             core::ptr::from_ref(info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
+
     Ok(unsafe { h.assume_init() })
 }
 
 #[inline]
-pub fn physical_device_count(instance: VkHandleRef<VkInstance>) -> crate::Result<u32> {
+pub fn physical_device_count(instance: VkHandleRef<brvk::VkInstance>) -> crate::Result<u32> {
     let mut n = 0;
-    unsafe {
-        crate::vkfn::enumerate_physical_devices(instance.0, &mut n, null_mut()).into_result()?;
-    }
+    translate_vk_result(unsafe { brvk::fns::enumerate_physical_devices(instance.0, &mut n, null_mut()) })?;
 
     Ok(n)
 }
@@ -84,180 +76,175 @@ pub fn physical_device_count(instance: VkHandleRef<VkInstance>) -> crate::Result
 /// instance must be valid for the lifetime of the returned physical devices.
 #[inline]
 pub unsafe fn enumerate_physical_devices(
-    instance: VkHandleRef<VkInstance>,
-    sink: &mut [MaybeUninit<VkPhysicalDevice>],
+    instance: VkHandleRef<brvk::VkInstance>,
+    sink: &mut [MaybeUninit<brvk::VkPhysicalDevice>],
 ) -> crate::Result<u32> {
     let mut n = sink.len() as _;
-    unsafe {
-        crate::vkfn::enumerate_physical_devices(instance.0, &mut n, sink.as_mut_ptr().cast()).into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::enumerate_physical_devices(instance.0, &mut n, sink.as_mut_ptr().cast())
+    })?;
 
     Ok(n)
 }
 
 #[inline]
 pub fn get_physical_device_features(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut MaybeUninit<PhysicalDeviceFeatures>,
 ) {
-    unsafe { crate::vkfn::get_physical_device_features(physical_device.0, sink.as_mut_ptr()) }
+    unsafe { brvk::fns::get_physical_device_features(physical_device.0, sink.as_mut_ptr()) }
 }
 
 #[inline]
 pub fn get_physical_device_properties(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut MaybeUninit<PhysicalDeviceProperties>,
 ) {
-    unsafe { crate::vkfn::get_physical_device_properties(physical_device.0, sink.as_mut_ptr()) }
+    unsafe { brvk::fns::get_physical_device_properties(physical_device.0, sink.as_mut_ptr()) }
 }
 
 #[inline]
 pub fn get_physical_device_memory_properties(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut MaybeUninit<PhysicalDeviceMemoryProperties>,
 ) {
-    unsafe { crate::vkfn::get_physical_device_memory_properties(physical_device.0, sink.as_mut_ptr()) }
+    unsafe { brvk::fns::get_physical_device_memory_properties(physical_device.0, sink.as_mut_ptr().cast()) }
 }
 
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[inline]
 pub unsafe fn get_physical_device_xlib_presentation_support(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
     dpy: *mut x11::xlib::Display,
     visual_id: x11::xlib::VisualID,
 ) -> bool {
     unsafe {
-        crate::vkfn::get_physical_device_xlib_presentation_support_khr(
+        brvk::fns::get_physical_device_xlib_presentation_support_khr(
             physical_device.0,
             queue_family_index,
             dpy,
             visual_id,
-        ) == VK_TRUE
+        ) == brvk::VK_TRUE
     }
 }
 
 #[cfg(feature = "VK_KHR_xcb_surface")]
 pub unsafe fn get_physical_device_xcb_presentation_support(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
     connection: *mut xcb::ffi::xcb_connection_t,
     visual_id: xcb::x::Visualid,
 ) -> bool {
     unsafe {
-        crate::vkfn::get_physical_device_xcb_presentation_support_khr(
+        brvk::fns::get_physical_device_xcb_presentation_support_khr(
             physical_device.0,
             queue_family_index,
             connection,
             visual_id,
-        ) == VK_TRUE
+        ) == brvk::VK_TRUE
     }
 }
 
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[inline]
 pub unsafe fn get_physical_device_wayland_presentation_support(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
     display: *mut core::ffi::c_void,
 ) -> bool {
     unsafe {
-        crate::vkfn::get_physical_device_wayland_presentation_support_khr(
-            physical_device.0,
-            queue_family_index,
-            display,
-        ) == VK_TRUE
+        brvk::fns::get_physical_device_wayland_presentation_support_khr(physical_device.0, queue_family_index, display)
+            == brvk::VK_TRUE
     }
 }
 
 #[cfg(feature = "VK_KHR_win32_surface")]
 pub unsafe fn get_physical_device_win32_presentation_support(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
 ) -> bool {
     unsafe {
-        crate::vkfn::get_physical_device_win32_presentation_support_khr(physical_device.0, queue_family_index)
-            == VK_TRUE
+        brvk::fns::get_physical_device_win32_presentation_support_khr(physical_device.0, queue_family_index)
+            == brvk::VK_TRUE
     }
 }
 
 /// # Safety
 ///
-/// `surface` and `physical_device` must be created from the same `VkInstance`.
+/// `surface` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_support(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     queue_family_index: u32,
-    surface: VkHandleRef<VkSurfaceKHR>,
+    surface: VkHandleRef<brvk::VkSurfaceKHR>,
 ) -> crate::Result<bool> {
     let mut sink = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_physical_device_surface_support_khr(
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_surface_support_khr(
             physical_device.0,
             queue_family_index,
             surface.0,
             sink.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
-    Ok(unsafe { sink.assume_init() == VK_TRUE })
+    Ok(unsafe { sink.assume_init() == brvk::VK_TRUE })
 }
 
 /// # Safety
 ///
-/// `surface` and `physical_device` must be created from the same `VkInstance`.
+/// `surface` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_capabilities(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    surface: VkHandleRef<VkSurfaceKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    surface: VkHandleRef<brvk::VkSurfaceKHR>,
     sink: &mut MaybeUninit<SurfaceCapabilities>,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::get_physical_device_surface_capabilities_khr(physical_device.0, surface.0, sink.as_mut_ptr())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_surface_capabilities_khr(physical_device.0, surface.0, sink.as_mut_ptr().cast())
+    })?;
+
+    Ok(())
 }
 
 /// # Safety
 ///
-/// `surface` and `physical_device` must be created from the same `VkInstance`.
+/// `surface` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_format_count(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    surface: VkHandleRef<VkSurfaceKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    surface: VkHandleRef<brvk::VkSurfaceKHR>,
 ) -> crate::Result<u32> {
     let mut v = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_physical_device_surface_formats_khr(
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_surface_formats_khr(
             physical_device.0,
             surface.0,
             v.as_mut_ptr(),
             core::ptr::null_mut(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { v.assume_init() })
 }
 
 /// # Safety
 ///
-/// `surface` and `physical_device` must be created from the same `VkInstance`.
+/// `surface` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_formats(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    surface: VkHandleRef<VkSurfaceKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    surface: VkHandleRef<brvk::VkSurfaceKHR>,
     sink: &mut [MaybeUninit<SurfaceFormat>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_physical_device_surface_formats_khr(
+        brvk::fns::get_physical_device_surface_formats_khr(
             physical_device.0,
             surface.0,
             &mut v,
@@ -270,40 +257,39 @@ pub unsafe fn get_physical_device_surface_formats(
 
 /// # Safety
 ///
-/// `surface` and `physical_device` must be created from the same `VkInstance`.
+/// `surface` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_present_mode_count(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    surface: VkHandleRef<VkSurfaceKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    surface: VkHandleRef<brvk::VkSurfaceKHR>,
 ) -> crate::Result<u32> {
     let mut v = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_physical_device_surface_present_modes_khr(
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_surface_present_modes_khr(
             physical_device.0,
             surface.0,
             v.as_mut_ptr(),
             core::ptr::null_mut(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { v.assume_init() })
 }
 
 /// # Safety
 ///
-/// `surface` and `physical_device` must be created from the same `VkInstance`.
+/// `surface` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn get_physical_device_surface_present_modes(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    surface: VkHandleRef<VkSurfaceKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    surface: VkHandleRef<brvk::VkSurfaceKHR>,
     sink: &mut [MaybeUninit<PresentMode>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_physical_device_surface_present_modes_khr(
+        brvk::fns::get_physical_device_surface_present_modes_khr(
             physical_device.0,
             surface.0,
             &mut v,
@@ -317,13 +303,12 @@ pub unsafe fn get_physical_device_surface_present_modes(
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub fn get_physical_device_display_property_count(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
 ) -> crate::Result<u32> {
     let mut count = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_physical_device_display_properties_khr(physical_device.0, count.as_mut_ptr(), null_mut())
-            .into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_display_properties_khr(physical_device.0, count.as_mut_ptr(), null_mut())
+    })?;
 
     Ok(unsafe { count.assume_init() })
 }
@@ -331,12 +316,12 @@ pub fn get_physical_device_display_property_count(
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub fn get_physical_device_display_properties(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut [MaybeUninit<DisplayProperties>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_physical_device_display_properties_khr(physical_device.0, &mut v, sink.as_mut_ptr().cast())
+        brvk::fns::get_physical_device_display_properties_khr(physical_device.0, &mut v, sink.as_mut_ptr().cast())
     })?;
 
     Ok(r.with_result(v))
@@ -345,17 +330,12 @@ pub fn get_physical_device_display_properties(
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub fn get_physical_device_display_plane_property_count(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
 ) -> crate::Result<u32> {
     let mut count = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_physical_device_display_plane_properties_khr(
-            physical_device.0,
-            count.as_mut_ptr(),
-            null_mut(),
-        )
-        .into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_physical_device_display_plane_properties_khr(physical_device.0, count.as_mut_ptr(), null_mut())
+    })?;
 
     Ok(unsafe { count.assume_init() })
 }
@@ -363,16 +343,12 @@ pub fn get_physical_device_display_plane_property_count(
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub fn get_physical_device_display_plane_properties(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     sink: &mut [MaybeUninit<DisplayPlaneProperties>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_physical_device_display_plane_properties_khr(
-            physical_device.0,
-            &mut v,
-            sink.as_mut_ptr().cast(),
-        )
+        brvk::fns::get_physical_device_display_plane_properties_khr(physical_device.0, &mut v, sink.as_mut_ptr().cast())
     })?;
 
     Ok(r.with_result(v))
@@ -380,35 +356,34 @@ pub fn get_physical_device_display_plane_properties(
 
 /// # Safety
 ///
-/// `display` and `physical_device` must be created from the same `VkInstance`.
+/// `display` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub unsafe fn get_display_mode_property_count(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    display: VkHandleRef<VkDisplayKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    display: VkHandleRef<brvk::VkDisplayKHR>,
 ) -> crate::Result<u32> {
     let mut count = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_display_mode_properties_khr(physical_device.0, display.0, count.as_mut_ptr(), null_mut())
-            .into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_display_mode_properties_khr(physical_device.0, display.0, count.as_mut_ptr(), null_mut())
+    })?;
 
     Ok(unsafe { count.assume_init() })
 }
 
 /// # Safety
 ///
-/// `display` and `physical_device` must be created from the same `VkInstance`.
+/// `display` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub unsafe fn get_display_mode_properties(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    display: VkHandleRef<VkDisplayKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    display: VkHandleRef<brvk::VkDisplayKHR>,
     sink: &mut [MaybeUninit<DisplayModeProperties>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_display_mode_properties_khr(physical_device.0, display.0, &mut v, sink.as_mut_ptr().cast())
+        brvk::fns::get_display_mode_properties_khr(physical_device.0, display.0, &mut v, sink.as_mut_ptr().cast())
     })?;
 
     Ok(r.with_result(v))
@@ -416,38 +391,37 @@ pub unsafe fn get_display_mode_properties(
 
 /// # Safety
 ///
-/// `mode` and `physical_device` must be created from the same `VkInstance`.
+/// `mode` and `physical_device` must be created from the same `brvk::VkInstance`.
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub unsafe fn get_display_plane_capabilities(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
-    mode: VkHandleRefMut<VkDisplayModeKHR>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
+    mode: VkHandleRefMut<brvk::VkDisplayModeKHR>,
     plane_index: u32,
-    sink: &mut MaybeUninit<VkDisplayPlaneCapabilitiesKHR>,
+    sink: &mut MaybeUninit<brvk::VkDisplayPlaneCapabilitiesKHR>,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::get_display_plane_capabilities_khr(physical_device.0, mode.0, plane_index, sink.as_mut_ptr())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_display_plane_capabilities_khr(physical_device.0, mode.0, plane_index, sink.as_mut_ptr())
+    })?;
+
+    Ok(())
 }
 
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub fn get_display_plane_supported_display_count(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     plane_index: u32,
 ) -> crate::Result<u32> {
     let mut count = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_display_plane_supported_displays_khr(
+    translate_vk_result(unsafe {
+        brvk::fns::get_display_plane_supported_displays_khr(
             physical_device.0,
             plane_index,
             count.as_mut_ptr(),
             null_mut(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { count.assume_init() })
 }
@@ -455,13 +429,13 @@ pub fn get_display_plane_supported_display_count(
 #[cfg(feature = "VK_KHR_display")]
 #[inline]
 pub fn get_display_plane_supported_displays(
-    physical_device: VkHandleRef<VkPhysicalDevice>,
+    physical_device: VkHandleRef<brvk::VkPhysicalDevice>,
     plane_index: u32,
-    sink: &mut [MaybeUninit<VkDisplayKHR>],
+    sink: &mut [MaybeUninit<brvk::VkDisplayKHR>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_display_plane_supported_displays_khr(
+        brvk::fns::get_display_plane_supported_displays_khr(
             physical_device.0,
             plane_index,
             &mut v,
@@ -478,30 +452,29 @@ pub fn get_display_plane_supported_displays(
 #[cfg(feature = "VK_KHR_surface")]
 #[inline]
 pub unsafe fn destroy_surface(
-    instance: VkHandleRef<VkInstance>,
-    surface: VkHandleRefMut<VkSurfaceKHR>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    instance: VkHandleRef<brvk::VkInstance>,
+    surface: VkHandleRefMut<brvk::VkSurfaceKHR>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_surface_khr(instance.0, surface.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_surface_khr(instance.0, surface.0, opt_pointer(allocation_callbacks)) }
 }
 
 #[cfg(feature = "VK_KHR_swapchain")]
 #[inline]
 pub fn create_swapchain(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &SwapchainCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkSwapchainKHR> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkSwapchainKHR> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_swapchain_khr(
+    translate_vk_result(unsafe {
+        brvk::fns::create_swapchain_khr(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -512,11 +485,11 @@ pub fn create_swapchain(
 #[cfg(feature = "VK_KHR_swapchain")]
 #[inline]
 pub unsafe fn destroy_swapchain(
-    device: VkHandleRef<VkDevice>,
-    swapchain: VkHandleRefMut<VkSwapchainKHR>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    swapchain: VkHandleRefMut<brvk::VkSwapchainKHR>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_swapchain_khr(device.0, swapchain.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_swapchain_khr(device.0, swapchain.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -525,13 +498,13 @@ pub unsafe fn destroy_swapchain(
 #[cfg(feature = "VK_KHR_swapchain")]
 #[inline]
 pub unsafe fn get_swapchain_image_count(
-    device: VkHandleRef<VkDevice>,
-    swapchain: VkHandleRef<VkSwapchainKHR>,
+    device: VkHandleRef<brvk::VkDevice>,
+    swapchain: VkHandleRef<brvk::VkSwapchainKHR>,
 ) -> crate::Result<u32> {
     let mut v = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_swapchain_images_khr(device.0, swapchain.0, v.as_mut_ptr(), null_mut()).into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_swapchain_images_khr(device.0, swapchain.0, v.as_mut_ptr(), null_mut())
+    })?;
 
     Ok(unsafe { v.assume_init() })
 }
@@ -542,13 +515,13 @@ pub unsafe fn get_swapchain_image_count(
 #[cfg(feature = "VK_KHR_swapchain")]
 #[inline]
 pub unsafe fn get_swapchain_images(
-    device: VkHandleRef<VkDevice>,
-    swapchain: VkHandleRef<VkSwapchainKHR>,
-    sink: &mut [MaybeUninit<VkImage>],
+    device: VkHandleRef<brvk::VkDevice>,
+    swapchain: VkHandleRef<brvk::VkSwapchainKHR>,
+    sink: &mut [MaybeUninit<brvk::VkImage>],
 ) -> crate::Result<ArrayQueryResult<u32>> {
     let mut v = sink.len() as _;
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_swapchain_images_khr(device.0, swapchain.0, &mut v, sink.as_mut_ptr().cast())
+        brvk::fns::get_swapchain_images_khr(device.0, swapchain.0, &mut v, sink.as_mut_ptr().cast())
     })?;
 
     Ok(r.with_result(v))
@@ -560,15 +533,15 @@ pub unsafe fn get_swapchain_images(
 #[cfg(feature = "VK_KHR_swapchain")]
 #[inline]
 pub unsafe fn acquire_next_image(
-    device: VkHandleRef<VkDevice>,
-    swapchain: VkHandleRefMut<VkSwapchainKHR>,
+    device: VkHandleRef<brvk::VkDevice>,
+    swapchain: VkHandleRefMut<brvk::VkSwapchainKHR>,
     timeout: u64,
-    semaphore: Option<VkHandleRefMut<VkSemaphore>>,
-    fence: Option<VkHandleRefMut<VkFence>>,
+    semaphore: Option<VkHandleRefMut<brvk::VkSemaphore>>,
+    fence: Option<VkHandleRefMut<brvk::VkFence>>,
 ) -> crate::Result<u32> {
     let mut v = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::acquire_next_image_khr(
+    translate_vk_result(unsafe {
+        brvk::fns::acquire_next_image_khr(
             device.0,
             swapchain.0,
             timeout,
@@ -576,122 +549,125 @@ pub unsafe fn acquire_next_image(
             fence.map(|x| x.0),
             v.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { v.assume_init() })
 }
 
 #[inline]
-pub fn get_device_queue(device: VkHandleRef<VkDevice>, family_index: u32, index: u32) -> VkQueue {
+pub fn get_device_queue(device: VkHandleRef<brvk::VkDevice>, family_index: u32, index: u32) -> brvk::VkQueue {
     let mut h = MaybeUninit::uninit();
     unsafe {
-        crate::vkfn::get_device_queue(device.0, family_index, index, h.as_mut_ptr());
+        brvk::fns::get_device_queue(device.0, family_index, index, h.as_mut_ptr());
+        h.assume_init()
     }
-
-    unsafe { h.assume_init() }
 }
 
 #[inline]
-pub fn queue_wait_idle(queue: VkHandleRefMut<VkQueue>) -> crate::Result<()> {
-    unsafe { crate::vkfn::queue_wait_idle(queue.0).into_result().map(drop) }
+pub fn queue_wait_idle(queue: VkHandleRefMut<brvk::VkQueue>) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::queue_wait_idle(queue.0) })?;
+
+    Ok(())
 }
 
 /// # Safety
 ///
-/// Host access to all `VkQueue` objects created from `device` must be externally synchronized.
+/// Host access to all `brvk::VkQueue` objects created from `device` must be externally synchronized.
 #[inline]
-pub unsafe fn device_wait_idle(device: VkHandleRefMut<VkDevice>) -> crate::Result<()> {
-    unsafe { crate::vkfn::device_wait_idle(device.0).into_result().map(drop) }
+pub unsafe fn device_wait_idle(device: VkHandleRefMut<brvk::VkDevice>) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::device_wait_idle(device.0) })?;
+
+    Ok(())
 }
 
 #[inline]
-pub fn get_instance_proc_addr_pfn<F: crate::PFN>(instance: VkHandleRef<VkInstance>) -> Option<F> {
-    Some(unsafe { F::from_void_fn(crate::vkfn::get_instance_proc_addr(instance.0, F::NAME_CSTR.as_ptr())?) })
+pub fn get_instance_proc_addr_pfn<F: brvk::PFN>(instance: VkHandleRef<brvk::VkInstance>) -> Option<F> {
+    Some(unsafe { F::from_void_fn(brvk::fns::get_instance_proc_addr(instance.0, F::NAME_CSTR.as_ptr())?) })
 }
 
 #[inline]
-pub fn get_device_proc_addr_pfn<F: crate::PFN>(device: VkHandleRef<VkDevice>) -> Option<F> {
-    Some(unsafe { F::from_void_fn(crate::vkfn::get_device_proc_addr(device.0, F::NAME_CSTR.as_ptr())?) })
+pub fn get_device_proc_addr_pfn<F: brvk::PFN>(device: VkHandleRef<brvk::VkDevice>) -> Option<F> {
+    Some(unsafe { F::from_void_fn(brvk::fns::get_device_proc_addr(device.0, F::NAME_CSTR.as_ptr())?) })
 }
 
 #[inline]
 pub fn queue_submit(
-    queue: VkHandleRefMut<VkQueue>,
+    queue: VkHandleRefMut<brvk::VkQueue>,
     submit_info: &[SubmitInfo],
-    fence: Option<VkHandleRefMut<VkFence>>,
+    fence: Option<VkHandleRefMut<brvk::VkFence>>,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::queue_submit(
+    translate_vk_result(unsafe {
+        brvk::fns::queue_submit(
             queue.0,
             submit_info.len() as _,
             submit_info.as_ptr().cast(),
             fence.map(|x| x.0),
         )
-        .into_result()
-        .map(drop)
-    }
+    })?;
+
+    Ok(())
 }
 
 #[cfg(feature = "Allow1_3APIs")]
 #[inline]
 pub fn queue_submit2(
-    queue: VkHandleRefMut<VkQueue>,
+    queue: VkHandleRefMut<brvk::VkQueue>,
     submit_info: &[SubmitInfo2],
-    fence: Option<VkHandleRefMut<VkFence>>,
+    fence: Option<VkHandleRefMut<brvk::VkFence>>,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::queue_submit2(
+    translate_vk_result(unsafe {
+        brvk::fns::queue_submit2(
             queue.0,
             submit_info.len() as _,
             submit_info.as_ptr().cast(),
             fence.map(|x| x.0),
         )
-        .into_result()
-        .map(drop)
-    }
+    })?;
+
+    Ok(())
 }
 
 #[cfg(feature = "VK_KHR_swapchain")]
 #[inline]
-pub fn queue_present(queue: VkHandleRefMut<VkQueue>, present_info: &PresentInfo) -> crate::Result<PresentResult> {
-    match unsafe { crate::vkfn::queue_present_khr(queue.0, core::ptr::from_ref(present_info).cast()) } {
-        VK_SUCCESS => Ok(PresentResult::Success),
-        VK_SUBOPTIMAL_KHR => Ok(PresentResult::Suboptimal),
-        e if e.is_err() => Err(e),
-        e => unreachable!("unexpected result: {e:?}"),
+pub fn queue_present(queue: VkHandleRefMut<brvk::VkQueue>, present_info: &PresentInfo) -> crate::Result<PresentResult> {
+    match unsafe { brvk::fns::queue_present_khr(queue.0, core::ptr::from_ref(present_info).cast()) } {
+        brvk::VK_SUCCESS => Ok(PresentResult::Success),
+        brvk::VK_SUBOPTIMAL_KHR => Ok(PresentResult::Suboptimal),
+        e => match ResultCode(e) {
+            e if e.is_err() => Err(e),
+            e => unreachable!("unexpected result: {e:?}"),
+        },
     }
 }
 
 #[inline]
 pub fn queue_bind_sparse(
-    queue: VkHandleRefMut<VkQueue>,
+    queue: VkHandleRefMut<brvk::VkQueue>,
     infos: &[BindSparseInfo],
-    fence: Option<VkHandleRefMut<VkFence>>,
+    fence: Option<VkHandleRefMut<brvk::VkFence>>,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::queue_bind_sparse(queue.0, infos.len() as _, infos.as_ptr().cast(), fence.map(|x| x.0))
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::queue_bind_sparse(queue.0, infos.len() as _, infos.as_ptr().cast(), fence.map(|x| x.0))
+    })?;
+
+    Ok(())
 }
 
 #[inline]
 pub fn create_command_pool(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &CommandPoolCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkCommandPool> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkCommandPool> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_command_pool(
+    translate_vk_result(unsafe {
+        brvk::fns::create_command_pool(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -701,11 +677,11 @@ pub fn create_command_pool(
 /// `command_pool` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_command_pool(
-    device: VkHandleRef<VkDevice>,
-    command_pool: VkHandleRefMut<VkCommandPool>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    command_pool: VkHandleRefMut<brvk::VkCommandPool>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_command_pool(device.0, command_pool.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_command_pool(device.0, command_pool.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -713,19 +689,19 @@ pub unsafe fn destroy_command_pool(
 /// command pool in `allocation_info` must be created from `device`.
 #[inline]
 pub unsafe fn allocate_command_buffers(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     allocation_info: &CommandBufferAllocateInfo,
-    sink: &mut [MaybeUninit<VkCommandBuffer>],
+    sink: &mut [MaybeUninit<brvk::VkCommandBuffer>],
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::allocate_command_buffers(
+    translate_vk_result(unsafe {
+        brvk::fns::allocate_command_buffers(
             device.0,
             core::ptr::from_ref(allocation_info).cast(),
             sink.as_mut_ptr().cast(),
         )
-        .into_result()
-        .map(drop)
-    }
+    })?;
+
+    Ok(())
 }
 
 /// # Safety
@@ -734,11 +710,11 @@ pub unsafe fn allocate_command_buffers(
 /// * `command_pool` must be created from `device`.
 #[inline]
 pub unsafe fn free_command_buffers(
-    device: VkHandleRef<VkDevice>,
-    command_pool: VkHandleRefMut<VkCommandPool>,
-    buffers: &[VkHandleRefMut<VkCommandBuffer>],
+    device: VkHandleRef<brvk::VkDevice>,
+    command_pool: VkHandleRefMut<brvk::VkCommandPool>,
+    buffers: &[VkHandleRefMut<brvk::VkCommandBuffer>],
 ) {
-    unsafe { crate::vkfn::free_command_buffers(device.0, command_pool.0, buffers.len() as _, buffers.as_ptr().cast()) }
+    unsafe { brvk::fns::free_command_buffers(device.0, command_pool.0, buffers.len() as _, buffers.as_ptr().cast()) }
 }
 
 /// # Safety
@@ -746,15 +722,13 @@ pub unsafe fn free_command_buffers(
 /// `command_pool` must be created from `device`.
 #[inline(always)]
 pub unsafe fn reset_command_pool(
-    device: VkHandleRef<VkDevice>,
-    command_pool: VkHandleRefMut<VkCommandPool>,
+    device: VkHandleRef<brvk::VkDevice>,
+    command_pool: VkHandleRefMut<brvk::VkCommandPool>,
     flags: CommandPoolResetFlags,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::reset_command_pool(device.0, command_pool.0, flags.bits())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe { brvk::fns::reset_command_pool(device.0, command_pool.0, flags.bits()) })?;
+
+    Ok(())
 }
 
 /// # Safety
@@ -763,12 +737,12 @@ pub unsafe fn reset_command_pool(
 #[cfg(feature = "Allow1_1APIs")]
 #[inline(always)]
 pub unsafe fn trim_command_pool(
-    device: VkHandleRef<VkDevice>,
-    command_pool: VkHandleRefMut<VkCommandPool>,
+    device: VkHandleRef<brvk::VkDevice>,
+    command_pool: VkHandleRefMut<brvk::VkCommandPool>,
     flags: CommandPoolTrimFlags,
 ) {
     unsafe {
-        crate::vkfn::trim_command_pool(device.0, command_pool.0, flags.bits());
+        brvk::fns::trim_command_pool(device.0, command_pool.0, flags.bits());
     }
 }
 
@@ -777,44 +751,41 @@ pub unsafe fn trim_command_pool(
 /// * The command pool that `command_buffer` was allocated must be externally synchronized.
 #[inline]
 pub unsafe fn begin_command_buffer(
-    command_buffer: VkHandleRefMut<VkCommandBuffer>,
+    command_buffer: VkHandleRefMut<brvk::VkCommandBuffer>,
     begin_info: &CommandBufferBeginInfo,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::begin_command_buffer(command_buffer.0, core::ptr::from_ref(begin_info).cast())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::begin_command_buffer(command_buffer.0, core::ptr::from_ref(begin_info).cast())
+    })?;
+
+    Ok(())
 }
 
 /// # Safety
 ///
 /// * The command pool that `command_buffer` was allocated must be externally synchronized.
 #[inline]
-pub unsafe fn end_command_buffer(command_buffer: VkHandleRefMut<VkCommandBuffer>) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::end_command_buffer(command_buffer.0)
-            .into_result()
-            .map(drop)
-    }
+pub unsafe fn end_command_buffer(command_buffer: VkHandleRefMut<brvk::VkCommandBuffer>) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::end_command_buffer(command_buffer.0) })?;
+
+    Ok(())
 }
 
 #[inline]
 pub fn create_fence(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     info: &FenceCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkFence> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkFence> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_fence(
+    translate_vk_result(unsafe {
+        brvk::fns::create_fence(
             device.0,
             core::ptr::from_ref(info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -824,11 +795,11 @@ pub fn create_fence(
 /// `fence` must be created from the `device`.
 #[inline]
 pub unsafe fn destroy_fence(
-    device: VkHandleRef<VkDevice>,
-    fence: VkHandleRefMut<VkFence>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    fence: VkHandleRefMut<brvk::VkFence>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_fence(device.0, fence.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_fence(device.0, fence.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -836,59 +807,61 @@ pub unsafe fn destroy_fence(
 /// fences in `fences` must be created from the `device`.
 #[inline]
 pub unsafe fn wait_for_fences(
-    device: VkHandleRef<VkDevice>,
-    fences: &[VkHandleRef<VkFence>],
+    device: VkHandleRef<brvk::VkDevice>,
+    fences: &[VkHandleRef<brvk::VkFence>],
     wait_all: bool,
     timeout: u64,
-) -> crate::Result<VkResult> {
-    unsafe {
-        crate::vkfn::wait_for_fences(
+) -> crate::Result<TimeoutableWaitResult> {
+    Ok(TimeoutableWaitResult::from_vk_result(translate_vk_result(unsafe {
+        brvk::fns::wait_for_fences(
             device.0,
             fences.len() as _,
             fences.as_ptr().cast(),
             wait_all as _,
             timeout,
         )
-        .into_result()
-    }
+    })?))
 }
 
 /// # Safety
 ///
 /// fences in `fences` must be created from the `device`.
 #[inline]
-pub unsafe fn reset_fences(device: VkHandleRef<VkDevice>, fences: &[VkHandleRefMut<VkFence>]) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::reset_fences(device.0, fences.len() as _, fences.as_ptr().cast())
-            .into_result()
-            .map(drop)
-    }
+pub unsafe fn reset_fences(
+    device: VkHandleRef<brvk::VkDevice>,
+    fences: &[VkHandleRefMut<brvk::VkFence>],
+) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::reset_fences(device.0, fences.len() as _, fences.as_ptr().cast()) })?;
+
+    Ok(())
 }
 
 /// # Safety
 ///
 /// `fence` must be created from the `device`.
 #[inline]
-pub unsafe fn get_fence_status(device: VkHandleRef<VkDevice>, fence: VkHandleRef<VkFence>) -> crate::Result<VkResult> {
-    unsafe { crate::vkfn::get_fence_status(device.0, fence.0).into_result() }
+pub unsafe fn get_fence_status(
+    device: VkHandleRef<brvk::VkDevice>,
+    fence: VkHandleRef<brvk::VkFence>,
+) -> crate::Result<brvk::VkResult> {
+    translate_vk_result(unsafe { brvk::fns::get_fence_status(device.0, fence.0) })
 }
 
 #[inline]
 pub fn create_semaphore(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &SemaphoreCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkSemaphore> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkSemaphore> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_semaphore(
+    translate_vk_result(unsafe {
+        brvk::fns::create_semaphore(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -899,29 +872,28 @@ pub fn create_semaphore(
 /// * `semaphore` must be created from the `device`.
 #[inline]
 pub unsafe fn destroy_semaphore(
-    device: VkHandleRef<VkDevice>,
-    semaphore: VkHandleRefMut<VkSemaphore>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    semaphore: VkHandleRefMut<brvk::VkSemaphore>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_semaphore(device.0, semaphore.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_semaphore(device.0, semaphore.0, opt_pointer(allocation_callbacks)) }
 }
 
 #[inline]
 pub fn create_buffer(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &BufferCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkBuffer> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkBuffer> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_buffer(
+    translate_vk_result(unsafe {
+        brvk::fns::create_buffer(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -931,11 +903,11 @@ pub fn create_buffer(
 /// * `buffer` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_buffer(
-    device: VkHandleRef<VkDevice>,
-    buffer: VkHandleRefMut<VkBuffer>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    buffer: VkHandleRefMut<brvk::VkBuffer>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_buffer(device.0, buffer.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_buffer(device.0, buffer.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -943,12 +915,12 @@ pub unsafe fn destroy_buffer(
 /// * `buffer` must be created from `device`.
 #[inline]
 pub unsafe fn get_buffer_memory_requirements(
-    device: VkHandleRef<VkDevice>,
-    buffer: VkHandleRef<VkBuffer>,
-) -> VkMemoryRequirements {
+    device: VkHandleRef<brvk::VkDevice>,
+    buffer: VkHandleRef<brvk::VkBuffer>,
+) -> brvk::VkMemoryRequirements {
     let mut sink = MaybeUninit::uninit();
     unsafe {
-        crate::vkfn::get_buffer_memory_requirements(device.0, buffer.0, sink.as_mut_ptr());
+        brvk::fns::get_buffer_memory_requirements(device.0, buffer.0, sink.as_mut_ptr());
 
         sink.assume_init()
     }
@@ -960,11 +932,11 @@ pub unsafe fn get_buffer_memory_requirements(
 #[cfg(feature = "Allow1_1APIs")]
 #[inline]
 pub unsafe fn get_buffer_memory_requirements2(
-    device: VkHandleRef<VkDevice>,
-    info: &BufferMemoryRequirementsInfo2<'_, impl VkHandle<Handle = VkBuffer>>,
-    sink: &mut MaybeUninit<VkMemoryRequirements2>,
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &BufferMemoryRequirementsInfo2<'_, impl VkHandle<Handle = brvk::VkBuffer>>,
+    sink: &mut MaybeUninit<brvk::VkMemoryRequirements2>,
 ) {
-    unsafe { crate::vkfn::get_buffer_memory_requirements2(device.0, info.as_ref(), sink.as_mut_ptr()) }
+    unsafe { brvk::fns::get_buffer_memory_requirements2(device.0, info.as_ref(), sink.as_mut_ptr()) }
 }
 
 /// # Safety
@@ -972,16 +944,14 @@ pub unsafe fn get_buffer_memory_requirements2(
 /// * `buffer` and `memory` must be created from `device`.
 #[inline]
 pub unsafe fn bind_buffer_memory(
-    device: VkHandleRef<VkDevice>,
-    buffer: VkHandleRef<VkBuffer>,
-    memory: VkHandleRef<VkDeviceMemory>,
-    offset: DeviceSize,
+    device: VkHandleRef<brvk::VkDevice>,
+    buffer: VkHandleRefMut<brvk::VkBuffer>,
+    memory: VkHandleRef<brvk::VkDeviceMemory>,
+    offset: brvk::VkDeviceSize,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::bind_buffer_memory(device.0, buffer.0, memory.0, offset)
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe { brvk::fns::bind_buffer_memory(device.0, buffer.0, memory.0, offset) })?;
+
+    Ok(())
 }
 
 /// # Safety
@@ -990,32 +960,31 @@ pub unsafe fn bind_buffer_memory(
 #[cfg(feature = "Allow1_1APIs")]
 #[inline]
 pub unsafe fn bind_buffer_memory2(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     bind_infos: &[BindBufferMemoryInfo],
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::bind_buffer_memory2(device.0, bind_infos.len() as _, bind_infos.as_ptr().cast())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::bind_buffer_memory2(device.0, bind_infos.len() as _, bind_infos.as_ptr().cast())
+    })?;
+
+    Ok(())
 }
 
 #[inline]
 pub fn create_image(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &ImageCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkImage> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkImage> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_image(
+    translate_vk_result(unsafe {
+        brvk::fns::create_image(
             device.0,
             create_info as *const _ as _,
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1025,11 +994,11 @@ pub fn create_image(
 /// `image` must be created from the `device`.
 #[inline]
 pub unsafe fn destroy_image(
-    device: VkHandleRef<VkDevice>,
-    image: VkHandleRef<VkImage>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    image: VkHandleRefMut<brvk::VkImage>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_image(device.0, image.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_image(device.0, image.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1037,12 +1006,12 @@ pub unsafe fn destroy_image(
 /// `image` must be created from the `device`.
 #[inline]
 pub unsafe fn get_image_memory_requirements(
-    device: VkHandleRef<VkDevice>,
-    image: VkHandleRef<VkImage>,
-) -> VkMemoryRequirements {
+    device: VkHandleRef<brvk::VkDevice>,
+    image: VkHandleRef<brvk::VkImage>,
+) -> brvk::VkMemoryRequirements {
     let mut sink = MaybeUninit::uninit();
     unsafe {
-        crate::vkfn::get_image_memory_requirements(device.0, image.0, sink.as_mut_ptr());
+        brvk::fns::get_image_memory_requirements(device.0, image.0, sink.as_mut_ptr());
 
         sink.assume_init()
     }
@@ -1054,11 +1023,11 @@ pub unsafe fn get_image_memory_requirements(
 #[cfg(feature = "Allow1_1APIs")]
 #[inline]
 pub unsafe fn get_image_memory_requirements2(
-    device: VkHandleRef<VkDevice>,
-    info: &ImageMemoryRequirementsInfo2<'_, impl VkHandle<Handle = VkImage>>,
-    sink: &mut MaybeUninit<VkMemoryRequirements2>,
+    device: VkHandleRef<brvk::VkDevice>,
+    info: &ImageMemoryRequirementsInfo2<'_, impl VkHandle<Handle = brvk::VkImage>>,
+    sink: &mut MaybeUninit<brvk::VkMemoryRequirements2>,
 ) {
-    unsafe { crate::vkfn::get_image_memory_requirements2(device.0, info.as_ref(), sink.as_mut_ptr()) }
+    unsafe { brvk::fns::get_image_memory_requirements2(device.0, info.as_ref(), sink.as_mut_ptr()) }
 }
 
 /// # Safety
@@ -1066,16 +1035,14 @@ pub unsafe fn get_image_memory_requirements2(
 /// * `image` and `memory` must be created from `device`.
 #[inline]
 pub unsafe fn bind_image_memory(
-    device: VkHandleRef<VkDevice>,
-    image: VkHandleRef<VkImage>,
-    memory: VkHandleRef<VkDeviceMemory>,
-    offset: DeviceSize,
+    device: VkHandleRef<brvk::VkDevice>,
+    image: VkHandleRefMut<brvk::VkImage>,
+    memory: VkHandleRef<brvk::VkDeviceMemory>,
+    offset: brvk::VkDeviceSize,
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::bind_image_memory(device.0, image.0, memory.0, offset)
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe { brvk::fns::bind_image_memory(device.0, image.0, memory.0, offset) })?;
+
+    Ok(())
 }
 
 /// # Safety
@@ -1084,32 +1051,31 @@ pub unsafe fn bind_image_memory(
 #[cfg(feature = "Allow1_1APIs")]
 #[inline]
 pub unsafe fn bind_image_memory2(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     bind_infos: &[BindImageMemoryInfo],
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::bind_image_memory2(device.0, bind_infos.len() as _, bind_infos.as_ptr().cast())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::bind_image_memory2(device.0, bind_infos.len() as _, bind_infos.as_ptr().cast())
+    })?;
+
+    Ok(())
 }
 
 #[inline]
 pub fn create_sampler(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &SamplerCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkSampler> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkSampler> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_sampler(
+    translate_vk_result(unsafe {
+        brvk::fns::create_sampler(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1119,29 +1085,28 @@ pub fn create_sampler(
 /// `sampler` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_sampler(
-    device: VkHandleRef<VkDevice>,
-    sampler: VkHandleRefMut<VkSampler>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    sampler: VkHandleRefMut<brvk::VkSampler>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_sampler(device.0, sampler.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_sampler(device.0, sampler.0, opt_pointer(allocation_callbacks)) }
 }
 
 #[inline]
 pub fn allocate_memory(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     allocate_info: &MemoryAllocateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkDeviceMemory> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkDeviceMemory> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::allocate_memory(
+    translate_vk_result(unsafe {
+        brvk::fns::allocate_memory(
             device.0,
             core::ptr::from_ref(allocate_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1151,11 +1116,11 @@ pub fn allocate_memory(
 /// `memory` must be allocated from `device`.
 #[inline]
 pub unsafe fn free_memory(
-    device: VkHandleRef<VkDevice>,
-    memory: VkHandleRefMut<VkDeviceMemory>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    memory: VkHandleRefMut<brvk::VkDeviceMemory>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::free_memory(device.0, memory.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::free_memory(device.0, memory.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1163,14 +1128,14 @@ pub unsafe fn free_memory(
 /// `memory` must be allocated from `device`.
 #[inline]
 pub unsafe fn map_memory(
-    device: VkHandleRef<VkDevice>,
-    memory: VkHandleRefMut<VkDeviceMemory>,
-    range: core::ops::Range<DeviceSize>,
-    flags: VkMemoryMapFlags,
+    device: VkHandleRef<brvk::VkDevice>,
+    memory: VkHandleRefMut<brvk::VkDeviceMemory>,
+    range: core::ops::Range<brvk::VkDeviceSize>,
+    flags: brvk::VkMemoryMapFlags,
 ) -> crate::Result<*mut core::ffi::c_void> {
     let mut p = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::map_memory(
+    translate_vk_result(unsafe {
+        brvk::fns::map_memory(
             device.0,
             memory.0,
             range.start,
@@ -1178,8 +1143,7 @@ pub unsafe fn map_memory(
             flags,
             p.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { p.assume_init() })
 }
@@ -1188,52 +1152,52 @@ pub unsafe fn map_memory(
 ///
 /// `memory` must be mapped from `device`.
 #[inline]
-pub unsafe fn unmap_memory(device: VkHandleRef<VkDevice>, memory: VkHandleRefMut<VkDeviceMemory>) {
-    unsafe {
-        crate::vkfn::unmap_memory(device.0, memory.0);
-    }
+pub unsafe fn unmap_memory(device: VkHandleRef<brvk::VkDevice>, memory: VkHandleRefMut<brvk::VkDeviceMemory>) {
+    unsafe { brvk::fns::unmap_memory(device.0, memory.0) }
 }
 
 #[inline]
 pub fn invalidate_mapped_memory_ranges(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     memory_ranges: &[MappedMemoryRange],
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::invalidate_mapped_memory_ranges(device.0, memory_ranges.len() as _, memory_ranges.as_ptr().cast())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::invalidate_mapped_memory_ranges(device.0, memory_ranges.len() as _, memory_ranges.as_ptr().cast())
+    })?;
+
+    Ok(())
 }
 
 #[inline]
 pub fn flush_mapped_memory_ranges(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     memory_ranges: &[MappedMemoryRange],
 ) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::flush_mapped_memory_ranges(device.0, memory_ranges.len() as _, memory_ranges.as_ptr().cast())
-            .into_result()
-            .map(drop)
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::flush_mapped_memory_ranges(device.0, memory_ranges.len() as _, memory_ranges.as_ptr().cast())
+    })?;
+
+    Ok(())
 }
 
+/// # Safety
+///
+/// image in `create_info` must be created from `device`.
 #[inline]
-pub fn create_image_view(
-    device: VkHandleRef<VkDevice>,
+pub unsafe fn create_image_view(
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &ImageViewCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkImageView> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkImageView> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_image_view(
+    translate_vk_result(unsafe {
+        brvk::fns::create_image_view(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1243,11 +1207,11 @@ pub fn create_image_view(
 /// `image_view` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_image_view(
-    device: VkHandleRef<VkDevice>,
-    image_view: VkHandleRefMut<VkImageView>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    image_view: VkHandleRefMut<brvk::VkImageView>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_image_view(device.0, image_view.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_image_view(device.0, image_view.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1255,20 +1219,19 @@ pub unsafe fn destroy_image_view(
 /// buffer in `create_info` must be created from `device`.
 #[inline]
 pub unsafe fn create_buffer_view(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &BufferViewCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkBufferView> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkBufferView> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_buffer_view(
+    translate_vk_result(unsafe {
+        brvk::fns::create_buffer_view(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1278,11 +1241,11 @@ pub unsafe fn create_buffer_view(
 /// `buffer_view` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_buffer_view(
-    device: VkHandleRef<VkDevice>,
-    buffer_view: VkHandleRefMut<VkBufferView>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    buffer_view: VkHandleRefMut<brvk::VkBufferView>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_buffer_view(device.0, buffer_view.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_buffer_view(device.0, buffer_view.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1290,20 +1253,19 @@ pub unsafe fn destroy_buffer_view(
 /// renderPass and attachments in `create_info` must be created from `device`.
 #[inline]
 pub unsafe fn create_framebuffer(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &FramebufferCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkFramebuffer> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkFramebuffer> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_framebuffer(
+    translate_vk_result(unsafe {
+        brvk::fns::create_framebuffer(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1313,11 +1275,11 @@ pub unsafe fn create_framebuffer(
 /// `framebuffer` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_framebuffer(
-    device: VkHandleRef<VkDevice>,
-    framebuffer: VkHandleRefMut<VkFramebuffer>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    framebuffer: VkHandleRefMut<brvk::VkFramebuffer>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_framebuffer(device.0, framebuffer.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_framebuffer(device.0, framebuffer.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1325,11 +1287,11 @@ pub unsafe fn destroy_framebuffer(
 /// `render_pass` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_render_pass(
-    device: VkHandleRef<VkDevice>,
-    render_pass: VkHandleRefMut<VkRenderPass>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    render_pass: VkHandleRefMut<brvk::VkRenderPass>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_render_pass(device.0, render_pass.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_render_pass(device.0, render_pass.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1337,16 +1299,16 @@ pub unsafe fn destroy_render_pass(
 /// `pipeline_cache` must be created from `device`.
 #[inline]
 pub unsafe fn create_graphics_pipelines(
-    device: VkHandleRef<VkDevice>,
-    pipeline_cache: Option<VkHandleRef<VkPipelineCache>>,
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: Option<VkHandleRef<brvk::VkPipelineCache>>,
     create_infos: &[GraphicsPipelineCreateInfo],
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-    results: &mut [MaybeUninit<VkPipeline>],
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    results: &mut [MaybeUninit<brvk::VkPipeline>],
 ) -> crate::Result<()> {
     debug_assert!(results.len() >= create_infos.len());
 
-    unsafe {
-        crate::vkfn::create_graphics_pipelines(
+    translate_vk_result(unsafe {
+        brvk::fns::create_graphics_pipelines(
             device.0,
             pipeline_cache.map(|x| x.0),
             create_infos.len() as _,
@@ -1354,9 +1316,9 @@ pub unsafe fn create_graphics_pipelines(
             opt_pointer(allocation_callbacks),
             results.as_mut_ptr().cast(),
         )
-        .into_result()
-        .map(drop)
-    }
+    })?;
+
+    Ok(())
 }
 
 /// # Safety
@@ -1364,11 +1326,11 @@ pub unsafe fn create_graphics_pipelines(
 /// `pipeline_cache` must be created from `device`.
 #[inline]
 pub unsafe fn create_graphics_pipeline_array<const N: usize>(
-    device: VkHandleRef<VkDevice>,
-    pipeline_cache: Option<VkHandleRef<VkPipelineCache>>,
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: Option<VkHandleRef<brvk::VkPipelineCache>>,
     create_infos: &[GraphicsPipelineCreateInfo; N],
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<[VkPipeline; N]> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<[brvk::VkPipeline; N]> {
     let mut results = [MaybeUninit::uninit(); N];
     unsafe {
         create_graphics_pipelines(device, pipeline_cache, create_infos, allocation_callbacks, &mut results)?;
@@ -1382,29 +1344,28 @@ pub unsafe fn create_graphics_pipeline_array<const N: usize>(
 /// `pipeline` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_pipeline(
-    device: VkHandleRef<VkDevice>,
-    pipeline: VkHandleRefMut<VkPipeline>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline: VkHandleRefMut<brvk::VkPipeline>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe { crate::vkfn::destroy_pipeline(device.0, pipeline.0, opt_pointer(allocation_callbacks)) }
+    unsafe { brvk::fns::destroy_pipeline(device.0, pipeline.0, opt_pointer(allocation_callbacks)) }
 }
 
 #[inline]
 pub fn create_pipeline_layout(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     create_info: &PipelineLayoutCreateInfo,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
-) -> crate::Result<VkPipelineLayout> {
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+) -> crate::Result<brvk::VkPipelineLayout> {
     let mut h = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::create_pipeline_layout(
+    translate_vk_result(unsafe {
+        brvk::fns::create_pipeline_layout(
             device.0,
             core::ptr::from_ref(create_info).cast(),
             opt_pointer(allocation_callbacks),
             h.as_mut_ptr(),
         )
-        .into_result()?;
-    }
+    })?;
 
     Ok(unsafe { h.assume_init() })
 }
@@ -1414,13 +1375,11 @@ pub fn create_pipeline_layout(
 /// `pipeline_layout` must be created from `device`.
 #[inline]
 pub unsafe fn destroy_pipeline_layout(
-    device: VkHandleRef<VkDevice>,
-    pipeline_layout: VkHandleRefMut<VkPipelineLayout>,
-    allocation_callbacks: Option<&VkAllocationCallbacks>,
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_layout: VkHandleRefMut<brvk::VkPipelineLayout>,
+    allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
 ) {
-    unsafe {
-        crate::vkfn::destroy_pipeline_layout(device.0, pipeline_layout.0, opt_pointer(allocation_callbacks));
-    }
+    unsafe { brvk::fns::destroy_pipeline_layout(device.0, pipeline_layout.0, opt_pointer(allocation_callbacks)) }
 }
 
 /// # Safety
@@ -1428,13 +1387,13 @@ pub unsafe fn destroy_pipeline_layout(
 /// `pipeline_cache` must be created from `device`.
 #[inline]
 pub unsafe fn get_pipeline_cache_data_byte_length(
-    device: VkHandleRef<VkDevice>,
-    pipeline_cache: VkHandleRef<VkPipelineCache>,
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: VkHandleRef<brvk::VkPipelineCache>,
 ) -> crate::Result<usize> {
     let mut len = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_pipeline_cache_data(device.0, pipeline_cache.0, len.as_mut_ptr(), null_mut()).into_result()?;
-    }
+    translate_vk_result(unsafe {
+        brvk::fns::get_pipeline_cache_data(device.0, pipeline_cache.0, len.as_mut_ptr(), null_mut())
+    })?;
 
     Ok(unsafe { len.assume_init() })
 }
@@ -1444,14 +1403,13 @@ pub unsafe fn get_pipeline_cache_data_byte_length(
 /// `pipeline_cache` must be created from `device`.
 #[inline]
 pub unsafe fn get_pipeline_cache_data(
-    device: VkHandleRef<VkDevice>,
-    pipeline_cache: VkHandleRef<VkPipelineCache>,
+    device: VkHandleRef<brvk::VkDevice>,
+    pipeline_cache: VkHandleRef<brvk::VkPipelineCache>,
     sink: &mut [MaybeUninit<u8>],
 ) -> crate::Result<ArrayQueryResult<usize>> {
     let mut len = sink.len();
     let r = ArrayQueryResult::from_vk_result(unsafe {
-        crate::vkfn::get_pipeline_cache_data(device.0, pipeline_cache.0, &mut len, sink.as_mut_ptr().cast())
-            .into_result()?
+        brvk::fns::get_pipeline_cache_data(device.0, pipeline_cache.0, &mut len, sink.as_mut_ptr().cast())
     })?;
 
     Ok(r.with_result(len))
@@ -1459,46 +1417,47 @@ pub unsafe fn get_pipeline_cache_data(
 
 /// # Safety
 ///
-/// * `semaphore` must be created with a [`VkSemaphoreType`] of [`VK_SEMAPHORE_TYPE_TIMELINE`].
+/// * `semaphore` must be created with a [`brvk::VkSemaphoreType`] of [`brvk::VK_SEMAPHORE_TYPE_TIMELINE`].
 /// * `semaphore` must be created from `device`.
 #[cfg(feature = "Allow1_2APIs")]
 #[inline]
 pub unsafe fn get_semaphore_counter_value(
-    device: VkHandleRef<VkDevice>,
-    semaphore: VkHandleRef<VkSemaphore>,
+    device: VkHandleRef<brvk::VkDevice>,
+    semaphore: VkHandleRef<brvk::VkSemaphore>,
 ) -> crate::Result<u64> {
     let mut value = MaybeUninit::uninit();
-    unsafe {
-        crate::vkfn::get_semaphore_counter_value(device.0, semaphore.0, value.as_mut_ptr()).into_result()?;
-    }
+    translate_vk_result(unsafe { brvk::fns::get_semaphore_counter_value(device.0, semaphore.0, value.as_mut_ptr()) })?;
 
     Ok(unsafe { value.assume_init() })
 }
 
 /// # Safety
 ///
-/// * semaphore in `signal_info` must be created with a [`VkSemaphoreType`] of [`VK_SEMAPHORE_TYPE_TIMELINE`].
+/// * semaphore in `signal_info` must be created with a [`brvk::VkSemaphoreType`] of [`brvk::VK_SEMAPHORE_TYPE_TIMELINE`].
 /// * semaphore in `signal_info` must be created from `device`.
 #[cfg(feature = "Allow1_2APIs")]
 #[inline]
-pub unsafe fn signal_semaphore(device: VkHandleRef<VkDevice>, signal_info: &SemaphoreSignalInfo) -> crate::Result<()> {
-    unsafe {
-        crate::vkfn::signal_semaphore(device.0, core::ptr::from_ref(signal_info).cast())
-            .into_result()
-            .map(drop)
-    }
+pub unsafe fn signal_semaphore(
+    device: VkHandleRef<brvk::VkDevice>,
+    signal_info: &SemaphoreSignalInfo,
+) -> crate::Result<()> {
+    translate_vk_result(unsafe { brvk::fns::signal_semaphore(device.0, core::ptr::from_ref(signal_info).cast()) })?;
+
+    Ok(())
 }
 
 /// # Safety
 ///
-/// * semaphore in `wait_info` must be created with a [`VkSemaphoreType`] of [`VK_SEMAPHORE_TYPE_TIMELINE`].
+/// * semaphore in `wait_info` must be created with a [`brvk::VkSemaphoreType`] of [`brvk::VK_SEMAPHORE_TYPE_TIMELINE`].
 /// * semaphore in `wait_info` must be created from `device`.
 #[cfg(feature = "Allow1_2APIs")]
 #[inline]
 pub unsafe fn wait_semaphores(
-    device: VkHandleRef<VkDevice>,
+    device: VkHandleRef<brvk::VkDevice>,
     wait_info: &SemaphoreWaitInfo,
     timeout: u64,
-) -> crate::Result<VkResult> {
-    unsafe { crate::vkfn::wait_semaphores(device.0, core::ptr::from_ref(wait_info).cast(), timeout).into_result() }
+) -> crate::Result<TimeoutableWaitResult> {
+    Ok(TimeoutableWaitResult::from_vk_result(translate_vk_result(unsafe {
+        brvk::fns::wait_semaphores(device.0, core::ptr::from_ref(wait_info).cast(), timeout)
+    })?))
 }

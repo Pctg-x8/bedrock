@@ -1,4 +1,4 @@
-use crate::vk::*;
+use crate::*;
 use core::ffi::*;
 
 #[rustfmt::skip] #[inline(always)] #[allow(clippy::too_many_arguments)]

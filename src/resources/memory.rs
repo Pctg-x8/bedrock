@@ -1,14 +1,16 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
+
 use crate::*;
 use derives::implements;
 
-pub trait DeviceMemory: VkHandle<Handle = VkDeviceMemory> + DeviceChildHandle {
+pub trait DeviceMemory: VkHandle<Handle = brvk::VkDeviceMemory> + DeviceChildHandle {
     /// Query the current commitment for a `DeviceMemory`
     #[implements]
     #[inline]
-    fn commitment_bytes(&self) -> VkDeviceSize {
+    fn commitment_bytes(&self) -> brvk::VkDeviceSize {
         let mut b = 0;
         unsafe {
-            crate::vkfn::get_device_memory_commitment(self.device_handle(), self.native_ptr(), &mut b);
+            brvk::fns::get_device_memory_commitment(self.device_handle(), self.native_ptr(), &mut b);
         }
 
         b
@@ -24,12 +26,12 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_MEMORY_MAP_FAILED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
     #[inline(always)]
-    unsafe fn map_raw(&mut self, range: core::ops::Range<VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
+    unsafe fn map_raw(&mut self, range: core::ops::Range<brvk::VkDeviceSize>) -> crate::Result<*mut core::ffi::c_void> {
         unsafe {
             crate::vkfn_wrapper::map_memory(
                 self.device_transparent_ref(),
@@ -44,9 +46,9 @@ pub trait DeviceMemoryMut: DeviceMemory + VkHandleMut {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_MEMORY_MAP_FAILED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_MEMORY_MAP_FAILED`
     #[implements]
     #[inline]
     fn map<'a>(&'a mut self, range: core::ops::Range<usize>) -> crate::Result<MappedMemory<'a, Self>> {
@@ -75,10 +77,10 @@ DerefContainerBracketImpl!(for mut DeviceMemoryMut {});
 GuardsImpl!(for mut DeviceMemoryMut {});
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkDeviceMemory::OBJECT_TYPE)]
-pub struct DeviceMemoryObject<Device: VkHandle<Handle = VkDevice>>(VkDeviceMemory, Device);
+#[VkObject(type = brvk::VkDeviceMemory::OBJECT_TYPE)]
+pub struct DeviceMemoryObject<Device: VkHandle<Handle = brvk::VkDevice>>(brvk::VkDeviceMemory, Device);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for DeviceMemoryObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for DeviceMemoryObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
@@ -86,11 +88,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for DeviceMemoryObject<Device> {
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for DeviceMemoryObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for DeviceMemoryObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DeviceMemoryObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for DeviceMemoryObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for DeviceMemoryObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for DeviceMemoryObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -102,18 +104,18 @@ impl<Device: crate::Device> DeviceChild for DeviceMemoryObject<Device> {
         &self.1
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> DeviceMemory for DeviceMemoryObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryMut for DeviceMemoryObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceMemory for DeviceMemoryObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceMemoryMut for DeviceMemoryObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceMemoryObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkDeviceMemory, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkDeviceMemory, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkDeviceMemory, Device) {
+    pub const fn unmanage(self) -> (brvk::VkDeviceMemory, Device) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -121,7 +123,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DeviceMemoryObject<Device> {
         (v, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> DeviceMemoryObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> DeviceMemoryObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DeviceMemoryObject<Device> {
@@ -136,10 +138,10 @@ impl<Device: crate::Device> DeviceMemoryObject<Device> {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_INVALID_EXTERNAL_HANDLE`]
-    /// * [`VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_INVALID_EXTERNAL_HANDLE`]
+    /// * [`brvk::VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR`]
     #[implements]
     #[inline]
     pub fn new(device: Device, info: &MemoryAllocateInfo) -> crate::Result<Self> {
@@ -151,14 +153,14 @@ impl<Device: crate::Device> DeviceMemoryObject<Device> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct MemoryAllocateInfo<'d>(
-    VkMemoryAllocateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
+    brvk::VkMemoryAllocateInfo,
+    core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,
 );
 impl<'d> MemoryAllocateInfo<'d> {
-    pub const fn new(size: VkDeviceSize, memory_type_index: u32) -> Self {
+    pub const fn new(size: brvk::VkDeviceSize, memory_type_index: u32) -> Self {
         Self(
-            VkMemoryAllocateInfo {
-                sType: VkMemoryAllocateInfo::TYPE,
+            brvk::VkMemoryAllocateInfo {
+                sType: brvk::VkMemoryAllocateInfo::TYPE,
                 pNext: core::ptr::null(),
                 allocationSize: size,
                 memoryTypeIndex: memory_type_index,
@@ -169,16 +171,16 @@ impl<'d> MemoryAllocateInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkMemoryAllocateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkMemoryAllocateInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkMemoryAllocateInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkMemoryAllocateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkMemoryAllocateInfo {
+    pub const fn into_raw(self) -> brvk::VkMemoryAllocateInfo {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -186,18 +188,18 @@ impl<'d> MemoryAllocateInfo<'d> {
     /// # Safety
     ///
     /// next data must be a value for type of T.
-    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: brvk::VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
-unsafe impl VulkanStructure for MemoryAllocateInfo<'_> {
+unsafe impl brvk::VulkanStructure for MemoryAllocateInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }
@@ -207,33 +209,33 @@ unsafe impl VulkanStructure for MemoryAllocateInfo<'_> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct MemoryDedicatedAllocateInfo<'d>(
-    VkMemoryDedicatedAllocateInfoKHR,
+    brvk::VkMemoryDedicatedAllocateInfoKHR,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        Option<&'d dyn VulkanStructure>,
-        Option<&'d dyn VkHandle<Handle = VkImage>>,
-        Option<&'d dyn VkHandle<Handle = VkBuffer>>,
+        Option<&'d dyn brvk::VulkanStructure>,
+        Option<&'d dyn VkHandle<Handle = brvk::VkImage>>,
+        Option<&'d dyn VkHandle<Handle = brvk::VkBuffer>>,
     )>,
 );
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
-unsafe impl VulkanStructure for MemoryDedicatedAllocateInfo<'_> {
+unsafe impl brvk::VulkanStructure for MemoryDedicatedAllocateInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 }
 #[cfg(feature = "VK_KHR_dedicated_allocation")]
 impl<'d> MemoryDedicatedAllocateInfo<'d> {
     #[inline]
-    pub fn for_buffer(buffer: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized)) -> Self {
+    pub fn for_buffer(buffer: &'d (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized)) -> Self {
         Self(
-            VkMemoryDedicatedAllocateInfoKHR {
-                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+            brvk::VkMemoryDedicatedAllocateInfoKHR {
+                sType: brvk::VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 image: None,
                 buffer: Some(buffer.native_ptr()),
@@ -246,10 +248,10 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     ///
     /// `buffer` must be a valid object.
     #[inline]
-    pub const unsafe fn for_buffer_raw(buffer: VkBuffer) -> Self {
+    pub const unsafe fn for_buffer_raw(buffer: brvk::VkBuffer) -> Self {
         Self(
-            VkMemoryDedicatedAllocateInfoKHR {
-                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+            brvk::VkMemoryDedicatedAllocateInfoKHR {
+                sType: brvk::VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 image: None,
                 buffer: Some(buffer),
@@ -259,10 +261,10 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     }
 
     #[inline]
-    pub fn for_image(image: &'d (impl VkHandle<Handle = VkImage> + ?Sized)) -> Self {
+    pub fn for_image(image: &'d (impl VkHandle<Handle = brvk::VkImage> + ?Sized)) -> Self {
         Self(
-            VkMemoryDedicatedAllocateInfoKHR {
-                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+            brvk::VkMemoryDedicatedAllocateInfoKHR {
+                sType: brvk::VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 image: Some(image.native_ptr()),
                 buffer: None,
@@ -275,10 +277,10 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     ///
     /// `image` must be a valid object.
     #[inline]
-    pub const unsafe fn for_image_raw(image: VkImage) -> Self {
+    pub const unsafe fn for_image_raw(image: brvk::VkImage) -> Self {
         Self(
-            VkMemoryDedicatedAllocateInfoKHR {
-                sType: VkMemoryDedicatedAllocateInfoKHR::TYPE,
+            brvk::VkMemoryDedicatedAllocateInfoKHR {
+                sType: brvk::VkMemoryDedicatedAllocateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 image: Some(image),
                 buffer: None,
@@ -289,16 +291,16 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkMemoryDedicatedAllocateInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkMemoryDedicatedAllocateInfoKHR) -> Self {
+    /// `raw` must be a valid [`brvk::VkMemoryDedicatedAllocateInfoKHR`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkMemoryDedicatedAllocateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkMemoryDedicatedAllocateInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkMemoryDedicatedAllocateInfoKHR {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -306,24 +308,24 @@ impl<'d> MemoryDedicatedAllocateInfo<'d> {
     /// # Safety
     ///
     /// `next` must be a value for type of T.
-    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: brvk::VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
 
 /// Structure specifying a mapped memory range.
 pub struct MappedMemoryRange<'a>(
-    VkMappedMemoryRange,
-    core::marker::PhantomData<&'a dyn VkHandle<Handle = VkDeviceMemory>>,
+    brvk::VkMappedMemoryRange,
+    core::marker::PhantomData<&'a dyn VkHandle<Handle = brvk::VkDeviceMemory>>,
 );
 impl<'a> MappedMemoryRange<'a> {
     pub fn new(
-        memory: &'a (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
-        range: core::ops::Range<DeviceSize>,
+        memory: &'a (impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
     ) -> Self {
         Self(
-            VkMappedMemoryRange {
-                sType: VkMappedMemoryRange::TYPE,
+            brvk::VkMappedMemoryRange {
+                sType: brvk::VkMappedMemoryRange::TYPE,
                 pNext: core::ptr::null(),
                 memory: memory.native_ptr(),
                 offset: range.start,
@@ -336,10 +338,14 @@ impl<'a> MappedMemoryRange<'a> {
     /// # Safety
     ///
     /// `memory` must be a valid object.
-    pub const unsafe fn new_raw(memory: VkDeviceMemory, offset: DeviceSize, size: DeviceSize) -> Self {
+    pub const unsafe fn new_raw(
+        memory: brvk::VkDeviceMemory,
+        offset: brvk::VkDeviceSize,
+        size: brvk::VkDeviceSize,
+    ) -> Self {
         Self(
-            VkMappedMemoryRange {
-                sType: VkMappedMemoryRange::TYPE,
+            brvk::VkMappedMemoryRange {
+                sType: brvk::VkMappedMemoryRange::TYPE,
                 pNext: core::ptr::null(),
                 memory,
                 offset,
@@ -352,11 +358,11 @@ impl<'a> MappedMemoryRange<'a> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkMappedMemoryRange`] struct.
-    pub const unsafe fn from_raw(raw: VkMappedMemoryRange) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkMappedMemoryRange) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkMappedMemoryRange {
+    pub const fn into_raw(self) -> brvk::VkMappedMemoryRange {
         self.0
     }
 }

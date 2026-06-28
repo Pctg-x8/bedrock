@@ -163,7 +163,7 @@ pub fn derive_object(tok: TokenStream) -> TokenStream {
 
     quote! {
         impl #impl_generics crate::VkObject for #name #ty_generics #where_clause {
-            const TYPE: crate::vk::VkObjectType = #object_type;
+            const TYPE: bedrock_vk::VkObjectType = #object_type;
         }
     }
     .into()
@@ -662,7 +662,7 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
 
         Some(quote! {
             #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
-            impl crate::resolver::StaticCallable for #pfn_name {
+            impl crate::StaticCallable for #pfn_name {
                 const STATIC: Self = Self(#fn_ident);
             }
 
@@ -707,24 +707,24 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
             #[derive(Clone, Copy, Debug)]
             #base_vis struct #pfn_name(pub #pfn_ty);
             #[cfg(feature = #promote_feature_name)]
-            unsafe impl crate::resolver::FromPtr for #pfn_name {
+            unsafe impl crate::FromPtr for #pfn_name {
                 #[inline(always)]
                 unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                     core::mem::transmute(p)
                 }
             }
             #[cfg(feature = #promote_feature_name)]
-            unsafe impl crate::resolver::PFN for #pfn_name {
+            unsafe impl crate::PFN for #pfn_name {
                 const NAME_CSTR: &core::ffi::CStr = #promoted_fn_cstr;
 
                 #[inline(always)]
-                unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
+                unsafe fn from_void_fn(p: crate::PFN_vkVoidFunction) -> Self {
                     core::mem::transmute(p)
                 }
             }
 
             #[cfg(all(feature = "Implements", feature = #promote_feature_name, not(feature = "DynamicLoaded")))]
-            impl crate::resolver::StaticCallable for #pfn_name {
+            impl crate::StaticCallable for #pfn_name {
                 const STATIC: Self = Self(#promoted_fn_ident);
             }
 
@@ -741,17 +741,17 @@ pub fn vk_ext_command(input: TokenStream) -> TokenStream {
         #[repr(transparent)]
         #[derive(Clone, Copy, Debug)]
         #base_vis struct #pfn_name(pub #pfn_ty);
-        unsafe impl crate::resolver::FromPtr for #pfn_name {
+        unsafe impl crate::FromPtr for #pfn_name {
             #[inline(always)]
             unsafe fn from_ptr(p: *const core::ffi::c_void) -> Self {
                 core::mem::transmute(p)
             }
         }
-        unsafe impl crate::resolver::PFN for #pfn_name {
+        unsafe impl crate::PFN for #pfn_name {
             const NAME_CSTR: &core::ffi::CStr = #fname_cstr;
 
             #[inline(always)]
-            unsafe fn from_void_fn(p: crate::vk::PFN_vkVoidFunction) -> Self {
+            unsafe fn from_void_fn(p: crate::PFN_vkVoidFunction) -> Self {
                 core::mem::transmute(p)
             }
         }

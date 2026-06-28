@@ -5,7 +5,7 @@ pub static VK_KHR_PUSH_DESCRIPTOR_EXTENSION_NAME: &str = "VK_KHR_push_descriptor
 
 use super::*;
 use crate::vk2::*;
-use derives::{promote_1_4, vk_ext_command};
+use derives::{TypedVulkanSinkStructure, promote_1_4, vk_ext_command};
 
 vk_bitmask! {
     extending enum VkDescriptorSetLayoutCreateFlagBits {
@@ -30,15 +30,13 @@ vk_ext_command! {
     promote = "1.4";
 }
 
-cfg_if::cfg_if! {
-    if #[cfg(feature = "VK_KHR_descriptor_update_template")] {
-        #[promote_1_4(suffix = "KHR")]
-        pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+#[promote_1_4(suffix = "KHR")]
+pub const VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR: VkDescriptorUpdateTemplateTypeKHR = 1;
 
-        vk_ext_command! {
-            pub fn vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const c_void);
-            suffix = "KHR";
-            promote = "1.4";
-        }
-    }
+#[cfg(feature = "VK_KHR_descriptor_update_template")]
+vk_ext_command! {
+    pub fn vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer: VkCommandBuffer, descriptorUpdateTemplate: VkDescriptorUpdateTemplateKHR, layout: VkPipelineLayout, set: u32, pData: *const c_void);
+    suffix = "KHR";
+    promote = "1.4";
 }

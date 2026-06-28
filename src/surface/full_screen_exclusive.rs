@@ -5,14 +5,14 @@ use crate::*;
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub enum FullScreenExclusive {
     /// The implementation should determine the appropriate full-screen method by whatever means it deems appropriate.
-    Default = VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT,
+    Default = brvk::VK_FULL_SCREEN_EXCLUSIVE_DEFAULT_EXT,
     /// The implementation may use full-screen exclusive mechanisms when available.
-    Allowed = VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT,
+    Allowed = brvk::VK_FULL_SCREEN_EXCLUSIVE_ALLOWED_EXT,
     /// The implementation should avoid using full-screen mechanisms which rely on disruptive transitions.
-    Disallowed = VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT,
+    Disallowed = brvk::VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT,
     /// The application will manage full-screen exclusive mode by using the
     /// [`vkAcquireFullScreenExclusiveModeEXT`] and [`vkReleaseFullScreenExclusiveModeEXT`] commands.
-    ApplicationControlled = VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT,
+    ApplicationControlled = brvk::VK_FULL_SCREEN_EXCLUSIVE_APPLICATION_CONTROLLED_EXT,
 }
 
 #[repr(transparent)]
@@ -37,7 +37,7 @@ impl<'n> SurfaceFullScreenExclusiveInfo<'n> {
     pub const fn new(flags: VkFullScreenExclusiveEXT) -> Self {
         Self(
             VkSurfaceFullScreenExclusiveInfoEXT {
-                sType: <VkSurfaceFullScreenExclusiveInfoEXT as TypedVulkanSinkStructure>::TYPE,
+                sType: <VkSurfaceFullScreenExclusiveInfoEXT as brvk::TypedVulkanSinkStructure>::TYPE,
                 pNext: core::ptr::null_mut(),
                 fullScreenExclusive: flags,
             },

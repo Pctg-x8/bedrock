@@ -1,18 +1,18 @@
 //! External Memory Import/Export Operations
-
-use crate::*;
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
 
 #[cfg(feature = "VK_KHR_external_memory")]
-pub type ExternalMemoryImageCreateInfo = VkExternalMemoryImageCreateInfoKHR;
+#[repr(transparent)]
+pub struct ExternalMemoryImageCreateInfo(brvk::VkExternalMemoryImageCreateInfoKHR);
 #[cfg(feature = "VK_KHR_external_memory")]
 impl ExternalMemoryImageCreateInfo {
     #[inline(always)]
-    pub const fn new(handle_types: VkExternalMemoryHandleTypeFlagBitsKHR) -> Self {
-        Self {
-            sType: VkExternalMemoryImageCreateInfoKHR::TYPE,
+    pub const fn new(handle_types: brvk::VkExternalMemoryHandleTypeFlagBitsKHR) -> Self {
+        Self(brvk::VkExternalMemoryImageCreateInfoKHR {
+            sType: brvk::VkExternalMemoryImageCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             handleTypes: handle_types,
-        }
+        })
     }
 }
 

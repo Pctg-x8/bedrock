@@ -1,34 +1,36 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
 use widestring::WideCStr;
 use windows::Win32::Foundation::HANDLE;
 
+use crate::error::translate_vk_result;
 use crate::ffi_helper::opt_pointer;
 use crate::*;
 
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum ExternalMemoryHandleTypeWin32 {
-    OpaqueWin32 = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR,
-    OpaqueWin32KMT = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR,
-    D3D11Texture = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT_KHR,
-    D3D11TextureKMT = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR,
-    D3D12Heap = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR,
-    D3D12Resource = VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR,
+    OpaqueWin32 = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_KHR,
+    OpaqueWin32KMT = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_KHR,
+    D3D11Texture = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_BIT_KHR,
+    D3D11TextureKMT = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_TEXTURE_KMT_BIT_KHR,
+    D3D12Heap = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_HEAP_BIT_KHR,
+    D3D12Resource = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_D3D12_RESOURCE_BIT_KHR,
 }
 
 #[repr(transparent)]
 #[derive(Debug, Clone)]
 pub struct ImportMemoryWin32HandleInfo<'d>(
-    VkImportMemoryWin32HandleInfoKHR,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, Option<&'d WideCStr>)>,
+    brvk::VkImportMemoryWin32HandleInfoKHR,
+    core::marker::PhantomData<(Option<&'d dyn brvk::VulkanStructure>, Option<&'d WideCStr>)>,
 );
-unsafe impl VulkanStructure for ImportMemoryWin32HandleInfo<'_> {
+unsafe impl brvk::VulkanStructure for ImportMemoryWin32HandleInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 }
@@ -39,8 +41,8 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
         name: Option<&'d WideCStr>,
     ) -> Self {
         Self(
-            VkImportMemoryWin32HandleInfoKHR {
-                sType: VkImportMemoryWin32HandleInfoKHR::TYPE,
+            brvk::VkImportMemoryWin32HandleInfoKHR {
+                sType: brvk::VkImportMemoryWin32HandleInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 handleType: handle_type as _,
                 handle,
@@ -56,15 +58,15 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkImportMemoryWin32HandleInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkImportMemoryWin32HandleInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkImportMemoryWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkImportMemoryWin32HandleInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkImportMemoryWin32HandleInfoKHR {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -72,7 +74,7 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
     /// # Safety
     ///
     /// `self` must be a valid value for type of T.
-    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: brvk::VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
@@ -80,17 +82,17 @@ impl<'d> ImportMemoryWin32HandleInfo<'d> {
 #[repr(transparent)]
 #[derive(Debug, Clone)]
 pub struct ExportMemoryWin32HandleInfo<'d>(
-    VkExportMemoryWin32HandleInfoKHR,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, &'d WideCStr)>,
+    brvk::VkExportMemoryWin32HandleInfoKHR,
+    core::marker::PhantomData<(Option<&'d dyn brvk::VulkanStructure>, &'d WideCStr)>,
 );
-unsafe impl VulkanStructure for ExportMemoryWin32HandleInfo<'_> {
+unsafe impl brvk::VulkanStructure for ExportMemoryWin32HandleInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 }
@@ -101,8 +103,8 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
         name: &'d WideCStr,
     ) -> Self {
         Self(
-            VkExportMemoryWin32HandleInfoKHR {
-                sType: VkExportMemoryWin32HandleInfoKHR::TYPE,
+            brvk::VkExportMemoryWin32HandleInfoKHR {
+                sType: brvk::VkExportMemoryWin32HandleInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 pAttributes: opt_pointer(security_attributes),
                 dwAccess: access,
@@ -115,15 +117,15 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkExportMemoryWin32HandleInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkExportMemoryWin32HandleInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkExportMemoryWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkExportMemoryWin32HandleInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkExportMemoryWin32HandleInfoKHR {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -131,7 +133,7 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
     /// # Safety
     ///
     /// `self` must be a valid value for type of T.
-    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: brvk::VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
@@ -139,29 +141,29 @@ impl<'d> ExportMemoryWin32HandleInfo<'d> {
 #[repr(transparent)]
 #[derive(Debug, Clone)]
 pub struct MemoryGetWin32HandleInfo<'d>(
-    pub(crate) VkMemoryGetWin32HandleInfoKHR,
-    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
+    pub(crate) brvk::VkMemoryGetWin32HandleInfoKHR,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = brvk::VkDeviceMemory>>,
 );
-unsafe impl VulkanStructure for MemoryGetWin32HandleInfo<'_> {
+unsafe impl brvk::VulkanStructure for MemoryGetWin32HandleInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         unsafe { core::mem::transmute(self) }
     }
 }
 impl<'d> MemoryGetWin32HandleInfo<'d> {
     #[inline]
     pub fn new(
-        memory: &'d (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        memory: &'d (impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
         handle_type: ExternalMemoryHandleTypeWin32,
     ) -> Self {
         Self(
-            VkMemoryGetWin32HandleInfoKHR {
-                sType: VkMemoryGetWin32HandleInfoKHR::TYPE,
+            brvk::VkMemoryGetWin32HandleInfoKHR {
+                sType: brvk::VkMemoryGetWin32HandleInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 memory: memory.native_ptr(),
                 handleType: handle_type as _,
@@ -172,28 +174,28 @@ impl<'d> MemoryGetWin32HandleInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkMemoryGetWin32HandleInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkMemoryGetWin32HandleInfoKHR) -> Self {
+    /// `raw` must be a valid [`brvk::VkMemoryGetWin32HandleInfoKHR`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkMemoryGetWin32HandleInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkMemoryGetWin32HandleInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkMemoryGetWin32HandleInfoKHR {
         self.0
     }
 
     /// # Safety
     ///
     /// `self` must be a valid value for type of T.
-    pub const unsafe fn next_sink<T: VulkanStructure>(&mut self) -> &mut *const T {
+    pub const unsafe fn next_sink<T: brvk::VulkanStructure>(&mut self) -> &mut *const T {
         unsafe { core::mem::transmute(&mut self.0.pNext) }
     }
 }
 
 pub trait DeviceExternalMemoryWin32Extension: Device {
     #[implements]
-    fn get_memory_win32_handle_khr_fn(&self) -> PFN_vkGetMemoryWin32HandleKHR;
+    fn get_memory_win32_handle_khr_fn(&self) -> brvk::PFN_vkGetMemoryWin32HandleKHR;
     #[implements]
-    fn get_memory_win32_handle_properties_khr_fn(&self) -> PFN_vkGetMemoryWin32HandlePropertiesKHR;
+    fn get_memory_win32_handle_properties_khr_fn(&self) -> brvk::PFN_vkGetMemoryWin32HandlePropertiesKHR;
 
     /// Get Properties of External Memory Win32 Handles
     /// # Safety
@@ -201,26 +203,26 @@ pub trait DeviceExternalMemoryWin32Extension: Device {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INVALID_EXTERNAL_HANDLE`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_INVALID_EXTERNAL_HANDLE`
     #[implements]
     #[inline]
     unsafe fn memory_win32_handle_properties(
         &self,
         handle_type: ExternalMemoryHandleTypeWin32,
         handle: HANDLE,
-        sink: &mut core::mem::MaybeUninit<VkMemoryWin32HandlePropertiesKHR>,
+        sink: &mut core::mem::MaybeUninit<brvk::VkMemoryWin32HandlePropertiesKHR>,
     ) -> crate::Result<()> {
-        unsafe {
+        translate_vk_result(unsafe {
             self.get_memory_win32_handle_properties_khr_fn().0(
                 self.native_ptr(),
                 handle_type as _,
                 handle,
                 sink.as_mut_ptr(),
             )
-            .into_result()
-            .map(drop)
-        }
+        })?;
+
+        Ok(())
     }
 
     /// Get a Windows HANDLE for a memory object
@@ -229,23 +231,23 @@ pub trait DeviceExternalMemoryWin32Extension: Device {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
     #[implements]
     #[inline]
     fn get_memory_win32_handle(&self, info: &MemoryGetWin32HandleInfo) -> crate::Result<HANDLE> {
         let mut handle = core::mem::MaybeUninit::uninit();
 
-        unsafe {
-            self.get_memory_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr()).into_result()?;
+        translate_vk_result(unsafe {
+            self.get_memory_win32_handle_khr_fn().0(self.native_ptr(), &info.0, handle.as_mut_ptr())
+        })?;
 
-            Ok(handle.assume_init())
-        }
+        Ok(unsafe { handle.assume_init() })
     }
 }
 DerefContainerWithGuardsBracketImpl!(for DeviceExternalMemoryWin32Extension {
     #[implements]
-    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> PFN_vkGetMemoryWin32HandleKHR);
+    ForwardFnPtr!(deref get_memory_win32_handle_khr_fn -> brvk::PFN_vkGetMemoryWin32HandleKHR);
     #[implements]
-    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> PFN_vkGetMemoryWin32HandlePropertiesKHR);
+    ForwardFnPtr!(deref get_memory_win32_handle_properties_khr_fn -> brvk::PFN_vkGetMemoryWin32HandlePropertiesKHR);
 });

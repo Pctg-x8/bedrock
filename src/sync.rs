@@ -1,25 +1,27 @@
 //! Vulkan Synchronization Primitives(Fence, Semaphore, Event)
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
-use crate::*;
+use crate::{error::translate_vk_result, *};
 use derives::implements;
 
-pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
+pub trait Fence: VkHandle<Handle = brvk::VkFence> + DeviceChildHandle + Status {
     /// Wait for a fence to become signaled, returns `Ok(true)` if operation is timed out
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_DEVICE_LOST`]
     #[implements]
     #[inline(always)]
-    fn wait_timeout(&self, timeout: u64) -> crate::Result<bool> {
-        let vr =
-            unsafe { crate::vkfn::wait_for_fences(self.device_handle(), 1, &self.native_ptr(), false as _, timeout) };
-        match vr {
-            VK_SUCCESS => Ok(false),
-            VK_TIMEOUT => Ok(true),
-            _ => Err(vr),
+    fn wait_timeout(&self, timeout: u64) -> crate::Result<TimeoutableWaitResult> {
+        unsafe {
+            crate::vkfn_wrapper::wait_for_fences(
+                self.device_transparent_ref(),
+                &[self.as_transparent_ref()],
+                false,
+                timeout,
+            )
         }
     }
 
@@ -27,9 +29,9 @@ pub trait Fence: VkHandle<Handle = VkFence> + DeviceChildHandle + Status {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_DEVICE_LOST`]
     #[implements]
     #[inline(always)]
     fn wait(&self) -> crate::Result<()> {
@@ -44,15 +46,16 @@ pub trait FenceMut: Fence + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     #[inline(always)]
     fn reset(&mut self) -> crate::Result<()> {
         unsafe {
-            crate::vkfn::reset_fences(self.device_handle(), 1, &self.native_ptr_mut())
-                .into_result()
-                .map(drop)
+            crate::vkfn_wrapper::reset_fences(
+                self.device_transparent_ref(),
+                &[VkHandleRefMut::dangling(self.native_ptr())],
+            )
         }
     }
 }
@@ -62,7 +65,7 @@ GuardsImpl!(for mut FenceMut {});
 pub trait DeviceChildFence: DeviceChild + Fence {}
 impl<T: DeviceChild + Fence> DeviceChildFence for T {}
 
-pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
+pub trait Semaphore: VkHandle<Handle = brvk::VkSemaphore> + DeviceChild {
     /// Creates a submit info structure for this semaphore.
     #[cfg(feature = "VK_KHR_synchronization2")]
     #[inline(always)]
@@ -74,14 +77,9 @@ pub trait Semaphore: VkHandle<Handle = VkSemaphore> + DeviceChild {
     #[implements("Allow1_2APIs")]
     #[inline(always)]
     fn counter_value(&self) -> crate::Result<u64> {
-        let mut sink = core::mem::MaybeUninit::uninit();
-
         unsafe {
-            crate::vkfn::get_semaphore_counter_value(self.device().native_ptr(), self.native_ptr(), sink.as_mut_ptr())
-                .into_result()?;
+            crate::vkfn_wrapper::get_semaphore_counter_value(self.device_transparent_ref(), self.as_transparent_ref())
         }
-
-        Ok(unsafe { sink.assume_init() })
     }
 }
 DerefContainerBracketImpl!(for Semaphore {});
@@ -91,7 +89,7 @@ pub trait SemaphoreMut: Semaphore + VkHandleMut {}
 DerefContainerBracketImpl!(for mut SemaphoreMut {});
 GuardsImpl!(for mut SemaphoreMut {});
 
-pub trait Event: VkHandle<Handle = VkEvent> + DeviceChild + Status {}
+pub trait Event: VkHandle<Handle = brvk::VkEvent> + DeviceChild + Status {}
 DerefContainerBracketImpl!(for Event {});
 GuardsImpl!(for Event {});
 
@@ -100,32 +98,28 @@ pub trait EventMut: Event + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     fn set(&mut self) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::set_event(self.device().native_ptr(), self.native_ptr_mut())
-                .into_result()
-                .map(drop)
-        }
+        translate_vk_result(unsafe { brvk::fns::set_event(self.device().native_ptr(), self.native_ptr_mut()) })?;
+
+        Ok(())
     }
 
     /// Reset an event to non-signaled state
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     fn reset(&mut self) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::reset_event(self.device().native_ptr(), self.native_ptr_mut())
-                .into_result()
-                .map(drop)
-        }
+        translate_vk_result(unsafe { brvk::fns::reset_event(self.device().native_ptr(), self.native_ptr_mut()) })?;
+
+        Ok(())
     }
 }
 DerefContainerBracketImpl!(for mut EventMut {});
@@ -136,9 +130,9 @@ pub trait Status {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_DEVICE_LOST`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_DEVICE_LOST`]
     #[implements]
     fn status(&self) -> crate::Result<bool>;
 }
@@ -160,14 +154,14 @@ GuardsImpl!(for Status {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct FenceCreateInfo<'d>(
-    VkFenceCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
+    brvk::VkFenceCreateInfo,
+    core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,
 );
 impl<'d> FenceCreateInfo<'d> {
-    pub const fn new(flags: VkFenceCreateFlags) -> Self {
+    pub const fn new(flags: brvk::VkFenceCreateFlags) -> Self {
         Self(
-            VkFenceCreateInfo {
-                sType: VkFenceCreateInfo::TYPE,
+            brvk::VkFenceCreateInfo {
+                sType: brvk::VkFenceCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags,
             },
@@ -177,38 +171,38 @@ impl<'d> FenceCreateInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkFenceCreateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkFenceCreateInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkFenceCreateInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkFenceCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkFenceCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkFenceCreateInfo {
         self.0
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl TypedVulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl brvk::TypedVulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkFence::OBJECT_TYPE)]
-pub struct FenceObject<Device: VkHandle<Handle = VkDevice>>(VkFence, Device);
+#[VkObject(type = brvk::VkFence::OBJECT_TYPE)]
+pub struct FenceObject<Device: VkHandle<Handle = brvk::VkDevice>>(brvk::VkFence, Device);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for FenceObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for FenceObject<Device> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_fence(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_fence(self.device_transparent_ref(), VkHandleRefMut::dangling(self.0), None);
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for FenceObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for FenceObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for FenceObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for FenceObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for FenceObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for FenceObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -220,29 +214,31 @@ impl<Device: crate::Device> DeviceChild for FenceObject<Device> {
         &self.1
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> Fence for FenceObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> FenceMut for FenceObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> Status for FenceObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Fence for FenceObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> FenceMut for FenceObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Status for FenceObject<Device> {
     #[inline(always)]
     #[implements]
     fn status(&self) -> crate::Result<bool> {
-        match unsafe { crate::vkfn::get_fence_status(self.1.native_ptr(), self.0) } {
-            VK_SUCCESS => Ok(true),
-            VK_NOT_READY => Ok(false),
-            vr => Err(vr),
+        match unsafe {
+            crate::vkfn_wrapper::get_fence_status(self.device_transparent_ref(), self.as_transparent_ref())
+        }? {
+            brvk::VK_SUCCESS => Ok(true),
+            brvk::VK_NOT_READY => Ok(false),
+            e => unreachable!("unexpected result: {:?}", ResultCode(e)),
         }
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> FenceObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkFence, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkFence, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkFence, Device) {
+    pub const fn unmanage(self) -> (brvk::VkFence, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -250,7 +246,7 @@ impl<Device: VkHandle<Handle = VkDevice>> FenceObject<Device> {
         (h, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> FenceObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> FenceObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> FenceObject<Device> {
@@ -262,8 +258,8 @@ impl<Device: crate::Device> FenceObject<Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn new(device: Device, create_info: &FenceCreateInfo) -> crate::Result<Self> {
@@ -274,14 +270,14 @@ impl<Device: crate::Device> FenceObject<Device> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct SemaphoreCreateInfo<'d>(
-    VkSemaphoreCreateInfo,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
+    brvk::VkSemaphoreCreateInfo,
+    core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,
 );
 impl<'d> SemaphoreCreateInfo<'d> {
     pub const fn new() -> Self {
         Self(
-            VkSemaphoreCreateInfo {
-                sType: VkSemaphoreCreateInfo::TYPE,
+            brvk::VkSemaphoreCreateInfo {
+                sType: brvk::VkSemaphoreCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
             },
@@ -292,41 +288,42 @@ impl<'d> SemaphoreCreateInfo<'d> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkSemaphoreCreateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkSemaphoreCreateInfo) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkSemaphoreCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSemaphoreCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkSemaphoreCreateInfo {
         self.0
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
 
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-pub type PhysicalDeviceTimelineSemaphoreFeatures = VkPhysicalDeviceTimelineSemaphoreFeaturesKHR;
+#[repr(transparent)]
+pub struct PhysicalDeviceTimelineSemaphoreFeatures(pub brvk::VkPhysicalDeviceTimelineSemaphoreFeaturesKHR);
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 impl PhysicalDeviceTimelineSemaphoreFeatures {
     #[inline(always)]
     pub const fn new(active: bool) -> Self {
-        Self {
-            sType: <VkPhysicalDeviceTimelineSemaphoreFeaturesKHR as TypedVulkanStructure>::TYPE,
+        Self(brvk::VkPhysicalDeviceTimelineSemaphoreFeaturesKHR {
+            sType: <brvk::VkPhysicalDeviceTimelineSemaphoreFeaturesKHR as brvk::TypedVulkanStructure>::TYPE,
             pNext: core::ptr::null_mut(),
             timelineSemaphore: active as _,
-        }
+        })
     }
 
     #[inline(always)]
     pub const fn uninit_sink() -> core::mem::MaybeUninit<Self> {
         let mut p = core::mem::MaybeUninit::<Self>::uninit();
         unsafe {
-            core::ptr::addr_of_mut!((*p.as_mut_ptr()).sType)
-                .write(<VkPhysicalDeviceTimelineSemaphoreFeaturesKHR as TypedVulkanSinkStructure>::TYPE);
-            core::ptr::addr_of_mut!((*p.as_mut_ptr()).pNext).write(core::ptr::null_mut());
+            core::ptr::addr_of_mut!((*p.as_mut_ptr()).0.sType)
+                .write(<brvk::VkPhysicalDeviceTimelineSemaphoreFeaturesKHR as brvk::TypedVulkanSinkStructure>::TYPE);
+            core::ptr::addr_of_mut!((*p.as_mut_ptr()).0.pNext).write(core::ptr::null_mut());
         }
 
         p
@@ -335,17 +332,17 @@ impl PhysicalDeviceTimelineSemaphoreFeatures {
 
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 pub struct SemaphoreTypeCreateInfo<'d>(
-    VkSemaphoreTypeCreateInfoKHR,
-    core::marker::PhantomData<Option<&'d dyn VulkanStructure>>,
+    brvk::VkSemaphoreTypeCreateInfoKHR,
+    core::marker::PhantomData<Option<&'d dyn brvk::VulkanStructure>>,
 );
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 impl<'d> SemaphoreTypeCreateInfo<'d> {
     pub const fn binary() -> Self {
         Self(
-            VkSemaphoreTypeCreateInfoKHR {
-                sType: VkSemaphoreTypeCreateInfoKHR::TYPE,
+            brvk::VkSemaphoreTypeCreateInfoKHR {
+                sType: brvk::VkSemaphoreTypeCreateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
-                semaphoreType: VK_SEMAPHORE_TYPE_BINARY_KHR,
+                semaphoreType: brvk::VK_SEMAPHORE_TYPE_BINARY_KHR,
                 initialValue: 0,
             },
             core::marker::PhantomData,
@@ -354,10 +351,10 @@ impl<'d> SemaphoreTypeCreateInfo<'d> {
 
     pub const fn timeline(init: u64) -> Self {
         Self(
-            VkSemaphoreTypeCreateInfoKHR {
-                sType: VkSemaphoreTypeCreateInfoKHR::TYPE,
+            brvk::VkSemaphoreTypeCreateInfoKHR {
+                sType: brvk::VkSemaphoreTypeCreateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
-                semaphoreType: VK_SEMAPHORE_TYPE_TIMELINE_KHR,
+                semaphoreType: brvk::VK_SEMAPHORE_TYPE_TIMELINE_KHR,
                 initialValue: init,
             },
             core::marker::PhantomData,
@@ -367,50 +364,54 @@ impl<'d> SemaphoreTypeCreateInfo<'d> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkSemaphoreTypeCreateInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkSemaphoreTypeCreateInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkSemaphoreTypeCreateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSemaphoreTypeCreateInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkSemaphoreTypeCreateInfoKHR {
         self.0
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-unsafe impl VulkanStructure for SemaphoreTypeCreateInfo<'_> {
+unsafe impl brvk::VulkanStructure for SemaphoreTypeCreateInfo<'_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkSemaphore::OBJECT_TYPE)]
-pub struct SemaphoreObject<Device: VkHandle<Handle = VkDevice>>(VkSemaphore, Device);
+#[VkObject(type = brvk::VkSemaphore::OBJECT_TYPE)]
+pub struct SemaphoreObject<Device: VkHandle<Handle = brvk::VkDevice>>(brvk::VkSemaphore, Device);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for SemaphoreObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for SemaphoreObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_semaphore(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_semaphore(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for SemaphoreObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for SemaphoreObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for SemaphoreObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for SemaphoreObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for SemaphoreObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for SemaphoreObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -424,16 +425,16 @@ impl<Device: crate::Device> DeviceChild for SemaphoreObject<Device> {
 }
 impl<Device: crate::Device> Semaphore for SemaphoreObject<Device> {}
 impl<Device: crate::Device> SemaphoreMut for SemaphoreObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> SemaphoreObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkSemaphore, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkSemaphore, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkSemaphore, Device) {
+    pub const fn unmanage(self) -> (brvk::VkSemaphore, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -441,7 +442,7 @@ impl<Device: VkHandle<Handle = VkDevice>> SemaphoreObject<Device> {
         (h, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> SemaphoreObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> SemaphoreObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> SemaphoreObject<Device> {
@@ -453,8 +454,8 @@ impl<Device: crate::Device> SemaphoreObject<Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn new(device: Device, info: &SemaphoreCreateInfo) -> crate::Result<Self> {
@@ -465,23 +466,26 @@ impl<Device: crate::Device> SemaphoreObject<Device> {
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(C)]
 pub enum SemaphoreType {
-    Binary = VK_SEMAPHORE_TYPE_BINARY_KHR as _,
-    Timeline = VK_SEMAPHORE_TYPE_TIMELINE_KHR as _,
+    Binary = brvk::VK_SEMAPHORE_TYPE_BINARY_KHR as _,
+    Timeline = brvk::VK_SEMAPHORE_TYPE_TIMELINE_KHR as _,
 }
 
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
 pub struct SemaphoreSignalInfo<'s, 'n>(
-    VkSemaphoreSignalInfoKHR,
-    core::marker::PhantomData<(&'s dyn VkHandle<Handle = VkSemaphore>, Option<&'n dyn VulkanStructure>)>,
+    brvk::VkSemaphoreSignalInfoKHR,
+    core::marker::PhantomData<(
+        &'s dyn VkHandle<Handle = brvk::VkSemaphore>,
+        Option<&'n dyn brvk::VulkanStructure>,
+    )>,
 );
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 impl<'s, 'n> SemaphoreSignalInfo<'s, 'n> {
     #[inline(always)]
-    pub fn new(semaphore: &'s (impl VkHandle<Handle = VkSemaphore> + ?Sized), value: u64) -> Self {
+    pub fn new(semaphore: &'s (impl VkHandle<Handle = brvk::VkSemaphore> + ?Sized), value: u64) -> Self {
         Self(
-            VkSemaphoreSignalInfoKHR {
-                sType: VkSemaphoreSignalInfoKHR::TYPE,
+            brvk::VkSemaphoreSignalInfoKHR {
+                sType: brvk::VkSemaphoreSignalInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 semaphore: semaphore.native_ptr(),
                 value,
@@ -493,10 +497,10 @@ impl<'s, 'n> SemaphoreSignalInfo<'s, 'n> {
     /// # Safety
     ///
     /// `semaphore` must be a valid [`VkSemaphore`] handle.
-    pub const unsafe fn new_raw(semaphore: VkSemaphore, value: u64) -> Self {
+    pub const unsafe fn new_raw(semaphore: brvk::VkSemaphore, value: u64) -> Self {
         Self(
-            VkSemaphoreSignalInfoKHR {
-                sType: VkSemaphoreSignalInfoKHR::TYPE,
+            brvk::VkSemaphoreSignalInfoKHR {
+                sType: brvk::VkSemaphoreSignalInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 semaphore,
                 value,
@@ -508,29 +512,29 @@ impl<'s, 'n> SemaphoreSignalInfo<'s, 'n> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn from_raw(raw: VkSemaphoreSignalInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkSemaphoreSignalInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSemaphoreSignalInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkSemaphoreSignalInfoKHR {
         self.0
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'n (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-unsafe impl VulkanStructure for SemaphoreSignalInfo<'_, '_> {
+unsafe impl brvk::VulkanStructure for SemaphoreSignalInfo<'_, '_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }
@@ -538,25 +542,25 @@ unsafe impl VulkanStructure for SemaphoreSignalInfo<'_, '_> {
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
 pub struct SemaphoreWaitInfo<'s, 'n, 'xs>(
-    VkSemaphoreWaitInfoKHR,
+    brvk::VkSemaphoreWaitInfoKHR,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        &'xs [&'s dyn VkHandle<Handle = VkSemaphore>],
+        &'xs [&'s dyn VkHandle<Handle = brvk::VkSemaphore>],
         &'xs [u64],
-        Option<&'n dyn VulkanStructure>,
+        Option<&'n dyn brvk::VulkanStructure>,
     )>,
 );
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 impl<'s, 'n, 'xs> SemaphoreWaitInfo<'s, 'n, 'xs> {
     #[inline(always)]
-    pub fn new(semaphores: &'xs [VkHandleRef<'s, VkSemaphore>], values: &'xs [u64]) -> Self {
+    pub fn new(semaphores: &'xs [VkHandleRef<'s, brvk::VkSemaphore>], values: &'xs [u64]) -> Self {
         use crate::ffi_helper::slice_as_ptr_empty_null;
 
         debug_assert_eq!(semaphores.len(), values.len());
 
         Self(
-            VkSemaphoreWaitInfoKHR {
-                sType: VkSemaphoreWaitInfoKHR::TYPE,
+            brvk::VkSemaphoreWaitInfoKHR {
+                sType: brvk::VkSemaphoreWaitInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 semaphoreCount: semaphores.len() as _,
@@ -569,14 +573,14 @@ impl<'s, 'n, 'xs> SemaphoreWaitInfo<'s, 'n, 'xs> {
 
     #[inline(always)]
     pub fn new_array<const N: usize>(
-        semaphores: &'xs [VkHandleRef<'s, VkSemaphore>; N],
+        semaphores: &'xs [VkHandleRef<'s, brvk::VkSemaphore>; N],
         values: &'xs [u64; N],
     ) -> Self {
         use crate::ffi_helper::slice_as_ptr_empty_null;
 
         Self(
-            VkSemaphoreWaitInfoKHR {
-                sType: VkSemaphoreWaitInfoKHR::TYPE,
+            brvk::VkSemaphoreWaitInfoKHR {
+                sType: brvk::VkSemaphoreWaitInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 semaphoreCount: N as _,
@@ -590,46 +594,46 @@ impl<'s, 'n, 'xs> SemaphoreWaitInfo<'s, 'n, 'xs> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn from_raw(raw: VkSemaphoreWaitInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkSemaphoreWaitInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSemaphoreWaitInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkSemaphoreWaitInfoKHR {
         self.0
     }
 
     #[inline(always)]
     pub const fn for_any(mut self) -> Self {
-        self.0.flags |= VK_SEMAPHORE_WAIT_ANY_BIT_KHR;
+        self.0.flags |= brvk::VK_SEMAPHORE_WAIT_ANY_BIT_KHR;
         self
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'n (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-unsafe impl VulkanStructure for SemaphoreWaitInfo<'_, '_, '_> {
+unsafe impl brvk::VulkanStructure for SemaphoreWaitInfo<'_, '_, '_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }
 
 #[repr(transparent)]
 #[derive(Clone)]
-pub struct EventCreateInfo(VkEventCreateInfo);
+pub struct EventCreateInfo(brvk::VkEventCreateInfo);
 impl EventCreateInfo {
     pub const fn new() -> Self {
-        Self(VkEventCreateInfo {
-            sType: VkEventCreateInfo::TYPE,
+        Self(brvk::VkEventCreateInfo {
+            sType: brvk::VkEventCreateInfo::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
         })
@@ -637,22 +641,22 @@ impl EventCreateInfo {
 }
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkEvent::OBJECT_TYPE)]
-pub struct EventObject<Device: VkHandle<Handle = VkDevice>>(VkEvent, Device);
+#[VkObject(type = brvk::VkEvent::OBJECT_TYPE)]
+pub struct EventObject<Device: VkHandle<Handle = brvk::VkDevice>>(brvk::VkEvent, Device);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for EventObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for EventObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_event(self.1.native_ptr(), self.0, core::ptr::null());
+            brvk::fns::destroy_event(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for EventObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for EventObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for EventObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for EventObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for EventObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for EventObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -664,26 +668,26 @@ impl<Device: crate::Device> DeviceChild for EventObject<Device> {
         &self.1
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> Status for EventObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Status for EventObject<Device> {
     #[implements]
     fn status(&self) -> crate::Result<bool> {
-        match unsafe { crate::vkfn::get_event_status(self.1.native_ptr(), self.0) } {
-            VK_EVENT_SET => Ok(true),
-            VK_EVENT_RESET => Ok(false),
-            vr => Err(vr),
+        match unsafe { brvk::fns::get_event_status(self.1.native_ptr(), self.0) } {
+            brvk::VK_EVENT_SET => Ok(true),
+            brvk::VK_EVENT_RESET => Ok(false),
+            vr => Err(ResultCode(vr)),
         }
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> EventObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkEvent, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkEvent, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkEvent, Device) {
+    pub const fn unmanage(self) -> (brvk::VkEvent, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -691,7 +695,7 @@ impl<Device: VkHandle<Handle = VkDevice>> EventObject<Device> {
         (h, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> EventObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> EventObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> EventObject<Device> {
@@ -703,8 +707,8 @@ impl<Device: crate::Device> EventObject<Device> {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn new(device: Device, create_info: &EventCreateInfo) -> crate::Result<Self> {
@@ -715,20 +719,20 @@ impl<Device: crate::Device> EventObject<Device> {
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
 pub struct SemaphoreSubmitInfo<'s>(
-    VkSemaphoreSubmitInfoKHR,
-    core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSemaphore>>,
+    brvk::VkSemaphoreSubmitInfoKHR,
+    core::marker::PhantomData<&'s dyn VkHandle<Handle = brvk::VkSemaphore>>,
 );
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'s> SemaphoreSubmitInfo<'s> {
     #[inline]
-    pub fn new(semaphore: &'s (impl VkHandle<Handle = VkSemaphore> + ?Sized)) -> Self {
+    pub fn new(semaphore: &'s (impl VkHandle<Handle = brvk::VkSemaphore> + ?Sized)) -> Self {
         Self(
-            VkSemaphoreSubmitInfoKHR {
-                sType: VkSemaphoreSubmitInfoKHR::TYPE,
+            brvk::VkSemaphoreSubmitInfoKHR {
+                sType: brvk::VkSemaphoreSubmitInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 semaphore: semaphore.native_ptr(),
                 value: 0,
-                stageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
+                stageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
                 deviceIndex: 0,
             },
             core::marker::PhantomData,
@@ -742,173 +746,173 @@ impl<'s> SemaphoreSubmitInfo<'s> {
     }
 
     #[inline(always)]
-    pub const fn with_on_stage(mut self, stage_mask: VkPipelineStageFlags2KHR) -> Self {
+    pub const fn with_on_stage(mut self, stage_mask: brvk::VkPipelineStageFlags2KHR) -> Self {
         self.0.stageMask |= stage_mask;
         self
     }
 
     #[inline(always)]
     pub const fn on_top_of_pipe(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_TOP_OF_PIPE_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_draw_indirect(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_DRAW_INDIRECT_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_vertex_input(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_VERTEX_INPUT_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_VERTEX_INPUT_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_vertex_shader(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_VERTEX_SHADER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_tessellation_control_shader(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_TESSELLATION_CONTROL_SHADER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_TESSELLATION_CONTROL_SHADER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_tessellation_evaluation_shader(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_TESSELLATION_EVALUATION_SHADER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_TESSELLATION_EVALUATION_SHADER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_geometry_shader(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_GEOMETRY_SHADER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_GEOMETRY_SHADER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_fragment_shader(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_FRAGMENT_SHADER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_early_fragment_tests(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_late_fragment_tests(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_LATE_FRAGMENT_TESTS_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_color_attachment_output(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_compute_shader(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_COMPUTE_SHADER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_any_transfer(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_ALL_TRANSFER_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_bottom_of_pipe(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_BOTTOM_OF_PIPE_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_host(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_HOST_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_HOST_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_any_graphics(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_ALL_GRAPHICS_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_any_command(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_ALL_COMMANDS_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_copy(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_COPY_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_COPY_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_resolve(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_RESOLVE_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_RESOLVE_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_blit(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_BLIT_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_BLIT_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_clear(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_CLEAR_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_CLEAR_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_index_input(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_INDEX_INPUT_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_INDEX_INPUT_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_vertex_attribute_input(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT_KHR)
     }
 
     #[inline(always)]
     pub const fn on_pre_rasterization_shaders(self) -> Self {
-        self.with_on_stage(VK_PIPELINE_STAGE_2_PRE_RASTERIZATION_SHADERS_BIT_KHR)
+        self.with_on_stage(brvk::VK_PIPELINE_STAGE_2_PRE_RASTERIZATION_SHADERS_BIT_KHR)
     }
 }
 
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[derives::bitflags_newtype]
-pub struct AccessFlags2(pub VkAccessFlags2KHR);
+pub struct AccessFlags2(pub brvk::VkAccessFlags2KHR);
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl AccessFlags2 {
-    pub const NONE: Self = Self(VK_ACCESS_2_NONE_KHR);
+    pub const NONE: Self = Self(brvk::VK_ACCESS_2_NONE_KHR);
 
-    pub const INDIRECT_COMMAND_READ: Self = Self(VK_ACCESS_2_INDIRECT_COMMAND_READ_BIT_KHR);
-    pub const INDEX_READ: Self = Self(VK_ACCESS_2_INDEX_READ_BIT_KHR);
-    pub const VERTEX_ATTRIBUTE_READ: Self = Self(VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT_KHR);
-    pub const UNIFORM_READ: Self = Self(VK_ACCESS_2_UNIFORM_READ_BIT_KHR);
-    pub const INPUT_ATTACHMENT_READ: Self = Self(VK_ACCESS_2_INPUT_ATTACHMENT_READ_BIT_KHR);
+    pub const INDIRECT_COMMAND_READ: Self = Self(brvk::VK_ACCESS_2_INDIRECT_COMMAND_READ_BIT_KHR);
+    pub const INDEX_READ: Self = Self(brvk::VK_ACCESS_2_INDEX_READ_BIT_KHR);
+    pub const VERTEX_ATTRIBUTE_READ: Self = Self(brvk::VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT_KHR);
+    pub const UNIFORM_READ: Self = Self(brvk::VK_ACCESS_2_UNIFORM_READ_BIT_KHR);
+    pub const INPUT_ATTACHMENT_READ: Self = Self(brvk::VK_ACCESS_2_INPUT_ATTACHMENT_READ_BIT_KHR);
     pub const SHADER: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_SHADER_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_SHADER_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_SHADER_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_SHADER_WRITE_BIT_KHR),
     };
     pub const COLOR_ATTACHMENT: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT_KHR),
     };
     pub const DEPTH_STENCIL_ATTACHMENT: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT_KHR),
     };
     pub const TRANSFER: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_TRANSFER_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_TRANSFER_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_TRANSFER_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_TRANSFER_WRITE_BIT_KHR),
     };
     pub const HOST: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_HOST_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_HOST_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_HOST_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_HOST_WRITE_BIT_KHR),
     };
     pub const MEMORY: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_MEMORY_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_MEMORY_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_MEMORY_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_MEMORY_WRITE_BIT_KHR),
     };
-    pub const SHADER_SAMPLED_READ: Self = Self(VK_ACCESS_2_SHADER_SAMPLED_READ_BIT_KHR);
+    pub const SHADER_SAMPLED_READ: Self = Self(brvk::VK_ACCESS_2_SHADER_SAMPLED_READ_BIT_KHR);
     pub const SHADER_STORAGE: AccessFlags2ReadWriteBits = AccessFlags2ReadWriteBits {
-        read: Self(VK_ACCESS_2_SHADER_STORAGE_READ_BIT_KHR),
-        write: Self(VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT_KHR),
+        read: Self(brvk::VK_ACCESS_2_SHADER_STORAGE_READ_BIT_KHR),
+        write: Self(brvk::VK_ACCESS_2_SHADER_STORAGE_WRITE_BIT_KHR),
     };
 }
 #[cfg(feature = "VK_KHR_synchronization2")]

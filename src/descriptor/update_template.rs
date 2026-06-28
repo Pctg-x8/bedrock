@@ -3,9 +3,9 @@ use derives::implements;
 use crate::*;
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]
+#[VkObject(type = brvk::VK_OBJECT_TYPE_DESCRIPTOR_UPDATE_TEMPLATE_KHR)]
 pub struct DescriptorUpdateTemplateObject<Device: crate::Device>(
-    pub(crate) VkDescriptorUpdateTemplateKHR,
+    pub(crate) brvk::VkDescriptorUpdateTemplateKHR,
     pub(crate) Device,
 );
 #[implements]
@@ -13,7 +13,7 @@ impl<Device: crate::Device> Drop for DescriptorUpdateTemplateObject<Device> {
     fn drop(&mut self) {
         #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            crate::vkfn::destroy_descriptor_update_template(self.1.native_ptr(), self.0, core::ptr::null());
+            brvk::fns::destroy_descriptor_update_template(self.1.native_ptr(), self.0, core::ptr::null());
         }
         #[cfg(not(feature = "Allow1_1APIs"))]
         unsafe {
@@ -25,7 +25,7 @@ unsafe impl<Device: crate::Device + Sync> Sync for DescriptorUpdateTemplateObjec
 unsafe impl<Device: crate::Device + Send> Send for DescriptorUpdateTemplateObject<Device> {}
 impl<Device: crate::Device> DeviceChildHandle for DescriptorUpdateTemplateObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -42,12 +42,12 @@ impl<Device: crate::Device> DescriptorUpdateTemplateObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkDescriptorUpdateTemplateKHR, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkDescriptorUpdateTemplateKHR, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkDescriptorUpdateTemplateKHR, Device) {
+    pub const fn unmanage(self) -> (brvk::VkDescriptorUpdateTemplateKHR, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -66,12 +66,12 @@ impl<Device: crate::Device + Clone> DescriptorUpdateTemplateObject<&'_ Device> {
     }
 }
 
-pub trait DescriptorUpdateTemplate: VkHandle<Handle = VkDescriptorUpdateTemplateKHR> + DeviceChild {
+pub trait DescriptorUpdateTemplate: VkHandle<Handle = brvk::VkDescriptorUpdateTemplateKHR> + DeviceChild {
     #[implements]
-    fn update_set<T>(&self, set: VkDescriptorSet, data: &T) {
+    fn update_set<T>(&self, set: brvk::VkDescriptorSet, data: &T) {
         #[cfg(feature = "Allow1_1APIs")]
         unsafe {
-            crate::vkfn::update_descriptor_set_with_template(
+            brvk::fns::update_descriptor_set_with_template(
                 self.device().native_ptr(),
                 set,
                 self.native_ptr(),

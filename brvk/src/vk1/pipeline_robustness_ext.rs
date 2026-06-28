@@ -3,9 +3,8 @@
 pub const VK_EXT_PIPELINE_ROBUSTNESS_SPEC_VERISON: usize = 1;
 pub const VK_EXT_PIPELINE_ROBUSTNESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_robustness";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_4;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO_EXT: VkStructureType = ext_enum_value(69, 0) as _;

@@ -1,15 +1,17 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
+
 use crate::*;
 use derives::implements;
 
-pub trait DebugReportCallback: VkHandle<Handle = VkDebugReportCallbackEXT> + InstanceChild {}
+pub trait DebugReportCallback: VkHandle<Handle = brvk::VkDebugReportCallbackEXT> + InstanceChild {}
 DerefContainerBracketImpl!(for DebugReportCallback {});
 GuardsImpl!(for DebugReportCallback {});
 
 /// Opaque object to a debug report callback object
 #[derive(VkHandle, VkObject, InstanceChild)]
-#[VkObject(type = VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
+#[VkObject(type = brvk::VK_OBJECT_TYPE_DEBUG_REPORT_CALLBACK_EXT)]
 pub struct DebugReportCallbackObject<Instance: crate::Instance + InstanceDebugReportExtension>(
-    pub(crate) VkDebugReportCallbackEXT,
+    pub(crate) brvk::VkDebugReportCallbackEXT,
     #[parent] pub(crate) Instance,
 );
 #[implements]
@@ -38,7 +40,7 @@ impl<Instance: crate::Instance + InstanceDebugReportExtension> DebugReportCallba
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
     #[implements]
     #[inline]
     pub fn new(instance: Instance, info: &DebugReportCallbackCreateInfo) -> crate::Result<Self> {
@@ -59,11 +61,11 @@ impl<Instance: crate::Instance + InstanceDebugReportExtension + Clone> DebugRepo
 }
 
 #[repr(transparent)]
-pub struct DebugReportCallbackCreateInfo(VkDebugReportCallbackCreateInfoEXT);
+pub struct DebugReportCallbackCreateInfo(brvk::VkDebugReportCallbackCreateInfoEXT);
 impl DebugReportCallbackCreateInfo {
-    pub const fn new(flags: VkDebugReportFlagsEXT, callback: PFN_vkDebugReportCallbackEXT) -> Self {
-        Self(VkDebugReportCallbackCreateInfoEXT {
-            sType: VkDebugReportCallbackCreateInfoEXT::TYPE,
+    pub const fn new(flags: brvk::VkDebugReportFlagsEXT, callback: brvk::PFN_vkDebugReportCallbackEXT) -> Self {
+        Self(brvk::VkDebugReportCallbackCreateInfoEXT {
+            sType: brvk::VkDebugReportCallbackCreateInfoEXT::TYPE,
             pNext: core::ptr::null(),
             flags,
             pfnCallback: callback,
@@ -71,15 +73,18 @@ impl DebugReportCallbackCreateInfo {
         })
     }
 
-    pub const unsafe fn from_raw(raw: VkDebugReportCallbackCreateInfoEXT) -> Self {
+    /// # Safety
+    ///
+    /// `raw` must be a valid `VkDebugReportCallbackCreateInfoEXT` structure.
+    pub const unsafe fn from_raw(raw: brvk::VkDebugReportCallbackCreateInfoEXT) -> Self {
         Self(raw)
     }
 
-    pub const fn into_raw(self) -> VkDebugReportCallbackCreateInfoEXT {
+    pub const fn into_raw(self) -> brvk::VkDebugReportCallbackCreateInfoEXT {
         self.0
     }
 
-    pub(crate) const fn as_raw_ref(&self) -> &VkDebugReportCallbackCreateInfoEXT {
+    pub(crate) const fn as_raw_ref(&self) -> &brvk::VkDebugReportCallbackCreateInfoEXT {
         &self.0
     }
 

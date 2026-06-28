@@ -1,25 +1,26 @@
 //! Direct Display Rendering
-//! All functionality requires VK_KHR_display feature.
+//! All functionality requires brvk::VK_KHR_display feature.
 
-use crate::ffi_helper::opt_pointer;
 use crate::*;
+use crate::{error::translate_vk_result, ffi_helper::opt_pointer};
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
 #[allow(unused_imports)]
 use derives::*;
 use std::ops::Deref;
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VK_OBJECT_TYPE_DISPLAY_KHR)]
-pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub VkDisplayKHR, pub PhysicalDevice);
+#[VkObject(type = brvk::VK_OBJECT_TYPE_DISPLAY_KHR)]
+pub struct Display<PhysicalDevice: crate::PhysicalDevice>(pub brvk::VkDisplayKHR, pub PhysicalDevice);
 
 #[repr(transparent)]
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VK_OBJECT_TYPE_DISPLAY_MODE_KHR)]
-pub struct DisplayMode(pub VkDisplayModeKHR);
+#[VkObject(type = brvk::VK_OBJECT_TYPE_DISPLAY_MODE_KHR)]
+pub struct DisplayMode(pub brvk::VkDisplayModeKHR);
 impl DisplayMode {
     #[implements]
     pub unsafe fn new(
         display: &Display<impl crate::PhysicalDevice>,
-        create_info: &VkDisplayModeCreateInfoKHR,
+        create_info: &brvk::VkDisplayModeCreateInfoKHR,
     ) -> crate::Result<Self> {
         Ok(Self(unsafe { display.create_display_mode_raw(create_info, None)? }))
     }
@@ -30,16 +31,15 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn mode_property_count(&self) -> crate::Result<u32> {
         let mut n = 0;
-        unsafe {
-            crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, core::ptr::null_mut())
-                .into_result()?;
-        }
+        translate_vk_result(unsafe {
+            brvk::fns::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, core::ptr::null_mut())
+        })?;
 
         Ok(n)
     }
@@ -48,16 +48,15 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn mode_properties(&self, sink: &mut [core::mem::MaybeUninit<DisplayModeProperties>]) -> crate::Result<u32> {
         let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, sink.as_mut_ptr() as _)
-                .into_result()?;
-        }
+        translate_vk_result(unsafe {
+            brvk::fns::get_display_mode_properties_khr(self.1.native_ptr(), self.0, &mut n, sink.as_mut_ptr() as _)
+        })?;
 
         Ok(n)
     }
@@ -66,8 +65,8 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements("alloc")]
     pub fn mode_properties_alloc(&self) -> crate::Result<Vec<DisplayModeProperties>> {
         let n = self.mode_property_count()? as usize;
@@ -85,7 +84,7 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
         Ok(xs)
     }
 
-    /// Release access to an acquired VkDisplayKHR
+    /// Release access to an acquired brvk::VkDisplayKHR
     #[implements("VK_EXT_direct_mode_display")]
     pub fn release(&self)
     where
@@ -96,12 +95,12 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
         }
     }
 
-    /// Acquire access to a VkDisplayKHR using Xlib
+    /// Acquire access to a brvk::VkDisplayKHR using Xlib
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
     #[implements("VK_EXT_acquire_xlib_display")]
     pub fn acquire_xlib_display(&self, dpy: *mut x11::xlib::Display) -> crate::Result<()>
     where
@@ -118,8 +117,8 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     ///
     /// # Safety
     /// no guarantee will be provided (simply calls under api)
@@ -127,21 +126,20 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     #[inline]
     pub unsafe fn create_display_mode_raw(
         &self,
-        info: &VkDisplayModeCreateInfoKHR,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkDisplayModeKHR> {
+        info: &brvk::VkDisplayModeCreateInfoKHR,
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkDisplayModeKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
-            crate::vkfn::create_display_mode_khr(
+        translate_vk_result(unsafe {
+            brvk::fns::create_display_mode_khr(
                 self.1.native_ptr(),
                 self.native_ptr(),
                 info,
                 opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -150,12 +148,12 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
-    pub fn create_display_mode(&self, params: VkDisplayModeParametersKHR) -> crate::Result<DisplayMode> {
-        let cinfo = VkDisplayModeCreateInfoKHR {
-            sType: VkDisplayModeCreateInfoKHR::TYPE,
+    pub fn create_display_mode(&self, params: brvk::VkDisplayModeParametersKHR) -> crate::Result<DisplayMode> {
+        let cinfo = brvk::VkDisplayModeCreateInfoKHR {
+            sType: brvk::VkDisplayModeCreateInfoKHR::TYPE,
             pNext: std::ptr::null(),
             flags: 0,
             parameters: params,
@@ -165,26 +163,27 @@ impl<PhysicalDevice: crate::PhysicalDevice> Display<PhysicalDevice> {
     }
 }
 
-pub type DisplayProperties = VkDisplayPropertiesKHR;
+#[repr(transparent)]
+pub struct DisplayProperties(brvk::VkDisplayPropertiesKHR);
 impl DisplayProperties {
     pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
-        SurfaceTransformFlags(self.supportedTransforms)
+        SurfaceTransformFlags(self.0.supportedTransforms)
     }
 
     pub const fn plane_reorder_possible(&self) -> bool {
-        self.planeReorderPossible != 0
+        self.0.planeReorderPossible != 0
     }
 
     pub const fn persistent_content(&self) -> bool {
-        self.persistentContent != 0
+        self.0.persistentContent != 0
     }
 
     pub const fn display_name(&self) -> Option<&core::ffi::CStr> {
-        if self.displayName.is_null() {
+        if self.0.displayName.is_null() {
             return None;
         }
 
-        Some(unsafe { core::ffi::CStr::from_ptr(self.displayName) })
+        Some(unsafe { core::ffi::CStr::from_ptr(self.0.displayName) })
     }
 }
 
@@ -193,71 +192,71 @@ pub struct DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice: crate::Physica
     pub(crate) PhysicalDevice,
 );
 impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice>>
-    for VkDisplayPropertiesKHR
+    for brvk::VkDisplayPropertiesKHR
 {
     fn from(v: DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice>) -> Self {
-        v.0
+        v.0.0
     }
 }
 impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice> {
-    type Target = VkDisplayPropertiesKHR;
-    fn deref(&self) -> &VkDisplayPropertiesKHR {
-        &self.0
+    type Target = brvk::VkDisplayPropertiesKHR;
+    fn deref(&self) -> &brvk::VkDisplayPropertiesKHR {
+        &self.0.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPropertiesKHR>
+impl<PhysicalDevice: crate::PhysicalDevice> AsRef<brvk::VkDisplayPropertiesKHR>
     for DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice>
 {
-    fn as_ref(&self) -> &VkDisplayPropertiesKHR {
-        &self.0
+    fn as_ref(&self) -> &brvk::VkDisplayPropertiesKHR {
+        &self.0.0
     }
 }
 impl<PhysicalDevice: crate::PhysicalDevice> DisplayPropertiesWithPhysicalDeviceRef<PhysicalDevice> {
     /// A handle that is used to refer to the display described here.
     /// This handle will be valid for the lifetime of the Vulkan instance.
     pub const fn display(&self) -> Display<&PhysicalDevice> {
-        Display(self.0.display, &self.1)
+        Display(self.0.0.display, &self.1)
     }
 
     /// The name of the display.
     pub const fn display_name(&self) -> &core::ffi::CStr {
-        unsafe { core::ffi::CStr::from_ptr(self.0.displayName) }
+        unsafe { core::ffi::CStr::from_ptr(self.0.0.displayName) }
     }
 
     /// Whether the planes on this display can have their z order changed.
     pub const fn can_reorder_plane(&self) -> bool {
-        self.0.planeReorderPossible == VK_TRUE
+        self.0.0.planeReorderPossible == brvk::VK_TRUE
     }
 
     /// Whether the display supports self-refresh/internal buffering.
     pub const fn has_persistent_content(&self) -> bool {
-        self.0.persistentContent == VK_TRUE
+        self.0.0.persistentContent == brvk::VK_TRUE
     }
 }
 
-pub type DisplayPlaneProperties = VkDisplayPlanePropertiesKHR;
+pub type DisplayPlaneProperties = brvk::VkDisplayPlanePropertiesKHR;
 
 pub struct DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice: crate::PhysicalDevice>(
-    pub(crate) VkDisplayPlanePropertiesKHR,
+    pub(crate) brvk::VkDisplayPlanePropertiesKHR,
     pub(crate) PhysicalDevice,
 );
 impl<PhysicalDevice: crate::PhysicalDevice> From<DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice>>
-    for VkDisplayPlanePropertiesKHR
+    for brvk::VkDisplayPlanePropertiesKHR
 {
     fn from(v: DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice>) -> Self {
         v.0
     }
 }
 impl<PhysicalDevice: crate::PhysicalDevice> Deref for DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice> {
-    type Target = VkDisplayPlanePropertiesKHR;
-    fn deref(&self) -> &VkDisplayPlanePropertiesKHR {
+    type Target = brvk::VkDisplayPlanePropertiesKHR;
+    fn deref(&self) -> &brvk::VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
-impl<PhysicalDevice: crate::PhysicalDevice> AsRef<VkDisplayPlanePropertiesKHR>
+impl<PhysicalDevice: crate::PhysicalDevice> AsRef<brvk::VkDisplayPlanePropertiesKHR>
     for DisplayPlanePropertiesWithPhysicalDeviceRef<PhysicalDevice>
 {
-    fn as_ref(&self) -> &VkDisplayPlanePropertiesKHR {
+    fn as_ref(&self) -> &brvk::VkDisplayPlanePropertiesKHR {
         &self.0
     }
 }
@@ -274,25 +273,25 @@ impl<PhysicalDevice: crate::PhysicalDevice> DisplayPlanePropertiesWithPhysicalDe
 }
 
 #[repr(transparent)]
-pub struct DisplayModeProperties(VkDisplayModePropertiesKHR);
-impl From<VkDisplayModePropertiesKHR> for DisplayModeProperties {
-    fn from(v: VkDisplayModePropertiesKHR) -> Self {
+pub struct DisplayModeProperties(brvk::VkDisplayModePropertiesKHR);
+impl From<brvk::VkDisplayModePropertiesKHR> for DisplayModeProperties {
+    fn from(v: brvk::VkDisplayModePropertiesKHR) -> Self {
         Self(v)
     }
 }
-impl From<DisplayModeProperties> for VkDisplayModePropertiesKHR {
+impl From<DisplayModeProperties> for brvk::VkDisplayModePropertiesKHR {
     fn from(v: DisplayModeProperties) -> Self {
         v.0
     }
 }
 impl Deref for DisplayModeProperties {
-    type Target = VkDisplayModePropertiesKHR;
-    fn deref(&self) -> &VkDisplayModePropertiesKHR {
+    type Target = brvk::VkDisplayModePropertiesKHR;
+    fn deref(&self) -> &brvk::VkDisplayModePropertiesKHR {
         &self.0
     }
 }
-impl AsRef<VkDisplayModePropertiesKHR> for DisplayModeProperties {
-    fn as_ref(&self) -> &VkDisplayModePropertiesKHR {
+impl AsRef<brvk::VkDisplayModePropertiesKHR> for DisplayModeProperties {
+    fn as_ref(&self) -> &brvk::VkDisplayModePropertiesKHR {
         &self.0
     }
 }
@@ -309,24 +308,26 @@ impl DisplayModeProperties {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DisplayPlaneAlpha {
     /// The source image will be treated as opaque
-    Opaque = VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR,
+    Opaque = brvk::VK_DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR,
     /// A global alpha value must be specified that will be applied to all pixels in the source image
-    Global = VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR,
+    Global = brvk::VK_DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR,
     /// The alpha value will be determined by the alpha channel of the source image's pixels.
     /// If the source format contains no alpha values, no blending will be applied.
     /// The source alpha values are not premultiplied into the source image's other color channels
-    PerPixel = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR,
+    PerPixel = brvk::VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR,
     /// This is equivalent to `PerPixel` except the source alpha values are assumed to be premultiplied into the source image's other color channels
-    PrePixelPremultiplied = VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR,
+    PrePixelPremultiplied = brvk::VK_DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR,
 }
 
-impl VkDisplayModeCreateInfoKHR {
-    pub const fn new(parameters: VkDisplayModeParametersKHR) -> Self {
-        Self {
-            sType: Self::TYPE,
+#[repr(transparent)]
+pub struct DisplayModeCreateInfo(brvk::VkDisplayModeCreateInfoKHR);
+impl DisplayModeCreateInfo {
+    pub const fn new(parameters: brvk::VkDisplayModeParametersKHR) -> Self {
+        Self(brvk::VkDisplayModeCreateInfoKHR {
+            sType: brvk::VkDisplayModeCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             parameters,
-        }
+        })
     }
 }

@@ -1,3 +1,5 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
+
 use crate::*;
 #[cfg(feature = "VK_KHR_synchronization2")]
 use ffi_helper::slice_as_ptr_empty_null;
@@ -5,17 +7,17 @@ use ffi_helper::slice_as_ptr_empty_null;
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[repr(transparent)]
 #[derive(Clone, Debug)]
-pub struct MemoryBarrier2(VkMemoryBarrier2KHR);
+pub struct MemoryBarrier2(brvk::VkMemoryBarrier2KHR);
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl MemoryBarrier2 {
     pub const fn new() -> Self {
-        Self(VkMemoryBarrier2KHR {
-            sType: VkMemoryBarrier2KHR::TYPE,
+        Self(brvk::VkMemoryBarrier2KHR {
+            sType: brvk::VkMemoryBarrier2KHR::TYPE,
             pNext: core::ptr::null(),
-            srcStageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
-            srcAccessMask: VK_ACCESS_2_NONE_KHR,
-            dstStageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
-            dstAccessMask: VK_ACCESS_2_NONE_KHR,
+            srcStageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
+            srcAccessMask: brvk::VK_ACCESS_2_NONE_KHR,
+            dstStageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
+            dstAccessMask: brvk::VK_ACCESS_2_NONE_KHR,
         })
     }
 
@@ -48,26 +50,26 @@ impl MemoryBarrier2 {
 #[repr(transparent)]
 #[derive(Clone, Debug)]
 pub struct BufferMemoryBarrier2<'b>(
-    VkBufferMemoryBarrier2KHR,
-    core::marker::PhantomData<&'b dyn VkHandle<Handle = VkBuffer>>,
+    brvk::VkBufferMemoryBarrier2KHR,
+    core::marker::PhantomData<&'b dyn VkHandle<Handle = brvk::VkBuffer>>,
 );
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'b> BufferMemoryBarrier2<'b> {
     pub fn new(
-        buffer: &'b (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: VkDeviceSize,
-        size: VkDeviceSize,
+        buffer: &'b (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        offset: brvk::VkDeviceSize,
+        size: brvk::VkDeviceSize,
     ) -> Self {
         Self(
-            VkBufferMemoryBarrier2KHR {
-                sType: VkBufferMemoryBarrier2KHR::TYPE,
+            brvk::VkBufferMemoryBarrier2KHR {
+                sType: brvk::VkBufferMemoryBarrier2KHR::TYPE,
                 pNext: core::ptr::null(),
-                srcStageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
-                srcAccessMask: VK_ACCESS_2_NONE_KHR,
-                dstStageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
-                dstAccessMask: VK_ACCESS_2_NONE_KHR,
-                srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-                dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+                srcStageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
+                srcAccessMask: brvk::VK_ACCESS_2_NONE_KHR,
+                dstStageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
+                dstAccessMask: brvk::VK_ACCESS_2_NONE_KHR,
+                srcQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
+                dstQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
                 buffer: buffer.native_ptr(),
                 offset,
                 size,
@@ -111,27 +113,27 @@ impl<'b> BufferMemoryBarrier2<'b> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct ImageMemoryBarrier2<'r>(
-    VkImageMemoryBarrier2KHR,
-    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkImage>>,
+    brvk::VkImageMemoryBarrier2KHR,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = brvk::VkImage>>,
 );
 #[cfg(feature = "VK_KHR_synchronization2")]
 impl<'r> ImageMemoryBarrier2<'r> {
     pub fn new(
-        image: &'r (impl VkHandle<Handle = VkImage> + ?Sized),
-        subresource_range: VkImageSubresourceRange,
+        image: &'r (impl VkHandle<Handle = brvk::VkImage> + ?Sized),
+        subresource_range: brvk::VkImageSubresourceRange,
     ) -> Self {
         Self(
-            VkImageMemoryBarrier2KHR {
-                sType: VkImageMemoryBarrier2KHR::TYPE,
+            brvk::VkImageMemoryBarrier2KHR {
+                sType: brvk::VkImageMemoryBarrier2KHR::TYPE,
                 pNext: core::ptr::null(),
-                srcStageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
-                srcAccessMask: VK_ACCESS_2_NONE_KHR,
-                dstStageMask: VK_PIPELINE_STAGE_2_NONE_KHR,
-                dstAccessMask: VK_ACCESS_2_NONE_KHR,
-                oldLayout: VK_IMAGE_LAYOUT_UNDEFINED,
-                newLayout: VK_IMAGE_LAYOUT_UNDEFINED,
-                srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-                dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+                srcStageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
+                srcAccessMask: brvk::VK_ACCESS_2_NONE_KHR,
+                dstStageMask: brvk::VK_PIPELINE_STAGE_2_NONE_KHR,
+                dstAccessMask: brvk::VK_ACCESS_2_NONE_KHR,
+                oldLayout: brvk::VK_IMAGE_LAYOUT_UNDEFINED,
+                newLayout: brvk::VK_IMAGE_LAYOUT_UNDEFINED,
+                srcQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
+                dstQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
                 image: image.native_ptr(),
                 subresourceRange: subresource_range,
             },
@@ -186,7 +188,7 @@ impl<'r> ImageMemoryBarrier2<'r> {
 #[repr(transparent)]
 #[derive(Debug, Clone)]
 pub struct DependencyInfo<'b, 'r>(
-    VkDependencyInfoKHR,
+    brvk::VkDependencyInfoKHR,
     core::marker::PhantomData<(
         &'b [MemoryBarrier2],
         &'b [BufferMemoryBarrier2<'r>],
@@ -201,8 +203,8 @@ impl<'b, 'r> DependencyInfo<'b, 'r> {
         image_memory_barriers: &'b [ImageMemoryBarrier2<'r>],
     ) -> Self {
         Self(
-            VkDependencyInfoKHR {
-                sType: VkDependencyInfoKHR::TYPE,
+            brvk::VkDependencyInfoKHR {
+                sType: brvk::VkDependencyInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 dependencyFlags: 0,
                 memoryBarrierCount: memory_barriers.len() as _,
@@ -217,7 +219,7 @@ impl<'b, 'r> DependencyInfo<'b, 'r> {
     }
 
     pub const fn by_region(mut self) -> Self {
-        self.0.dependencyFlags |= VK_DEPENDENCY_BY_REGION_BIT;
+        self.0.dependencyFlags |= brvk::VK_DEPENDENCY_BY_REGION_BIT;
         self
     }
 }

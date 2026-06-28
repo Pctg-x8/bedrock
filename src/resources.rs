@@ -24,7 +24,7 @@
 //! [`ImageDesc`](struct.ImageDesc.html)で作成する
 //!
 //! ```rust,ignore
-//! let image = ImageDesc::new(&Extent2D(128, 128), VK_FORMAT_R8G8B8A8_UNORM, ImageUsage::SAMPLED.color_attachment(), ImageLayout::General)
+//! let image = ImageDesc::new(&Extent2D(128, 128), brvk::VK_FORMAT_R8G8B8A8_UNORM, ImageUsage::SAMPLED.color_attachment(), ImageLayout::General)
 //!     .create(&device)?;
 //! ```
 //!
@@ -39,7 +39,7 @@
 //!
 //! - [`sample_counts`](struct.ImageDesc.html#method.sample_counts): イメージの要素ごとのサンプル数を2^nの値(1, 2, 4, 8, 16, 32, 64)で指定する。デフォルトは1。
 //!   以下の条件を一つでも満たす場合は1を設定する必要がある。
-//!   - 最適タイリング(`VK_IMAGE_TILING_OPTIMAL`)が使われていない(`use_linear_tiling`を併用する場合)
+//!   - 最適タイリング(`brvk::VK_IMAGE_TILING_OPTIMAL`)が使われていない(`use_linear_tiling`を併用する場合)
 //!   - 2Dテクスチャではない(`new`の第一引数が`Extent2D`でない場合)
 //!   - キューブテクスチャである(`flags`に`ImageFlags::CUBE_COMPATIBLE`を指定している場合)
 //!   - 指定したフォーマットがカラーアタッチメントもしくは深度/ステンシルアタッチメントとしての利用に対応していない場合
@@ -112,9 +112,10 @@
 //! ### その他
 //!
 //! - `TRANSIENT_ATTACHMENT`: 色、深度/ステンシル、マルチサンプル解決、および入力アイテムとして指定可能であることを示す
-//!   - テクスチャが`VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`が指定された[`DeviceMemory`]にバインドされることを想定している
+//!   - テクスチャが`brvk::VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT`が指定された[`DeviceMemory`]にバインドされることを想定している
 //!   - パス間の中間バッファなどで、一時的に確保される必要があるバッファに指定するとメモリ使用量が少なくて済むかもしれない？
 //!
+use bedrock_vk as brvk;
 
 use crate::*;
 use cfg_if::cfg_if;
@@ -148,7 +149,7 @@ pub trait MemoryBound: VkHandle {
 
     /// Returns the memory requirements for specified Vulkan object
     #[implements]
-    fn requirements(&self) -> VkMemoryRequirements;
+    fn requirements(&self) -> brvk::VkMemoryRequirements;
 
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     fn requirements2<'b>(&'b self) -> Self::MemoryRequirementsInfo2<'b>;
@@ -157,36 +158,24 @@ pub trait MemoryBound: VkHandle {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
-    fn bind(&mut self, memory: &(impl VkHandle<Handle = VkDeviceMemory> + ?Sized), offset: usize) -> crate::Result<()>
+    fn bind(
+        &mut self,
+        memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
+        offset: usize,
+    ) -> crate::Result<()>
     where
         Self: VkHandleMut;
 }
 
-#[inline(always)]
 #[implements]
+#[inline(always)]
 pub fn bind_memory(
     resource: &mut (impl MemoryBound + VkHandleMut + ?Sized),
-    memory: &(impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+    memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
     offset: usize,
 ) -> crate::Result<()> {
     resource.bind(memory, offset)
-}
-
-impl VkComponentMapping {
-    pub const IDENTITY: Self = Self::all(VK_COMPONENT_SWIZZLE_IDENTITY);
-    pub const ZERO: Self = Self::all(VK_COMPONENT_SWIZZLE_ZERO);
-    pub const ONE: Self = Self::all(VK_COMPONENT_SWIZZLE_ONE);
-
-    /// Set same value to all component
-    pub const fn all(s: VkComponentSwizzle) -> Self {
-        Self { r: s, g: s, b: s, a: s }
-    }
-
-    /// Set 2 values with repeating
-    pub const fn set2(a: VkComponentSwizzle, b: VkComponentSwizzle) -> Self {
-        Self { r: a, g: b, b: a, a: b }
-    }
 }

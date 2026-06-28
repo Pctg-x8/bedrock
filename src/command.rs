@@ -1,13 +1,17 @@
 //! Vulkan Commands
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
-use crate::*;
+use crate::{error::translate_vk_result, *};
 use derives::implements;
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkCommandPool::OBJECT_TYPE)]
-pub struct CommandPoolObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkCommandPool, pub(crate) Device);
+#[VkObject(type = brvk::VkCommandPool::OBJECT_TYPE)]
+pub struct CommandPoolObject<Device: VkHandle<Handle = brvk::VkDevice>>(
+    pub(crate) brvk::VkCommandPool,
+    pub(crate) Device,
+);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for CommandPoolObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for CommandPoolObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
@@ -19,11 +23,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for CommandPoolObject<Device> {
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for CommandPoolObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for CommandPoolObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for CommandPoolObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for CommandPoolObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for CommandPoolObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for CommandPoolObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -37,16 +41,16 @@ impl<Device: crate::Device> DeviceChild for CommandPoolObject<Device> {
 }
 impl<Device: crate::Device> CommandPool for CommandPoolObject<Device> {}
 impl<Device: crate::Device> CommandPoolMut for CommandPoolObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> CommandPoolObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> CommandPoolObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkCommandPool, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkCommandPool, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkCommandPool, Device) {
+    pub const fn unmanage(self) -> (brvk::VkCommandPool, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -54,7 +58,7 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandPoolObject<Device> {
         (h, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> CommandPoolObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> CommandPoolObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> CommandPoolObject<Device> {
@@ -69,8 +73,8 @@ impl<Device: crate::Device> CommandPoolObject<Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn new(device: Device, info: &CommandPoolCreateInfo) -> crate::Result<Self> {
@@ -83,8 +87,8 @@ impl<Device: crate::Device> CommandPoolObject<Device> {
 /// Opaque handle to a command buffer object
 #[repr(transparent)]
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkCommandBuffer::OBJECT_TYPE)]
-pub struct CommandBufferObject<Device>(VkCommandBuffer, core::marker::PhantomData<Device>);
+#[VkObject(type = brvk::VkCommandBuffer::OBJECT_TYPE)]
+pub struct CommandBufferObject<Device>(brvk::VkCommandBuffer, core::marker::PhantomData<Device>);
 impl<Device> Clone for CommandBufferObject<Device> {
     #[inline(always)]
     fn clone(&self) -> Self {
@@ -96,13 +100,13 @@ unsafe impl<Device: Sync> Sync for CommandBufferObject<Device> {}
 unsafe impl<Device: Send> Send for CommandBufferObject<Device> {}
 impl<Device> CommandBuffer for CommandBufferObject<Device> {}
 impl<Device> CommandBufferMut for CommandBufferObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> CommandBufferObject<Device> {
     /// Allocate command buffers from an existing command pool
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("alloc")]
     #[inline]
     pub fn alloc(device: Device, info: &CommandBufferAllocateInfo) -> crate::Result<Vec<Self>> {
@@ -113,7 +117,7 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
                 info,
                 core::mem::transmute::<
                     &mut [core::mem::MaybeUninit<Self>],
-                    &mut [core::mem::MaybeUninit<VkCommandBuffer>],
+                    &mut [core::mem::MaybeUninit<brvk::VkCommandBuffer>],
                 >(hs.spare_capacity_mut()),
             )?;
             hs.set_len(info.0.commandBufferCount as _);
@@ -126,8 +130,8 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     #[inline]
     pub fn alloc_array<const N: usize>(
@@ -141,7 +145,7 @@ impl<Device: VkHandle<Handle = VkDevice>> CommandBufferObject<Device> {
                 core::mem::transmute::<&CommandBufferFixedCountAllocateInfo<N>, &CommandBufferAllocateInfo>(info),
                 core::mem::transmute::<
                     &mut [core::mem::MaybeUninit<Self>],
-                    &mut [core::mem::MaybeUninit<VkCommandBuffer>],
+                    &mut [core::mem::MaybeUninit<brvk::VkCommandBuffer>],
                 >(&mut hs),
             )?;
         }
@@ -158,11 +162,11 @@ impl<Device: Clone> CommandBufferObject<&'_ Device> {
 
 #[repr(transparent)]
 #[derive(Clone)]
-pub struct CommandPoolCreateInfo(VkCommandPoolCreateInfo);
+pub struct CommandPoolCreateInfo(brvk::VkCommandPoolCreateInfo);
 impl CommandPoolCreateInfo {
     pub const fn new(queue_family_index: u32) -> Self {
-        Self(VkCommandPoolCreateInfo {
-            sType: VkCommandPoolCreateInfo::TYPE,
+        Self(brvk::VkCommandPoolCreateInfo {
+            sType: brvk::VkCommandPoolCreateInfo::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             queueFamilyIndex: queue_family_index,
@@ -171,22 +175,22 @@ impl CommandPoolCreateInfo {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkCommandPoolCreateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkCommandPoolCreateInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkCommandPoolCreateInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkCommandPoolCreateInfo) -> Self {
         Self(raw)
     }
 
-    pub const fn into_raw(self) -> VkCommandPoolCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkCommandPoolCreateInfo {
         self.0
     }
 
     pub const fn transient(mut self) -> Self {
-        self.0.flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+        self.0.flags |= brvk::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
         self
     }
 
     pub const fn individual_resettable(mut self) -> Self {
-        self.0.flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+        self.0.flags |= brvk::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
         self
     }
 }
@@ -194,38 +198,38 @@ impl CommandPoolCreateInfo {
 #[repr(i32)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum CommandBufferLevel {
-    Primary = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-    Secondary = VK_COMMAND_BUFFER_LEVEL_SECONDARY,
+    Primary = brvk::VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+    Secondary = brvk::VK_COMMAND_BUFFER_LEVEL_SECONDARY,
 }
 
 /// Bitmask controlling behavior of a command pool reset.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[bitflags_newtype]
-pub struct CommandPoolResetFlags(VkCommandPoolResetFlags);
+pub struct CommandPoolResetFlags(brvk::VkCommandPoolResetFlags);
 impl CommandPoolResetFlags {
     /// Empty bits.
     pub const EMPTY: Self = Self(0);
 
     /// Resetting a command pool recycles all of the resources from the command pool back to the system.
-    pub const RELEASE_RESOURCES: Self = Self(VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
+    pub const RELEASE_RESOURCES: Self = Self(brvk::VK_COMMAND_POOL_RESET_RELEASE_RESOURCES_BIT);
 }
 
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct CommandBufferAllocateInfo<'r>(
-    pub(crate) VkCommandBufferAllocateInfo,
-    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
+    pub(crate) brvk::VkCommandBufferAllocateInfo,
+    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = brvk::VkCommandPool>>,
 );
 impl<'r> CommandBufferAllocateInfo<'r> {
     #[inline(always)]
     pub fn new(
-        command_pool: &'r mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
+        command_pool: &'r mut (impl VkHandleMut<Handle = brvk::VkCommandPool> + ?Sized),
         count: u32,
         level: CommandBufferLevel,
     ) -> Self {
         Self(
-            VkCommandBufferAllocateInfo {
-                sType: VkCommandBufferAllocateInfo::TYPE,
+            brvk::VkCommandBufferAllocateInfo {
+                sType: brvk::VkCommandBufferAllocateInfo::TYPE,
                 pNext: core::ptr::null(),
                 commandPool: command_pool.native_ptr_mut(),
                 level: level as _,
@@ -237,12 +241,12 @@ impl<'r> CommandBufferAllocateInfo<'r> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkCommandBufferAllocateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkCommandBufferAllocateInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkCommandBufferAllocateInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkCommandBufferAllocateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkCommandBufferAllocateInfo {
+    pub const fn into_raw(self) -> brvk::VkCommandBufferAllocateInfo {
         self.0
     }
 }
@@ -250,20 +254,20 @@ impl<'r> CommandBufferAllocateInfo<'r> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct CommandBufferFixedCountAllocateInfo<'r, const N: usize>(
-    VkCommandBufferAllocateInfo,
-    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = VkCommandPool>>,
+    brvk::VkCommandBufferAllocateInfo,
+    core::marker::PhantomData<&'r mut dyn VkHandleMut<Handle = brvk::VkCommandPool>>,
 );
 impl<'r, const N: usize> CommandBufferFixedCountAllocateInfo<'r, N> {
     #[inline(always)]
     pub fn new(
-        command_pool: &'r mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
+        command_pool: &'r mut (impl VkHandleMut<Handle = brvk::VkCommandPool> + ?Sized),
         level: CommandBufferLevel,
     ) -> Self {
         assert!(N <= u32::MAX as usize, "too many command buffers will be allocated");
 
         Self(
-            VkCommandBufferAllocateInfo {
-                sType: VkCommandBufferAllocateInfo::TYPE,
+            brvk::VkCommandBufferAllocateInfo {
+                sType: brvk::VkCommandBufferAllocateInfo::TYPE,
                 pNext: core::ptr::null(),
                 commandPool: command_pool.native_ptr_mut(),
                 level: level as _,
@@ -274,7 +278,7 @@ impl<'r, const N: usize> CommandBufferFixedCountAllocateInfo<'r, N> {
     }
 }
 
-pub trait CommandPool: VkHandle<Handle = VkCommandPool> + DeviceChild {}
+pub trait CommandPool: VkHandle<Handle = brvk::VkCommandPool> + DeviceChild {}
 DerefContainerBracketImpl!(for CommandPool {});
 GuardsImpl!(for CommandPool {});
 
@@ -285,8 +289,8 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     #[inline(always)]
     unsafe fn reset(&mut self, flags: CommandPoolResetFlags) -> crate::Result<()> {
@@ -304,7 +308,7 @@ pub trait CommandPoolMut: CommandPool + VkHandleMut {
     /// Application cannot use passed command buffers after this call
     #[implements]
     #[inline(always)]
-    unsafe fn free(&mut self, buffers: &[VkHandleRefMut<VkCommandBuffer>]) {
+    unsafe fn free(&mut self, buffers: &[VkHandleRefMut<brvk::VkCommandBuffer>]) {
         unsafe {
             crate::vkfn_wrapper::free_command_buffers(
                 self.device_transparent_ref(),
@@ -344,7 +348,7 @@ GuardsImpl!(for mut CommandPoolMut {});
 #[cfg(feature = "VK_KHR_maintenance1")]
 #[derive(Clone, Copy, Debug)]
 #[bitflags_newtype]
-pub struct CommandPoolTrimFlags(VkCommandPoolTrimFlagsKHR);
+pub struct CommandPoolTrimFlags(brvk::VkCommandPoolTrimFlagsKHR);
 #[cfg(feature = "VK_KHR_maintenance1")]
 impl CommandPoolTrimFlags {
     pub const EMPTY: Self = Self(0);
@@ -353,14 +357,14 @@ impl CommandPoolTrimFlags {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct CommandBufferBeginInfo<'d>(
-    VkCommandBufferBeginInfo,
+    brvk::VkCommandBufferBeginInfo,
     core::marker::PhantomData<Option<&'d CommandBufferInheritanceInfo<'d>>>,
 );
 impl<'d> CommandBufferBeginInfo<'d> {
     pub const fn new() -> Self {
         Self(
-            VkCommandBufferBeginInfo {
-                sType: VkCommandBufferBeginInfo::TYPE,
+            brvk::VkCommandBufferBeginInfo {
+                sType: brvk::VkCommandBufferBeginInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 pInheritanceInfo: core::ptr::null(),
@@ -371,31 +375,31 @@ impl<'d> CommandBufferBeginInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkCommandBufferBeginInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkCommandBufferBeginInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkCommandBufferBeginInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkCommandBufferBeginInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkCommandBufferBeginInfo {
+    pub const fn into_raw(self) -> brvk::VkCommandBufferBeginInfo {
         self.0
     }
 
-    pub const fn as_raw_ref(&self) -> &VkCommandBufferBeginInfo {
+    pub const fn as_raw_ref(&self) -> &brvk::VkCommandBufferBeginInfo {
         &self.0
     }
 
     pub const fn onetime_submit(mut self) -> Self {
-        self.0.flags |= VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        self.0.flags |= brvk::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
         self
     }
 
     pub const fn renderpass_continue(mut self) -> Self {
-        self.0.flags |= VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
+        self.0.flags |= brvk::VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
         self
     }
 
     pub const fn simultaneous_use(mut self) -> Self {
-        self.0.flags |= VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+        self.0.flags |= brvk::VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
         self
     }
 
@@ -408,18 +412,18 @@ impl<'d> CommandBufferBeginInfo<'d> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct CommandBufferInheritanceInfo<'d>(
-    VkCommandBufferInheritanceInfo,
+    brvk::VkCommandBufferInheritanceInfo,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        Option<&'d dyn VkHandle<Handle = VkRenderPass>>,
-        Option<&'d dyn VkHandle<Handle = VkFramebuffer>>,
+        Option<&'d dyn VkHandle<Handle = brvk::VkRenderPass>>,
+        Option<&'d dyn VkHandle<Handle = brvk::VkFramebuffer>>,
     )>,
 );
 impl<'d> CommandBufferInheritanceInfo<'d> {
     pub const fn new() -> Self {
         CommandBufferInheritanceInfo(
-            VkCommandBufferInheritanceInfo {
-                sType: VkCommandBufferInheritanceInfo::TYPE,
+            brvk::VkCommandBufferInheritanceInfo {
+                sType: brvk::VkCommandBufferInheritanceInfo::TYPE,
                 pNext: core::ptr::null(),
                 renderPass: None,
                 subpass: 0,
@@ -434,8 +438,8 @@ impl<'d> CommandBufferInheritanceInfo<'d> {
 
     #[inline]
     pub fn of_rendering(
-        render_pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>,
-        framebuffer: Option<&'d (impl VkHandle<Handle = VkFramebuffer> + ?Sized)>,
+        render_pass: SubpassRef<'d, impl VkHandle<Handle = brvk::VkRenderPass> + ?Sized>,
+        framebuffer: Option<&'d (impl VkHandle<Handle = brvk::VkFramebuffer> + ?Sized)>,
     ) -> Self {
         Self::new().rendering(render_pass, framebuffer)
     }
@@ -443,8 +447,8 @@ impl<'d> CommandBufferInheritanceInfo<'d> {
     #[inline]
     pub fn rendering(
         mut self,
-        render_pass: SubpassRef<'d, impl VkHandle<Handle = VkRenderPass> + ?Sized>,
-        framebuffer: Option<&'d (impl VkHandle<Handle = VkFramebuffer> + ?Sized)>,
+        render_pass: SubpassRef<'d, impl VkHandle<Handle = brvk::VkRenderPass> + ?Sized>,
+        framebuffer: Option<&'d (impl VkHandle<Handle = brvk::VkFramebuffer> + ?Sized)>,
     ) -> Self {
         self.0.renderPass = Some(render_pass.0.native_ptr());
         self.0.subpass = render_pass.1;
@@ -458,7 +462,7 @@ impl<'d> CommandBufferInheritanceInfo<'d> {
             _ => true as _,
         };
         self.0.queryFlags = match q {
-            OcclusionQuery::Precise => VK_QUERY_CONTROL_PRECISE_BIT,
+            OcclusionQuery::Precise => brvk::VK_QUERY_CONTROL_PRECISE_BIT,
             _ => 0,
         };
         self
@@ -470,7 +474,7 @@ impl<'d> CommandBufferInheritanceInfo<'d> {
     }
 }
 
-pub trait CommandBuffer: VkHandle<Handle = VkCommandBuffer> {}
+pub trait CommandBuffer: VkHandle<Handle = brvk::VkCommandBuffer> {}
 DerefContainerBracketImpl!(for CommandBuffer {});
 GuardsImpl!(for CommandBuffer {});
 
@@ -479,8 +483,8 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     ///
     /// # Safety
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
@@ -499,18 +503,16 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     ///
     /// # Safety
     /// The `CommandPool` that this commandBuffer was allocated from must be externally synchronized.
     #[implements]
     #[inline]
-    unsafe fn reset(&mut self, flags: VkCommandBufferResetFlags) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::reset_command_buffer(self.native_ptr_mut(), flags)
-                .into_result()
-                .map(drop)
-        }
+    unsafe fn reset(&mut self, flags: brvk::VkCommandBufferResetFlags) -> crate::Result<()> {
+        translate_vk_result(unsafe { brvk::fns::reset_command_buffer(self.native_ptr_mut(), flags) })?;
+
+        Ok(())
     }
 
     /// Locking CommandBuffer with CommandPool to satisfy externally synchronization restriction.
@@ -518,7 +520,7 @@ pub trait CommandBufferMut: CommandBuffer + VkHandleMut {
     /// This command buffer must be allocated from `pool`.
     unsafe fn synchronize_with<'p, 'b: 'p>(
         &'b mut self,
-        pool: &'p mut (impl VkHandleMut<Handle = VkCommandPool> + ?Sized),
+        pool: &'p mut (impl VkHandleMut<Handle = brvk::VkCommandPool> + ?Sized),
     ) -> SynchronizedCommandBuffer<'p, 'b> {
         SynchronizedCommandBuffer {
             _pool: pool.as_transparent_ref_mut(),
@@ -530,9 +532,9 @@ DerefContainerBracketImpl!(for mut CommandBufferMut {});
 GuardsImpl!(for mut CommandBufferMut {});
 
 pub struct SynchronizedCommandBuffer<'p, 'b: 'p> {
-    _pool: VkHandleRefMut<'p, VkCommandPool>,
+    _pool: VkHandleRefMut<'p, brvk::VkCommandPool>,
     #[cfg_attr(not(feature = "Implements"), allow(dead_code))]
-    buffer: VkHandleRefMut<'b, VkCommandBuffer>,
+    buffer: VkHandleRefMut<'b, brvk::VkCommandBuffer>,
 }
 #[implements]
 impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
@@ -542,8 +544,8 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
     ///
     /// `buffer` must be created from `pool`.
     pub const unsafe fn new_unchecked(
-        pool: VkHandleRefMut<'p, VkCommandPool>,
-        buffer: VkHandleRefMut<'b, VkCommandBuffer>,
+        pool: VkHandleRefMut<'p, brvk::VkCommandPool>,
+        buffer: VkHandleRefMut<'b, brvk::VkCommandBuffer>,
     ) -> Self {
         Self { _pool: pool, buffer }
     }
@@ -552,8 +554,8 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[inline(always)]
     pub fn begin(&'b mut self, info: &CommandBufferBeginInfo) -> crate::Result<CmdRecord<'b>> {
         unsafe {
@@ -569,29 +571,27 @@ impl<'p, 'b: 'p> SynchronizedCommandBuffer<'p, 'b> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[inline(always)]
-    pub fn reset(&mut self, flags: VkCommandBufferResetFlags) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::reset_command_buffer(self.buffer.native_ptr_mut(), flags)
-                .into_result()
-                .map(drop)
-        }
+    pub fn reset(&mut self, flags: brvk::VkCommandBufferResetFlags) -> crate::Result<()> {
+        translate_vk_result(unsafe { brvk::fns::reset_command_buffer(self.buffer.native_ptr_mut(), flags) })?;
+
+        Ok(())
     }
 }
 
 /// The recording state of command buffers
 #[must_use = "CmdRecord must be consumed by end() (not closed automatically by drop!)"]
 pub struct CmdRecord<'d> {
-    ptr: VkHandleRefMut<'d, VkCommandBuffer>,
+    ptr: VkHandleRefMut<'d, brvk::VkCommandBuffer>,
 }
 impl<'d> CmdRecord<'d> {
-    pub const fn new(ptr: VkHandleRefMut<'d, VkCommandBuffer>) -> Self {
+    pub const fn new(ptr: VkHandleRefMut<'d, brvk::VkCommandBuffer>) -> Self {
         Self { ptr }
     }
 
     #[inline(always)]
-    pub const fn raw_command_buffer_handle_mut(&mut self) -> &mut VkHandleRefMut<'d, VkCommandBuffer> {
+    pub const fn raw_command_buffer_handle_mut(&mut self) -> &mut VkHandleRefMut<'d, brvk::VkCommandBuffer> {
         &mut self.ptr
     }
 }
@@ -611,9 +611,9 @@ impl<'d> CmdRecord<'d> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SubpassContents {
     /// The contents of the subpass will be recorded inline the primary command buffer
-    Inline = VK_SUBPASS_CONTENTS_INLINE,
+    Inline = brvk::VK_SUBPASS_CONTENTS_INLINE,
     /// The contents are recorded in secondary command buffers that will be called from the primary command buffer
-    SecondaryCommandBuffers = VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS,
+    SecondaryCommandBuffers = brvk::VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS,
 }
 
 /// Specify the bind point of a pipeline object to a command buffer
@@ -621,9 +621,9 @@ pub enum SubpassContents {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PipelineBindPoint {
     /// Binding as a graphics pipeline
-    Graphics = VK_PIPELINE_BIND_POINT_GRAPHICS,
+    Graphics = brvk::VK_PIPELINE_BIND_POINT_GRAPHICS,
     /// Binding as a compute pipeline
-    Compute = VK_PIPELINE_BIND_POINT_COMPUTE,
+    Compute = brvk::VK_PIPELINE_BIND_POINT_COMPUTE,
 }
 
 /// Graphics Commands: Manipulating with Render Passes
@@ -633,7 +633,7 @@ impl<'d> CmdRecord<'d> {
     #[inline]
     pub fn begin_render_pass(mut self, info: &crate::RenderPassBeginInfo, contents: SubpassContents) -> Self {
         unsafe {
-            crate::vkfn::cmd_begin_render_pass(self.ptr.native_ptr_mut(), info.as_ref(), contents as _);
+            brvk::fns::cmd_begin_render_pass(self.ptr.native_ptr_mut(), info.as_ref(), contents as _);
         }
 
         self
@@ -643,7 +643,7 @@ impl<'d> CmdRecord<'d> {
     #[inline]
     pub fn next_subpass(mut self, contents: SubpassContents) -> Self {
         unsafe {
-            crate::vkfn::cmd_next_subpass(self.ptr.native_ptr_mut(), contents as _);
+            brvk::fns::cmd_next_subpass(self.ptr.native_ptr_mut(), contents as _);
         }
 
         self
@@ -652,7 +652,7 @@ impl<'d> CmdRecord<'d> {
     /// End the current render pass
     #[inline]
     pub fn end_render_pass(mut self) -> Self {
-        unsafe { crate::vkfn::cmd_end_render_pass(self.ptr.native_ptr_mut()) };
+        unsafe { brvk::fns::cmd_end_render_pass(self.ptr.native_ptr_mut()) };
 
         self
     }
@@ -684,7 +684,7 @@ impl<'d> CmdRecord<'d> {
         subpass_begin_info: &SubpassBeginInfo,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_begin_render_pass2(
+            brvk::fns::cmd_begin_render_pass2(
                 self.ptr.native_ptr_mut(),
                 begin_info as *const _ as _,
                 subpass_begin_info as *const _ as _,
@@ -717,7 +717,7 @@ impl<'d> CmdRecord<'d> {
     #[inline]
     pub fn next_subpass2(mut self, subpass_begin_info: &SubpassBeginInfo, subpass_end_info: &SubpassEndInfo) -> Self {
         unsafe {
-            crate::vkfn::cmd_next_subpass2(
+            brvk::fns::cmd_next_subpass2(
                 self.ptr.native_ptr_mut(),
                 subpass_begin_info as *const _ as _,
                 subpass_end_info as *const _ as _,
@@ -748,7 +748,7 @@ impl<'d> CmdRecord<'d> {
     #[inline]
     pub fn end_render_pass2(mut self, subpass_end_info: &SubpassEndInfo) -> Self {
         unsafe {
-            crate::vkfn::cmd_end_render_pass2(self.ptr.native_ptr_mut(), subpass_end_info);
+            brvk::fns::cmd_end_render_pass2(self.ptr.native_ptr_mut(), core::mem::transmute(&subpass_end_info));
         }
 
         self
@@ -763,10 +763,10 @@ impl<'d> CmdRecord<'d> {
     pub fn bind_pipeline(
         mut self,
         bind_point: PipelineBindPoint,
-        pipeline: &(impl VkHandle<Handle = VkPipeline> + ?Sized),
+        pipeline: &(impl VkHandle<Handle = brvk::VkPipeline> + ?Sized),
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_bind_pipeline(self.ptr.native_ptr_mut(), bind_point as _, pipeline.native_ptr());
+            brvk::fns::cmd_bind_pipeline(self.ptr.native_ptr_mut(), bind_point as _, pipeline.native_ptr());
         }
         self
     }
@@ -776,13 +776,13 @@ impl<'d> CmdRecord<'d> {
     pub fn bind_descriptor_sets(
         mut self,
         bind_point: PipelineBindPoint,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
         first: u32,
         descriptor_sets: &[DescriptorSet],
         dynamic_offsets: &[u32],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_bind_descriptor_sets(
+            brvk::fns::cmd_bind_descriptor_sets(
                 self.ptr.native_ptr_mut(),
                 bind_point as _,
                 pipeline_layout.native_ptr(),
@@ -801,13 +801,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn push_constant<T>(
         mut self,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
-        stage: VkShaderStageFlags,
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
+        stage: brvk::VkShaderStageFlags,
         offset: u32,
         value: &T,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_push_constants(
+            brvk::fns::cmd_push_constants(
                 self.ptr.native_ptr_mut(),
                 pipeline_layout.native_ptr(),
                 stage,
@@ -823,13 +823,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn push_constant_slice<T>(
         mut self,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
-        stage: VkShaderStageFlags,
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
+        stage: brvk::VkShaderStageFlags,
         offset: u32,
         values: &[T],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_push_constants(
+            brvk::fns::cmd_push_constants(
                 self.ptr.native_ptr_mut(),
                 pipeline_layout.native_ptr(),
                 stage,
@@ -852,9 +852,9 @@ impl<'d> CmdRecord<'d> {
         mut self,
         fn_provider: &(impl DevicePushDescriptorExtension + ?Sized),
         bind_point: PipelineBindPoint,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
         set: u32,
-        writes: &[VkWriteDescriptorSet],
+        writes: &[brvk::VkWriteDescriptorSet],
     ) -> Self {
         unsafe {
             (fn_provider.cmd_push_descriptor_set_khr_fn().0)(
@@ -880,12 +880,12 @@ impl<'d> CmdRecord<'d> {
     pub unsafe fn push_descriptor_set_raw(
         mut self,
         bind_point: PipelineBindPoint,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
         set: u32,
-        writes: &[VkWriteDescriptorSet],
+        writes: &[brvk::VkWriteDescriptorSet],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_push_descriptor_set(
+            brvk::fns::cmd_push_descriptor_set(
                 self.ptr.native_ptr_mut(),
                 bind_point as _,
                 pipeline_layout.native_ptr(),
@@ -906,7 +906,7 @@ impl<'d> CmdRecord<'d> {
         self,
         fn_provider: &(impl DevicePushDescriptorExtension + ?Sized),
         bind_point: PipelineBindPoint,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
         set: u32,
         writes: &[crate::DescriptorSetWriteInfo],
     ) -> Self {
@@ -928,7 +928,7 @@ impl<'d> CmdRecord<'d> {
     pub fn push_descriptor_set_alloc(
         self,
         bind_point: PipelineBindPoint,
-        pipeline_layout: &(impl VkHandle<Handle = VkPipelineLayout> + ?Sized),
+        pipeline_layout: &(impl VkHandle<Handle = brvk::VkPipelineLayout> + ?Sized),
         set: u32,
         writes: &[crate::DescriptorSetWriteInfo],
     ) -> Self {
@@ -948,9 +948,9 @@ impl<'d> CmdRecord<'d> {
 impl<'d> CmdRecord<'d> {
     /// Set the viewport on a command buffer
     #[inline(always)]
-    pub fn set_viewport(mut self, first: u32, viewports: &[Viewport]) -> Self {
+    pub fn set_viewport(mut self, first: u32, viewports: &[brvk::VkViewport]) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_viewport(
+            brvk::fns::cmd_set_viewport(
                 self.ptr.native_ptr_mut(),
                 first,
                 viewports.len() as _,
@@ -962,9 +962,9 @@ impl<'d> CmdRecord<'d> {
 
     /// Set the dynamic scissor rectangles on a command buffer
     #[inline(always)]
-    pub fn set_scissor(mut self, first: u32, scissors: &[Rect2D]) -> Self {
+    pub fn set_scissor(mut self, first: u32, scissors: &[brvk::VkRect2D]) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_scissor(
+            brvk::fns::cmd_set_scissor(
                 self.ptr.native_ptr_mut(),
                 first,
                 scissors.len() as _,
@@ -978,7 +978,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_line_width(mut self, w: f32) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_line_width(self.ptr.native_ptr_mut(), w);
+            brvk::fns::cmd_set_line_width(self.ptr.native_ptr_mut(), w);
         }
         self
     }
@@ -987,7 +987,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_depth_bias(mut self, constant_factor: f32, clamp: f32, slope_factor: f32) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_depth_bias(self.ptr.native_ptr_mut(), constant_factor, clamp, slope_factor);
+            brvk::fns::cmd_set_depth_bias(self.ptr.native_ptr_mut(), constant_factor, clamp, slope_factor);
         }
         self
     }
@@ -996,7 +996,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_blend_constants(mut self, blend_constants: &[f32; 4]) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_blend_constants(self.ptr.native_ptr_mut(), blend_constants.as_ptr());
+            brvk::fns::cmd_set_blend_constants(self.ptr.native_ptr_mut(), blend_constants.as_ptr());
         }
         self
     }
@@ -1005,7 +1005,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_depth_bounds(mut self, bounds: core::ops::Range<f32>) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
+            brvk::fns::cmd_set_depth_bounds(self.ptr.native_ptr_mut(), bounds.start, bounds.end);
         }
         self
     }
@@ -1014,7 +1014,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_stencil_compare_mask(mut self, face_mask: StencilFaceMask, compare_mask: u32) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_stencil_compare_mask(self.ptr.native_ptr_mut(), face_mask as _, compare_mask);
+            brvk::fns::cmd_set_stencil_compare_mask(self.ptr.native_ptr_mut(), face_mask as _, compare_mask);
         }
         self
     }
@@ -1023,7 +1023,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_stencil_write_mask(mut self, face_mask: StencilFaceMask, write_mask: u32) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_stencil_write_mask(self.ptr.native_ptr_mut(), face_mask as _, write_mask);
+            brvk::fns::cmd_set_stencil_write_mask(self.ptr.native_ptr_mut(), face_mask as _, write_mask);
         }
         self
     }
@@ -1032,7 +1032,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_stencil_reference(mut self, face_mask: StencilFaceMask, reference: u32) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_stencil_reference(self.ptr.native_ptr_mut(), face_mask as _, reference);
+            brvk::fns::cmd_set_stencil_reference(self.ptr.native_ptr_mut(), face_mask as _, reference);
         }
         self
     }
@@ -1043,7 +1043,7 @@ impl<'d> CmdRecord<'d> {
     pub fn set_sample_locations(
         mut self,
         fn_provider: &(impl DeviceSampleLocationsExtension + ?Sized),
-        info: &VkSampleLocationsInfoEXT,
+        info: &brvk::VkSampleLocationsInfoEXT,
     ) -> Self {
         unsafe {
             (fn_provider.cmd_set_sample_locations_ext_fn().0)(self.ptr.native_ptr_mut(), info);
@@ -1060,12 +1060,12 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn bind_index_buffer(
         mut self,
-        buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
+        buffer: &(impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
         offset: usize,
         index_type: IndexType,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_bind_index_buffer(
+            brvk::fns::cmd_bind_index_buffer(
                 self.ptr.native_ptr_mut(),
                 buffer.native_ptr(),
                 offset as _,
@@ -1080,17 +1080,17 @@ impl<'d> CmdRecord<'d> {
     pub fn bind_vertex_buffers(
         mut self,
         first: u32,
-        buffers: &[VkHandleRef<VkBuffer>],
-        offsets: &[DeviceSize],
+        buffers: &[VkHandleRef<brvk::VkBuffer>],
+        offsets: &[brvk::VkDeviceSize],
     ) -> Self {
         assert_eq!(buffers.len(), offsets.len());
 
         unsafe {
-            crate::vkfn::cmd_bind_vertex_buffers(
+            brvk::fns::cmd_bind_vertex_buffers(
                 self.ptr.native_ptr_mut(),
                 first,
                 buffers.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers).cast(),
                 crate::ffi_helper::slice_as_ptr_empty_null(offsets),
             );
         }
@@ -1102,15 +1102,15 @@ impl<'d> CmdRecord<'d> {
     pub fn bind_vertex_buffer_array<const N: usize>(
         mut self,
         first: u32,
-        buffers: &[VkHandleRef<VkBuffer>; N],
-        offsets: &[DeviceSize; N],
+        buffers: &[VkHandleRef<brvk::VkBuffer>; N],
+        offsets: &[brvk::VkDeviceSize; N],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_bind_vertex_buffers(
+            brvk::fns::cmd_bind_vertex_buffers(
                 self.ptr.native_ptr_mut(),
                 first,
                 N as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(buffers).cast(),
                 crate::ffi_helper::slice_as_ptr_empty_null(offsets),
             );
         }
@@ -1125,7 +1125,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn draw(mut self, vertex_count: u32, instance_count: u32, first_vertex: u32, first_instance: u32) -> Self {
         unsafe {
-            crate::vkfn::cmd_draw(
+            brvk::fns::cmd_draw(
                 self.ptr.native_ptr_mut(),
                 vertex_count,
                 instance_count,
@@ -1147,7 +1147,7 @@ impl<'d> CmdRecord<'d> {
         first_instance: u32,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_draw_indexed(
+            brvk::fns::cmd_draw_indexed(
                 self.ptr.native_ptr_mut(),
                 index_count,
                 instance_count,
@@ -1163,13 +1163,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn draw_indirect(
         mut self,
-        buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: DeviceSize,
+        buffer: &(impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        offset: brvk::VkDeviceSize,
         draw_count: u32,
         stride: u32,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_draw_indirect(
+            brvk::fns::cmd_draw_indirect(
                 self.ptr.native_ptr_mut(),
                 buffer.native_ptr(),
                 offset,
@@ -1184,13 +1184,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn draw_indexed_indirect(
         mut self,
-        buffer: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: DeviceSize,
+        buffer: &(impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        offset: brvk::VkDeviceSize,
         draw_count: u32,
         stride: u32,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_draw_indexed_indirect(
+            brvk::fns::cmd_draw_indexed_indirect(
                 self.ptr.native_ptr_mut(),
                 buffer.native_ptr(),
                 offset,
@@ -1209,7 +1209,7 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn dispatch(mut self, group_count_x: u32, group_count_y: u32, group_count_z: u32) -> Self {
         unsafe {
-            crate::vkfn::cmd_dispatch(self.ptr.native_ptr_mut(), group_count_x, group_count_y, group_count_z);
+            brvk::fns::cmd_dispatch(self.ptr.native_ptr_mut(), group_count_x, group_count_y, group_count_z);
         }
         self
     }
@@ -1218,11 +1218,11 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn dispatch_indirect(
         mut self,
-        buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        offset: DeviceSize,
+        buffer: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        offset: brvk::VkDeviceSize,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_dispatch_indirect(self.ptr.native_ptr_mut(), buffer.native_ptr(), offset);
+            brvk::fns::cmd_dispatch_indirect(self.ptr.native_ptr_mut(), buffer.native_ptr(), offset);
         }
         self
     }
@@ -1235,17 +1235,17 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn copy_buffer(
         mut self,
-        src: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
+        src: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
         regions: &[BufferCopy],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_copy_buffer(
+            brvk::fns::cmd_copy_buffer(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 dst.native_ptr(),
                 regions.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(regions) as _,
+                crate::ffi_helper::slice_as_ptr_empty_null(regions).cast(),
             );
         }
         self
@@ -1255,21 +1255,21 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn copy_image(
         mut self,
-        src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        src: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         dst_layout: ImageLayout,
         regions: &[ImageCopy],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_copy_image(
+            brvk::fns::cmd_copy_image(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 src_layout as _,
                 dst.native_ptr(),
                 dst_layout as _,
                 regions.len() as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(regions),
+                crate::ffi_helper::slice_as_ptr_empty_null(regions).cast(),
             );
         }
         self
@@ -1279,15 +1279,15 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn blit_image(
         mut self,
-        src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        src: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         dst_layout: ImageLayout,
-        regions: &[VkImageBlit],
+        regions: &[brvk::VkImageBlit],
         filter: FilterMode,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_blit_image(
+            brvk::fns::cmd_blit_image(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 src_layout as _,
@@ -1305,13 +1305,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn copy_buffer_to_image(
         mut self,
-        src_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        src_buffer: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_image: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         dst_layout: ImageLayout,
-        regions: &[VkBufferImageCopy],
+        regions: &[brvk::VkBufferImageCopy],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_copy_buffer_to_image(
+            brvk::fns::cmd_copy_buffer_to_image(
                 self.ptr.native_ptr_mut(),
                 src_buffer.native_ptr(),
                 dst_image.native_ptr(),
@@ -1327,13 +1327,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn copy_image_to_buffer(
         mut self,
-        src_image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        src_image: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst_buffer: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        regions: &[VkBufferImageCopy],
+        dst_buffer: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        regions: &[brvk::VkBufferImageCopy],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_copy_image_to_buffer(
+            brvk::fns::cmd_copy_image_to_buffer(
                 self.ptr.native_ptr_mut(),
                 src_image.native_ptr(),
                 src_layout as _,
@@ -1351,13 +1351,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub unsafe fn update_buffer_raw(
         mut self,
-        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: DeviceSize,
-        size: DeviceSize,
+        dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_offset: brvk::VkDeviceSize,
+        size: brvk::VkDeviceSize,
         data: *const core::ffi::c_void,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_update_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
+            brvk::fns::cmd_update_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
         }
         self
     }
@@ -1366,13 +1366,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn update_buffer<T>(
         self,
-        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: DeviceSize,
-        size: DeviceSize,
+        dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_offset: brvk::VkDeviceSize,
+        size: brvk::VkDeviceSize,
         data: &T,
     ) -> Self {
         assert!(
-            size <= size_of::<T>() as VkDeviceSize,
+            size <= size_of::<T>() as brvk::VkDeviceSize,
             "Updated size exceeds size of datatype"
         );
 
@@ -1383,8 +1383,8 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn update_buffer_exact<T>(
         self,
-        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: DeviceSize,
+        dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_offset: brvk::VkDeviceSize,
         data: &T,
     ) -> Self {
         unsafe {
@@ -1401,8 +1401,8 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn update_buffer_slice<T>(
         self,
-        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: DeviceSize,
+        dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_offset: brvk::VkDeviceSize,
         data: &[T],
     ) -> Self {
         unsafe { self.update_buffer_raw(dst, dst_offset, size_of_val(data) as _, data.as_ptr().cast()) }
@@ -1417,13 +1417,13 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn fill_buffer(
         mut self,
-        dst: &(impl crate::VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: DeviceSize,
-        size: DeviceSize,
+        dst: &(impl crate::VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_offset: brvk::VkDeviceSize,
+        size: brvk::VkDeviceSize,
         data: u32,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_fill_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
+            brvk::fns::cmd_fill_buffer(self.ptr.native_ptr_mut(), dst.native_ptr(), dst_offset, size, data);
         }
         self
     }
@@ -1432,19 +1432,19 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn clear_color_image(
         mut self,
-        image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        image: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         layout: ImageLayout,
         colors: &[ClearColorValue],
-        ranges: &[VkImageSubresourceRange],
+        ranges: &[brvk::VkImageSubresourceRange],
     ) -> Self {
         assert_eq!(colors.len(), ranges.len());
 
         unsafe {
-            crate::vkfn::cmd_clear_color_image(
+            brvk::fns::cmd_clear_color_image(
                 self.ptr.native_ptr_mut(),
                 image.native_ptr(),
                 layout as _,
-                crate::ffi_helper::slice_as_ptr_empty_null(colors),
+                crate::ffi_helper::slice_as_ptr_empty_null(colors).cast(),
                 ranges.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(ranges),
             );
@@ -1456,18 +1456,18 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn clear_depth_stencil_image(
         mut self,
-        image: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        image: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         layout: ImageLayout,
         depth: f32,
         stencil: u32,
-        ranges: &[VkImageSubresourceRange],
+        ranges: &[brvk::VkImageSubresourceRange],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_clear_depth_stencil_image(
+            brvk::fns::cmd_clear_depth_stencil_image(
                 self.ptr.native_ptr_mut(),
                 image.native_ptr(),
                 layout as _,
-                &VkClearDepthStencilValue { depth, stencil },
+                &brvk::VkClearDepthStencilValue { depth, stencil },
                 ranges.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(ranges),
             );
@@ -1477,9 +1477,9 @@ impl<'d> CmdRecord<'d> {
 
     /// Clear regions within currently bound framebuffer attachments
     #[inline(always)]
-    pub fn clear_attachments(mut self, attachments: &[VkClearAttachment], rects: &[VkClearRect]) -> Self {
+    pub fn clear_attachments(mut self, attachments: &[brvk::VkClearAttachment], rects: &[brvk::VkClearRect]) -> Self {
         unsafe {
-            crate::vkfn::cmd_clear_attachments(
+            brvk::fns::cmd_clear_attachments(
                 self.ptr.native_ptr_mut(),
                 attachments.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(attachments),
@@ -1499,9 +1499,9 @@ impl<'d> CmdRecord<'d> {
     ///
     /// Caller must be primary buffer and in the render pass when executing secondary command buffer
     #[inline(always)]
-    pub unsafe fn execute_commands(mut self, buffers: &[VkHandleRef<VkCommandBuffer>]) -> Self {
+    pub unsafe fn execute_commands(mut self, buffers: &[VkHandleRef<brvk::VkCommandBuffer>]) -> Self {
         unsafe {
-            crate::vkfn::cmd_execute_commands(
+            brvk::fns::cmd_execute_commands(
                 self.ptr.native_ptr_mut(),
                 buffers.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(buffers) as _,
@@ -1518,14 +1518,14 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn resolve_image(
         mut self,
-        src: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        src: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         src_layout: ImageLayout,
-        dst: &(impl crate::VkHandle<Handle = VkImage> + ?Sized),
+        dst: &(impl crate::VkHandle<Handle = brvk::VkImage> + ?Sized),
         dst_layout: ImageLayout,
-        regions: &[VkImageResolve],
+        regions: &[brvk::VkImageResolve],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_resolve_image(
+            brvk::fns::cmd_resolve_image(
                 self.ptr.native_ptr_mut(),
                 src.native_ptr(),
                 src_layout as _,
@@ -1546,11 +1546,11 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn set_event(
         mut self,
-        event: &(impl VkHandle<Handle = VkEvent> + ?Sized),
+        event: &(impl VkHandle<Handle = brvk::VkEvent> + ?Sized),
         stage_mask: PipelineStageFlags,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_set_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
+            brvk::fns::cmd_set_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
         }
         self
     }
@@ -1559,11 +1559,11 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn reset_event(
         mut self,
-        event: &(impl VkHandle<Handle = VkEvent> + ?Sized),
+        event: &(impl VkHandle<Handle = brvk::VkEvent> + ?Sized),
         stage_mask: PipelineStageFlags,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_reset_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
+            brvk::fns::cmd_reset_event(self.ptr.native_ptr_mut(), event.native_ptr(), stage_mask.0);
         }
         self
     }
@@ -1572,15 +1572,15 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn wait_events(
         mut self,
-        events: &[VkHandleRef<VkEvent>],
+        events: &[VkHandleRef<brvk::VkEvent>],
         src_stage_mask: PipelineStageFlags,
         dst_stage_mask: PipelineStageFlags,
-        memory_barriers: &[VkMemoryBarrier],
+        memory_barriers: &[brvk::VkMemoryBarrier],
         buffer_memory_barriers: &[BufferMemoryBarrier],
         image_memory_barriers: &[ImageMemoryBarrier],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_wait_events(
+            brvk::fns::cmd_wait_events(
                 self.ptr.native_ptr_mut(),
                 events.len() as _,
                 crate::ffi_helper::slice_as_ptr_empty_null(events) as _,
@@ -1603,13 +1603,13 @@ impl<'d> CmdRecord<'d> {
         mut self,
         src_stage_mask: PipelineStageFlags,
         dst_stage_mask: PipelineStageFlags,
-        dependency_flags: VkDependencyFlags,
-        memory_barriers: &[VkMemoryBarrier],
+        dependency_flags: brvk::VkDependencyFlags,
+        memory_barriers: &[brvk::VkMemoryBarrier],
         buffer_memory_barriers: &[BufferMemoryBarrier],
         image_memory_barriers: &[ImageMemoryBarrier],
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_pipeline_barrier(
+            brvk::fns::cmd_pipeline_barrier(
                 self.ptr.native_ptr_mut(),
                 src_stage_mask.0,
                 dst_stage_mask.0,
@@ -1644,7 +1644,7 @@ impl<'d> CmdRecord<'d> {
     #[cfg(feature = "Allow1_3APIs")]
     #[inline(always)]
     pub fn pipeline_barrier_2(mut self, dependency_info: &crate::DependencyInfo) -> Self {
-        unsafe { crate::vkfn::cmd_pipeline_barrier2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _) }
+        unsafe { brvk::fns::cmd_pipeline_barrier2(self.ptr.native_ptr_mut(), dependency_info as *const _ as _) }
 
         self
     }
@@ -1657,21 +1657,21 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn begin_query(
         mut self,
-        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        pool: &(impl VkHandle<Handle = brvk::VkQueryPool> + ?Sized),
         query: u32,
-        flags: VkQueryControlFlags,
+        flags: brvk::VkQueryControlFlags,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_begin_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query, flags);
+            brvk::fns::cmd_begin_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query, flags);
         }
         self
     }
 
     /// Ends a query
     #[inline(always)]
-    pub fn end_query(mut self, pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized), query: u32) -> Self {
+    pub fn end_query(mut self, pool: &(impl VkHandle<Handle = brvk::VkQueryPool> + ?Sized), query: u32) -> Self {
         unsafe {
-            crate::vkfn::cmd_end_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query);
+            brvk::fns::cmd_end_query(self.ptr.native_ptr_mut(), pool.native_ptr(), query);
         }
         self
     }
@@ -1680,11 +1680,11 @@ impl<'d> CmdRecord<'d> {
     #[inline(always)]
     pub fn reset_query_pool(
         mut self,
-        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        pool: &(impl VkHandle<Handle = brvk::VkQueryPool> + ?Sized),
         range: core::ops::Range<u32>,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_reset_query_pool(
+            brvk::fns::cmd_reset_query_pool(
                 self.ptr.native_ptr_mut(),
                 pool.native_ptr(),
                 range.start,
@@ -1699,11 +1699,11 @@ impl<'d> CmdRecord<'d> {
     pub fn write_timestamp(
         mut self,
         stage: PipelineStageFlags,
-        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        pool: &(impl VkHandle<Handle = brvk::VkQueryPool> + ?Sized),
         query: u32,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_write_timestamp(self.ptr.native_ptr_mut(), stage.0, pool.native_ptr(), query);
+            brvk::fns::cmd_write_timestamp(self.ptr.native_ptr_mut(), stage.0, pool.native_ptr(), query);
         }
         self
     }
@@ -1713,15 +1713,15 @@ impl<'d> CmdRecord<'d> {
     #[allow(clippy::too_many_arguments)]
     pub fn copy_query_pool_results(
         mut self,
-        pool: &(impl VkHandle<Handle = VkQueryPool> + ?Sized),
+        pool: &(impl VkHandle<Handle = brvk::VkQueryPool> + ?Sized),
         range: core::ops::Range<u32>,
-        dst: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        dst_offset: DeviceSize,
-        stride: DeviceSize,
+        dst: &(impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        dst_offset: brvk::VkDeviceSize,
+        stride: brvk::VkDeviceSize,
         flags: QueryResultFlags,
     ) -> Self {
         unsafe {
-            crate::vkfn::cmd_copy_query_pool_results(
+            brvk::fns::cmd_copy_query_pool_results(
                 self.ptr.native_ptr_mut(),
                 pool.native_ptr(),
                 range.start,
@@ -1748,57 +1748,59 @@ impl<'d> CmdRecord<'d> {
 
 /// A color value representation for clearing operations.
 /// Constructable from RGBA values using `From::from`.
-pub type ClearColorValue = VkClearColorValue;
+#[repr(transparent)]
+pub struct ClearColorValue(pub brvk::VkClearColorValue);
 impl From<[f32; 4]> for ClearColorValue {
     #[inline(always)]
     fn from(c: [f32; 4]) -> Self {
-        VkClearColorValue { float32: c }
+        Self(brvk::VkClearColorValue { float32: c })
     }
 }
 impl From<[i32; 4]> for ClearColorValue {
     #[inline(always)]
     fn from(c: [i32; 4]) -> Self {
-        VkClearColorValue { int32: c }
+        Self(brvk::VkClearColorValue { int32: c })
     }
 }
 impl From<[u32; 4]> for ClearColorValue {
     #[inline(always)]
     fn from(c: [u32; 4]) -> Self {
-        VkClearColorValue { uint32: c }
+        Self(brvk::VkClearColorValue { uint32: c })
     }
 }
 
-pub type ClearValue = VkClearValue;
+#[repr(transparent)]
+pub struct ClearValue(pub brvk::VkClearValue);
 impl ClearValue {
     /// Constructs a `ClearValue` which represents clearing color value
     #[inline(always)]
     pub fn color(c: impl Into<ClearColorValue>) -> Self {
-        Self { color: c.into() }
+        Self(brvk::VkClearValue { color: c.into().0 })
     }
 
     /// Constructs a `ClearValue` which represents clearing color value
     pub const fn color_f32(c: [f32; 4]) -> Self {
-        Self {
-            color: VkClearColorValue { float32: c },
-        }
+        Self(brvk::VkClearValue {
+            color: brvk::VkClearColorValue { float32: c },
+        })
     }
     /// Constructs a `ClearValue` which represents clearing color value
     pub const fn color_u32(c: [u32; 4]) -> Self {
-        Self {
-            color: VkClearColorValue { uint32: c },
-        }
+        Self(brvk::VkClearValue {
+            color: brvk::VkClearColorValue { uint32: c },
+        })
     }
     /// Constructs a `ClearValue` which represents clearing color value
     pub const fn color_i32(c: [i32; 4]) -> Self {
-        Self {
-            color: VkClearColorValue { int32: c },
-        }
+        Self(brvk::VkClearValue {
+            color: brvk::VkClearColorValue { int32: c },
+        })
     }
     /// Constructs a `ClearValue` which represents clearing both depth and stencil values
     pub const fn depth_stencil(depth: f32, stencil: u32) -> Self {
-        Self {
-            depthStencil: VkClearDepthStencilValue { depth, stencil },
-        }
+        Self(brvk::VkClearValue {
+            depthStencil: brvk::VkClearDepthStencilValue { depth, stencil },
+        })
     }
 }
 
@@ -1808,11 +1810,11 @@ impl ClearValue {
 pub enum IndexType {
     /// Indices are 8-bit unsigned integer values
     #[cfg(feature = "VK_KHR_index_type_uint8")]
-    U8 = VK_INDEX_TYPE_UINT8_KHR,
+    U8 = brvk::VK_INDEX_TYPE_UINT8_KHR,
     /// Indices are 16-bit unsigned integer values
-    U16 = VK_INDEX_TYPE_UINT16,
+    U16 = brvk::VK_INDEX_TYPE_UINT16,
     /// Indices are 32-bit unsigned integer values
-    U32 = VK_INDEX_TYPE_UINT32,
+    U32 = brvk::VK_INDEX_TYPE_UINT32,
 }
 
 /// Enabling or disabling the occlusion query
@@ -1820,34 +1822,34 @@ pub enum IndexType {
 pub enum OcclusionQuery {
     Disable,
     Enable,
-    /// `VK_QUERY_CONTROL_PRECISE_BIT`
+    /// `brvk::VK_QUERY_CONTROL_PRECISE_BIT`
     Precise,
 }
 
 /// Access Types
 pub struct AccessFlags {
-    pub read: VkAccessFlags,
-    pub write: VkAccessFlags,
+    pub read: brvk::VkAccessFlags,
+    pub write: brvk::VkAccessFlags,
 }
 impl AccessFlags {
     /// Specifies read access to an indirect command structure read as part of an indirect drawing or dispatch command.
-    pub const INDIRECT_COMMAND_READ: VkAccessFlags = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+    pub const INDIRECT_COMMAND_READ: brvk::VkAccessFlags = brvk::VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
     /// Specifies read access to an index buffer as part of an indexed drawing command, bound by `vkCmdBindIndexBuffer`.
-    pub const INDEX_READ: VkAccessFlags = VK_ACCESS_INDEX_READ_BIT;
+    pub const INDEX_READ: brvk::VkAccessFlags = brvk::VK_ACCESS_INDEX_READ_BIT;
     /// Specifies read access to a vertex buffer as part of a drawing command, bound by `vkCmdBindVertexBuffers`.
-    pub const VERTEX_ATTRIBUTE_READ: VkAccessFlags = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+    pub const VERTEX_ATTRIBUTE_READ: brvk::VkAccessFlags = brvk::VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
     /// Specifies read access to a [uniform buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformbuffer).
-    pub const UNIFORM_READ: VkAccessFlags = VK_ACCESS_UNIFORM_READ_BIT;
+    pub const UNIFORM_READ: brvk::VkAccessFlags = brvk::VK_ACCESS_UNIFORM_READ_BIT;
     /// Specifies read access to an [input attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass) within a render pass during fragment shading.
-    pub const INPUT_ATTACHMENT_READ: VkAccessFlags = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
+    pub const INPUT_ATTACHMENT_READ: brvk::VkAccessFlags = brvk::VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
     /// Specifies read/write access to a [storage buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagebuffer),
     /// [uniform texel buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-uniformtexelbuffer)(read only),
     /// [storage texel buffer](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storagetexelbuffer),
     /// [samples image](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-sampledimage)(read only),
     /// or [storage image](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#descriptorsets-storageimage).
     pub const SHADER: Self = AccessFlags {
-        read: VK_ACCESS_SHADER_READ_BIT,
-        write: VK_ACCESS_SHADER_WRITE_BIT,
+        read: brvk::VK_ACCESS_SHADER_READ_BIT,
+        write: brvk::VK_ACCESS_SHADER_WRITE_BIT,
     };
     /// - `read`: Specifies read access to a [color attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass),
     ///   such as via [blending](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#framebuffer-blending),
@@ -1857,8 +1859,8 @@ impl AccessFlags {
     ///   during a [render pass](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass)
     ///   or via certain [subpass load and store operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass-load-store-ops).
     pub const COLOR_ATTACHMENT: Self = AccessFlags {
-        read: VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
-        write: VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+        read: brvk::VK_ACCESS_COLOR_ATTACHMENT_READ_BIT,
+        write: brvk::VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
     };
     /// - `read`: Specifies read access to a [depth/stencil attachment](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass),
     ///   via [depth or stencil operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-ds-state)
@@ -1867,20 +1869,20 @@ impl AccessFlags {
     ///   via [depth or stencil operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#fragops-ds-state)
     ///   or via certain [subpass load and store operations](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#renderpass-load-store-ops).
     pub const DEPTH_STENCIL_ATTACHMENT: Self = AccessFlags {
-        read: VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
-        write: VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
+        read: brvk::VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT,
+        write: brvk::VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
     };
     /// Specifies read/write access to an image or buffer in a [clear](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#clears)(write only)
     /// or [copy](https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#copies) operation.
     pub const TRANSFER: Self = AccessFlags {
-        read: VK_ACCESS_TRANSFER_READ_BIT,
-        write: VK_ACCESS_TRANSFER_WRITE_BIT,
+        read: brvk::VK_ACCESS_TRANSFER_READ_BIT,
+        write: brvk::VK_ACCESS_TRANSFER_WRITE_BIT,
     };
     /// Specifies read/write access by a host operation.
     /// Accesses of this type are not performed through a resource, but directly on memory.
     pub const HOST: Self = AccessFlags {
-        read: VK_ACCESS_HOST_READ_BIT,
-        write: VK_ACCESS_HOST_WRITE_BIT,
+        read: brvk::VK_ACCESS_HOST_READ_BIT,
+        write: brvk::VK_ACCESS_HOST_WRITE_BIT,
     };
     /// Specifies read/write access via non-specific entities.
     /// These entities include the Vulkan device and host, but *may* also include entities external to the Vulkan device
@@ -1891,24 +1893,24 @@ impl AccessFlags {
     /// - When included in a destination access mask, makes all available writes visible to all future read accesses on
     ///   entities known to the Vulkan device.
     pub const MEMORY: Self = AccessFlags {
-        read: VK_ACCESS_MEMORY_READ_BIT,
-        write: VK_ACCESS_MEMORY_WRITE_BIT,
+        read: brvk::VK_ACCESS_MEMORY_READ_BIT,
+        write: brvk::VK_ACCESS_MEMORY_WRITE_BIT,
     };
 }
 
-/// Wrapper object of `VkImageMemoryBarrier`, derscribes a memory barrier of an image.
+/// Wrapper object of `brvk::VkImageMemoryBarrier`, derscribes a memory barrier of an image.
 #[derive(Clone)]
 #[repr(transparent)]
-pub struct ImageMemoryBarrier(VkImageMemoryBarrier);
+pub struct ImageMemoryBarrier(brvk::VkImageMemoryBarrier);
 impl ImageMemoryBarrier {
     /// Construct a new barrier descriptor from discrete pair of resource and subresource core::ops::Range
     pub fn new(
-        res: &(impl VkHandle<Handle = VkImage> + ?Sized),
-        subres: impl Into<VkImageSubresourceRange>,
+        res: &(impl VkHandle<Handle = brvk::VkImage> + ?Sized),
+        subres: impl Into<brvk::VkImageSubresourceRange>,
         trans: LayoutTransition,
     ) -> Self {
-        Self(VkImageMemoryBarrier {
-            sType: VkImageMemoryBarrier::TYPE,
+        Self(brvk::VkImageMemoryBarrier {
+            sType: brvk::VkImageMemoryBarrier::TYPE,
             pNext: core::ptr::null(),
             image: res.native_ptr(),
             subresourceRange: subres.into(),
@@ -1916,28 +1918,28 @@ impl ImageMemoryBarrier {
             newLayout: trans.to as _,
             srcAccessMask: trans.from.default_access_mask(),
             dstAccessMask: trans.to.default_access_mask(),
-            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-            dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+            srcQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
+            dstQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
         })
     }
 
     /// Update the source access mask
     #[inline]
-    pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self {
+    pub fn src_access_mask(mut self, mask: brvk::VkAccessFlags) -> Self {
         self.0.srcAccessMask = mask;
         self
     }
 
     /// Update the destination access mask
     #[inline]
-    pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self {
+    pub fn dest_access_mask(mut self, mask: brvk::VkAccessFlags) -> Self {
         self.0.dstAccessMask = mask;
         self
     }
 
     /// Update the access mask transition
     #[inline]
-    pub fn access_mask_transition(mut self, src: VkAccessFlags, dst: VkAccessFlags) -> Self {
+    pub fn access_mask_transition(mut self, src: brvk::VkAccessFlags, dst: brvk::VkAccessFlags) -> Self {
         self.0.srcAccessMask = src;
         self.0.dstAccessMask = dst;
         self
@@ -1951,61 +1953,61 @@ impl ImageMemoryBarrier {
         self
     }
 }
-impl From<VkImageMemoryBarrier> for ImageMemoryBarrier {
+impl From<brvk::VkImageMemoryBarrier> for ImageMemoryBarrier {
     #[inline]
-    fn from(v: VkImageMemoryBarrier) -> Self {
+    fn from(v: brvk::VkImageMemoryBarrier) -> Self {
         Self(v)
     }
 }
-impl From<ImageMemoryBarrier> for VkImageMemoryBarrier {
+impl From<ImageMemoryBarrier> for brvk::VkImageMemoryBarrier {
     #[inline]
     fn from(v: ImageMemoryBarrier) -> Self {
         v.0
     }
 }
 
-/// Wrapper object of `VkBufferMemoryBarrier`, describes a memory barrier of a buffer.
+/// Wrapper object of `brvk::VkBufferMemoryBarrier`, describes a memory barrier of a buffer.
 #[derive(Clone)]
 #[repr(transparent)]
-pub struct BufferMemoryBarrier(VkBufferMemoryBarrier);
+pub struct BufferMemoryBarrier(brvk::VkBufferMemoryBarrier);
 impl BufferMemoryBarrier {
     /// Construct a new buffer descriptor
     pub fn new(
-        buf: &(impl VkHandle<Handle = VkBuffer> + ?Sized),
-        range: core::ops::Range<VkDeviceSize>,
-        src_access_mask: VkAccessFlags,
-        dst_access_mask: VkAccessFlags,
+        buf: &(impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
+        src_access_mask: brvk::VkAccessFlags,
+        dst_access_mask: brvk::VkAccessFlags,
     ) -> Self {
-        Self(VkBufferMemoryBarrier {
-            sType: VkBufferMemoryBarrier::TYPE,
+        Self(brvk::VkBufferMemoryBarrier {
+            sType: brvk::VkBufferMemoryBarrier::TYPE,
             pNext: core::ptr::null(),
             buffer: buf.native_ptr(),
             offset: range.start,
             size: range.end - range.start,
             srcAccessMask: src_access_mask,
             dstAccessMask: dst_access_mask,
-            srcQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
-            dstQueueFamilyIndex: VK_QUEUE_FAMILY_IGNORED,
+            srcQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
+            dstQueueFamilyIndex: brvk::VK_QUEUE_FAMILY_IGNORED,
         })
     }
 
     /// Update the source access mask
     #[inline]
-    pub fn src_access_mask(mut self, mask: VkAccessFlags) -> Self {
+    pub fn src_access_mask(mut self, mask: brvk::VkAccessFlags) -> Self {
         self.0.srcAccessMask = mask;
         self
     }
 
     /// Update the destination access mask
     #[inline]
-    pub fn dest_access_mask(mut self, mask: VkAccessFlags) -> Self {
+    pub fn dest_access_mask(mut self, mask: brvk::VkAccessFlags) -> Self {
         self.0.dstAccessMask = mask;
         self
     }
 
     /// Update the access mask transition
     #[inline]
-    pub fn access_mask_transition(self, src: VkAccessFlags, dst: VkAccessFlags) -> Self {
+    pub fn access_mask_transition(self, src: brvk::VkAccessFlags, dst: brvk::VkAccessFlags) -> Self {
         self.src_access_mask(src).dest_access_mask(dst)
     }
 
@@ -2016,40 +2018,42 @@ impl BufferMemoryBarrier {
         self
     }
 }
-impl From<VkBufferMemoryBarrier> for BufferMemoryBarrier {
+impl From<brvk::VkBufferMemoryBarrier> for BufferMemoryBarrier {
     #[inline]
-    fn from(v: VkBufferMemoryBarrier) -> Self {
+    fn from(v: brvk::VkBufferMemoryBarrier) -> Self {
         BufferMemoryBarrier(v)
     }
 }
-impl From<BufferMemoryBarrier> for VkBufferMemoryBarrier {
+impl From<BufferMemoryBarrier> for brvk::VkBufferMemoryBarrier {
     #[inline]
     fn from(v: BufferMemoryBarrier) -> Self {
         v.0
     }
 }
 
-pub type BufferCopy = VkBufferCopy;
+#[repr(transparent)]
+pub struct BufferCopy(pub brvk::VkBufferCopy);
 impl BufferCopy {
-    pub const fn mirror(offset: VkDeviceSize, size: VkDeviceSize) -> Self {
-        Self {
+    pub const fn mirror(offset: brvk::VkDeviceSize, size: brvk::VkDeviceSize) -> Self {
+        Self(brvk::VkBufferCopy {
             srcOffset: offset,
             dstOffset: offset,
             size,
-        }
+        })
     }
 
-    pub const fn mirror_data<T>(offset: VkDeviceSize) -> Self {
+    pub const fn mirror_data<T>(offset: brvk::VkDeviceSize) -> Self {
         Self::mirror(offset, core::mem::size_of::<T>() as _)
     }
 
-    pub const fn copy_data<T>(src_offset: VkDeviceSize, dst_offset: VkDeviceSize) -> Self {
-        Self {
+    pub const fn copy_data<T>(src_offset: brvk::VkDeviceSize, dst_offset: brvk::VkDeviceSize) -> Self {
+        Self(brvk::VkBufferCopy {
             srcOffset: src_offset,
             dstOffset: dst_offset,
             size: core::mem::size_of::<T>() as _,
-        }
+        })
     }
 }
 
-pub type ImageCopy = VkImageCopy;
+#[repr(transparent)]
+pub struct ImageCopy(pub brvk::VkImageCopy);

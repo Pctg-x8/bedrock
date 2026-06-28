@@ -3,9 +3,8 @@
 pub const VK_KHR_MAP_MEMORY_2_SPEC_VERSION: usize = 1;
 pub const VK_KHR_MAP_MEMORY_2_EXTENSION_NAME: &str = "VK_KHR_map_memory2";
 
-use super::*;
-use crate::vk2::*;
-use derives::{promote_1_4, vk_ext_command};
+use crate::*;
+use derives::{TypedVulkanStructure, promote_1_4, vk_ext_command};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_MEMORY_MAP_INFO_KHR: VkStructureType = ext_enum_value(272, 0) as _;

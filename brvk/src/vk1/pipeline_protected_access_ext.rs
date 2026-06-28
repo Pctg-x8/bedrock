@@ -3,9 +3,8 @@
 pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_SPEC_VERSION: usize = 1;
 pub const VK_EXT_PIPELINE_PROTECTED_ACCESS_EXTENSION_NAME: &str = "VK_EXT_pipeline_protected_access";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_4;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT: VkStructureType =

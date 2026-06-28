@@ -3,10 +3,10 @@
 pub const VK_KHR_MAINTENANCE_5_SPEC_VERSION: usize = 1;
 pub const VK_KHR_MAINTENANCE_5_EXTENSION_NAME: &str = "VK_KHR_maintenance5";
 
-use derives::{promote_1_4, vk_ext_command};
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4, vk_ext_command};
 
-use super::*;
 use crate::vk2::*;
+use crate::*;
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR: VkStructureType = ext_enum_value(471, 0) as _;

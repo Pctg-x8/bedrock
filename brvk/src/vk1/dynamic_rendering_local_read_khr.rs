@@ -3,10 +3,8 @@
 pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_SPEC_VERSION: usize = 1;
 pub const VK_KHR_DYNAMIC_RENDERING_LOCAL_READ_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering_local_read";
 
-use crate::vk2::*;
-use derives::{promote_1_4, vk_ext_command};
-
-use super::*;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4, vk_ext_command};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR: VkStructureType =

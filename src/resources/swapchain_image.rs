@@ -1,19 +1,21 @@
+use bedrock_vk::{self as brvk, VkRawHandle};
+
 use crate::*;
 
 /// Opaque handle to a image object, backed by Swapchain.
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkImage::OBJECT_TYPE)]
+#[VkObject(type = brvk::VkImage::OBJECT_TYPE)]
 pub struct SwapchainImage<Swapchain>(
-    pub(crate) VkImage,
+    pub(crate) brvk::VkImage,
     pub(crate) Swapchain,
-    pub(crate) VkFormat,
-    pub(crate) VkExtent3D,
+    pub(crate) brvk::VkFormat,
+    pub(crate) brvk::VkExtent3D,
 );
 unsafe impl<Swapchain: Sync> Sync for SwapchainImage<Swapchain> {}
 unsafe impl<Swapchain: Send> Send for SwapchainImage<Swapchain> {}
 impl<Swapchain: DeviceChildHandle> DeviceChildHandle for SwapchainImage<Swapchain> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.device_handle()
     }
 }
@@ -27,18 +29,18 @@ impl<Swapchain: DeviceChild> DeviceChild for SwapchainImage<Swapchain> {
 }
 impl<Swapchain: crate::Swapchain> Image for SwapchainImage<Swapchain> {
     #[inline(always)]
-    fn format(&self) -> VkFormat {
+    fn format(&self) -> brvk::VkFormat {
         self.2
     }
 
     #[inline(always)]
-    fn size(&self) -> &VkExtent3D {
+    fn size(&self) -> &brvk::VkExtent3D {
         &self.3
     }
 
     #[inline(always)]
-    fn dimension(&self) -> VkImageViewType {
-        VK_IMAGE_VIEW_TYPE_2D
+    fn dimension(&self) -> brvk::VkImageViewType {
+        brvk::VK_IMAGE_VIEW_TYPE_2D
     }
 }
 impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
@@ -50,7 +52,7 @@ impl<Swapchain: Clone> SwapchainImage<&'_ Swapchain> {
 }
 impl<Swapchain> SwapchainImage<Swapchain> {
     /// Purges the construct
-    pub const fn unmanage(self) -> (VkImage, Swapchain, VkFormat, VkExtent3D) {
+    pub const fn unmanage(self) -> (brvk::VkImage, Swapchain, brvk::VkFormat, brvk::VkExtent3D) {
         let image = unsafe { core::ptr::read(&self.0) };
         let swapchain = unsafe { core::ptr::read(&self.1) };
         let format = unsafe { core::ptr::read(&self.2) };

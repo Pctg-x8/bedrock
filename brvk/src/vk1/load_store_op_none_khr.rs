@@ -3,8 +3,7 @@
 pub const VK_KHR_LOAD_STORE_OP_NONE_SPEC_VERSION: usize = 1;
 pub const VK_KHR_LOAD_STORE_OP_NONE_EXTENSION_NAME: &str = "VK_KHR_load_store_op_none";
 
-use super::*;
-use crate::vk2::*;
+use crate::*;
 use derives::promote_1_4;
 
 #[promote_1_4]

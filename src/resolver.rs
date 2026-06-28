@@ -1,8 +1,6 @@
 //! Vulkan Function Resolver
 
 #![allow(non_snake_case)]
-
-use crate::*;
 use derives::implements;
 
 use core::ffi::*;
@@ -14,14 +12,14 @@ pub trait ResolverInterface {
     /// # Safety
     ///
     /// retrieved symbol must be valid value of type T.
-    unsafe fn load_symbol_unconstrainted<T: FromPtr>(&self, name: &CStr) -> T;
+    unsafe fn load_symbol_unconstrainted<T: bedrock_vk::FromPtr>(&self, name: &CStr) -> T;
 
     /// Loads a function using the resolver, without any constraints on the function's type.
     ///
     /// # Safety
     ///
     /// retrieved function must be valid function pointer of type F.
-    unsafe fn load_function_unconstrainted<F: PFN>(&self) -> F;
+    unsafe fn load_function_unconstrainted<F: bedrock_vk::PFN>(&self) -> F;
 }
 
 #[implements]
@@ -31,7 +29,7 @@ cfg_if::cfg_if! {
 
         /// Sets custom resolver object for vulkan api call
         pub fn set_custom_resolver(resolver: Box<dyn ResolverInterface>) {
-            crate::vkfn::FunctionPointerTable::reset();
+            brvk::FunctionPointerTable::reset();
             *GLOBAL_RESOLVER.write() = Some(resolver);
         }
 
@@ -145,32 +143,10 @@ cfg_if::cfg_if! {
     }
 }
 
-/// # Safety
-///
-/// provides a safe wrapper around a raw function pointer, ensuring it is valid.
-pub unsafe trait FromPtr {
-    unsafe fn from_ptr(p: *const c_void) -> Self;
-}
-
-/// # Safety
-///
-/// provides a safe wrapper around a raw function pointer, ensuring it is valid and callable.
-pub unsafe trait PFN {
-    const NAME_CSTR: &CStr;
-
-    /// # Safety
-    ///
-    /// p must be a valid function pointer of type F.
-    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self;
-}
-pub trait StaticCallable: PFN {
-    const STATIC: Self;
-}
-
 #[implements]
-pub struct ResolvedFnCell<F: PFN, R>(R, std::sync::OnceLock<F>);
+pub struct ResolvedFnCell<F: bedrock_vk::PFN, R>(R, std::sync::OnceLock<F>);
 #[implements]
-impl<F: PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
+impl<F: bedrock_vk::PFN, R: ResolverInterface> ResolvedFnCell<F, R> {
     pub const fn new(resolver: R) -> Self {
         Self(resolver, std::sync::OnceLock::new())
     }

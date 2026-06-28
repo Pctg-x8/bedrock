@@ -3,10 +3,8 @@
 pub const VK_KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION: usize = 1;
 pub const VK_KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME: &str = "VK_KHR_depth_stencil_resolve";
 
-use crate::vk2::*;
-use derives::promote_1_2;
-
-use super::*;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_2};
 
 #[promote_1_2]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES_KHR: VkStructureType =

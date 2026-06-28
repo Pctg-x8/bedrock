@@ -7,9 +7,9 @@
 //! # Compile Options
 //! - `Implements`: Enable Vulkan implementations(functions)
 //! - `Multithreaded`: Enables to use objects from some threads(experimental)
-//! - `Presentation`: Enable rendering features to Window/Display(`VK_KHR_surface`/`VK_KHR_swapchain`/`VK_KHR_display`)
+//! - `Presentation`: Enable rendering features to Window/Display(`brvk::VK_KHR_surface`/`brvk::VK_KHR_swapchain`/`brvk::VK_KHR_display`)
 //! - `alloc`(default): Enable extra functionalities that may allocate some memory inside
-//! - `VK_***`: Enable Vulkan extensions(same name as each extensions)
+//! - `brvk::VK_***`: Enable Vulkan extensions(same name as each extensions)
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![doc(html_root_url = "https://docs.ct2.io/bedrock/mod-peridot/")]
 
@@ -30,37 +30,29 @@ mod libdl;
 #[cfg(windows)]
 mod libloaderapi;
 
+use bedrock_vk as brvk;
 use cfg_if::cfg_if;
 use derives::*;
 
 pub use derives::SpecializationConstants;
 
-#[macro_use]
-mod vk1;
-mod vk2;
-pub mod vk {
-    pub use crate::vk1::*;
-    pub use crate::vk2::*;
-}
-use crate::vk::*;
-
 pub mod error;
 mod resolver;
 #[cfg(feature = "Implements")]
 pub use resolver::ResolverInterface;
-pub use resolver::{PFN, StaticCallable};
 
-#[cfg(feature = "Implements")]
-#[allow(dead_code)]
-pub mod vkfn;
 #[cfg(feature = "Implements")]
 pub mod vkfn_wrapper;
 
 macro_rules! DerefContainerWithGuardsBracketImpl {
+    (for mut $t: path { $($required: item)* }) => {
+        DerefContainerBracketImpl!(for mut $t { $($required)* });
+        GuardsImpl!(for mut $t { $($required)* });
+    };
     (for $t: path { $($required: item)* }) => {
         DerefContainerBracketImpl!(for $t { $($required)* });
         GuardsImpl!(for $t { $($required)* });
-    }
+    };
 }
 macro_rules! DerefContainerBracketImpl {
     (unsafe for mut $t: path { $($required: item)* }) => {
@@ -116,12 +108,14 @@ macro_rules! ForwardFnPtr {
     };
 }
 
-pub type Result<T> = core::result::Result<T, VkResult>;
+pub type Result<T> = core::result::Result<T, ResultCode>;
 
 #[cfg(feature = "alloc")]
 pub(crate) mod alloc;
 
 mod handle;
+use crate::error::ResultCode;
+
 pub use self::handle::*;
 
 /// An result type of querying an array of objects
@@ -135,18 +129,20 @@ pub struct ArrayQueryResult<T> {
 }
 impl ArrayQueryResult<()> {
     #[inline(always)]
-    pub(crate) fn from_vk_result(r: VkResult) -> Result<Self> {
+    pub(crate) fn from_vk_result(r: brvk::VkResult) -> Result<Self> {
         match r {
-            VK_SUCCESS => Ok(Self {
+            brvk::VK_SUCCESS => Ok(Self {
                 result: (),
                 is_incomplete: false,
             }),
-            VK_INCOMPLETE => Ok(Self {
+            brvk::VK_INCOMPLETE => Ok(Self {
                 result: (),
                 is_incomplete: true,
             }),
-            e if e.is_err() => Err(e),
-            e => unreachable!("unexpected result: {e:?}"),
+            e => match ResultCode(e) {
+                e if e.is_err() => Err(e),
+                e => unreachable!("unexpected result: {e:?}"),
+            },
         }
     }
 }
@@ -177,7 +173,7 @@ impl<T> ArrayQueryResult<T> {
 }
 
 #[cfg(feature = "VK_KHR_swapchain")]
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum PresentResult {
     /// All requests presented successfully.
     Success,
@@ -185,46 +181,63 @@ pub enum PresentResult {
     Suboptimal,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TimeoutableWaitResult {
+    /// Wait operations completed successfully.
+    Success,
+    /// Wait operations timed out.
+    Timeout,
+}
+impl TimeoutableWaitResult {
+    pub(crate) fn from_vk_result(r: brvk::VkResult) -> Self {
+        match r {
+            brvk::VK_SUCCESS => Self::Success,
+            brvk::VK_TIMEOUT => Self::Timeout,
+            e => unreachable!("unexpected result: {:?}", ResultCode(e)),
+        }
+    }
+}
+
 /// An object in Vulkan
 pub trait VkObject: VkHandle {
-    const TYPE: VkObjectType;
+    const TYPE: brvk::VkObjectType;
 
     /// Give a user-friendly name to this object.
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_EXT_debug_utils")]
     fn set_name(&self, name: Option<&core::ffi::CStr>) -> crate::Result<()>
     where
         Self: DeviceChild<ConcreteDevice: InstanceChild<ConcreteInstance: InstanceDebugUtilsExtension>>,
-        Self::Handle: VkRawHandle,
+        Self::Handle: brvk::VkRawHandle,
     {
         self.device()
             .set_object_name(&DebugUtilsObjectNameInfo::new(self, name))
     }
 }
 impl<T: VkObject + ?Sized> VkObject for &'_ T {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for &'_ mut T {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::rc::Rc<T> {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::sync::Arc<T> {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::cell::Ref<'_, T> {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::cell::RefMut<'_, T> {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 impl<T: VkObject + ?Sized> VkObject for std::sync::MutexGuard<'_, T> {
-    const TYPE: VkObjectType = T::TYPE;
+    const TYPE: brvk::VkObjectType = T::TYPE;
 }
 
 // A single Number or a Range
@@ -258,296 +271,6 @@ where
     }
     fn end(&self) -> T {
         self.end
-    }
-}
-
-// Vulkan ReExports //
-pub type DeviceSize = VkDeviceSize;
-pub type Extent2D = VkExtent2D;
-pub type Offset2D = VkOffset2D;
-pub type Rect2D = VkRect2D;
-pub type Viewport = VkViewport;
-pub type Extent3D = VkExtent3D;
-pub type Offset3D = VkOffset3D;
-pub type Format = VkFormat;
-
-// Spreading single value to all dimensions
-impl Extent2D {
-    pub const fn spread1(value: u32) -> Self {
-        Self {
-            width: value,
-            height: value,
-        }
-    }
-}
-impl Extent3D {
-    pub const fn spread1(value: u32) -> Self {
-        Self {
-            width: value,
-            height: value,
-            depth: value,
-        }
-    }
-
-    pub const fn new1(width: u32) -> Self {
-        Self {
-            width,
-            height: 1,
-            depth: 1,
-        }
-    }
-
-    pub const fn new2(width: u32, height: u32) -> Self {
-        Self {
-            width,
-            height,
-            depth: 1,
-        }
-    }
-
-    pub const fn new(width: u32, height: u32, depth: u32) -> Self {
-        Self { width, height, depth }
-    }
-
-    pub const fn as_2d_ref(&self) -> &VkExtent2D {
-        unsafe { std::mem::transmute(self) }
-    }
-}
-impl Offset2D {
-    pub const fn spread1(value: i32) -> Self {
-        Self { x: value, y: value }
-    }
-}
-impl Offset3D {
-    pub const fn spread1(value: i32) -> Self {
-        Self {
-            x: value,
-            y: value,
-            z: value,
-        }
-    }
-
-    pub const fn new1(x: i32) -> Self {
-        Self { x, y: 0, z: 0 }
-    }
-
-    pub const fn new2(x: i32, y: i32) -> Self {
-        Self { x, y, z: 0 }
-    }
-
-    pub const fn new(x: i32, y: i32, z: i32) -> Self {
-        Self { x, y, z }
-    }
-
-    pub const fn as_2d_ref(&self) -> &VkOffset2D {
-        unsafe { std::mem::transmute(self) }
-    }
-}
-
-// into conversion to larger dimension //
-impl Extent2D {
-    pub const fn with_depth(self, depth: u32) -> Extent3D {
-        Extent3D {
-            width: self.width,
-            height: self.height,
-            depth,
-        }
-    }
-}
-impl Offset2D {
-    pub const fn with_z(self, z: i32) -> Offset3D {
-        Offset3D {
-            x: self.x,
-            y: self.y,
-            z,
-        }
-    }
-}
-// AsRef for self //
-impl AsRef<Extent3D> for Extent3D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Extent2D> for Extent2D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Offset3D> for Offset3D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-impl AsRef<Offset2D> for Offset2D {
-    fn as_ref(&self) -> &Self {
-        self
-    }
-}
-
-// AsRef Conversion to smaller-dimension
-impl AsRef<Extent2D> for Extent3D {
-    fn as_ref(&self) -> &Extent2D {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-impl AsRef<Offset2D> for Offset3D {
-    fn as_ref(&self) -> &Offset2D {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-
-// From conversion to smaller-dimension
-impl From<Offset3D> for Offset2D {
-    fn from(value: Offset3D) -> Self {
-        Self { x: value.x, y: value.y }
-    }
-}
-
-impl From<Extent3D> for Extent2D {
-    fn from(value: Extent3D) -> Self {
-        Self {
-            width: value.width,
-            height: value.height,
-        }
-    }
-}
-
-// Swizzling
-impl Extent3D {
-    pub const fn wh(&self) -> Extent2D {
-        Extent2D {
-            width: self.width,
-            height: self.height,
-        }
-    }
-
-    pub const fn wd(&self) -> Extent2D {
-        Extent2D {
-            width: self.width,
-            height: self.depth,
-        }
-    }
-
-    pub const fn hw(&self) -> Extent2D {
-        Extent2D {
-            width: self.height,
-            height: self.width,
-        }
-    }
-
-    pub const fn hd(&self) -> Extent2D {
-        Extent2D {
-            width: self.height,
-            height: self.depth,
-        }
-    }
-
-    pub const fn dw(&self) -> Extent2D {
-        Extent2D {
-            width: self.depth,
-            height: self.width,
-        }
-    }
-
-    pub const fn dh(&self) -> Extent2D {
-        Extent2D {
-            width: self.depth,
-            height: self.height,
-        }
-    }
-}
-impl Offset3D {
-    pub const fn xy(&self) -> Offset2D {
-        Offset2D { x: self.x, y: self.y }
-    }
-
-    pub const fn xz(&self) -> Offset2D {
-        Offset2D { x: self.x, y: self.z }
-    }
-
-    pub const fn yx(&self) -> Offset2D {
-        Offset2D { x: self.y, y: self.x }
-    }
-
-    pub const fn yz(&self) -> Offset2D {
-        Offset2D { x: self.y, y: self.z }
-    }
-
-    pub const fn zx(&self) -> Offset2D {
-        Offset2D { x: self.z, y: self.x }
-    }
-
-    pub const fn zy(&self) -> Offset2D {
-        Offset2D { x: self.z, y: self.y }
-    }
-}
-
-/// Utility Constants
-impl Extent2D {
-    pub const ONE: Self = Self::spread1(1);
-}
-impl Extent3D {
-    pub const ONE: Self = Self::spread1(1);
-}
-impl Offset2D {
-    pub const ZERO: Self = Self::spread1(0);
-}
-impl Offset3D {
-    pub const ZERO: Self = Self::spread1(0);
-}
-
-/// Viewport and Rect Util Functions
-impl Extent2D {
-    pub const fn into_rect(self, offset: Offset2D) -> Rect2D {
-        Rect2D { offset, extent: self }
-    }
-}
-impl From<Viewport> for Rect2D {
-    fn from(vp: Viewport) -> Self {
-        Rect2D {
-            offset: Offset2D {
-                x: vp.x as _,
-                y: vp.y as _,
-            },
-            extent: Extent2D {
-                width: vp.width as _,
-                height: vp.height as _,
-            },
-        }
-    }
-}
-impl Rect2D {
-    pub const fn make_viewport(&self, depth_range: std::ops::Range<f32>) -> Viewport {
-        Viewport {
-            x: self.offset.x as _,
-            y: self.offset.y as _,
-            width: self.extent.width as _,
-            height: self.extent.height as _,
-            minDepth: depth_range.start,
-            maxDepth: depth_range.end,
-        }
-    }
-}
-impl Viewport {
-    pub const fn from_rect_with_depth_range(rect: &Rect2D, depth_range: core::ops::Range<f32>) -> Self {
-        rect.make_viewport(depth_range)
-    }
-
-    pub const fn set_offset(&mut self, offset: &Offset2D) -> &mut Self {
-        self.x = offset.x as _;
-        self.y = offset.y as _;
-        self
-    }
-    pub const fn set_extent(&mut self, extent: &Extent2D) -> &mut Self {
-        self.width = extent.width as _;
-        self.height = extent.height as _;
-        self
-    }
-    pub const fn set_depth_range(&mut self, range: core::ops::Range<f32>) -> &mut Self {
-        self.minDepth = range.start;
-        self.maxDepth = range.end;
-        self
     }
 }
 

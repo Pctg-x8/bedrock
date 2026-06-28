@@ -2813,10 +2813,7 @@ const STRUCTS: &[Struct] = &[
     Struct::new(
         "ExtensionProperties",
         &[
-            Struct::member(
-                "extensionName",
-                "crate::ffi_helper::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>",
-            ),
+            Struct::member("extensionName", "crate::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>"),
             Struct::member("specVersion", "u32"),
         ],
     ),
@@ -3271,16 +3268,10 @@ const STRUCTS: &[Struct] = &[
     Struct::new(
         "LayerProperties",
         &[
-            Struct::member(
-                "layerName",
-                "crate::ffi_helper::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>",
-            ),
+            Struct::member("layerName", "crate::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>"),
             Struct::member("specVersion", "u32"),
             Struct::member("implementationVersion", "u32"),
-            Struct::member(
-                "description",
-                "crate::ffi_helper::FixedCStrBuffer<VK_MAX_DESCRIPTION_SIZE>",
-            ),
+            Struct::member("description", "crate::FixedCStrBuffer<VK_MAX_DESCRIPTION_SIZE>"),
         ],
     ),
     Struct::new(
@@ -3781,10 +3772,7 @@ const STRUCTS: &[Struct] = &[
             Struct::member("vendorID", "u32"),
             Struct::member("deviceID", "u32"),
             Struct::member("deviceType", "VkPhysicalDeviceType"),
-            Struct::member(
-                "deviceName",
-                "crate::ffi_helper::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>",
-            ),
+            Struct::member("deviceName", "crate::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>"),
             Struct::member("pipelineCacheUUID", "[u8; VK_UUID_SIZE]"),
             Struct::member("limits", "VkPhysicalDeviceLimits"),
             Struct::member("sparseProperties", "VkPhysicalDeviceSparseProperties"),

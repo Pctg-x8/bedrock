@@ -3,9 +3,8 @@
 pub const VK_KHR_INDEX_TYPE_UINT8_SPEC_VERSION: usize = 1;
 pub const VK_KHR_INDEX_TYPE_UINT8_EXTENSION_NAME: &str = "VK_KHR_index_type_uint8";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_4;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR: VkStructureType =

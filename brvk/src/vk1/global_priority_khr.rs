@@ -3,9 +3,8 @@
 pub const VK_KHR_GLOBAL_PRIORITY_SPEC_VERISON: usize = 1;
 pub const VK_KHR_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_KHR_global_priority";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_4;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4};
 
 #[promote_1_4]
 pub const VK_MAX_GLOBAL_PRIORITY_SIZE_KHR: usize = 16;

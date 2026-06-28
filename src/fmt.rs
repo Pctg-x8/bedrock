@@ -1,6 +1,6 @@
 //! Format Helpers
 
-use crate::vk::*;
+use bedrock_vk::*;
 
 /// Provides commonly used corresponding VkFormat for types
 pub trait AsFormat {

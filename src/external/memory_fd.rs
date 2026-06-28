@@ -3,9 +3,9 @@ use crate::*;
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum ExternalMemoryHandleTypeFd {
-    Opaque = VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR,
+    Opaque = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_FD_BIT_KHR,
     #[cfg(feature = "VK_EXT_external_memory_dma_buf")]
-    DMABuf = VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
+    DMABuf = brvk::VK_EXTERNAL_MEMORY_HANDLE_TYPE_DMA_BUF_BIT_EXT,
 }
 
 #[repr(transparent)]
@@ -59,18 +59,18 @@ impl<'d> ImportMemoryFdInfo<'d> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct MemoryGetFdInfo<'d>(
-    pub(crate) VkMemoryGetFdInfoKHR,
-    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkDeviceMemory>>,
+    pub(crate) brvk::VkMemoryGetFdInfoKHR,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = brvk::VkDeviceMemory>>,
 );
 impl<'d> MemoryGetFdInfo<'d> {
     #[inline]
     pub fn new(
-        memory: &'d (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
+        memory: &'d (impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
         handle_type: ExternalMemoryHandleTypeFd,
     ) -> Self {
         Self(
-            VkMemoryGetFdInfoKHR {
-                sType: VkMemoryGetFdInfoKHR::TYPE,
+            brvk::VkMemoryGetFdInfoKHR {
+                sType: brvk::VkMemoryGetFdInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 memory: memory.native_ptr(),
                 handleType: handle_type as _,
@@ -79,11 +79,11 @@ impl<'d> MemoryGetFdInfo<'d> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkMemoryGetFdInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkMemoryGetFdInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkMemoryGetFdInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkMemoryGetFdInfoKHR {
         self.0
     }
 

@@ -3,9 +3,8 @@
 pub const VK_KHR_FORMAT_FEATURE_FLAGS_2_SPEC_VERSION: usize = 2;
 pub const VK_KHR_FORMAT_FEATURE_FLAGS_2_EXTENSION_NAME: &str = "VK_KHR_format_feature_flags2";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_3;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, promote_1_3};
 
 #[promote_1_3]
 pub const VK_STRUCTURE_TYPE_FORMAT_PROPERTIES_3_KHR: VkStructureType = ext_enum_value(361, 0) as _;

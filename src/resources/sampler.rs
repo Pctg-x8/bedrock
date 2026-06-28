@@ -1,27 +1,29 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
+
 use crate::*;
 use derives::implements;
 
-pub trait Sampler: VkHandle<Handle = VkSampler> {}
+pub trait Sampler: VkHandle<Handle = brvk::VkSampler> {}
 DerefContainerBracketImpl!(for Sampler {});
 GuardsImpl!(for Sampler {});
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkSampler::OBJECT_TYPE)]
-pub struct SamplerObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkSampler, pub(crate) Device);
+#[VkObject(type = brvk::VkSampler::OBJECT_TYPE)]
+pub struct SamplerObject<Device: VkHandle<Handle = brvk::VkDevice>>(pub(crate) brvk::VkSampler, pub(crate) Device);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for SamplerObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for SamplerObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_sampler(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_sampler(self.device_transparent_ref(), VkHandleRefMut::dangling(self.0), None);
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for SamplerObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for SamplerObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for SamplerObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for SamplerObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for SamplerObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for SamplerObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -33,17 +35,17 @@ impl<Device: crate::Device> DeviceChild for SamplerObject<Device> {
         &self.1
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> Sampler for SamplerObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Sampler for SamplerObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> SamplerObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkSampler, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkSampler, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkSampler, Device) {
+    pub const fn unmanage(self) -> (brvk::VkSampler, Device) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -51,7 +53,7 @@ impl<Device: VkHandle<Handle = VkDevice>> SamplerObject<Device> {
         (v, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> SamplerObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> SamplerObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> SamplerObject<Device> {
@@ -66,9 +68,9 @@ impl<Device: crate::Device> SamplerObject<Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_TOO_MANY_OBJECTS`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_TOO_MANY_OBJECTS`
     #[implements]
     pub fn new(device: Device, info: &SamplerCreateInfo) -> crate::Result<Self> {
         Ok(unsafe { Self::manage(device.new_sampler_raw(info, None)?, device) })
@@ -77,7 +79,7 @@ impl<Device: crate::Device> SamplerObject<Device> {
 
 #[repr(transparent)]
 #[derive(Clone)]
-pub struct SamplerCreateInfo(VkSamplerCreateInfo);
+pub struct SamplerCreateInfo(brvk::VkSamplerCreateInfo);
 impl Default for SamplerCreateInfo {
     #[inline(always)]
     fn default() -> Self {
@@ -87,8 +89,8 @@ impl Default for SamplerCreateInfo {
 impl SamplerCreateInfo {
     /// Initialize by default sampler parameters: Linear Filtering, Repeat addressing, no anisotrophy and no lod biases
     pub const fn new() -> Self {
-        Self(VkSamplerCreateInfo {
-            sType: VkSamplerCreateInfo::TYPE,
+        Self(brvk::VkSamplerCreateInfo {
+            sType: brvk::VkSamplerCreateInfo::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             magFilter: FilterMode::Linear as _,
@@ -111,12 +113,12 @@ impl SamplerCreateInfo {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSamplerCreateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkSamplerCreateInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkSamplerCreateInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkSamplerCreateInfo) -> Self {
         Self(raw)
     }
 
-    pub const fn into_raw(self) -> VkSamplerCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkSamplerCreateInfo {
         self.0
     }
 
@@ -196,7 +198,7 @@ impl SamplerCreateInfo {
     /// Whether to use unnormalized or normalized texel coordinates to address texels of the image.
     /// Default: `false`
     /// # Safety
-    /// User must meet the constraints as described in the "Valid Usage" section in the `VkSamplerCreateInfo` manual page
+    /// User must meet the constraints as described in the "Valid Usage" section in the `brvk::VkSamplerCreateInfo` manual page
     pub const unsafe fn unnormalized_coordinates(mut self, use_unnormalized: bool) -> Self {
         self.0.unnormalizedCoordinates = use_unnormalized as _;
 
@@ -209,16 +211,16 @@ impl SamplerCreateInfo {
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum AddressingMode {
     /// The repeat wrap mode
-    Repeat = VK_SAMPLER_ADDRESS_MODE_REPEAT as _,
+    Repeat = brvk::VK_SAMPLER_ADDRESS_MODE_REPEAT as _,
     /// The mirrored repeat wrap mode
-    MirroredRepeat = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT as _,
+    MirroredRepeat = brvk::VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT as _,
     /// The clamp to edge wrap mode
-    ClampToEdge = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE as _,
+    ClampToEdge = brvk::VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE as _,
     /// The clamp to border wrap mode
-    ClampToBorder = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER as _,
+    ClampToBorder = brvk::VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER as _,
     /// The mirror clamp to edge wrap mode
     #[cfg(feature = "VK_KHR_sampler_mirror_clamp_to_edge")]
-    MirrorClampToEdge = VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as _,
+    MirrorClampToEdge = brvk::VK_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE as _,
 }
 
 /// Specify filter used for texture lookups
@@ -226,9 +228,9 @@ pub enum AddressingMode {
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum FilterMode {
     /// Nearest filtering
-    Nearest = VK_FILTER_NEAREST as _,
+    Nearest = brvk::VK_FILTER_NEAREST as _,
     /// Linear filtering
-    Linear = VK_FILTER_LINEAR as _,
+    Linear = brvk::VK_FILTER_LINEAR as _,
 }
 
 /// Specify mipmap mode used for texture lookups
@@ -236,9 +238,9 @@ pub enum FilterMode {
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum MipmapFilterMode {
     /// Nearest filtering
-    Nearest = VK_SAMPLER_MIPMAP_MODE_NEAREST as _,
+    Nearest = brvk::VK_SAMPLER_MIPMAP_MODE_NEAREST as _,
     /// Linear filtering
-    Linear = VK_SAMPLER_MIPMAP_MODE_LINEAR as _,
+    Linear = brvk::VK_SAMPLER_MIPMAP_MODE_LINEAR as _,
 }
 
 /// Specify border color used for texture lookups
@@ -246,15 +248,15 @@ pub enum MipmapFilterMode {
 #[derive(Debug, Clone, PartialEq, Eq, Copy, Hash)]
 pub enum BorderColor {
     /// A transparent, floating-point format, black color
-    TransparentBlackF = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK as _,
+    TransparentBlackF = brvk::VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK as _,
     /// A transparent, integer format, black color
-    TransparentBlackI = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK as _,
+    TransparentBlackI = brvk::VK_BORDER_COLOR_INT_TRANSPARENT_BLACK as _,
     /// An opaque, floating-point format, black color
-    OpaqueBlackF = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK as _,
+    OpaqueBlackF = brvk::VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK as _,
     /// An opaque, integer format, black color
-    OpaqueBlackI = VK_BORDER_COLOR_INT_OPAQUE_BLACK as _,
+    OpaqueBlackI = brvk::VK_BORDER_COLOR_INT_OPAQUE_BLACK as _,
     /// An opaque, floating-point format, white color
-    OpaqueWhiteF = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE as _,
+    OpaqueWhiteF = brvk::VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE as _,
     /// An opaque, integer format, white color
-    OpaqueWhiteI = VK_BORDER_COLOR_INT_OPAQUE_WHITE as _,
+    OpaqueWhiteI = brvk::VK_BORDER_COLOR_INT_OPAQUE_WHITE as _,
 }

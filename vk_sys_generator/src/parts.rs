@@ -1297,7 +1297,7 @@ impl Command {
 
     fn emit_pfn(w: &mut impl std::io::Write, type_name: &str, org_fn_name: &str) -> std::io::Result<()> {
         writeln!(w, "#[rustfmt::skip]")?;
-        writeln!(w, "unsafe impl crate::resolver::PFN for {type_name} {{")?;
+        writeln!(w, "unsafe impl crate::PFN for {type_name} {{")?;
         writeln!(w, "    const NAME_CSTR: &'static core::ffi::CStr = c\"{org_fn_name}\";")?;
         writeln!(w)?;
         writeln!(w, "    #[inline(always)]")?;
@@ -1380,7 +1380,7 @@ impl Command {
             w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             self.emit_feature_gate(w)?;
             writeln!(w, "#[rustfmt::skip]")?;
-            writeln!(w, "impl crate::resolver::StaticCallable for {type_name} {{")?;
+            writeln!(w, "impl crate::StaticCallable for {type_name} {{")?;
             writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
             writeln!(w, "}}")?;
         }
@@ -1432,7 +1432,7 @@ impl Command {
             w.write_all(b"#[cfg(not(feature = \"DynamicLoaded\"))]\n")?;
             writeln!(w, "#[cfg(feature = \"Allow{p}APIs\")]")?;
             writeln!(w, "#[rustfmt::skip]")?;
-            writeln!(w, "impl crate::resolver::StaticCallable for {type_name} {{")?;
+            writeln!(w, "impl crate::StaticCallable for {type_name} {{")?;
             writeln!(w, "    const STATIC: Self = Self({org_fn_name});")?;
             writeln!(w, "}}")?;
         }

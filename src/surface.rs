@@ -13,9 +13,9 @@ pub enum CompletionHandler<Fence: crate::Fence, Semaphore: crate::Semaphore> {
 /// A semaphore or a fence, externally synchronized on host access
 pub enum CompletionHandlerMut<'d> {
     /// A Host synchronizer(aka Fence)
-    Host(VkHandleRefMut<'d, VkFence>),
+    Host(VkHandleRefMut<'d, brvk::VkFence>),
     /// A Queue synchronizer(aka Semaphore)
-    Queue(VkHandleRefMut<'d, VkSemaphore>),
+    Queue(VkHandleRefMut<'d, brvk::VkSemaphore>),
 }
 
 cfg_if! {

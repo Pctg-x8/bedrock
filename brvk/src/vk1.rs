@@ -10,19 +10,13 @@
 ** SPDX-License-Identifier: Apache-2.0
 */
 
-use crate::{TypedVulkanSinkStructure, TypedVulkanStructure};
 use core::ffi::*;
 
 // define macros
 
-#[inline]
-const fn ext_enum_value(ext_number: u16, index: u16) -> u64 {
-    1000_000_000 + ((ext_number - 1) as u64 * 1_000) + index as u64
-}
-
 macro_rules! vk_bitmask {
     ($(#[$ty_attr: meta])* $ty_vis: vis enum $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* $(,)? }) => {
-        $(#[$ty_attr])* $ty_vis type $ty_name = crate::vk::VkFlags;
+        $(#[$ty_attr])* $ty_vis type $ty_name = crate::VkFlags;
         $(
             $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
         )*
@@ -33,7 +27,7 @@ macro_rules! vk_bitmask {
         )*
     };
     ($(#[$ty_attr: meta])* $ty_vis: vis enum64 $ty_name: ident { $($(#[$val_attr: meta])* $val_vis: vis $val_name: ident : $bitpos: expr),* $(,)? }) => {
-        $(#[$ty_attr])* $ty_vis type $ty_name = crate::vk::VkFlags64;
+        $(#[$ty_attr])* $ty_vis type $ty_name = crate::VkFlags64;
         $(
             $(#[$val_attr])* $val_vis const $val_name: $ty_name = 1 << $bitpos;
         )*

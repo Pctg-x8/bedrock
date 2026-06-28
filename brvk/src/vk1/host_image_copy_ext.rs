@@ -3,10 +3,8 @@
 pub const VK_EXT_HOST_IMAGE_COPY_SPEC_VERISON: usize = 1;
 pub const VK_EXT_HOST_IMAGE_COPY_EXTENSION_NAME: &str = "VK_EXT_host_image_copy";
 
-use super::*;
-
-use crate::vk2::*;
-use derives::{promote_1_4, vk_ext_command};
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4, vk_ext_command};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT: VkStructureType = ext_enum_value(271, 0) as _;

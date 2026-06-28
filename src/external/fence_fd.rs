@@ -3,19 +3,19 @@ use crate::*;
 #[repr(u32)]
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub enum ExternalFenceFdType {
-    Opaque = VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR,
-    Sync = VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR,
+    Opaque = brvk::VK_EXTERNAL_FENCE_HANDLE_TYPE_OPAQUE_FD_BIT_KHR,
+    Sync = brvk::VK_EXTERNAL_FENCE_HANDLE_TYPE_SYNC_FD_BIT_KHR,
 }
 
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct ImportFenceFdInfo<'d>(
     pub(crate) VkImportFenceFdInfoKHR,
-    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkFence>>,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = brvk::VkFence>>,
 );
 impl<'d> ImportFenceFdInfo<'d> {
     pub fn new(
-        fence: &'d (impl VkHandle<Handle = VkFence> + ?Sized),
+        fence: &'d (impl VkHandle<Handle = brvk::VkFence> + ?Sized),
         handle_type: ExternalFenceFdType,
         fd: std::os::unix::io::RawFd,
     ) -> Self {
@@ -40,7 +40,7 @@ impl<'d> ImportFenceFdInfo<'d> {
         self.0
     }
 
-    pub const fn with_flags(mut self, flags: VkFenceImportFlagsKHR) -> Self {
+    pub const fn with_flags(mut self, flags: brvk::VkFenceImportFlagsKHR) -> Self {
         self.0.flags = flags;
         self
     }
@@ -49,15 +49,15 @@ impl<'d> ImportFenceFdInfo<'d> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct FenceFdGetInfo<'d>(
-    pub(crate) VkFenceGetFdInfoKHR,
-    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkFence>>,
+    pub(crate) brvk::VkFenceGetFdInfoKHR,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = brvk::VkFence>>,
 );
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 impl<'d> FenceFdGetInfo<'d> {
-    pub fn new(fence: &'d (impl VkHandle<Handle = VkFence> + ?Sized), handle_type: ExternalFenceFdType) -> Self {
+    pub fn new(fence: &'d (impl VkHandle<Handle = brvk::VkFence> + ?Sized), handle_type: ExternalFenceFdType) -> Self {
         Self(
-            VkFenceGetFdInfoKHR {
-                sType: VkFenceGetFdInfoKHR::TYPE,
+            brvk::VkFenceGetFdInfoKHR {
+                sType: brvk::VkFenceGetFdInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 fence: fence.native_ptr(),
                 handleType: handle_type as _,
@@ -66,11 +66,11 @@ impl<'d> FenceFdGetInfo<'d> {
         )
     }
 
-    pub const unsafe fn from_raw(raw: VkFenceGetFdInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkFenceGetFdInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkFenceGetFdInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkFenceGetFdInfoKHR {
         self.0
     }
 }

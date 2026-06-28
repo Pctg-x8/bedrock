@@ -1,7 +1,7 @@
 //! VK_KHR_create_renderpass2
 
-use super::*;
 use crate::vk2::*;
+use crate::*;
 use derives::*;
 
 pub const VK_KHR_CREATE_RENDERPASS_2_SPEC_VERSION: usize = 1;
@@ -28,7 +28,7 @@ pub const VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR: VkStructureType = ext_enum_val
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO_2_KHR)]
 pub struct VkRenderPassCreateInfo2KHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
     pub flags: VkRenderPassCreateFlags,
     pub attachmentCount: u32,
     pub pAttachments: *const VkAttachmentDescription2KHR,
@@ -46,7 +46,7 @@ pub struct VkRenderPassCreateInfo2KHR {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_ATTACHMENT_DESCRIPTION_2_KHR)]
 pub struct VkAttachmentDescription2KHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
     pub flags: VkAttachmentDescriptionFlags,
     pub format: VkFormat,
     pub samples: VkSampleCountFlagBits,
@@ -64,7 +64,7 @@ pub struct VkAttachmentDescription2KHR {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_ATTACHMENT_REFERENCE_2_KHR)]
 pub struct VkAttachmentReference2KHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
     pub attachment: u32,
     pub layout: VkImageLayout,
     pub aspectMask: VkImageAspectFlags,
@@ -76,7 +76,7 @@ pub struct VkAttachmentReference2KHR {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_DESCRIPTION_2_KHR)]
 pub struct VkSubpassDescription2KHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
     pub flags: VkSubpassDescriptionFlags,
     pub pipelineBindPoint: VkPipelineBindPoint,
     pub viewMask: u32,
@@ -96,7 +96,7 @@ pub struct VkSubpassDescription2KHR {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_DEPENDENCY_2_KHR)]
 pub struct VkSubpassDependency2KHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
     pub srcSubpass: u32,
     pub dstSubpass: u32,
     pub srcStageMask: VkPipelineStageFlags,
@@ -113,7 +113,7 @@ pub struct VkSubpassDependency2KHR {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_BEGIN_INFO_KHR)]
 pub struct VkSubpassBeginInfoKHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
     pub contents: VkSubpassContents,
 }
 
@@ -123,7 +123,7 @@ pub struct VkSubpassBeginInfoKHR {
 #[VulkanStructure(type = VK_STRUCTURE_TYPE_SUBPASS_END_INFO_KHR)]
 pub struct VkSubpassEndInfoKHR {
     pub sType: VkStructureType,
-    pub pNext: *const c_void,
+    pub pNext: *const core::ffi::c_void,
 }
 
 vk_ext_command! {

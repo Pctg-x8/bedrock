@@ -1,10 +1,7 @@
 //! VK_KHR_line_rasterization
 
-use crate::vk2::*;
-use derives::{promote_1_4, vk_ext_command};
-
-use super::*;
-use crate::TypedVulkanStructure;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4, vk_ext_command};
 
 pub const VK_KHR_LINE_RASTERIZATION_SPEC_VERSION: usize = 1;
 pub const VK_KHR_LINE_RASTERIZATION_EXTENSION_NAME: &str = "VK_KHR_line_rasterization";

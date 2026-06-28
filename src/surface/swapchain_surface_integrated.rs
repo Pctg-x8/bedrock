@@ -1,59 +1,67 @@
 use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle, VulkanStructure};
 use derives::implements;
 
 use super::DeviceChildHandle;
 
 /// Opaque handle to as swapchain object, backed with specific surface
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkSwapchainKHR::OBJECT_TYPE)]
-pub struct SurfaceSwapchainObject<Device: VkHandle<Handle = VkDevice>, Surface: VkHandle<Handle = VkSurfaceKHR>> {
+#[VkObject(type = brvk::VkSwapchainKHR::OBJECT_TYPE)]
+pub struct SurfaceSwapchainObject<
+    Device: VkHandle<Handle = brvk::VkDevice>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
+> {
     #[handle]
-    pub(crate) handle: VkSwapchainKHR,
+    pub(crate) handle: brvk::VkSwapchainKHR,
     pub(crate) device: Device,
     pub(crate) surface: Surface,
-    pub(crate) format: VkFormat,
-    pub(crate) extent: VkExtent2D,
+    pub(crate) format: brvk::VkFormat,
+    pub(crate) extent: brvk::VkExtent2D,
 }
 #[implements]
 impl<Device, Surface> Drop for SurfaceSwapchainObject<Device, Surface>
 where
-    Device: VkHandle<Handle = VkDevice>,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Device: VkHandle<Handle = brvk::VkDevice>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_swapchain_khr(self.device.native_ptr(), self.handle, core::ptr::null());
+            crate::vkfn_wrapper::destroy_swapchain(
+                self.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.handle),
+                None,
+            );
         }
     }
 }
 unsafe impl<Device, Surface> Sync for SurfaceSwapchainObject<Device, Surface>
 where
-    Device: VkHandle<Handle = VkDevice> + Sync,
-    Surface: VkHandle<Handle = VkSurfaceKHR> + Sync,
+    Device: VkHandle<Handle = brvk::VkDevice> + Sync,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR> + Sync,
 {
 }
 unsafe impl<Device, Surface> Send for SurfaceSwapchainObject<Device, Surface>
 where
-    Device: VkHandle<Handle = VkDevice> + Send,
-    Surface: VkHandle<Handle = VkSurfaceKHR> + Send,
+    Device: VkHandle<Handle = brvk::VkDevice> + Send,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR> + Send,
 {
 }
 impl<Device, Surface> DeviceChildHandle for SurfaceSwapchainObject<Device, Surface>
 where
-    Device: VkHandle<Handle = VkDevice>,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Device: VkHandle<Handle = brvk::VkDevice>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.device.native_ptr()
     }
 }
 impl<Device, Surface> DeviceChild for SurfaceSwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
     type ConcreteDevice = Device;
 
@@ -65,37 +73,37 @@ where
 impl<Device, Surface> Swapchain for SurfaceSwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
 }
 impl<Device, Surface> SwapchainMut for SurfaceSwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
 }
 impl<Device, Surface> SwapchainImageExt for SurfaceSwapchainObject<Device, Surface>
 where
     Device: crate::Device,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
     #[inline(always)]
-    fn format(&self) -> VkFormat {
+    fn format(&self) -> brvk::VkFormat {
         self.format
     }
 
     #[inline(always)]
-    fn extent(&self) -> VkExtent2D {
+    fn extent(&self) -> brvk::VkExtent2D {
         self.extent
     }
 }
 impl<Device, Surface> SurfaceSwapchainObject<Device, Surface>
 where
-    Device: VkHandle<Handle = VkDevice>,
-    Surface: VkHandle<Handle = VkSurfaceKHR>,
+    Device: VkHandle<Handle = brvk::VkDevice>,
+    Surface: VkHandle<Handle = brvk::VkSurfaceKHR>,
 {
     /// Deconstructs this and take ownership of managed objects(no drop occured)
-    pub const fn unmanage(self) -> (Device, Surface, VkSwapchainKHR) {
+    pub const fn unmanage(self) -> (Device, Surface, brvk::VkSwapchainKHR) {
         let device = unsafe { core::ptr::read(&self.device) };
         let surface = unsafe { core::ptr::read(&self.surface) };
         let swapchain = self.handle;
@@ -106,13 +114,13 @@ where
 
     /// Deconstructs the swapchain and retrieves its parents
     #[implements]
-    pub fn deconstruct(self) -> (Device, Surface) {
+    pub fn deconstruct(mut self) -> (Device, Surface) {
         let d = unsafe { core::ptr::read(&self.device) };
         let s = unsafe { core::ptr::read(&self.surface) };
 
         // Note: DeviceとSurfaceをdropさせない（Swapchainだけ消す）
         unsafe {
-            crate::vkfn::destroy_swapchain_khr(self.device.native_ptr(), self.handle, core::ptr::null());
+            crate::vkfn_wrapper::destroy_swapchain(d.as_transparent_ref(), self.as_transparent_ref_mut(), None);
         }
         core::mem::forget(self);
 
@@ -130,25 +138,25 @@ impl<Surface: crate::Surface> super::TransferSurfaceObject for SwapchainWithSurf
 
 /// Builder object to construct a `Swapchain`, backed with a surface
 pub struct SwapchainWithSurfaceBuilder<'n, 'sw, Surface: crate::Surface>(
-    VkSwapchainCreateInfoKHR,
+    brvk::VkSwapchainCreateInfoKHR,
     Surface,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        Option<&'n dyn VulkanStructure>,
-        Option<&'sw dyn VkHandle<Handle = VkSwapchainKHR>>,
+        Option<&'n dyn brvk::VulkanStructure>,
+        Option<&'sw dyn VkHandle<Handle = brvk::VkSwapchainKHR>>,
     )>,
 );
 impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surface> {
     pub fn new(
         surface: Surface,
         min_image_count: u32,
-        format: VkSurfaceFormatKHR,
-        extent: VkExtent2D,
+        format: brvk::VkSurfaceFormatKHR,
+        extent: brvk::VkExtent2D,
         usage: ImageUsageFlags,
     ) -> Self {
         Self(
-            VkSwapchainCreateInfoKHR {
-                sType: VkSwapchainCreateInfoKHR::TYPE,
+            brvk::VkSwapchainCreateInfoKHR {
+                sType: brvk::VkSwapchainCreateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 surface: surface.native_ptr(),
@@ -158,9 +166,9 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
                 imageExtent: extent,
                 imageArrayLayers: 1,
                 imageUsage: usage.bits(),
-                imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
-                preTransform: VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR,
-                compositeAlpha: VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+                imageSharingMode: brvk::VK_SHARING_MODE_EXCLUSIVE,
+                preTransform: brvk::VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR,
+                compositeAlpha: brvk::VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
                 presentMode: PresentMode::FIFO as _,
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
@@ -172,7 +180,7 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
         )
     }
 
-    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'n (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -185,14 +193,14 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
     pub const fn shared(mut self, queue_families: &[u32]) -> Self {
         assert!(!queue_families.is_empty(), "empty families not allowed");
 
-        self.0.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        self.0.imageSharingMode = brvk::VK_SHARING_MODE_CONCURRENT;
         self.0.queueFamilyIndexCount = queue_families.len() as _;
         self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(queue_families);
         self
     }
 
     pub const fn exclusive(mut self) -> Self {
-        self.0.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        self.0.imageSharingMode = brvk::VK_SHARING_MODE_EXCLUSIVE;
         self.0.queueFamilyIndexCount = 0;
         self.0.pQueueFamilyIndices = core::ptr::null();
 
@@ -225,7 +233,7 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
     }
 
     #[inline(always)]
-    pub fn old_swapchain(mut self, sw: &'sw (impl VkHandle<Handle = VkSwapchainKHR> + ?Sized)) -> Self {
+    pub fn old_swapchain(mut self, sw: &'sw (impl VkHandle<Handle = brvk::VkSwapchainKHR> + ?Sized)) -> Self {
         self.0.oldSwapchain = Some(sw.native_ptr());
         self
     }
@@ -234,39 +242,45 @@ impl<'n, 'sw, Surface: crate::Surface> SwapchainWithSurfaceBuilder<'n, 'sw, Surf
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
-    /// * `VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_DEVICE_LOST`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_NATIVE_WINDOW_IN_USE_KHR`
     #[implements]
     pub fn create<Device: crate::Device>(
         mut self,
         device: Device,
     ) -> crate::Result<SurfaceSwapchainObject<Device, Surface>> {
-        let mut h = core::mem::MaybeUninit::uninit();
         let mut structure = core::mem::MaybeUninit::uninit();
         self.build(unsafe { &mut *structure.as_mut_ptr() });
         let structure = unsafe { structure.assume_init() };
 
-        unsafe {
-            crate::vkfn::create_swapchain_khr(device.native_ptr(), &structure, std::ptr::null(), h.as_mut_ptr())
-                .into_result()
-                .map(|_| SurfaceSwapchainObject {
-                    handle: h.assume_init(),
-                    device,
-                    surface: self.1,
-                    format: structure.imageFormat,
-                    extent: structure.imageExtent,
-                })
-        }
+        let handle = {
+            crate::vkfn_wrapper::create_swapchain(
+                device.as_transparent_ref(),
+                unsafe { core::mem::transmute::<&brvk::VkSwapchainCreateInfoKHR, &SwapchainCreateInfo>(&structure) },
+                None,
+            )?
+        };
+
+        Ok(SurfaceSwapchainObject {
+            handle,
+            device,
+            surface: self.1,
+            format: structure.imageFormat,
+            extent: structure.imageExtent,
+        })
     }
 }
 impl<Surface: crate::Surface> VulkanStructureProvider for SwapchainWithSurfaceBuilder<'_, '_, Surface> {
-    type RootStructure = VkSwapchainCreateInfoKHR;
+    type RootStructure = brvk::VkSwapchainCreateInfoKHR;
 
     #[inline(always)]
-    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut VkSwapchainCreateInfoKHR) -> &'r mut GenericVulkanStructure {
+    fn build<'r, 's: 'r>(
+        &'s mut self,
+        root: &'s mut brvk::VkSwapchainCreateInfoKHR,
+    ) -> &'r mut brvk::GenericVulkanStructure {
         *root = self.0.clone();
         root.as_generic_mut()
     }

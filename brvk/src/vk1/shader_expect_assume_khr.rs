@@ -3,9 +3,8 @@
 pub const VK_KHR_SHADER_EXPECT_ASSUME_SPEC_VERSION: usize = 1;
 pub const VK_KHR_SHADER_EXPECT_ASSUME_EXTENSION_NAME: &str = "VK_KHR_shader_expect_assume";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_4;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_4};
 
 #[promote_1_4]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR: VkStructureType =

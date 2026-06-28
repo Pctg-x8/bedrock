@@ -3,9 +3,8 @@
 pub const VK_KHR_DYNAMIC_RENDERING_SPEC_VERSION: usize = 1;
 pub const VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME: &str = "VK_KHR_dynamic_rendering";
 
-use super::*;
-use crate::vk2::*;
-use derives::{promote_1_3, vk_ext_command};
+use crate::*;
+use derives::{TypedVulkanSinkStructure, TypedVulkanStructure, promote_1_3, vk_ext_command};
 
 #[promote_1_3]
 pub const VK_STRUCTURE_TYPE_RENDERING_INFO_KHR: VkStructureType = ext_enum_value(45, 0) as _;

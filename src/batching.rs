@@ -1,3 +1,5 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
+
 use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
 use crate::*;
 use core::marker::PhantomData;
@@ -5,10 +7,10 @@ use core::marker::PhantomData;
 #[cfg(feature = "alloc")]
 #[deprecated = "old batching library"]
 pub struct TemporalSubmissionBatchResources {
-    command_buffers: Vec<VkCommandBuffer>,
-    wait_semaphores: Vec<VkSemaphore>,
-    wait_stages: Vec<VkPipelineStageFlags>,
-    signal_semaphores: Vec<VkSemaphore>,
+    command_buffers: Vec<brvk::VkCommandBuffer>,
+    wait_semaphores: Vec<brvk::VkSemaphore>,
+    wait_stages: Vec<brvk::VkPipelineStageFlags>,
+    signal_semaphores: Vec<brvk::VkSemaphore>,
 }
 #[cfg(feature = "alloc")]
 #[allow(deprecated)]
@@ -24,8 +26,8 @@ impl TemporalSubmissionBatchResources {
 
     pub fn make_info_struct<'a>(&'a self) -> SubmitInfo<'a, 'a, 'a> {
         unsafe {
-            SubmitInfo::from_raw(VkSubmitInfo {
-                sType: VkSubmitInfo::TYPE,
+            SubmitInfo::from_raw(brvk::VkSubmitInfo {
+                sType: brvk::VkSubmitInfo::TYPE,
                 pNext: std::ptr::null(),
                 commandBufferCount: self.command_buffers.len() as _,
                 pCommandBuffers: self.command_buffers.as_ptr_empty_null(),
@@ -108,14 +110,14 @@ impl<T: SubmissionBatch + ?Sized> SubmissionBatch for Box<T> {
 
 #[repr(transparent)]
 pub struct SubmitInfo<'r, 'rs, 'n>(
-    VkSubmitInfo,
+    brvk::VkSubmitInfo,
     #[allow(clippy::type_complexity)]
     PhantomData<(
-        Option<&'n dyn VulkanStructure>,
-        &'rs [VkHandleRef<'r, VkSemaphore>],
+        Option<&'n dyn brvk::VulkanStructure>,
+        &'rs [VkHandleRef<'r, brvk::VkSemaphore>],
         &'rs [PipelineStageFlags],
-        &'rs [VkHandleRef<'r, VkCommandBuffer>],
-        &'rs [VkHandleRef<'r, VkSemaphore>],
+        &'rs [VkHandleRef<'r, brvk::VkCommandBuffer>],
+        &'rs [VkHandleRef<'r, brvk::VkSemaphore>],
     )>,
 );
 impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
@@ -123,14 +125,14 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
     ///
     /// `wait_semaphores`, `wait_semaphore_dst_stages`, `command_buffers`, and `signal_semaphores` must have same length.
     pub unsafe fn new_unchecked(
-        wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+        wait_semaphores: &'rs [VkHandleRef<'r, brvk::VkSemaphore>],
         wait_semaphore_dst_stages: &'rs [PipelineStageFlags],
-        command_buffers: &'rs [VkHandleRef<'r, VkCommandBuffer>],
-        signal_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+        command_buffers: &'rs [VkHandleRef<'r, brvk::VkCommandBuffer>],
+        signal_semaphores: &'rs [VkHandleRef<'r, brvk::VkSemaphore>],
     ) -> Self {
         Self(
-            VkSubmitInfo {
-                sType: VkSubmitInfo::TYPE,
+            brvk::VkSubmitInfo {
+                sType: brvk::VkSubmitInfo::TYPE,
                 pNext: core::ptr::null(),
                 waitSemaphoreCount: wait_semaphores.len() as _,
                 pWaitSemaphores: slice_as_ptr_empty_null(wait_semaphores) as _,
@@ -145,10 +147,10 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
     }
 
     pub fn new(
-        wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+        wait_semaphores: &'rs [VkHandleRef<'r, brvk::VkSemaphore>],
         wait_semaphore_dst_stages: &'rs [PipelineStageFlags],
-        command_buffers: &'rs [VkHandleRef<'r, VkCommandBuffer>],
-        signal_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>],
+        command_buffers: &'rs [VkHandleRef<'r, brvk::VkCommandBuffer>],
+        signal_semaphores: &'rs [VkHandleRef<'r, brvk::VkSemaphore>],
     ) -> Self {
         assert_eq!(wait_semaphores.len(), wait_semaphore_dst_stages.len());
 
@@ -163,14 +165,14 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
     }
 
     pub const fn new_array<const NW: usize, const NC: usize, const NS: usize>(
-        wait_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>; NW],
+        wait_semaphores: &'rs [VkHandleRef<'r, brvk::VkSemaphore>; NW],
         wait_semaphore_dst_stages: &'rs [PipelineStageFlags; NW],
-        command_buffers: &'rs [VkHandleRef<'r, VkCommandBuffer>; NC],
-        signal_semaphores: &'rs [VkHandleRef<'r, VkSemaphore>; NS],
+        command_buffers: &'rs [VkHandleRef<'r, brvk::VkCommandBuffer>; NC],
+        signal_semaphores: &'rs [VkHandleRef<'r, brvk::VkSemaphore>; NS],
     ) -> Self {
         Self(
-            VkSubmitInfo {
-                sType: VkSubmitInfo::TYPE,
+            brvk::VkSubmitInfo {
+                sType: brvk::VkSubmitInfo::TYPE,
                 pNext: core::ptr::null(),
                 waitSemaphoreCount: NW as _,
                 pWaitSemaphores: slice_as_ptr_empty_null(wait_semaphores) as _,
@@ -186,16 +188,16 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSubmitInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkSubmitInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkSubmitInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkSubmitInfo) -> Self {
         Self(raw, PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSubmitInfo {
+    pub const fn into_raw(self) -> brvk::VkSubmitInfo {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'n (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -204,15 +206,15 @@ impl<'r, 'rs, 'n> SubmitInfo<'r, 'rs, 'n> {
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[repr(transparent)]
 pub struct TimelineSemaphoreSubmitInfo<'d, 'xs>(
-    VkTimelineSemaphoreSubmitInfoKHR,
-    core::marker::PhantomData<(Option<&'d dyn VulkanStructure>, &'xs [u64])>,
+    brvk::VkTimelineSemaphoreSubmitInfoKHR,
+    core::marker::PhantomData<(Option<&'d dyn brvk::VulkanStructure>, &'xs [u64])>,
 );
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 impl<'d, 'xs> TimelineSemaphoreSubmitInfo<'d, 'xs> {
     pub const fn new(wait_semaphore_values: &'xs [u64], signal_semaphore_values: &'xs [u64]) -> Self {
         Self(
-            VkTimelineSemaphoreSubmitInfoKHR {
-                sType: VkTimelineSemaphoreSubmitInfoKHR::TYPE,
+            brvk::VkTimelineSemaphoreSubmitInfoKHR {
+                sType: brvk::VkTimelineSemaphoreSubmitInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 waitSemaphoreValueCount: wait_semaphore_values.len() as _,
                 pWaitSemaphoreValues: slice_as_ptr_empty_null(wait_semaphore_values) as _,
@@ -226,29 +228,29 @@ impl<'d, 'xs> TimelineSemaphoreSubmitInfo<'d, 'xs> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkTimelineSemaphoreSubmitInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkTimelineSemaphoreSubmitInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkTimelineSemaphoreSubmitInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkTimelineSemaphoreSubmitInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkTimelineSemaphoreSubmitInfoKHR {
         self.0
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
 }
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
-unsafe impl VulkanStructure for TimelineSemaphoreSubmitInfo<'_, '_> {
+unsafe impl brvk::VulkanStructure for TimelineSemaphoreSubmitInfo<'_, '_> {
     #[inline(always)]
-    fn as_generic(&self) -> &GenericVulkanStructure {
+    fn as_generic(&self) -> &brvk::GenericVulkanStructure {
         self.0.as_generic()
     }
 
     #[inline(always)]
-    fn as_generic_mut(&mut self) -> &mut GenericVulkanStructure {
+    fn as_generic_mut(&mut self) -> &mut brvk::GenericVulkanStructure {
         self.0.as_generic_mut()
     }
 }
@@ -265,7 +267,7 @@ impl SubmissionBatch for EmptySubmissionBatch {
 #[allow(deprecated)]
 pub struct SubmissionWithCommandBuffers<'d, Parent: SubmissionBatch, CommandBuffer: crate::CommandBuffer + 'd>(
     Parent,
-    Vec<VkCommandBuffer>,
+    Vec<brvk::VkCommandBuffer>,
     std::marker::PhantomData<&'d [CommandBuffer]>,
 );
 #[cfg(feature = "alloc")]
@@ -286,8 +288,8 @@ where
 #[allow(deprecated)]
 pub struct SubmissionWithWaitSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
     Parent,
-    Vec<VkSemaphore>,
-    Vec<VkPipelineStageFlags>,
+    Vec<brvk::VkSemaphore>,
+    Vec<brvk::VkPipelineStageFlags>,
     std::marker::PhantomData<&'d [Semaphore]>,
 );
 #[cfg(feature = "alloc")]
@@ -309,7 +311,7 @@ where
 #[allow(deprecated)]
 pub struct SubmissionWithSignalSemaphores<'d, Parent: SubmissionBatch, Semaphore: crate::Semaphore + 'd>(
     Parent,
-    Vec<VkSemaphore>,
+    Vec<brvk::VkSemaphore>,
     std::marker::PhantomData<&'d [Semaphore]>,
 );
 #[cfg(feature = "alloc")]
@@ -327,12 +329,12 @@ where
 }
 
 pub trait SparseBindingOpBatch {
-    fn make_info_struct(&self) -> VkBindSparseInfo;
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a>;
 
     #[inline]
     fn with_buffer_binds<'d>(
         self,
-        buffer_binds: &'d [VkSparseBufferMemoryBindInfo],
+        buffer_binds: &'d [brvk::VkSparseBufferMemoryBindInfo],
     ) -> SparseBindingOpBatchWithBufferBinds<'d, Self>
     where
         Self: Sized,
@@ -343,7 +345,7 @@ pub trait SparseBindingOpBatch {
     #[inline]
     fn with_image_binds<'d>(
         self,
-        buffer_binds: &'d [VkSparseImageMemoryBindInfo],
+        buffer_binds: &'d [brvk::VkSparseImageMemoryBindInfo],
     ) -> SparseBindingOpBatchWithImageBinds<'d, Self>
     where
         Self: Sized,
@@ -354,7 +356,7 @@ pub trait SparseBindingOpBatch {
     #[inline]
     fn with_image_opaque_binds<'d>(
         self,
-        buffer_binds: &'d [VkSparseImageOpaqueMemoryBindInfo],
+        buffer_binds: &'d [brvk::VkSparseImageOpaqueMemoryBindInfo],
     ) -> SparseBindingOpBatchWithImageOpaqueBinds<'d, Self>
     where
         Self: Sized,
@@ -394,115 +396,127 @@ pub trait SparseBindingOpBatch {
         )
     }
 }
-impl SparseBindingOpBatch for VkBindSparseInfo {
+impl SparseBindingOpBatch for BindSparseInfo<'_> {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        self.clone()
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe { BindSparseInfo::from_raw(self.as_raw_ref().clone()) }
     }
 }
 
 pub struct EmptyBindingOpBatch;
 impl SparseBindingOpBatch for EmptyBindingOpBatch {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        VkBindSparseInfo {
-            sType: VkBindSparseInfo::TYPE,
-            pNext: std::ptr::null(),
-            waitSemaphoreCount: 0,
-            pWaitSemaphores: std::ptr::null(),
-            bufferBindCount: 0,
-            pBufferBinds: std::ptr::null(),
-            imageBindCount: 0,
-            pImageBinds: std::ptr::null(),
-            imageOpaqueBindCount: 0,
-            pImageOpaqueBinds: std::ptr::null(),
-            signalSemaphoreCount: 0,
-            pSignalSemaphores: std::ptr::null(),
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe {
+            BindSparseInfo::from_raw(brvk::VkBindSparseInfo {
+                sType: brvk::VkBindSparseInfo::TYPE,
+                pNext: std::ptr::null(),
+                waitSemaphoreCount: 0,
+                pWaitSemaphores: std::ptr::null(),
+                bufferBindCount: 0,
+                pBufferBinds: std::ptr::null(),
+                imageBindCount: 0,
+                pImageBinds: std::ptr::null(),
+                imageOpaqueBindCount: 0,
+                pImageOpaqueBinds: std::ptr::null(),
+                signalSemaphoreCount: 0,
+                pSignalSemaphores: std::ptr::null(),
+            })
         }
     }
 }
 pub struct SparseBindingOpBatchWithBufferBinds<'d, Parent: SparseBindingOpBatch>(
     Parent,
-    &'d [VkSparseBufferMemoryBindInfo],
+    &'d [brvk::VkSparseBufferMemoryBindInfo],
 );
 impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithBufferBinds<'d, Parent> {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        VkBindSparseInfo {
-            bufferBindCount: self.1.len() as _,
-            pBufferBinds: self.1.as_ptr_empty_null(),
-            ..self.0.make_info_struct()
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe {
+            BindSparseInfo::from_raw(brvk::VkBindSparseInfo {
+                bufferBindCount: self.1.len() as _,
+                pBufferBinds: self.1.as_ptr_empty_null(),
+                ..self.0.make_info_struct().into_raw()
+            })
         }
     }
 }
 pub struct SparseBindingOpBatchWithImageBinds<'d, Parent: SparseBindingOpBatch>(
     Parent,
-    &'d [VkSparseImageMemoryBindInfo],
+    &'d [brvk::VkSparseImageMemoryBindInfo],
 );
 impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithImageBinds<'d, Parent> {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        VkBindSparseInfo {
-            imageBindCount: self.1.len() as _,
-            pImageBinds: self.1.as_ptr_empty_null(),
-            ..self.0.make_info_struct()
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe {
+            BindSparseInfo::from_raw(brvk::VkBindSparseInfo {
+                imageBindCount: self.1.len() as _,
+                pImageBinds: self.1.as_ptr_empty_null(),
+                ..self.0.make_info_struct().into_raw()
+            })
         }
     }
 }
 pub struct SparseBindingOpBatchWithImageOpaqueBinds<'d, Parent: SparseBindingOpBatch>(
     Parent,
-    &'d [VkSparseImageOpaqueMemoryBindInfo],
+    &'d [brvk::VkSparseImageOpaqueMemoryBindInfo],
 );
 impl<'d, Parent: SparseBindingOpBatch> SparseBindingOpBatch for SparseBindingOpBatchWithImageOpaqueBinds<'d, Parent> {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        VkBindSparseInfo {
-            imageOpaqueBindCount: self.1.len() as _,
-            pImageOpaqueBinds: self.1.as_ptr_empty_null(),
-            ..self.0.make_info_struct()
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe {
+            BindSparseInfo::from_raw(brvk::VkBindSparseInfo {
+                imageOpaqueBindCount: self.1.len() as _,
+                pImageOpaqueBinds: self.1.as_ptr_empty_null(),
+                ..self.0.make_info_struct().into_raw()
+            })
         }
     }
 }
 pub struct SparseBindingOpBatchWithWaitSemaphores<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd>(
     Parent,
-    Vec<VkSemaphore>,
+    Vec<brvk::VkSemaphore>,
     std::marker::PhantomData<&'d [Semaphore]>,
 );
 impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseBindingOpBatch
     for SparseBindingOpBatchWithWaitSemaphores<'d, Parent, Semaphore>
 {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        VkBindSparseInfo {
-            waitSemaphoreCount: self.1.len() as _,
-            pWaitSemaphores: self.1.as_ptr_empty_null(),
-            ..self.0.make_info_struct()
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe {
+            BindSparseInfo::from_raw(brvk::VkBindSparseInfo {
+                waitSemaphoreCount: self.1.len() as _,
+                pWaitSemaphores: self.1.as_ptr_empty_null(),
+                ..self.0.make_info_struct().into_raw()
+            })
         }
     }
 }
 pub struct SparseBindingOpBatchWithSignalSemaphores<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd>(
     Parent,
-    Vec<VkSemaphore>,
+    Vec<brvk::VkSemaphore>,
     std::marker::PhantomData<&'d [Semaphore]>,
 );
 impl<'d, Parent: SparseBindingOpBatch, Semaphore: crate::Semaphore + 'd> SparseBindingOpBatch
     for SparseBindingOpBatchWithSignalSemaphores<'d, Parent, Semaphore>
 {
     #[inline]
-    fn make_info_struct(&self) -> VkBindSparseInfo {
-        VkBindSparseInfo {
-            signalSemaphoreCount: self.1.len() as _,
-            pSignalSemaphores: self.1.as_ptr_empty_null(),
-            ..self.0.make_info_struct()
+    fn make_info_struct<'a>(&'a self) -> BindSparseInfo<'a> {
+        unsafe {
+            BindSparseInfo::from_raw(brvk::VkBindSparseInfo {
+                signalSemaphoreCount: self.1.len() as _,
+                pSignalSemaphores: self.1.as_ptr_empty_null(),
+                ..self.0.make_info_struct().into_raw()
+            })
         }
     }
 }
 
 #[repr(transparent)]
 pub struct BindSparseInfo<'a> {
-    vk: VkBindSparseInfo,
-    _wait_semaphores: core::marker::PhantomData<&'a [VkHandleRef<'a, VkSemaphore>]>,
-    _signal_semaphores: core::marker::PhantomData<&'a [VkHandleRef<'a, VkSemaphore>]>,
+    vk: brvk::VkBindSparseInfo,
+    _wait_semaphores: core::marker::PhantomData<&'a [VkHandleRef<'a, brvk::VkSemaphore>]>,
+    _signal_semaphores: core::marker::PhantomData<&'a [VkHandleRef<'a, brvk::VkSemaphore>]>,
     _buffer_binds: core::marker::PhantomData<&'a [SparseBufferMemoryBindInfo<'a>]>,
     _image_binds: core::marker::PhantomData<&'a [SparseImageMemoryBindInfo<'a>]>,
     _image_opaque_binds: core::marker::PhantomData<&'a [SparseImageOpaqueMemoryBindInfo<'a>]>,
@@ -511,8 +525,8 @@ impl<'a> BindSparseInfo<'a> {
     #[inline(always)]
     pub const fn new() -> Self {
         unsafe {
-            Self::from_raw(VkBindSparseInfo {
-                sType: VkBindSparseInfo::TYPE,
+            Self::from_raw(brvk::VkBindSparseInfo {
+                sType: brvk::VkBindSparseInfo::TYPE,
                 pNext: core::ptr::null(),
                 waitSemaphoreCount: 0,
                 pWaitSemaphores: core::ptr::null(),
@@ -529,14 +543,14 @@ impl<'a> BindSparseInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn into_raw(self) -> VkBindSparseInfo {
+    pub const fn into_raw(self) -> brvk::VkBindSparseInfo {
         self.vk
     }
 
     /// # Safety
     ///
     /// `raw` must be a valid [`VkBindSparseInfo`] struct.
-    pub const unsafe fn from_raw(vk: VkBindSparseInfo) -> Self {
+    pub const unsafe fn from_raw(vk: brvk::VkBindSparseInfo) -> Self {
         Self {
             vk,
             _wait_semaphores: core::marker::PhantomData,
@@ -547,16 +561,16 @@ impl<'a> BindSparseInfo<'a> {
         }
     }
 
-    pub const fn as_raw_ref(&self) -> &VkBindSparseInfo {
+    pub const fn as_raw_ref(&self) -> &brvk::VkBindSparseInfo {
         &self.vk
     }
 
-    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkBindSparseInfo {
+    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut brvk::VkBindSparseInfo {
         &mut self.vk
     }
 
     #[inline(always)]
-    pub const fn wait_semaphores(mut self, semaphores: &'a [VkHandleRef<'a, VkSemaphore>]) -> Self {
+    pub const fn wait_semaphores(mut self, semaphores: &'a [VkHandleRef<'a, brvk::VkSemaphore>]) -> Self {
         self.vk.waitSemaphoreCount = semaphores.len() as _;
         self.vk.pWaitSemaphores = semaphores.as_ptr() as _;
 
@@ -564,7 +578,7 @@ impl<'a> BindSparseInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn signal_semaphores(mut self, semaphores: &'a [VkHandleRef<'a, VkSemaphore>]) -> Self {
+    pub const fn signal_semaphores(mut self, semaphores: &'a [VkHandleRef<'a, brvk::VkSemaphore>]) -> Self {
         self.vk.signalSemaphoreCount = semaphores.len() as _;
         self.vk.pSignalSemaphores = semaphores.as_ptr() as _;
 
@@ -598,15 +612,18 @@ impl<'a> BindSparseInfo<'a> {
 
 #[repr(transparent)]
 pub struct SparseBufferMemoryBindInfo<'a> {
-    vk: VkSparseBufferMemoryBindInfo,
-    _buffer: core::marker::PhantomData<&'a dyn VkHandle<Handle = VkBuffer>>,
+    vk: brvk::VkSparseBufferMemoryBindInfo,
+    _buffer: core::marker::PhantomData<&'a dyn VkHandle<Handle = brvk::VkBuffer>>,
     _binds: core::marker::PhantomData<&'a [SparseMemoryBind<'a>]>,
 }
 impl<'a> SparseBufferMemoryBindInfo<'a> {
     #[inline(always)]
-    pub fn new(buffer: &'a (impl VkHandle<Handle = VkBuffer> + ?Sized), binds: &'a [SparseMemoryBind<'a>]) -> Self {
+    pub fn new(
+        buffer: &'a (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        binds: &'a [SparseMemoryBind<'a>],
+    ) -> Self {
         unsafe {
-            Self::from_raw(VkSparseBufferMemoryBindInfo {
+            Self::from_raw(brvk::VkSparseBufferMemoryBindInfo {
                 buffer: buffer.native_ptr(),
                 bindCount: binds.len() as _,
                 pBinds: binds.as_ptr() as _,
@@ -615,15 +632,15 @@ impl<'a> SparseBufferMemoryBindInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn into_raw(self) -> VkSparseBufferMemoryBindInfo {
+    pub const fn into_raw(self) -> brvk::VkSparseBufferMemoryBindInfo {
         self.vk
     }
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSparseBufferMemoryBindInfo`] struct.
+    /// `raw` must be a valid [`brvk::VkSparseBufferMemoryBindInfo`] struct.
     #[inline(always)]
-    pub const unsafe fn from_raw(vk: VkSparseBufferMemoryBindInfo) -> Self {
+    pub const unsafe fn from_raw(vk: brvk::VkSparseBufferMemoryBindInfo) -> Self {
         Self {
             vk,
             _buffer: core::marker::PhantomData,
@@ -632,27 +649,30 @@ impl<'a> SparseBufferMemoryBindInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn as_raw_ref(&self) -> &VkSparseBufferMemoryBindInfo {
+    pub const fn as_raw_ref(&self) -> &brvk::VkSparseBufferMemoryBindInfo {
         &self.vk
     }
 
     #[inline(always)]
-    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkSparseBufferMemoryBindInfo {
+    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut brvk::VkSparseBufferMemoryBindInfo {
         &mut self.vk
     }
 }
 
 #[repr(transparent)]
 pub struct SparseImageMemoryBindInfo<'a> {
-    vk: VkSparseImageMemoryBindInfo,
-    _image: core::marker::PhantomData<&'a dyn VkHandle<Handle = VkImage>>,
+    vk: brvk::VkSparseImageMemoryBindInfo,
+    _image: core::marker::PhantomData<&'a dyn VkHandle<Handle = brvk::VkImage>>,
     _binds: core::marker::PhantomData<&'a [SparseImageMemoryBind<'a>]>,
 }
 impl<'a> SparseImageMemoryBindInfo<'a> {
     #[inline(always)]
-    pub fn new(image: &'a (impl VkHandle<Handle = VkImage> + ?Sized), binds: &'a [SparseImageMemoryBind<'a>]) -> Self {
+    pub fn new(
+        image: &'a (impl VkHandle<Handle = brvk::VkImage> + ?Sized),
+        binds: &'a [SparseImageMemoryBind<'a>],
+    ) -> Self {
         unsafe {
-            Self::from_raw(VkSparseImageMemoryBindInfo {
+            Self::from_raw(brvk::VkSparseImageMemoryBindInfo {
                 image: image.native_ptr(),
                 bindCount: binds.len() as _,
                 pBinds: binds.as_ptr() as _,
@@ -661,15 +681,15 @@ impl<'a> SparseImageMemoryBindInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn into_raw(self) -> VkSparseImageMemoryBindInfo {
+    pub const fn into_raw(self) -> brvk::VkSparseImageMemoryBindInfo {
         self.vk
     }
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSparseImageMemoryBindInfo`] struct.
+    /// `raw` must be a valid [`brvk::VkSparseImageMemoryBindInfo`] struct.
     #[inline(always)]
-    pub const unsafe fn from_raw(vk: VkSparseImageMemoryBindInfo) -> Self {
+    pub const unsafe fn from_raw(vk: brvk::VkSparseImageMemoryBindInfo) -> Self {
         Self {
             vk,
             _image: core::marker::PhantomData,
@@ -678,27 +698,27 @@ impl<'a> SparseImageMemoryBindInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn as_raw_ref(&self) -> &VkSparseImageMemoryBindInfo {
+    pub const fn as_raw_ref(&self) -> &brvk::VkSparseImageMemoryBindInfo {
         &self.vk
     }
 
     #[inline(always)]
-    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkSparseImageMemoryBindInfo {
+    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut brvk::VkSparseImageMemoryBindInfo {
         &mut self.vk
     }
 }
 
 #[repr(transparent)]
 pub struct SparseImageOpaqueMemoryBindInfo<'a> {
-    vk: VkSparseImageOpaqueMemoryBindInfo,
-    _image: core::marker::PhantomData<&'a dyn VkHandle<Handle = VkImage>>,
+    vk: brvk::VkSparseImageOpaqueMemoryBindInfo,
+    _image: core::marker::PhantomData<&'a dyn VkHandle<Handle = brvk::VkImage>>,
     _binds: core::marker::PhantomData<&'a [SparseMemoryBind<'a>]>,
 }
 impl<'a> SparseImageOpaqueMemoryBindInfo<'a> {
     #[inline(always)]
-    pub fn new(image: &'a (impl VkHandle<Handle = VkImage> + ?Sized), binds: &'a [SparseMemoryBind<'a>]) -> Self {
+    pub fn new(image: &'a (impl VkHandle<Handle = brvk::VkImage> + ?Sized), binds: &'a [SparseMemoryBind<'a>]) -> Self {
         unsafe {
-            Self::from_raw(VkSparseImageOpaqueMemoryBindInfo {
+            Self::from_raw(brvk::VkSparseImageOpaqueMemoryBindInfo {
                 image: image.native_ptr(),
                 bindCount: binds.len() as _,
                 pBinds: binds.as_ptr() as _,
@@ -707,15 +727,15 @@ impl<'a> SparseImageOpaqueMemoryBindInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn into_raw(self) -> VkSparseImageOpaqueMemoryBindInfo {
+    pub const fn into_raw(self) -> brvk::VkSparseImageOpaqueMemoryBindInfo {
         self.vk
     }
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSparseImageOpaqueMemoryBindInfo`] struct.
+    /// `raw` must be a valid [`brvk::VkSparseImageOpaqueMemoryBindInfo`] struct.
     #[inline(always)]
-    pub const unsafe fn from_raw(vk: VkSparseImageOpaqueMemoryBindInfo) -> Self {
+    pub const unsafe fn from_raw(vk: brvk::VkSparseImageOpaqueMemoryBindInfo) -> Self {
         Self {
             vk,
             _image: core::marker::PhantomData,
@@ -724,29 +744,29 @@ impl<'a> SparseImageOpaqueMemoryBindInfo<'a> {
     }
 
     #[inline(always)]
-    pub const fn as_raw_ref(&self) -> &VkSparseImageOpaqueMemoryBindInfo {
+    pub const fn as_raw_ref(&self) -> &brvk::VkSparseImageOpaqueMemoryBindInfo {
         &self.vk
     }
 
     #[inline(always)]
-    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkSparseImageOpaqueMemoryBindInfo {
+    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut brvk::VkSparseImageOpaqueMemoryBindInfo {
         &mut self.vk
     }
 }
 
 #[repr(transparent)]
 pub struct SparseMemoryBind<'a> {
-    vk: VkSparseMemoryBind,
-    _memory: core::marker::PhantomData<&'a dyn VkHandle<Handle = VkDeviceMemory>>,
+    vk: brvk::VkSparseMemoryBind,
+    _memory: core::marker::PhantomData<&'a dyn VkHandle<Handle = brvk::VkDeviceMemory>>,
 }
 impl<'a> SparseMemoryBind<'a> {
     pub fn new(
-        resource_byte_range: core::ops::Range<DeviceSize>,
-        memory: &'a (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
-        memory_offset: DeviceSize,
+        resource_byte_range: core::ops::Range<brvk::VkDeviceSize>,
+        memory: &'a (impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
+        memory_offset: brvk::VkDeviceSize,
     ) -> Self {
         unsafe {
-            Self::from_raw(VkSparseMemoryBind {
+            Self::from_raw(brvk::VkSparseMemoryBind {
                 resourceOffset: resource_byte_range.start,
                 size: resource_byte_range.end - resource_byte_range.start,
                 memory: memory.native_ptr(),
@@ -757,15 +777,15 @@ impl<'a> SparseMemoryBind<'a> {
     }
 
     #[inline(always)]
-    pub const fn into_raw(self) -> VkSparseMemoryBind {
+    pub const fn into_raw(self) -> brvk::VkSparseMemoryBind {
         self.vk
     }
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSparseMemoryBind`] struct.
+    /// `raw` must be a valid [`brvk::VkSparseMemoryBind`] struct.
     #[inline(always)]
-    pub const unsafe fn from_raw(vk: VkSparseMemoryBind) -> Self {
+    pub const unsafe fn from_raw(vk: brvk::VkSparseMemoryBind) -> Self {
         Self {
             vk,
             _memory: core::marker::PhantomData,
@@ -773,32 +793,32 @@ impl<'a> SparseMemoryBind<'a> {
     }
 
     #[inline(always)]
-    pub const fn as_raw_ref(&self) -> &VkSparseMemoryBind {
+    pub const fn as_raw_ref(&self) -> &brvk::VkSparseMemoryBind {
         &self.vk
     }
 
     #[inline(always)]
-    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkSparseMemoryBind {
+    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut brvk::VkSparseMemoryBind {
         &mut self.vk
     }
 }
 
 #[repr(transparent)]
 pub struct SparseImageMemoryBind<'a> {
-    vk: VkSparseImageMemoryBind,
-    _memory: core::marker::PhantomData<&'a dyn VkHandle<Handle = VkDeviceMemory>>,
+    vk: brvk::VkSparseImageMemoryBind,
+    _memory: core::marker::PhantomData<&'a dyn VkHandle<Handle = brvk::VkDeviceMemory>>,
 }
 impl<'a> SparseImageMemoryBind<'a> {
     pub fn new(
         subresource: ImageSubresource,
-        offset: Offset3D,
-        extent: Extent3D,
-        memory: &'a (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
-        memory_offset: DeviceSize,
+        offset: brvk::VkOffset3D,
+        extent: brvk::VkExtent3D,
+        memory: &'a (impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
+        memory_offset: brvk::VkDeviceSize,
     ) -> Self {
         unsafe {
-            Self::from_raw(VkSparseImageMemoryBind {
-                subresource,
+            Self::from_raw(brvk::VkSparseImageMemoryBind {
+                subresource: subresource.0,
                 offset,
                 extent,
                 memory: memory.native_ptr(),
@@ -809,15 +829,15 @@ impl<'a> SparseImageMemoryBind<'a> {
     }
 
     #[inline(always)]
-    pub const fn into_raw(self) -> VkSparseImageMemoryBind {
+    pub const fn into_raw(self) -> brvk::VkSparseImageMemoryBind {
         self.vk
     }
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkSparseImageMemoryBind`] struct.
+    /// `raw` must be a valid [`brvk::VkSparseImageMemoryBind`] struct.
     #[inline(always)]
-    pub const unsafe fn from_raw(vk: VkSparseImageMemoryBind) -> Self {
+    pub const unsafe fn from_raw(vk: brvk::VkSparseImageMemoryBind) -> Self {
         Self {
             vk,
             _memory: core::marker::PhantomData,
@@ -825,12 +845,12 @@ impl<'a> SparseImageMemoryBind<'a> {
     }
 
     #[inline(always)]
-    pub const fn as_raw_ref(&self) -> &VkSparseImageMemoryBind {
+    pub const fn as_raw_ref(&self) -> &brvk::VkSparseImageMemoryBind {
         &self.vk
     }
 
     #[inline(always)]
-    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut VkSparseImageMemoryBind {
+    pub const unsafe fn as_raw_ref_mut(&mut self) -> &mut brvk::VkSparseImageMemoryBind {
         &mut self.vk
     }
 }

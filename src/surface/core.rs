@@ -1,10 +1,11 @@
 use crate::{ffi_helper::opt_pointer, *};
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 use derives::{bitflags_newtype, implements};
 
 /// Opaque handle to a surface object
 #[derive(VkHandle, VkObject, InstanceChild)]
-#[VkObject(type = VkSurfaceKHR::OBJECT_TYPE)]
-pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) VkSurfaceKHR, #[parent] pub(crate) Instance);
+#[VkObject(type = brvk::VkSurfaceKHR::OBJECT_TYPE)]
+pub struct SurfaceObject<Instance: crate::Instance>(pub(crate) brvk::VkSurfaceKHR, #[parent] pub(crate) Instance);
 unsafe impl<Instance: crate::Instance + Sync> Sync for SurfaceObject<Instance> {}
 unsafe impl<Instance: crate::Instance + Send> Send for SurfaceObject<Instance> {}
 #[implements]
@@ -38,7 +39,7 @@ impl<Instance: crate::Instance + Clone> SurfaceObject<&'_ Instance> {
     }
 }
 
-pub trait Surface: VkHandle<Handle = VkSurfaceKHR> + InstanceChild {}
+pub trait Surface: VkHandle<Handle = brvk::VkSurfaceKHR> + InstanceChild {}
 DerefContainerBracketImpl!(for Surface {});
 
 pub trait TransferSurfaceObject {
@@ -61,100 +62,102 @@ impl<Parent: VulkanStructureProvider + TransferSurfaceObject, T> TransferSurface
 pub enum PresentMode {
     /// The presentation engine does not wait for a vertical blanking period to update the current image, meaning
     /// this mode may result in visible tearing
-    Immediate = VK_PRESENT_MODE_IMMEDIATE_KHR,
+    Immediate = brvk::VK_PRESENT_MODE_IMMEDIATE_KHR,
     /// The presentation engine waits for the next vertical blanking period to update the current image.
     /// Tearing cannot be observed. An internal single-entry queue is used to hold pending presentation requests.
     /// If the queue is full when a new presentation request is received, the new request replaces the existing entry, and any images
     /// associated with the prior entry become available for re-use by the application
-    Mailbox = VK_PRESENT_MODE_MAILBOX_KHR,
+    Mailbox = brvk::VK_PRESENT_MODE_MAILBOX_KHR,
     /// The presentation engine waits for the next vertical blanking period to update the current image.
     /// Tearing cannot be observed. An internal queue is used to hold pending presentation requests.
     /// New requests are appended to the end of the queue, and one request is removed from the beginning of the queue
     /// and processed during each vertical blanking period in which the queue is non-empty.
-    FIFO = VK_PRESENT_MODE_FIFO_KHR,
+    FIFO = brvk::VK_PRESENT_MODE_FIFO_KHR,
     /// The presentation engine generally waits for the next vertical blanking period to update the currnt image.
     /// If a vertical blanking period has already passed since the last update of the current image then the presentation engine
     /// does not wait for another vertical blanking period for the update, meaning this mode may result in visible tearing in this case
-    FIFORelaxed = VK_PRESENT_MODE_FIFO_RELAXED_KHR,
+    FIFORelaxed = brvk::VK_PRESENT_MODE_FIFO_RELAXED_KHR,
 }
 
 /// Presentation transforms supported on a device
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[bitflags_newtype]
-pub struct SurfaceTransformFlags(pub(crate) VkSurfaceTransformFlagsKHR);
+pub struct SurfaceTransformFlags(pub(crate) brvk::VkSurfaceTransformFlagsKHR);
 impl SurfaceTransformFlags {
     /// The image content is presented without being transformed
-    pub const IDENTITY: Self = Self(VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR);
+    pub const IDENTITY: Self = Self(brvk::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR);
     /// The image content is rotated 90 degrees clockwise
-    pub const ROTATE_90: Self = Self(VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR);
+    pub const ROTATE_90: Self = Self(brvk::VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR);
     /// The image content is rotated 180 degrees clockwise
-    pub const ROTATE_180: Self = Self(VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR);
+    pub const ROTATE_180: Self = Self(brvk::VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR);
     /// The image content is rotated 270 degrees clockwise
-    pub const ROTATE_270: Self = Self(VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR);
+    pub const ROTATE_270: Self = Self(brvk::VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR);
     /// The image content is mirrored horizontally
-    pub const HORIZONTAL_MIRROR: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR);
+    pub const HORIZONTAL_MIRROR: Self = Self(brvk::VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR);
     /// The image content is mirrored horizontally, then rotated 90 degrees clockwise
-    pub const HORIZONTAL_MIRROR_ROTATE_90: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR);
+    pub const HORIZONTAL_MIRROR_ROTATE_90: Self = Self(brvk::VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR);
     /// The image content is mirrored horizontally, then rotated 180 degrees clockwise
-    pub const HORIZONTAL_MIRROR_ROTATE_180: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR);
+    pub const HORIZONTAL_MIRROR_ROTATE_180: Self =
+        Self(brvk::VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR);
     /// The image content is mirrored horizontally, then rotated 270 degrees clockwise
-    pub const HORIZONTAL_MIRROR_ROTATE_270: Self = Self(VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR);
+    pub const HORIZONTAL_MIRROR_ROTATE_270: Self =
+        Self(brvk::VK_SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR);
     /// The presentation transform is not specified, and is instead determined by platform-specific considerations and mechanisms outside Vulkan
-    pub const INHERIT: Self = Self(VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR);
+    pub const INHERIT: Self = Self(brvk::VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR);
 }
 
 /// Alpha compositing modes supported on a device
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[bitflags_newtype]
-pub struct CompositeAlphaFlags(VkCompositeAlphaFlagsKHR);
+pub struct CompositeAlphaFlags(brvk::VkCompositeAlphaFlagsKHR);
 impl CompositeAlphaFlags {
     /// The alpha channel, if it exists, of the image is ignored in the compositing process
-    pub const OPAQUE: Self = Self(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR);
+    pub const OPAQUE: Self = Self(brvk::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR);
     /// The alpha channel, if it exists, of the images is respected in the compositing process.
     /// The non-alpha channels of the image are expected to already be multiplied by the alpha channel by the application
-    pub const PRE_MULTIPLIED: Self = Self(VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR);
+    pub const PRE_MULTIPLIED: Self = Self(brvk::VK_COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR);
     /// The alpha channel, if it exists, of the images is respected in the compositing process.
     /// The non-alpha channels of the image are not expected to already be multiplied by the alpha channel by the application;
     /// instead, the compositor will multiply the non-alpha channels of the image by the alpha channel during compositing
-    pub const POST_MULTIPLIED: Self = Self(VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR);
+    pub const POST_MULTIPLIED: Self = Self(brvk::VK_COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR);
     /// The way in which the presentation engine treats the alpha channel in the images is unknown to the Vulkan API.
     /// Instead, the application is responsible for setting the composite alpha blending mode using native window system commands
-    pub const INHERIT: Self = Self(VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR);
+    pub const INHERIT: Self = Self(brvk::VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR);
 }
 
-// specification extensions
-pub type SurfaceCapabilities = VkSurfaceCapabilitiesKHR;
+#[repr(transparent)]
+pub struct SurfaceCapabilities(pub brvk::VkSurfaceCapabilitiesKHR);
 impl SurfaceCapabilities {
     /// The presentation transforms supported for the surface
     pub const fn supported_transforms(&self) -> SurfaceTransformFlags {
-        SurfaceTransformFlags(self.supportedTransforms)
+        SurfaceTransformFlags(self.0.supportedTransforms)
     }
 
     /// The surface's current transform relative to the presentation engine's natural orientation
     pub const fn current_transform(&self) -> SurfaceTransformFlags {
-        SurfaceTransformFlags(self.currentTransform)
+        SurfaceTransformFlags(self.0.currentTransform)
     }
 
     /// The alpha compositing modes supported by the presentation engine for the surface
     pub const fn supported_composite_alpha(&self) -> CompositeAlphaFlags {
-        CompositeAlphaFlags(self.supportedCompositeAlpha)
+        CompositeAlphaFlags(self.0.supportedCompositeAlpha)
     }
 
     /// The ways the application can use the presentable images of a swapchain
     pub const fn supported_usage_flags(&self) -> ImageUsageFlags {
-        unsafe { core::mem::transmute(self.supportedUsageFlags) }
+        unsafe { core::mem::transmute(self.0.supportedUsageFlags) }
     }
 }
 
-pub type SurfaceFormat = VkSurfaceFormatKHR;
+pub type SurfaceFormat = brvk::VkSurfaceFormatKHR;
 
 pub trait SurfaceCreateInfo {
     #[implements]
     fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR>;
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkSurfaceKHR>;
 }
 
 #[cfg(feature = "VK_KHR_xlib_surface")]
@@ -179,13 +182,13 @@ impl SurfaceCreateInfo for XlibSurfaceCreateInfo {
     #[inline(always)]
     unsafe fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::create_xlib_surface_khr(
+            brvk::create_xlib_surface_khr(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
@@ -220,13 +223,13 @@ impl SurfaceCreateInfo for XcbSurfaceCreateInfo {
     #[inline(always)]
     unsafe fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::create_xcb_surface_khr(
+            brvk::create_xcb_surface_khr(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
@@ -261,13 +264,13 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
     #[inline(always)]
     unsafe fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::create_wayland_surface_khr(
+            brvk::create_wayland_surface_khr(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
@@ -281,7 +284,7 @@ impl SurfaceCreateInfo for WaylandSurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_android_surface")]
-pub type AndroidSurfaceCreateInfo = VkAndroidSurfaceCreateInfoKHR;
+pub type AndroidSurfaceCreateInfo = brvk::VkAndroidSurfaceCreateInfoKHR;
 #[cfg(feature = "VK_KHR_android_surface")]
 impl AndroidSurfaceCreateInfo {
     /// # Safety
@@ -301,13 +304,13 @@ impl SurfaceCreateInfo for AndroidSurfaceCreateInfo {
     #[inline(always)]
     unsafe fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::create_android_surface_khr(
+            brvk::create_android_surface_khr(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
@@ -340,13 +343,13 @@ impl SurfaceCreateInfo for Win32SurfaceCreateInfo {
     #[inline(always)]
     unsafe fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::create_win32_surface_khr(
+            brvk::create_win32_surface_khr(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
@@ -380,13 +383,13 @@ impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
     #[inline(always)]
     unsafe fn execute(
         &self,
-        instance: &(impl VkHandle<Handle = VkInstance> + ?Sized),
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        instance: &(impl VkHandle<Handle = brvk::VkInstance> + ?Sized),
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) -> crate::Result<VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
         unsafe {
-            crate::vkfn::create_metal_surface_ext(
+            brvk::create_metal_surface_ext(
                 instance.native_ptr(),
                 self,
                 opt_pointer(allocation_callbacks),
@@ -400,7 +403,10 @@ impl SurfaceCreateInfo for MetalSurfaceCreateInfo {
 }
 
 #[cfg(feature = "VK_KHR_display")]
-impl VkDisplaySurfaceCreateInfoKHR {
+#[repr(transparent)]
+pub struct DisplaySurfaceCreateInfo(pub brvk::VkDisplaySurfaceCreateInfoKHR);
+#[cfg(feature = "VK_KHR_display")]
+impl DisplaySurfaceCreateInfo {
     pub const fn new(
         mode: &super::DisplayMode,
         plane_index: u32,
@@ -408,10 +414,10 @@ impl VkDisplaySurfaceCreateInfoKHR {
         transform: SurfaceTransformFlags,
         global_alpha: f32,
         alpha_mode: super::DisplayPlaneAlpha,
-        extent: VkExtent2D,
+        extent: brvk::VkExtent2D,
     ) -> Self {
-        Self {
-            sType: Self::TYPE,
+        Self(brvk::VkDisplaySurfaceCreateInfoKHR {
+            sType: brvk::VkDisplaySurfaceCreateInfoKHR::TYPE,
             pNext: core::ptr::null(),
             flags: 0,
             displayMode: mode.0,
@@ -421,6 +427,6 @@ impl VkDisplaySurfaceCreateInfoKHR {
             globalAlpha: global_alpha,
             alphaMode: alpha_mode as _,
             imageExtent: extent,
-        }
+        })
     }
 }

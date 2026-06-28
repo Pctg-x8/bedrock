@@ -1,4 +1,5 @@
 //! Vulkan Framebuffer
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
 use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
@@ -7,15 +8,16 @@ use derives::implements;
 
 /// Opaque handle to a framebuffer object
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkFramebuffer::OBJECT_TYPE)]
-pub struct FramebufferObject<'r, Device: VkHandle<Handle = VkDevice>> {
+#[VkObject(type = brvk::VkFramebuffer::OBJECT_TYPE)]
+pub struct FramebufferObject<'r, Device: VkHandle<Handle = brvk::VkDevice>> {
     #[handle]
-    pub(crate) handle: VkFramebuffer,
+    pub(crate) handle: brvk::VkFramebuffer,
     pub(crate) parent: Device,
-    pub(crate) _under_resources: core::marker::PhantomData<&'r [Box<dyn crate::VkHandle<Handle = VkImageView> + 'r>]>,
+    pub(crate) _under_resources:
+        core::marker::PhantomData<&'r [Box<dyn crate::VkHandle<Handle = brvk::VkImageView> + 'r>]>,
 }
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for FramebufferObject<'_, Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for FramebufferObject<'_, Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
@@ -27,11 +29,11 @@ impl<Device: VkHandle<Handle = VkDevice>> Drop for FramebufferObject<'_, Device>
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for FramebufferObject<'_, Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for FramebufferObject<'_, Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for FramebufferObject<'_, Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for FramebufferObject<'_, Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for FramebufferObject<'_, Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for FramebufferObject<'_, Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.parent.native_ptr()
     }
 }
@@ -43,12 +45,12 @@ impl<Device: crate::Device> DeviceChild for FramebufferObject<'_, Device> {
         &self.parent
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> Framebuffer for FramebufferObject<'_, Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> FramebufferObject<'_, Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Framebuffer for FramebufferObject<'_, Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> FramebufferObject<'_, Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkFramebuffer, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkFramebuffer, parent: Device) -> Self {
         Self {
             handle,
             parent,
@@ -57,7 +59,7 @@ impl<Device: VkHandle<Handle = VkDevice>> FramebufferObject<'_, Device> {
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkFramebuffer, Device) {
+    pub const fn unmanage(self) -> (brvk::VkFramebuffer, Device) {
         let h = self.handle;
         let p = unsafe { core::ptr::read(&self.parent) };
         core::mem::forget(self);
@@ -65,7 +67,7 @@ impl<Device: VkHandle<Handle = VkDevice>> FramebufferObject<'_, Device> {
         (h, p)
     }
 }
-impl<'r, Device: VkHandle<Handle = VkDevice> + Clone> FramebufferObject<'r, &'_ Device> {
+impl<'r, Device: VkHandle<Handle = brvk::VkDevice> + Clone> FramebufferObject<'r, &'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> FramebufferObject<'r, Device> {
@@ -84,8 +86,8 @@ impl<'r, Device: crate::Device> FramebufferObject<'r, Device> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn new(device: Device, info: &FramebufferCreateInfo) -> crate::Result<Self> {
@@ -96,24 +98,24 @@ impl<'r, Device: crate::Device> FramebufferObject<'r, Device> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct FramebufferCreateInfo<'r, 'rs>(
-    VkFramebufferCreateInfo,
+    brvk::VkFramebufferCreateInfo,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        &'r dyn VkHandle<Handle = VkRenderPass>,
-        &'rs [&'r dyn VkHandle<Handle = VkImageView>],
+        &'r dyn VkHandle<Handle = brvk::VkRenderPass>,
+        &'rs [&'r dyn VkHandle<Handle = brvk::VkImageView>],
     )>,
 );
 impl<'r, 'rs> FramebufferCreateInfo<'r, 'rs> {
     #[inline(always)]
     pub fn new(
-        render_pass: &'r (impl VkHandle<Handle = VkRenderPass> + ?Sized),
-        attachments: &'rs [VkHandleRef<'r, VkImageView>],
+        render_pass: &'r (impl VkHandle<Handle = brvk::VkRenderPass> + ?Sized),
+        attachments: &'rs [VkHandleRef<'r, brvk::VkImageView>],
         width: u32,
         height: u32,
     ) -> Self {
         Self(
-            VkFramebufferCreateInfo {
-                sType: VkFramebufferCreateInfo::TYPE,
+            brvk::VkFramebufferCreateInfo {
+                sType: brvk::VkFramebufferCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 renderPass: render_pass.native_ptr(),
                 flags: 0,
@@ -130,11 +132,11 @@ impl<'r, 'rs> FramebufferCreateInfo<'r, 'rs> {
     /// # Safety
     ///
     /// raw must be a valid VkFramebufferCreateInfo struct.
-    pub const unsafe fn from_raw(raw: VkFramebufferCreateInfo) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkFramebufferCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkFramebufferCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkFramebufferCreateInfo {
         self.0
     }
 
@@ -144,6 +146,6 @@ impl<'r, 'rs> FramebufferCreateInfo<'r, 'rs> {
     }
 }
 
-pub trait Framebuffer: VkHandle<Handle = VkFramebuffer> {}
+pub trait Framebuffer: VkHandle<Handle = brvk::VkFramebuffer> {}
 DerefContainerBracketImpl!(for Framebuffer {});
 GuardsImpl!(for Framebuffer {});

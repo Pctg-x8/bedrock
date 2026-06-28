@@ -1,31 +1,33 @@
 //! Vulkan Descriptors
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle};
 
 use derives::implements;
 
+use crate::error::translate_vk_result;
 use crate::ffi_helper::{ArrayFFIExtensions, slice_as_ptr_empty_null};
 use crate::*;
 
 /// Opaque handle to a descriptor set layout object
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkDescriptorSetLayout::OBJECT_TYPE)]
-pub struct DescriptorSetLayoutObject<Device: VkHandle<Handle = VkDevice>>(
-    pub(crate) VkDescriptorSetLayout,
+#[VkObject(type = brvk::VkDescriptorSetLayout::OBJECT_TYPE)]
+pub struct DescriptorSetLayoutObject<Device: VkHandle<Handle = brvk::VkDevice>>(
+    pub(crate) brvk::VkDescriptorSetLayout,
     pub(crate) Device,
 );
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for DescriptorSetLayoutObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for DescriptorSetLayoutObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_descriptor_set_layout(self.1.native_ptr(), self.0, core::ptr::null());
+            brvk::fns::destroy_descriptor_set_layout(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for DescriptorSetLayoutObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for DescriptorSetLayoutObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DescriptorSetLayoutObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for DescriptorSetLayoutObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for DescriptorSetLayoutObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for DescriptorSetLayoutObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -38,34 +40,33 @@ impl<Device: crate::Device> DeviceChild for DescriptorSetLayoutObject<Device> {
     }
 }
 impl<Device: crate::Device> DescriptorSetLayout for DescriptorSetLayoutObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DescriptorSetLayoutObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DescriptorSetLayoutObject<Device> {
     /// Create a new descriptor set layout
     /// # Failures
     /// On failure, this command returns
     ///
-    /// - [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// - [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// - [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// - [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     pub fn new(device: Device, info: &DescriptorSetLayoutCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
-            crate::vkfn::create_descriptor_set_layout(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
+        translate_vk_result(unsafe {
+            brvk::fns::create_descriptor_set_layout(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+        })?;
 
-            Ok(Self(h.assume_init(), device))
-        }
+        Ok(Self(unsafe { h.assume_init() }, device))
     }
 
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkDescriptorSetLayout, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkDescriptorSetLayout, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkDescriptorSetLayout, Device) {
+    pub const fn unmanage(self) -> (brvk::VkDescriptorSetLayout, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -73,7 +74,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DescriptorSetLayoutObject<Device> {
         (h, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorSetLayoutObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> DescriptorSetLayoutObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DescriptorSetLayoutObject<Device> {
@@ -85,22 +86,25 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorSetLayoutObject<&'_ 
 }
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkDescriptorPool::OBJECT_TYPE)]
-pub struct DescriptorPoolObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkDescriptorPool, pub(crate) Device);
+#[VkObject(type = brvk::VkDescriptorPool::OBJECT_TYPE)]
+pub struct DescriptorPoolObject<Device: VkHandle<Handle = brvk::VkDevice>>(
+    pub(crate) brvk::VkDescriptorPool,
+    pub(crate) Device,
+);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for DescriptorPoolObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for DescriptorPoolObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_descriptor_pool(self.1.native_ptr(), self.0, core::ptr::null());
+            brvk::fns::destroy_descriptor_pool(self.1.native_ptr(), self.0, core::ptr::null());
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for DescriptorPoolObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for DescriptorPoolObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for DescriptorPoolObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for DescriptorPoolObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for DescriptorPoolObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for DescriptorPoolObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -112,36 +116,35 @@ impl<Device: crate::Device> DeviceChild for DescriptorPoolObject<Device> {
         &self.1
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> DescriptorPool for DescriptorPoolObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DescriptorPoolMut for DescriptorPoolObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DescriptorPoolObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DescriptorPool for DescriptorPoolObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DescriptorPoolMut for DescriptorPoolObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DescriptorPoolObject<Device> {
     /// Creates a descriptor pool object
     /// # Failures
     /// On failure, this command returns
     ///
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
     pub fn new(device: Device, info: &DescriptorPoolCreateInfo) -> crate::Result<Self> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
-            crate::vkfn::create_descriptor_pool(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
-                .into_result()?;
+        translate_vk_result(unsafe {
+            brvk::fns::create_descriptor_pool(device.native_ptr(), &info.0, core::ptr::null(), h.as_mut_ptr())
+        })?;
 
-            Ok(Self(h.assume_init(), device))
-        }
+        Ok(Self(unsafe { h.assume_init() }, device))
     }
 
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the device and not freed anywhere
-    pub const unsafe fn manage(handle: VkDescriptorPool, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkDescriptorPool, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges the construct (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkDescriptorPool, Device) {
+    pub const fn unmanage(self) -> (brvk::VkDescriptorPool, Device) {
         let h = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -149,7 +152,7 @@ impl<Device: VkHandle<Handle = VkDevice>> DescriptorPoolObject<Device> {
         (h, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorPoolObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> DescriptorPoolObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> DescriptorPoolObject<Device> {
@@ -160,13 +163,15 @@ impl<Device: VkHandle<Handle = VkDevice> + Clone> DescriptorPoolObject<&'_ Devic
     }
 }
 
-pub type DescriptorSet = VkDescriptorSet;
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct DescriptorSet(pub(crate) brvk::VkDescriptorSet);
 unsafe impl Sync for DescriptorSet {}
 unsafe impl Send for DescriptorSet {}
 impl DescriptorSet {
     #[inline]
     pub const fn binding_at(&self, b: u32) -> DescriptorPointer {
-        DescriptorPointer::new(*self, b)
+        DescriptorPointer::new(self.0, b)
     }
 }
 
@@ -174,41 +179,41 @@ impl DescriptorSet {
 #[repr(C)]
 #[derive(Debug, Clone, PartialEq, Eq, Copy, PartialOrd, Ord, Hash)]
 pub enum DescriptorType {
-    Sampler = VK_DESCRIPTOR_TYPE_SAMPLER as _,
-    CombinedImageSampler = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER as _,
-    SampledImage = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE as _,
-    StorageImage = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE as _,
-    UniformTexelBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER as _,
-    StorageTexelBuffer = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER as _,
-    UniformBuffer = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER as _,
-    StorageBuffer = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER as _,
-    UniformBufferDynamic = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC as _,
-    StorageBufferDynamic = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC as _,
-    InputAttachment = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _,
+    Sampler = brvk::VK_DESCRIPTOR_TYPE_SAMPLER as _,
+    CombinedImageSampler = brvk::VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER as _,
+    SampledImage = brvk::VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE as _,
+    StorageImage = brvk::VK_DESCRIPTOR_TYPE_STORAGE_IMAGE as _,
+    UniformTexelBuffer = brvk::VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER as _,
+    StorageTexelBuffer = brvk::VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER as _,
+    UniformBuffer = brvk::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER as _,
+    StorageBuffer = brvk::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER as _,
+    UniformBufferDynamic = brvk::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC as _,
+    StorageBufferDynamic = brvk::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC as _,
+    InputAttachment = brvk::VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT as _,
 }
 impl DescriptorType {
-    pub const fn make_size(self, count: u32) -> VkDescriptorPoolSize {
-        VkDescriptorPoolSize {
+    pub const fn make_size(self, count: u32) -> brvk::VkDescriptorPoolSize {
+        brvk::VkDescriptorPoolSize {
             r#type: self as _,
             descriptorCount: count,
         }
     }
 
     pub const fn make_binding<'a>(self, binding: u32, count: u32) -> DescriptorSetLayoutBinding<'a> {
-        DescriptorSetLayoutBinding::new(binding, self, count, VK_SHADER_STAGE_ALL)
+        DescriptorSetLayoutBinding::new(binding, self, count, brvk::VK_SHADER_STAGE_ALL)
     }
 }
 
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct DescriptorSetLayoutBinding<'s> {
-    raw: VkDescriptorSetLayoutBinding,
-    immutable_samplers: core::marker::PhantomData<&'s dyn VkHandle<Handle = VkSampler>>,
+    raw: brvk::VkDescriptorSetLayoutBinding,
+    immutable_samplers: core::marker::PhantomData<&'s dyn VkHandle<Handle = brvk::VkSampler>>,
 }
 impl<'s> DescriptorSetLayoutBinding<'s> {
-    pub const fn new(binding: u32, r#type: DescriptorType, count: u32, shader_stage: VkShaderStageFlags) -> Self {
+    pub const fn new(binding: u32, r#type: DescriptorType, count: u32, shader_stage: brvk::VkShaderStageFlags) -> Self {
         Self {
-            raw: VkDescriptorSetLayoutBinding {
+            raw: brvk::VkDescriptorSetLayoutBinding {
                 binding,
                 descriptorType: r#type as _,
                 descriptorCount: count,
@@ -220,7 +225,7 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
     }
 
     #[inline(always)]
-    pub fn with_immutable_samplers(self, samplers: &'s [VkHandleRef<VkSampler>]) -> Self {
+    pub fn with_immutable_samplers(self, samplers: &'s [VkHandleRef<brvk::VkSampler>]) -> Self {
         assert_eq!(samplers.len(), self.raw.descriptorCount as usize);
         unsafe { self.with_immutable_samplers_unchecked(samplers) }
     }
@@ -228,57 +233,62 @@ impl<'s> DescriptorSetLayoutBinding<'s> {
     /// # Safety
     ///
     /// The caller must ensure that a number of `samplers` is equal to the descriptor's count.
-    pub const unsafe fn with_immutable_samplers_unchecked(mut self, samplers: &'s [VkHandleRef<VkSampler>]) -> Self {
+    pub const unsafe fn with_immutable_samplers_unchecked(
+        mut self,
+        samplers: &'s [VkHandleRef<brvk::VkSampler>],
+    ) -> Self {
         self.raw.pImmutableSamplers = slice_as_ptr_empty_null(samplers) as _;
         self
     }
 
-    pub const fn for_shader_stage(mut self, mask: VkShaderStageFlags) -> Self {
+    pub const fn for_shader_stage(mut self, mask: brvk::VkShaderStageFlags) -> Self {
         self.raw.stageFlags = mask;
         self
     }
 
     pub const fn only_for_vertex(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_VERTEX_BIT)
+        self.for_shader_stage(brvk::VK_SHADER_STAGE_VERTEX_BIT)
     }
 
     pub const fn only_for_tess_control(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT)
+        self.for_shader_stage(brvk::VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT)
     }
 
     pub const fn only_for_tess_evaluation(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT)
+        self.for_shader_stage(brvk::VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT)
     }
 
     pub const fn only_for_tessellation(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT | VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT)
+        self.for_shader_stage(
+            brvk::VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT | brvk::VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT,
+        )
     }
 
     pub const fn only_for_geometry(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_GEOMETRY_BIT)
+        self.for_shader_stage(brvk::VK_SHADER_STAGE_GEOMETRY_BIT)
     }
 
     pub const fn only_for_fragment(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_FRAGMENT_BIT)
+        self.for_shader_stage(brvk::VK_SHADER_STAGE_FRAGMENT_BIT)
     }
 
     pub const fn only_for_compute(self) -> Self {
-        self.for_shader_stage(VK_SHADER_STAGE_COMPUTE_BIT)
+        self.for_shader_stage(brvk::VK_SHADER_STAGE_COMPUTE_BIT)
     }
 }
 
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct DescriptorSetLayoutCreateInfo<'d, 's>(
-    VkDescriptorSetLayoutCreateInfo,
+    brvk::VkDescriptorSetLayoutCreateInfo,
     core::marker::PhantomData<&'d [DescriptorSetLayoutBinding<'s>]>,
 );
 impl<'d, 's> DescriptorSetLayoutCreateInfo<'d, 's> {
     #[inline(always)]
     pub const fn new(bindings: &'d [DescriptorSetLayoutBinding<'s>]) -> Self {
         Self(
-            VkDescriptorSetLayoutCreateInfo {
-                sType: VkDescriptorSetLayoutCreateInfo::TYPE,
+            brvk::VkDescriptorSetLayoutCreateInfo {
+                sType: brvk::VkDescriptorSetLayoutCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 bindingCount: bindings.len() as _,
@@ -289,14 +299,14 @@ impl<'d, 's> DescriptorSetLayoutCreateInfo<'d, 's> {
     }
 }
 
-pub trait DescriptorSetLayout: VkHandle<Handle = VkDescriptorSetLayout> + DeviceChild {}
+pub trait DescriptorSetLayout: VkHandle<Handle = brvk::VkDescriptorSetLayout> + DeviceChild {}
 DerefContainerBracketImpl!(for DescriptorSetLayout {});
 GuardsImpl!(for DescriptorSetLayout {});
 
 /*
-# DescriptorPoolのフラグメンテーションについてメモ(from `VkDescriptorPoolCreateInfo` Manual)
+# DescriptorPoolのフラグメンテーションについてメモ(from `brvk::VkDescriptorPoolCreateInfo` Manual)
 
-`VkDescriptorPoolSize`構造体が`pPoolSizes`配列内に複数ある場合、プールはそれぞれのタイプの合計分のデスクリプタが十分入るように確保されます。
+`brvk::VkDescriptorPoolSize`構造体が`pPoolSizes`配列内に複数ある場合、プールはそれぞれのタイプの合計分のデスクリプタが十分入るように確保されます。
 
 DescriptorPoolはフラグメンテーションを起こすことがあり、DescriptorSetの確保に失敗することがあります。
 フラグメンテーションに起因する失敗は、確保したDescriptorSetの数+確保を要求したDescriptorSetの数が`maxSets`に満たない場合でも
@@ -305,7 +315,7 @@ DescriptorPoolはフラグメンテーションを起こすことがあり、Des
 (言い換えると、「以下に示す場合はフラグメンテーション状態でも確保に成功する」)
 
 DescriptorPoolが、生成されてから/間近にリセットされてから今までに開放されたDescriptorSetがない場合、
-フラグメンテーションは確保の失敗を引き起こしません。(`VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT`を伴わずに生成されたプールに対しては常に満たすものとします？)
+フラグメンテーションは確保の失敗を引き起こしません。(`brvk::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT`を伴わずに生成されたプールに対しては常に満たすものとします？)
 また、
 - プールが生成されてから/間近にリセットされてから確保された、すべてのDescriptorSetが各タイプ同じ数のDescriptorを使う場合、そして
 - 要求した確保も各タイプ同じ数のDescriptorを使う場合、
@@ -317,14 +327,14 @@ DescriptorPoolが、生成されてから/間近にリセットされてから�
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct DescriptorPoolCreateInfo<'d>(
-    VkDescriptorPoolCreateInfo,
-    core::marker::PhantomData<&'d [VkDescriptorPoolSize]>,
+    brvk::VkDescriptorPoolCreateInfo,
+    core::marker::PhantomData<&'d [brvk::VkDescriptorPoolSize]>,
 );
 impl<'d> DescriptorPoolCreateInfo<'d> {
-    pub const fn new(max_sets: u32, sizes: &'d [VkDescriptorPoolSize]) -> Self {
+    pub const fn new(max_sets: u32, sizes: &'d [brvk::VkDescriptorPoolSize]) -> Self {
         Self(
-            VkDescriptorPoolCreateInfo {
-                sType: VkDescriptorPoolCreateInfo::TYPE,
+            brvk::VkDescriptorPoolCreateInfo {
+                sType: brvk::VkDescriptorPoolCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 maxSets: max_sets,
@@ -337,22 +347,22 @@ impl<'d> DescriptorPoolCreateInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid `VkDescriptorPoolCreateInfo` value.
-    pub const unsafe fn from_raw(raw: VkDescriptorPoolCreateInfo) -> Self {
+    /// `raw` must be a valid `brvk::VkDescriptorPoolCreateInfo` value.
+    pub const unsafe fn from_raw(raw: brvk::VkDescriptorPoolCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkDescriptorPoolCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkDescriptorPoolCreateInfo {
         self.0
     }
 
     pub const fn allow_individual_free(mut self) -> Self {
-        self.0.flags |= VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        self.0.flags |= brvk::VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
         self
     }
 }
 
-pub trait DescriptorPool: VkHandle<Handle = VkDescriptorPool> {}
+pub trait DescriptorPool: VkHandle<Handle = brvk::VkDescriptorPool> {}
 DerefContainerBracketImpl!(for DescriptorPool {});
 GuardsImpl!(for DescriptorPool {});
 
@@ -360,9 +370,9 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// Allocate one or more descriptor sets
     /// # Failures
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    /// - VK_ERROR_FRAGMENTED_POOL
+    /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - brvk::VK_ERROR_FRAGMENTED_POOL
     ///
     /// # Safety
     /// no guarantees will be provided (simply calls under api)
@@ -370,27 +380,27 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     #[inline]
     unsafe fn alloc_raw(
         &mut self,
-        info: &VkDescriptorSetAllocateInfo,
-        objects: &mut [core::mem::MaybeUninit<VkDescriptorSet>],
+        info: &brvk::VkDescriptorSetAllocateInfo,
+        objects: &mut [core::mem::MaybeUninit<brvk::VkDescriptorSet>],
     ) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr().cast())
-                .into_result()
-                .map(drop)
-        }
+        translate_vk_result(unsafe {
+            brvk::fns::allocate_descriptor_sets(self.device_handle(), info, objects.as_mut_ptr().cast())
+        })?;
+
+        Ok(())
     }
 
     /// Allocate one or more descriptor sets
     /// # Failures
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    /// - VK_ERROR_FRAGMENTED_POOL
+    /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - brvk::VK_ERROR_FRAGMENTED_POOL
     #[implements]
     #[cfg(feature = "alloc")]
-    fn alloc(&mut self, layouts: &[VkHandleRef<VkDescriptorSetLayout>]) -> crate::Result<Vec<DescriptorSet>> {
-        let ainfo = VkDescriptorSetAllocateInfo {
-            sType: VkDescriptorSetAllocateInfo::TYPE,
+    fn alloc(&mut self, layouts: &[VkHandleRef<brvk::VkDescriptorSetLayout>]) -> crate::Result<Vec<DescriptorSet>> {
+        let ainfo = brvk::VkDescriptorSetAllocateInfo {
+            sType: brvk::VkDescriptorSetAllocateInfo::TYPE,
             pNext: core::ptr::null(),
             descriptorPool: self.native_ptr_mut(),
             descriptorSetCount: layouts.len() as _,
@@ -399,7 +409,13 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
         let mut hs = crate::alloc::empty_reserved_buffer(layouts.len());
 
         unsafe {
-            self.alloc_raw(&ainfo, hs.spare_capacity_mut())?;
+            self.alloc_raw(
+                &ainfo,
+                core::mem::transmute::<
+                    &mut [core::mem::MaybeUninit<DescriptorSet>],
+                    &mut [core::mem::MaybeUninit<brvk::VkDescriptorSet>],
+                >(hs.spare_capacity_mut()),
+            )?;
             hs.set_len(layouts.len())
         }
 
@@ -409,16 +425,16 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// Allocate one or more descriptor sets
     /// # Failures
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
-    /// - VK_ERROR_FRAGMENTED_POOL
+    /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - brvk::VK_ERROR_FRAGMENTED_POOL
     #[implements]
     fn alloc_array<const N: usize>(
         &mut self,
-        layouts: &[VkHandleRef<VkDescriptorSetLayout>; N],
+        layouts: &[VkHandleRef<brvk::VkDescriptorSetLayout>; N],
     ) -> crate::Result<[DescriptorSet; N]> {
-        let ainfo = VkDescriptorSetAllocateInfo {
-            sType: VkDescriptorSetAllocateInfo::TYPE,
+        let ainfo = brvk::VkDescriptorSetAllocateInfo {
+            sType: brvk::VkDescriptorSetAllocateInfo::TYPE,
             pNext: core::ptr::null(),
             descriptorPool: self.native_ptr_mut(),
             descriptorSetCount: N as _,
@@ -438,16 +454,16 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// Application must not use descriptor sets after this call
     /// # Failures
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
     #[inline]
-    unsafe fn reset(&mut self, flags: VkDescriptorPoolResetFlags) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), flags)
-                .into_result()
-                .map(drop)
-        }
+    unsafe fn reset(&mut self, flags: brvk::VkDescriptorPoolResetFlags) -> crate::Result<()> {
+        translate_vk_result(unsafe {
+            brvk::fns::reset_descriptor_pool(self.device_handle(), self.native_ptr_mut(), flags)
+        })?;
+
+        Ok(())
     }
 
     /// Free one or more descriptor sets
@@ -455,21 +471,21 @@ pub trait DescriptorPoolMut: DescriptorPool + VkHandleMut + DeviceChildHandle {
     /// Host access to each member of pDescriptorSets must be externally synchronized
     /// # Failures
     /// On failure, this command returns
-    /// - VK_ERROR_OUT_OF_HOST_MEMORY
-    /// - VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// - brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements]
     #[inline]
     unsafe fn free(&mut self, sets: &[DescriptorSet]) -> crate::Result<()> {
-        unsafe {
-            crate::vkfn::free_descriptor_sets(
+        translate_vk_result(unsafe {
+            brvk::fns::free_descriptor_sets(
                 self.device_handle(),
                 self.native_ptr(),
                 sets.len() as _,
-                sets.as_ptr_empty_null() as _,
+                sets.as_ptr_empty_null().cast(),
             )
-            .into_result()
-            .map(drop)
-        }
+        })?;
+
+        Ok(())
     }
 }
 DerefContainerBracketImpl!(for mut DescriptorPoolMut {});
@@ -478,12 +494,12 @@ GuardsImpl!(for mut DescriptorPoolMut {});
 /// Pointer for descriptor array in set
 #[derive(Clone)]
 pub struct DescriptorPointer {
-    pub set: VkDescriptorSet,
+    pub set: brvk::VkDescriptorSet,
     pub binding: u32,
     pub array_offset: u32,
 }
 impl DescriptorPointer {
-    pub const fn new(set: VkDescriptorSet, binding: u32) -> Self {
+    pub const fn new(set: brvk::VkDescriptorSet, binding: u32) -> Self {
         Self {
             set,
             binding,
@@ -525,14 +541,17 @@ impl DescriptorPointer {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct DescriptorBufferInfo<'r>(
-    VkDescriptorBufferInfo,
-    core::marker::PhantomData<&'r dyn VkHandle<Handle = VkBuffer>>,
+    brvk::VkDescriptorBufferInfo,
+    core::marker::PhantomData<&'r dyn VkHandle<Handle = brvk::VkBuffer>>,
 );
 impl<'r> DescriptorBufferInfo<'r> {
     #[inline(always)]
-    pub fn new(r: &'r (impl VkHandle<Handle = VkBuffer> + ?Sized), range: core::ops::Range<VkDeviceSize>) -> Self {
+    pub fn new(
+        r: &'r (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
+    ) -> Self {
         Self(
-            VkDescriptorBufferInfo {
+            brvk::VkDescriptorBufferInfo {
                 buffer: r.native_ptr(),
                 offset: range.start,
                 range: range.end - range.start,
@@ -542,9 +561,9 @@ impl<'r> DescriptorBufferInfo<'r> {
     }
 
     #[inline(always)]
-    pub const fn unbounded(h: VkBuffer, range: core::ops::Range<VkDeviceSize>) -> Self {
+    pub const fn unbounded(h: brvk::VkBuffer, range: core::ops::Range<brvk::VkDeviceSize>) -> Self {
         Self(
-            VkDescriptorBufferInfo {
+            brvk::VkDescriptorBufferInfo {
                 buffer: h,
                 offset: range.start,
                 range: range.end - range.start,
@@ -557,18 +576,18 @@ impl<'r> DescriptorBufferInfo<'r> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct DescriptorImageInfo<'r>(
-    VkDescriptorImageInfo,
+    brvk::VkDescriptorImageInfo,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        &'r dyn VkHandle<Handle = VkImageView>,
-        Option<&'r dyn VkHandle<Handle = VkSampler>>,
+        &'r dyn VkHandle<Handle = brvk::VkImageView>,
+        Option<&'r dyn VkHandle<Handle = brvk::VkSampler>>,
     )>,
 );
 impl<'r> DescriptorImageInfo<'r> {
     #[inline(always)]
-    pub fn new(r: &'r (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+    pub fn new(r: &'r (impl VkHandle<Handle = brvk::VkImageView> + ?Sized), layout: ImageLayout) -> Self {
         Self(
-            VkDescriptorImageInfo {
+            brvk::VkDescriptorImageInfo {
                 imageView: r.native_ptr(),
                 imageLayout: layout as _,
                 sampler: None,
@@ -578,9 +597,9 @@ impl<'r> DescriptorImageInfo<'r> {
     }
 
     #[inline(always)]
-    pub const fn unbounded(h: VkImageView, layout: ImageLayout) -> Self {
+    pub const fn unbounded(h: brvk::VkImageView, layout: ImageLayout) -> Self {
         Self(
-            VkDescriptorImageInfo {
+            brvk::VkDescriptorImageInfo {
                 imageView: h,
                 imageLayout: layout as _,
                 sampler: None,
@@ -590,13 +609,13 @@ impl<'r> DescriptorImageInfo<'r> {
     }
 
     #[inline(always)]
-    pub fn with_sampler(mut self, sampler: &'r (impl VkHandle<Handle = VkSampler> + ?Sized)) -> Self {
+    pub fn with_sampler(mut self, sampler: &'r (impl VkHandle<Handle = brvk::VkSampler> + ?Sized)) -> Self {
         self.0.sampler = Some(sampler.native_ptr());
         self
     }
 
     #[inline(always)]
-    pub const fn with_unbounded_sampler(mut self, sampler: VkSampler) -> Self {
+    pub const fn with_unbounded_sampler(mut self, sampler: brvk::VkSampler) -> Self {
         self.0.sampler = Some(sampler);
         self
     }
@@ -613,8 +632,8 @@ pub enum DescriptorContents<'r> {
     StorageBuffer(Vec<DescriptorBufferInfo<'r>>),
     UniformBufferDynamic(Vec<DescriptorBufferInfo<'r>>),
     StorageBufferDynamic(Vec<DescriptorBufferInfo<'r>>),
-    UniformTexelBuffer(Vec<VkHandleRef<'r, VkBufferView>>),
-    StorageTexelBuffer(Vec<VkHandleRef<'r, VkBufferView>>),
+    UniformTexelBuffer(Vec<VkHandleRef<'r, brvk::VkBufferView>>),
+    StorageTexelBuffer(Vec<VkHandleRef<'r, brvk::VkBufferView>>),
 }
 impl<'d> DescriptorContents<'d> {
     pub fn type_count(&self) -> (DescriptorType, usize) {
@@ -636,62 +655,65 @@ impl<'d> DescriptorContents<'d> {
     // single content utilities
 
     #[inline(always)]
-    pub fn sampler(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+    pub fn sampler(obj: &'d (impl VkHandle<Handle = brvk::VkImageView> + ?Sized), layout: ImageLayout) -> Self {
         Self::Sampler(vec![DescriptorImageInfo::new(obj, layout)])
     }
     #[inline(always)]
     pub fn combined_image_sampler(
-        obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized),
+        obj: &'d (impl VkHandle<Handle = brvk::VkImageView> + ?Sized),
         layout: ImageLayout,
     ) -> Self {
         Self::CombinedImageSampler(vec![DescriptorImageInfo::new(obj, layout)])
     }
     #[inline(always)]
-    pub fn sampled_image(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+    pub fn sampled_image(obj: &'d (impl VkHandle<Handle = brvk::VkImageView> + ?Sized), layout: ImageLayout) -> Self {
         Self::SampledImage(vec![DescriptorImageInfo::new(obj, layout)])
     }
     #[inline(always)]
-    pub fn storage_image(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+    pub fn storage_image(obj: &'d (impl VkHandle<Handle = brvk::VkImageView> + ?Sized), layout: ImageLayout) -> Self {
         Self::StorageImage(vec![DescriptorImageInfo::new(obj, layout)])
     }
     #[inline(always)]
-    pub fn input_attachment(obj: &'d (impl VkHandle<Handle = VkImageView> + ?Sized), layout: ImageLayout) -> Self {
+    pub fn input_attachment(
+        obj: &'d (impl VkHandle<Handle = brvk::VkImageView> + ?Sized),
+        layout: ImageLayout,
+    ) -> Self {
         Self::InputAttachment(vec![DescriptorImageInfo::new(obj, layout)])
     }
     #[inline(always)]
     pub fn uniform_buffer(
-        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        range: core::ops::Range<VkDeviceSize>,
+        obj: &'d (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
     ) -> Self {
         Self::UniformBuffer(vec![DescriptorBufferInfo::new(obj, range)])
     }
     #[inline(always)]
     pub fn storage_buffer(
-        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        range: core::ops::Range<VkDeviceSize>,
+        obj: &'d (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
     ) -> Self {
         Self::StorageBuffer(vec![DescriptorBufferInfo::new(obj, range)])
     }
     #[inline(always)]
     pub fn uniform_buffer_dynamic(
-        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        range: core::ops::Range<VkDeviceSize>,
+        obj: &'d (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
     ) -> Self {
         Self::UniformBufferDynamic(vec![DescriptorBufferInfo::new(obj, range)])
     }
     #[inline(always)]
     pub fn storage_buffer_dynamic(
-        obj: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        range: core::ops::Range<VkDeviceSize>,
+        obj: &'d (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        range: core::ops::Range<brvk::VkDeviceSize>,
     ) -> Self {
         Self::StorageBufferDynamic(vec![DescriptorBufferInfo::new(obj, range)])
     }
     #[inline(always)]
-    pub fn uniform_texel_buffer(obj: &'d (impl VkHandle<Handle = VkBufferView> + ?Sized)) -> Self {
+    pub fn uniform_texel_buffer(obj: &'d (impl VkHandle<Handle = brvk::VkBufferView> + ?Sized)) -> Self {
         Self::UniformTexelBuffer(vec![VkHandleRef::new(obj)])
     }
     #[inline(always)]
-    pub fn storage_texel_buffer(obj: &'d (impl VkHandle<Handle = VkBufferView> + ?Sized)) -> Self {
+    pub fn storage_texel_buffer(obj: &'d (impl VkHandle<Handle = brvk::VkBufferView> + ?Sized)) -> Self {
         Self::StorageTexelBuffer(vec![VkHandleRef::new(obj)])
     }
 }
@@ -699,7 +721,7 @@ impl<'d> DescriptorContents<'d> {
 #[derive(Clone)]
 pub struct DescriptorSetWriteInfo<'s>(pub DescriptorPointer, pub DescriptorContents<'s>);
 impl DescriptorSetWriteInfo<'_> {
-    pub fn make_structure(&self) -> VkWriteDescriptorSet {
+    pub fn make_structure(&self) -> brvk::VkWriteDescriptorSet {
         let (r#type, count) = self.1.type_count();
         let (buffers, images, buffer_views) = match self.1 {
             DescriptorContents::Sampler(ref res)
@@ -720,8 +742,8 @@ impl DescriptorSetWriteInfo<'_> {
             }
         };
 
-        VkWriteDescriptorSet {
-            sType: VkWriteDescriptorSet::TYPE,
+        brvk::VkWriteDescriptorSet {
+            sType: brvk::VkWriteDescriptorSet::TYPE,
             pNext: core::ptr::null(),
             dstSet: self.0.set,
             dstBinding: self.0.binding,
@@ -738,9 +760,9 @@ impl DescriptorSetWriteInfo<'_> {
 #[derive(Clone)]
 pub struct DescriptorSetCopyInfo(pub DescriptorPointer, pub DescriptorPointer, u32);
 impl DescriptorSetCopyInfo {
-    pub fn make_structure(&self) -> VkCopyDescriptorSet {
-        VkCopyDescriptorSet {
-            sType: VkCopyDescriptorSet::TYPE,
+    pub fn make_structure(&self) -> brvk::VkCopyDescriptorSet {
+        brvk::VkCopyDescriptorSet {
+            sType: brvk::VkCopyDescriptorSet::TYPE,
             pNext: core::ptr::null(),
             srcSet: self.0.set,
             srcBinding: self.0.binding,
@@ -756,7 +778,7 @@ impl DescriptorSetCopyInfo {
 #[macro_export]
 macro_rules! DescriptorUpdateTemplateEntry {
     { ($b: expr, $a: expr) .. : [$ty: expr; $c: expr] = $o: expr, $s: expr } => {
-        VkDescriptorUpdateTemplateEntry
+        brvk::VkDescriptorUpdateTemplateEntry
         {
             descriptorType: $ty, descriptorCount: $c,
             dstBinding: $b, dstArrayElement: $a, offset: $o, stride: $s

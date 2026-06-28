@@ -3,9 +3,8 @@
 pub const VK_KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION: usize = 4;
 pub const VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME: &str = "VK_KHR_shader_float_controls";
 
-use super::*;
-use crate::vk2::*;
-use derives::promote_1_2;
+use crate::*;
+use derives::{TypedVulkanSinkStructure, promote_1_2};
 
 #[promote_1_2]
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR: VkStructureType =

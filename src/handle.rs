@@ -1,3 +1,5 @@
+use bedrock_vk::VkRawHandle;
+
 use crate::*;
 
 /// Wrapping a Vulkan Dispatchable/Nondispatchable Handler
@@ -170,30 +172,13 @@ impl<T: VkHandleMut + ?Sized> VkHandleMut for parking_lot::MappedMutexGuard<'_, 
     }
 }
 
-pub trait VkRawHandle {
-    const OBJECT_TYPE: VkObjectType;
-
-    fn raw_handle_value(&self) -> u64;
-}
-impl<T: VkRawHandle> VkRawHandle for Option<T> {
-    const OBJECT_TYPE: VkObjectType = T::OBJECT_TYPE;
-
-    #[inline(always)]
-    fn raw_handle_value(&self) -> u64 {
-        match self {
-            None => 0,
-            Some(x) => x.raw_handle_value(),
-        }
-    }
-}
-
 /// Extension methods(not dyn compatible) for `VkHandle`
 pub trait VkHandleExt: VkHandle {
     /// Checks the equality between vulkan objects by their handle value.
     #[inline(always)]
     fn eq_handle(&self, other: &Self) -> bool
     where
-        Self::Handle: VkRawHandle,
+        Self::Handle: brvk::VkRawHandle,
     {
         self.native_ptr().raw_handle_value() == other.native_ptr().raw_handle_value()
     }
@@ -204,7 +189,7 @@ pub trait VkDeviceChildNonExtDestroyable {
     /// # Safety
     ///
     /// device must be a valid Vulkan device handle and must own this resource.
-    unsafe fn destroy(self, device: crate::vk::VkDevice, allocator: *const crate::vk::VkAllocationCallbacks);
+    unsafe fn destroy(self, device: brvk::VkDevice, allocator: *const brvk::VkAllocationCallbacks);
 }
 
 /// A smart handle to a Vulkan object that holds a source lifetime

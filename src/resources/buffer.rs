@@ -1,33 +1,35 @@
+use bedrock_vk::{self as brvk, TypedVulkanStructure, VkRawHandle, VulkanStructure};
+
 use crate::ffi_helper::slice_as_ptr_empty_null;
 use crate::*;
 use derives::implements;
 
-pub trait Buffer: VkHandle<Handle = VkBuffer> + DeviceChildHandle {}
+pub trait Buffer: VkHandle<Handle = brvk::VkBuffer> + DeviceChildHandle {}
 DerefContainerBracketImpl!(for Buffer {});
 GuardsImpl!(for Buffer {});
 
-pub trait BufferView: VkHandle<Handle = VkBufferView> {}
+pub trait BufferView: VkHandle<Handle = brvk::VkBufferView> {}
 DerefContainerBracketImpl!(for BufferView {});
 GuardsImpl!(for BufferView {});
 
 /// Opaque handle to a buffer object(constructed via [`BufferDesc`])
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkBuffer::OBJECT_TYPE)]
-pub struct BufferObject<Device: VkHandle<Handle = VkDevice>>(pub(crate) VkBuffer, pub(crate) Device);
+#[VkObject(type = brvk::VkBuffer::OBJECT_TYPE)]
+pub struct BufferObject<Device: VkHandle<Handle = brvk::VkDevice>>(pub(crate) brvk::VkBuffer, pub(crate) Device);
 #[implements]
-impl<Device: VkHandle<Handle = VkDevice>> Drop for BufferObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Drop for BufferObject<Device> {
     #[inline(always)]
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_buffer(self.1.native_ptr(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_buffer(self.1.as_transparent_ref(), VkHandleRefMut::dangling(self.0), None);
         }
     }
 }
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Sync> Sync for BufferObject<Device> {}
-unsafe impl<Device: VkHandle<Handle = VkDevice> + Send> Send for BufferObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> DeviceChildHandle for BufferObject<Device> {
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Sync> Sync for BufferObject<Device> {}
+unsafe impl<Device: VkHandle<Handle = brvk::VkDevice> + Send> Send for BufferObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> DeviceChildHandle for BufferObject<Device> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.native_ptr()
     }
 }
@@ -39,8 +41,8 @@ impl<Device: crate::Device> DeviceChild for BufferObject<Device> {
         &self.1
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> Buffer for BufferObject<Device> {}
-impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> Buffer for BufferObject<Device> {}
+impl<Device: VkHandle<Handle = brvk::VkDevice>> MemoryBound for BufferObject<Device> {
     #[cfg(feature = "VK_KHR_get_memory_requirements2")]
     type MemoryRequirementsInfo2<'b>
         = BufferMemoryRequirementsInfo2<'b, Self>
@@ -48,12 +50,13 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
         Device: 'b;
 
     #[implements]
-    fn requirements(&self) -> VkMemoryRequirements {
-        let mut p = core::mem::MaybeUninit::uninit();
+    #[inline(always)]
+    fn requirements(&self) -> brvk::VkMemoryRequirements {
         unsafe {
-            crate::vkfn::get_buffer_memory_requirements(self.1.native_ptr(), self.0, p.as_mut_ptr());
-
-            p.assume_init()
+            crate::vkfn_wrapper::get_buffer_memory_requirements(
+                self.device_transparent_ref(),
+                self.as_transparent_ref(),
+            )
         }
     }
 
@@ -62,29 +65,36 @@ impl<Device: VkHandle<Handle = VkDevice>> MemoryBound for BufferObject<Device> {
         BufferMemoryRequirementsInfo2::new(self)
     }
 
-    #[inline(always)]
     #[implements]
-    fn bind(&mut self, memory: &(impl VkHandle<Handle = VkDeviceMemory> + ?Sized), offset: usize) -> crate::Result<()>
+    #[inline(always)]
+    fn bind(
+        &mut self,
+        memory: &(impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
+        offset: usize,
+    ) -> crate::Result<()>
     where
         Self: VkHandleMut,
     {
         unsafe {
-            crate::vkfn::bind_buffer_memory(self.1.native_ptr(), self.0, memory.native_ptr(), offset as _)
-                .into_result()
-                .map(drop)
+            crate::vkfn_wrapper::bind_buffer_memory(
+                self.1.as_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                memory.as_transparent_ref(),
+                offset as _,
+            )
         }
     }
 }
-impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice>> BufferObject<Device> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkBuffer, parent: Device) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkBuffer, parent: Device) -> Self {
         Self(handle, parent)
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkBuffer, Device) {
+    pub const fn unmanage(self) -> (brvk::VkBuffer, Device) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -92,7 +102,7 @@ impl<Device: VkHandle<Handle = VkDevice>> BufferObject<Device> {
         (v, p)
     }
 }
-impl<Device: VkHandle<Handle = VkDevice> + Clone> BufferObject<&'_ Device> {
+impl<Device: VkHandle<Handle = brvk::VkDevice> + Clone> BufferObject<&'_ Device> {
     /// Owning parent object by cloning it.
     #[inline(always)]
     pub fn clone_parent(self) -> BufferObject<Device> {
@@ -107,8 +117,8 @@ impl<Device: crate::Device> BufferObject<Device> {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements]
     #[inline]
     pub fn new(device: Device, info: &BufferCreateInfo) -> crate::Result<Self> {
@@ -117,14 +127,18 @@ impl<Device: crate::Device> BufferObject<Device> {
 }
 
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VkBufferView::OBJECT_TYPE)]
+#[VkObject(type = brvk::VkBufferView::OBJECT_TYPE)]
 /// Opaque handle to a buffer view object
-pub struct BufferViewObject<Buffer: DeviceChildHandle>(VkBufferView, Buffer);
+pub struct BufferViewObject<Buffer: DeviceChildHandle>(brvk::VkBufferView, Buffer);
 #[implements]
 impl<Buffer: DeviceChildHandle> Drop for BufferViewObject<Buffer> {
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_buffer_view(self.1.device_handle(), self.0, core::ptr::null());
+            crate::vkfn_wrapper::destroy_buffer_view(
+                self.1.device_transparent_ref(),
+                VkHandleRefMut::dangling(self.0),
+                None,
+            );
         }
     }
 }
@@ -132,7 +146,7 @@ unsafe impl<Buffer: DeviceChildHandle + Sync> Sync for BufferViewObject<Buffer> 
 unsafe impl<Buffer: DeviceChildHandle + Send> Send for BufferViewObject<Buffer> {}
 impl<Buffer: DeviceChildHandle> DeviceChildHandle for BufferViewObject<Buffer> {
     #[inline(always)]
-    fn device_handle(&self) -> VkDevice {
+    fn device_handle(&self) -> brvk::VkDevice {
         self.1.device_handle()
     }
 }
@@ -157,12 +171,12 @@ impl<Buffer: DeviceChildHandle> BufferViewObject<Buffer> {
     /// Constructs from raw values
     /// # Safety
     /// the resource must be created from the parent
-    pub const unsafe fn manage(handle: VkBufferView, parent: Buffer) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkBufferView, parent: Buffer) -> Self {
         Self(handle, parent)
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> (VkBufferView, Buffer) {
+    pub const fn unmanage(self) -> (brvk::VkBufferView, Buffer) {
         let v = self.0;
         let p = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -185,8 +199,8 @@ impl<Buffer: DeviceChild> BufferViewObject<Buffer> {
     /// # Failure
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     pub fn new(buffer: Buffer, info: &BufferViewCreateInfo) -> crate::Result<Self> {
@@ -199,18 +213,18 @@ impl<Buffer: DeviceChild> BufferViewObject<Buffer> {
 /// Builder structure specifying the parameters of a newly created buffer object
 #[repr(transparent)]
 #[derive(Clone)]
-pub struct BufferCreateInfo<'s>(VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
+pub struct BufferCreateInfo<'s>(brvk::VkBufferCreateInfo, core::marker::PhantomData<Option<&'s [u32]>>);
 impl<'s> BufferCreateInfo<'s> {
     /// Creates a new buffer description with provided byte-size and usage flags
     pub const fn new(byte_size: usize, usage: BufferUsage) -> Self {
         Self(
-            VkBufferCreateInfo {
-                sType: VkBufferCreateInfo::TYPE,
+            brvk::VkBufferCreateInfo {
+                sType: brvk::VkBufferCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 size: byte_size as _,
                 usage: usage.0,
-                sharingMode: VK_SHARING_MODE_EXCLUSIVE,
+                sharingMode: brvk::VK_SHARING_MODE_EXCLUSIVE,
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
             },
@@ -227,23 +241,23 @@ impl<'s> BufferCreateInfo<'s> {
     /// Wraps raw vulkan structure
     /// # Safety
     /// This function does not check any references/constraints
-    pub const unsafe fn from_raw(s: VkBufferCreateInfo) -> Self {
+    pub const unsafe fn from_raw(s: brvk::VkBufferCreateInfo) -> Self {
         Self(s, core::marker::PhantomData)
     }
 
     /// Unwraps raw vulkan structure
     /// # Safety
     /// Lifetime constraints are removed
-    pub const unsafe fn into_raw(self) -> VkBufferCreateInfo {
+    pub const unsafe fn into_raw(self) -> brvk::VkBufferCreateInfo {
         self.0
     }
 
     /// A list of queue families that will access this buffer
     pub const fn sharing_queue_families(mut self, indices: &'s [u32]) -> Self {
         self.0.sharingMode = if indices.is_empty() {
-            VK_SHARING_MODE_EXCLUSIVE
+            brvk::VK_SHARING_MODE_EXCLUSIVE
         } else {
-            VK_SHARING_MODE_CONCURRENT
+            brvk::VK_SHARING_MODE_CONCURRENT
         };
         self.0.queueFamilyIndexCount = indices.len() as _;
         self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(indices);
@@ -269,7 +283,7 @@ impl<'s> BufferCreateInfo<'s> {
         self
     }
 
-    pub const fn size(&self) -> VkDeviceSize {
+    pub const fn size(&self) -> brvk::VkDeviceSize {
         self.0.size
     }
 
@@ -278,9 +292,9 @@ impl<'s> BufferCreateInfo<'s> {
     }
 }
 impl crate::VulkanStructureProvider for BufferCreateInfo<'_> {
-    type RootStructure = VkBufferCreateInfo;
+    type RootStructure = brvk::VkBufferCreateInfo;
 
-    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut crate::GenericVulkanStructure {
+    fn build<'r, 's: 'r>(&'s mut self, root: &'s mut Self::RootStructure) -> &'r mut brvk::GenericVulkanStructure {
         *root = self.0.clone();
         root.as_generic_mut()
     }
@@ -289,19 +303,19 @@ impl crate::VulkanStructureProvider for BufferCreateInfo<'_> {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct BufferViewCreateInfo<'d>(
-    VkBufferViewCreateInfo,
-    core::marker::PhantomData<&'d dyn VkHandle<Handle = VkBuffer>>,
+    brvk::VkBufferViewCreateInfo,
+    core::marker::PhantomData<&'d dyn VkHandle<Handle = brvk::VkBuffer>>,
 );
 impl<'d> BufferViewCreateInfo<'d> {
     #[inline]
     pub fn new(
-        buffer: &'d (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        format: VkFormat,
-        range: core::ops::Range<VkDeviceSize>,
+        buffer: &'d (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        format: brvk::VkFormat,
+        range: core::ops::Range<brvk::VkDeviceSize>,
     ) -> Self {
         Self(
-            VkBufferViewCreateInfo {
-                sType: VkBufferViewCreateInfo::TYPE,
+            brvk::VkBufferViewCreateInfo {
+                sType: brvk::VkBufferViewCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 buffer: buffer.native_ptr(),
@@ -315,27 +329,27 @@ impl<'d> BufferViewCreateInfo<'d> {
 
     /// # Safety
     ///
-    /// `raw` must be a valid [`VkBufferViewCreateInfo`] struct.
-    pub const unsafe fn from_raw(raw: VkBufferViewCreateInfo) -> Self {
+    /// `raw` must be a valid [`brvk::VkBufferViewCreateInfo`] struct.
+    pub const unsafe fn from_raw(raw: brvk::VkBufferViewCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkBufferViewCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkBufferViewCreateInfo {
         self.0
     }
 }
 
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-pub struct BufferMemoryRequirementsInfo2<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b>(
-    VkBufferMemoryRequirementsInfo2KHR,
+pub struct BufferMemoryRequirementsInfo2<'b, Buffer: VkHandle<Handle = brvk::VkBuffer> + 'b>(
+    brvk::VkBufferMemoryRequirementsInfo2KHR,
     &'b Buffer,
 );
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2<'b, Buffer> {
+impl<'b, Buffer: VkHandle<Handle = brvk::VkBuffer> + 'b> BufferMemoryRequirementsInfo2<'b, Buffer> {
     pub fn new(buffer: &'b Buffer) -> Self {
         Self(
-            VkBufferMemoryRequirementsInfo2KHR {
-                sType: VkBufferMemoryRequirementsInfo2KHR::TYPE,
+            brvk::VkBufferMemoryRequirementsInfo2KHR {
+                sType: brvk::VkBufferMemoryRequirementsInfo2KHR::TYPE,
                 pNext: core::ptr::null(),
                 buffer: buffer.native_ptr(),
             },
@@ -344,20 +358,19 @@ impl<'b, Buffer: VkHandle<Handle = VkBuffer> + 'b> BufferMemoryRequirementsInfo2
     }
 
     #[implements("Allow1_1APIs")]
-    pub fn query(self, sink: &mut core::mem::MaybeUninit<VkMemoryRequirements2KHR>)
+    #[inline(always)]
+    pub fn query(self, sink: &mut core::mem::MaybeUninit<brvk::VkMemoryRequirements2KHR>)
     where
         Buffer: crate::DeviceChild,
     {
-        unsafe {
-            crate::vkfn::get_buffer_memory_requirements2(self.1.device().native_ptr(), &self.0, sink.as_mut_ptr());
-        }
+        unsafe { crate::vkfn_wrapper::get_buffer_memory_requirements2(self.1.device_transparent_ref(), &self, sink) }
     }
 }
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
-impl<Buffer: VkHandle<Handle = VkBuffer>> AsRef<VkBufferMemoryRequirementsInfo2KHR>
+impl<Buffer: VkHandle<Handle = brvk::VkBuffer>> AsRef<brvk::VkBufferMemoryRequirementsInfo2KHR>
     for BufferMemoryRequirementsInfo2<'_, Buffer>
 {
-    fn as_ref(&self) -> &VkBufferMemoryRequirementsInfo2KHR {
+    fn as_ref(&self) -> &brvk::VkBufferMemoryRequirementsInfo2KHR {
         &self.0
     }
 }
@@ -365,19 +378,19 @@ impl<Buffer: VkHandle<Handle = VkBuffer>> AsRef<VkBufferMemoryRequirementsInfo2K
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[repr(transparent)]
 pub struct BindBufferMemoryInfo<'b>(
-    VkBindBufferMemoryInfoKHR,
-    core::marker::PhantomData<(VkHandleRef<'b, VkBuffer>, VkHandleRef<'b, VkDeviceMemory>)>,
+    brvk::VkBindBufferMemoryInfoKHR,
+    core::marker::PhantomData<(VkHandleRef<'b, brvk::VkBuffer>, VkHandleRef<'b, brvk::VkDeviceMemory>)>,
 );
 #[cfg(feature = "VK_KHR_bind_memory2")]
 impl<'b> BindBufferMemoryInfo<'b> {
     pub fn new(
-        buffer: &'b (impl VkHandle<Handle = VkBuffer> + ?Sized),
-        memory: &'b (impl VkHandle<Handle = VkDeviceMemory> + ?Sized),
-        offset: DeviceSize,
+        buffer: &'b (impl VkHandle<Handle = brvk::VkBuffer> + ?Sized),
+        memory: &'b (impl VkHandle<Handle = brvk::VkDeviceMemory> + ?Sized),
+        offset: brvk::VkDeviceSize,
     ) -> Self {
         Self(
-            VkBindBufferMemoryInfoKHR {
-                sType: VkBindBufferMemoryInfoKHR::TYPE,
+            brvk::VkBindBufferMemoryInfoKHR {
+                sType: brvk::VkBindBufferMemoryInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 buffer: buffer.native_ptr(),
                 memory: memory.native_ptr(),
@@ -390,11 +403,11 @@ impl<'b> BindBufferMemoryInfo<'b> {
     /// # Safety
     ///
     /// `raw` must be a valid [`VkBindBufferMemoryInfoKHR`] struct.
-    pub const unsafe fn from_raw(raw: VkBindBufferMemoryInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkBindBufferMemoryInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkBindBufferMemoryInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkBindBufferMemoryInfoKHR {
         self.0
     }
 }
@@ -402,31 +415,31 @@ impl<'b> BindBufferMemoryInfo<'b> {
 /// Bitmask specifying allowed usage of a buffer
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 #[repr(transparent)]
-pub struct BufferUsage(pub VkBufferUsageFlags);
+pub struct BufferUsage(pub brvk::VkBufferUsageFlags);
 impl BufferUsage {
     /// Specifies that the buffer can be used as the source of a transfer command
-    pub const TRANSFER_SRC: Self = Self(VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+    pub const TRANSFER_SRC: Self = Self(brvk::VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
     /// Specifies that the buffer can be used as the destination of a transfer command
-    pub const TRANSFER_DEST: Self = Self(VK_BUFFER_USAGE_TRANSFER_DST_BIT);
+    pub const TRANSFER_DEST: Self = Self(brvk::VK_BUFFER_USAGE_TRANSFER_DST_BIT);
     /// Specifies that the buffer can be used to create a `BufferView` suitable for
-    /// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`
-    pub const UNIFORM_TEXEL_BUFFER: Self = Self(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT);
+    /// occupying a `DescriptorSet` slot of type `brvk::VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`
+    pub const UNIFORM_TEXEL_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT);
     /// Specifies that the buffer can be used to create a `BufferView` suitable for
-    /// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`
-    pub const STORAGE_TEXEL_BUFFER: Self = Self(VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT);
+    /// occupying a `DescriptorSet` slot of type `brvk::VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`
+    pub const STORAGE_TEXEL_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT);
     /// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for
-    /// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`
-    pub const UNIFORM_BUFFER: Self = Self(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+    /// occupying a `DescriptorSet` slot either of type `brvk::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `brvk::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`
+    pub const UNIFORM_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
     /// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for
-    /// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`
-    pub const STORAGE_BUFFER: Self = Self(VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+    /// occupying a `DescriptorSet` slot either of type `brvk::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `brvk::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`
+    pub const STORAGE_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
     /// Specifies that the buffer is suitable for passing as the `buffer` parameter to `DrawCommandBuffer::bind_index_buffer`
-    pub const INDEX_BUFFER: Self = Self(VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+    pub const INDEX_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
     /// Specifies that the buffer is suitable for passing as an element of the `buffers` array to `DrawCommandBuffer::bind_vertex_buffers`
-    pub const VERTEX_BUFFER: Self = Self(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+    pub const VERTEX_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
     /// Specifies that the buffer is suitable for passing as the `buffer` parameter to
     /// `DrawCommandBuffer::draw_indirect`, `DrawCommandBuffer::draw_indexed_indirect`, or `ComputeCommandBuffer::dispatch_indirect`
-    pub const INDIRECT_BUFFER: Self = Self(VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT);
+    pub const INDIRECT_BUFFER: Self = Self(brvk::VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT);
 
     /// Specifies that the buffer can be used as the source of a transfer command
     pub const fn transfer_src(self) -> Self {
@@ -437,22 +450,22 @@ impl BufferUsage {
         Self(self.0 | Self::TRANSFER_DEST.0)
     }
     /// Specifies that the buffer can be used to create a `BufferView` suitable for
-    /// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`
+    /// occupying a `DescriptorSet` slot of type `brvk::VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER`
     pub const fn uniform_texel_buffer(self) -> Self {
         Self(self.0 | Self::UNIFORM_TEXEL_BUFFER.0)
     }
     /// Specifies that the buffer can be used to create a `BufferView` suitable for
-    /// occupying a `DescriptorSet` slot of type `VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`
+    /// occupying a `DescriptorSet` slot of type `brvk::VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER`
     pub const fn storage_texel_buffer(self) -> Self {
         Self(self.0 | Self::STORAGE_TEXEL_BUFFER.0)
     }
     /// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for
-    /// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`
+    /// occupying a `DescriptorSet` slot either of type `brvk::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER` or `brvk::VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC`
     pub const fn uniform_buffer(self) -> Self {
         Self(self.0 | Self::UNIFORM_BUFFER.0)
     }
     /// Specifies that the buffer can be used in a `DescriptorBufferInfo` suitable for
-    /// occupying a `DescriptorSet` slot either of type `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`
+    /// occupying a `DescriptorSet` slot either of type `brvk::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER` or `brvk::VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC`
     pub const fn storage_buffer(self) -> Self {
         Self(self.0 | Self::STORAGE_BUFFER.0)
     }
@@ -476,34 +489,34 @@ impl BufferUsage {
     }
 
     /// Generates a default access type mask
-    pub const fn default_access_mask(self) -> VkAccessFlags {
+    pub const fn default_access_mask(self) -> brvk::VkAccessFlags {
         let mut bits = 0;
         if (self.0 & Self::TRANSFER_SRC.0) != 0 {
-            bits |= VK_ACCESS_TRANSFER_READ_BIT;
+            bits |= brvk::VK_ACCESS_TRANSFER_READ_BIT;
         }
         if (self.0 & Self::TRANSFER_DEST.0) != 0 {
-            bits |= VK_ACCESS_TRANSFER_WRITE_BIT;
+            bits |= brvk::VK_ACCESS_TRANSFER_WRITE_BIT;
         }
         if (self.0 & Self::UNIFORM_TEXEL_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_UNIFORM_READ_BIT;
+            bits |= brvk::VK_ACCESS_UNIFORM_READ_BIT;
         }
         if (self.0 & Self::STORAGE_TEXEL_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_UNIFORM_READ_BIT;
+            bits |= brvk::VK_ACCESS_UNIFORM_READ_BIT;
         }
         if (self.0 & Self::UNIFORM_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_UNIFORM_READ_BIT;
+            bits |= brvk::VK_ACCESS_UNIFORM_READ_BIT;
         }
         if (self.0 & Self::STORAGE_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_UNIFORM_READ_BIT;
+            bits |= brvk::VK_ACCESS_UNIFORM_READ_BIT;
         }
         if (self.0 & Self::INDEX_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_INDEX_READ_BIT;
+            bits |= brvk::VK_ACCESS_INDEX_READ_BIT;
         }
         if (self.0 & Self::VERTEX_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+            bits |= brvk::VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
         }
         if (self.0 & Self::INDIRECT_BUFFER.0) != 0 {
-            bits |= VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+            bits |= brvk::VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
         }
         bits
     }
@@ -531,7 +544,7 @@ impl core::ops::BitOrAssign for BufferUsage {
         self.0 |= other.0;
     }
 }
-impl From<BufferUsage> for VkBufferUsageFlags {
+impl From<BufferUsage> for brvk::VkBufferUsageFlags {
     #[inline(always)]
     fn from(value: BufferUsage) -> Self {
         value.0
@@ -545,14 +558,14 @@ pub enum BufferSparseBinding {
     /// No sparse binding features
     None = 0,
     /// the buffer will be backed using sparse memory binding
-    Bound = VK_BUFFER_CREATE_SPARSE_BINDING_BIT as _,
+    Bound = brvk::VK_BUFFER_CREATE_SPARSE_BINDING_BIT as _,
     /// the buffer can be partially backed using sparse memory binding.
-    Residency = (VK_BUFFER_CREATE_SPARSE_BINDING_BIT | VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT) as _,
+    Residency = (brvk::VK_BUFFER_CREATE_SPARSE_BINDING_BIT | brvk::VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT) as _,
     /// the buffer will be backed using sparse memory binding with memory ranges
     /// that might also simultaneously be backing another buffer (or another portion of the same buffer)
-    Aliased = (VK_BUFFER_CREATE_SPARSE_BINDING_BIT | VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _,
+    Aliased = (brvk::VK_BUFFER_CREATE_SPARSE_BINDING_BIT | brvk::VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _,
     /// Aliased and Residency
-    Both = (VK_BUFFER_CREATE_SPARSE_BINDING_BIT
-        | VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT
-        | VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _,
+    Both = (brvk::VK_BUFFER_CREATE_SPARSE_BINDING_BIT
+        | brvk::VK_BUFFER_CREATE_SPARSE_RESIDENCY_BIT
+        | brvk::VK_BUFFER_CREATE_SPARSE_ALIASED_BIT) as _,
 }

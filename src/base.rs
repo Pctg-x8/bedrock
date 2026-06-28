@@ -1,7 +1,9 @@
 //! Vulkan Base Objects(Instance/PhysicalDevice)
 
+use crate::error::translate_vk_result;
 use crate::ffi_helper::{CStrFFIRef, slice_as_ptr_empty_null};
 use crate::*;
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
 use core::ffi::CStr;
 use derives::implements;
 
@@ -32,7 +34,7 @@ impl Version {
 
     /// Construct an object from discrete values
     pub const fn with_variant(variant: u8, major: u16, minor: u16, patch: u16) -> Self {
-        Self(crate::vk::VK_MAKE_VERSION(variant, major, minor, patch))
+        Self(brvk::VK_MAKE_VERSION(variant, major, minor, patch))
     }
 
     /// Construct an object from a raw value
@@ -47,22 +49,22 @@ impl Version {
 
     /// Version variant number
     pub const fn variant(&self) -> u8 {
-        crate::vk::VK_VARIANT_VERSION(self.0)
+        brvk::VK_VARIANT_VERSION(self.0)
     }
 
     /// Major version number
     pub const fn major(&self) -> u16 {
-        crate::vk::VK_MAJOR_VERSION(self.0)
+        brvk::VK_MAJOR_VERSION(self.0)
     }
 
     /// Minor version number
     pub const fn minor(&self) -> u16 {
-        crate::vk::VK_MINOR_VERSION(self.0)
+        brvk::VK_MINOR_VERSION(self.0)
     }
 
     /// Patch version number
     pub const fn patch(&self) -> u16 {
-        crate::vk::VK_PATCH_VERSION(self.0)
+        brvk::VK_PATCH_VERSION(self.0)
     }
 }
 impl core::fmt::Display for Version {
@@ -77,14 +79,16 @@ impl core::fmt::Display for Version {
 /// # Failures
 /// On failure, this command returns
 ///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
 #[inline]
 #[implements]
 pub fn instance_version() -> crate::Result<Version> {
     #[cfg(feature = "Allow1_1APIs")]
     unsafe {
+        use crate::error::translate_vk_result;
+
         let mut sink = 0;
-        crate::vkfn::enumerate_instance_version(&mut sink).into_result()?;
+        translate_vk_result(brvk::fns::enumerate_instance_version(&mut sink))?;
         Ok(Version(sink))
     }
     #[cfg(not(feature = "Allow1_1APIs"))]
@@ -95,21 +99,21 @@ pub fn instance_version() -> crate::Result<Version> {
 }
 
 #[implements]
-type InstanceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, VkInstance>;
+type InstanceResolvedFn<F> = crate::resolver::ResolvedFnCell<F, brvk::VkInstance>;
 #[implements]
-impl crate::resolver::ResolverInterface for VkInstance {
+impl crate::resolver::ResolverInterface for brvk::VkInstance {
     #[inline(always)]
-    unsafe fn load_symbol_unconstrainted<T: crate::resolver::FromPtr>(&self, name: &core::ffi::CStr) -> T {
+    unsafe fn load_symbol_unconstrainted<T: brvk::FromPtr>(&self, name: &core::ffi::CStr) -> T {
         unsafe {
-            T::from_ptr(core::mem::transmute::<Option<PFN_vkVoidFunction>, *const _>(
-                crate::vkfn::get_instance_proc_addr(*self, name.as_ptr() as _),
+            T::from_ptr(core::mem::transmute::<Option<brvk::PFN_vkVoidFunction>, *const _>(
+                brvk::fns::get_instance_proc_addr(*self, name.as_ptr() as _),
             ))
         }
     }
 
-    #[tracing::instrument(name = "<VkInstance as ResolverInterface>::load_function_unconstrainted", skip(self), fields(name = ?F::NAME_CSTR))]
-    unsafe fn load_function_unconstrainted<F: crate::resolver::PFN>(&self) -> F {
-        match unsafe { crate::vkfn::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _) } {
+    #[tracing::instrument(name = "<brvk::VkInstance as ResolverInterface>::load_function_unconstrainted", skip(self), fields(name = ?F::NAME_CSTR))]
+    unsafe fn load_function_unconstrainted<F: brvk::PFN>(&self) -> F {
+        match unsafe { brvk::fns::get_instance_proc_addr(*self, F::NAME_CSTR.as_ptr() as _) } {
             Some(x) => unsafe { F::from_void_fn(x) },
             None => {
                 tracing::error!("instance function not found, bedrock could not continue");
@@ -123,14 +127,14 @@ impl crate::resolver::ResolverInterface for VkInstance {
 ///
 /// ## Platform Dependent Methods: Presentation Support checking functions
 ///
-/// * `xlib_presentation_support(&self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool`: VK_KHR_xlib_surface
-/// * `xcb_presentation_support(&self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool`: VK_KHR_xcb_surface
-/// * `wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool`: VK_KHR_wayland_surface
-/// * `win32_presentation_support(&self, queue_family: u32) -> bool`: VK_KHR_win32_surface
+/// * `xlib_presentation_support(&self, queue_family: u32, display: *mut x11::xlib::Display, visual: x11::xlib::VisualID) -> bool`: brvk::VK_KHR_xlib_surface
+/// * `xcb_presentation_support(&self, queue_family: u32, connection: *mut xcb::ffi::xcb_connection_t, visual: xcb::ffi::xcb_visualid_t) -> bool`: brvk::VK_KHR_xcb_surface
+/// * `wayland_presentation_support(&self, queue_family: u32, display: *mut wayland_client::sys::wl_display) -> bool`: brvk::VK_KHR_wayland_surface
+/// * `win32_presentation_support(&self, queue_family: u32) -> bool`: brvk::VK_KHR_win32_surface
 /// * Methods for Android and Mir surfaces are not implemented
 #[derive(VkHandle, VkObject, crate::InstanceChild, crate::InstanceChildTransferrable, Clone)]
-#[VkObject(type = VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
-pub struct PhysicalDeviceObject<Owner: Instance>(VkPhysicalDevice, #[parent] Owner);
+#[VkObject(type = brvk::VK_OBJECT_TYPE_PHYSICAL_DEVICE)]
+pub struct PhysicalDeviceObject<Owner: Instance>(brvk::VkPhysicalDevice, #[parent] Owner);
 unsafe impl<Owner: Instance + Sync> Sync for PhysicalDeviceObject<Owner> {}
 unsafe impl<Owner: Instance + Send> Send for PhysicalDeviceObject<Owner> {}
 impl<Owner: Instance> PhysicalDevice for PhysicalDeviceObject<Owner> {}
@@ -138,11 +142,11 @@ impl<Owner: Instance> PhysicalDeviceObject<Owner> {
     /// # Safety
     ///
     /// passed handles must be valid, and owned by the same instance as `owner`.
-    pub const unsafe fn manage(handle: VkPhysicalDevice, owner: Owner) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkPhysicalDevice, owner: Owner) -> Self {
         Self(handle, owner)
     }
 
-    pub const fn unmanage(self) -> (VkPhysicalDevice, Owner) {
+    pub const fn unmanage(self) -> (brvk::VkPhysicalDevice, Owner) {
         let handle = self.0;
         let owner = unsafe { core::ptr::read(&self.1) };
         core::mem::forget(self);
@@ -158,7 +162,7 @@ impl<Owner: Instance + Clone> PhysicalDeviceObject<&'_ Owner> {
     }
 }
 
-pub struct IterPhysicalDevices<'i, Source: Instance + 'i + ?Sized>(Vec<VkPhysicalDevice>, usize, &'i Source);
+pub struct IterPhysicalDevices<'i, Source: Instance + 'i + ?Sized>(Vec<brvk::VkPhysicalDevice>, usize, &'i Source);
 impl<'i, Source: Instance + 'i + ?Sized> Iterator for IterPhysicalDevices<'i, Source> {
     type Item = PhysicalDeviceObject<&'i Source>;
 
@@ -197,17 +201,17 @@ impl<'i, Source: Instance + 'i + ?Sized> DoubleEndedIterator for IterPhysicalDev
 /// # Failures
 /// On failure, this command returns
 ///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
 #[implements("alloc")]
-pub fn instance_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties>> {
+pub fn instance_layer_properties_alloc() -> crate::Result<Vec<brvk::VkLayerProperties>> {
     let n = crate::vkfn_wrapper::instance_layer_property_count()?;
     if n == 0 {
         // no items
         return Ok(crate::alloc::empty_sink_buffer());
     }
 
-    let mut xs = Vec::with_capacity(n as _);
+    let mut xs = crate::alloc::empty_reserved_buffer(n as _);
     crate::vkfn_wrapper::instance_layer_properties(xs.spare_capacity_mut())?;
     unsafe {
         xs.set_len(n as _);
@@ -220,18 +224,20 @@ pub fn instance_layer_properties_alloc() -> crate::Result<Vec<VkLayerProperties>
 /// # Failures
 /// On failure, this command returns
 ///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `VK_ERROR_LAYER_NOT_PRESENT`
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
 #[implements("alloc")]
-pub fn instance_extension_properties_alloc(layer_name: Option<&CStr>) -> crate::Result<Vec<VkExtensionProperties>> {
+pub fn instance_extension_properties_alloc(
+    layer_name: Option<&CStr>,
+) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
     let n = crate::vkfn_wrapper::instance_extension_property_count(layer_name)? as usize;
     if n == 0 {
         // no items
         return Ok(crate::alloc::empty_sink_buffer());
     }
 
-    let mut xs = Vec::with_capacity(n);
+    let mut xs = crate::alloc::empty_reserved_buffer(n);
     crate::vkfn_wrapper::instance_extension_properties(layer_name, xs.spare_capacity_mut())?;
     unsafe {
         xs.set_len(n);
@@ -244,24 +250,26 @@ pub fn instance_extension_properties_alloc(layer_name: Option<&CStr>) -> crate::
 /// # Failures
 /// On failure, this command returns
 ///
-/// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-/// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-/// * `VK_ERROR_LAYER_NOT_PRESENT`
+/// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+/// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+/// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
 #[implements("alloc")]
-pub fn instance_extension_properties_str_alloc(layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
+pub fn instance_extension_properties_str_alloc(
+    layer_name: Option<&str>,
+) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
     instance_extension_properties_alloc(layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref())
 }
 
 #[repr(transparent)]
-pub struct ApplicationInfo<'d>(VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
+pub struct ApplicationInfo<'d>(brvk::VkApplicationInfo, core::marker::PhantomData<&'d CStr>);
 impl<'d> ApplicationInfo<'d> {
     #[inline(always)]
     pub const fn new(app_name: &'d CStr, app_version: Version, engine_name: &'d CStr, engine_version: Version) -> Self {
         Self(
-            VkApplicationInfo {
-                sType: VkApplicationInfo::TYPE,
+            brvk::VkApplicationInfo {
+                sType: brvk::VkApplicationInfo::TYPE,
                 pNext: core::ptr::null(),
-                apiVersion: VK_API_VERSION_1_0,
+                apiVersion: brvk::VK_API_VERSION_1_0,
                 pApplicationName: app_name.as_ptr(),
                 applicationVersion: app_version.0,
                 pEngineName: engine_name.as_ptr(),
@@ -280,7 +288,7 @@ impl<'d> ApplicationInfo<'d> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[bitflags_newtype]
-pub struct InstanceCreateFlags(VkInstanceCreateFlags);
+pub struct InstanceCreateFlags(brvk::VkInstanceCreateFlags);
 impl InstanceCreateFlags {
     /// Empty bits.
     pub const EMPTY: Self = Self(0);
@@ -288,15 +296,15 @@ impl InstanceCreateFlags {
     #[cfg(feature = "VK_KHR_portability_enumeration")]
     /// The instance will enumerate available Vulkan Portability-compliant physical devices and groups
     /// in addition to the Vulkan physical devices and groups that are enumerated by default.
-    pub const ENUMERATE_PORTABILITY: Self = Self(VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR);
+    pub const ENUMERATE_PORTABILITY: Self = Self(brvk::VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR);
 }
 
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct InstanceCreateInfo<'d>(
-    VkInstanceCreateInfo,
+    brvk::VkInstanceCreateInfo,
     core::marker::PhantomData<(
-        Option<&'d dyn VulkanStructure>,
+        Option<&'d dyn brvk::VulkanStructure>,
         &'d ApplicationInfo<'d>,
         &'d [CStrFFIRef<'d>],
     )>,
@@ -308,8 +316,8 @@ impl<'d> InstanceCreateInfo<'d> {
         extensions: &'d [CStrFFIRef<'d>],
     ) -> Self {
         Self(
-            VkInstanceCreateInfo {
-                sType: VkInstanceCreateInfo::TYPE,
+            brvk::VkInstanceCreateInfo {
+                sType: brvk::VkInstanceCreateInfo::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 pApplicationInfo: core::ptr::from_ref(application_info).cast(),
@@ -324,17 +332,17 @@ impl<'d> InstanceCreateInfo<'d> {
 
     /// # Safety
     ///
-    /// raw must be a valid VkInstanceCreateInfo struct.
-    pub const unsafe fn from_raw(raw: VkInstanceCreateInfo) -> Self {
+    /// raw must be a valid brvk::VkInstanceCreateInfo struct.
+    pub const unsafe fn from_raw(raw: brvk::VkInstanceCreateInfo) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkInstanceCreateInfo {
+    pub const fn into_raw(self) -> brvk::VkInstanceCreateInfo {
         self.0
     }
 
     #[inline(always)]
-    pub fn with_next(mut self, next: &'d (impl VulkanStructure + ?Sized)) -> Self {
+    pub fn with_next(mut self, next: &'d (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next.as_generic() as *const _ as _;
         self
     }
@@ -347,10 +355,10 @@ impl<'d> InstanceCreateInfo<'d> {
 
 /// Opaque handle to a instance object
 #[derive(VkHandle, VkObject)]
-#[VkObject(type = VK_OBJECT_TYPE_INSTANCE)]
+#[VkObject(type = brvk::VK_OBJECT_TYPE_INSTANCE)]
 pub struct InstanceObject {
     #[handle]
-    handle: VkInstance,
+    handle: brvk::VkInstance,
     #[cfg(feature = "Implements")]
     ext: InstanceExtFunctions,
 }
@@ -360,7 +368,7 @@ unsafe impl Send for InstanceObject {}
 impl Drop for InstanceObject {
     fn drop(&mut self) {
         unsafe {
-            crate::vkfn::destroy_instance(self.handle, core::ptr::null());
+            brvk::fns::destroy_instance(self.handle, core::ptr::null());
         }
     }
 }
@@ -370,12 +378,12 @@ impl InstanceObject {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_LAYER_NOT_PRESENT`
-    /// * `VK_ERROR_EXTENSION_NOT_PRESENT`
-    /// * `VK_ERROR_INCOMPATIBLE_DRIVER`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
+    /// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
+    /// * `brvk::VK_ERROR_EXTENSION_NOT_PRESENT`
+    /// * `brvk::VK_ERROR_INCOMPATIBLE_DRIVER`
     #[implements]
     #[inline]
     pub fn new(info: &InstanceCreateInfo) -> crate::Result<Self> {
@@ -385,7 +393,7 @@ impl InstanceObject {
     /// Constructs from raw handle
     /// # Safety
     /// the handle must be valid and not freed
-    pub const unsafe fn manage(handle: VkInstance) -> Self {
+    pub const unsafe fn manage(handle: brvk::VkInstance) -> Self {
         Self {
             handle,
             #[cfg(feature = "Implements")]
@@ -394,7 +402,7 @@ impl InstanceObject {
     }
 
     /// Purges internal values (Drop will not be called for this resource)
-    pub const fn unmanage(self) -> VkInstance {
+    pub const fn unmanage(self) -> brvk::VkInstance {
         let v = self.handle;
         core::mem::forget(self);
 
@@ -403,22 +411,22 @@ impl InstanceObject {
 }
 
 /// A Vulkan Instance interface
-pub trait Instance: VkHandle<Handle = VkInstance> {
+pub trait Instance: VkHandle<Handle = brvk::VkInstance> {
     /// Return a function pointer for a command
     #[deprecated = "do not use this directly(this does not provide caching!)"]
     #[implements]
     #[inline]
-    fn extra_procedure(&self, name: &CStr) -> Option<PFN_vkVoidFunction> {
-        unsafe { crate::vkfn::get_instance_proc_addr(self.native_ptr(), name.as_ptr()) }
+    fn extra_procedure(&self, name: &CStr) -> Option<brvk::PFN_vkVoidFunction> {
+        unsafe { brvk::fns::get_instance_proc_addr(self.native_ptr(), name.as_ptr()) }
     }
 
     /// Counts the physical devices accessible to a Vulkan instance
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_INITIALIZATION_FAILED`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_INITIALIZATION_FAILED`]
     #[implements]
     #[inline(always)]
     fn physical_device_count(&self) -> crate::Result<u32> {
@@ -429,12 +437,15 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_INITIALIZATION_FAILED`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_INITIALIZATION_FAILED`]
     #[implements]
     #[inline(always)]
-    fn enumerate_physical_devices(&self, sink: &mut [core::mem::MaybeUninit<VkPhysicalDevice>]) -> crate::Result<u32> {
+    fn enumerate_physical_devices(
+        &self,
+        sink: &mut [core::mem::MaybeUninit<brvk::VkPhysicalDevice>],
+    ) -> crate::Result<u32> {
         unsafe { crate::vkfn_wrapper::enumerate_physical_devices(self.as_transparent_ref(), sink) }
     }
 
@@ -444,9 +455,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     ///
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
     #[implements("alloc")]
     fn iter_physical_devices<'a>(&'a self) -> crate::Result<IterPhysicalDevices<'a, Self>> {
         let n = self.physical_device_count()? as usize;
@@ -468,9 +479,9 @@ pub trait Instance: VkHandle<Handle = VkInstance> {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
     #[implements("alloc")]
     fn enumerate_physical_devices_alloc(&self) -> crate::Result<Vec<PhysicalDeviceObject<&Self>>> {
         self.iter_physical_devices().map(crate::alloc::collect_vec)
@@ -482,42 +493,45 @@ DerefContainerWithGuardsBracketImpl!(for Instance {});
 #[implements]
 struct InstanceExtFunctions {
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceProperties2KHR>,
+    get_physical_device_properties2_khr: InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceProperties2KHR>,
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_features2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFeatures2KHR>,
+    get_physical_device_features2_khr: InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceFeatures2KHR>,
     #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
-    get_physical_device_format_properties2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
+    get_physical_device_format_properties2_khr: InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceFormatProperties2KHR>,
     #[cfg(feature = "VK_EXT_debug_report")]
-    create_debug_report_callback_ext: InstanceResolvedFn<PFN_vkCreateDebugReportCallbackEXT>,
+    create_debug_report_callback_ext: InstanceResolvedFn<brvk::PFN_vkCreateDebugReportCallbackEXT>,
     #[cfg(feature = "VK_EXT_debug_report")]
-    destroy_debug_report_callback_ext: InstanceResolvedFn<PFN_vkDestroyDebugReportCallbackEXT>,
+    destroy_debug_report_callback_ext: InstanceResolvedFn<brvk::PFN_vkDestroyDebugReportCallbackEXT>,
     #[cfg(feature = "VK_EXT_debug_report")]
-    debug_report_message_ext: InstanceResolvedFn<PFN_vkDebugReportMessageEXT>,
+    debug_report_message_ext: InstanceResolvedFn<brvk::PFN_vkDebugReportMessageEXT>,
     #[cfg(feature = "VK_EXT_debug_utils")]
-    create_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkCreateDebugUtilsMessengerEXT>,
+    create_debug_utils_messenger_ext: InstanceResolvedFn<brvk::PFN_vkCreateDebugUtilsMessengerEXT>,
     #[cfg(feature = "VK_EXT_debug_utils")]
-    destroy_debug_utils_messenger_ext: InstanceResolvedFn<PFN_vkDestroyDebugUtilsMessengerEXT>,
+    destroy_debug_utils_messenger_ext: InstanceResolvedFn<brvk::PFN_vkDestroyDebugUtilsMessengerEXT>,
     #[cfg(feature = "VK_EXT_debug_utils")]
-    set_debug_utils_object_name_ext: InstanceResolvedFn<PFN_vkSetDebugUtilsObjectNameEXT>,
+    set_debug_utils_object_name_ext: InstanceResolvedFn<brvk::PFN_vkSetDebugUtilsObjectNameEXT>,
     #[cfg(feature = "VK_KHR_external_fence_capabilities")]
     get_physical_device_external_fence_properties_khr:
-        InstanceResolvedFn<PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
+        InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR>,
     #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-    get_randr_output_display_ext: InstanceResolvedFn<PFN_vkGetRandROutputDisplayEXT>,
+    get_randr_output_display_ext: InstanceResolvedFn<brvk::PFN_vkGetRandROutputDisplayEXT>,
     #[cfg(feature = "VK_EXT_acquire_xlib_display")]
-    acquire_xlib_display_ext: InstanceResolvedFn<PFN_vkAcquireXlibDisplayEXT>,
+    acquire_xlib_display_ext: InstanceResolvedFn<brvk::PFN_vkAcquireXlibDisplayEXT>,
     #[cfg(feature = "VK_EXT_full_screen_exclusive")]
-    get_physical_device_surface_present_modes_2_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
+    get_physical_device_surface_present_modes_2_ext:
+        InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT>,
     #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
-    get_physical_device_surface_capabilities_2_khr: InstanceResolvedFn<PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
+    get_physical_device_surface_capabilities_2_khr:
+        InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR>,
     #[cfg(feature = "VK_EXT_direct_mode_display")]
-    release_display_ext: InstanceResolvedFn<PFN_vkReleaseDisplayEXT>,
+    release_display_ext: InstanceResolvedFn<brvk::PFN_vkReleaseDisplayEXT>,
     #[cfg(feature = "VK_EXT_sample_locations")]
-    get_physical_device_multisample_properties_ext: InstanceResolvedFn<PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
+    get_physical_device_multisample_properties_ext:
+        InstanceResolvedFn<brvk::PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT>,
 }
 #[implements]
 impl InstanceExtFunctions {
-    const fn new(r: VkInstance) -> Self {
+    const fn new(r: brvk::VkInstance) -> Self {
         Self {
             #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
             get_physical_device_properties2_khr: InstanceResolvedFn::new(r),
@@ -558,36 +572,36 @@ impl InstanceExtFunctions {
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 pub trait InstanceGetPhysicalDeviceProperties2Extension: Instance {
     #[implements]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR;
+    fn get_physical_device_properties2_khr_fn(&self) -> brvk::PFN_vkGetPhysicalDeviceProperties2KHR;
     #[implements]
-    fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR;
+    fn get_physical_device_features2_khr_fn(&self) -> brvk::PFN_vkGetPhysicalDeviceFeatures2KHR;
     #[implements]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR;
+    fn get_physical_device_format_properties2_khr_fn(&self) -> brvk::PFN_vkGetPhysicalDeviceFormatProperties2KHR;
 }
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 DerefContainerWithGuardsBracketImpl!(for InstanceGetPhysicalDeviceProperties2Extension {
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> PFN_vkGetPhysicalDeviceProperties2KHR);
+    ForwardFnPtr!(deref get_physical_device_properties2_khr_fn -> brvk::PFN_vkGetPhysicalDeviceProperties2KHR);
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_features2_khr_fn -> PFN_vkGetPhysicalDeviceFeatures2KHR);
+    ForwardFnPtr!(deref get_physical_device_features2_khr_fn -> brvk::PFN_vkGetPhysicalDeviceFeatures2KHR);
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_format_properties2_khr_fn -> PFN_vkGetPhysicalDeviceFormatProperties2KHR);
+    ForwardFnPtr!(deref get_physical_device_format_properties2_khr_fn -> brvk::PFN_vkGetPhysicalDeviceFormatProperties2KHR);
 });
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 impl InstanceGetPhysicalDeviceProperties2Extension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn get_physical_device_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceProperties2KHR {
+    fn get_physical_device_properties2_khr_fn(&self) -> brvk::PFN_vkGetPhysicalDeviceProperties2KHR {
         *self.ext.get_physical_device_properties2_khr.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn get_physical_device_features2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFeatures2KHR {
+    fn get_physical_device_features2_khr_fn(&self) -> brvk::PFN_vkGetPhysicalDeviceFeatures2KHR {
         *self.ext.get_physical_device_features2_khr.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn get_physical_device_format_properties2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+    fn get_physical_device_format_properties2_khr_fn(&self) -> brvk::PFN_vkGetPhysicalDeviceFormatProperties2KHR {
         *self.ext.get_physical_device_format_properties2_khr.resolve()
     }
 }
@@ -595,17 +609,17 @@ impl InstanceGetPhysicalDeviceProperties2Extension for InstanceObject {
 #[cfg(feature = "VK_EXT_debug_report")]
 pub trait InstanceDebugReportExtension: Instance {
     #[implements]
-    fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT;
+    fn create_debug_report_callback_ext_fn(&self) -> brvk::PFN_vkCreateDebugReportCallbackEXT;
     #[implements]
-    fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT;
+    fn destroy_debug_report_callback_ext_fn(&self) -> brvk::PFN_vkDestroyDebugReportCallbackEXT;
     #[implements]
-    fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT;
+    fn debug_report_message_ext_fn(&self) -> brvk::PFN_vkDebugReportMessageEXT;
 
     /// Register a debug report callback
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
     ///
     /// # Safety
     /// must not execute in parallel with any Vulkan commands
@@ -614,18 +628,17 @@ pub trait InstanceDebugReportExtension: Instance {
     unsafe fn new_debug_report_callback_raw(
         &self,
         info: &crate::DebugReportCallbackCreateInfo,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkDebugReportCallbackEXT> {
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkDebugReportCallbackEXT> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
+        translate_vk_result(unsafe {
             self.create_debug_report_callback_ext_fn().0(
                 self.native_ptr(),
                 info.as_raw_ref(),
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -633,9 +646,10 @@ pub trait InstanceDebugReportExtension: Instance {
     /// Inject its own messages into the debug stream
     #[implements]
     #[inline]
+    #[allow(clippy::too_many_arguments)]
     fn debug_message(
         &self,
-        flags: VkDebugReportFlagsEXT,
+        flags: brvk::VkDebugReportFlagsEXT,
         object_type: crate::DebugReportObjectType,
         object: u64,
         location: usize,
@@ -665,8 +679,8 @@ pub trait InstanceDebugReportExtension: Instance {
     #[inline]
     unsafe fn destroy_debug_report_callback_raw(
         &self,
-        obj: VkDebugReportCallbackEXT,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        obj: brvk::VkDebugReportCallbackEXT,
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) {
         unsafe {
             self.destroy_debug_report_callback_ext_fn().0(
@@ -680,27 +694,27 @@ pub trait InstanceDebugReportExtension: Instance {
 #[cfg(feature = "VK_EXT_debug_report")]
 DerefContainerWithGuardsBracketImpl!(for InstanceDebugReportExtension {
     #[implements]
-    ForwardFnPtr!(deref create_debug_report_callback_ext_fn -> PFN_vkCreateDebugReportCallbackEXT);
+    ForwardFnPtr!(deref create_debug_report_callback_ext_fn -> brvk::PFN_vkCreateDebugReportCallbackEXT);
     #[implements]
-    ForwardFnPtr!(deref destroy_debug_report_callback_ext_fn -> PFN_vkDestroyDebugReportCallbackEXT);
+    ForwardFnPtr!(deref destroy_debug_report_callback_ext_fn -> brvk::PFN_vkDestroyDebugReportCallbackEXT);
     #[implements]
-    ForwardFnPtr!(deref debug_report_message_ext_fn -> PFN_vkDebugReportMessageEXT);
+    ForwardFnPtr!(deref debug_report_message_ext_fn -> brvk::PFN_vkDebugReportMessageEXT);
 });
 #[cfg(feature = "VK_EXT_debug_report")]
 impl InstanceDebugReportExtension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn create_debug_report_callback_ext_fn(&self) -> PFN_vkCreateDebugReportCallbackEXT {
+    fn create_debug_report_callback_ext_fn(&self) -> brvk::PFN_vkCreateDebugReportCallbackEXT {
         *self.ext.create_debug_report_callback_ext.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn destroy_debug_report_callback_ext_fn(&self) -> PFN_vkDestroyDebugReportCallbackEXT {
+    fn destroy_debug_report_callback_ext_fn(&self) -> brvk::PFN_vkDestroyDebugReportCallbackEXT {
         *self.ext.destroy_debug_report_callback_ext.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn debug_report_message_ext_fn(&self) -> PFN_vkDebugReportMessageEXT {
+    fn debug_report_message_ext_fn(&self) -> brvk::PFN_vkDebugReportMessageEXT {
         *self.ext.debug_report_message_ext.resolve()
     }
 }
@@ -708,17 +722,17 @@ impl InstanceDebugReportExtension for InstanceObject {
 #[cfg(feature = "VK_EXT_debug_utils")]
 pub trait InstanceDebugUtilsExtension: Instance {
     #[implements]
-    fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT;
+    fn create_debug_utils_messenger_ext_fn(&self) -> brvk::PFN_vkCreateDebugUtilsMessengerEXT;
     #[implements]
-    fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT;
+    fn destroy_debug_utils_messenger_ext_fn(&self) -> brvk::PFN_vkDestroyDebugUtilsMessengerEXT;
     #[implements]
-    fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT;
+    fn set_debug_utils_object_name_ext_fn(&self) -> brvk::PFN_vkSetDebugUtilsObjectNameEXT;
 
     /// Create a debug messenger object
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
     ///
     /// # Safety
     /// must not be executed in parallel with any Vulkan commands
@@ -727,18 +741,17 @@ pub trait InstanceDebugUtilsExtension: Instance {
     unsafe fn new_debug_utils_messenger_raw(
         &self,
         info: &crate::DebugUtilsMessengerCreateInfo,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkDebugUtilsMessengerEXT> {
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkDebugUtilsMessengerEXT> {
         let mut h = core::mem::MaybeUninit::uninit();
-        unsafe {
+        translate_vk_result(unsafe {
             self.create_debug_utils_messenger_ext_fn().0(
                 self.native_ptr(),
-                info,
+                core::ptr::from_ref(info).cast(),
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -751,8 +764,8 @@ pub trait InstanceDebugUtilsExtension: Instance {
     #[inline]
     unsafe fn destroy_debug_utils_messenger_raw(
         &self,
-        obj: VkDebugUtilsMessengerEXT,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
+        obj: brvk::VkDebugUtilsMessengerEXT,
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
     ) {
         unsafe {
             self.destroy_debug_utils_messenger_ext_fn().0(
@@ -766,27 +779,27 @@ pub trait InstanceDebugUtilsExtension: Instance {
 #[cfg(feature = "VK_EXT_debug_utils")]
 DerefContainerWithGuardsBracketImpl!(for InstanceDebugUtilsExtension {
     #[implements]
-    ForwardFnPtr!(deref create_debug_utils_messenger_ext_fn -> PFN_vkCreateDebugUtilsMessengerEXT);
+    ForwardFnPtr!(deref create_debug_utils_messenger_ext_fn -> brvk::PFN_vkCreateDebugUtilsMessengerEXT);
     #[implements]
-    ForwardFnPtr!(deref destroy_debug_utils_messenger_ext_fn -> PFN_vkDestroyDebugUtilsMessengerEXT);
+    ForwardFnPtr!(deref destroy_debug_utils_messenger_ext_fn -> brvk::PFN_vkDestroyDebugUtilsMessengerEXT);
     #[implements]
-    ForwardFnPtr!(deref set_debug_utils_object_name_ext_fn -> PFN_vkSetDebugUtilsObjectNameEXT);
+    ForwardFnPtr!(deref set_debug_utils_object_name_ext_fn -> brvk::PFN_vkSetDebugUtilsObjectNameEXT);
 });
 #[cfg(feature = "VK_EXT_debug_utils")]
 impl InstanceDebugUtilsExtension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn create_debug_utils_messenger_ext_fn(&self) -> PFN_vkCreateDebugUtilsMessengerEXT {
+    fn create_debug_utils_messenger_ext_fn(&self) -> brvk::PFN_vkCreateDebugUtilsMessengerEXT {
         *self.ext.create_debug_utils_messenger_ext.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn destroy_debug_utils_messenger_ext_fn(&self) -> PFN_vkDestroyDebugUtilsMessengerEXT {
+    fn destroy_debug_utils_messenger_ext_fn(&self) -> brvk::PFN_vkDestroyDebugUtilsMessengerEXT {
         *self.ext.destroy_debug_utils_messenger_ext.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn set_debug_utils_object_name_ext_fn(&self) -> PFN_vkSetDebugUtilsObjectNameEXT {
+    fn set_debug_utils_object_name_ext_fn(&self) -> brvk::PFN_vkSetDebugUtilsObjectNameEXT {
         *self.ext.set_debug_utils_object_name_ext.resolve()
     }
 }
@@ -794,13 +807,14 @@ impl InstanceDebugUtilsExtension for InstanceObject {
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 pub trait InstanceExternalFenceCapabilitiesExtension: Instance {
     #[implements]
-    fn get_physical_device_external_fence_properties_khr_fn(&self)
-    -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
+    fn get_physical_device_external_fence_properties_khr_fn(
+        &self,
+    ) -> brvk::PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR;
 }
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 DerefContainerWithGuardsBracketImpl!(for InstanceExternalFenceCapabilitiesExtension {
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_external_fence_properties_khr_fn -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR);
+    ForwardFnPtr!(deref get_physical_device_external_fence_properties_khr_fn -> brvk::PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR);
 });
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 impl InstanceExternalFenceCapabilitiesExtension for InstanceObject {
@@ -808,7 +822,7 @@ impl InstanceExternalFenceCapabilitiesExtension for InstanceObject {
     #[inline(always)]
     fn get_physical_device_external_fence_properties_khr_fn(
         &self,
-    ) -> PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+    ) -> brvk::PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
         *self.ext.get_physical_device_external_fence_properties_khr.resolve()
     }
 }
@@ -816,27 +830,27 @@ impl InstanceExternalFenceCapabilitiesExtension for InstanceObject {
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 pub trait InstanceAcquireXlibDisplayExtension: Instance {
     #[implements]
-    fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT;
+    fn get_randr_output_display_ext_fn(&self) -> brvk::PFN_vkGetRandROutputDisplayEXT;
     #[implements]
-    fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT;
+    fn acquire_xlib_display_ext_fn(&self) -> brvk::PFN_vkAcquireXlibDisplayEXT;
 }
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 DerefContainerWithGuardsBracketImpl!(for InstanceAcquireXlibDisplayExtension {
     #[implements]
-    ForwardFnPtr!(deref get_randr_output_display_ext_fn -> PFN_vkGetRandROutputDisplayEXT);
+    ForwardFnPtr!(deref get_randr_output_display_ext_fn -> brvk::PFN_vkGetRandROutputDisplayEXT);
     #[implements]
-    ForwardFnPtr!(deref acquire_xlib_display_ext_fn -> PFN_vkAcquireXlibDisplayEXT);
+    ForwardFnPtr!(deref acquire_xlib_display_ext_fn -> brvk::PFN_vkAcquireXlibDisplayEXT);
 });
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 impl InstanceAcquireXlibDisplayExtension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn get_randr_output_display_ext_fn(&self) -> PFN_vkGetRandROutputDisplayEXT {
+    fn get_randr_output_display_ext_fn(&self) -> brvk::PFN_vkGetRandROutputDisplayEXT {
         *self.ext.get_randr_output_display_ext.resolve()
     }
     #[implements]
     #[inline(always)]
-    fn acquire_xlib_display_ext_fn(&self) -> PFN_vkAcquireXlibDisplayEXT {
+    fn acquire_xlib_display_ext_fn(&self) -> brvk::PFN_vkAcquireXlibDisplayEXT {
         *self.ext.acquire_xlib_display_ext.resolve()
     }
 }
@@ -844,18 +858,22 @@ impl InstanceAcquireXlibDisplayExtension for InstanceObject {
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 pub trait InstanceFullScreenExclusiveExtension: Instance {
     #[implements]
-    fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
+    fn get_physical_device_surface_present_modes_2_ext_fn(
+        &self,
+    ) -> brvk::PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT;
 }
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 DerefContainerWithGuardsBracketImpl!(for InstanceFullScreenExclusiveExtension {
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_surface_present_modes_2_ext_fn -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
+    ForwardFnPtr!(deref get_physical_device_surface_present_modes_2_ext_fn -> brvk::PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT);
 });
 #[cfg(feature = "VK_EXT_full_screen_exclusive")]
 impl InstanceFullScreenExclusiveExtension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn get_physical_device_surface_present_modes_2_ext_fn(&self) -> PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
+    fn get_physical_device_surface_present_modes_2_ext_fn(
+        &self,
+    ) -> brvk::PFN_vkGetPhysicalDeviceSurfacePresentModes2EXT {
         *self.ext.get_physical_device_surface_present_modes_2_ext.resolve()
     }
 }
@@ -863,18 +881,21 @@ impl InstanceFullScreenExclusiveExtension for InstanceObject {
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 pub trait InstanceGetSurfaceCapabilities2Extension: Instance {
     #[implements]
-    fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
+    fn get_physical_device_surface_capabilities_2_khr_fn(&self)
+    -> brvk::PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
 }
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 DerefContainerWithGuardsBracketImpl!(for InstanceGetSurfaceCapabilities2Extension {
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_surface_capabilities_2_khr_fn -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR);
+    ForwardFnPtr!(deref get_physical_device_surface_capabilities_2_khr_fn -> brvk::PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR);
 });
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 impl InstanceGetSurfaceCapabilities2Extension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn get_physical_device_surface_capabilities_2_khr_fn(&self) -> PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+    fn get_physical_device_surface_capabilities_2_khr_fn(
+        &self,
+    ) -> brvk::PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
         *self.ext.get_physical_device_surface_capabilities_2_khr.resolve()
     }
 }
@@ -882,18 +903,18 @@ impl InstanceGetSurfaceCapabilities2Extension for InstanceObject {
 #[cfg(feature = "VK_EXT_direct_mode_display")]
 pub trait InstanceDirectModeDisplayExtension: Instance {
     #[implements]
-    fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT;
+    fn release_display_ext_fn(&self) -> brvk::PFN_vkReleaseDisplayEXT;
 }
 #[cfg(feature = "VK_EXT_direct_mode_display")]
 DerefContainerWithGuardsBracketImpl!(for InstanceDirectModeDisplayExtension {
     #[implements]
-    ForwardFnPtr!(deref release_display_ext_fn -> PFN_vkReleaseDisplayEXT);
+    ForwardFnPtr!(deref release_display_ext_fn -> brvk::PFN_vkReleaseDisplayEXT);
 });
 #[cfg(feature = "VK_EXT_direct_mode_display")]
 impl InstanceDirectModeDisplayExtension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn release_display_ext_fn(&self) -> PFN_vkReleaseDisplayEXT {
+    fn release_display_ext_fn(&self) -> brvk::PFN_vkReleaseDisplayEXT {
         *self.ext.release_display_ext.resolve()
     }
 }
@@ -901,38 +922,41 @@ impl InstanceDirectModeDisplayExtension for InstanceObject {
 #[cfg(feature = "VK_EXT_sample_locations")]
 pub trait InstanceSampleLocationsExtension: Instance {
     #[implements]
-    fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
+    fn get_physical_device_multisample_properties_ext_fn(
+        &self,
+    ) -> brvk::PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT;
 }
 #[cfg(feature = "VK_EXT_sample_locations")]
 DerefContainerWithGuardsBracketImpl!(for InstanceSampleLocationsExtension {
     #[implements]
-    ForwardFnPtr!(deref get_physical_device_multisample_properties_ext_fn -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT);
+    ForwardFnPtr!(deref get_physical_device_multisample_properties_ext_fn -> brvk::PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT);
 });
 #[cfg(feature = "VK_EXT_sample_locations")]
 impl InstanceSampleLocationsExtension for InstanceObject {
     #[implements]
     #[inline(always)]
-    fn get_physical_device_multisample_properties_ext_fn(&self) -> PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
+    fn get_physical_device_multisample_properties_ext_fn(
+        &self,
+    ) -> brvk::PFN_vkGetPhysicalDeviceMultisamplePropertiesEXT {
         *self.ext.get_physical_device_multisample_properties_ext.resolve()
     }
 }
 
 /// A PhysicalDevice interface
-pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
+pub trait PhysicalDevice: VkHandle<Handle = brvk::VkPhysicalDevice> + InstanceChild {
     /// Returns a count of properties of available physical device layers
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     fn layer_property_count(&self) -> crate::Result<u32> {
         let mut n = 0;
-        unsafe {
-            crate::vkfn::enumerate_device_layer_properties(self.native_ptr(), &mut n, core::ptr::null_mut())
-                .into_result()?;
-        }
+        translate_vk_result(unsafe {
+            brvk::fns::enumerate_device_layer_properties(self.native_ptr(), &mut n, core::ptr::null_mut())
+        })?;
 
         Ok(n)
     }
@@ -941,16 +965,18 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
-    fn enumerate_layer_properties(&self, sink: &mut [core::mem::MaybeUninit<VkLayerProperties>]) -> crate::Result<u32> {
+    fn enumerate_layer_properties(
+        &self,
+        sink: &mut [core::mem::MaybeUninit<brvk::VkLayerProperties>],
+    ) -> crate::Result<u32> {
         let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::enumerate_device_layer_properties(self.native_ptr(), &mut n, sink.as_mut_ptr() as _)
-                .into_result()?;
-        }
+        translate_vk_result(unsafe {
+            brvk::fns::enumerate_device_layer_properties(self.native_ptr(), &mut n, sink.as_mut_ptr() as _)
+        })?;
 
         Ok(n)
     }
@@ -959,10 +985,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("alloc")]
-    fn enumerate_layer_properties_alloc(&self) -> crate::Result<Vec<VkLayerProperties>> {
+    fn enumerate_layer_properties_alloc(&self) -> crate::Result<Vec<brvk::VkLayerProperties>> {
         let count = self.layer_property_count()? as usize;
         if count == 0 {
             // no items
@@ -982,22 +1008,21 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_LAYER_NOT_PRESENT`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_LAYER_NOT_PRESENT`]
     #[implements]
     #[inline]
     fn extension_property_count_cstr(&self, layer_name: Option<&core::ffi::CStr>) -> crate::Result<u32> {
         let mut n = 0;
-        unsafe {
-            crate::vkfn::enumerate_device_extension_properties(
+        translate_vk_result(unsafe {
+            brvk::fns::enumerate_device_extension_properties(
                 self.native_ptr(),
                 crate::ffi_helper::opt_cstr_ptr(layer_name),
                 &mut n,
                 core::ptr::null_mut(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(n)
     }
@@ -1006,26 +1031,25 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_LAYER_NOT_PRESENT`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_LAYER_NOT_PRESENT`]
     #[implements]
     #[inline]
     fn enumerate_extension_properties_cstr(
         &self,
         layer_name: Option<&core::ffi::CStr>,
-        sink: &mut [core::mem::MaybeUninit<VkExtensionProperties>],
+        sink: &mut [core::mem::MaybeUninit<brvk::VkExtensionProperties>],
     ) -> crate::Result<u32> {
         let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::enumerate_device_extension_properties(
+        translate_vk_result(unsafe {
+            brvk::fns::enumerate_device_extension_properties(
                 self.native_ptr(),
                 crate::ffi_helper::opt_cstr_ptr(layer_name),
                 &mut n,
                 sink.as_mut_ptr() as _,
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(n)
     }
@@ -1034,14 +1058,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_LAYER_NOT_PRESENT`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
     #[implements("alloc")]
     fn enumerate_extension_properties_cstr_alloc(
         &self,
         layer_name: Option<&core::ffi::CStr>,
-    ) -> crate::Result<Vec<VkExtensionProperties>> {
+    ) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
         let n = self.extension_property_count_cstr(layer_name)? as usize;
         if n == 0 {
             // no items
@@ -1061,12 +1085,15 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_LAYER_NOT_PRESENT`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_LAYER_NOT_PRESENT`
     #[implements("alloc")]
     #[inline]
-    fn enumerate_extension_properties(&self, layer_name: Option<&str>) -> crate::Result<Vec<VkExtensionProperties>> {
+    fn enumerate_extension_properties(
+        &self,
+        layer_name: Option<&str>,
+    ) -> crate::Result<Vec<brvk::VkExtensionProperties>> {
         self.enumerate_extension_properties_cstr_alloc(
             layer_name.map(|s| crate::alloc::str_to_cstr(s).unwrap()).as_deref(),
         )
@@ -1075,10 +1102,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Reports capabilities of a physical device.
     #[implements]
     #[inline]
-    fn features(&self) -> VkPhysicalDeviceFeatures {
+    fn features(&self) -> brvk::VkPhysicalDeviceFeatures {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::get_physical_device_features(self.native_ptr(), p.as_mut_ptr());
+            brvk::fns::get_physical_device_features(self.native_ptr(), p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -1089,9 +1116,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("Allow1_1APIs")]
     #[inline]
-    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>) {
+    unsafe fn features2(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceFeatures2KHR>) {
         unsafe {
-            crate::vkfn::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
+            brvk::fns::get_physical_device_features2(self.native_ptr(), sink.as_mut_ptr());
         }
     }
 
@@ -1100,7 +1127,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceFeatures2KHR>)
+    unsafe fn features2_khr(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceFeatures2KHR>)
     where
         Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
@@ -1112,10 +1139,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Returns properties of a physical device
     #[implements]
     #[inline]
-    fn properties(&self) -> VkPhysicalDeviceProperties {
+    fn properties(&self) -> brvk::VkPhysicalDeviceProperties {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::get_physical_device_properties(self.native_ptr(), p.as_mut_ptr());
+            crate::vkfn_wrapper::get_physical_device_properties(self.as_transparent_ref(), &mut p);
 
             p.assume_init()
         }
@@ -1126,9 +1153,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("Allow1_1APIs")]
     #[inline]
-    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>) {
+    unsafe fn properties2(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceProperties2KHR>) {
         unsafe {
-            crate::vkfn::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
+            brvk::fns::get_physical_device_properties2(self.native_ptr(), sink.as_mut_ptr());
         }
     }
 
@@ -1137,7 +1164,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn properties2_khr(&self, sink: &mut core::mem::MaybeUninit<VkPhysicalDeviceProperties2KHR>)
+    unsafe fn properties2_khr(&self, sink: &mut core::mem::MaybeUninit<brvk::VkPhysicalDeviceProperties2KHR>)
     where
         Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
@@ -1149,10 +1176,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Lists physical device's format capabilities
     #[implements]
     #[inline]
-    fn format_properties(&self, format: VkFormat) -> VkFormatProperties {
+    fn format_properties(&self, format: brvk::VkFormat) -> brvk::VkFormatProperties {
         let mut p = std::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::get_physical_device_format_properties(self.native_ptr(), format, p.as_mut_ptr());
+            brvk::fns::get_physical_device_format_properties(self.native_ptr(), format, p.as_mut_ptr());
 
             p.assume_init()
         }
@@ -1163,9 +1190,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `out` are safe.
     #[implements("Allow1_1APIs")]
     #[inline]
-    unsafe fn format_properties2(&self, format: VkFormat, out: &mut core::mem::MaybeUninit<VkFormatProperties2KHR>) {
+    unsafe fn format_properties2(
+        &self,
+        format: brvk::VkFormat,
+        out: &mut core::mem::MaybeUninit<brvk::VkFormatProperties2KHR>,
+    ) {
         unsafe {
-            crate::vkfn::get_physical_device_format_properties2(self.native_ptr(), format, out.as_mut_ptr());
+            brvk::fns::get_physical_device_format_properties2(self.native_ptr(), format, out.as_mut_ptr());
         }
     }
 
@@ -1174,8 +1205,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Caller must guarantee that all write operations to `out` are safe.
     #[implements("VK_KHR_get_physical_device_properties2")]
     #[inline]
-    unsafe fn format_properties2_khr(&self, format: VkFormat, out: &mut core::mem::MaybeUninit<VkFormatProperties2KHR>)
-    where
+    unsafe fn format_properties2_khr(
+        &self,
+        format: brvk::VkFormat,
+        out: &mut core::mem::MaybeUninit<brvk::VkFormatProperties2KHR>,
+    ) where
         Self::ConcreteInstance: InstanceGetPhysicalDeviceProperties2Extension,
     {
         unsafe {
@@ -1191,22 +1225,22 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_FORMAT_NOT_SUPPORTED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_FORMAT_NOT_SUPPORTED`
     #[implements]
     #[inline]
     fn image_format_properties(
         &self,
-        format: VkFormat,
-        itype: VkImageType,
-        tiling: VkImageTiling,
+        format: brvk::VkFormat,
+        itype: brvk::VkImageType,
+        tiling: brvk::VkImageTiling,
         usage: ImageUsageFlags,
         flags: ImageFlags,
-    ) -> crate::Result<VkImageFormatProperties> {
+    ) -> crate::Result<brvk::VkImageFormatProperties> {
         let mut p = std::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_physical_device_image_format_properties(
+        translate_vk_result(unsafe {
+            brvk::fns::get_physical_device_image_format_properties(
                 self.native_ptr(),
                 format,
                 itype,
@@ -1215,8 +1249,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
                 flags.bits(),
                 p.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { p.assume_init() })
     }
@@ -1227,7 +1260,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     fn queue_family_property_count(&self) -> u32 {
         let mut n = 0;
         unsafe {
-            crate::vkfn::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, core::ptr::null_mut());
+            brvk::fns::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, core::ptr::null_mut());
         }
 
         n
@@ -1236,10 +1269,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// Reports properties of the queues of the specified physical device
     #[implements]
     #[inline]
-    fn queue_family_properties(&self, sink: &mut [core::mem::MaybeUninit<VkQueueFamilyProperties>]) -> u32 {
+    fn queue_family_properties(&self, sink: &mut [core::mem::MaybeUninit<QueueFamilyProperties>]) -> u32 {
         let mut n = sink.len() as _;
         unsafe {
-            crate::vkfn::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, sink.as_mut_ptr() as _);
+            brvk::fns::get_physical_device_queue_family_properties(self.native_ptr(), &mut n, sink.as_mut_ptr().cast());
         }
 
         n
@@ -1255,10 +1288,10 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             return QueueFamilies(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n);
-        self.queue_family_properties(xs.spare_capacity_mut());
+        let mut xs = crate::alloc::empty_reserved_buffer(n);
+        let filled = self.queue_family_properties(xs.spare_capacity_mut());
         unsafe {
-            xs.set_len(n);
+            xs.set_len(filled as _);
         }
 
         QueueFamilies(xs)
@@ -1269,11 +1302,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     fn memory_properties(&self) -> MemoryProperties {
         let mut p = core::mem::MaybeUninit::uninit();
-        unsafe {
-            crate::vkfn::get_physical_device_memory_properties(self.native_ptr(), p.as_mut_ptr());
-
-            MemoryProperties(p.assume_init())
-        }
+        crate::vkfn_wrapper::get_physical_device_memory_properties(self.as_transparent_ref(), &mut p);
+        unsafe { MemoryProperties(p.assume_init()) }
     }
 
     /// Retrieve a count of properties of an image format spplied to sparse images
@@ -1281,15 +1311,15 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     fn sparse_image_format_property_count(
         &self,
-        format: VkFormat,
-        image_type: VkImageType,
-        samples: VkSampleCountFlags,
+        format: brvk::VkFormat,
+        image_type: brvk::VkImageType,
+        samples: brvk::VkSampleCountFlags,
         usage: ImageUsageFlags,
-        tiling: VkImageTiling,
+        tiling: brvk::VkImageTiling,
     ) -> u32 {
         let mut n = 0;
         unsafe {
-            crate::vkfn::get_physical_device_sparse_image_format_properties(
+            brvk::fns::get_physical_device_sparse_image_format_properties(
                 self.native_ptr(),
                 format,
                 image_type,
@@ -1309,16 +1339,16 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     fn sparse_image_format_properties(
         &self,
-        format: VkFormat,
-        image_type: VkImageType,
-        samples: VkSampleCountFlags,
+        format: brvk::VkFormat,
+        image_type: brvk::VkImageType,
+        samples: brvk::VkSampleCountFlags,
         usage: ImageUsageFlags,
-        tiling: VkImageTiling,
-        sink: &mut [core::mem::MaybeUninit<VkSparseImageFormatProperties>],
+        tiling: brvk::VkImageTiling,
+        sink: &mut [core::mem::MaybeUninit<brvk::VkSparseImageFormatProperties>],
     ) -> u32 {
         let mut n = sink.len() as _;
         unsafe {
-            crate::vkfn::get_physical_device_sparse_image_format_properties(
+            brvk::fns::get_physical_device_sparse_image_format_properties(
                 self.native_ptr(),
                 format,
                 image_type,
@@ -1338,12 +1368,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[cfg(feature = "alloc")]
     fn sparse_image_format_properties_alloc(
         &self,
-        format: VkFormat,
-        itype: VkImageType,
-        samples: VkSampleCountFlags,
+        format: brvk::VkFormat,
+        itype: brvk::VkImageType,
+        samples: brvk::VkSampleCountFlags,
         usage: ImageUsageFlags,
-        tiling: VkImageTiling,
-    ) -> Vec<VkSparseImageFormatProperties> {
+        tiling: brvk::VkImageTiling,
+    ) -> Vec<brvk::VkSparseImageFormatProperties> {
         let n = self.sparse_image_format_property_count(format, itype, samples, usage, tiling);
         if n == 0 {
             // no items
@@ -1364,7 +1394,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[implements("VK_EXT_sample_locations")]
     unsafe fn multisample_properties(
         &self,
-        samples: VkSampleCountFlags,
+        samples: brvk::VkSampleCountFlags,
         sink: &mut core::mem::MaybeUninit<VkMultisamplePropertiesEXT>,
     ) where
         Self::ConcreteInstance: InstanceSampleLocationsExtension,
@@ -1383,8 +1413,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline(always)]
     unsafe fn external_fence_properties(
         &self,
-        info: &VkPhysicalDeviceExternalFenceInfoKHR,
-        sink: &mut core::mem::MaybeUninit<VkExternalFencePropertiesKHR>,
+        info: &brvk::VkPhysicalDeviceExternalFenceInfoKHR,
+        sink: &mut core::mem::MaybeUninit<brvk::VkExternalFencePropertiesKHR>,
     ) where
         Self::ConcreteInstance: InstanceExternalFenceCapabilitiesExtension,
     {
@@ -1401,9 +1431,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
     #[inline(always)]
     fn surface_support(&self, queue_family: u32, surface: &(impl Surface + ?Sized)) -> crate::Result<bool> {
@@ -1420,12 +1450,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
     #[inline]
-    fn surface_capabilities(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<VkSurfaceCapabilitiesKHR> {
+    fn surface_capabilities(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<SurfaceCapabilities> {
         let mut s = std::mem::MaybeUninit::uninit();
 
         unsafe {
@@ -1442,12 +1472,15 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
     #[inline(always)]
-    fn surface_format_count(&self, surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized)) -> crate::Result<u32> {
+    fn surface_format_count(
+        &self,
+        surface: &(impl VkHandle<Handle = brvk::VkSurfaceKHR> + ?Sized),
+    ) -> crate::Result<u32> {
         unsafe {
             crate::vkfn_wrapper::get_physical_device_surface_format_count(
                 self.as_transparent_ref(),
@@ -1460,15 +1493,15 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
     #[inline(always)]
     fn surface_formats(
         &self,
-        surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
-        sink: &mut [core::mem::MaybeUninit<VkSurfaceFormatKHR>],
+        surface: &(impl VkHandle<Handle = brvk::VkSurfaceKHR> + ?Sized),
+        sink: &mut [core::mem::MaybeUninit<brvk::VkSurfaceFormatKHR>],
     ) -> crate::Result<ArrayQueryResult<u32>> {
         unsafe {
             crate::vkfn_wrapper::get_physical_device_surface_formats(
@@ -1483,14 +1516,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface", "alloc")]
     fn surface_formats_alloc(
         &self,
         surface: &(impl Surface + ?Sized),
-    ) -> crate::Result<ArrayQueryResult<Vec<VkSurfaceFormatKHR>>> {
+    ) -> crate::Result<ArrayQueryResult<Vec<brvk::VkSurfaceFormatKHR>>> {
         let n = self.surface_format_count(surface)?;
         if n == 0 {
             // no items
@@ -1510,64 +1543,53 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
-    #[inline]
+    #[inline(always)]
     fn surface_present_mode_count(
         &self,
-        surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
+        surface: &(impl VkHandle<Handle = brvk::VkSurfaceKHR> + ?Sized),
     ) -> crate::Result<u32> {
-        let mut n = 0;
         unsafe {
-            crate::vkfn::get_physical_device_surface_present_modes_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
+            crate::vkfn_wrapper::get_physical_device_surface_present_mode_count(
+                self.as_transparent_ref(),
+                surface.as_transparent_ref(),
             )
-            .into_result()?;
         }
-
-        Ok(n)
     }
 
     /// Query supported presentation modes
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface")]
-    #[inline]
+    #[inline(always)]
     fn surface_present_modes(
         &self,
-        surface: &(impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
+        surface: &(impl VkHandle<Handle = brvk::VkSurfaceKHR> + ?Sized),
         sink: &mut [core::mem::MaybeUninit<PresentMode>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
+    ) -> crate::Result<ArrayQueryResult<u32>> {
         unsafe {
-            crate::vkfn::get_physical_device_surface_present_modes_khr(
-                self.native_ptr(),
-                surface.native_ptr(),
-                &mut n,
-                sink.as_mut_ptr() as _,
+            crate::vkfn_wrapper::get_physical_device_surface_present_modes(
+                self.as_transparent_ref(),
+                surface.as_transparent_ref(),
+                sink,
             )
-            .into_result()?;
         }
-
-        Ok(n)
     }
 
     /// Query supported presentation modes
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_KHR_surface", "alloc")]
     fn surface_present_modes_alloc(&self, surface: &(impl Surface + ?Sized)) -> crate::Result<Vec<PresentMode>> {
         let n = self.surface_present_mode_count(surface)?;
@@ -1597,12 +1619,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         visual: x11::xlib::VisualID,
     ) -> bool {
         unsafe {
-            crate::vkfn::get_physical_device_xlib_presentation_support_khr(
-                self.native_ptr(),
-                queue_family,
-                display,
-                visual,
-            ) != 0
+            brvk::get_physical_device_xlib_presentation_support_khr(self.native_ptr(), queue_family, display, visual)
+                != 0
         }
     }
 
@@ -1618,12 +1636,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
         visual: xcb::x::Visualid,
     ) -> bool {
         unsafe {
-            crate::vkfn::get_physical_device_xcb_presentation_support_khr(
-                self.native_ptr(),
-                queue_family,
-                connection,
-                visual,
-            ) != 0
+            brvk::get_physical_device_xcb_presentation_support_khr(self.native_ptr(), queue_family, connection, visual)
+                != 0
         }
     }
 
@@ -1634,8 +1648,7 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn wayland_presentation_support(&self, queue_family: u32, display: *mut core::ffi::c_void) -> bool {
         unsafe {
-            crate::vkfn::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display)
-                != 0
+            brvk::get_physical_device_wayland_presentation_support_khr(self.native_ptr(), queue_family, display) != 0
         }
     }
 
@@ -1643,67 +1656,59 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[implements("VK_KHR_win32_surface")]
     #[inline]
     fn win32_presentation_support(&self, queue_family: u32) -> bool {
-        unsafe { crate::vkfn::get_physical_device_win32_presentation_support_khr(self.native_ptr(), queue_family) != 0 }
+        unsafe { brvk::get_physical_device_win32_presentation_support_khr(self.native_ptr(), queue_family) != 0 }
     }
 
     /// Query a count of the set of mode properties supported by the display
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
-    fn display_mode_property_count(&self, display: VkDisplayKHR) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_display_mode_properties_khr(self.native_ptr(), display, &mut n, core::ptr::null_mut())
-                .into_result()?;
-        }
-
-        Ok(n)
+    #[inline(always)]
+    fn display_mode_property_count(&self, display: VkHandleRef<brvk::VkDisplayKHR>) -> crate::Result<u32> {
+        unsafe { crate::vkfn_wrapper::get_display_mode_property_count(self.as_transparent_ref(), display) }
     }
 
     /// Query the set of mode properties supported by the display
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_mode_properties(
         &self,
-        display: VkDisplayKHR,
-        sink: &mut [core::mem::MaybeUninit<VkDisplayModePropertiesKHR>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_display_mode_properties_khr(self.native_ptr(), display, &mut n, sink.as_mut_ptr() as _)
-                .into_result()?;
-        }
-
-        Ok(n)
+        display: VkHandleRef<brvk::VkDisplayKHR>,
+        sink: &mut [core::mem::MaybeUninit<DisplayModeProperties>],
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        unsafe { crate::vkfn_wrapper::get_display_mode_properties(self.as_transparent_ref(), display, sink) }
     }
 
     /// Query the set of mode properties supported by the display
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display", "alloc")]
-    fn display_mode_properties_alloc(&self, display: VkDisplayKHR) -> crate::Result<Vec<VkDisplayModePropertiesKHR>> {
+    fn display_mode_properties_alloc(
+        &self,
+        display: VkHandleRef<brvk::VkDisplayKHR>,
+    ) -> crate::Result<Vec<DisplayModeProperties>> {
         let n = self.display_mode_property_count(display)?;
         if n == 0 {
             // no items
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.display_mode_properties(display, xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let res = self.display_mode_properties(display, xs.spare_capacity_mut())?;
+        assert!(!res.is_incomplete);
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(res.result as _);
         }
 
         Ok(xs)
@@ -1713,9 +1718,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
     ///
     /// # Safety
     /// no guarantee will be provided (simply calls under api)
@@ -1723,22 +1728,21 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn new_display_mode_raw(
         &self,
-        display: VkDisplayKHR,
-        info: &VkDisplayModeCreateInfoKHR,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkDisplayModeKHR> {
+        display: brvk::VkDisplayKHR,
+        info: &brvk::VkDisplayModeCreateInfoKHR,
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkDisplayModeKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
-            crate::vkfn::create_display_mode_khr(
+        translate_vk_result(unsafe {
+            brvk::fns::create_display_mode_khr(
                 self.native_ptr(),
                 display,
                 info,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
@@ -1747,20 +1751,18 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
     #[inline]
     fn display_plane_capabilities(
         &self,
-        mode: VkDisplayModeKHR,
+        mode: VkHandleRefMut<brvk::VkDisplayModeKHR>,
         plane_index: u32,
-    ) -> crate::Result<VkDisplayPlaneCapabilitiesKHR> {
+    ) -> crate::Result<brvk::VkDisplayPlaneCapabilitiesKHR> {
         let mut s = core::mem::MaybeUninit::uninit();
         unsafe {
-            crate::vkfn::get_display_plane_capabilities_khr(self.native_ptr(), mode, plane_index, s.as_mut_ptr())
-                .into_result()?;
-
+            crate::vkfn_wrapper::get_display_plane_capabilities(self.as_transparent_ref(), mode, plane_index, &mut s)?;
             Ok(s.assume_init())
         }
     }
@@ -1769,44 +1771,35 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_property_count(&self) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_physical_device_display_properties_khr(self.native_ptr(), &mut n, core::ptr::null_mut())
-                .into_result()?;
-        }
-
-        Ok(n)
+        crate::vkfn_wrapper::get_physical_device_display_property_count(self.as_transparent_ref())
     }
 
     /// Query information about the available displays
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
     #[inline]
-    fn display_properties(&self, sink: &mut [core::mem::MaybeUninit<VkDisplayPropertiesKHR>]) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_physical_device_display_properties_khr(self.native_ptr(), &mut n, sink.as_mut_ptr() as _)
-                .into_result()?;
-        }
-
-        Ok(n)
+    fn display_properties(
+        &self,
+        sink: &mut [core::mem::MaybeUninit<DisplayProperties>],
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        crate::vkfn_wrapper::get_physical_device_display_properties(self.as_transparent_ref(), sink)
     }
 
     /// Query information about the available displays.
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements("VK_KHR_display", "alloc")]
     fn display_properties_alloc(&self) -> crate::Result<Vec<DisplayPropertiesWithPhysicalDeviceRef<&Self>>> {
         let n = self.display_property_count()?;
@@ -1815,10 +1808,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.display_properties(xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let r = self.display_properties(xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(r.result as _);
         }
 
         Ok(crate::alloc::collect_vec(
@@ -1831,55 +1825,35 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_plane_property_count(&self) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_physical_device_display_plane_properties_khr(
-                self.native_ptr(),
-                &mut n,
-                core::ptr::null_mut(),
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
+        crate::vkfn_wrapper::get_physical_device_display_plane_property_count(self.as_transparent_ref())
     }
 
     /// Query the plane properties
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_plane_properties(
         &self,
-        sink: &mut [core::mem::MaybeUninit<VkDisplayPlanePropertiesKHR>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_physical_device_display_plane_properties_khr(
-                self.native_ptr(),
-                &mut n,
-                sink.as_mut_ptr() as _,
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
+        sink: &mut [core::mem::MaybeUninit<brvk::VkDisplayPlanePropertiesKHR>],
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        crate::vkfn_wrapper::get_physical_device_display_plane_properties(self.as_transparent_ref(), sink)
     }
 
     /// Query the plane properties.
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements("VK_KHR_display", "alloc")]
     fn display_plane_properties_alloc(&self) -> crate::Result<Vec<DisplayPlanePropertiesWithPhysicalDeviceRef<&Self>>> {
         let n = self.display_plane_property_count()?;
@@ -1888,10 +1862,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.display_plane_properties(xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let r = self.display_plane_properties(xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(r.result as _);
         }
 
         Ok(crate::alloc::collect_vec(
@@ -1904,58 +1879,36 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_plane_supported_display_count(&self, plane_index: u32) -> crate::Result<u32> {
-        let mut n = 0;
-        unsafe {
-            crate::vkfn::get_display_plane_supported_displays_khr(
-                self.native_ptr(),
-                plane_index,
-                &mut n,
-                core::ptr::null_mut(),
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
+        crate::vkfn_wrapper::get_display_plane_supported_display_count(self.as_transparent_ref(), plane_index)
     }
 
     /// Query the list of displays a plane supports
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("VK_KHR_display")]
-    #[inline]
+    #[inline(always)]
     fn display_plane_supported_displays(
         &self,
         plane_index: u32,
-        sink: &mut [core::mem::MaybeUninit<VkDisplayKHR>],
-    ) -> crate::Result<u32> {
-        let mut n = sink.len() as _;
-        unsafe {
-            crate::vkfn::get_display_plane_supported_displays_khr(
-                self.native_ptr(),
-                plane_index,
-                &mut n,
-                sink.as_mut_ptr() as _,
-            )
-            .into_result()?;
-        }
-
-        Ok(n)
+        sink: &mut [core::mem::MaybeUninit<brvk::VkDisplayKHR>],
+    ) -> crate::Result<ArrayQueryResult<u32>> {
+        crate::vkfn_wrapper::get_display_plane_supported_displays(self.as_transparent_ref(), plane_index, sink)
     }
 
     /// Query the list of displays a plane supports.
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * VK_ERROR_OUT_OF_HOST_MEMORY
-    /// * VK_ERROR_OUT_OF_DEVICE_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_HOST_MEMORY
+    /// * brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY
     #[implements("VK_KHR_display", "alloc")]
     fn display_plane_supported_displays_alloc(&self, plane_index: u32) -> crate::Result<Vec<Display<&Self>>> {
         let n = self.display_plane_supported_display_count(plane_index)?;
@@ -1964,10 +1917,11 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
             return Ok(crate::alloc::empty_sink_buffer());
         }
 
-        let mut xs = Vec::with_capacity(n as _);
-        self.display_plane_supported_displays(plane_index, xs.spare_capacity_mut())?;
+        let mut xs = crate::alloc::empty_reserved_buffer(n as _);
+        let r = self.display_plane_supported_displays(plane_index, xs.spare_capacity_mut())?;
+        assert!(!r.is_incomplete);
         unsafe {
-            xs.set_len(n as _);
+            xs.set_len(r.result as _);
         }
 
         Ok(crate::alloc::collect_vec(xs.into_iter().map(move |x| Display(x, self))))
@@ -1977,8 +1931,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     ///
     /// # Safety
     /// no guarantee will be provided (simply calls under api)
@@ -1986,28 +1940,27 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn new_surface_for_display_plane_raw(
         &self,
-        info: &VkDisplaySurfaceCreateInfoKHR,
-        allocation_callbacks: Option<&VkAllocationCallbacks>,
-    ) -> crate::Result<VkSurfaceKHR> {
+        info: &brvk::VkDisplaySurfaceCreateInfoKHR,
+        allocation_callbacks: Option<&brvk::VkAllocationCallbacks>,
+    ) -> crate::Result<brvk::VkSurfaceKHR> {
         let mut h = core::mem::MaybeUninit::uninit();
 
-        unsafe {
-            crate::vkfn::create_display_plane_surface_khr(
+        translate_vk_result(unsafe {
+            brvk::fns::create_display_plane_surface_khr(
                 self.instance().native_ptr(),
                 info,
                 crate::ffi_helper::opt_pointer(allocation_callbacks),
                 h.as_mut_ptr(),
             )
-            .into_result()?;
-        }
+        })?;
 
         Ok(unsafe { h.assume_init() })
     }
 
-    /// Query the VkDisplayKHR corresponding to an X11 RandR Output
+    /// Query the brvk::VkDisplayKHR corresponding to an X11 RandR Output
     /// # Failures
     /// On failure, this command returns
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
     ///
     /// # Safety
     /// Provided `dpy` must be a valid reference
@@ -2035,9 +1988,9 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     ///
     /// On failure, this command returns
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
     ///
     /// # Safety
     /// Caller must guarantee that all write operations to `sink` and its `pNext` fields are safe
@@ -2045,8 +1998,8 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     #[inline]
     unsafe fn surface_capabilities2(
         &self,
-        surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
-        sink: &mut core::mem::MaybeUninit<VkSurfaceCapabilities2KHR>,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
+        sink: &mut core::mem::MaybeUninit<brvk::VkSurfaceCapabilities2KHR>,
     ) -> crate::Result<()>
     where
         Self::ConcreteInstance: InstanceGetSurfaceCapabilities2Extension,
@@ -2066,12 +2019,12 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_EXT_full_screen_exclusive")]
     #[inline]
-    fn surface_present_mode2_count(&self, surface_info: &VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<u32>
+    fn surface_present_mode2_count(&self, surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR) -> crate::Result<u32>
     where
         Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
     {
@@ -2093,14 +2046,14 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_EXT_full_screen_exclusive")]
     #[inline]
     fn surface_present_modes2(
         &self,
-        surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
         sink: &mut [core::mem::MaybeUninit<VkPresentModeKHR>],
     ) -> crate::Result<u32>
     where
@@ -2125,13 +2078,13 @@ pub trait PhysicalDevice: VkHandle<Handle = VkPhysicalDevice> + InstanceChild {
     /// # Failures
     ///
     /// On failure, this command returns
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
-    /// * [`VK_ERROR_SURFACE_LOST_KHR`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_SURFACE_LOST_KHR`]
     #[implements("VK_EXT_full_screen_exclusive", "alloc")]
     fn surface_present_modes2_alloc(
         &self,
-        surface_info: &VkPhysicalDeviceSurfaceInfo2KHR,
+        surface_info: &brvk::VkPhysicalDeviceSurfaceInfo2KHR,
     ) -> crate::Result<Vec<VkPresentModeKHR>>
     where
         Self::ConcreteInstance: InstanceFullScreenExclusiveExtension,
@@ -2186,63 +2139,63 @@ where
     }
 }
 
-#[cfg(feature = "VK_KHR_external_fence_capabilities")]
-impl VkExternalFencePropertiesKHR {
-    pub const fn is_exportable(&self) -> bool {
-        (self.externalFenceFeatures & VK_EXTERNAL_FENCE_FEATURE_EXPORTABLE_BIT_KHR) != 0
-    }
-
-    pub const fn is_importable(&self) -> bool {
-        (self.externalFenceFeatures & VK_EXTERNAL_FENCE_FEATURE_IMPORTABLE_BIT_KHR) != 0
-    }
-}
-
-pub type PhysicalDeviceFeatures = VkPhysicalDeviceFeatures;
+pub type PhysicalDeviceFeatures = brvk::VkPhysicalDeviceFeatures;
 #[cfg(feature = "Allow1_2APIs")]
-pub type PhysicalDeviceVulkan11Features = VkPhysicalDeviceVulkan11Features;
+pub type PhysicalDeviceVulkan11Features = brvk::VkPhysicalDeviceVulkan11Features;
 
-pub type PhysicalDeviceProperties = VkPhysicalDeviceProperties;
+pub type PhysicalDeviceProperties = brvk::VkPhysicalDeviceProperties;
 #[cfg(feature = "Allow1_2APIs")]
-pub type PhysicalDeviceVulkan11Properties = VkPhysicalDeviceVulkan11Properties;
+pub type PhysicalDeviceVulkan11Properties = brvk::VkPhysicalDeviceVulkan11Properties;
 
-pub type PhysicalDeviceMemoryProperties = VkPhysicalDeviceMemoryProperties;
+#[repr(transparent)]
+pub struct PhysicalDeviceMemoryProperties(brvk::VkPhysicalDeviceMemoryProperties);
 impl PhysicalDeviceMemoryProperties {
     #[inline(always)]
     pub fn types(&self) -> &[MemoryType] {
-        &self.memoryTypes[..self.memoryTypeCount as _]
+        unsafe { core::mem::transmute::<&[_], &[_]>(&self.0.memoryTypes[..self.0.memoryTypeCount as _]) }
     }
 
     #[inline(always)]
     pub fn heaps(&self) -> &[MemoryHeap] {
-        &self.memoryHeaps[..self.memoryHeapCount as _]
+        unsafe { core::mem::transmute::<&[_], &[_]>(&self.0.memoryHeaps[..self.0.memoryHeapCount as _]) }
     }
 }
 
-pub type MemoryType = VkMemoryType;
+#[repr(transparent)]
+pub struct MemoryType(brvk::VkMemoryType);
 impl MemoryType {
     pub const fn property_flags(&self) -> MemoryPropertyFlags {
-        MemoryPropertyFlags(self.propertyFlags)
+        MemoryPropertyFlags(self.0.propertyFlags)
+    }
+
+    pub const fn heap_index(&self) -> u32 {
+        self.0.heapIndex
     }
 }
 
-pub type MemoryHeap = VkMemoryHeap;
+#[repr(transparent)]
+pub struct MemoryHeap(brvk::VkMemoryHeap);
 impl MemoryHeap {
     pub const fn flags(&self) -> MemoryHeapFlags {
-        MemoryHeapFlags(self.flags)
+        MemoryHeapFlags(self.0.flags)
+    }
+
+    pub const fn size(&self) -> brvk::VkDeviceSize {
+        self.0.size
     }
 }
 
 /// Device memory properties
 #[repr(transparent)]
-pub struct MemoryProperties(VkPhysicalDeviceMemoryProperties);
+pub struct MemoryProperties(PhysicalDeviceMemoryProperties);
 impl MemoryProperties {
     #[inline(always)]
     pub fn types(&self) -> &[MemoryType] {
-        &self.0.memoryTypes[..self.0.memoryTypeCount as _]
+        self.0.types()
     }
     #[inline(always)]
     pub fn heaps(&self) -> &[MemoryHeap] {
-        &self.0.memoryHeaps[..self.0.memoryHeapCount as _]
+        self.0.heaps()
     }
 
     #[inline]
@@ -2283,12 +2236,12 @@ impl MemoryProperties {
     }
 
     pub fn is_coherent(&self, index: u32) -> bool {
-        self.0.memoryTypes[index as usize]
+        self.0.types()[index as usize]
             .property_flags()
             .has_any(MemoryPropertyFlags::HOST_COHERENT)
     }
     pub fn is_cached(&self, index: u32) -> bool {
-        self.0.memoryTypes[index as usize]
+        self.0.types()[index as usize]
             .property_flags()
             .has_any(MemoryPropertyFlags::HOST_CACHED)
     }
@@ -2297,33 +2250,33 @@ impl MemoryProperties {
 /// Bitmask specifying properties for a memory type
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[bitflags_newtype]
-pub struct MemoryPropertyFlags(VkMemoryPropertyFlags);
+pub struct MemoryPropertyFlags(brvk::VkMemoryPropertyFlags);
 impl MemoryPropertyFlags {
     /// Empty set
     pub const EMPTY: Self = MemoryPropertyFlags(0);
 
     /// Memory allocated with this type is the most efficient for device access
-    pub const DEVICE_LOCAL: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    pub const DEVICE_LOCAL: Self = MemoryPropertyFlags(brvk::VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     /// Memory allocated with this type can be mapped for host access using `vkMapMemory`
-    pub const HOST_VISIBLE: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+    pub const HOST_VISIBLE: Self = MemoryPropertyFlags(brvk::VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
     /// The host cache management commands `vkFlushMappedMemoryRanges` and `vkInvalidateMappedMemoryRanges`
     /// are not needed to flush host writes to the device or make device writes visible to the host, respectively.
-    pub const HOST_COHERENT: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+    pub const HOST_COHERENT: Self = MemoryPropertyFlags(brvk::VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
     /// Memory allocated with this type is cached on the host.
     /// Host memory accesses to uncached memory are slower than to cached memory, however uncached memory is always host coherent
-    pub const HOST_CACHED: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
+    pub const HOST_CACHED: Self = MemoryPropertyFlags(brvk::VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
     /// The memory type only allows device access to the memory.
-    pub const LAZILY_ALLOCATED: Self = MemoryPropertyFlags(VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
+    pub const LAZILY_ALLOCATED: Self = MemoryPropertyFlags(brvk::VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT);
 
     #[cfg(feature = "Allow1_1APIs")]
     /// The memory type only allows device access to the memory, and allows protected queue operations to access the memory.
-    pub const PROTECTED: Self = Self(VK_MEMORY_PROPERTY_PROTECTED_BIT);
+    pub const PROTECTED: Self = Self(brvk::VK_MEMORY_PROPERTY_PROTECTED_BIT);
 }
 
 /// Bitmask specifying attribute flags for a heap
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[bitflags_newtype]
-pub struct MemoryHeapFlags(VkMemoryHeapFlags);
+pub struct MemoryHeapFlags(brvk::VkMemoryHeapFlags);
 impl MemoryHeapFlags {
     /// Empty set
     pub const EMPTY: Self = Self(0);
@@ -2331,13 +2284,13 @@ impl MemoryHeapFlags {
     /// The heap corresponds to device-local memory.
     /// Device-local memory may have different performance characteristics than host-local memory,
     /// and may support different memory property flags.
-    pub const DEVICE_LOCAL: Self = Self(VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
+    pub const DEVICE_LOCAL: Self = Self(brvk::VK_MEMORY_HEAP_DEVICE_LOCAL_BIT);
 
     #[cfg(feature = "Allow1_1APIs")]
     /// In a logical device representing more than one physical device,
     /// there is a per-physical device instance of the heap memory.
     /// By default, an allocation from such a heap will be replicated to each physical device's instance of the heap.
-    pub const MULTI_INSTANCE: Self = Self(VK_MEMORY_HEAP_MULTI_INSTANCE_BIT);
+    pub const MULTI_INSTANCE: Self = Self(brvk::VK_MEMORY_HEAP_MULTI_INSTANCE_BIT);
 }
 
 /// List of queue families
@@ -2347,7 +2300,7 @@ impl QueueFamilies {
     pub fn find_matching_index(&self, flags: QueueFlags) -> Option<u32> {
         self.0
             .iter()
-            .position(|q| (q.queueFlags & flags.0) != 0)
+            .position(|q| q.queue_flags().has_all(flags))
             .map(|x| x as _)
     }
 
@@ -2356,9 +2309,7 @@ impl QueueFamilies {
         self.0
             .iter()
             .enumerate()
-            .find_map(|(n, &QueueFamilyProperties { queueFlags, .. })| {
-                ((queueFlags & flags.0) != 0 && exclude != n as u32).then_some(n as _)
-            })
+            .find_map(|(n, p)| (p.queue_flags().has_all(flags) && exclude != n as u32).then_some(n as _))
     }
 
     /// Number of queue families
@@ -2373,42 +2324,55 @@ impl QueueFamilies {
 
     /// Number of queues in selected queue family
     pub fn queue_count(&self, family_index: u32) -> u32 {
-        self.0[family_index as usize].queueCount
+        self.0[family_index as usize].queue_count()
     }
 
     /// Unsigned integer count of meaningful bits in the timestamps written via `vkCmdWriteTimestamp`
     pub fn timestamp_valid_bits(&self, family_index: u32) -> u32 {
-        self.0[family_index as usize].timestampValidBits
+        self.0[family_index as usize].timestamp_valid_bits()
     }
 
     /// Minimum granularity supported for image transfer operations on the queues in selected queue family
-    pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &Extent3D {
-        &self.0[family_index as usize].minImageTransferGranularity
+    pub fn minimum_image_transfer_granularity(&self, family_index: u32) -> &brvk::VkExtent3D {
+        self.0[family_index as usize].min_image_transfer_granularity()
     }
 }
 
-pub type QueueFamilyProperties = VkQueueFamilyProperties;
+#[repr(transparent)]
+pub struct QueueFamilyProperties(brvk::VkQueueFamilyProperties);
 impl QueueFamilyProperties {
     pub const fn queue_flags(&self) -> QueueFlags {
-        QueueFlags(self.queueFlags)
+        QueueFlags(self.0.queueFlags)
+    }
+
+    pub const fn queue_count(&self) -> u32 {
+        self.0.queueCount
+    }
+
+    pub const fn timestamp_valid_bits(&self) -> u32 {
+        self.0.timestampValidBits
+    }
+
+    pub const fn min_image_transfer_granularity(&self) -> &brvk::VkExtent3D {
+        &self.0.minImageTransferGranularity
     }
 }
 
 /// Set of bit of queue flags
 #[derive(Debug, Clone, PartialEq, Eq, Copy)]
 #[bitflags_newtype]
-pub struct QueueFlags(VkQueueFlags);
+pub struct QueueFlags(brvk::VkQueueFlags);
 impl QueueFlags {
     /// Empty bits
     pub const EMPTY: Self = QueueFlags(0);
     /// Supports only graphics operations
-    pub const GRAPHICS: Self = QueueFlags(VK_QUEUE_GRAPHICS_BIT);
+    pub const GRAPHICS: Self = QueueFlags(brvk::VK_QUEUE_GRAPHICS_BIT);
     /// Supports only compute operations
-    pub const COMPUTE: Self = QueueFlags(VK_QUEUE_COMPUTE_BIT);
+    pub const COMPUTE: Self = QueueFlags(brvk::VK_QUEUE_COMPUTE_BIT);
     /// Supports only transfer operations
-    pub const TRANSFER: Self = QueueFlags(VK_QUEUE_TRANSFER_BIT);
+    pub const TRANSFER: Self = QueueFlags(brvk::VK_QUEUE_TRANSFER_BIT);
     /// Supports only sparse memory management operations
-    pub const SPARSE_BINDING: Self = QueueFlags(VK_QUEUE_SPARSE_BINDING_BIT);
+    pub const SPARSE_BINDING: Self = QueueFlags(brvk::VK_QUEUE_SPARSE_BINDING_BIT);
 }
 
 #[cfg(feature = "VK_KHR_display")]

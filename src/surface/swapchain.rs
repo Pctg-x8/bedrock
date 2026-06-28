@@ -1,13 +1,14 @@
 use crate::{ffi_helper::slice_as_ptr_empty_null, *};
+use bedrock_vk::{self as brvk, TypedVulkanStructure};
 use derives::implements;
 
-pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
+pub trait Swapchain: VkHandle<Handle = brvk::VkSwapchainKHR> + DeviceChild {
     /// Obtain a count of the array of presentable images associated with a swapchain
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline]
     fn image_count(&self) -> crate::Result<u32> {
@@ -20,11 +21,11 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * [`VK_ERROR_OUT_OF_HOST_MEMORY`]
-    /// * [`VK_ERROR_OUT_OF_DEVICE_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_HOST_MEMORY`]
+    /// * [`brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`]
     #[implements]
     #[inline(always)]
-    fn images(&self, sink: &mut [core::mem::MaybeUninit<VkImage>]) -> crate::Result<ArrayQueryResult<u32>> {
+    fn images(&self, sink: &mut [core::mem::MaybeUninit<brvk::VkImage>]) -> crate::Result<ArrayQueryResult<u32>> {
         unsafe {
             crate::vkfn_wrapper::get_swapchain_images(self.device_transparent_ref(), self.as_transparent_ref(), sink)
         }
@@ -34,10 +35,10 @@ pub trait Swapchain: VkHandle<Handle = VkSwapchainKHR> + DeviceChild {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_INITIALIZATION_FAILED`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_INITIALIZATION_FAILED`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements("VK_EXT_full_screen_exclusive")]
     fn acquire_full_screen_exclusive_mode(&self) -> crate::Result<()>
     where
@@ -70,11 +71,11 @@ pub trait SwapchainMut: Swapchain + VkHandleMut {
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
-    /// * `VK_ERROR_DEVICE_LOST`
-    /// * `VK_ERROR_OUT_OF_DATE_KHR`
-    /// * `VK_ERROR_SURFACE_LOST_KHR`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_DEVICE_LOST`
+    /// * `brvk::VK_ERROR_OUT_OF_DATE_KHR`
+    /// * `brvk::VK_ERROR_SURFACE_LOST_KHR`
     #[implements]
     fn acquire_next(&mut self, timeout: Option<u64>, completion: CompletionHandlerMut) -> crate::Result<u32> {
         let (semaphore, fence) = match completion {
@@ -96,15 +97,15 @@ pub trait SwapchainMut: Swapchain + VkHandleMut {
 DerefContainerBracketImpl!(for mut SwapchainMut {});
 
 pub trait SwapchainImageExt: Swapchain {
-    fn format(&self) -> VkFormat;
-    fn extent(&self) -> VkExtent2D;
+    fn format(&self) -> brvk::VkFormat;
+    fn extent(&self) -> brvk::VkExtent2D;
 
     /// Obtain the array of presentable images associated with a swapchain
     /// # Failures
     /// On failure, this command returns
     ///
-    /// * `VK_ERROR_OUT_OF_HOST_MEMORY`
-    /// * `VK_ERROR_OUT_OF_DEVICE_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_HOST_MEMORY`
+    /// * `brvk::VK_ERROR_OUT_OF_DEVICE_MEMORY`
     #[implements("alloc")]
     fn images_alloc(&self) -> crate::Result<ArrayQueryResult<Vec<crate::SwapchainImage<&Self>>>>
     where
@@ -123,18 +124,28 @@ pub trait SwapchainImageExt: Swapchain {
         }
 
         Ok(res.with_result(crate::alloc::collect_vec(xs.into_iter().map(move |r| {
-            crate::SwapchainImage(r, self, self.format(), self.extent().with_depth(1))
+            let ext = self.extent();
+            crate::SwapchainImage(
+                r,
+                self,
+                self.format(),
+                brvk::VkExtent3D {
+                    width: ext.width,
+                    height: ext.height,
+                    depth: 1,
+                },
+            )
         }))))
     }
 }
 DerefContainerBracketImpl!(for SwapchainImageExt {
     #[inline(always)]
-    fn format(&self) -> VkFormat {
+    fn format(&self) -> brvk::VkFormat {
         T::format(self)
     }
 
     #[inline(always)]
-    fn extent(&self) -> VkExtent2D {
+    fn extent(&self) -> brvk::VkExtent2D {
         T::extent(self)
     }
 });
@@ -142,27 +153,27 @@ DerefContainerBracketImpl!(for SwapchainImageExt {
 #[repr(transparent)]
 #[derive(Clone)]
 pub struct SwapchainCreateInfo<'r, 'n, 'sw>(
-    VkSwapchainCreateInfoKHR,
+    brvk::VkSwapchainCreateInfoKHR,
     #[allow(clippy::type_complexity)]
     core::marker::PhantomData<(
-        &'r dyn VkHandle<Handle = VkSurfaceKHR>,
-        Option<&'n dyn VulkanStructure>,
+        &'r dyn VkHandle<Handle = brvk::VkSurfaceKHR>,
+        Option<&'n dyn brvk::VulkanStructure>,
         Option<&'r [u32]>,
-        Option<&'sw dyn VkHandle<Handle = VkSwapchainKHR>>,
+        Option<&'sw dyn VkHandle<Handle = brvk::VkSwapchainKHR>>,
     )>,
 );
 impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
     #[inline]
     pub fn new(
-        surface: &'r (impl VkHandle<Handle = VkSurfaceKHR> + ?Sized),
+        surface: &'r (impl VkHandle<Handle = brvk::VkSurfaceKHR> + ?Sized),
         min_image_count: u32,
-        format: VkSurfaceFormatKHR,
-        extent: VkExtent2D,
+        format: brvk::VkSurfaceFormatKHR,
+        extent: brvk::VkExtent2D,
         usage: ImageUsageFlags,
     ) -> Self {
         Self(
-            VkSwapchainCreateInfoKHR {
-                sType: VkSwapchainCreateInfoKHR::TYPE,
+            brvk::VkSwapchainCreateInfoKHR {
+                sType: brvk::VkSwapchainCreateInfoKHR::TYPE,
                 pNext: core::ptr::null(),
                 flags: 0,
                 surface: surface.native_ptr(),
@@ -172,12 +183,12 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
                 imageExtent: extent,
                 imageArrayLayers: 1,
                 imageUsage: usage.bits(),
-                imageSharingMode: VK_SHARING_MODE_EXCLUSIVE,
+                imageSharingMode: brvk::VK_SHARING_MODE_EXCLUSIVE,
                 queueFamilyIndexCount: 0,
                 pQueueFamilyIndices: core::ptr::null(),
-                preTransform: VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR,
-                compositeAlpha: VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
-                presentMode: VK_PRESENT_MODE_IMMEDIATE_KHR,
+                preTransform: brvk::VK_SURFACE_TRANSFORM_INHERIT_BIT_KHR,
+                compositeAlpha: brvk::VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
+                presentMode: brvk::VK_PRESENT_MODE_IMMEDIATE_KHR,
                 clipped: false as _,
                 oldSwapchain: None,
             },
@@ -188,15 +199,15 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
     /// # Safety
     ///
     /// `raw` must be a valid `VkSwapchainCreateInfoKHR` struct.
-    pub const unsafe fn from_raw(raw: VkSwapchainCreateInfoKHR) -> Self {
+    pub const unsafe fn from_raw(raw: brvk::VkSwapchainCreateInfoKHR) -> Self {
         Self(raw, core::marker::PhantomData)
     }
 
-    pub const fn into_raw(self) -> VkSwapchainCreateInfoKHR {
+    pub const fn into_raw(self) -> brvk::VkSwapchainCreateInfoKHR {
         self.0
     }
 
-    pub const fn with_next(mut self, next: &'n (impl VulkanStructure + ?Sized)) -> Self {
+    pub const fn with_next(mut self, next: &'n (impl brvk::VulkanStructure + ?Sized)) -> Self {
         self.0.pNext = next as *const _ as _;
         self
     }
@@ -209,14 +220,14 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
     pub const fn shared(mut self, queue_families: &'r [u32]) -> Self {
         assert!(!queue_families.is_empty(), "empty families not allowed");
 
-        self.0.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+        self.0.imageSharingMode = brvk::VK_SHARING_MODE_CONCURRENT;
         self.0.queueFamilyIndexCount = queue_families.len() as _;
         self.0.pQueueFamilyIndices = slice_as_ptr_empty_null(queue_families);
         self
     }
 
     pub const fn exclusive(mut self) -> Self {
-        self.0.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        self.0.imageSharingMode = brvk::VK_SHARING_MODE_EXCLUSIVE;
         self.0.queueFamilyIndexCount = 0;
         self.0.pQueueFamilyIndices = core::ptr::null();
 
@@ -249,7 +260,10 @@ impl<'r, 'n, 'sw> SwapchainCreateInfo<'r, 'n, 'sw> {
     }
 
     #[inline(always)]
-    pub fn old_swapchain(mut self, old_swapchain: &'sw (impl VkHandle<Handle = VkSwapchainKHR> + ?Sized)) -> Self {
+    pub fn old_swapchain(
+        mut self,
+        old_swapchain: &'sw (impl VkHandle<Handle = brvk::VkSwapchainKHR> + ?Sized),
+    ) -> Self {
         self.0.oldSwapchain = Some(old_swapchain.native_ptr());
         self
     }

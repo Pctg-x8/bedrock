@@ -5351,7 +5351,7 @@ impl crate::TypedVulkanStructure for VkExportSemaphoreWin32HandleInfoKHR { const
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkExtensionProperties {
-    pub extensionName: crate::ffi_helper::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
+    pub extensionName: crate::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
     pub specVersion: u32,
 }
 
@@ -6391,10 +6391,10 @@ impl crate::TypedVulkanStructure for VkInstanceCreateInfo { const TYPE: VkStruct
 #[repr(C)]
 #[rustfmt::skip]
 pub struct VkLayerProperties {
-    pub layerName: crate::ffi_helper::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
+    pub layerName: crate::FixedCStrBuffer<VK_MAX_EXTENSION_NAME_SIZE>,
     pub specVersion: u32,
     pub implementationVersion: u32,
-    pub description: crate::ffi_helper::FixedCStrBuffer<VK_MAX_DESCRIPTION_SIZE>,
+    pub description: crate::FixedCStrBuffer<VK_MAX_DESCRIPTION_SIZE>,
 }
 
 #[derive(Debug, Clone)]
@@ -7478,7 +7478,7 @@ pub struct VkPhysicalDeviceProperties {
     pub vendorID: u32,
     pub deviceID: u32,
     pub deviceType: VkPhysicalDeviceType,
-    pub deviceName: crate::ffi_helper::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
+    pub deviceName: crate::FixedCStrBuffer<VK_MAX_PHYSICAL_DEVICE_NAME_SIZE>,
     pub pipelineCacheUUID: [u8; VK_UUID_SIZE],
     pub limits: VkPhysicalDeviceLimits,
     pub sparseProperties: VkPhysicalDeviceSparseProperties,
@@ -9576,7 +9576,7 @@ pub union VkClearValue {
 pub struct PFN_vkCreateInstance(pub unsafe extern "system" fn(pCreateInfo: *const VkInstanceCreateInfo, pAllocator: *const VkAllocationCallbacks, pInstance: *mut VkInstance) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateInstance {
+unsafe impl crate::PFN for PFN_vkCreateInstance {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateInstance";
 
     #[inline(always)]
@@ -9587,7 +9587,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateInstance {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateInstance {
+impl crate::StaticCallable for PFN_vkCreateInstance {
     const STATIC: Self = Self(vkCreateInstance);
 }
 
@@ -9598,7 +9598,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateInstance {
 pub struct PFN_vkDestroyInstance(pub unsafe extern "system" fn(instance: VkInstance, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyInstance {
+unsafe impl crate::PFN for PFN_vkDestroyInstance {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyInstance";
 
     #[inline(always)]
@@ -9609,7 +9609,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyInstance {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyInstance {
+impl crate::StaticCallable for PFN_vkDestroyInstance {
     const STATIC: Self = Self(vkDestroyInstance);
 }
 
@@ -9620,7 +9620,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyInstance {
 pub struct PFN_vkEnumeratePhysicalDevices(pub unsafe extern "system" fn(instance: VkInstance, pPhysicalDeviceCount: *mut u32, pPhysicalDevices: *mut VkPhysicalDevice) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDevices {
+unsafe impl crate::PFN for PFN_vkEnumeratePhysicalDevices {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumeratePhysicalDevices";
 
     #[inline(always)]
@@ -9631,7 +9631,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDevices {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumeratePhysicalDevices {
+impl crate::StaticCallable for PFN_vkEnumeratePhysicalDevices {
     const STATIC: Self = Self(vkEnumeratePhysicalDevices);
 }
 
@@ -9642,7 +9642,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumeratePhysicalDevices {
 pub struct PFN_vkGetPhysicalDeviceFeatures(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkPhysicalDeviceFeatures));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFeatures {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFeatures";
 
     #[inline(always)]
@@ -9653,7 +9653,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFeatures {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFeatures {
     const STATIC: Self = Self(vkGetPhysicalDeviceFeatures);
 }
 
@@ -9664,7 +9664,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFeatures {
 pub struct PFN_vkGetPhysicalDeviceFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, pFormatProperties: *mut VkFormatProperties));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFormatProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFormatProperties";
 
     #[inline(always)]
@@ -9675,7 +9675,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties);
 }
 
@@ -9686,7 +9686,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties
 pub struct PFN_vkGetPhysicalDeviceImageFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, tiling: VkImageTiling, usage: VkImageUsageFlags, flags: VkImageCreateFlags, pImageFormatProperties: *mut VkImageFormatProperties) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceImageFormatProperties";
 
     #[inline(always)]
@@ -9697,7 +9697,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatPropertie
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties);
 }
 
@@ -9708,7 +9708,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatPrope
 pub struct PFN_vkGetPhysicalDeviceProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pProperties: *mut VkPhysicalDeviceProperties));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceProperties";
 
     #[inline(always)]
@@ -9719,7 +9719,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceProperties);
 }
 
@@ -9730,7 +9730,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceProperties {
 pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pQueueFamilyPropertyCount: *mut u32, pQueueFamilyProperties: *mut VkQueueFamilyProperties));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceQueueFamilyProperties";
 
     #[inline(always)]
@@ -9741,7 +9741,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyPropertie
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties);
 }
 
@@ -9752,7 +9752,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyPrope
 pub struct PFN_vkGetPhysicalDeviceMemoryProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pMemoryProperties: *mut VkPhysicalDeviceMemoryProperties));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceMemoryProperties";
 
     #[inline(always)]
@@ -9763,7 +9763,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties);
 }
 
@@ -9774,7 +9774,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties
 pub struct PFN_vkGetInstanceProcAddr(pub unsafe extern "system" fn(instance: VkInstance, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetInstanceProcAddr {
+unsafe impl crate::PFN for PFN_vkGetInstanceProcAddr {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetInstanceProcAddr";
 
     #[inline(always)]
@@ -9785,7 +9785,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetInstanceProcAddr {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetInstanceProcAddr {
+impl crate::StaticCallable for PFN_vkGetInstanceProcAddr {
     const STATIC: Self = Self(vkGetInstanceProcAddr);
 }
 
@@ -9796,7 +9796,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetInstanceProcAddr {
 pub struct PFN_vkGetDeviceProcAddr(pub unsafe extern "system" fn(device: VkDevice, pName: *const core::ffi::c_char) -> Option<PFN_vkVoidFunction>);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceProcAddr {
+unsafe impl crate::PFN for PFN_vkGetDeviceProcAddr {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceProcAddr";
 
     #[inline(always)]
@@ -9807,7 +9807,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceProcAddr {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDeviceProcAddr {
+impl crate::StaticCallable for PFN_vkGetDeviceProcAddr {
     const STATIC: Self = Self(vkGetDeviceProcAddr);
 }
 
@@ -9818,7 +9818,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceProcAddr {
 pub struct PFN_vkCreateDevice(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pCreateInfo: *const VkDeviceCreateInfo, pAllocator: *const VkAllocationCallbacks, pDevice: *mut VkDevice) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDevice {
+unsafe impl crate::PFN for PFN_vkCreateDevice {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDevice";
 
     #[inline(always)]
@@ -9829,7 +9829,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDevice {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateDevice {
+impl crate::StaticCallable for PFN_vkCreateDevice {
     const STATIC: Self = Self(vkCreateDevice);
 }
 
@@ -9840,7 +9840,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDevice {
 pub struct PFN_vkDestroyDevice(pub unsafe extern "system" fn(device: VkDevice, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDevice {
+unsafe impl crate::PFN for PFN_vkDestroyDevice {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDevice";
 
     #[inline(always)]
@@ -9851,7 +9851,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDevice {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyDevice {
+impl crate::StaticCallable for PFN_vkDestroyDevice {
     const STATIC: Self = Self(vkDestroyDevice);
 }
 
@@ -9862,7 +9862,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDevice {
 pub struct PFN_vkEnumerateInstanceExtensionProperties(pub unsafe extern "system" fn(pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceExtensionProperties {
+unsafe impl crate::PFN for PFN_vkEnumerateInstanceExtensionProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateInstanceExtensionProperties";
 
     #[inline(always)]
@@ -9873,7 +9873,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceExtensionProperties 
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceExtensionProperties {
+impl crate::StaticCallable for PFN_vkEnumerateInstanceExtensionProperties {
     const STATIC: Self = Self(vkEnumerateInstanceExtensionProperties);
 }
 
@@ -9884,7 +9884,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceExtensionPropert
 pub struct PFN_vkEnumerateDeviceExtensionProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pLayerName: *const core::ffi::c_char, pPropertyCount: *mut u32, pProperties: *mut VkExtensionProperties) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumerateDeviceExtensionProperties {
+unsafe impl crate::PFN for PFN_vkEnumerateDeviceExtensionProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateDeviceExtensionProperties";
 
     #[inline(always)]
@@ -9895,7 +9895,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumerateDeviceExtensionProperties {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceExtensionProperties {
+impl crate::StaticCallable for PFN_vkEnumerateDeviceExtensionProperties {
     const STATIC: Self = Self(vkEnumerateDeviceExtensionProperties);
 }
 
@@ -9906,7 +9906,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceExtensionPropertie
 pub struct PFN_vkEnumerateInstanceLayerProperties(pub unsafe extern "system" fn(pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceLayerProperties {
+unsafe impl crate::PFN for PFN_vkEnumerateInstanceLayerProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateInstanceLayerProperties";
 
     #[inline(always)]
@@ -9917,7 +9917,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceLayerProperties {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceLayerProperties {
+impl crate::StaticCallable for PFN_vkEnumerateInstanceLayerProperties {
     const STATIC: Self = Self(vkEnumerateInstanceLayerProperties);
 }
 
@@ -9928,7 +9928,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceLayerProperties 
 pub struct PFN_vkEnumerateDeviceLayerProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pPropertyCount: *mut u32, pProperties: *mut VkLayerProperties) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumerateDeviceLayerProperties {
+unsafe impl crate::PFN for PFN_vkEnumerateDeviceLayerProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateDeviceLayerProperties";
 
     #[inline(always)]
@@ -9939,7 +9939,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumerateDeviceLayerProperties {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceLayerProperties {
+impl crate::StaticCallable for PFN_vkEnumerateDeviceLayerProperties {
     const STATIC: Self = Self(vkEnumerateDeviceLayerProperties);
 }
 
@@ -9950,7 +9950,7 @@ impl crate::resolver::StaticCallable for PFN_vkEnumerateDeviceLayerProperties {
 pub struct PFN_vkGetDeviceQueue(pub unsafe extern "system" fn(device: VkDevice, queueFamilyIndex: u32, queueIndex: u32, pQueue: *mut VkQueue));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceQueue {
+unsafe impl crate::PFN for PFN_vkGetDeviceQueue {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceQueue";
 
     #[inline(always)]
@@ -9961,7 +9961,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceQueue {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDeviceQueue {
+impl crate::StaticCallable for PFN_vkGetDeviceQueue {
     const STATIC: Self = Self(vkGetDeviceQueue);
 }
 
@@ -9972,7 +9972,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceQueue {
 pub struct PFN_vkQueueSubmit(pub unsafe extern "system" fn(queue: VkQueue, submitCount: u32, pSubmits: *const VkSubmitInfo, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit {
+unsafe impl crate::PFN for PFN_vkQueueSubmit {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueSubmit";
 
     #[inline(always)]
@@ -9983,7 +9983,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkQueueSubmit {
+impl crate::StaticCallable for PFN_vkQueueSubmit {
     const STATIC: Self = Self(vkQueueSubmit);
 }
 
@@ -9994,7 +9994,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueSubmit {
 pub struct PFN_vkQueueWaitIdle(pub unsafe extern "system" fn(queue: VkQueue) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueWaitIdle {
+unsafe impl crate::PFN for PFN_vkQueueWaitIdle {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueWaitIdle";
 
     #[inline(always)]
@@ -10005,7 +10005,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueWaitIdle {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkQueueWaitIdle {
+impl crate::StaticCallable for PFN_vkQueueWaitIdle {
     const STATIC: Self = Self(vkQueueWaitIdle);
 }
 
@@ -10016,7 +10016,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueWaitIdle {
 pub struct PFN_vkDeviceWaitIdle(pub unsafe extern "system" fn(device: VkDevice) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDeviceWaitIdle {
+unsafe impl crate::PFN for PFN_vkDeviceWaitIdle {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDeviceWaitIdle";
 
     #[inline(always)]
@@ -10027,7 +10027,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDeviceWaitIdle {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDeviceWaitIdle {
+impl crate::StaticCallable for PFN_vkDeviceWaitIdle {
     const STATIC: Self = Self(vkDeviceWaitIdle);
 }
 
@@ -10038,7 +10038,7 @@ impl crate::resolver::StaticCallable for PFN_vkDeviceWaitIdle {
 pub struct PFN_vkAllocateMemory(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkMemoryAllocateInfo, pAllocator: *const VkAllocationCallbacks, pMemory: *mut VkDeviceMemory) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAllocateMemory {
+unsafe impl crate::PFN for PFN_vkAllocateMemory {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAllocateMemory";
 
     #[inline(always)]
@@ -10049,7 +10049,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAllocateMemory {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkAllocateMemory {
+impl crate::StaticCallable for PFN_vkAllocateMemory {
     const STATIC: Self = Self(vkAllocateMemory);
 }
 
@@ -10060,7 +10060,7 @@ impl crate::resolver::StaticCallable for PFN_vkAllocateMemory {
 pub struct PFN_vkFreeMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkFreeMemory {
+unsafe impl crate::PFN for PFN_vkFreeMemory {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkFreeMemory";
 
     #[inline(always)]
@@ -10071,7 +10071,7 @@ unsafe impl crate::resolver::PFN for PFN_vkFreeMemory {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkFreeMemory {
+impl crate::StaticCallable for PFN_vkFreeMemory {
     const STATIC: Self = Self(vkFreeMemory);
 }
 
@@ -10082,7 +10082,7 @@ impl crate::resolver::StaticCallable for PFN_vkFreeMemory {
 pub struct PFN_vkMapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, offset: VkDeviceSize, size: VkDeviceSize, flags: VkMemoryMapFlags, ppData: *mut *mut core::ffi::c_void) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkMapMemory {
+unsafe impl crate::PFN for PFN_vkMapMemory {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkMapMemory";
 
     #[inline(always)]
@@ -10093,7 +10093,7 @@ unsafe impl crate::resolver::PFN for PFN_vkMapMemory {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkMapMemory {
+impl crate::StaticCallable for PFN_vkMapMemory {
     const STATIC: Self = Self(vkMapMemory);
 }
 
@@ -10104,7 +10104,7 @@ impl crate::resolver::StaticCallable for PFN_vkMapMemory {
 pub struct PFN_vkUnmapMemory(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkUnmapMemory {
+unsafe impl crate::PFN for PFN_vkUnmapMemory {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkUnmapMemory";
 
     #[inline(always)]
@@ -10115,7 +10115,7 @@ unsafe impl crate::resolver::PFN for PFN_vkUnmapMemory {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkUnmapMemory {
+impl crate::StaticCallable for PFN_vkUnmapMemory {
     const STATIC: Self = Self(vkUnmapMemory);
 }
 
@@ -10126,7 +10126,7 @@ impl crate::resolver::StaticCallable for PFN_vkUnmapMemory {
 pub struct PFN_vkFlushMappedMemoryRanges(pub unsafe extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkFlushMappedMemoryRanges {
+unsafe impl crate::PFN for PFN_vkFlushMappedMemoryRanges {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkFlushMappedMemoryRanges";
 
     #[inline(always)]
@@ -10137,7 +10137,7 @@ unsafe impl crate::resolver::PFN for PFN_vkFlushMappedMemoryRanges {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkFlushMappedMemoryRanges {
+impl crate::StaticCallable for PFN_vkFlushMappedMemoryRanges {
     const STATIC: Self = Self(vkFlushMappedMemoryRanges);
 }
 
@@ -10148,7 +10148,7 @@ impl crate::resolver::StaticCallable for PFN_vkFlushMappedMemoryRanges {
 pub struct PFN_vkInvalidateMappedMemoryRanges(pub unsafe extern "system" fn(device: VkDevice, memoryRangeCount: u32, pMemoryRanges: *const VkMappedMemoryRange) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkInvalidateMappedMemoryRanges {
+unsafe impl crate::PFN for PFN_vkInvalidateMappedMemoryRanges {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkInvalidateMappedMemoryRanges";
 
     #[inline(always)]
@@ -10159,7 +10159,7 @@ unsafe impl crate::resolver::PFN for PFN_vkInvalidateMappedMemoryRanges {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkInvalidateMappedMemoryRanges {
+impl crate::StaticCallable for PFN_vkInvalidateMappedMemoryRanges {
     const STATIC: Self = Self(vkInvalidateMappedMemoryRanges);
 }
 
@@ -10170,7 +10170,7 @@ impl crate::resolver::StaticCallable for PFN_vkInvalidateMappedMemoryRanges {
 pub struct PFN_vkGetDeviceMemoryCommitment(pub unsafe extern "system" fn(device: VkDevice, memory: VkDeviceMemory, pCommitmentMemoryInBytes: *mut VkDeviceSize));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryCommitment {
+unsafe impl crate::PFN for PFN_vkGetDeviceMemoryCommitment {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceMemoryCommitment";
 
     #[inline(always)]
@@ -10181,7 +10181,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryCommitment {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDeviceMemoryCommitment {
+impl crate::StaticCallable for PFN_vkGetDeviceMemoryCommitment {
     const STATIC: Self = Self(vkGetDeviceMemoryCommitment);
 }
 
@@ -10192,7 +10192,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetDeviceMemoryCommitment {
 pub struct PFN_vkBindBufferMemory(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory {
+unsafe impl crate::PFN for PFN_vkBindBufferMemory {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBindBufferMemory";
 
     #[inline(always)]
@@ -10203,7 +10203,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkBindBufferMemory {
+impl crate::StaticCallable for PFN_vkBindBufferMemory {
     const STATIC: Self = Self(vkBindBufferMemory);
 }
 
@@ -10214,7 +10214,7 @@ impl crate::resolver::StaticCallable for PFN_vkBindBufferMemory {
 pub struct PFN_vkBindImageMemory(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, memory: VkDeviceMemory, memoryOffset: VkDeviceSize) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory {
+unsafe impl crate::PFN for PFN_vkBindImageMemory {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBindImageMemory";
 
     #[inline(always)]
@@ -10225,7 +10225,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkBindImageMemory {
+impl crate::StaticCallable for PFN_vkBindImageMemory {
     const STATIC: Self = Self(vkBindImageMemory);
 }
 
@@ -10236,7 +10236,7 @@ impl crate::resolver::StaticCallable for PFN_vkBindImageMemory {
 pub struct PFN_vkGetBufferMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pMemoryRequirements: *mut VkMemoryRequirements));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements {
+unsafe impl crate::PFN for PFN_vkGetBufferMemoryRequirements {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferMemoryRequirements";
 
     #[inline(always)]
@@ -10247,7 +10247,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements {
+impl crate::StaticCallable for PFN_vkGetBufferMemoryRequirements {
     const STATIC: Self = Self(vkGetBufferMemoryRequirements);
 }
 
@@ -10258,7 +10258,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements {
 pub struct PFN_vkGetImageMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pMemoryRequirements: *mut VkMemoryRequirements));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements {
+unsafe impl crate::PFN for PFN_vkGetImageMemoryRequirements {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageMemoryRequirements";
 
     #[inline(always)]
@@ -10269,7 +10269,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements {
+impl crate::StaticCallable for PFN_vkGetImageMemoryRequirements {
     const STATIC: Self = Self(vkGetImageMemoryRequirements);
 }
 
@@ -10280,7 +10280,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements {
 pub struct PFN_vkGetImageSparseMemoryRequirements(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSparseMemoryRequirementsCount: *mut u32, pSparseMemoryRequirements: *mut VkSparseImageMemoryRequirements));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements {
+unsafe impl crate::PFN for PFN_vkGetImageSparseMemoryRequirements {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSparseMemoryRequirements";
 
     #[inline(always)]
@@ -10291,7 +10291,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetImageSparseMemoryRequirements {
+impl crate::StaticCallable for PFN_vkGetImageSparseMemoryRequirements {
     const STATIC: Self = Self(vkGetImageSparseMemoryRequirements);
 }
 
@@ -10302,7 +10302,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageSparseMemoryRequirements 
 pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, format: VkFormat, r#type: VkImageType, samples: VkSampleCountFlags, usage: VkImageUsageFlags, tiling: VkImageTiling, pPropertyCount: *mut u32, pProperties: *mut VkSparseImageFormatProperties));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSparseImageFormatProperties";
 
     #[inline(always)]
@@ -10313,7 +10313,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatPro
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties);
 }
 
@@ -10324,7 +10324,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageForma
 pub struct PFN_vkQueueBindSparse(pub unsafe extern "system" fn(queue: VkQueue, bindInfoCount: u32, pBindInfos: *const VkBindSparseInfo, fence: Option<VkFence>) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueBindSparse {
+unsafe impl crate::PFN for PFN_vkQueueBindSparse {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueBindSparse";
 
     #[inline(always)]
@@ -10335,7 +10335,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueBindSparse {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkQueueBindSparse {
+impl crate::StaticCallable for PFN_vkQueueBindSparse {
     const STATIC: Self = Self(vkQueueBindSparse);
 }
 
@@ -10346,7 +10346,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueBindSparse {
 pub struct PFN_vkCreateFence(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkFenceCreateInfo, pAllocator: *const VkAllocationCallbacks, pFence: *mut VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateFence {
+unsafe impl crate::PFN for PFN_vkCreateFence {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateFence";
 
     #[inline(always)]
@@ -10357,7 +10357,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateFence {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateFence {
+impl crate::StaticCallable for PFN_vkCreateFence {
     const STATIC: Self = Self(vkCreateFence);
 }
 
@@ -10368,7 +10368,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateFence {
 pub struct PFN_vkDestroyFence(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyFence {
+unsafe impl crate::PFN for PFN_vkDestroyFence {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyFence";
 
     #[inline(always)]
@@ -10379,7 +10379,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyFence {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyFence {
+impl crate::StaticCallable for PFN_vkDestroyFence {
     const STATIC: Self = Self(vkDestroyFence);
 }
 
@@ -10390,7 +10390,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyFence {
 pub struct PFN_vkResetFences(pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkResetFences {
+unsafe impl crate::PFN for PFN_vkResetFences {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkResetFences";
 
     #[inline(always)]
@@ -10401,7 +10401,7 @@ unsafe impl crate::resolver::PFN for PFN_vkResetFences {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkResetFences {
+impl crate::StaticCallable for PFN_vkResetFences {
     const STATIC: Self = Self(vkResetFences);
 }
 
@@ -10412,7 +10412,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetFences {
 pub struct PFN_vkGetFenceStatus(pub unsafe extern "system" fn(device: VkDevice, fence: VkFence) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetFenceStatus {
+unsafe impl crate::PFN for PFN_vkGetFenceStatus {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetFenceStatus";
 
     #[inline(always)]
@@ -10423,7 +10423,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetFenceStatus {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetFenceStatus {
+impl crate::StaticCallable for PFN_vkGetFenceStatus {
     const STATIC: Self = Self(vkGetFenceStatus);
 }
 
@@ -10434,7 +10434,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetFenceStatus {
 pub struct PFN_vkWaitForFences(pub unsafe extern "system" fn(device: VkDevice, fenceCount: u32, pFences: *const VkFence, waitAll: VkBool32, timeout: u64) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkWaitForFences {
+unsafe impl crate::PFN for PFN_vkWaitForFences {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkWaitForFences";
 
     #[inline(always)]
@@ -10445,7 +10445,7 @@ unsafe impl crate::resolver::PFN for PFN_vkWaitForFences {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkWaitForFences {
+impl crate::StaticCallable for PFN_vkWaitForFences {
     const STATIC: Self = Self(vkWaitForFences);
 }
 
@@ -10456,7 +10456,7 @@ impl crate::resolver::StaticCallable for PFN_vkWaitForFences {
 pub struct PFN_vkCreateSemaphore(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSemaphoreCreateInfo, pAllocator: *const VkAllocationCallbacks, pSemaphore: *mut VkSemaphore) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateSemaphore {
+unsafe impl crate::PFN for PFN_vkCreateSemaphore {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSemaphore";
 
     #[inline(always)]
@@ -10467,7 +10467,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateSemaphore {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateSemaphore {
+impl crate::StaticCallable for PFN_vkCreateSemaphore {
     const STATIC: Self = Self(vkCreateSemaphore);
 }
 
@@ -10478,7 +10478,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateSemaphore {
 pub struct PFN_vkDestroySemaphore(pub unsafe extern "system" fn(device: VkDevice, semaphore: VkSemaphore, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroySemaphore {
+unsafe impl crate::PFN for PFN_vkDestroySemaphore {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySemaphore";
 
     #[inline(always)]
@@ -10489,7 +10489,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroySemaphore {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroySemaphore {
+impl crate::StaticCallable for PFN_vkDestroySemaphore {
     const STATIC: Self = Self(vkDestroySemaphore);
 }
 
@@ -10500,7 +10500,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySemaphore {
 pub struct PFN_vkCreateEvent(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkEventCreateInfo, pAllocator: *const VkAllocationCallbacks, pEvent: *mut VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateEvent {
+unsafe impl crate::PFN for PFN_vkCreateEvent {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateEvent";
 
     #[inline(always)]
@@ -10511,7 +10511,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateEvent {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateEvent {
+impl crate::StaticCallable for PFN_vkCreateEvent {
     const STATIC: Self = Self(vkCreateEvent);
 }
 
@@ -10522,7 +10522,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateEvent {
 pub struct PFN_vkDestroyEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyEvent {
+unsafe impl crate::PFN for PFN_vkDestroyEvent {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyEvent";
 
     #[inline(always)]
@@ -10533,7 +10533,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyEvent {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyEvent {
+impl crate::StaticCallable for PFN_vkDestroyEvent {
     const STATIC: Self = Self(vkDestroyEvent);
 }
 
@@ -10544,7 +10544,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyEvent {
 pub struct PFN_vkGetEventStatus(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetEventStatus {
+unsafe impl crate::PFN for PFN_vkGetEventStatus {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetEventStatus";
 
     #[inline(always)]
@@ -10555,7 +10555,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetEventStatus {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetEventStatus {
+impl crate::StaticCallable for PFN_vkGetEventStatus {
     const STATIC: Self = Self(vkGetEventStatus);
 }
 
@@ -10566,7 +10566,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetEventStatus {
 pub struct PFN_vkSetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkSetEvent {
+unsafe impl crate::PFN for PFN_vkSetEvent {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkSetEvent";
 
     #[inline(always)]
@@ -10577,7 +10577,7 @@ unsafe impl crate::resolver::PFN for PFN_vkSetEvent {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkSetEvent {
+impl crate::StaticCallable for PFN_vkSetEvent {
     const STATIC: Self = Self(vkSetEvent);
 }
 
@@ -10588,7 +10588,7 @@ impl crate::resolver::StaticCallable for PFN_vkSetEvent {
 pub struct PFN_vkResetEvent(pub unsafe extern "system" fn(device: VkDevice, event: VkEvent) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkResetEvent {
+unsafe impl crate::PFN for PFN_vkResetEvent {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkResetEvent";
 
     #[inline(always)]
@@ -10599,7 +10599,7 @@ unsafe impl crate::resolver::PFN for PFN_vkResetEvent {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkResetEvent {
+impl crate::StaticCallable for PFN_vkResetEvent {
     const STATIC: Self = Self(vkResetEvent);
 }
 
@@ -10610,7 +10610,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetEvent {
 pub struct PFN_vkCreateQueryPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkQueryPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pQueryPool: *mut VkQueryPool) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateQueryPool {
+unsafe impl crate::PFN for PFN_vkCreateQueryPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateQueryPool";
 
     #[inline(always)]
@@ -10621,7 +10621,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateQueryPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateQueryPool {
+impl crate::StaticCallable for PFN_vkCreateQueryPool {
     const STATIC: Self = Self(vkCreateQueryPool);
 }
 
@@ -10632,7 +10632,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateQueryPool {
 pub struct PFN_vkDestroyQueryPool(pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyQueryPool {
+unsafe impl crate::PFN for PFN_vkDestroyQueryPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyQueryPool";
 
     #[inline(always)]
@@ -10643,7 +10643,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyQueryPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyQueryPool {
+impl crate::StaticCallable for PFN_vkDestroyQueryPool {
     const STATIC: Self = Self(vkDestroyQueryPool);
 }
 
@@ -10654,7 +10654,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyQueryPool {
 pub struct PFN_vkGetQueryPoolResults(pub unsafe extern "system" fn(device: VkDevice, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dataSize: usize, pData: *mut core::ffi::c_void, stride: VkDeviceSize, flags: VkQueryResultFlags) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetQueryPoolResults {
+unsafe impl crate::PFN for PFN_vkGetQueryPoolResults {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetQueryPoolResults";
 
     #[inline(always)]
@@ -10665,7 +10665,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetQueryPoolResults {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetQueryPoolResults {
+impl crate::StaticCallable for PFN_vkGetQueryPoolResults {
     const STATIC: Self = Self(vkGetQueryPoolResults);
 }
 
@@ -10676,7 +10676,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetQueryPoolResults {
 pub struct PFN_vkCreateBuffer(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkBufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pBuffer: *mut VkBuffer) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateBuffer {
+unsafe impl crate::PFN for PFN_vkCreateBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateBuffer";
 
     #[inline(always)]
@@ -10687,7 +10687,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateBuffer {
+impl crate::StaticCallable for PFN_vkCreateBuffer {
     const STATIC: Self = Self(vkCreateBuffer);
 }
 
@@ -10698,7 +10698,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateBuffer {
 pub struct PFN_vkDestroyBuffer(pub unsafe extern "system" fn(device: VkDevice, buffer: VkBuffer, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyBuffer {
+unsafe impl crate::PFN for PFN_vkDestroyBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyBuffer";
 
     #[inline(always)]
@@ -10709,7 +10709,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyBuffer {
+impl crate::StaticCallable for PFN_vkDestroyBuffer {
     const STATIC: Self = Self(vkDestroyBuffer);
 }
 
@@ -10720,7 +10720,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyBuffer {
 pub struct PFN_vkCreateBufferView(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkBufferViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkBufferView) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateBufferView {
+unsafe impl crate::PFN for PFN_vkCreateBufferView {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateBufferView";
 
     #[inline(always)]
@@ -10731,7 +10731,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateBufferView {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateBufferView {
+impl crate::StaticCallable for PFN_vkCreateBufferView {
     const STATIC: Self = Self(vkCreateBufferView);
 }
 
@@ -10742,7 +10742,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateBufferView {
 pub struct PFN_vkDestroyBufferView(pub unsafe extern "system" fn(device: VkDevice, bufferView: VkBufferView, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyBufferView {
+unsafe impl crate::PFN for PFN_vkDestroyBufferView {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyBufferView";
 
     #[inline(always)]
@@ -10753,7 +10753,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyBufferView {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyBufferView {
+impl crate::StaticCallable for PFN_vkDestroyBufferView {
     const STATIC: Self = Self(vkDestroyBufferView);
 }
 
@@ -10764,7 +10764,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyBufferView {
 pub struct PFN_vkCreateImage(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkImageCreateInfo, pAllocator: *const VkAllocationCallbacks, pImage: *mut VkImage) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateImage {
+unsafe impl crate::PFN for PFN_vkCreateImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateImage";
 
     #[inline(always)]
@@ -10775,7 +10775,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateImage {
+impl crate::StaticCallable for PFN_vkCreateImage {
     const STATIC: Self = Self(vkCreateImage);
 }
 
@@ -10786,7 +10786,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateImage {
 pub struct PFN_vkDestroyImage(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyImage {
+unsafe impl crate::PFN for PFN_vkDestroyImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyImage";
 
     #[inline(always)]
@@ -10797,7 +10797,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyImage {
+impl crate::StaticCallable for PFN_vkDestroyImage {
     const STATIC: Self = Self(vkDestroyImage);
 }
 
@@ -10808,7 +10808,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyImage {
 pub struct PFN_vkGetImageSubresourceLayout(pub unsafe extern "system" fn(device: VkDevice, image: VkImage, pSubresource: *const VkImageSubresource, pLayout: *mut VkSubresourceLayout));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageSubresourceLayout {
+unsafe impl crate::PFN for PFN_vkGetImageSubresourceLayout {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSubresourceLayout";
 
     #[inline(always)]
@@ -10819,7 +10819,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageSubresourceLayout {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetImageSubresourceLayout {
+impl crate::StaticCallable for PFN_vkGetImageSubresourceLayout {
     const STATIC: Self = Self(vkGetImageSubresourceLayout);
 }
 
@@ -10830,7 +10830,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetImageSubresourceLayout {
 pub struct PFN_vkCreateImageView(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkImageViewCreateInfo, pAllocator: *const VkAllocationCallbacks, pView: *mut VkImageView) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateImageView {
+unsafe impl crate::PFN for PFN_vkCreateImageView {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateImageView";
 
     #[inline(always)]
@@ -10841,7 +10841,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateImageView {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateImageView {
+impl crate::StaticCallable for PFN_vkCreateImageView {
     const STATIC: Self = Self(vkCreateImageView);
 }
 
@@ -10852,7 +10852,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateImageView {
 pub struct PFN_vkDestroyImageView(pub unsafe extern "system" fn(device: VkDevice, view: VkImageView, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyImageView {
+unsafe impl crate::PFN for PFN_vkDestroyImageView {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyImageView";
 
     #[inline(always)]
@@ -10863,7 +10863,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyImageView {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyImageView {
+impl crate::StaticCallable for PFN_vkDestroyImageView {
     const STATIC: Self = Self(vkDestroyImageView);
 }
 
@@ -10874,7 +10874,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyImageView {
 pub struct PFN_vkCreateShaderModule(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkShaderModuleCreateInfo, pAllocator: *const VkAllocationCallbacks, pModule: *mut VkShaderModule) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateShaderModule {
+unsafe impl crate::PFN for PFN_vkCreateShaderModule {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateShaderModule";
 
     #[inline(always)]
@@ -10885,7 +10885,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateShaderModule {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateShaderModule {
+impl crate::StaticCallable for PFN_vkCreateShaderModule {
     const STATIC: Self = Self(vkCreateShaderModule);
 }
 
@@ -10896,7 +10896,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateShaderModule {
 pub struct PFN_vkDestroyShaderModule(pub unsafe extern "system" fn(device: VkDevice, module: VkShaderModule, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyShaderModule {
+unsafe impl crate::PFN for PFN_vkDestroyShaderModule {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyShaderModule";
 
     #[inline(always)]
@@ -10907,7 +10907,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyShaderModule {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyShaderModule {
+impl crate::StaticCallable for PFN_vkDestroyShaderModule {
     const STATIC: Self = Self(vkDestroyShaderModule);
 }
 
@@ -10918,7 +10918,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyShaderModule {
 pub struct PFN_vkCreatePipelineCache(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkPipelineCacheCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineCache: *mut VkPipelineCache) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreatePipelineCache {
+unsafe impl crate::PFN for PFN_vkCreatePipelineCache {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreatePipelineCache";
 
     #[inline(always)]
@@ -10929,7 +10929,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreatePipelineCache {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreatePipelineCache {
+impl crate::StaticCallable for PFN_vkCreatePipelineCache {
     const STATIC: Self = Self(vkCreatePipelineCache);
 }
 
@@ -10940,7 +10940,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreatePipelineCache {
 pub struct PFN_vkDestroyPipelineCache(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyPipelineCache {
+unsafe impl crate::PFN for PFN_vkDestroyPipelineCache {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyPipelineCache";
 
     #[inline(always)]
@@ -10951,7 +10951,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyPipelineCache {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineCache {
+impl crate::StaticCallable for PFN_vkDestroyPipelineCache {
     const STATIC: Self = Self(vkDestroyPipelineCache);
 }
 
@@ -10962,7 +10962,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineCache {
 pub struct PFN_vkGetPipelineCacheData(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: VkPipelineCache, pDataSize: *mut usize, pData: *mut core::ffi::c_void) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPipelineCacheData {
+unsafe impl crate::PFN for PFN_vkGetPipelineCacheData {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPipelineCacheData";
 
     #[inline(always)]
@@ -10973,7 +10973,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPipelineCacheData {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPipelineCacheData {
+impl crate::StaticCallable for PFN_vkGetPipelineCacheData {
     const STATIC: Self = Self(vkGetPipelineCacheData);
 }
 
@@ -10984,7 +10984,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetPipelineCacheData {
 pub struct PFN_vkMergePipelineCaches(pub unsafe extern "system" fn(device: VkDevice, dstCache: VkPipelineCache, srcCacheCount: u32, pSrcCaches: *const VkPipelineCache) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkMergePipelineCaches {
+unsafe impl crate::PFN for PFN_vkMergePipelineCaches {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkMergePipelineCaches";
 
     #[inline(always)]
@@ -10995,7 +10995,7 @@ unsafe impl crate::resolver::PFN for PFN_vkMergePipelineCaches {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkMergePipelineCaches {
+impl crate::StaticCallable for PFN_vkMergePipelineCaches {
     const STATIC: Self = Self(vkMergePipelineCaches);
 }
 
@@ -11006,7 +11006,7 @@ impl crate::resolver::StaticCallable for PFN_vkMergePipelineCaches {
 pub struct PFN_vkCreateGraphicsPipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkGraphicsPipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateGraphicsPipelines {
+unsafe impl crate::PFN for PFN_vkCreateGraphicsPipelines {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateGraphicsPipelines";
 
     #[inline(always)]
@@ -11017,7 +11017,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateGraphicsPipelines {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateGraphicsPipelines {
+impl crate::StaticCallable for PFN_vkCreateGraphicsPipelines {
     const STATIC: Self = Self(vkCreateGraphicsPipelines);
 }
 
@@ -11028,7 +11028,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateGraphicsPipelines {
 pub struct PFN_vkCreateComputePipelines(pub unsafe extern "system" fn(device: VkDevice, pipelineCache: Option<VkPipelineCache>, createInfoCount: u32, pCreateInfos: *const VkComputePipelineCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelines: *mut VkPipeline) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateComputePipelines {
+unsafe impl crate::PFN for PFN_vkCreateComputePipelines {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateComputePipelines";
 
     #[inline(always)]
@@ -11039,7 +11039,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateComputePipelines {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateComputePipelines {
+impl crate::StaticCallable for PFN_vkCreateComputePipelines {
     const STATIC: Self = Self(vkCreateComputePipelines);
 }
 
@@ -11050,7 +11050,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateComputePipelines {
 pub struct PFN_vkDestroyPipeline(pub unsafe extern "system" fn(device: VkDevice, pipeline: VkPipeline, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyPipeline {
+unsafe impl crate::PFN for PFN_vkDestroyPipeline {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyPipeline";
 
     #[inline(always)]
@@ -11061,7 +11061,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyPipeline {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyPipeline {
+impl crate::StaticCallable for PFN_vkDestroyPipeline {
     const STATIC: Self = Self(vkDestroyPipeline);
 }
 
@@ -11072,7 +11072,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyPipeline {
 pub struct PFN_vkCreatePipelineLayout(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkPipelineLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pPipelineLayout: *mut VkPipelineLayout) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreatePipelineLayout {
+unsafe impl crate::PFN for PFN_vkCreatePipelineLayout {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreatePipelineLayout";
 
     #[inline(always)]
@@ -11083,7 +11083,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreatePipelineLayout {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreatePipelineLayout {
+impl crate::StaticCallable for PFN_vkCreatePipelineLayout {
     const STATIC: Self = Self(vkCreatePipelineLayout);
 }
 
@@ -11094,7 +11094,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreatePipelineLayout {
 pub struct PFN_vkDestroyPipelineLayout(pub unsafe extern "system" fn(device: VkDevice, pipelineLayout: VkPipelineLayout, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyPipelineLayout {
+unsafe impl crate::PFN for PFN_vkDestroyPipelineLayout {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyPipelineLayout";
 
     #[inline(always)]
@@ -11105,7 +11105,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyPipelineLayout {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineLayout {
+impl crate::StaticCallable for PFN_vkDestroyPipelineLayout {
     const STATIC: Self = Self(vkDestroyPipelineLayout);
 }
 
@@ -11116,7 +11116,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyPipelineLayout {
 pub struct PFN_vkCreateSampler(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkSamplerCreateInfo, pAllocator: *const VkAllocationCallbacks, pSampler: *mut VkSampler) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateSampler {
+unsafe impl crate::PFN for PFN_vkCreateSampler {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSampler";
 
     #[inline(always)]
@@ -11127,7 +11127,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateSampler {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateSampler {
+impl crate::StaticCallable for PFN_vkCreateSampler {
     const STATIC: Self = Self(vkCreateSampler);
 }
 
@@ -11138,7 +11138,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateSampler {
 pub struct PFN_vkDestroySampler(pub unsafe extern "system" fn(device: VkDevice, sampler: VkSampler, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroySampler {
+unsafe impl crate::PFN for PFN_vkDestroySampler {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySampler";
 
     #[inline(always)]
@@ -11149,7 +11149,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroySampler {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroySampler {
+impl crate::StaticCallable for PFN_vkDestroySampler {
     const STATIC: Self = Self(vkDestroySampler);
 }
 
@@ -11160,7 +11160,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroySampler {
 pub struct PFN_vkCreateDescriptorSetLayout(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorSetLayoutCreateInfo, pAllocator: *const VkAllocationCallbacks, pSetLayout: *mut VkDescriptorSetLayout) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorSetLayout {
+unsafe impl crate::PFN for PFN_vkCreateDescriptorSetLayout {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDescriptorSetLayout";
 
     #[inline(always)]
@@ -11171,7 +11171,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorSetLayout {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorSetLayout {
+impl crate::StaticCallable for PFN_vkCreateDescriptorSetLayout {
     const STATIC: Self = Self(vkCreateDescriptorSetLayout);
 }
 
@@ -11182,7 +11182,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorSetLayout {
 pub struct PFN_vkDestroyDescriptorSetLayout(pub unsafe extern "system" fn(device: VkDevice, descriptorSetLayout: VkDescriptorSetLayout, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorSetLayout {
+unsafe impl crate::PFN for PFN_vkDestroyDescriptorSetLayout {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDescriptorSetLayout";
 
     #[inline(always)]
@@ -11193,7 +11193,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorSetLayout {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorSetLayout {
+impl crate::StaticCallable for PFN_vkDestroyDescriptorSetLayout {
     const STATIC: Self = Self(vkDestroyDescriptorSetLayout);
 }
 
@@ -11204,7 +11204,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorSetLayout {
 pub struct PFN_vkCreateDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkDescriptorPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pPool: *mut VkDescriptorPool) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorPool {
+unsafe impl crate::PFN for PFN_vkCreateDescriptorPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDescriptorPool";
 
     #[inline(always)]
@@ -11215,7 +11215,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorPool {
+impl crate::StaticCallable for PFN_vkCreateDescriptorPool {
     const STATIC: Self = Self(vkCreateDescriptorPool);
 }
 
@@ -11226,7 +11226,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorPool {
 pub struct PFN_vkDestroyDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorPool {
+unsafe impl crate::PFN for PFN_vkDestroyDescriptorPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDescriptorPool";
 
     #[inline(always)]
@@ -11237,7 +11237,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorPool {
+impl crate::StaticCallable for PFN_vkDestroyDescriptorPool {
     const STATIC: Self = Self(vkDestroyDescriptorPool);
 }
 
@@ -11248,7 +11248,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorPool {
 pub struct PFN_vkResetDescriptorPool(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, flags: VkDescriptorPoolResetFlags) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkResetDescriptorPool {
+unsafe impl crate::PFN for PFN_vkResetDescriptorPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkResetDescriptorPool";
 
     #[inline(always)]
@@ -11259,7 +11259,7 @@ unsafe impl crate::resolver::PFN for PFN_vkResetDescriptorPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkResetDescriptorPool {
+impl crate::StaticCallable for PFN_vkResetDescriptorPool {
     const STATIC: Self = Self(vkResetDescriptorPool);
 }
 
@@ -11270,7 +11270,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetDescriptorPool {
 pub struct PFN_vkAllocateDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkDescriptorSetAllocateInfo, pDescriptorSets: *mut VkDescriptorSet) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAllocateDescriptorSets {
+unsafe impl crate::PFN for PFN_vkAllocateDescriptorSets {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAllocateDescriptorSets";
 
     #[inline(always)]
@@ -11281,7 +11281,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAllocateDescriptorSets {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkAllocateDescriptorSets {
+impl crate::StaticCallable for PFN_vkAllocateDescriptorSets {
     const STATIC: Self = Self(vkAllocateDescriptorSets);
 }
 
@@ -11292,7 +11292,7 @@ impl crate::resolver::StaticCallable for PFN_vkAllocateDescriptorSets {
 pub struct PFN_vkFreeDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, descriptorPool: VkDescriptorPool, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkFreeDescriptorSets {
+unsafe impl crate::PFN for PFN_vkFreeDescriptorSets {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkFreeDescriptorSets";
 
     #[inline(always)]
@@ -11303,7 +11303,7 @@ unsafe impl crate::resolver::PFN for PFN_vkFreeDescriptorSets {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkFreeDescriptorSets {
+impl crate::StaticCallable for PFN_vkFreeDescriptorSets {
     const STATIC: Self = Self(vkFreeDescriptorSets);
 }
 
@@ -11314,7 +11314,7 @@ impl crate::resolver::StaticCallable for PFN_vkFreeDescriptorSets {
 pub struct PFN_vkUpdateDescriptorSets(pub unsafe extern "system" fn(device: VkDevice, descriptorWriteCount: u32, pDescriptorWrites: *const VkWriteDescriptorSet, descriptorCopyCount: u32, pDescriptorCopies: *const VkCopyDescriptorSet));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSets {
+unsafe impl crate::PFN for PFN_vkUpdateDescriptorSets {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkUpdateDescriptorSets";
 
     #[inline(always)]
@@ -11325,7 +11325,7 @@ unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSets {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkUpdateDescriptorSets {
+impl crate::StaticCallable for PFN_vkUpdateDescriptorSets {
     const STATIC: Self = Self(vkUpdateDescriptorSets);
 }
 
@@ -11336,7 +11336,7 @@ impl crate::resolver::StaticCallable for PFN_vkUpdateDescriptorSets {
 pub struct PFN_vkCreateFramebuffer(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkFramebufferCreateInfo, pAllocator: *const VkAllocationCallbacks, pFramebuffer: *mut VkFramebuffer) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateFramebuffer {
+unsafe impl crate::PFN for PFN_vkCreateFramebuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateFramebuffer";
 
     #[inline(always)]
@@ -11347,7 +11347,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateFramebuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateFramebuffer {
+impl crate::StaticCallable for PFN_vkCreateFramebuffer {
     const STATIC: Self = Self(vkCreateFramebuffer);
 }
 
@@ -11358,7 +11358,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateFramebuffer {
 pub struct PFN_vkDestroyFramebuffer(pub unsafe extern "system" fn(device: VkDevice, framebuffer: VkFramebuffer, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyFramebuffer {
+unsafe impl crate::PFN for PFN_vkDestroyFramebuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyFramebuffer";
 
     #[inline(always)]
@@ -11369,7 +11369,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyFramebuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyFramebuffer {
+impl crate::StaticCallable for PFN_vkDestroyFramebuffer {
     const STATIC: Self = Self(vkDestroyFramebuffer);
 }
 
@@ -11380,7 +11380,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyFramebuffer {
 pub struct PFN_vkCreateRenderPass(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkRenderPassCreateInfo, pAllocator: *const VkAllocationCallbacks, pRenderPass: *mut VkRenderPass) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateRenderPass {
+unsafe impl crate::PFN for PFN_vkCreateRenderPass {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateRenderPass";
 
     #[inline(always)]
@@ -11391,7 +11391,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateRenderPass {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateRenderPass {
+impl crate::StaticCallable for PFN_vkCreateRenderPass {
     const STATIC: Self = Self(vkCreateRenderPass);
 }
 
@@ -11402,7 +11402,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateRenderPass {
 pub struct PFN_vkDestroyRenderPass(pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyRenderPass {
+unsafe impl crate::PFN for PFN_vkDestroyRenderPass {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyRenderPass";
 
     #[inline(always)]
@@ -11413,7 +11413,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyRenderPass {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyRenderPass {
+impl crate::StaticCallable for PFN_vkDestroyRenderPass {
     const STATIC: Self = Self(vkDestroyRenderPass);
 }
 
@@ -11424,7 +11424,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyRenderPass {
 pub struct PFN_vkGetRenderAreaGranularity(pub unsafe extern "system" fn(device: VkDevice, renderPass: VkRenderPass, pGranularity: *mut VkExtent2D));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetRenderAreaGranularity {
+unsafe impl crate::PFN for PFN_vkGetRenderAreaGranularity {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetRenderAreaGranularity";
 
     #[inline(always)]
@@ -11435,7 +11435,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetRenderAreaGranularity {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetRenderAreaGranularity {
+impl crate::StaticCallable for PFN_vkGetRenderAreaGranularity {
     const STATIC: Self = Self(vkGetRenderAreaGranularity);
 }
 
@@ -11446,7 +11446,7 @@ impl crate::resolver::StaticCallable for PFN_vkGetRenderAreaGranularity {
 pub struct PFN_vkCreateCommandPool(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkCommandPoolCreateInfo, pAllocator: *const VkAllocationCallbacks, pCommandPool: *mut VkCommandPool) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateCommandPool {
+unsafe impl crate::PFN for PFN_vkCreateCommandPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateCommandPool";
 
     #[inline(always)]
@@ -11457,7 +11457,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateCommandPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateCommandPool {
+impl crate::StaticCallable for PFN_vkCreateCommandPool {
     const STATIC: Self = Self(vkCreateCommandPool);
 }
 
@@ -11468,7 +11468,7 @@ impl crate::resolver::StaticCallable for PFN_vkCreateCommandPool {
 pub struct PFN_vkDestroyCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, pAllocator: *const VkAllocationCallbacks));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyCommandPool {
+unsafe impl crate::PFN for PFN_vkDestroyCommandPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyCommandPool";
 
     #[inline(always)]
@@ -11479,7 +11479,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyCommandPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyCommandPool {
+impl crate::StaticCallable for PFN_vkDestroyCommandPool {
     const STATIC: Self = Self(vkDestroyCommandPool);
 }
 
@@ -11490,7 +11490,7 @@ impl crate::resolver::StaticCallable for PFN_vkDestroyCommandPool {
 pub struct PFN_vkResetCommandPool(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, flags: VkCommandPoolResetFlags) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkResetCommandPool {
+unsafe impl crate::PFN for PFN_vkResetCommandPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkResetCommandPool";
 
     #[inline(always)]
@@ -11501,7 +11501,7 @@ unsafe impl crate::resolver::PFN for PFN_vkResetCommandPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkResetCommandPool {
+impl crate::StaticCallable for PFN_vkResetCommandPool {
     const STATIC: Self = Self(vkResetCommandPool);
 }
 
@@ -11512,7 +11512,7 @@ impl crate::resolver::StaticCallable for PFN_vkResetCommandPool {
 pub struct PFN_vkAllocateCommandBuffers(pub unsafe extern "system" fn(device: VkDevice, pAllocateInfo: *const VkCommandBufferAllocateInfo, pCommandBuffers: *mut VkCommandBuffer) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAllocateCommandBuffers {
+unsafe impl crate::PFN for PFN_vkAllocateCommandBuffers {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAllocateCommandBuffers";
 
     #[inline(always)]
@@ -11523,7 +11523,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAllocateCommandBuffers {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkAllocateCommandBuffers {
+impl crate::StaticCallable for PFN_vkAllocateCommandBuffers {
     const STATIC: Self = Self(vkAllocateCommandBuffers);
 }
 
@@ -11534,7 +11534,7 @@ impl crate::resolver::StaticCallable for PFN_vkAllocateCommandBuffers {
 pub struct PFN_vkFreeCommandBuffers(pub unsafe extern "system" fn(device: VkDevice, commandPool: VkCommandPool, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkFreeCommandBuffers {
+unsafe impl crate::PFN for PFN_vkFreeCommandBuffers {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkFreeCommandBuffers";
 
     #[inline(always)]
@@ -11545,7 +11545,7 @@ unsafe impl crate::resolver::PFN for PFN_vkFreeCommandBuffers {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkFreeCommandBuffers {
+impl crate::StaticCallable for PFN_vkFreeCommandBuffers {
     const STATIC: Self = Self(vkFreeCommandBuffers);
 }
 
@@ -11556,7 +11556,7 @@ impl crate::resolver::StaticCallable for PFN_vkFreeCommandBuffers {
 pub struct PFN_vkBeginCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pBeginInfo: *const VkCommandBufferBeginInfo) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBeginCommandBuffer {
+unsafe impl crate::PFN for PFN_vkBeginCommandBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBeginCommandBuffer";
 
     #[inline(always)]
@@ -11567,7 +11567,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBeginCommandBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkBeginCommandBuffer {
+impl crate::StaticCallable for PFN_vkBeginCommandBuffer {
     const STATIC: Self = Self(vkBeginCommandBuffer);
 }
 
@@ -11578,7 +11578,7 @@ impl crate::resolver::StaticCallable for PFN_vkBeginCommandBuffer {
 pub struct PFN_vkEndCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEndCommandBuffer {
+unsafe impl crate::PFN for PFN_vkEndCommandBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEndCommandBuffer";
 
     #[inline(always)]
@@ -11589,7 +11589,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEndCommandBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEndCommandBuffer {
+impl crate::StaticCallable for PFN_vkEndCommandBuffer {
     const STATIC: Self = Self(vkEndCommandBuffer);
 }
 
@@ -11600,7 +11600,7 @@ impl crate::resolver::StaticCallable for PFN_vkEndCommandBuffer {
 pub struct PFN_vkResetCommandBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, flags: VkCommandBufferResetFlags) -> VkResult);
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkResetCommandBuffer {
+unsafe impl crate::PFN for PFN_vkResetCommandBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkResetCommandBuffer";
 
     #[inline(always)]
@@ -11611,7 +11611,7 @@ unsafe impl crate::resolver::PFN for PFN_vkResetCommandBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkResetCommandBuffer {
+impl crate::StaticCallable for PFN_vkResetCommandBuffer {
     const STATIC: Self = Self(vkResetCommandBuffer);
 }
 
@@ -11624,7 +11624,7 @@ pub struct PFN_vkEnumerateInstanceVersion(pub unsafe extern "system" fn(pApiVers
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceVersion {
+unsafe impl crate::PFN for PFN_vkEnumerateInstanceVersion {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumerateInstanceVersion";
 
     #[inline(always)]
@@ -11636,7 +11636,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumerateInstanceVersion {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumerateInstanceVersion {
+impl crate::StaticCallable for PFN_vkEnumerateInstanceVersion {
     const STATIC: Self = Self(vkEnumerateInstanceVersion);
 }
 
@@ -11649,7 +11649,7 @@ pub struct PFN_vkDestroySurfaceKHR(pub unsafe extern "system" fn(instance: VkIns
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroySurfaceKHR {
+unsafe impl crate::PFN for PFN_vkDestroySurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySurfaceKHR";
 
     #[inline(always)]
@@ -11661,7 +11661,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroySurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroySurfaceKHR {
+impl crate::StaticCallable for PFN_vkDestroySurfaceKHR {
     const STATIC: Self = Self(vkDestroySurfaceKHR);
 }
 
@@ -11674,7 +11674,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceSupportKHR(pub unsafe extern "system" f
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceSupportKHR";
 
     #[inline(always)]
@@ -11686,7 +11686,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceSupportKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceSupportKHR);
 }
 
@@ -11699,7 +11699,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pub unsafe extern "syst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceCapabilitiesKHR";
 
     #[inline(always)]
@@ -11711,7 +11711,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesK
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceCapabilitiesKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceCapabilitiesKHR);
 }
 
@@ -11724,7 +11724,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceFormatsKHR(pub unsafe extern "system" f
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceFormatsKHR";
 
     #[inline(always)]
@@ -11736,7 +11736,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfaceFormatsKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceSurfaceFormatsKHR);
 }
 
@@ -11749,7 +11749,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfacePresentModesKHR(pub unsafe extern "syst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfacePresentModesKHR";
 
     #[inline(always)]
@@ -11761,7 +11761,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfacePresentModesK
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSurfacePresentModesKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceSurfacePresentModesKHR);
 }
 
@@ -11774,7 +11774,7 @@ pub struct PFN_vkCreateSwapchainKHR(pub unsafe extern "system" fn(device: VkDevi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateSwapchainKHR {
+unsafe impl crate::PFN for PFN_vkCreateSwapchainKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSwapchainKHR";
 
     #[inline(always)]
@@ -11786,7 +11786,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateSwapchainKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateSwapchainKHR {
+impl crate::StaticCallable for PFN_vkCreateSwapchainKHR {
     const STATIC: Self = Self(vkCreateSwapchainKHR);
 }
 
@@ -11799,7 +11799,7 @@ pub struct PFN_vkDestroySwapchainKHR(pub unsafe extern "system" fn(device: VkDev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroySwapchainKHR {
+unsafe impl crate::PFN for PFN_vkDestroySwapchainKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySwapchainKHR";
 
     #[inline(always)]
@@ -11811,7 +11811,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroySwapchainKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroySwapchainKHR {
+impl crate::StaticCallable for PFN_vkDestroySwapchainKHR {
     const STATIC: Self = Self(vkDestroySwapchainKHR);
 }
 
@@ -11824,7 +11824,7 @@ pub struct PFN_vkGetSwapchainImagesKHR(pub unsafe extern "system" fn(device: VkD
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetSwapchainImagesKHR {
+unsafe impl crate::PFN for PFN_vkGetSwapchainImagesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSwapchainImagesKHR";
 
     #[inline(always)]
@@ -11836,7 +11836,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetSwapchainImagesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetSwapchainImagesKHR {
+impl crate::StaticCallable for PFN_vkGetSwapchainImagesKHR {
     const STATIC: Self = Self(vkGetSwapchainImagesKHR);
 }
 
@@ -11849,7 +11849,7 @@ pub struct PFN_vkAcquireNextImageKHR(pub unsafe extern "system" fn(device: VkDev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAcquireNextImageKHR {
+unsafe impl crate::PFN for PFN_vkAcquireNextImageKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireNextImageKHR";
 
     #[inline(always)]
@@ -11861,7 +11861,7 @@ unsafe impl crate::resolver::PFN for PFN_vkAcquireNextImageKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkAcquireNextImageKHR {
+impl crate::StaticCallable for PFN_vkAcquireNextImageKHR {
     const STATIC: Self = Self(vkAcquireNextImageKHR);
 }
 
@@ -11874,7 +11874,7 @@ pub struct PFN_vkQueuePresentKHR(pub unsafe extern "system" fn(queue: VkQueue, p
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueuePresentKHR {
+unsafe impl crate::PFN for PFN_vkQueuePresentKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueuePresentKHR";
 
     #[inline(always)]
@@ -11886,7 +11886,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueuePresentKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkQueuePresentKHR {
+impl crate::StaticCallable for PFN_vkQueuePresentKHR {
     const STATIC: Self = Self(vkQueuePresentKHR);
 }
 
@@ -11899,7 +11899,7 @@ pub struct PFN_vkGetPhysicalDeviceDisplayPropertiesKHR(pub unsafe extern "system
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceDisplayPropertiesKHR";
 
     #[inline(always)]
@@ -11911,7 +11911,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPropertiesKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPropertiesKHR);
 }
 
@@ -11924,7 +11924,7 @@ pub struct PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR(pub unsafe extern "s
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceDisplayPlanePropertiesKHR";
 
     #[inline(always)]
@@ -11936,7 +11936,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceDisplayPlaneProperti
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceDisplayPlanePropertiesKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceDisplayPlanePropertiesKHR);
 }
 
@@ -11949,7 +11949,7 @@ pub struct PFN_vkGetDisplayPlaneSupportedDisplaysKHR(pub unsafe extern "system" 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
+unsafe impl crate::PFN for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDisplayPlaneSupportedDisplaysKHR";
 
     #[inline(always)]
@@ -11961,7 +11961,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
+impl crate::StaticCallable for PFN_vkGetDisplayPlaneSupportedDisplaysKHR {
     const STATIC: Self = Self(vkGetDisplayPlaneSupportedDisplaysKHR);
 }
 
@@ -11974,7 +11974,7 @@ pub struct PFN_vkGetDisplayModePropertiesKHR(pub unsafe extern "system" fn(physi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDisplayModePropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetDisplayModePropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDisplayModePropertiesKHR";
 
     #[inline(always)]
@@ -11986,7 +11986,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDisplayModePropertiesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDisplayModePropertiesKHR {
+impl crate::StaticCallable for PFN_vkGetDisplayModePropertiesKHR {
     const STATIC: Self = Self(vkGetDisplayModePropertiesKHR);
 }
 
@@ -11999,7 +11999,7 @@ pub struct PFN_vkCreateDisplayModeKHR(pub unsafe extern "system" fn(physicalDevi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDisplayModeKHR {
+unsafe impl crate::PFN for PFN_vkCreateDisplayModeKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDisplayModeKHR";
 
     #[inline(always)]
@@ -12011,7 +12011,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDisplayModeKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateDisplayModeKHR {
+impl crate::StaticCallable for PFN_vkCreateDisplayModeKHR {
     const STATIC: Self = Self(vkCreateDisplayModeKHR);
 }
 
@@ -12024,7 +12024,7 @@ pub struct PFN_vkGetDisplayPlaneCapabilitiesKHR(pub unsafe extern "system" fn(ph
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDisplayPlaneCapabilitiesKHR {
+unsafe impl crate::PFN for PFN_vkGetDisplayPlaneCapabilitiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDisplayPlaneCapabilitiesKHR";
 
     #[inline(always)]
@@ -12036,7 +12036,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDisplayPlaneCapabilitiesKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDisplayPlaneCapabilitiesKHR {
+impl crate::StaticCallable for PFN_vkGetDisplayPlaneCapabilitiesKHR {
     const STATIC: Self = Self(vkGetDisplayPlaneCapabilitiesKHR);
 }
 
@@ -12049,7 +12049,7 @@ pub struct PFN_vkCreateDisplayPlaneSurfaceKHR(pub unsafe extern "system" fn(inst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDisplayPlaneSurfaceKHR {
+unsafe impl crate::PFN for PFN_vkCreateDisplayPlaneSurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDisplayPlaneSurfaceKHR";
 
     #[inline(always)]
@@ -12061,7 +12061,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDisplayPlaneSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR {
+impl crate::StaticCallable for PFN_vkCreateDisplayPlaneSurfaceKHR {
     const STATIC: Self = Self(vkCreateDisplayPlaneSurfaceKHR);
 }
 
@@ -12074,7 +12074,7 @@ pub struct PFN_vkCreateSharedSwapchainKHR(pub unsafe extern "system" fn(device: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_display_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateSharedSwapchainKHR {
+unsafe impl crate::PFN for PFN_vkCreateSharedSwapchainKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSharedSwapchainKHR";
 
     #[inline(always)]
@@ -12092,7 +12092,7 @@ pub struct PFN_vkCreateXlibSurfaceKHR(pub unsafe extern "system" fn(instance: Vk
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateXlibSurfaceKHR {
+unsafe impl crate::PFN for PFN_vkCreateXlibSurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateXlibSurfaceKHR";
 
     #[inline(always)]
@@ -12104,7 +12104,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateXlibSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateXlibSurfaceKHR {
+impl crate::StaticCallable for PFN_vkCreateXlibSurfaceKHR {
     const STATIC: Self = Self(vkCreateXlibSurfaceKHR);
 }
 
@@ -12117,7 +12117,7 @@ pub struct PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR(pub unsafe extern "
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceXlibPresentationSupportKHR";
 
     #[inline(always)]
@@ -12129,7 +12129,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceXlibPresentationSupp
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xlib_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceXlibPresentationSupportKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceXlibPresentationSupportKHR);
 }
 
@@ -12142,7 +12142,7 @@ pub struct PFN_vkCreateXcbSurfaceKHR(pub unsafe extern "system" fn(instance: VkI
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateXcbSurfaceKHR {
+unsafe impl crate::PFN for PFN_vkCreateXcbSurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateXcbSurfaceKHR";
 
     #[inline(always)]
@@ -12154,7 +12154,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateXcbSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateXcbSurfaceKHR {
+impl crate::StaticCallable for PFN_vkCreateXcbSurfaceKHR {
     const STATIC: Self = Self(vkCreateXcbSurfaceKHR);
 }
 
@@ -12167,7 +12167,7 @@ pub struct PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR(pub unsafe extern "s
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceXcbPresentationSupportKHR";
 
     #[inline(always)]
@@ -12179,7 +12179,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceXcbPresentationSuppo
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_xcb_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceXcbPresentationSupportKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceXcbPresentationSupportKHR);
 }
 
@@ -12192,7 +12192,7 @@ pub struct PFN_vkCreateWaylandSurfaceKHR(pub unsafe extern "system" fn(instance:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateWaylandSurfaceKHR {
+unsafe impl crate::PFN for PFN_vkCreateWaylandSurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateWaylandSurfaceKHR";
 
     #[inline(always)]
@@ -12204,7 +12204,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateWaylandSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateWaylandSurfaceKHR {
+impl crate::StaticCallable for PFN_vkCreateWaylandSurfaceKHR {
     const STATIC: Self = Self(vkCreateWaylandSurfaceKHR);
 }
 
@@ -12217,7 +12217,7 @@ pub struct PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR(pub unsafe exter
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceWaylandPresentationSupportKHR";
 
     #[inline(always)]
@@ -12229,7 +12229,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceWaylandPresentationS
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_wayland_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceWaylandPresentationSupportKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceWaylandPresentationSupportKHR);
 }
 
@@ -12242,7 +12242,7 @@ pub struct PFN_vkCreateAndroidSurfaceKHR(pub unsafe extern "system" fn(instance:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_android_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateAndroidSurfaceKHR {
+unsafe impl crate::PFN for PFN_vkCreateAndroidSurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateAndroidSurfaceKHR";
 
     #[inline(always)]
@@ -12254,7 +12254,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateAndroidSurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_android_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateAndroidSurfaceKHR {
+impl crate::StaticCallable for PFN_vkCreateAndroidSurfaceKHR {
     const STATIC: Self = Self(vkCreateAndroidSurfaceKHR);
 }
 
@@ -12267,7 +12267,7 @@ pub struct PFN_vkCreateWin32SurfaceKHR(pub unsafe extern "system" fn(instance: V
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateWin32SurfaceKHR {
+unsafe impl crate::PFN for PFN_vkCreateWin32SurfaceKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateWin32SurfaceKHR";
 
     #[inline(always)]
@@ -12279,7 +12279,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateWin32SurfaceKHR {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateWin32SurfaceKHR {
+impl crate::StaticCallable for PFN_vkCreateWin32SurfaceKHR {
     const STATIC: Self = Self(vkCreateWin32SurfaceKHR);
 }
 
@@ -12292,7 +12292,7 @@ pub struct PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR(pub unsafe extern 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceWin32PresentationSupportKHR";
 
     #[inline(always)]
@@ -12304,7 +12304,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceWin32PresentationSup
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_win32_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceWin32PresentationSupportKHR {
     const STATIC: Self = Self(vkGetPhysicalDeviceWin32PresentationSupportKHR);
 }
 
@@ -12317,7 +12317,7 @@ pub struct PFN_vkCreateMetalSurfaceEXT(pub unsafe extern "system" fn(instance: V
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_metal_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateMetalSurfaceEXT {
+unsafe impl crate::PFN for PFN_vkCreateMetalSurfaceEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateMetalSurfaceEXT";
 
     #[inline(always)]
@@ -12329,7 +12329,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateMetalSurfaceEXT {
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_metal_surface")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateMetalSurfaceEXT {
+impl crate::StaticCallable for PFN_vkCreateMetalSurfaceEXT {
     const STATIC: Self = Self(vkCreateMetalSurfaceEXT);
 }
 
@@ -12342,7 +12342,7 @@ pub struct PFN_vkGetMemoryWin32HandleKHR(pub unsafe extern "system" fn(device: V
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetMemoryWin32HandleKHR {
+unsafe impl crate::PFN for PFN_vkGetMemoryWin32HandleKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryWin32HandleKHR";
 
     #[inline(always)]
@@ -12360,7 +12360,7 @@ pub struct PFN_vkGetMemoryWin32HandlePropertiesKHR(pub unsafe extern "system" fn
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_win32")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetMemoryWin32HandlePropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetMemoryWin32HandlePropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryWin32HandlePropertiesKHR";
 
     #[inline(always)]
@@ -12378,7 +12378,7 @@ pub struct PFN_vkGetMemoryFdKHR(pub unsafe extern "system" fn(device: VkDevice, 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetMemoryFdKHR {
+unsafe impl crate::PFN for PFN_vkGetMemoryFdKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryFdKHR";
 
     #[inline(always)]
@@ -12396,7 +12396,7 @@ pub struct PFN_vkGetMemoryFdPropertiesKHR(pub unsafe extern "system" fn(device: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_fd")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetMemoryFdPropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetMemoryFdPropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetMemoryFdPropertiesKHR";
 
     #[inline(always)]
@@ -12414,7 +12414,7 @@ pub struct PFN_vkImportSemaphoreWin32HandleKHR(pub unsafe extern "system" fn(dev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkImportSemaphoreWin32HandleKHR {
+unsafe impl crate::PFN for PFN_vkImportSemaphoreWin32HandleKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkImportSemaphoreWin32HandleKHR";
 
     #[inline(always)]
@@ -12432,7 +12432,7 @@ pub struct PFN_vkGetSemaphoreWin32HandleKHR(pub unsafe extern "system" fn(device
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_win32")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreWin32HandleKHR {
+unsafe impl crate::PFN for PFN_vkGetSemaphoreWin32HandleKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreWin32HandleKHR";
 
     #[inline(always)]
@@ -12450,7 +12450,7 @@ pub struct PFN_vkImportSemaphoreFdKHR(pub unsafe extern "system" fn(device: VkDe
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkImportSemaphoreFdKHR {
+unsafe impl crate::PFN for PFN_vkImportSemaphoreFdKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkImportSemaphoreFdKHR";
 
     #[inline(always)]
@@ -12468,7 +12468,7 @@ pub struct PFN_vkGetSemaphoreFdKHR(pub unsafe extern "system" fn(device: VkDevic
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_fd")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreFdKHR {
+unsafe impl crate::PFN for PFN_vkGetSemaphoreFdKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreFdKHR";
 
     #[inline(always)]
@@ -12486,7 +12486,7 @@ pub struct PFN_vkImportFenceWin32HandleKHR(pub unsafe extern "system" fn(device:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_win32")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkImportFenceWin32HandleKHR {
+unsafe impl crate::PFN for PFN_vkImportFenceWin32HandleKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkImportFenceWin32HandleKHR";
 
     #[inline(always)]
@@ -12504,7 +12504,7 @@ pub struct PFN_vkGetFenceWin32HandleKHR(pub unsafe extern "system" fn(device: Vk
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_win32")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetFenceWin32HandleKHR {
+unsafe impl crate::PFN for PFN_vkGetFenceWin32HandleKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetFenceWin32HandleKHR";
 
     #[inline(always)]
@@ -12522,7 +12522,7 @@ pub struct PFN_vkImportFenceFdKHR(pub unsafe extern "system" fn(device: VkDevice
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkImportFenceFdKHR {
+unsafe impl crate::PFN for PFN_vkImportFenceFdKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkImportFenceFdKHR";
 
     #[inline(always)]
@@ -12540,7 +12540,7 @@ pub struct PFN_vkGetFenceFdKHR(pub unsafe extern "system" fn(device: VkDevice, p
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_fd")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetFenceFdKHR {
+unsafe impl crate::PFN for PFN_vkGetFenceFdKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetFenceFdKHR";
 
     #[inline(always)]
@@ -12558,7 +12558,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR(pub unsafe extern "sys
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceCapabilities2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceCapabilities2KHR";
 
     #[inline(always)]
@@ -12576,7 +12576,7 @@ pub struct PFN_vkGetPhysicalDeviceSurfaceFormats2KHR(pub unsafe extern "system" 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_surface_capabilities2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSurfaceFormats2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSurfaceFormats2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSurfaceFormats2KHR";
 
     #[inline(always)]
@@ -12594,7 +12594,7 @@ pub struct PFN_vkCreateDebugReportCallbackEXT(pub unsafe extern "system" fn(inst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDebugReportCallbackEXT {
+unsafe impl crate::PFN for PFN_vkCreateDebugReportCallbackEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDebugReportCallbackEXT";
 
     #[inline(always)]
@@ -12612,7 +12612,7 @@ pub struct PFN_vkDestroyDebugReportCallbackEXT(pub unsafe extern "system" fn(ins
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDebugReportCallbackEXT {
+unsafe impl crate::PFN for PFN_vkDestroyDebugReportCallbackEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDebugReportCallbackEXT";
 
     #[inline(always)]
@@ -12630,7 +12630,7 @@ pub struct PFN_vkDebugReportMessageEXT(pub unsafe extern "system" fn(instance: V
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_report")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDebugReportMessageEXT {
+unsafe impl crate::PFN for PFN_vkDebugReportMessageEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDebugReportMessageEXT";
 
     #[inline(always)]
@@ -12648,7 +12648,7 @@ pub struct PFN_vkSetDebugUtilsObjectNameEXT(pub unsafe extern "system" fn(device
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkSetDebugUtilsObjectNameEXT {
+unsafe impl crate::PFN for PFN_vkSetDebugUtilsObjectNameEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkSetDebugUtilsObjectNameEXT";
 
     #[inline(always)]
@@ -12666,7 +12666,7 @@ pub struct PFN_vkSetDebugUtilsObjectTagEXT(pub unsafe extern "system" fn(device:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkSetDebugUtilsObjectTagEXT {
+unsafe impl crate::PFN for PFN_vkSetDebugUtilsObjectTagEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkSetDebugUtilsObjectTagEXT";
 
     #[inline(always)]
@@ -12684,7 +12684,7 @@ pub struct PFN_vkQueueBeginDebugUtilsLabelEXT(pub unsafe extern "system" fn(queu
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueBeginDebugUtilsLabelEXT {
+unsafe impl crate::PFN for PFN_vkQueueBeginDebugUtilsLabelEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueBeginDebugUtilsLabelEXT";
 
     #[inline(always)]
@@ -12702,7 +12702,7 @@ pub struct PFN_vkQueueEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(queue:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueEndDebugUtilsLabelEXT {
+unsafe impl crate::PFN for PFN_vkQueueEndDebugUtilsLabelEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueEndDebugUtilsLabelEXT";
 
     #[inline(always)]
@@ -12720,7 +12720,7 @@ pub struct PFN_vkQueueInsertDebugUtilsLabelEXT(pub unsafe extern "system" fn(que
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueInsertDebugUtilsLabelEXT {
+unsafe impl crate::PFN for PFN_vkQueueInsertDebugUtilsLabelEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueInsertDebugUtilsLabelEXT";
 
     #[inline(always)]
@@ -12738,7 +12738,7 @@ pub struct PFN_vkCreateDebugUtilsMessengerEXT(pub unsafe extern "system" fn(inst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDebugUtilsMessengerEXT {
+unsafe impl crate::PFN for PFN_vkCreateDebugUtilsMessengerEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDebugUtilsMessengerEXT";
 
     #[inline(always)]
@@ -12756,7 +12756,7 @@ pub struct PFN_vkDestroyDebugUtilsMessengerEXT(pub unsafe extern "system" fn(ins
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDebugUtilsMessengerEXT {
+unsafe impl crate::PFN for PFN_vkDestroyDebugUtilsMessengerEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDebugUtilsMessengerEXT";
 
     #[inline(always)]
@@ -12774,7 +12774,7 @@ pub struct PFN_vkSubmitDebugUtilsMessageEXT(pub unsafe extern "system" fn(instan
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkSubmitDebugUtilsMessageEXT {
+unsafe impl crate::PFN for PFN_vkSubmitDebugUtilsMessageEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkSubmitDebugUtilsMessageEXT";
 
     #[inline(always)]
@@ -12792,7 +12792,7 @@ pub struct PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR(pub unsafe extern 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_memory_capabilities")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalBufferPropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalBufferPropertiesKHR";
 
     #[inline(always)]
@@ -12809,7 +12809,7 @@ pub struct PFN_vkGetPhysicalDeviceExternalBufferProperties(pub unsafe extern "sy
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalBufferProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalBufferProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalBufferProperties";
 
     #[inline(always)]
@@ -12821,7 +12821,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalBufferProper
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalBufferProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalBufferProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceExternalBufferProperties);
 }
 
@@ -12834,7 +12834,7 @@ pub struct PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(pub unsafe exte
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_semaphore_capabilities")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalSemaphorePropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalSemaphorePropertiesKHR";
 
     #[inline(always)]
@@ -12851,7 +12851,7 @@ pub struct PFN_vkGetPhysicalDeviceExternalSemaphoreProperties(pub unsafe extern 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalSemaphoreProperties";
 
     #[inline(always)]
@@ -12863,7 +12863,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalSemaphorePro
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalSemaphoreProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceExternalSemaphoreProperties);
 }
 
@@ -12876,7 +12876,7 @@ pub struct PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR(pub unsafe extern "
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_external_fence_capabilities")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalFencePropertiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalFencePropertiesKHR";
 
     #[inline(always)]
@@ -12893,7 +12893,7 @@ pub struct PFN_vkGetPhysicalDeviceExternalFenceProperties(pub unsafe extern "sys
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalFenceProperties {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceExternalFenceProperties {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceExternalFenceProperties";
 
     #[inline(always)]
@@ -12905,7 +12905,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceExternalFencePropert
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceExternalFenceProperties {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceExternalFenceProperties {
     const STATIC: Self = Self(vkGetPhysicalDeviceExternalFenceProperties);
 }
 
@@ -12918,7 +12918,7 @@ pub struct PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR(pub unsafe extern "system" 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR {
+unsafe impl crate::PFN for PFN_vkGetDeviceGroupPeerMemoryFeaturesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceGroupPeerMemoryFeaturesKHR";
 
     #[inline(always)]
@@ -12935,7 +12935,7 @@ pub struct PFN_vkGetDeviceGroupPeerMemoryFeatures(pub unsafe extern "system" fn(
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupPeerMemoryFeatures {
+unsafe impl crate::PFN for PFN_vkGetDeviceGroupPeerMemoryFeatures {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceGroupPeerMemoryFeatures";
 
     #[inline(always)]
@@ -12947,7 +12947,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupPeerMemoryFeatures {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDeviceGroupPeerMemoryFeatures {
+impl crate::StaticCallable for PFN_vkGetDeviceGroupPeerMemoryFeatures {
     const STATIC: Self = Self(vkGetDeviceGroupPeerMemoryFeatures);
 }
 
@@ -12962,7 +12962,7 @@ pub struct PFN_vkGetDeviceGroupPresentCapabilitiesKHR(pub unsafe extern "system"
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupPresentCapabilitiesKHR {
+unsafe impl crate::PFN for PFN_vkGetDeviceGroupPresentCapabilitiesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceGroupPresentCapabilitiesKHR";
 
     #[inline(always)]
@@ -12982,7 +12982,7 @@ pub struct PFN_vkGetDeviceGroupSurfacePresentModesKHR(pub unsafe extern "system"
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceGroupSurfacePresentModesKHR {
+unsafe impl crate::PFN for PFN_vkGetDeviceGroupSurfacePresentModesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceGroupSurfacePresentModesKHR";
 
     #[inline(always)]
@@ -13002,7 +13002,7 @@ pub struct PFN_vkGetPhysicalDevicePresentRectanglesKHR(pub unsafe extern "system
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_surface")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDevicePresentRectanglesKHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDevicePresentRectanglesKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDevicePresentRectanglesKHR";
 
     #[inline(always)]
@@ -13022,7 +13022,7 @@ pub struct PFN_vkAcquireNextImage2KHR(pub unsafe extern "system" fn(device: VkDe
 #[cfg(feature = "VK_KHR_device_group")]
 #[cfg(feature = "VK_KHR_swapchain")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAcquireNextImage2KHR {
+unsafe impl crate::PFN for PFN_vkAcquireNextImage2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireNextImage2KHR";
 
     #[inline(always)]
@@ -13040,7 +13040,7 @@ pub struct PFN_vkGetPhysicalDeviceFeatures2KHR(pub unsafe extern "system" fn(phy
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFeatures2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFeatures2KHR";
 
     #[inline(always)]
@@ -13057,7 +13057,7 @@ pub struct PFN_vkGetPhysicalDeviceFeatures2(pub unsafe extern "system" fn(physic
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFeatures2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFeatures2";
 
     #[inline(always)]
@@ -13069,7 +13069,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFeatures2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFeatures2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFeatures2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceFeatures2);
 }
 
@@ -13082,7 +13082,7 @@ pub struct PFN_vkGetPhysicalDeviceProperties2KHR(pub unsafe extern "system" fn(p
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceProperties2KHR";
 
     #[inline(always)]
@@ -13099,7 +13099,7 @@ pub struct PFN_vkGetPhysicalDeviceProperties2(pub unsafe extern "system" fn(phys
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceProperties2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceProperties2";
 
     #[inline(always)]
@@ -13111,7 +13111,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceProperties2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceProperties2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceProperties2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceProperties2);
 }
 
@@ -13124,7 +13124,7 @@ pub struct PFN_vkGetPhysicalDeviceFormatProperties2KHR(pub unsafe extern "system
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFormatProperties2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFormatProperties2KHR";
 
     #[inline(always)]
@@ -13141,7 +13141,7 @@ pub struct PFN_vkGetPhysicalDeviceFormatProperties2(pub unsafe extern "system" f
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceFormatProperties2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceFormatProperties2";
 
     #[inline(always)]
@@ -13153,7 +13153,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceFormatProperties2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceFormatProperties2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceFormatProperties2);
 }
 
@@ -13166,7 +13166,7 @@ pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2KHR(pub unsafe extern "s
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceImageFormatProperties2KHR";
 
     #[inline(always)]
@@ -13183,7 +13183,7 @@ pub struct PFN_vkGetPhysicalDeviceImageFormatProperties2(pub unsafe extern "syst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceImageFormatProperties2";
 
     #[inline(always)]
@@ -13195,7 +13195,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceImageFormatPropertie
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceImageFormatProperties2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceImageFormatProperties2);
 }
 
@@ -13208,7 +13208,7 @@ pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR(pub unsafe extern "s
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceQueueFamilyProperties2KHR";
 
     #[inline(always)]
@@ -13225,7 +13225,7 @@ pub struct PFN_vkGetPhysicalDeviceQueueFamilyProperties2(pub unsafe extern "syst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceQueueFamilyProperties2";
 
     #[inline(always)]
@@ -13237,7 +13237,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceQueueFamilyPropertie
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceQueueFamilyProperties2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceQueueFamilyProperties2);
 }
 
@@ -13250,7 +13250,7 @@ pub struct PFN_vkGetPhysicalDeviceMemoryProperties2KHR(pub unsafe extern "system
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceMemoryProperties2KHR";
 
     #[inline(always)]
@@ -13267,7 +13267,7 @@ pub struct PFN_vkGetPhysicalDeviceMemoryProperties2(pub unsafe extern "system" f
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceMemoryProperties2";
 
     #[inline(always)]
@@ -13279,7 +13279,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceMemoryProperties2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceMemoryProperties2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceMemoryProperties2);
 }
 
@@ -13292,7 +13292,7 @@ pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR(pub unsafe ext
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_physical_device_properties2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSparseImageFormatProperties2KHR";
 
     #[inline(always)]
@@ -13309,7 +13309,7 @@ pub struct PFN_vkGetPhysicalDeviceSparseImageFormatProperties2(pub unsafe extern
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceSparseImageFormatProperties2";
 
     #[inline(always)]
@@ -13321,7 +13321,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetPhysicalDeviceSparseImageFormatPro
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
+impl crate::StaticCallable for PFN_vkGetPhysicalDeviceSparseImageFormatProperties2 {
     const STATIC: Self = Self(vkGetPhysicalDeviceSparseImageFormatProperties2);
 }
 
@@ -13334,7 +13334,7 @@ pub struct PFN_vkEnumeratePhysicalDeviceGroupKHR(pub unsafe extern "system" fn(i
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group_creation")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDeviceGroupKHR {
+unsafe impl crate::PFN for PFN_vkEnumeratePhysicalDeviceGroupKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumeratePhysicalDeviceGroupKHR";
 
     #[inline(always)]
@@ -13351,7 +13351,7 @@ pub struct PFN_vkEnumeratePhysicalDeviceGroup(pub unsafe extern "system" fn(inst
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDeviceGroup {
+unsafe impl crate::PFN for PFN_vkEnumeratePhysicalDeviceGroup {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkEnumeratePhysicalDeviceGroup";
 
     #[inline(always)]
@@ -13363,7 +13363,7 @@ unsafe impl crate::resolver::PFN for PFN_vkEnumeratePhysicalDeviceGroup {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkEnumeratePhysicalDeviceGroup {
+impl crate::StaticCallable for PFN_vkEnumeratePhysicalDeviceGroup {
     const STATIC: Self = Self(vkEnumeratePhysicalDeviceGroup);
 }
 
@@ -13376,7 +13376,7 @@ pub struct PFN_vkGetImageMemoryRequirements2KHR(pub unsafe extern "system" fn(de
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements2KHR {
+unsafe impl crate::PFN for PFN_vkGetImageMemoryRequirements2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageMemoryRequirements2KHR";
 
     #[inline(always)]
@@ -13393,7 +13393,7 @@ pub struct PFN_vkGetImageMemoryRequirements2(pub unsafe extern "system" fn(devic
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements2 {
+unsafe impl crate::PFN for PFN_vkGetImageMemoryRequirements2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageMemoryRequirements2";
 
     #[inline(always)]
@@ -13405,7 +13405,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageMemoryRequirements2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetImageMemoryRequirements2 {
+impl crate::StaticCallable for PFN_vkGetImageMemoryRequirements2 {
     const STATIC: Self = Self(vkGetImageMemoryRequirements2);
 }
 
@@ -13418,7 +13418,7 @@ pub struct PFN_vkGetBufferMemoryRequirements2KHR(pub unsafe extern "system" fn(d
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements2KHR {
+unsafe impl crate::PFN for PFN_vkGetBufferMemoryRequirements2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferMemoryRequirements2KHR";
 
     #[inline(always)]
@@ -13435,7 +13435,7 @@ pub struct PFN_vkGetBufferMemoryRequirements2(pub unsafe extern "system" fn(devi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements2 {
+unsafe impl crate::PFN for PFN_vkGetBufferMemoryRequirements2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferMemoryRequirements2";
 
     #[inline(always)]
@@ -13447,7 +13447,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferMemoryRequirements2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetBufferMemoryRequirements2 {
+impl crate::StaticCallable for PFN_vkGetBufferMemoryRequirements2 {
     const STATIC: Self = Self(vkGetBufferMemoryRequirements2);
 }
 
@@ -13460,7 +13460,7 @@ pub struct PFN_vkGetImageSparseMemoryRequirements2KHR(pub unsafe extern "system"
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_get_memory_requirements2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements2KHR {
+unsafe impl crate::PFN for PFN_vkGetImageSparseMemoryRequirements2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSparseMemoryRequirements2KHR";
 
     #[inline(always)]
@@ -13477,7 +13477,7 @@ pub struct PFN_vkGetImageSparseMemoryRequirements2(pub unsafe extern "system" fn
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements2 {
+unsafe impl crate::PFN for PFN_vkGetImageSparseMemoryRequirements2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetImageSparseMemoryRequirements2";
 
     #[inline(always)]
@@ -13489,7 +13489,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetImageSparseMemoryRequirements2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetImageSparseMemoryRequirements2 {
+impl crate::StaticCallable for PFN_vkGetImageSparseMemoryRequirements2 {
     const STATIC: Self = Self(vkGetImageSparseMemoryRequirements2);
 }
 
@@ -13502,7 +13502,7 @@ pub struct PFN_vkBindBufferMemory2KHR(pub unsafe extern "system" fn(device: VkDe
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory2KHR {
+unsafe impl crate::PFN for PFN_vkBindBufferMemory2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBindBufferMemory2KHR";
 
     #[inline(always)]
@@ -13519,7 +13519,7 @@ pub struct PFN_vkBindBufferMemory2(pub unsafe extern "system" fn(device: VkDevic
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory2 {
+unsafe impl crate::PFN for PFN_vkBindBufferMemory2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBindBufferMemory2";
 
     #[inline(always)]
@@ -13531,7 +13531,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBindBufferMemory2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkBindBufferMemory2 {
+impl crate::StaticCallable for PFN_vkBindBufferMemory2 {
     const STATIC: Self = Self(vkBindBufferMemory2);
 }
 
@@ -13544,7 +13544,7 @@ pub struct PFN_vkBindImageMemory2KHR(pub unsafe extern "system" fn(device: VkDev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_bind_memory2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory2KHR {
+unsafe impl crate::PFN for PFN_vkBindImageMemory2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBindImageMemory2KHR";
 
     #[inline(always)]
@@ -13561,7 +13561,7 @@ pub struct PFN_vkBindImageMemory2(pub unsafe extern "system" fn(device: VkDevice
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory2 {
+unsafe impl crate::PFN for PFN_vkBindImageMemory2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkBindImageMemory2";
 
     #[inline(always)]
@@ -13573,7 +13573,7 @@ unsafe impl crate::resolver::PFN for PFN_vkBindImageMemory2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkBindImageMemory2 {
+impl crate::StaticCallable for PFN_vkBindImageMemory2 {
     const STATIC: Self = Self(vkBindImageMemory2);
 }
 
@@ -13586,7 +13586,7 @@ pub struct PFN_vkCreateDescriptorUpdateTemplateKHR(pub unsafe extern "system" fn
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorUpdateTemplateKHR {
+unsafe impl crate::PFN for PFN_vkCreateDescriptorUpdateTemplateKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDescriptorUpdateTemplateKHR";
 
     #[inline(always)]
@@ -13603,7 +13603,7 @@ pub struct PFN_vkCreateDescriptorUpdateTemplate(pub unsafe extern "system" fn(de
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorUpdateTemplate {
+unsafe impl crate::PFN for PFN_vkCreateDescriptorUpdateTemplate {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateDescriptorUpdateTemplate";
 
     #[inline(always)]
@@ -13615,7 +13615,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateDescriptorUpdateTemplate {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateDescriptorUpdateTemplate {
+impl crate::StaticCallable for PFN_vkCreateDescriptorUpdateTemplate {
     const STATIC: Self = Self(vkCreateDescriptorUpdateTemplate);
 }
 
@@ -13628,7 +13628,7 @@ pub struct PFN_vkDestroyDescriptorUpdateTemplateKHR(pub unsafe extern "system" f
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorUpdateTemplateKHR {
+unsafe impl crate::PFN for PFN_vkDestroyDescriptorUpdateTemplateKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDescriptorUpdateTemplateKHR";
 
     #[inline(always)]
@@ -13645,7 +13645,7 @@ pub struct PFN_vkDestroyDescriptorUpdateTemplate(pub unsafe extern "system" fn(d
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorUpdateTemplate {
+unsafe impl crate::PFN for PFN_vkDestroyDescriptorUpdateTemplate {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyDescriptorUpdateTemplate";
 
     #[inline(always)]
@@ -13657,7 +13657,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroyDescriptorUpdateTemplate {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroyDescriptorUpdateTemplate {
+impl crate::StaticCallable for PFN_vkDestroyDescriptorUpdateTemplate {
     const STATIC: Self = Self(vkDestroyDescriptorUpdateTemplate);
 }
 
@@ -13670,7 +13670,7 @@ pub struct PFN_vkUpdateDescriptorSetWithTemplateKHR(pub unsafe extern "system" f
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_descriptor_update_template")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSetWithTemplateKHR {
+unsafe impl crate::PFN for PFN_vkUpdateDescriptorSetWithTemplateKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkUpdateDescriptorSetWithTemplateKHR";
 
     #[inline(always)]
@@ -13687,7 +13687,7 @@ pub struct PFN_vkUpdateDescriptorSetWithTemplate(pub unsafe extern "system" fn(d
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSetWithTemplate {
+unsafe impl crate::PFN for PFN_vkUpdateDescriptorSetWithTemplate {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkUpdateDescriptorSetWithTemplate";
 
     #[inline(always)]
@@ -13699,7 +13699,7 @@ unsafe impl crate::resolver::PFN for PFN_vkUpdateDescriptorSetWithTemplate {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkUpdateDescriptorSetWithTemplate {
+impl crate::StaticCallable for PFN_vkUpdateDescriptorSetWithTemplate {
     const STATIC: Self = Self(vkUpdateDescriptorSetWithTemplate);
 }
 
@@ -13712,7 +13712,7 @@ pub struct PFN_vkCreateSamplerYcbcrConversionKHR(pub unsafe extern "system" fn(d
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateSamplerYcbcrConversionKHR {
+unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversionKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSamplerYcbcrConversionKHR";
 
     #[inline(always)]
@@ -13729,7 +13729,7 @@ pub struct PFN_vkCreateSamplerYcbcrConversion(pub unsafe extern "system" fn(devi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateSamplerYcbcrConversion {
+unsafe impl crate::PFN for PFN_vkCreateSamplerYcbcrConversion {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateSamplerYcbcrConversion";
 
     #[inline(always)]
@@ -13741,7 +13741,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCreateSamplerYcbcrConversion {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCreateSamplerYcbcrConversion {
+impl crate::StaticCallable for PFN_vkCreateSamplerYcbcrConversion {
     const STATIC: Self = Self(vkCreateSamplerYcbcrConversion);
 }
 
@@ -13754,7 +13754,7 @@ pub struct PFN_vkDestroySamplerYcbcrConversionKHR(pub unsafe extern "system" fn(
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_sampler_ycbcr_conversion")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroySamplerYcbcrConversionKHR {
+unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversionKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySamplerYcbcrConversionKHR";
 
     #[inline(always)]
@@ -13771,7 +13771,7 @@ pub struct PFN_vkDestroySamplerYcbcrConversion(pub unsafe extern "system" fn(dev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroySamplerYcbcrConversion {
+unsafe impl crate::PFN for PFN_vkDestroySamplerYcbcrConversion {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroySamplerYcbcrConversion";
 
     #[inline(always)]
@@ -13783,7 +13783,7 @@ unsafe impl crate::resolver::PFN for PFN_vkDestroySamplerYcbcrConversion {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkDestroySamplerYcbcrConversion {
+impl crate::StaticCallable for PFN_vkDestroySamplerYcbcrConversion {
     const STATIC: Self = Self(vkDestroySamplerYcbcrConversion);
 }
 
@@ -13796,7 +13796,7 @@ pub struct PFN_vkTrimCommandPoolKHR(pub unsafe extern "system" fn(device: VkDevi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance1")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkTrimCommandPoolKHR {
+unsafe impl crate::PFN for PFN_vkTrimCommandPoolKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkTrimCommandPoolKHR";
 
     #[inline(always)]
@@ -13813,7 +13813,7 @@ pub struct PFN_vkTrimCommandPool(pub unsafe extern "system" fn(device: VkDevice,
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkTrimCommandPool {
+unsafe impl crate::PFN for PFN_vkTrimCommandPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkTrimCommandPool";
 
     #[inline(always)]
@@ -13825,7 +13825,7 @@ unsafe impl crate::resolver::PFN for PFN_vkTrimCommandPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkTrimCommandPool {
+impl crate::StaticCallable for PFN_vkTrimCommandPool {
     const STATIC: Self = Self(vkTrimCommandPool);
 }
 
@@ -13838,7 +13838,7 @@ pub struct PFN_vkGetDescriptorSetLayoutSupportKHR(pub unsafe extern "system" fn(
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_maintenance3")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDescriptorSetLayoutSupportKHR {
+unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutSupportKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDescriptorSetLayoutSupportKHR";
 
     #[inline(always)]
@@ -13855,7 +13855,7 @@ pub struct PFN_vkGetDescriptorSetLayoutSupport(pub unsafe extern "system" fn(dev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDescriptorSetLayoutSupport {
+unsafe impl crate::PFN for PFN_vkGetDescriptorSetLayoutSupport {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDescriptorSetLayoutSupport";
 
     #[inline(always)]
@@ -13867,7 +13867,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDescriptorSetLayoutSupport {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
+impl crate::StaticCallable for PFN_vkGetDescriptorSetLayoutSupport {
     const STATIC: Self = Self(vkGetDescriptorSetLayoutSupport);
 }
 
@@ -13880,7 +13880,7 @@ pub struct PFN_vkQueueSubmit2KHR(pub unsafe extern "system" fn(queue: VkQueue, s
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2KHR {
+unsafe impl crate::PFN for PFN_vkQueueSubmit2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueSubmit2KHR";
 
     #[inline(always)]
@@ -13897,7 +13897,7 @@ pub struct PFN_vkQueueSubmit2(pub unsafe extern "system" fn(queue: VkQueue, subm
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2 {
+unsafe impl crate::PFN for PFN_vkQueueSubmit2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkQueueSubmit2";
 
     #[inline(always)]
@@ -13909,7 +13909,7 @@ unsafe impl crate::resolver::PFN for PFN_vkQueueSubmit2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkQueueSubmit2 {
+impl crate::StaticCallable for PFN_vkQueueSubmit2 {
     const STATIC: Self = Self(vkQueueSubmit2);
 }
 
@@ -13920,7 +13920,7 @@ impl crate::resolver::StaticCallable for PFN_vkQueueSubmit2 {
 pub struct PFN_vkCmdBindPipeline(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, pipeline: VkPipeline));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBindPipeline {
+unsafe impl crate::PFN for PFN_vkCmdBindPipeline {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindPipeline";
 
     #[inline(always)]
@@ -13931,7 +13931,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBindPipeline {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBindPipeline {
+impl crate::StaticCallable for PFN_vkCmdBindPipeline {
     const STATIC: Self = Self(vkCmdBindPipeline);
 }
 
@@ -13942,7 +13942,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindPipeline {
 pub struct PFN_vkCmdSetViewport(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstViewport: u32, viewportCount: u32, pViewports: *const VkViewport));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetViewport {
+unsafe impl crate::PFN for PFN_vkCmdSetViewport {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetViewport";
 
     #[inline(always)]
@@ -13953,7 +13953,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetViewport {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetViewport {
+impl crate::StaticCallable for PFN_vkCmdSetViewport {
     const STATIC: Self = Self(vkCmdSetViewport);
 }
 
@@ -13964,7 +13964,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetViewport {
 pub struct PFN_vkCmdSetScissor(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstScissor: u32, scissorCount: u32, pScissors: *const VkRect2D));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetScissor {
+unsafe impl crate::PFN for PFN_vkCmdSetScissor {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetScissor";
 
     #[inline(always)]
@@ -13975,7 +13975,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetScissor {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetScissor {
+impl crate::StaticCallable for PFN_vkCmdSetScissor {
     const STATIC: Self = Self(vkCmdSetScissor);
 }
 
@@ -13986,7 +13986,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetScissor {
 pub struct PFN_vkCmdSetLineWidth(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, lineWidth: core::ffi::c_float));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetLineWidth {
+unsafe impl crate::PFN for PFN_vkCmdSetLineWidth {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetLineWidth";
 
     #[inline(always)]
@@ -13997,7 +13997,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetLineWidth {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetLineWidth {
+impl crate::StaticCallable for PFN_vkCmdSetLineWidth {
     const STATIC: Self = Self(vkCmdSetLineWidth);
 }
 
@@ -14008,7 +14008,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetLineWidth {
 pub struct PFN_vkCmdSetDepthBias(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, depthBiasConstantFactor: core::ffi::c_float, depthBiasClamp: core::ffi::c_float, depthBiasSlopeFactor: core::ffi::c_float));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetDepthBias {
+unsafe impl crate::PFN for PFN_vkCmdSetDepthBias {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDepthBias";
 
     #[inline(always)]
@@ -14019,7 +14019,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetDepthBias {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBias {
+impl crate::StaticCallable for PFN_vkCmdSetDepthBias {
     const STATIC: Self = Self(vkCmdSetDepthBias);
 }
 
@@ -14030,7 +14030,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBias {
 pub struct PFN_vkCmdSetBlendConstants(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, blendConstants: *const core::ffi::c_float));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetBlendConstants {
+unsafe impl crate::PFN for PFN_vkCmdSetBlendConstants {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetBlendConstants";
 
     #[inline(always)]
@@ -14041,7 +14041,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetBlendConstants {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetBlendConstants {
+impl crate::StaticCallable for PFN_vkCmdSetBlendConstants {
     const STATIC: Self = Self(vkCmdSetBlendConstants);
 }
 
@@ -14052,7 +14052,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetBlendConstants {
 pub struct PFN_vkCmdSetDepthBounds(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, minDepthBounds: core::ffi::c_float, maxDepthBounds: core::ffi::c_float));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetDepthBounds {
+unsafe impl crate::PFN for PFN_vkCmdSetDepthBounds {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDepthBounds";
 
     #[inline(always)]
@@ -14063,7 +14063,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetDepthBounds {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBounds {
+impl crate::StaticCallable for PFN_vkCmdSetDepthBounds {
     const STATIC: Self = Self(vkCmdSetDepthBounds);
 }
 
@@ -14074,7 +14074,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetDepthBounds {
 pub struct PFN_vkCmdSetStencilCompareMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, compareMask: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilCompareMask {
+unsafe impl crate::PFN for PFN_vkCmdSetStencilCompareMask {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetStencilCompareMask";
 
     #[inline(always)]
@@ -14085,7 +14085,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilCompareMask {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilCompareMask {
+impl crate::StaticCallable for PFN_vkCmdSetStencilCompareMask {
     const STATIC: Self = Self(vkCmdSetStencilCompareMask);
 }
 
@@ -14096,7 +14096,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilCompareMask {
 pub struct PFN_vkCmdSetStencilWriteMask(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, writeMask: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilWriteMask {
+unsafe impl crate::PFN for PFN_vkCmdSetStencilWriteMask {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetStencilWriteMask";
 
     #[inline(always)]
@@ -14107,7 +14107,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilWriteMask {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilWriteMask {
+impl crate::StaticCallable for PFN_vkCmdSetStencilWriteMask {
     const STATIC: Self = Self(vkCmdSetStencilWriteMask);
 }
 
@@ -14118,7 +14118,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilWriteMask {
 pub struct PFN_vkCmdSetStencilReference(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, faceMask: VkStencilFaceFlags, reference: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilReference {
+unsafe impl crate::PFN for PFN_vkCmdSetStencilReference {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetStencilReference";
 
     #[inline(always)]
@@ -14129,7 +14129,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetStencilReference {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilReference {
+impl crate::StaticCallable for PFN_vkCmdSetStencilReference {
     const STATIC: Self = Self(vkCmdSetStencilReference);
 }
 
@@ -14140,7 +14140,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetStencilReference {
 pub struct PFN_vkCmdBindDescriptorSets(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineBindPoint: VkPipelineBindPoint, layout: VkPipelineLayout, firstSet: u32, descriptorSetCount: u32, pDescriptorSets: *const VkDescriptorSet, dynamicOffsetCount: u32, pDynamicOffsets: *const u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBindDescriptorSets {
+unsafe impl crate::PFN for PFN_vkCmdBindDescriptorSets {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindDescriptorSets";
 
     #[inline(always)]
@@ -14151,7 +14151,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBindDescriptorSets {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBindDescriptorSets {
+impl crate::StaticCallable for PFN_vkCmdBindDescriptorSets {
     const STATIC: Self = Self(vkCmdBindDescriptorSets);
 }
 
@@ -14162,7 +14162,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindDescriptorSets {
 pub struct PFN_vkCmdBindIndexBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, indexType: VkIndexType));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBindIndexBuffer {
+unsafe impl crate::PFN for PFN_vkCmdBindIndexBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindIndexBuffer";
 
     #[inline(always)]
@@ -14173,7 +14173,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBindIndexBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBindIndexBuffer {
+impl crate::StaticCallable for PFN_vkCmdBindIndexBuffer {
     const STATIC: Self = Self(vkCmdBindIndexBuffer);
 }
 
@@ -14184,7 +14184,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindIndexBuffer {
 pub struct PFN_vkCmdBindVertexBuffers(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, firstBinding: u32, bindingCount: u32, pBuffers: *const VkBuffer, pOffsets: *const VkDeviceSize));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBindVertexBuffers {
+unsafe impl crate::PFN for PFN_vkCmdBindVertexBuffers {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBindVertexBuffers";
 
     #[inline(always)]
@@ -14195,7 +14195,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBindVertexBuffers {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBindVertexBuffers {
+impl crate::StaticCallable for PFN_vkCmdBindVertexBuffers {
     const STATIC: Self = Self(vkCmdBindVertexBuffers);
 }
 
@@ -14206,7 +14206,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBindVertexBuffers {
 pub struct PFN_vkCmdDraw(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDraw {
+unsafe impl crate::PFN for PFN_vkCmdDraw {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDraw";
 
     #[inline(always)]
@@ -14217,7 +14217,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDraw {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDraw {
+impl crate::StaticCallable for PFN_vkCmdDraw {
     const STATIC: Self = Self(vkCmdDraw);
 }
 
@@ -14228,7 +14228,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDraw {
 pub struct PFN_vkCmdDrawIndexed(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndexed {
+unsafe impl crate::PFN for PFN_vkCmdDrawIndexed {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDrawIndexed";
 
     #[inline(always)]
@@ -14239,7 +14239,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndexed {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexed {
+impl crate::StaticCallable for PFN_vkCmdDrawIndexed {
     const STATIC: Self = Self(vkCmdDrawIndexed);
 }
 
@@ -14250,7 +14250,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexed {
 pub struct PFN_vkCmdDrawIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndirect {
+unsafe impl crate::PFN for PFN_vkCmdDrawIndirect {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDrawIndirect";
 
     #[inline(always)]
@@ -14261,7 +14261,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndirect {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndirect {
+impl crate::StaticCallable for PFN_vkCmdDrawIndirect {
     const STATIC: Self = Self(vkCmdDrawIndirect);
 }
 
@@ -14272,7 +14272,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndirect {
 pub struct PFN_vkCmdDrawIndexedIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize, drawCount: u32, stride: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndexedIndirect {
+unsafe impl crate::PFN for PFN_vkCmdDrawIndexedIndirect {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDrawIndexedIndirect";
 
     #[inline(always)]
@@ -14283,7 +14283,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDrawIndexedIndirect {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexedIndirect {
+impl crate::StaticCallable for PFN_vkCmdDrawIndexedIndirect {
     const STATIC: Self = Self(vkCmdDrawIndexedIndirect);
 }
 
@@ -14294,7 +14294,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDrawIndexedIndirect {
 pub struct PFN_vkCmdDispatch(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDispatch {
+unsafe impl crate::PFN for PFN_vkCmdDispatch {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDispatch";
 
     #[inline(always)]
@@ -14305,7 +14305,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDispatch {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDispatch {
+impl crate::StaticCallable for PFN_vkCmdDispatch {
     const STATIC: Self = Self(vkCmdDispatch);
 }
 
@@ -14316,7 +14316,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDispatch {
 pub struct PFN_vkCmdDispatchIndirect(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: VkDeviceSize));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchIndirect {
+unsafe impl crate::PFN for PFN_vkCmdDispatchIndirect {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDispatchIndirect";
 
     #[inline(always)]
@@ -14327,7 +14327,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchIndirect {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDispatchIndirect {
+impl crate::StaticCallable for PFN_vkCmdDispatchIndirect {
     const STATIC: Self = Self(vkCmdDispatchIndirect);
 }
 
@@ -14338,7 +14338,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdDispatchIndirect {
 pub struct PFN_vkCmdCopyBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferCopy));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdCopyBuffer {
+unsafe impl crate::PFN for PFN_vkCmdCopyBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyBuffer";
 
     #[inline(always)]
@@ -14349,7 +14349,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdCopyBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdCopyBuffer {
+impl crate::StaticCallable for PFN_vkCmdCopyBuffer {
     const STATIC: Self = Self(vkCmdCopyBuffer);
 }
 
@@ -14360,7 +14360,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyBuffer {
 pub struct PFN_vkCmdCopyImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageCopy));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdCopyImage {
+unsafe impl crate::PFN for PFN_vkCmdCopyImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyImage";
 
     #[inline(always)]
@@ -14371,7 +14371,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdCopyImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdCopyImage {
+impl crate::StaticCallable for PFN_vkCmdCopyImage {
     const STATIC: Self = Self(vkCmdCopyImage);
 }
 
@@ -14382,7 +14382,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyImage {
 pub struct PFN_vkCmdBlitImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageBlit, filters: VkFilter));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBlitImage {
+unsafe impl crate::PFN for PFN_vkCmdBlitImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBlitImage";
 
     #[inline(always)]
@@ -14393,7 +14393,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBlitImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBlitImage {
+impl crate::StaticCallable for PFN_vkCmdBlitImage {
     const STATIC: Self = Self(vkCmdBlitImage);
 }
 
@@ -14404,7 +14404,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBlitImage {
 pub struct PFN_vkCmdCopyBufferToImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcBuffer: VkBuffer, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkBufferImageCopy));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdCopyBufferToImage {
+unsafe impl crate::PFN for PFN_vkCmdCopyBufferToImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyBufferToImage";
 
     #[inline(always)]
@@ -14415,7 +14415,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdCopyBufferToImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdCopyBufferToImage {
+impl crate::StaticCallable for PFN_vkCmdCopyBufferToImage {
     const STATIC: Self = Self(vkCmdCopyBufferToImage);
 }
 
@@ -14426,7 +14426,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyBufferToImage {
 pub struct PFN_vkCmdCopyImageToBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstBuffer: VkBuffer, regionCount: u32, pRegions: *const VkBufferImageCopy));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdCopyImageToBuffer {
+unsafe impl crate::PFN for PFN_vkCmdCopyImageToBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyImageToBuffer";
 
     #[inline(always)]
@@ -14437,7 +14437,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdCopyImageToBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdCopyImageToBuffer {
+impl crate::StaticCallable for PFN_vkCmdCopyImageToBuffer {
     const STATIC: Self = Self(vkCmdCopyImageToBuffer);
 }
 
@@ -14448,7 +14448,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyImageToBuffer {
 pub struct PFN_vkCmdUpdateBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, pData: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdUpdateBuffer {
+unsafe impl crate::PFN for PFN_vkCmdUpdateBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdUpdateBuffer";
 
     #[inline(always)]
@@ -14459,7 +14459,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdUpdateBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdUpdateBuffer {
+impl crate::StaticCallable for PFN_vkCmdUpdateBuffer {
     const STATIC: Self = Self(vkCmdUpdateBuffer);
 }
 
@@ -14470,7 +14470,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdUpdateBuffer {
 pub struct PFN_vkCmdFillBuffer(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, dataSize: VkDeviceSize, data: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdFillBuffer {
+unsafe impl crate::PFN for PFN_vkCmdFillBuffer {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdFillBuffer";
 
     #[inline(always)]
@@ -14481,7 +14481,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdFillBuffer {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdFillBuffer {
+impl crate::StaticCallable for PFN_vkCmdFillBuffer {
     const STATIC: Self = Self(vkCmdFillBuffer);
 }
 
@@ -14492,7 +14492,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdFillBuffer {
 pub struct PFN_vkCmdClearColorImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pColor: *const VkClearColorValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdClearColorImage {
+unsafe impl crate::PFN for PFN_vkCmdClearColorImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdClearColorImage";
 
     #[inline(always)]
@@ -14503,7 +14503,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdClearColorImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdClearColorImage {
+impl crate::StaticCallable for PFN_vkCmdClearColorImage {
     const STATIC: Self = Self(vkCmdClearColorImage);
 }
 
@@ -14514,7 +14514,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdClearColorImage {
 pub struct PFN_vkCmdClearDepthStencilImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, image: VkImage, imageLayout: VkImageLayout, pDepthStencil: *const VkClearDepthStencilValue, rangeCount: u32, pRanges: *const VkImageSubresourceRange));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdClearDepthStencilImage {
+unsafe impl crate::PFN for PFN_vkCmdClearDepthStencilImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdClearDepthStencilImage";
 
     #[inline(always)]
@@ -14525,7 +14525,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdClearDepthStencilImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdClearDepthStencilImage {
+impl crate::StaticCallable for PFN_vkCmdClearDepthStencilImage {
     const STATIC: Self = Self(vkCmdClearDepthStencilImage);
 }
 
@@ -14536,7 +14536,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdClearDepthStencilImage {
 pub struct PFN_vkCmdClearAttachments(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, attachmentCount: u32, pAttachments: *const VkClearAttachment, rectCount: u32, pRects: *const VkClearRect));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdClearAttachments {
+unsafe impl crate::PFN for PFN_vkCmdClearAttachments {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdClearAttachments";
 
     #[inline(always)]
@@ -14547,7 +14547,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdClearAttachments {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdClearAttachments {
+impl crate::StaticCallable for PFN_vkCmdClearAttachments {
     const STATIC: Self = Self(vkCmdClearAttachments);
 }
 
@@ -14558,7 +14558,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdClearAttachments {
 pub struct PFN_vkCmdResolveImage(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcImage: VkImage, srcImageLayout: VkImageLayout, dstImage: VkImage, dstImageLayout: VkImageLayout, regionCount: u32, pRegions: *const VkImageResolve));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdResolveImage {
+unsafe impl crate::PFN for PFN_vkCmdResolveImage {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResolveImage";
 
     #[inline(always)]
@@ -14569,7 +14569,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdResolveImage {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdResolveImage {
+impl crate::StaticCallable for PFN_vkCmdResolveImage {
     const STATIC: Self = Self(vkCmdResolveImage);
 }
 
@@ -14580,7 +14580,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResolveImage {
 pub struct PFN_vkCmdSetEvent(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent {
+unsafe impl crate::PFN for PFN_vkCmdSetEvent {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetEvent";
 
     #[inline(always)]
@@ -14591,7 +14591,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent {
+impl crate::StaticCallable for PFN_vkCmdSetEvent {
     const STATIC: Self = Self(vkCmdSetEvent);
 }
 
@@ -14602,7 +14602,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent {
 pub struct PFN_vkCmdResetEvent(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: VkPipelineStageFlags));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent {
+unsafe impl crate::PFN for PFN_vkCmdResetEvent {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetEvent";
 
     #[inline(always)]
@@ -14613,7 +14613,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent {
+impl crate::StaticCallable for PFN_vkCmdResetEvent {
     const STATIC: Self = Self(vkCmdResetEvent);
 }
 
@@ -14624,7 +14624,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent {
 pub struct PFN_vkCmdWaitEvents(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, eventCount: u32, pEvents: *const VkEvent, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents {
+unsafe impl crate::PFN for PFN_vkCmdWaitEvents {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWaitEvents";
 
     #[inline(always)]
@@ -14635,7 +14635,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents {
+impl crate::StaticCallable for PFN_vkCmdWaitEvents {
     const STATIC: Self = Self(vkCmdWaitEvents);
 }
 
@@ -14646,7 +14646,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents {
 pub struct PFN_vkCmdPipelineBarrier(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, srcStageMask: VkPipelineStageFlags, dstStageMask: VkPipelineStageFlags, dependencyFlags: VkDependencyFlags, memoryBarrierCount: u32, pMemoryBarriers: *const VkMemoryBarrier, bufferMemoryBarrierCount: u32, pBufferMemoryBarriers: *const VkBufferMemoryBarrier, imageMemoryBarrierCount: u32, pImageMemoryBarriers: *const VkImageMemoryBarrier));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier {
+unsafe impl crate::PFN for PFN_vkCmdPipelineBarrier {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPipelineBarrier";
 
     #[inline(always)]
@@ -14657,7 +14657,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier {
+impl crate::StaticCallable for PFN_vkCmdPipelineBarrier {
     const STATIC: Self = Self(vkCmdPipelineBarrier);
 }
 
@@ -14668,7 +14668,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier {
 pub struct PFN_vkCmdBeginQuery(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32, flags: VkQueryControlFlags));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBeginQuery {
+unsafe impl crate::PFN for PFN_vkCmdBeginQuery {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginQuery";
 
     #[inline(always)]
@@ -14679,7 +14679,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBeginQuery {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBeginQuery {
+impl crate::StaticCallable for PFN_vkCmdBeginQuery {
     const STATIC: Self = Self(vkCmdBeginQuery);
 }
 
@@ -14690,7 +14690,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBeginQuery {
 pub struct PFN_vkCmdEndQuery(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdEndQuery {
+unsafe impl crate::PFN for PFN_vkCmdEndQuery {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndQuery";
 
     #[inline(always)]
@@ -14701,7 +14701,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdEndQuery {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdEndQuery {
+impl crate::StaticCallable for PFN_vkCmdEndQuery {
     const STATIC: Self = Self(vkCmdEndQuery);
 }
 
@@ -14712,7 +14712,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdEndQuery {
 pub struct PFN_vkCmdResetQueryPool(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdResetQueryPool {
+unsafe impl crate::PFN for PFN_vkCmdResetQueryPool {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetQueryPool";
 
     #[inline(always)]
@@ -14723,7 +14723,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdResetQueryPool {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdResetQueryPool {
+impl crate::StaticCallable for PFN_vkCmdResetQueryPool {
     const STATIC: Self = Self(vkCmdResetQueryPool);
 }
 
@@ -14734,7 +14734,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdResetQueryPool {
 pub struct PFN_vkCmdWriteTimestamp(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineStage: VkPipelineStageFlags, queryPool: VkQueryPool, query: u32));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp {
+unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteTimestamp";
 
     #[inline(always)]
@@ -14745,7 +14745,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp {
+impl crate::StaticCallable for PFN_vkCmdWriteTimestamp {
     const STATIC: Self = Self(vkCmdWriteTimestamp);
 }
 
@@ -14756,7 +14756,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp {
 pub struct PFN_vkCmdCopyQueryPoolResults(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: u32, queryCount: u32, dstBuffer: VkBuffer, dstOffset: VkDeviceSize, stride: VkDeviceSize, flags: VkQueryResultFlags));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdCopyQueryPoolResults {
+unsafe impl crate::PFN for PFN_vkCmdCopyQueryPoolResults {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdCopyQueryPoolResults";
 
     #[inline(always)]
@@ -14767,7 +14767,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdCopyQueryPoolResults {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdCopyQueryPoolResults {
+impl crate::StaticCallable for PFN_vkCmdCopyQueryPoolResults {
     const STATIC: Self = Self(vkCmdCopyQueryPoolResults);
 }
 
@@ -14778,7 +14778,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdCopyQueryPoolResults {
 pub struct PFN_vkCmdPushConstants(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pipelineLayout: VkPipelineLayout, stageFlags: VkShaderStageFlags, offset: u32, size: u32, pValues: *const core::ffi::c_void));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdPushConstants {
+unsafe impl crate::PFN for PFN_vkCmdPushConstants {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPushConstants";
 
     #[inline(always)]
@@ -14789,7 +14789,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdPushConstants {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdPushConstants {
+impl crate::StaticCallable for PFN_vkCmdPushConstants {
     const STATIC: Self = Self(vkCmdPushConstants);
 }
 
@@ -14800,7 +14800,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdPushConstants {
 pub struct PFN_vkCmdBeginRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pRenderPassBegin: *const VkRenderPassBeginInfo, contents: VkSubpassContents));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBeginRenderPass {
+unsafe impl crate::PFN for PFN_vkCmdBeginRenderPass {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginRenderPass";
 
     #[inline(always)]
@@ -14811,7 +14811,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdBeginRenderPass {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdBeginRenderPass {
+impl crate::StaticCallable for PFN_vkCmdBeginRenderPass {
     const STATIC: Self = Self(vkCmdBeginRenderPass);
 }
 
@@ -14822,7 +14822,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdBeginRenderPass {
 pub struct PFN_vkCmdNextSubpass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, contents: VkSubpassContents));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdNextSubpass {
+unsafe impl crate::PFN for PFN_vkCmdNextSubpass {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdNextSubpass";
 
     #[inline(always)]
@@ -14833,7 +14833,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdNextSubpass {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdNextSubpass {
+impl crate::StaticCallable for PFN_vkCmdNextSubpass {
     const STATIC: Self = Self(vkCmdNextSubpass);
 }
 
@@ -14844,7 +14844,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdNextSubpass {
 pub struct PFN_vkCmdEndRenderPass(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdEndRenderPass {
+unsafe impl crate::PFN for PFN_vkCmdEndRenderPass {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndRenderPass";
 
     #[inline(always)]
@@ -14855,7 +14855,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdEndRenderPass {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdEndRenderPass {
+impl crate::StaticCallable for PFN_vkCmdEndRenderPass {
     const STATIC: Self = Self(vkCmdEndRenderPass);
 }
 
@@ -14866,7 +14866,7 @@ impl crate::resolver::StaticCallable for PFN_vkCmdEndRenderPass {
 pub struct PFN_vkCmdExecuteCommands(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, commandBufferCount: u32, pCommandBuffers: *const VkCommandBuffer));
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdExecuteCommands {
+unsafe impl crate::PFN for PFN_vkCmdExecuteCommands {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdExecuteCommands";
 
     #[inline(always)]
@@ -14877,7 +14877,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdExecuteCommands {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Implements")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdExecuteCommands {
+impl crate::StaticCallable for PFN_vkCmdExecuteCommands {
     const STATIC: Self = Self(vkCmdExecuteCommands);
 }
 
@@ -14890,7 +14890,7 @@ pub struct PFN_vkCmdBeginDebugUtilsLabelEXT(pub unsafe extern "system" fn(comman
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdBeginDebugUtilsLabelEXT {
+unsafe impl crate::PFN for PFN_vkCmdBeginDebugUtilsLabelEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdBeginDebugUtilsLabelEXT";
 
     #[inline(always)]
@@ -14908,7 +14908,7 @@ pub struct PFN_vkCmdEndDebugUtilsLabelEXT(pub unsafe extern "system" fn(commandB
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdEndDebugUtilsLabelEXT {
+unsafe impl crate::PFN for PFN_vkCmdEndDebugUtilsLabelEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdEndDebugUtilsLabelEXT";
 
     #[inline(always)]
@@ -14926,7 +14926,7 @@ pub struct PFN_vkCmdInsertDebugUtilsLabelEXT(pub unsafe extern "system" fn(comma
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_debug_utils")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdInsertDebugUtilsLabelEXT {
+unsafe impl crate::PFN for PFN_vkCmdInsertDebugUtilsLabelEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdInsertDebugUtilsLabelEXT";
 
     #[inline(always)]
@@ -14944,7 +14944,7 @@ pub struct PFN_vkCmdSetDeviceMaskKHR(pub unsafe extern "system" fn(commandBuffer
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetDeviceMaskKHR {
+unsafe impl crate::PFN for PFN_vkCmdSetDeviceMaskKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDeviceMaskKHR";
 
     #[inline(always)]
@@ -14961,7 +14961,7 @@ pub struct PFN_vkCmdSetDeviceMask(pub unsafe extern "system" fn(commandBuffer: V
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetDeviceMask {
+unsafe impl crate::PFN for PFN_vkCmdSetDeviceMask {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetDeviceMask";
 
     #[inline(always)]
@@ -14973,7 +14973,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetDeviceMask {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetDeviceMask {
+impl crate::StaticCallable for PFN_vkCmdSetDeviceMask {
     const STATIC: Self = Self(vkCmdSetDeviceMask);
 }
 
@@ -14986,7 +14986,7 @@ pub struct PFN_vkCmdDispatchBaseKHR(pub unsafe extern "system" fn(commandBuffer:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_device_group")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchBaseKHR {
+unsafe impl crate::PFN for PFN_vkCmdDispatchBaseKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDispatchBaseKHR";
 
     #[inline(always)]
@@ -15003,7 +15003,7 @@ pub struct PFN_vkCmdDispatchBase(pub unsafe extern "system" fn(commandBuffer: Vk
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchBase {
+unsafe impl crate::PFN for PFN_vkCmdDispatchBase {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdDispatchBase";
 
     #[inline(always)]
@@ -15015,7 +15015,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdDispatchBase {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_1APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdDispatchBase {
+impl crate::StaticCallable for PFN_vkCmdDispatchBase {
     const STATIC: Self = Self(vkCmdDispatchBase);
 }
 
@@ -15028,7 +15028,7 @@ pub struct PFN_vkCmdSetEvent2KHR(pub unsafe extern "system" fn(commandBuffer: Vk
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent2KHR {
+unsafe impl crate::PFN for PFN_vkCmdSetEvent2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetEvent2KHR";
 
     #[inline(always)]
@@ -15045,7 +15045,7 @@ pub struct PFN_vkCmdSetEvent2(pub unsafe extern "system" fn(commandBuffer: VkCom
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent2 {
+unsafe impl crate::PFN for PFN_vkCmdSetEvent2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdSetEvent2";
 
     #[inline(always)]
@@ -15057,7 +15057,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdSetEvent2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdSetEvent2 {
+impl crate::StaticCallable for PFN_vkCmdSetEvent2 {
     const STATIC: Self = Self(vkCmdSetEvent2);
 }
 
@@ -15070,7 +15070,7 @@ pub struct PFN_vkCmdResetEvent2KHR(pub unsafe extern "system" fn(commandBuffer: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent2KHR {
+unsafe impl crate::PFN for PFN_vkCmdResetEvent2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetEvent2KHR";
 
     #[inline(always)]
@@ -15087,7 +15087,7 @@ pub struct PFN_vkCmdResetEvent2(pub unsafe extern "system" fn(commandBuffer: VkC
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent2 {
+unsafe impl crate::PFN for PFN_vkCmdResetEvent2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdResetEvent2";
 
     #[inline(always)]
@@ -15099,7 +15099,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdResetEvent2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdResetEvent2 {
+impl crate::StaticCallable for PFN_vkCmdResetEvent2 {
     const STATIC: Self = Self(vkCmdResetEvent2);
 }
 
@@ -15112,7 +15112,7 @@ pub struct PFN_vkCmdWaitEvents2KHR(pub unsafe extern "system" fn(commandBuffer: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents2KHR {
+unsafe impl crate::PFN for PFN_vkCmdWaitEvents2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWaitEvents2KHR";
 
     #[inline(always)]
@@ -15129,7 +15129,7 @@ pub struct PFN_vkCmdWaitEvents2(pub unsafe extern "system" fn(commandBuffer: VkC
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents2 {
+unsafe impl crate::PFN for PFN_vkCmdWaitEvents2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWaitEvents2";
 
     #[inline(always)]
@@ -15141,7 +15141,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdWaitEvents2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdWaitEvents2 {
+impl crate::StaticCallable for PFN_vkCmdWaitEvents2 {
     const STATIC: Self = Self(vkCmdWaitEvents2);
 }
 
@@ -15154,7 +15154,7 @@ pub struct PFN_vkCmdPipelineBarrier2KHR(pub unsafe extern "system" fn(commandBuf
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier2KHR {
+unsafe impl crate::PFN for PFN_vkCmdPipelineBarrier2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPipelineBarrier2KHR";
 
     #[inline(always)]
@@ -15171,7 +15171,7 @@ pub struct PFN_vkCmdPipelineBarrier2(pub unsafe extern "system" fn(commandBuffer
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier2 {
+unsafe impl crate::PFN for PFN_vkCmdPipelineBarrier2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdPipelineBarrier2";
 
     #[inline(always)]
@@ -15183,7 +15183,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdPipelineBarrier2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdPipelineBarrier2 {
+impl crate::StaticCallable for PFN_vkCmdPipelineBarrier2 {
     const STATIC: Self = Self(vkCmdPipelineBarrier2);
 }
 
@@ -15196,7 +15196,7 @@ pub struct PFN_vkCmdWriteTimestamp2KHR(pub unsafe extern "system" fn(commandBuff
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_synchronization2")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp2KHR {
+unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp2KHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteTimestamp2KHR";
 
     #[inline(always)]
@@ -15213,7 +15213,7 @@ pub struct PFN_vkCmdWriteTimestamp2(pub unsafe extern "system" fn(commandBuffer:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp2 {
+unsafe impl crate::PFN for PFN_vkCmdWriteTimestamp2 {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteTimestamp2";
 
     #[inline(always)]
@@ -15225,7 +15225,7 @@ unsafe impl crate::resolver::PFN for PFN_vkCmdWriteTimestamp2 {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_3APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkCmdWriteTimestamp2 {
+impl crate::StaticCallable for PFN_vkCmdWriteTimestamp2 {
     const STATIC: Self = Self(vkCmdWriteTimestamp2);
 }
 
@@ -16136,7 +16136,7 @@ pub struct PFN_vkGetBufferDeviceAddressKHR(pub unsafe extern "system" fn(device:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferDeviceAddressKHR {
+unsafe impl crate::PFN for PFN_vkGetBufferDeviceAddressKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferDeviceAddressKHR";
 
     #[inline(always)]
@@ -16153,7 +16153,7 @@ pub struct PFN_vkGetBufferDeviceAddress(pub unsafe extern "system" fn(device: Vk
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferDeviceAddress {
+unsafe impl crate::PFN for PFN_vkGetBufferDeviceAddress {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferDeviceAddress";
 
     #[inline(always)]
@@ -16165,7 +16165,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferDeviceAddress {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetBufferDeviceAddress {
+impl crate::StaticCallable for PFN_vkGetBufferDeviceAddress {
     const STATIC: Self = Self(vkGetBufferDeviceAddress);
 }
 
@@ -16178,7 +16178,7 @@ pub struct PFN_vkGetBufferOpaqueCaptureAddressKHR(pub unsafe extern "system" fn(
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferOpaqueCaptureAddressKHR {
+unsafe impl crate::PFN for PFN_vkGetBufferOpaqueCaptureAddressKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferOpaqueCaptureAddressKHR";
 
     #[inline(always)]
@@ -16195,7 +16195,7 @@ pub struct PFN_vkGetBufferOpaqueCaptureAddress(pub unsafe extern "system" fn(dev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetBufferOpaqueCaptureAddress {
+unsafe impl crate::PFN for PFN_vkGetBufferOpaqueCaptureAddress {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetBufferOpaqueCaptureAddress";
 
     #[inline(always)]
@@ -16207,7 +16207,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetBufferOpaqueCaptureAddress {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetBufferOpaqueCaptureAddress {
+impl crate::StaticCallable for PFN_vkGetBufferOpaqueCaptureAddress {
     const STATIC: Self = Self(vkGetBufferOpaqueCaptureAddress);
 }
 
@@ -16220,7 +16220,7 @@ pub struct PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR(pub unsafe extern "syste
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_buffer_device_address")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR {
+unsafe impl crate::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddressKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceMemoryOpaqueCaptureAddressKHR";
 
     #[inline(always)]
@@ -16237,7 +16237,7 @@ pub struct PFN_vkGetDeviceMemoryOpaqueCaptureAddress(pub unsafe extern "system" 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
+unsafe impl crate::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDeviceMemoryOpaqueCaptureAddress";
 
     #[inline(always)]
@@ -16249,7 +16249,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
+impl crate::StaticCallable for PFN_vkGetDeviceMemoryOpaqueCaptureAddress {
     const STATIC: Self = Self(vkGetDeviceMemoryOpaqueCaptureAddress);
 }
 
@@ -16262,7 +16262,7 @@ pub struct PFN_vkGetSemaphoreCounterValueKHR(pub unsafe extern "system" fn(devic
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreCounterValueKHR {
+unsafe impl crate::PFN for PFN_vkGetSemaphoreCounterValueKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreCounterValueKHR";
 
     #[inline(always)]
@@ -16279,7 +16279,7 @@ pub struct PFN_vkGetSemaphoreCounterValue(pub unsafe extern "system" fn(device: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreCounterValue {
+unsafe impl crate::PFN for PFN_vkGetSemaphoreCounterValue {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetSemaphoreCounterValue";
 
     #[inline(always)]
@@ -16291,7 +16291,7 @@ unsafe impl crate::resolver::PFN for PFN_vkGetSemaphoreCounterValue {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkGetSemaphoreCounterValue {
+impl crate::StaticCallable for PFN_vkGetSemaphoreCounterValue {
     const STATIC: Self = Self(vkGetSemaphoreCounterValue);
 }
 
@@ -16304,7 +16304,7 @@ pub struct PFN_vkSignalSemaphoreKHR(pub unsafe extern "system" fn(device: VkDevi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkSignalSemaphoreKHR {
+unsafe impl crate::PFN for PFN_vkSignalSemaphoreKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkSignalSemaphoreKHR";
 
     #[inline(always)]
@@ -16321,7 +16321,7 @@ pub struct PFN_vkSignalSemaphore(pub unsafe extern "system" fn(device: VkDevice,
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkSignalSemaphore {
+unsafe impl crate::PFN for PFN_vkSignalSemaphore {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkSignalSemaphore";
 
     #[inline(always)]
@@ -16333,7 +16333,7 @@ unsafe impl crate::resolver::PFN for PFN_vkSignalSemaphore {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkSignalSemaphore {
+impl crate::StaticCallable for PFN_vkSignalSemaphore {
     const STATIC: Self = Self(vkSignalSemaphore);
 }
 
@@ -16346,7 +16346,7 @@ pub struct PFN_vkWaitSemaphoresKHR(pub unsafe extern "system" fn(device: VkDevic
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_KHR_timeline_semaphore")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkWaitSemaphoresKHR {
+unsafe impl crate::PFN for PFN_vkWaitSemaphoresKHR {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkWaitSemaphoresKHR";
 
     #[inline(always)]
@@ -16363,7 +16363,7 @@ pub struct PFN_vkWaitSemaphores(pub unsafe extern "system" fn(device: VkDevice, 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkWaitSemaphores {
+unsafe impl crate::PFN for PFN_vkWaitSemaphores {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkWaitSemaphores";
 
     #[inline(always)]
@@ -16375,7 +16375,7 @@ unsafe impl crate::resolver::PFN for PFN_vkWaitSemaphores {
 #[cfg(not(feature = "DynamicLoaded"))]
 #[cfg(feature = "Allow1_2APIs")]
 #[rustfmt::skip]
-impl crate::resolver::StaticCallable for PFN_vkWaitSemaphores {
+impl crate::StaticCallable for PFN_vkWaitSemaphores {
     const STATIC: Self = Self(vkWaitSemaphores);
 }
 
@@ -16824,7 +16824,7 @@ pub struct PFN_vkAcquireDrmDisplayEXT(pub unsafe extern "system" fn(physicalDevi
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAcquireDrmDisplayEXT {
+unsafe impl crate::PFN for PFN_vkAcquireDrmDisplayEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireDrmDisplayEXT";
 
     #[inline(always)]
@@ -16842,7 +16842,7 @@ pub struct PFN_vkAcquireWinrtDisplayNV(pub unsafe extern "system" fn(physicalDev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAcquireWinrtDisplayNV {
+unsafe impl crate::PFN for PFN_vkAcquireWinrtDisplayNV {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireWinrtDisplayNV";
 
     #[inline(always)]
@@ -16860,7 +16860,7 @@ pub struct PFN_vkAcquireXlibDisplayEXT(pub unsafe extern "system" fn(physicalDev
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkAcquireXlibDisplayEXT {
+unsafe impl crate::PFN for PFN_vkAcquireXlibDisplayEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkAcquireXlibDisplayEXT";
 
     #[inline(always)]
@@ -16878,7 +16878,7 @@ pub struct PFN_vkCreateValidationCacheEXT(pub unsafe extern "system" fn(device: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCreateValidationCacheEXT {
+unsafe impl crate::PFN for PFN_vkCreateValidationCacheEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateValidationCacheEXT";
 
     #[inline(always)]
@@ -16896,7 +16896,7 @@ pub struct PFN_vkDestroyValidationCacheEXT(pub unsafe extern "system" fn(device:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkDestroyValidationCacheEXT {
+unsafe impl crate::PFN for PFN_vkDestroyValidationCacheEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyValidationCacheEXT";
 
     #[inline(always)]
@@ -16914,7 +16914,7 @@ pub struct PFN_vkGetDrmDisplayEXT(pub unsafe extern "system" fn(physicalDevice: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_drm_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetDrmDisplayEXT {
+unsafe impl crate::PFN for PFN_vkGetDrmDisplayEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetDrmDisplayEXT";
 
     #[inline(always)]
@@ -16932,7 +16932,7 @@ pub struct PFN_vkGetRandROutputDisplayEXT(pub unsafe extern "system" fn(physical
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_acquire_xlib_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetRandROutputDisplayEXT {
+unsafe impl crate::PFN for PFN_vkGetRandROutputDisplayEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetRandROutputDisplayEXT";
 
     #[inline(always)]
@@ -16950,7 +16950,7 @@ pub struct PFN_vkGetValidationCacheDataEXT(pub unsafe extern "system" fn(device:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetValidationCacheDataEXT {
+unsafe impl crate::PFN for PFN_vkGetValidationCacheDataEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetValidationCacheDataEXT";
 
     #[inline(always)]
@@ -16968,7 +16968,7 @@ pub struct PFN_vkGetWinrtDisplayNV(pub unsafe extern "system" fn(physicalDevice:
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_NV_acquire_winrt_display")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkGetWinrtDisplayNV {
+unsafe impl crate::PFN for PFN_vkGetWinrtDisplayNV {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkGetWinrtDisplayNV";
 
     #[inline(always)]
@@ -16986,7 +16986,7 @@ pub struct PFN_vkMergeValidationCachesEXT(pub unsafe extern "system" fn(device: 
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_EXT_validation_cache")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkMergeValidationCachesEXT {
+unsafe impl crate::PFN for PFN_vkMergeValidationCachesEXT {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkMergeValidationCachesEXT";
 
     #[inline(always)]
@@ -17004,7 +17004,7 @@ pub struct PFN_vkCmdWriteBufferMarkerAMD(pub unsafe extern "system" fn(commandBu
 #[cfg(feature = "Implements")]
 #[cfg(feature = "VK_AMD_buffer_marker")]
 #[rustfmt::skip]
-unsafe impl crate::resolver::PFN for PFN_vkCmdWriteBufferMarkerAMD {
+unsafe impl crate::PFN for PFN_vkCmdWriteBufferMarkerAMD {
     const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdWriteBufferMarkerAMD";
 
     #[inline(always)]
