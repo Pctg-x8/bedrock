@@ -1516,4 +1516,376 @@ pub const ELEMENTS: &[Element] = &[
         "FORMAT_FEATURE",
         &[Bitmask::entry("SAMPLED_IMAGE_FILTER_CUBIC", 13).extension("IMG", "filter_cubic")],
     )),
+    // VK_NVX_device_generated_commands
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_NVX_device_generated_commands", 1)),
+    Element::Object(
+        Object::new("ObjectTableNVX", "OBJECT_TABLE_NVX", vk_ext_enum(87, 0) as _)
+            .extension("VK_NVX_device_generated_commands"),
+    ),
+    Element::Object(
+        Object::new(
+            "IndirectCommandsLayoutNVX",
+            "INDIRECT_COMMANDS_LAYOUT_NVX",
+            vk_ext_enum(87, 1) as _,
+        )
+        .extension("VK_NVX_device_generated_commands"),
+    ),
+    Element::Enum(
+        Enum::new(
+            "IndirectCommandsTokenType",
+            "INDIRECT_COMMANDS_TOKEN_TYPE",
+            &[
+                Enum::member("PIPELINE", 0).extension("NVX", "device_generated_commands"),
+                Enum::member("DESCRIPTOR_SET", 1).extension("NVX", "device_generated_commands"),
+                Enum::member("INDEX_BUFFER", 2).extension("NVX", "device_generated_commands"),
+                Enum::member("VERTEX_BUFFER", 3).extension("NVX", "device_generated_commands"),
+                Enum::member("PUSH_CONSTANT", 4).extension("NVX", "device_generated_commands"),
+                Enum::member("DRAW_INDEXED", 5).extension("NVX", "device_generated_commands"),
+                Enum::member("DRAW", 6).extension("NVX", "device_generated_commands"),
+                Enum::member("DISPATCH", 7).extension("NVX", "device_generated_commands"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Enum(
+        Enum::new(
+            "ObjectEntryType",
+            "OBJECT_ENTRY_TYPE",
+            &[
+                Enum::member("DESCRIPTOR_SET", 0).extension("NVX", "device_generated_commands"),
+                Enum::member("PIPELINE", 1).extension("NVX", "device_generated_commands"),
+                Enum::member("INDEX_BUFFER", 2).extension("NVX", "device_generated_commands"),
+                Enum::member("VERTEX_BUFFER", 3).extension("NVX", "device_generated_commands"),
+                Enum::member("PUSH_CONSTANT", 4).extension("NVX", "device_generated_commands"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "IndirectCommandsLayoutUsageFlags",
+            "IndirectCommandsLayoutUsageFlagBits",
+            "INDIRECT_COMMANDS_LAYOUT_USAGE",
+            &[
+                Bitmask::entry("UNORDERED_SEQUENCES", 0).extension("NVX", "device_generated_commands"),
+                Bitmask::entry("SPARSE_SEQUENCES", 1).extension("NVX", "device_generated_commands"),
+                Bitmask::entry("EMPTY_EXECUTIONS", 2).extension("NVX", "device_generated_commands"),
+                Bitmask::entry("INDEXED_SEQUENCES", 3).extension("NVX", "device_generated_commands"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Bitmask(
+        Bitmask::new(
+            "ObjectEntryUsageFlags",
+            "ObjectEntryUsageFlagBits",
+            "OBJECT_ENTRY_USAGE",
+            &[
+                Bitmask::entry("GRAPHICS", 0).extension("NVX", "device_generated_commands"),
+                Bitmask::entry("COMPUTE", 1).extension("NVX", "device_generated_commands"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Bitmask(Bitmask::extending(
+        "PipelineStageFlagBits",
+        "PIPELINE_STAGE",
+        &[Bitmask::entry("COMMAND_PROCESS", 17).extension("NVX", "device_generated_commands")],
+    )),
+    Element::Bitmask(Bitmask::extending(
+        "AccessFlagBits",
+        "ACCESS",
+        &[
+            Bitmask::entry("COMMAND_PROCESS_READ", 17).extension("NVX", "device_generated_commands"),
+            Bitmask::entry("COMMAND_PROCESS_WRITE", 18).extension("NVX", "device_generated_commands"),
+        ],
+    )),
+    Element::Struct(
+        Struct::typed(
+            "DeviceGeneratedCommandsFeatures",
+            "DEVICE_GENERATED_COMMANDS_FEATURES",
+            vk_ext_enum(87, 5) as _,
+            StructUsage::Source,
+            &[Struct::member("computeBindingPointSupport", TY_VK_BOOL)],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "DeviceGeneratedCommandsLimits",
+            "DEVICE_GENERATED_COMMANDS_LIMITS",
+            vk_ext_enum(87, 4) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("maxIndirectCommandsLayoutTokenCount", "u32"),
+                Struct::member("maxObjectEntryCounts", "u32"),
+                Struct::member("minSequenceCountBufferOffsetAlignment", "u32"),
+                Struct::member("minSequenceIndexBufferOffsetAlignment", "u32"),
+                Struct::member("minCommandsTokenBufferOffsetAlignment", "u32"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "IndirectCommandsToken",
+            &[
+                Struct::member("tokenType", "VkIndirectCommandsTokenTypeNVX"),
+                Struct::member("buffer", "VkBuffer"),
+                Struct::member("offset", "VkDeviceSize"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "IndirectCommandsLayoutToken",
+            &[
+                Struct::member("tokenType", "VkIndirectCommandsTokenTypeNVX"),
+                Struct::member("bindingUnit", "u32"),
+                Struct::member("dynamicCount", "u32"),
+                Struct::member("divisor", "u32"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "IndirectCommandsLayoutCreateInfo",
+            "INDIRECT_COMMANDS_LAYOUT_CREATE_INFO",
+            vk_ext_enum(87, 1) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("pipelineBindPoint", "VkPipelineBindPoint"),
+                Struct::member("flags", "VkIndirectCommandsLayoutUsageFlagsNVX"),
+                Struct::member("tokenCount", "u32"),
+                Struct::member("pTokens", "*const VkIndirectCommandsLayoutTokenNVX"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "CmdProcessCommandsInfo",
+            "CMD_PROCESS_COMMANDS_INFO",
+            vk_ext_enum(87, 2) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("objectTable", "VkObjectTableNVX"),
+                Struct::member("indirectCommandsLayout", "VkIndirectCommandsLayoutNVX"),
+                Struct::member("indirectCommandsTokenCount", "u32"),
+                Struct::member("pIndirectCommandsTokens", "*const VkIndirectCommandsTokenNVX"),
+                Struct::member("maxSequencesCount", "u32"),
+                Struct::member("targetCommandBuffer", "VkCommandBuffer"),
+                Struct::member("sequencesCountBuffer", "VkBuffer"),
+                Struct::member("sequencesCountOffset", "VkDeviceSize"),
+                Struct::member("sequencesIndexBuffer", "VkBuffer"),
+                Struct::member("sequencesIndexOffset", "VkDeviceSize"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "CmdReserveSpaceForCommandsInfo",
+            "CMD_RESERVE_SPACE_FOR_COMMANDS_INFO",
+            vk_ext_enum(87, 3) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("objectTable", "VkObjectTableNVX"),
+                Struct::member("indirectCommandsLayout", "VkIndirectCommandsLayoutNVX"),
+                Struct::member("maxSequencesCount", "u32"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "ObjectTableCreateInfo",
+            "OBJECT_TABLE_CREATE_INFO",
+            vk_ext_enum(87, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("objectCount", "u32"),
+                Struct::member("pObjectEntryTypes", "*const VkObjectEntryTypeNVX"),
+                Struct::member("pObjectEntryCounts", "*const u32"),
+                Struct::member("pObjectEntryUsageFlags", "*const VkObjectEntryUsageFlagsNVX"),
+                Struct::member("maxUniformBuffersPerDescriptor", "u32"),
+                Struct::member("maxStorageBuffersPerDescriptor", "u32"),
+                Struct::member("maxStorageImagesPerDescriptor", "u32"),
+                Struct::member("maxSampledImagesPerDescriptor", "u32"),
+                Struct::member("maxPipelineLayouts", "u32"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ObjectTableEntry",
+            &[
+                Struct::member("r#type", "VkObjectEntryTypeNVX"),
+                Struct::member("flags", "OVkObjectEntryUsageFlagsNVX"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ObjectTablePipelineEntry",
+            &[
+                Struct::member("r#type", "VkObjectEntryTypeNVX"),
+                Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
+                Struct::member("pipeline", "VkPipeline"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ObjectTableDescriptorSEtEntry",
+            &[
+                Struct::member("r#type", "VkObjectEntryTypeNVX"),
+                Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
+                Struct::member("pipelineLayout", "VkPipelineLayout"),
+                Struct::member("descriptorSet", "VkDescriptorSet"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ObjectTableVertexBufferEntry",
+            &[
+                Struct::member("r#type", "VkObjectEntryTypeNVX"),
+                Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
+                Struct::member("buffer", "VkBuffer"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ObjectTableIndexBufferEntry",
+            &[
+                Struct::member("r#type", "VkObjectEntryTypeNVX"),
+                Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
+                Struct::member("buffer", "VkBuffer"),
+                Struct::member("indexType", "VkIndexType"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "ObjectTablePushConstantEntry",
+            &[
+                Struct::member("r#type", "VkObjectEntryTypeNVX"),
+                Struct::member("flags", "VkObjectEntryUsageFlagsNVX"),
+                Struct::member("pipelineLayout", "VkPipelineLayout"),
+                Struct::member("stageFlags", "VkShaderStageFlags"),
+            ],
+        )
+        .extensions(&[("NVX", "device_generated_commands")]),
+    ),
+    Element::Command(
+        Command::inst(
+            "ProcessCommands",
+            &[("pProcessCommandsInfo", "*const VkCmdProcessCommandsInfoNVX")],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::inst(
+            "ReserveSpaceForCommands",
+            &[("pReserveSpaceInfo", "*const VkCmdREserveSpaceForCommandsInfoNVX")],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "CreateIndirectCommandsLayout",
+            &[
+                ("device", "VkDevice"),
+                ("pCreateInfo", "*const VkIndirectCommandsLayoutCreateInfoNVX"),
+                ("pAllocator", "*const VkallocationCallbacks"),
+                ("pIndirectCommandsLayout", "*mut VkIndirectCommandsLayoutNVX"),
+            ],
+        )
+        .failable()
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "DestroyIndirectCommandsLayout",
+            &[
+                ("device", "VkDevice"),
+                ("indirectCommandsLayout", "VkIndirectCommandsLayoutNVX"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "CreateObjectTable",
+            &[
+                ("device", "VkDevice"),
+                ("pCreateInfo", "*const VkObjectTableCreateInfoNVX"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+                ("pObjectTable", "*mut VkObjectTableNVX"),
+            ],
+        )
+        .failable()
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "DestroyObjectTable",
+            &[
+                ("device", "VkDevice"),
+                ("objectTable", "VkObjectTableNVX"),
+                ("pAllocator", "*const VkAllocationCallbacks"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "RegisterObjects",
+            &[
+                ("device", "VkDevice"),
+                ("objectTable", "VkObjectTableNVX"),
+                ("objectCount", "u32"),
+                ("ppObjectTableEntries", "*const *const VkObjectTableEntryNVX"),
+                ("pObjectIndices", "*const u32"),
+            ],
+        )
+        .failable()
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "UnregisterObjects",
+            &[
+                ("device", "VkDevice"),
+                ("objectTable", "VkObjectTableNVX"),
+                ("objectCount", "u32"),
+                ("pObjectEntryTypes", "*const VkObjectEntryTypeNVX"),
+                ("pObjectIndices", "*const u32"),
+            ],
+        )
+        .failable()
+        .extension("NVX", "device_generated_commands"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetPhysicalDeviceGeneratedCommandsProperties",
+            &[
+                ("physicalDevice", "VkPhysicalDevice"),
+                ("pFeatures", "*mut VkDEviceGeneratedCommandsFeaturesNVX"),
+                ("pLimits", "*mut VkDEviceGeneratedCommandsLimitsNVX"),
+            ],
+        )
+        .extension("NVX", "device_generated_commands"),
+    ),
 ];

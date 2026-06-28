@@ -19675,6 +19675,586 @@ pub const VK_FILTER_CUBIC_IMG: VkFilter = 1000015000;
 #[rustfmt::skip]
 pub const VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG: VkFormatFeatureFlagBits = 0x00002000;
 
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME: &str = "VK_NVX_device_generated_commands";
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[rustfmt::skip]
+pub struct ObjectTableNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for ObjectTableNVX {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_OBJECT_TABLE_NVX;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_OBJECT_TABLE_NVX: VkObjectType = 1000086000;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[rustfmt::skip]
+pub struct IndirectCommandsLayoutNVX(pub core::num::NonZeroU64, pub core::marker::PhantomData<*mut u8>);
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::VkRawHandle for IndirectCommandsLayoutNVX {
+    const OBJECT_TYPE: VkObjectType = VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX;
+
+    #[inline(always)]
+    fn raw_handle_value(&self) -> u64 {
+        self.0.get()
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_TYPE_INDIRECT_COMMANDS_LAYOUT_NVX: VkObjectType = 1000086001;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub type VkIndirectCommandsTokenTypeNVX = i32;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_PIPELINE_NVX: VkIndirectCommandsTokenTypeNVX = 0;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_DESCRIPTOR_SET_NVX: VkIndirectCommandsTokenTypeNVX = 1;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_INDEX_BUFFER_NVX: VkIndirectCommandsTokenTypeNVX = 2;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_VERTEX_BUFFER_NVX: VkIndirectCommandsTokenTypeNVX = 3;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_PUSH_CONSTANT_NVX: VkIndirectCommandsTokenTypeNVX = 4;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_INDEXED_NVX: VkIndirectCommandsTokenTypeNVX = 5;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_DRAW_NVX: VkIndirectCommandsTokenTypeNVX = 6;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_TOKEN_TYPE_DISPATCH_NVX: VkIndirectCommandsTokenTypeNVX = 7;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub type VkObjectEntryTypeNVX = i32;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_TYPE_DESCRIPTOR_SET_NVX: VkObjectEntryTypeNVX = 0;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_TYPE_PIPELINE_NVX: VkObjectEntryTypeNVX = 1;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_TYPE_INDEX_BUFFER_NVX: VkObjectEntryTypeNVX = 2;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_TYPE_VERTEX_BUFFER_NVX: VkObjectEntryTypeNVX = 3;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_TYPE_PUSH_CONSTANT_NVX: VkObjectEntryTypeNVX = 4;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub type VkIndirectCommandsLayoutUsageFlagsNVX = VkFlags;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub type VkIndirectCommandsLayoutUsageFlagBitsNVX = VkFlags;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NVX: VkIndirectCommandsLayoutUsageFlagBitsNVX = 0x00000001;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_SPARSE_SEQUENCES_BIT_NVX: VkIndirectCommandsLayoutUsageFlagBitsNVX = 0x00000002;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX: VkIndirectCommandsLayoutUsageFlagBitsNVX = 0x00000004;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_INDIRECT_COMMANDS_LAYOUT_USAGE_INDEXED_SEQUENCES_BIT_NVX: VkIndirectCommandsLayoutUsageFlagBitsNVX = 0x00000008;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub type VkObjectEntryUsageFlagsNVX = VkFlags;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub type VkObjectEntryUsageFlagBitsNVX = VkFlags;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX: VkObjectEntryUsageFlagBitsNVX = 0x00000001;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX: VkObjectEntryUsageFlagBitsNVX = 0x00000002;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_PIPELINE_STAGE_COMMAND_PROCESS_BIT_NVX: VkPipelineStageFlagBits = 0x00020000;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_ACCESS_COMMAND_PROCESS_READ_BIT_NVX: VkAccessFlagBits = 0x00020000;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_ACCESS_COMMAND_PROCESS_WRITE_BIT_NVX: VkAccessFlagBits = 0x00040000;
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceGeneratedCommandsFeaturesNVX {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub computeBindingPointSupport: VkBool32,
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX: VkStructureType = 1000086005;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceGeneratedCommandsFeaturesNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceGeneratedCommandsFeaturesNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX; }
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkDeviceGeneratedCommandsLimitsNVX {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub maxIndirectCommandsLayoutTokenCount: u32,
+    pub maxObjectEntryCounts: u32,
+    pub minSequenceCountBufferOffsetAlignment: u32,
+    pub minSequenceIndexBufferOffsetAlignment: u32,
+    pub minCommandsTokenBufferOffsetAlignment: u32,
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX: VkStructureType = 1000086004;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkDeviceGeneratedCommandsLimitsNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkDeviceGeneratedCommandsLimitsNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX; }
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkIndirectCommandsTokenNVX {
+    pub tokenType: VkIndirectCommandsTokenTypeNVX,
+    pub buffer: VkBuffer,
+    pub offset: VkDeviceSize,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkIndirectCommandsLayoutTokenNVX {
+    pub tokenType: VkIndirectCommandsTokenTypeNVX,
+    pub bindingUnit: u32,
+    pub dynamicCount: u32,
+    pub divisor: u32,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkIndirectCommandsLayoutCreateInfoNVX {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub pipelineBindPoint: VkPipelineBindPoint,
+    pub flags: VkIndirectCommandsLayoutUsageFlagsNVX,
+    pub tokenCount: u32,
+    pub pTokens: *const VkIndirectCommandsLayoutTokenNVX,
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX: VkStructureType = 1000086001;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkIndirectCommandsLayoutCreateInfoNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkIndirectCommandsLayoutCreateInfoNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX; }
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkCmdProcessCommandsInfoNVX {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectTable: VkObjectTableNVX,
+    pub indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
+    pub indirectCommandsTokenCount: u32,
+    pub pIndirectCommandsTokens: *const VkIndirectCommandsTokenNVX,
+    pub maxSequencesCount: u32,
+    pub targetCommandBuffer: VkCommandBuffer,
+    pub sequencesCountBuffer: VkBuffer,
+    pub sequencesCountOffset: VkDeviceSize,
+    pub sequencesIndexBuffer: VkBuffer,
+    pub sequencesIndexOffset: VkDeviceSize,
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX: VkStructureType = 1000086002;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkCmdProcessCommandsInfoNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkCmdProcessCommandsInfoNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX; }
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkCmdReserveSpaceForCommandsInfoNVX {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectTable: VkObjectTableNVX,
+    pub indirectCommandsLayout: VkIndirectCommandsLayoutNVX,
+    pub maxSequencesCount: u32,
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX: VkStructureType = 1000086003;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkCmdReserveSpaceForCommandsInfoNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkCmdReserveSpaceForCommandsInfoNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX; }
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTableCreateInfoNVX {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub objectCount: u32,
+    pub pObjectEntryTypes: *const VkObjectEntryTypeNVX,
+    pub pObjectEntryCounts: *const u32,
+    pub pObjectEntryUsageFlags: *const VkObjectEntryUsageFlagsNVX,
+    pub maxUniformBuffersPerDescriptor: u32,
+    pub maxStorageBuffersPerDescriptor: u32,
+    pub maxStorageImagesPerDescriptor: u32,
+    pub maxSampledImagesPerDescriptor: u32,
+    pub maxPipelineLayouts: u32,
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX: VkStructureType = 1000086000;
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkObjectTableCreateInfoNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkObjectTableCreateInfoNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX; }
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTableEntryNVX {
+    pub r#type: VkObjectEntryTypeNVX,
+    pub flags: OVkObjectEntryUsageFlagsNVX,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTablePipelineEntryNVX {
+    pub r#type: VkObjectEntryTypeNVX,
+    pub flags: VkObjectEntryUsageFlagsNVX,
+    pub pipeline: VkPipeline,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTableDescriptorSEtEntryNVX {
+    pub r#type: VkObjectEntryTypeNVX,
+    pub flags: VkObjectEntryUsageFlagsNVX,
+    pub pipelineLayout: VkPipelineLayout,
+    pub descriptorSet: VkDescriptorSet,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTableVertexBufferEntryNVX {
+    pub r#type: VkObjectEntryTypeNVX,
+    pub flags: VkObjectEntryUsageFlagsNVX,
+    pub buffer: VkBuffer,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTableIndexBufferEntryNVX {
+    pub r#type: VkObjectEntryTypeNVX,
+    pub flags: VkObjectEntryUsageFlagsNVX,
+    pub buffer: VkBuffer,
+    pub indexType: VkIndexType,
+}
+
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkObjectTablePushConstantEntryNVX {
+    pub r#type: VkObjectEntryTypeNVX,
+    pub flags: VkObjectEntryUsageFlagsNVX,
+    pub pipelineLayout: VkPipelineLayout,
+    pub stageFlags: VkShaderStageFlags,
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdProcessCommandsNVX(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pProcessCommandsInfo: *const VkCmdProcessCommandsInfoNVX));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdProcessCommandsNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdProcessCommandsNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCmdReserveSpaceForCommandsNVX(pub unsafe extern "system" fn(commandBuffer: VkCommandBuffer, pReserveSpaceInfo: *const VkCmdREserveSpaceForCommandsInfoNVX));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCmdReserveSpaceForCommandsNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCmdReserveSpaceForCommandsNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateIndirectCommandsLayoutNVX(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkIndirectCommandsLayoutCreateInfoNVX, pAllocator: *const VkallocationCallbacks, pIndirectCommandsLayout: *mut VkIndirectCommandsLayoutNVX) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateIndirectCommandsLayoutNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateIndirectCommandsLayoutNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDestroyIndirectCommandsLayoutNVX(pub unsafe extern "system" fn(device: VkDevice, indirectCommandsLayout: VkIndirectCommandsLayoutNVX, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDestroyIndirectCommandsLayoutNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyIndirectCommandsLayoutNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkCreateObjectTableNVX(pub unsafe extern "system" fn(device: VkDevice, pCreateInfo: *const VkObjectTableCreateInfoNVX, pAllocator: *const VkAllocationCallbacks, pObjectTable: *mut VkObjectTableNVX) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkCreateObjectTableNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkCreateObjectTableNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkDestroyObjectTableNVX(pub unsafe extern "system" fn(device: VkDevice, objectTable: VkObjectTableNVX, pAllocator: *const VkAllocationCallbacks));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkDestroyObjectTableNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkDestroyObjectTableNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkRegisterObjectsNVX(pub unsafe extern "system" fn(device: VkDevice, objectTable: VkObjectTableNVX, objectCount: u32, ppObjectTableEntries: *const *const VkObjectTableEntryNVX, pObjectIndices: *const u32) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkRegisterObjectsNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkRegisterObjectsNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkUnregisterObjectsNVX(pub unsafe extern "system" fn(device: VkDevice, objectTable: VkObjectTableNVX, objectCount: u32, pObjectEntryTypes: *const VkObjectEntryTypeNVX, pObjectIndices: *const u32) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkUnregisterObjectsNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkUnregisterObjectsNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(pub unsafe extern "system" fn(physicalDevice: VkPhysicalDevice, pFeatures: *mut VkDEviceGeneratedCommandsFeaturesNVX, pLimits: *mut VkDEviceGeneratedCommandsLimitsNVX));
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_NVX_device_generated_commands")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

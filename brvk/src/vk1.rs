@@ -80,12 +80,6 @@ pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHX: crate::vk2::VkStructu
 pub const VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHX: crate::vk2::VkStructureType = 100_0060_012;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR: crate::vk2::VkStructureType = 100_0080_000;
 pub const VK_STRUCTURE_TYPE_PRESENT_REGIONS_KHR: crate::vk2::VkStructureType = 100_0084_000;
-pub const VK_STRUCTURE_TYPE_OBJECT_TABLE_CREATE_INFO_NVX: crate::vk2::VkStructureType = 100_0086_000;
-pub const VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_NVX: crate::vk2::VkStructureType = 100_0086_001;
-pub const VK_STRUCTURE_TYPE_CMD_PROCESS_COMMANDS_INFO_NVX: crate::vk2::VkStructureType = 100_0086_002;
-pub const VK_STRUCTURE_TYPE_CMD_RESERVE_SPACE_FOR_COMMANDS_INFO_NVX: crate::vk2::VkStructureType = 100_0086_003;
-pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_LIMITS_NVX: crate::vk2::VkStructureType = 100_0086_004;
-pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX: crate::vk2::VkStructureType = 100_0086_005;
 pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV: crate::vk2::VkStructureType =
     100_0087_000;
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: crate::vk2::VkStructureType = 100_0090_000;
@@ -172,7 +166,6 @@ ExportExtensions!("VK_AMD_shader_image_load_store_lod": shader_image_load_store_
 ExportExtensions!("VK_IMG_format_pvrtc": format_pvrtc_img);
 ExportExtensions!("VK_EXT_shader_group_ballot": shader_group_ballot_ext);
 ExportExtensions!("VK_EXT_shader_group_vote": shader_group_vote_ext);
-ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_nvx);
 ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
 ExportExtensions!("VK_NV_sample_mask_override_coverage": sample_mask_override_coverage_nv);
