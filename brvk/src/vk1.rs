@@ -231,7 +231,6 @@ ExportExtensions!("VK_EXT_post_depth_coverage": post_depth_coverage_ext);
 ExportExtensions!("VK_EXT_shader_viewport_index_layer": shader_viewport_index_layer_ext);
 ExportExtensions!("VK_EXT_global_priority": global_priority_ext);
 ExportExtensions!("VK_EXT_full_screen_exclusive": full_screen_exclusive_ext);
-ExportExtensions!("VK_KHR_image_format_list": image_format_list_khr);
 ExportExtensions!("VK_EXT_image_drm_format_modifier": image_drm_format_modifier);
 ExportExtensions!("VK_EXT_metal_objects": metal_objects_ext);
 ExportExtensions!("VK_KHR_maintenance7": maintenance7_khr);

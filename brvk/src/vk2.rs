@@ -16379,6 +16379,49 @@ impl crate::StaticCallable for PFN_vkWaitSemaphores {
     const STATIC: Self = Self(vkWaitSemaphores);
 }
 
+#[cfg(feature = "VK_KHR_image_format_list")]
+#[rustfmt::skip]
+pub const VK_KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME: &str = "VK_KHR_image_format_list";
+#[cfg(feature = "VK_KHR_image_format_list")]
+#[rustfmt::skip]
+pub const VK_KHR_IMAGE_FORMAT_LIST_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_KHR_image_format_list")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkImageFormatListCreateInfoKHR {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub viewFormatCount: u32,
+    pub pViewFormats: *const VkFormat,
+}
+#[cfg(feature = "VK_KHR_image_format_list")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR: VkStructureType = 1000147000;
+#[cfg(feature = "VK_KHR_image_format_list")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkImageFormatListCreateInfoKHR {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_KHR_image_format_list")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkImageFormatListCreateInfoKHR { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR; }
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub type VkImageFormatListCreateInfo = VkImageFormatListCreateInfoKHR;
+#[cfg(feature = "Allow1_2APIs")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO: VkStructureType = VK_STRUCTURE_TYPE_IMAGE_FORMAT_LIST_CREATE_INFO_KHR;
+
 #[cfg(feature = "VK_KHR_vertex_attribute_divisor")]
 #[rustfmt::skip]
 pub const VK_KHR_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME: &str = "VK_KHR_vertex_attribute_divisor";

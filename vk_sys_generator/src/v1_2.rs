@@ -2,6 +2,8 @@
 
 use crate::{parts::*, vk_ext_enum};
 
+const VERSION: &str = "1_2";
+
 pub const ELEMENTS: &[Element] = &[
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_buffer_device_address", 1)),
     Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_timeline_semaphore", 2)),
@@ -334,5 +336,21 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("KHR", "timeline_semaphore")
         .promoted("1_2"),
+    ),
+    // VK_KHR_image_format_list
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_KHR_image_format_list", 1)),
+    Element::Struct(
+        Struct::typed(
+            "ImageFormatListCreateInfo",
+            "IMAGE_FORMAT_LIST_CREATE_INFO",
+            vk_ext_enum(148, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("viewFormatCount", "u32"),
+                Struct::member("pViewFormats", "*const VkFormat"),
+            ],
+        )
+        .extensions(&[ex_khr("image_format_list")])
+        .promoted(VERSION),
     ),
 ];
