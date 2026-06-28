@@ -11,7 +11,7 @@ pub const ELEMENTS: &[Element] = &[
         "INVALID_OPAQUE_CAPTURE_ADDRESS",
         -vk_ext_enum(258, 0) as _,
     )
-    .extension("VK_KHR_buffer_device_address", "KHR")
+    .extension("buffer_device_address", "KHR")
     .promoted("1_2")])),
     Element::Enum(
         Enum::new(
@@ -19,14 +19,14 @@ pub const ELEMENTS: &[Element] = &[
             "SEMAPHORE_TYPE",
             &[
                 Enum::member("BINARY", 0)
-                    .extension("VK_KHR_timeline_semaphore", "KHR")
+                    .extension("timeline_semaphore", "KHR")
                     .promoted("1_2"),
                 Enum::member("TIMELINE", 1)
-                    .extension("VK_KHR_timeline_semaphore", "KHR")
+                    .extension("timeline_semaphore", "KHR")
                     .promoted("1_2"),
             ],
         )
-        .extension("VK_KHR_timeline_semaphore", "KHR")
+        .extension("timeline_semaphore", "KHR")
         .promoted("1_2"),
     ),
     Element::Bitmask(Bitmask::extending(

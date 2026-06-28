@@ -199,8 +199,8 @@ impl Enum {
         let is_newtyped = type_name == "VkResult";
 
         if !self.extending {
-            if let Some((x, _)) = self.extension {
-                writeln!(w, "#[cfg(feature = {x:?})]")?;
+            if let Some((name, suffix)) = self.extension {
+                writeln!(w, "#[cfg(feature = \"VK_{suffix}_{name}\")]")?;
             }
             emit_c_enum_type(w, &type_name)?;
             if let Some(v) = self.promoted {
@@ -220,7 +220,7 @@ impl Enum {
                     )?;
                 }
                 (Some((x, s)), None) | (None, Some((x, s))) => {
-                    writeln!(w, "#[cfg(feature = {x:?})]")?;
+                    writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
                     writeln!(w, "#[rustfmt::skip]")?;
                     if is_newtyped {
                         writeln!(
@@ -236,8 +236,8 @@ impl Enum {
                         )?;
                     }
                 }
-                (Some(a), Some(b)) if a.0 == b.0 => {
-                    writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
+                (Some(a), Some(b)) if a == b => {
+                    writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.1, a.0)?;
                     writeln!(w, "#[rustfmt::skip]")?;
                     if is_newtyped {
                         writeln!(
@@ -254,8 +254,8 @@ impl Enum {
                     }
                 }
                 (Some(a), Some(b)) if a.1 == b.1 => {
-                    writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
-                    writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
+                    writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.1, a.0)?;
+                    writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", b.1, b.0)?;
                     writeln!(w, "#[rustfmt::skip]")?;
                     if is_newtyped {
                         writeln!(
@@ -273,8 +273,8 @@ impl Enum {
                 }
                 (Some(a), Some(b)) => {
                     // both extension required, using member extension's suffix
-                    writeln!(w, "#[cfg(feature = {:?})]", a.0)?;
-                    writeln!(w, "#[cfg(feature = {:?})]", b.0)?;
+                    writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", a.1, a.0)?;
+                    writeln!(w, "#[cfg(feature = \"VK_{}_{}\")]", b.1, b.0)?;
                     writeln!(w, "#[rustfmt::skip]")?;
                     if is_newtyped {
                         writeln!(
@@ -293,8 +293,8 @@ impl Enum {
             }
 
             if let Some(v) = member.promoted {
-                if let Some((x, _)) = self.extension {
-                    writeln!(w, "#[cfg(feature = {x:?})]")?;
+                if let Some((x, s)) = self.extension {
+                    writeln!(w, "#[cfg(feature = \"VK_{s}_{x}\")]")?;
                 }
                 writeln!(w, "#[cfg(feature = \"Allow{v}APIs\")]")?;
                 writeln!(w, "#[rustfmt::skip]")?;

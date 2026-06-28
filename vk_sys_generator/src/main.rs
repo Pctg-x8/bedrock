@@ -419,21 +419,21 @@ const ENUMS: &[Enum] = &[
         "CHROMA_LOCATION",
         &[
             Enum::member("COSITED_EVEN", 0)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
             Enum::member("MIDPOINT", 1)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
         ],
     )
-    .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+    .extension("sampler_ycbcr_conversion", "KHR")
     .promoted("1_1"),
     Enum::new(
         "ColorSpace",
         "COLOR_SPACE",
-        &[Enum::member("SRGB_NONLINEAR", 0).extension("VK_KHR_surface", "KHR")],
+        &[Enum::member("SRGB_NONLINEAR", 0).extension("surface", "KHR")],
     )
-    .extension("VK_KHR_surface", "KHR"),
+    .extension("surface", "KHR"),
     Enum::new(
         "CommandBufferLevel",
         "COMMAND_BUFFER_LEVEL",
@@ -505,14 +505,14 @@ const ENUMS: &[Enum] = &[
             Enum::member("INDIRECT_COMMANDS_LAYOUT_NVX", 32),
             Enum::member("VALIDATION_CACHE_EXT", 33),
             Enum::member("DESCRIPTOR_UPDATE_TEMPLATE", vk_ext_enum(86, 0) as _)
-                .extension("VK_KHR_descriptor_update_template", "KHR")
+                .extension("descriptor_update_template", "KHR")
                 .promoted("1_1"),
             Enum::member("SAMPLER_YCBCR_CONVERSION", vk_ext_enum(157, 0) as _)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
         ],
     )
-    .extension("VK_EXT_debug_report", "EXT"),
+    .extension("debug_report", "EXT"),
     Enum::new(
         "DescriptorType",
         "DESCRIPTOR_TYPE",
@@ -534,10 +534,10 @@ const ENUMS: &[Enum] = &[
         "DescriptorUpdateTemplateType",
         "DESCRIPTOR_UPDATE_TEMPLATE_TYPE",
         &[Enum::member("DESCRIPTOR_SET", 0)
-            .extension("VK_KHR_descriptor_update_template", "KHR")
+            .extension("descriptor_update_template", "KHR")
             .promoted("1_1")],
     )
-    .extension("VK_KHR_descriptor_update_template", "KHR")
+    .extension("descriptor_update_template", "KHR")
     .promoted("1_1"),
     Enum::new(
         "DynamicState",
@@ -577,12 +577,12 @@ const ENUMS: &[Enum] = &[
             Enum::member("TRANSFER_SRC_OPTIMAL", 6),
             Enum::member("TRANSFER_DST_OPTIMAL", 7),
             Enum::member("PREINITIALIZED", 8),
-            Enum::member("PRESENT_SRC", vk_ext_enum(2, 2) as _).extension("VK_KHR_swapchain", "KHR"),
+            Enum::member("PRESENT_SRC", vk_ext_enum(2, 2) as _).extension("swapchain", "KHR"),
             Enum::member("DEPTH_READ_ONLY_STENCIL_ATTACHMENT_OPTIMAL", vk_ext_enum(118, 0) as _)
-                .extension("VK_KHR_maintenance2", "KHR")
+                .extension("maintenance2", "KHR")
                 .promoted("1_1"),
             Enum::member("DEPTH_ATTACHMENT_STENCIL_READ_ONLY_OPTIMAL", vk_ext_enum(118, 1) as _)
-                .extension("VK_KHR_maintenance2", "KHR")
+                .extension("maintenance2", "KHR")
                 .promoted("1_1"),
         ],
     ),
@@ -662,14 +662,14 @@ const ENUMS: &[Enum] = &[
         "POINT_CLIPPING_BEHAVIOR",
         &[
             Enum::member("ALL_CLIP_PLANES", 0)
-                .extension("VK_KHR_maintenance2", "KHR")
+                .extension("maintenance2", "KHR")
                 .promoted("1_1"),
             Enum::member("USER_CLIP_PLANES", 1)
-                .extension("VK_KHR_maintenance2", "KHR")
+                .extension("maintenance2", "KHR")
                 .promoted("1_1"),
         ],
     )
-    .extension("VK_KHR_maintenance2", "KHR")
+    .extension("maintenance2", "KHR")
     .promoted("1_1"),
     Enum::new(
         "PolygonMode",
@@ -684,13 +684,13 @@ const ENUMS: &[Enum] = &[
         "PresentMode",
         "PRESENT_MODE",
         &[
-            Enum::member("IMMEDIATE", 0).extension("VK_KHR_surface", "KHR"),
-            Enum::member("MAILBOX", 1).extension("VK_KHR_surface", "KHR"),
-            Enum::member("FIFO", 2).extension("VK_KHR_surface", "KHR"),
-            Enum::member("FIFO_RELAXED", 3).extension("VK_KHR_surface", "KHR"),
+            Enum::member("IMMEDIATE", 0).extension("surface", "KHR"),
+            Enum::member("MAILBOX", 1).extension("surface", "KHR"),
+            Enum::member("FIFO", 2).extension("surface", "KHR"),
+            Enum::member("FIFO_RELAXED", 3).extension("surface", "KHR"),
         ],
     )
-    .extension("VK_KHR_surface", "KHR"),
+    .extension("surface", "KHR"),
     Enum::new(
         "PrimitiveTopology",
         "PRIMITIVE_TOPOLOGY",
@@ -738,37 +738,37 @@ const ENUMS: &[Enum] = &[
         "SAMPLER_YCBCR_MODEL_CONVERSION",
         &[
             Enum::member("RGB_IDENTITY", 0)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
             Enum::member("YCBCR_IDENTITY", 1)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
             Enum::member("YCBCR_709", 2)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
             Enum::member("YCBCR_601", 3)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
             Enum::member("YCBCR_2020", 4)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
         ],
     )
-    .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+    .extension("sampler_ycbcr_conversion", "KHR")
     .promoted("1_1"),
     Enum::new(
         "SamplerYcbcrRange",
         "SAMPLER_YCBCR_RANGE",
         &[
             Enum::member("ITU_FULL", 0)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
             Enum::member("ITU_NARROW", 1)
-                .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+                .extension("sampler_ycbcr_conversion", "KHR")
                 .promoted("1_1"),
         ],
     )
-    .extension("VK_KHR_sampler_ycbcr_conversion", "KHR")
+    .extension("sampler_ycbcr_conversion", "KHR")
     .promoted("1_1"),
     Enum::new(
         "SharingMode",
@@ -810,14 +810,14 @@ const ENUMS: &[Enum] = &[
         "TESSELLATION_DOMAIN_ORIGIN",
         &[
             Enum::member("UPPER_LEFT", 0)
-                .extension("VK_KHR_maintenance2", "KHR")
+                .extension("maintenance2", "KHR")
                 .promoted("1_1"),
             Enum::member("LOWER_LEFT", 1)
-                .extension("VK_KHR_maintenance2", "KHR")
+                .extension("maintenance2", "KHR")
                 .promoted("1_1"),
         ],
     )
-    .extension("VK_KHR_maintenance2", "KHR")
+    .extension("maintenance2", "KHR")
     .promoted("1_1"),
     Enum::new(
         "VertexInputRate",

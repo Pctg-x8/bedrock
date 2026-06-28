@@ -16577,41 +16577,37 @@ pub const VK_ERROR_NOT_PERMITTED_KHR_KHR: VkResult = VkResult(-1000174001);
 #[rustfmt::skip]
 pub const VK_ERROR_NOT_PERMITTED_KHR: VkResult = VkResult(-1000174001);
 
-#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub type VkQueueGlobalPriorityKHR = i32;
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub type VkQueueGlobalPriority = i32;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR: VkQueueGlobalPriorityKHR = 128;
-#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW: VkQueueGlobalPriorityKHR = 128;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR: VkQueueGlobalPriorityKHR = 256;
-#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM: VkQueueGlobalPriorityKHR = 256;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR: VkQueueGlobalPriorityKHR = 512;
-#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH: VkQueueGlobalPriorityKHR = 512;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_KHR_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR: VkQueueGlobalPriorityKHR = 1024;
-#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_KHR_global_priority")]
 #[cfg(feature = "Allow1_4APIs")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME: VkQueueGlobalPriorityKHR = 1024;
@@ -18483,22 +18479,18 @@ pub const VK_NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME: &str = "VK_NV_framebuf
 #[rustfmt::skip]
 pub const VK_NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION: usize = 1;
 
-#[cfg(feature = "framebuffer_mixed_samples")]
+#[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 pub type VkCoverageModulationModeNV = i32;
-#[cfg(feature = "framebuffer_mixed_samples")]
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 pub const VK_COVERAGE_MODULATION_MODE_NONE_NV: VkCoverageModulationModeNV = 0;
-#[cfg(feature = "framebuffer_mixed_samples")]
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 pub const VK_COVERAGE_MODULATION_MODE_RGB_NV: VkCoverageModulationModeNV = 1;
-#[cfg(feature = "framebuffer_mixed_samples")]
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 pub const VK_COVERAGE_MODULATION_MODE_ALPHA_NV: VkCoverageModulationModeNV = 2;
-#[cfg(feature = "framebuffer_mixed_samples")]
 #[cfg(feature = "VK_NV_framebuffer_mixed_samples")]
 #[rustfmt::skip]
 pub const VK_COVERAGE_MODULATION_MODE_RGBA_NV: VkCoverageModulationModeNV = 3;
@@ -18550,22 +18542,18 @@ pub const VK_EXT_GLOBAL_PRIORITY_EXTENSION_NAME: &str = "VK_EXT_global_priority"
 #[rustfmt::skip]
 pub const VK_EXT_GLOBAL_PRIORITY_SPEC_VERSION: usize = 2;
 
-#[cfg(feature = "global_priority")]
+#[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub type VkQueueGlobalPriorityEXT = i32;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_LOW_EXT: VkQueueGlobalPriorityEXT = 128;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_EXT: VkQueueGlobalPriorityEXT = 256;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_HIGH_EXT: VkQueueGlobalPriorityEXT = 512;
-#[cfg(feature = "global_priority")]
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 pub const VK_QUEUE_GLOBAL_PRIORITY_REALTIME_EXT: VkQueueGlobalPriorityEXT = 1024;
@@ -18598,6 +18586,45 @@ unsafe impl crate::VulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT 
 #[cfg(feature = "VK_EXT_global_priority")]
 #[rustfmt::skip]
 impl crate::TypedVulkanStructure for VkDeviceQueueGlobalPriorityCreateInfoEXT { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT; }
+
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME: &str = "VK_NVX_multiview_per_view_attributes";
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_ATTRIBUTES_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000001;
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_SUBPASS_DESCRIPTION_PER_VIEW_POSITION_X_ONLY_BIT_NVX: VkSubpassDescriptionFlagBits = 0x00000002;
+
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+    pub sType: VkStructureType,
+    pub pNext: *mut core::ffi::c_void,
+    pub perViewPositionAllComponents: VkBool32,
+}
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX: VkStructureType = 1000097000;
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanSinkStructure { unsafe { core::mem::transmute(self) } }
+}
+#[cfg(feature = "VK_NVX_multiview_per_view_attributes")]
+#[rustfmt::skip]
+impl crate::TypedVulkanSinkStructure for VkPhysicalDeviceMultiviewPerViewAttributesPropertiesNVX { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX; }
 
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
