@@ -18143,7 +18143,7 @@ pub const VK_EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION: usize = 1;
 #[cfg(feature = "VK_EXT_external_memory_host")]
 #[cfg(feature = "VK_KHR_external_memory")]
 #[rustfmt::skip]
-pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT_BIT_EXT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000080;
+pub const VK_EXTERNAL_MEMORY_HANDLE_TYPE_HOST_ALLOCATION_BIT_EXT: VkExternalMemoryHandleTypeFlagBitsKHR = 0x00000080;
 #[cfg(feature = "VK_EXT_external_memory_host")]
 #[cfg(feature = "VK_KHR_external_memory")]
 #[rustfmt::skip]

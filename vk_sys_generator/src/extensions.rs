@@ -683,7 +683,7 @@ pub const ELEMENTS: &[Element] = &[
             "ExternalMemoryHandleTypeFlagBits",
             "EXTERNAL_MEMORY_HANDLE_TYPE",
             &[
-                Bitmask::entry("HOST_ALLOCATION_BIT_EXT", 7).extension("EXT", "external_memory_host"),
+                Bitmask::entry("HOST_ALLOCATION", 7).extension("EXT", "external_memory_host"),
                 Bitmask::entry("HOST_MAPPED_FOREIGN_MEMORY", 8).extension("EXT", "external_memory_host"),
             ],
         )
