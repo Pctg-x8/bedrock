@@ -89,7 +89,6 @@ pub const VK_STRUCTURE_TYPE_DEVICE_GENERATED_COMMANDS_FEATURES_NVX: crate::vk2::
 pub const VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_W_SCALING_STATE_CREATE_INFO_NV: crate::vk2::VkStructureType =
     100_0087_000;
 pub const VK_STRUCTURE_TYPE_SURFACE_CAPABILITIES2_EXT: crate::vk2::VkStructureType = 100_0090_000;
-pub const VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE: crate::vk2::VkStructureType = 100_0092_000;
 pub const VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT: crate::vk2::VkStructureType =
     100_0099_000;
 pub const VK_STRUCTURE_TYPE_PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT: crate::vk2::VkStructureType =
@@ -184,7 +183,6 @@ ExportExtensions!("VK_NVX_device_generated_commands": device_generated_commands_
 ExportExtensions!("VK_NV_clip_space_w_scaling": clip_space_w_scaling_nv);
 ExportExtensions!("VK_EXT_direct_mode_display": direct_mode_display_ext);
 ExportExtensions!("VK_EXT_display_surface_counter": display_surface_counter_ext);
-ExportExtensions!("VK_GOOGLE_display_timing": display_timing_google);
 ExportExtensions!("VK_NV_sample_mask_override_coverage": sample_mask_override_coverage_nv);
 ExportExtensions!("VK_NV_geometry_shader_passthrough": geometry_shader_passthrough_nv);
 ExportExtensions!("VK_NV_viewport_array2": viewport_array2_nv);

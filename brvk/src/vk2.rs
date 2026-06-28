@@ -19096,6 +19096,108 @@ unsafe impl crate::PFN for PFN_vkGetSwapchainCounterEXT {
     }
 }
 
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+pub const VK_GOOGLE_DISPLAY_TIMING_EXTENSION_NAME: &str = "VK_GOOGLE_display_timing";
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+pub const VK_GOOGLE_DISPLAY_TIMING_SPEC_VERSION: usize = 1;
+
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkRefreshCycleDurationGOOGLE {
+    pub refreshDuration: u64,
+}
+
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPastPresentationTimingGOOGLE {
+    pub presentID: u32,
+    pub desiredPresentTime: u64,
+    pub actualPresentTime: u64,
+    pub earliestPresentTime: u64,
+    pub presentMargin: u64,
+}
+
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPresentTimeGOOGLE {
+    pub presentID: u32,
+    pub desiredPresentTime: u64,
+}
+
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[derive(Debug, Clone)]
+#[repr(C)]
+#[rustfmt::skip]
+pub struct VkPresentTimesInfoGOOGLE {
+    pub sType: VkStructureType,
+    pub pNext: *const core::ffi::c_void,
+    pub swapchainCount: u32,
+    pub pTimes: *const VkPresentTimeGOOGLE,
+}
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+pub const VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE: VkStructureType = 1000092000;
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+unsafe impl crate::VulkanStructure for VkPresentTimesInfoGOOGLE {
+    #[inline(always)]
+    fn as_generic(&self) -> &crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline(always)]
+    fn as_generic_mut(&mut self) -> &mut crate::GenericVulkanStructure {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+impl crate::TypedVulkanStructure for VkPresentTimesInfoGOOGLE { const TYPE: VkStructureType = VK_STRUCTURE_TYPE_PRESENT_TIMES_INFO_GOOGLE; }
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetRefreshCycleDurationGOOGLE(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pDisplayTimingProperties: *mut VkRefreshCycleDurationGOOGLE) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetRefreshCycleDurationGOOGLE {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetRefreshCycleDurationGOOGLE";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy)]
+#[rustfmt::skip]
+pub struct PFN_vkGetPastPresentationTimingGOOGLE(pub unsafe extern "system" fn(device: VkDevice, swapchain: VkSwapchainKHR, pPresentationTimingCount: *mut u32, pPresentationTimings: *mut VkPastPresentationTimingGOOGLE) -> VkResult);
+#[cfg(feature = "Implements")]
+#[cfg(feature = "VK_GOOGLE_display_timing")]
+#[rustfmt::skip]
+unsafe impl crate::PFN for PFN_vkGetPastPresentationTimingGOOGLE {
+    const NAME_CSTR: &'static core::ffi::CStr = c"vkGetPastPresentationTimingGOOGLE";
+
+    #[inline(always)]
+    unsafe fn from_void_fn(p: PFN_vkVoidFunction) -> Self {
+        unsafe { core::mem::transmute::<PFN_vkVoidFunction, Self>(p) }
+    }
+}
+
 #[cfg(all(feature = "Implements", not(feature = "DynamicLoaded")))]
 #[cfg_attr(all(not(windows), not(target_os = "macos"), not(feature = "DynamicLoaded")), link(name = "vulkan"))]
 #[cfg_attr(all(windows, not(feature = "DynamicLoaded"), feature = "Implements"), link(name = "vulkan-1"))]

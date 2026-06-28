@@ -1212,4 +1212,71 @@ pub const ELEMENTS: &[Element] = &[
         .failable()
         .extension("EXT", "swapchain_counter"),
     ),
+    // VK_GOOGLE_display_timing
+    Element::ExtensionHeaderConstants(ExtensionHeaderConstants::new("VK_GOOGLE_display_timing", 1)),
+    Element::Struct(
+        Struct::new("RefreshCycleDuration", &[Struct::member("refreshDuration", "u64")])
+            .extensions(&[("GOOGLE", "display_timing")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "PastPresentationTiming",
+            &[
+                Struct::member("presentID", "u32"),
+                Struct::member("desiredPresentTime", "u64"),
+                Struct::member("actualPresentTime", "u64"),
+                Struct::member("earliestPresentTime", "u64"),
+                Struct::member("presentMargin", "u64"),
+            ],
+        )
+        .extensions(&[("GOOGLE", "display_timing")]),
+    ),
+    Element::Struct(
+        Struct::new(
+            "PresentTime",
+            &[
+                Struct::member("presentID", "u32"),
+                Struct::member("desiredPresentTime", "u64"),
+            ],
+        )
+        .extensions(&[("GOOGLE", "display_timing")]),
+    ),
+    Element::Struct(
+        Struct::typed(
+            "PresentTimesInfo",
+            "PRESENT_TIMES_INFO",
+            vk_ext_enum(93, 0) as _,
+            StructUsage::Source,
+            &[
+                Struct::member("swapchainCount", "u32"),
+                Struct::member("pTimes", "*const VkPresentTimeGOOGLE"),
+            ],
+        )
+        .extensions(&[("GOOGLE", "display_timing")]),
+    ),
+    Element::Command(
+        Command::new(
+            "GetRefreshCycleDuration",
+            &[
+                ("device", "VkDevice"),
+                ("swapchain", "VkSwapchainKHR"),
+                ("pDisplayTimingProperties", "*mut VkRefreshCycleDurationGOOGLE"),
+            ],
+        )
+        .failable()
+        .extension("GOOGLE", "display_timing"),
+    ),
+    Element::Command(
+        Command::new(
+            "GetPastPresentationTiming",
+            &[
+                ("device", "VkDevice"),
+                ("swapchain", "VkSwapchainKHR"),
+                ("pPresentationTimingCount", "*mut u32"),
+                ("pPresentationTimings", "*mut VkPastPresentationTimingGOOGLE"),
+            ],
+        )
+        .failable()
+        .extension("GOOGLE", "display_timing"),
+    ),
 ];
